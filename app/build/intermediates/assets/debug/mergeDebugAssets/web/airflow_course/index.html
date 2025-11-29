@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FKTI - Apache Airflow Mastery | Fakhruddin Khambaty Training Institute</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- External CDN removed for offline functionality -->
+    <style>
+        /* Basic code highlighting styles */
+        .hljs { 
+            background: #282c34; 
+            color: #abb2bf; 
+            padding: 12px; 
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+        }
+        .hljs-keyword { color: #c678dd; }
+        .hljs-string { color: #98c379; }
+        .hljs-number { color: #d19a66; }
+        .hljs-comment { color: #5c6370; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <img src="logo.svg" alt="FKTI Logo" class="logo">
+                <div class="header-text">
+                    <h1>🌊 Master Apache Airflow</h1>
+                    <p class="institute-name">FKTI - Fakhruddin Khambaty Training Institute</p>
+                    <p class="tagline">Build Production-Ready Data Pipelines</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-section">
+                <button class="nav-btn hub-btn" onclick="goToHub()">← FKTI Hub</button>
+            </div>
+            <div class="nav-section main-nav">
+            <button class="nav-btn" onclick="showSection('welcome')">🏠 Welcome</button>
+            <button class="nav-btn" onclick="showSection('basics')">🚀 Basics</button>
+            <button class="nav-btn" onclick="showSection('dags')">📋 DAGs</button>
+            <button class="nav-btn" onclick="showSection('operators')">⚙️ Operators</button>
+            <button class="nav-btn" onclick="showSection('scheduling')">⏰ Scheduling</button>
+            <button class="nav-btn" onclick="showSection('sensors')">📡 Sensors</button>
+            <button class="nav-btn" onclick="showSection('examples')">💡 Examples</button>
+            <button class="nav-btn" onclick="showSection('exercises')">🎯 Exercises</button>
+            </div>
+            <div class="nav-section">
+                <button class="nav-btn python-btn" onclick="goToPython()">🐍 Python Course</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-text" id="progressText">0% Complete</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Welcome Section -->
+        <section id="welcome" class="content-section active">
+            <h2>🎯 Welcome to Apache Airflow Mastery - University Level Course</h2>
+            
+            <div class="welcome-card">
+                <h3>Course Overview & Learning Objectives</h3>
+                <p><strong>Course Code:</strong> CS/DS 485 - Workflow Orchestration Systems</p>
+                <p><strong>Prerequisites:</strong> Data Structures, Database Systems, Distributed Computing Fundamentals</p>
+                
+                <h4>Upon completion, students will be able to:</h4>
+                <ul class="feature-list">
+                    <li>✅ <strong>Architectural Understanding:</strong> Analyze Airflow's distributed architecture, scheduler mechanics, and execution models</li>
+                    <li>✅ <strong>Graph Theory Application:</strong> Design and implement Directed Acyclic Graphs (DAGs) with complex dependency patterns</li>
+                    <li>✅ <strong>Abstraction Mastery:</strong> Utilize Operators, Sensors, and Hooks as software abstractions for workflow components</li>
+                    <li>✅ <strong>Temporal Logic:</strong> Implement advanced scheduling algorithms using cron expressions and interval-based triggers</li>
+                    <li>✅ <strong>Production Engineering:</strong> Deploy, monitor, and maintain enterprise-grade data orchestration systems</li>
+                    <li>✅ <strong>System Integration:</strong> Design fault-tolerant, scalable data pipelines integrating multiple data sources and destinations</li>
+                </ul>
+            </div>
+            
+            <div class="academic-context">
+                <h3>📚 Theoretical Foundation</h3>
+                <div class="theory-box">
+                    <h4>Workflow Management Systems in Computer Science</h4>
+                    <p>Apache Airflow belongs to the class of <strong>Workflow Management Systems (WMS)</strong>, which are distributed computing frameworks designed to orchestrate complex computational processes. The theoretical foundation draws from:</p>
+                    <ul>
+                        <li><strong>Graph Theory:</strong> DAGs represent computational workflows as directed acyclic graphs</li>
+                        <li><strong>Distributed Systems:</strong> Task scheduling across multiple worker nodes</li>
+                        <li><strong>Temporal Logic:</strong> Time-based scheduling and dependency resolution</li>
+                        <li><strong>Software Architecture:</strong> Plugin-based extensible design patterns</li>
+                    </ul>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-box">
+                        <h4>📸 Screenshot 1.1: Airflow Architecture Overview</h4>
+                        <div class="placeholder-image">🖼️ [Architecture Diagram Placeholder]</div>
+                        <p><strong>Description:</strong> High-level view of Airflow components including Web Server, Scheduler, Metadata Database, and Worker Nodes. This diagram illustrates the distributed nature of the system and data flow between components.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="welcome-card">
+                <h3>Industry Context & Market Analysis</h3>
+                <div class="market-analysis">
+                    <h4>Enterprise Adoption Statistics</h4>
+                    <p>According to industry surveys and GitHub statistics (2024), Apache Airflow has achieved significant market penetration:</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <h5>70%</h5>
+                            <p>Of Fortune 500 companies use Airflow</p>
+                        </div>
+                        <div class="stat-item">
+                            <h5>45K+</h5>
+                            <p>GitHub stars and active community</p>
+                        </div>
+                        <div class="stat-item">
+                            <h5>500+</h5>
+                            <p>Available community providers</p>
+                        </div>
+                    </div>
+                    
+                    <h4>Case Study Analysis</h4>
+                    <div class="case-studies">
+                        <div class="case-study">
+                            <h5>🎵 Spotify: Real-time Music Recommendation Engine</h5>
+                            <p><strong>Challenge:</strong> Process 40+ billion events daily for personalized recommendations</p>
+                            <p><strong>Solution:</strong> 2000+ DAGs orchestrating feature engineering, model training, and inference pipelines</p>
+                            <p><strong>Result:</strong> 30% improvement in recommendation accuracy, 50% reduction in pipeline maintenance</p>
+                        </div>
+                        
+                        <div class="case-study">
+                            <h5>✈️ Airbnb: Data Platform Orchestration</h5>
+                            <p><strong>Challenge:</strong> Coordinate ETL processes across 100+ data sources serving millions of users</p>
+                            <p><strong>Solution:</strong> Centralized workflow orchestration with 800+ production DAGs</p>
+                            <p><strong>Result:</strong> 60% reduction in data inconsistencies, improved data freshness from hours to minutes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="interactive-box">
+                <h3>Let's Start! 🚀</h3>
+                <p>Click through the navigation above or use the buttons below to begin your Airflow journey.</p>
+                <button class="start-btn" onclick="showSection('basics')">Start Learning →</button>
+            </div>
+
+            <div class="learning-path">
+                <h3>📅 Academic Curriculum Structure (15-Week Semester)</h3>
+                <div class="curriculum-overview">
+                    <p><strong>Course Format:</strong> 3 credit hours • 2 lectures + 1 lab per week • Prerequisites: CS 320 (Database Systems), CS 341 (Distributed Systems)</p>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <strong>Weeks 1-2: Theoretical Foundations</strong>
+                        <ul>
+                            <li>Workflow Management Systems theory</li>
+                            <li>Graph theory applications in computing</li>
+                            <li>Distributed systems architecture</li>
+                            <li>Lab: Airflow installation and environment setup</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Weeks 3-4: Core Architecture & DAG Theory</strong>
+                        <ul>
+                            <li>Directed Acyclic Graph mathematical properties</li>
+                            <li>Task scheduling algorithms</li>
+                            <li>Dependency resolution mechanisms</li>
+                            <li>Lab: Basic DAG implementation and testing</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Weeks 5-7: Operator Design Patterns</strong>
+                        <ul>
+                            <li>Software abstraction principles</li>
+                            <li>Plugin architecture patterns</li>
+                            <li>Hook design and implementation</li>
+                            <li>Lab: Custom operator development</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Weeks 8-10: Temporal Logic & Scheduling</strong>
+                        <ul>
+                            <li>Cron expression parsing algorithms</li>
+                            <li>Time-based dependency resolution</li>
+                            <li>Event-driven architecture patterns</li>
+                            <li>Lab: Complex scheduling implementation</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Weeks 11-13: Production Systems Engineering</strong>
+                        <ul>
+                            <li>High availability deployment patterns</li>
+                            <li>Monitoring and observability systems</li>
+                            <li>Performance optimization techniques</li>
+                            <li>Lab: Production deployment project</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Weeks 14-15: Capstone Project & Assessment</strong>
+                        <ul>
+                            <li>End-to-end data pipeline design</li>
+                            <li>System performance analysis</li>
+                            <li>Peer code review and presentation</li>
+                            <li>Final examination</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Basics Section -->
+        <section id="basics" class="content-section">
+            <h2>🚀 Airflow Basics - Understanding Data Workflows</h2>
+            
+            <!-- Simple Definition Box -->
+            <div class="definition-box mega-simple">
+                <h3>🤔 First Things First: What is Apache Airflow?</h3>
+                <div class="simple-definition">
+                    <p class="big-text">Airflow = A tool that helps computers run tasks in the right order, at the right time</p>
+                    
+                    <div class="real-life-comparison">
+                        <div class="comparison-item">
+                            <div class="scenario-icon">🍳</div>
+                            <h4>Like Cooking a Big Meal</h4>
+                            <p><strong>Problem:</strong> You need to make soup, bread, and salad for dinner</p>
+                            <p><strong>Solution:</strong> Start soup first (takes 2 hours), then bread (1 hour), then salad (30 min)</p>
+                            <p><strong>Airflow does this for data!</strong> It knows which computer tasks to start first</p>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="scenario-icon">🏗️</div>
+                            <h4>Like Building a House</h4>
+                            <p><strong>Problem:</strong> You can't paint walls before building them!</p>
+                            <p><strong>Solution:</strong> Foundation → Walls → Roof → Painting</p>
+                            <p><strong>Airflow does this for data!</strong> It follows the correct order automatically</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshot Section -->
+            <div class="screenshot-section">
+                <div class="screenshot-placeholder large">
+                    <i class="fas fa-desktop"></i>
+                    <h4>What Does Airflow Look Like?</h4>
+                    <p><strong>Screenshot:</strong> Simple Airflow web interface showing a basic data pipeline</p>
+                    <div class="screenshot-details">
+                        <ul>
+                            <li>Clean web interface with colorful boxes (these are "tasks")</li>
+                            <li>Arrows showing which task comes after which</li>
+                            <li>Green boxes = completed tasks, Red = failed tasks</li>
+                            <li>Timeline showing when each task ran</li>
+                            <li>Big "Run" button to start the workflow</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lesson-card enhanced" data-step="1">
+                <h3>🎯 Step 1: Understanding "Workflows" in Real Life</h3>
+                
+                <div class="why-this-matters">
+                    <h4>🌟 Why Do We Need Airflow? (Real Examples)</h4>
+                    <div class="real-examples">
+                        <div class="example-mini">
+                            <span class="example-icon">🏦</span>
+                            <span><strong>Banks:</strong> Every night, they need to calculate interest, update accounts, send statements - in the right order!</span>
+                        </div>
+                        <div class="example-mini">
+                            <span class="example-icon">📺</span>
+                            <span><strong>Netflix:</strong> They analyze what you watched, update recommendations, prepare new content - all automatically!</span>
+                        </div>
+                        <div class="example-mini">
+                            <span class="example-icon">🛒</span>
+                            <span><strong>Amazon:</strong> They track inventory, process orders, update shipping - millions of tasks coordinated perfectly!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-introduction">
+                    <h4>🎭 What is a "Workflow"?</h4>
+                    <p class="simple-definition">A workflow is just a fancy name for "a bunch of tasks that need to be done in a specific order"</p>
+                    
+                    <div class="workflow-analogy">
+                        <h5>🌅 Example: Your Morning Routine (This is a Workflow!)</h5>
+                        <div class="morning-workflow">
+                            <div class="workflow-step">
+                                <div class="step-number">1</div>
+                                <div class="step-description">
+                                    <strong>Wake up</strong><br>
+                                    <span class="step-note">Must happen first!</span>
+                                </div>
+                            </div>
+                            <div class="workflow-arrow">→</div>
+                            <div class="workflow-step">
+                                <div class="step-number">2</div>
+                                <div class="step-description">
+                                    <strong>Brush teeth</strong><br>
+                                    <span class="step-note">Can happen after waking up</span>
+                                </div>
+                            </div>
+                            <div class="workflow-arrow">→</div>
+                            <div class="workflow-step">
+                                <div class="step-number">3</div>
+                                <div class="step-description">
+                                    <strong>Get dressed</strong><br>
+                                    <span class="step-note">Can happen at the same time as teeth</span>
+                                </div>
+                            </div>
+                            <div class="workflow-arrow">→</div>
+                            <div class="workflow-step">
+                                <div class="step-number">4</div>
+                                <div class="step-description">
+                                    <strong>Leave house</strong><br>
+                                    <span class="step-note">Must happen last!</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="workflow-explanation">This is exactly what Airflow does, but with computer tasks instead of morning activities!</p>
+                    </div>
+                </div>
+
+                <!-- DAG Explanation -->
+                <div class="dag-introduction">
+                    <h4>🕸️ What is a "DAG"? (Don't worry, it's not scary!)</h4>
+                    
+                    <div class="dag-simple-explanation">
+                        <p><strong>DAG = Directed Acyclic Graph</strong></p>
+                        <p class="break-it-down">Let's break that down into human words:</p>
+                        
+                        <div class="dag-breakdown">
+                            <div class="breakdown-item">
+                                <div class="breakdown-icon">🎯</div>
+                                <div class="breakdown-content">
+                                    <h5>Directed</h5>
+                                    <p><strong>Means:</strong> Has a specific direction</p>
+                                    <p><strong>Example:</strong> Like a one-way street - traffic flows one direction only</p>
+                                    <p><strong>In Airflow:</strong> Task A → Task B (not the other way around!)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="breakdown-item">
+                                <div class="breakdown-icon">🚫</div>
+                                <div class="breakdown-content">
+                                    <h5>Acyclic</h5>
+                                    <p><strong>Means:</strong> No circles or loops</p>
+                                    <p><strong>Example:</strong> You can't go: A → B → C → A (that would be a loop!)</p>
+                                    <p><strong>In Airflow:</strong> Tasks can't depend on themselves (prevents infinite loops)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="breakdown-item">
+                                <div class="breakdown-icon">📊</div>
+                                <div class="breakdown-content">
+                                    <h5>Graph</h5>
+                                    <p><strong>Means:</strong> A diagram with boxes and arrows</p>
+                                    <p><strong>Example:</strong> Like a family tree or organization chart</p>
+                                    <p><strong>In Airflow:</strong> Tasks (boxes) connected by dependencies (arrows)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual DAG Example -->
+                <div class="dag-visual-example">
+                    <h4>📈 Simple DAG Example: Making Coffee</h4>
+                    
+                    <div class="coffee-dag">
+                        <div class="dag-flow">
+                            <div class="dag-task start-task">
+                                <div class="task-icon">💧</div>
+                                <div class="task-name">Boil Water</div>
+                                <div class="task-time">3 minutes</div>
+                            </div>
+                            
+                            <div class="dag-arrow">↓</div>
+                            
+                            <div class="parallel-tasks">
+                                <div class="dag-task">
+                                    <div class="task-icon">☕</div>
+                                    <div class="task-name">Add Coffee</div>
+                                    <div class="task-time">30 seconds</div>
+                                </div>
+                                <div class="and-text">&</div>
+                                <div class="dag-task">
+                                    <div class="task-icon">🥛</div>
+                                    <div class="task-name">Get Milk</div>
+                                    <div class="task-time">30 seconds</div>
+                                </div>
+                            </div>
+                            
+                            <div class="dag-arrow">↓</div>
+                            
+                            <div class="dag-task end-task">
+                                <div class="task-icon">🥄</div>
+                                <div class="task-name">Mix Everything</div>
+                                <div class="task-time">1 minute</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dag-explanation">
+                        <h5>🧠 Why This Works:</h5>
+                        <ul>
+                            <li><strong>Direction:</strong> Water must boil BEFORE we add coffee</li>
+                            <li><strong>No Loops:</strong> We don't go backwards in the process</li>
+                            <li><strong>Parallel Tasks:</strong> We can get milk WHILE water is boiling (saves time!)</li>
+                            <li><strong>Dependencies:</strong> "Mix Everything" waits until both coffee AND milk are ready</li>
+                        </ul>
+                        <p class="key-insight">💡 <strong>This is exactly how Airflow manages data tasks!</strong> Instead of coffee steps, it manages data processing steps.</p>
+                    </div>
+                </div>
+
+                <!-- Real Data Pipeline Example -->
+                <div class="real-pipeline-example">
+                    <h4>🏢 Real Business Example: Daily Sales Report</h4>
+                    
+                    <div class="business-scenario">
+                        <p><strong>Situation:</strong> Every morning at 9 AM, your company needs a sales report from yesterday's data.</p>
+                        
+                        <div class="pipeline-steps">
+                            <div class="pipeline-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h5>Download Sales Data</h5>
+                                    <p>Get yesterday's transactions from the database</p>
+                                    <div class="step-note">Takes 10 minutes • Must happen first</div>
+                                </div>
+                            </div>
+                            
+                            <div class="pipeline-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h5>Clean the Data</h5>
+                                    <p>Remove errors, fix formatting issues</p>
+                                    <div class="step-note">Takes 5 minutes • Needs data from step 1</div>
+                                </div>
+                            </div>
+                            
+                            <div class="pipeline-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h5>Calculate Totals</h5>
+                                    <p>Add up sales by region, product, salesperson</p>
+                                    <div class="step-note">Takes 3 minutes • Needs clean data from step 2</div>
+                                </div>
+                            </div>
+                            
+                            <div class="pipeline-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h5>Generate Report</h5>
+                                    <p>Create a nice PDF with charts and graphs</p>
+                                    <div class="step-note">Takes 2 minutes • Needs totals from step 3</div>
+                                </div>
+                            </div>
+                            
+                            <div class="pipeline-step">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h5>Email to Managers</h5>
+                                    <p>Send the report to all department heads</p>
+                                    <div class="step-note">Takes 1 minute • Needs report from step 4</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="airflow-magic">
+                            <h5>✨ What Airflow Does:</h5>
+                            <ul>
+                                <li><strong>Runs automatically:</strong> Every day at 8:40 AM (so report is ready by 9 AM)</li>
+                                <li><strong>Handles errors:</strong> If step 2 fails, it doesn't waste time on steps 3-5</li>
+                                <li><strong>Retries failures:</strong> If the database is temporarily down, it tries again</li>
+                                <li><strong>Sends alerts:</strong> If something breaks, it emails the IT team</li>
+                                <li><strong>Tracks history:</strong> You can see reports from any previous day</li>
+                            </ul>
+                            <p class="magic-note">🎩 Without Airflow, someone would have to manually run each step, every single day, in the right order. With Airflow, it happens automatically!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-box">
+                        <h4>📸 Figure 1.1: Airflow Web UI - DAG Overview</h4>
+                        <div class="placeholder-image">🖼️ [Airflow Web Interface Screenshot]</div>
+                        <p><strong>Expected Content:</strong> Screenshot showing the main Airflow web interface with DAG list view, displaying DAG names, status indicators, last run times, and success/failure metrics. Students should observe the clean, intuitive interface design.</p>
+                        <p><strong>Learning Objective:</strong> Familiarize with the primary user interface for workflow monitoring and management.</p>
+                    </div>
+                </div>
+                
+                <div class="architectural-overview">
+                    <h4>🏢 System Architecture Analysis</h4>
+                    
+                    <div class="component-analysis">
+                        <h5>Core Components & Their Interactions:</h5>
+                        
+                        <div class="component">
+                            <h6>1. Web Server (Flask Application)</h6>
+                            <p><strong>Function:</strong> Provides the HTTP interface for DAG management and monitoring</p>
+                            <p><strong>Architecture:</strong> WSGI-compliant Flask application with SQLAlchemy ORM</p>
+                            <p><strong>Scalability:</strong> Stateless design enables horizontal scaling behind load balancers</p>
+                        </div>
+                        
+                        <div class="component">
+                            <h6>2. Scheduler (Core Orchestration Engine)</h6>
+                            <p><strong>Function:</strong> Determines task execution order and timing based on dependencies</p>
+                            <p><strong>Algorithm:</strong> Implements topological sorting with temporal constraints</p>
+                            <p><strong>Performance:</strong> Configurable polling intervals and parallelization settings</p>
+                        </div>
+                        
+                        <div class="component">
+                            <h6>3. Metadata Database (Persistent State Store)</h6>
+                            <p><strong>Function:</strong> Stores DAG definitions, task instances, execution history, and configuration</p>
+                            <p><strong>Schema:</strong> Relational database with optimized indexing for temporal queries</p>
+                            <p><strong>Supported Systems:</strong> PostgreSQL (recommended), MySQL, SQLite (development only)</p>
+                        </div>
+                        
+                        <div class="component">
+                            <h6>4. Executor (Task Execution Layer)</h6>
+                            <p><strong>Function:</strong> Manages the actual execution of tasks across available resources</p>
+                            <p><strong>Types:</strong> Sequential, Local, Celery, Kubernetes, DASK</p>
+                            <p><strong>Abstraction:</strong> Pluggable architecture supporting multiple execution backends</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-box">
+                        <h4>📸 Figure 1.2: Component Interaction Diagram</h4>
+                        <div class="placeholder-image">🖼️ [Architecture Diagram with Data Flow]</div>
+                        <p><strong>Expected Content:</strong> Detailed architectural diagram showing data flow between Web Server, Scheduler, Metadata DB, and Executors. Include arrow indicators for request/response patterns and data persistence flows.</p>
+                        <p><strong>Analysis Points:</strong> Students should identify potential bottlenecks, single points of failure, and scaling considerations in this architecture.</p>
+                    </div>
+                </div>
+                
+                <div class="critical-thinking">
+                    <h4>🧠 Critical Analysis Questions</h4>
+                    <div class="thinking-questions">
+                        <p><strong>1. Architectural Trade-offs:</strong> Analyze the trade-offs between using a single scheduler instance versus distributed scheduling. Consider consistency, performance, and fault tolerance.</p>
+                        <p><strong>2. Scalability Limits:</strong> What are the theoretical and practical limits of this architecture? How might you redesign it for 10x the current scale?</p>
+                        <p><strong>3. Alternative Approaches:</strong> Compare Airflow's approach to other workflow management paradigms (e.g., event-driven systems, serverless orchestration).</p>
+                    </div>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I have completed the theoretical analysis and understand the architectural foundations.
+                </label>
+
+                <!-- Enhanced Academic Quiz -->
+                <div class="subsection-quiz">
+                    <h4>📝 Conceptual Assessment</h4>
+                    <p><strong>Question 1.1:</strong> In the context of distributed workflow management, what is the primary mathematical constraint that defines a DAG, and why is this constraint critical for workflow execution?</p>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-1" value="A">
+                            <span>A) Acyclic property prevents infinite loops in task execution</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-1" value="B">
+                            <span>B) Directed property ensures deterministic execution order</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-1" value="C">
+                            <span>C) Graph property allows parallel task execution</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-1" value="D">
+                            <span>D) All of the above contribute to reliable workflow execution</span>
+                        </label>
+                    </div>
+                    <button class="check-quiz-btn" onclick="checkSubsectionQuiz('quiz-1-1', 'D')">Check Answer</button>
+                    <div class="quiz-feedback" id="quiz-1-1-feedback"></div>
+                    
+                    <div class="quiz-explanation">
+                        <p><strong>Detailed Explanation:</strong> A DAG's mathematical properties are fundamental to workflow execution. The acyclic constraint prevents circular dependencies that would cause infinite loops. The directed property provides deterministic ordering through topological sorting. The graph structure enables parallel execution of independent branches while maintaining dependency constraints.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lesson-card" data-step="2">
+                <h3>1.2 DAG Implementation: From Theory to Practice</h3>
+                
+                <div class="academic-approach">
+                    <h4>🎯 Learning Objectives</h4>
+                    <ul>
+                        <li>Translate theoretical DAG concepts into Python implementation</li>
+                        <li>Understand the relationship between DAG objects and workflow execution</li>
+                        <li>Analyze the role of default arguments in task parameterization</li>
+                        <li>Examine the operator pattern in workflow task definition</li>
+                    </ul>
+                </div>
+                
+                <div class="code-analysis">
+                    <h4>💻 Code Structure Analysis</h4>
+                    <p>The following implementation demonstrates the fundamental patterns of DAG construction. Each component will be analyzed from both software engineering and systems perspectives.</p>
+                    
+                    <pre><code class="language-python"># hello_world_dag.py - Comprehensive DAG Implementation
+
+"""
+Airflow DAG: Hello World Implementation
+Author: FKTI Data Engineering Course
+Purpose: Demonstrate fundamental DAG construction patterns
+Complexity: O(1) - Single task execution
+"""
+
+from datetime import datetime, timedelta
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.utils.dates import days_ago
+import logging
+
+# Configure logging for observability
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Default arguments: Configuration template for all tasks
+default_args = {
+    'owner': 'data_engineering_team',           # Ownership assignment
+    'depends_on_past': False,                   # Task independence flag
+    'start_date': datetime(2025, 1, 1),        # Workflow inception time
+    'email_on_failure': True,                  # Failure notification
+    'email_on_retry': False,                   # Retry notification
+    'retries': 2,                              # Fault tolerance setting
+    'retry_delay': timedelta(minutes=5),       # Exponential backoff base
+    'max_active_runs': 1,                      # Concurrency control
+}
+
+# DAG instantiation with comprehensive configuration
+dag = DAG(
+    dag_id='hello_world_analytical',            # Unique identifier
+    default_args=default_args,                 # Task defaults inheritance
+    description='Academic DAG demonstrating core concepts',
+    schedule_interval=timedelta(days=1),       # Temporal recurrence pattern
+    start_date=days_ago(1),                    # Execution window start
+    catchup=False,                             # Historical run prevention
+    tags=['tutorial', 'fundamentals'],        # Metadata classification
+    max_active_runs=1,                         # DAG-level concurrency
+    dagrun_timeout=timedelta(minutes=60),      # Maximum execution duration
+)
+
+def hello_world_function(**context):
+    """
+    Task execution function with context analysis
+    
+    Args:
+        **context: Airflow runtime context containing:
+                  - execution_date: Logical execution time
+                  - task_instance: Current task metadata
+                  - dag_run: DAG execution instance
+    
+    Returns:
+        str: Task completion status for XCom
+    """
+    # Extract execution context for analysis
+    execution_date = context['execution_date']
+    task_instance = context['task_instance']
+    dag_run = context['dag_run']
+    
+    # Log execution metadata
+    logger.info(f"Task executed at: {execution_date}")
+    logger.info(f"DAG Run ID: {dag_run.run_id}")
+    logger.info(f"Task Instance: {task_instance.task_id}")
+    
+    # Perform computational work
+    message = f"Hello, Airflow World! Executed on {execution_date}"
+    print(message)
+    
+    # Return value for downstream task consumption via XCom
+    return {
+        'status': 'SUCCESS',
+        'execution_time': execution_date.isoformat(),
+        'message': message
+    }
+
+# Task instantiation using Operator pattern
+hello_task = PythonOperator(
+    task_id='hello_world_task',                # Task unique identifier
+    python_callable=hello_world_function,     # Function reference (not call)
+    provide_context=True,                     # Context injection flag
+    dag=dag,                                  # DAG association
+    doc_md="""                              # Documentation in Markdown
+    ## Hello World Task
+    
+    This task demonstrates:
+    - Context parameter access
+    - Return value handling
+    - Logging best practices
+    - XCom data exchange
+    """
+)</code></pre>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-box">
+                        <h4>📸 Figure 1.3: DAG Graph View</h4>
+                        <div class="placeholder-image">🖼️ [DAG Graph Visualization]</div>
+                        <p><strong>Expected Content:</strong> Screenshot of the Airflow web UI showing the graph view of our hello_world_dag. The single task should appear as a node with status indicators and execution metadata.</p>
+                        <p><strong>Analysis Focus:</strong> Observe how the logical DAG structure translates to visual representation. Note the task status colors, execution timing, and interactive elements.</p>
+                    </div>
+                </div>
+                
+                <div class="technical-analysis">
+                    <h4>🔍 Technical Deep Dive</h4>
+                    
+                    <div class="analysis-section">
+                        <h5>1. Default Arguments Pattern Analysis</h5>
+                        <p>The <code>default_args</code> dictionary implements the <strong>Template Method pattern</strong>, providing consistent configuration across all tasks in the DAG. This approach:</p>
+                        <ul>
+                            <li><strong>Reduces Code Duplication:</strong> Common settings defined once</li>
+                            <li><strong>Ensures Consistency:</strong> All tasks inherit the same behavior patterns</li>
+                            <li><strong>Simplifies Maintenance:</strong> Central location for configuration updates</li>
+                            <li><strong>Enables Standardization:</strong> Enterprise-wide configuration templates</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h5>2. DAG Object Lifecycle</h5>
+                        <p>The DAG instantiation process involves several phases:</p>
+                        <ol>
+                            <li><strong>Parse Phase:</strong> Python interpreter loads and validates DAG definition</li>
+                            <li><strong>Registration Phase:</strong> Scheduler discovers and registers the DAG in metadata DB</li>
+                            <li><strong>Scheduling Phase:</strong> Scheduler creates DAG runs based on schedule_interval</li>
+                            <li><strong>Execution Phase:</strong> Executor launches tasks according to dependencies</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h5>3. Operator Abstraction Analysis</h5>
+                        <p>The <code>PythonOperator</code> exemplifies the <strong>Command Pattern</strong>:</p>
+                        <ul>
+                            <li><strong>Encapsulation:</strong> Task logic encapsulated in callable object</li>
+                            <li><strong>Parameterization:</strong> Context injection enables runtime customization</li>
+                            <li><strong>Decoupling:</strong> Task definition separated from execution environment</li>
+                            <li><strong>Extensibility:</strong> Operator hierarchy supports custom implementations</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <div class="screenshot-box">
+                        <h4>📸 Figure 1.4: Task Instance Details</h4>
+                        <div class="placeholder-image">🖼️ [Task Instance Detail View]</div>
+                        <p><strong>Expected Content:</strong> Screenshot showing the detailed view of a task instance, including logs, duration, context variables, and XCom data. Students should see the execution timeline and output data.</p>
+                        <p><strong>Learning Focus:</strong> Understanding task execution lifecycle, context data availability, and debugging capabilities in the Airflow UI.</p>
+                    </div>
+                </div>
+                
+                <div class="practical-exercise">
+                    <h4>🛠️ Laboratory Exercise 1.2</h4>
+                    <div class="exercise-requirements">
+                        <h5>Implementation Requirements:</h5>
+                        <ol>
+                            <li>Modify the provided DAG to include error handling using try-catch blocks</li>
+                            <li>Add parameter validation for the context dictionary</li>
+                            <li>Implement custom logging with different severity levels</li>
+                            <li>Create a second task that processes the XCom output from the first task</li>
+                        </ol>
+                        
+                        <h5>Analysis Questions:</h5>
+                        <ol>
+                            <li>Explain the performance implications of different retry_delay strategies</li>
+                            <li>Analyze the memory usage patterns when provide_context=True</li>
+                            <li>Evaluate the trade-offs between catchup=True vs catchup=False in production</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I have completed the code analysis and understand the implementation patterns.
+                </label>
+
+                <!-- Enhanced Technical Quiz -->
+                <div class="subsection-quiz">
+                    <h4>📝 Technical Assessment 1.2</h4>
+                    <p><strong>Question:</strong> Analyze the following DAG configuration parameter and explain its impact on system behavior:</p>
+                    <div class="code-snippet">
+                        <code>catchup=False, max_active_runs=1, dagrun_timeout=timedelta(minutes=60)</code>
+                    </div>
+                    <p>What is the combined effect of these parameters on DAG execution behavior in a production environment?</p>
+                    
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-2" value="A">
+                            <span>A) Prevents historical reruns, ensures sequential execution, limits runtime</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-2" value="B">
+                            <span>B) Only prevents backfilling of missed DAG runs</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-2" value="C">
+                            <span>C) Creates a fault-tolerant execution environment with resource limits</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-2" value="D">
+                            <span>D) Optimizes performance by reducing database queries</span>
+                        </label>
+                    </div>
+                    <button class="check-quiz-btn" onclick="checkSubsectionQuiz('quiz-1-2', 'A')">Check Answer</button>
+                    <div class="quiz-feedback" id="quiz-1-2-feedback"></div>
+                    
+                    <div class="detailed-explanation">
+                        <h5>📊 System Behavior Analysis:</h5>
+                        <p><strong>catchup=False:</strong> Prevents the scheduler from creating DAG runs for historical intervals, avoiding computational overhead and potential data consistency issues.</p>
+                        <p><strong>max_active_runs=1:</strong> Ensures only one DAG run executes at a time, preventing resource conflicts and maintaining data integrity in ETL processes.</p>
+                        <p><strong>dagrun_timeout:</strong> Implements a circuit breaker pattern, terminating runaway processes and freeing system resources.</p>
+                        <p><strong>Combined Effect:</strong> Creates a predictable, resource-bounded execution environment suitable for production deployments with SLA requirements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lesson-card" data-step="3">
+                <h3>Step 3: Understanding Task Dependencies</h3>
+                <p>Tasks can depend on other tasks. Let's create a pipeline!</p>
+                <pre><code class="language-python">from airflow.operators.bash import BashOperator
+
+# Create multiple tasks
+start_task = BashOperator(
+    task_id='start_pipeline',
+    bash_command='echo "Starting data pipeline..."',
+    dag=dag,
+)
+
+extract_task = PythonOperator(
+    task_id='extract_data',
+    python_callable=lambda: print("Extracting data from source"),
+    dag=dag,
+)
+
+transform_task = PythonOperator(
+    task_id='transform_data',
+    python_callable=lambda: print("Transforming data"),
+    dag=dag,
+)
+
+load_task = PythonOperator(
+    task_id='load_data',
+    python_callable=lambda: print("Loading data to warehouse"),
+    dag=dag,
+)
+
+# Set dependencies - this creates the pipeline flow
+start_task >> extract_task >> transform_task >> load_task
+
+# Alternative syntax:
+# extract_task.set_upstream(start_task)
+# transform_task.set_upstream(extract_task)
+# load_task.set_upstream(transform_task)</code></pre>
+                
+                <div class="explanation">
+                    <strong>💡 Pipeline Flow:</strong>
+                    <p>Tasks execute in order: Start → Extract → Transform → Load. Each task waits for the previous one to complete successfully!</p>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+
+                <!-- Subsection Quiz -->
+                <div class="subsection-quiz">
+                    <h4>📝 Quick Check</h4>
+                    <p>Which symbol is used to set task dependencies in Airflow?</p>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-3" value="A">
+                            <span>A) -> (arrow)</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-3" value="B">
+                            <span>B) >> (right shift)</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-3" value="C">
+                            <span>C) | (pipe)</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="quiz-1-3" value="D">
+                            <span>D) + (plus)</span>
+                        </label>
+                    </div>
+                    <button class="check-quiz-btn" onclick="checkSubsectionQuiz('quiz-1-3', 'B')">Check Answer</button>
+                    <div class="quiz-feedback" id="quiz-1-3-feedback"></div>
+                </div>
+            </div>
+
+            <div class="next-section">
+                <button class="section-quiz-btn" onclick="startSectionQuiz('basics')">📝 Take Basics Section Quiz</button>
+                <button class="next-btn" onclick="showSection('dags')">Next: Deep Dive into DAGs →</button>
+            </div>
+        </section>
+
+        <!-- DAGs Section -->
+        <section id="dags" class="content-section">
+            <h2>📋 Mastering DAGs</h2>
+            
+            <div class="lesson-card" data-step="4">
+                <h3>Step 4: DAG Configuration Parameters</h3>
+                <p>Fine-tune your DAG behavior with these essential parameters!</p>
+                <pre><code class="language-python">from airflow import DAG
+from datetime import datetime, timedelta
+
+dag = DAG(
+    dag_id='advanced_config_dag',
+    
+    # Scheduling
+    schedule_interval='0 2 * * *',  # Run at 2 AM daily
+    start_date=datetime(2025, 1, 1),
+    end_date=datetime(2025, 12, 31),  # Optional end date
+    
+    # Execution behavior
+    catchup=False,  # Don't run missed intervals
+    max_active_runs=1,  # Only one instance at a time
+    
+    # Default task arguments
+    default_args={
+        'owner': 'data_team',
+        'retries': 2,
+        'retry_delay': timedelta(minutes=10),
+        'email_on_failure': True,
+        'email_on_retry': False,
+        'email': ['admin@company.com'],
+    },
+    
+    # Documentation
+    description='Production ETL pipeline',
+    tags=['etl', 'production', 'daily'],
+)</code></pre>
+                
+                <div class="explanation">
+                    <strong>💡 Key Parameters:</strong>
+                    <ul>
+                        <li><strong>schedule_interval:</strong> When to run (cron, timedelta, or None)</li>
+                        <li><strong>catchup:</strong> Run missed intervals when DAG is unpaused</li>
+                        <li><strong>max_active_runs:</strong> Prevent parallel DAG executions</li>
+                        <li><strong>retries:</strong> Automatic retry on task failure</li>
+                    </ul>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="lesson-card" data-step="5">
+                <h3>Step 5: Complex Dependencies</h3>
+                <p>Create sophisticated workflows with branching and parallel execution!</p>
+                <pre><code class="language-python">from airflow.operators.python import BranchPythonOperator
+from airflow.operators.dummy import DummyOperator
+
+def decide_branch(**context):
+    # Business logic to decide which path to take
+    hour = datetime.now().hour
+    if hour < 12:
+        return 'morning_process'
+    else:
+        return 'afternoon_process'
+
+# Create branching workflow
+start = DummyOperator(task_id='start', dag=dag)
+
+# Parallel data extraction
+extract_users = PythonOperator(task_id='extract_users', ...)
+extract_orders = PythonOperator(task_id='extract_orders', ...)
+extract_products = PythonOperator(task_id='extract_products', ...)
+
+# Branch based on condition
+branch_task = BranchPythonOperator(
+    task_id='decide_processing_path',
+    python_callable=decide_branch,
+    dag=dag,
+)
+
+# Different processing paths
+morning_process = PythonOperator(task_id='morning_process', ...)
+afternoon_process = PythonOperator(task_id='afternoon_process', ...)
+
+# Merge back together
+join_task = DummyOperator(
+    task_id='join_paths',
+    trigger_rule='none_failed_or_skipped',  # Important for branches!
+    dag=dag,
+)
+
+# Set complex dependencies
+start >> [extract_users, extract_orders, extract_products]
+[extract_users, extract_orders, extract_products] >> branch_task
+branch_task >> [morning_process, afternoon_process]
+[morning_process, afternoon_process] >> join_task</code></pre>
+                
+                <div class="tip-box">
+                    <strong>💡 Pro Tip:</strong> Use trigger_rule='none_failed_or_skipped' after branching to handle skipped tasks correctly!
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="next-section">
+                <button class="section-quiz-btn" onclick="startSectionQuiz('dags')">📝 Take DAGs Section Quiz</button>
+                <button class="next-btn" onclick="showSection('operators')">Next: Operators & Hooks →</button>
+            </div>
+        </section>
+
+        <!-- Operators Section -->
+        <section id="operators" class="content-section">
+            <h2>⚙️ Operators & Hooks</h2>
+            
+            <div class="lesson-card" data-step="6">
+                <h3>Step 6: Essential Operators</h3>
+                <p>Operators define what your tasks actually do. Here are the most common ones:</p>
+                
+                <h4>🐍 PythonOperator</h4>
+                <pre><code class="language-python">from airflow.operators.python import PythonOperator
+
+def process_data(**context):
+    # Access DAG run info
+    execution_date = context['execution_date']
+    print(f"Processing data for {execution_date}")
+    
+    # Your business logic here
+    result = {"processed_records": 1000}
+    return result
+
+python_task = PythonOperator(
+    task_id='process_with_python',
+    python_callable=process_data,
+    dag=dag,
+)</code></pre>
+
+                <h4>💻 BashOperator</h4>
+                <pre><code class="language-python">from airflow.operators.bash import BashOperator
+
+# Run shell commands
+bash_task = BashOperator(
+    task_id='run_shell_script',
+    bash_command='''
+    echo "Starting backup process..."
+    pg_dump mydb > /backup/mydb_{{ ds }}.sql
+    echo "Backup completed!"
+    ''',
+    dag=dag,
+)
+
+# Use Jinja templating
+cleanup_task = BashOperator(
+    task_id='cleanup_old_files',
+    bash_command='find /tmp -name "*.tmp" -mtime +7 -delete',
+    dag=dag,
+)</code></pre>
+
+                <h4>📧 EmailOperator</h4>
+                <pre><code class="language-python">from airflow.operators.email import EmailOperator
+
+send_report = EmailOperator(
+    task_id='send_daily_report',
+    to=['team@company.com'],
+    subject='Daily ETL Report - {{ ds }}',
+    html_content='''
+    <h3>Daily Report</h3>
+    <p>Pipeline completed successfully!</p>
+    <p>Execution Date: {{ ds }}</p>
+    ''',
+    dag=dag,
+)</code></pre>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="lesson-card" data-step="7">
+                <h3>Step 7: Database Operators</h3>
+                <p>Work with databases using specialized operators!</p>
+                
+                <pre><code class="language-python">from airflow.providers.postgres.operators.postgres import PostgresOperator
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+
+# Execute SQL directly
+create_table_task = PostgresOperator(
+    task_id='create_daily_summary',
+    postgres_conn_id='postgres_default',
+    sql='''
+    CREATE TABLE IF NOT EXISTS daily_summary (
+        date DATE PRIMARY KEY,
+        total_sales DECIMAL(10,2),
+        total_orders INTEGER,
+        created_at TIMESTAMP DEFAULT NOW()
+    );
+    ''',
+    dag=dag,
+)
+
+# Insert data with templating
+insert_data_task = PostgresOperator(
+    task_id='insert_daily_data',
+    postgres_conn_id='postgres_default',
+    sql='''
+    INSERT INTO daily_summary (date, total_sales, total_orders)
+    SELECT 
+        '{{ ds }}'::DATE,
+        SUM(amount) as total_sales,
+        COUNT(*) as total_orders
+    FROM orders 
+    WHERE order_date = '{{ ds }}';
+    ''',
+    dag=dag,
+)
+
+# Use hooks for complex operations
+def custom_db_operation(**context):
+    pg_hook = PostgresHook(postgres_conn_id='postgres_default')
+    
+    # Execute query and get results
+    records = pg_hook.get_records(
+        "SELECT * FROM daily_summary WHERE date = %s",
+        parameters=[context['ds']]
+    )
+    
+    print(f"Found {len(records)} records for {context['ds']}")
+    return records
+
+db_check_task = PythonOperator(
+    task_id='check_data_quality',
+    python_callable=custom_db_operation,
+    dag=dag,
+)</code></pre>
+                
+                <div class="explanation">
+                    <strong>💡 Database Best Practices:</strong>
+                    <ul>
+                        <li>Use connection IDs for database credentials</li>
+                        <li>Leverage Jinja templating for dynamic queries</li>
+                        <li>Use hooks for complex database operations</li>
+                        <li>Always handle database connections properly</li>
+                    </ul>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="next-section">
+                <button class="section-quiz-btn" onclick="startSectionQuiz('operators')">📝 Take Operators Quiz</button>
+                <button class="next-btn" onclick="showSection('scheduling')">Next: Scheduling & Triggers →</button>
+            </div>
+        </section>
+
+        <!-- Scheduling Section -->
+        <section id="scheduling" class="content-section">
+            <h2>⏰ Scheduling & Triggers</h2>
+            
+            <div class="lesson-card" data-step="8">
+                <h3>Step 8: Advanced Scheduling</h3>
+                <p>Master different scheduling patterns for your workflows!</p>
+                
+                <h4>📅 Cron Expressions</h4>
+                <pre><code class="language-python"># Common cron patterns
+schedules = {
+    # Every minute
+    '* * * * *': 'Every minute (testing only!)',
+    
+    # Hourly at minute 30
+    '30 * * * *': 'Every hour at 30 minutes past',
+    
+    # Daily at 2:30 AM
+    '30 2 * * *': 'Daily at 2:30 AM',
+    
+    # Weekly on Monday at 3:00 AM  
+    '0 3 * * 1': 'Every Monday at 3:00 AM',
+    
+    # Monthly on 1st at midnight
+    '0 0 1 * *': '1st of every month at midnight',
+    
+    # Business days at 9:00 AM
+    '0 9 * * 1-5': 'Weekdays at 9:00 AM',
+    
+    # Quarterly (Jan, Apr, Jul, Oct) 
+    '0 6 1 1,4,7,10 *': 'Quarterly at 6:00 AM',
+}
+
+# Example DAG with business hours schedule
+business_dag = DAG(
+    'business_hours_etl',
+    schedule_interval='0 9 * * 1-5',  # 9 AM on weekdays
+    start_date=datetime(2025, 1, 1),
+    catchup=False,
+)</code></pre>
+
+                <h4>⏱️ Timedelta Scheduling</h4>
+                <pre><code class="language-python">from datetime import timedelta
+
+# Using timedelta for regular intervals
+frequent_dag = DAG(
+    'frequent_updates',
+    schedule_interval=timedelta(minutes=15),  # Every 15 minutes
+    start_date=datetime(2025, 1, 1),
+    max_active_runs=1,  # Prevent overlap
+)
+
+# Different interval examples
+intervals = {
+    timedelta(minutes=30): "Every 30 minutes",
+    timedelta(hours=2): "Every 2 hours", 
+    timedelta(days=1): "Daily",
+    timedelta(weeks=1): "Weekly",
+}</code></pre>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="lesson-card" data-step="9">
+                <h3>Step 9: Conditional Scheduling & Triggers</h3>
+                <p>Create smart workflows that respond to external events!</p>
+                
+                <pre><code class="language-python">from airflow.operators.python import BranchPythonOperator
+from airflow.operators.dummy import DummyOperator
+
+def check_data_freshness(**context):
+    """Check if new data is available before processing"""
+    # Simulate checking data freshness
+    import random
+    
+    data_available = random.choice([True, False])
+    
+    if data_available:
+        print("New data detected! Proceeding with processing...")
+        return 'process_data'
+    else:
+        print("No new data. Skipping processing.")
+        return 'skip_processing'
+
+def process_if_weekend(**context):
+    """Different logic for weekends vs weekdays"""
+    execution_date = context['execution_date']
+    
+    if execution_date.weekday() >= 5:  # Saturday = 5, Sunday = 6
+        return 'weekend_processing'
+    else:
+        return 'weekday_processing'
+
+# Conditional DAG
+conditional_dag = DAG(
+    'conditional_processing',
+    schedule_interval='0 8 * * *',  # Daily at 8 AM
+    start_date=datetime(2025, 1, 1),
+)
+
+# Check conditions
+data_check = BranchPythonOperator(
+    task_id='check_data_availability',
+    python_callable=check_data_freshness,
+    dag=conditional_dag,
+)
+
+day_check = BranchPythonOperator(
+    task_id='check_day_type',
+    python_callable=process_if_weekend,
+    dag=conditional_dag,
+)
+
+# Processing paths
+process_data = DummyOperator(task_id='process_data', dag=conditional_dag)
+skip_processing = DummyOperator(task_id='skip_processing', dag=conditional_dag)
+weekend_processing = DummyOperator(task_id='weekend_processing', dag=conditional_dag)
+weekday_processing = DummyOperator(task_id='weekday_processing', dag=conditional_dag)
+
+# Dependencies
+data_check >> [process_data, skip_processing]
+process_data >> day_check
+day_check >> [weekend_processing, weekday_processing]</code></pre>
+                
+                <div class="tip-box">
+                    <strong>💡 Pro Tip:</strong> Use XCom to pass small amounts of data between tasks and make decisions based on previous task results!
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="next-section">
+                <button class="section-quiz-btn" onclick="startSectionQuiz('scheduling')">📝 Take Scheduling Quiz</button>
+                <button class="next-btn" onclick="showSection('sensors')">Next: Sensors & Monitoring →</button>
+            </div>
+        </section>
+
+        <!-- Sensors Section -->
+        <section id="sensors" class="content-section">
+            <h2>📡 Sensors & Monitoring</h2>
+            
+            <div class="lesson-card" data-step="10">
+                <h3>Step 10: File & Data Sensors</h3>
+                <p>Wait for external conditions before proceeding with your pipeline!</p>
+                
+                <h4>📁 File Sensor</h4>
+                <pre><code class="language-python">from airflow.sensors.filesystem import FileSensor
+from airflow.sensors.s3_key_sensor import S3KeySensor
+
+# Wait for local file
+wait_for_file = FileSensor(
+    task_id='wait_for_daily_export',
+    filepath='/data/exports/daily_export_{{ ds }}.csv',
+    fs_conn_id='fs_default',
+    poke_interval=60,  # Check every 60 seconds
+    timeout=300,  # Give up after 5 minutes
+    dag=dag,
+)
+
+# Wait for S3 file
+wait_for_s3_file = S3KeySensor(
+    task_id='wait_for_s3_data',
+    bucket_name='my-data-bucket',
+    bucket_key='raw-data/{{ ds }}/data.json',
+    aws_conn_id='aws_default',
+    poke_interval=120,
+    timeout=3600,  # 1 hour timeout
+    dag=dag,
+)</code></pre>
+
+                <h4>🗄️ SQL Sensor</h4>
+                <pre><code class="language-python">from airflow.sensors.sql import SqlSensor
+
+# Wait for database condition
+wait_for_data = SqlSensor(
+    task_id='wait_for_new_records',
+    conn_id='postgres_default',
+    sql='''
+    SELECT COUNT(*) 
+    FROM source_table 
+    WHERE created_date = '{{ ds }}'
+    ''',
+    poke_interval=300,  # Check every 5 minutes
+    timeout=7200,  # 2 hour timeout
+    dag=dag,
+)
+
+# Custom condition - wait for minimum record count
+wait_for_sufficient_data = SqlSensor(
+    task_id='wait_for_min_records',
+    conn_id='postgres_default',
+    sql='''
+    SELECT CASE 
+        WHEN COUNT(*) >= 1000 THEN 1 
+        ELSE 0 
+    END as sufficient_data
+    FROM daily_transactions 
+    WHERE transaction_date = '{{ ds }}'
+    ''',
+    dag=dag,
+)</code></pre>
+                
+                <div class="explanation">
+                    <strong>💡 Sensor Best Practices:</strong>
+                    <ul>
+                        <li>Set reasonable timeouts to avoid infinite waiting</li>
+                        <li>Use appropriate poke_interval to balance responsiveness and resource usage</li>
+                        <li>Consider using reschedule mode for long-running sensors</li>
+                        <li>Always have fallback mechanisms for critical workflows</li>
+                    </ul>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="lesson-card" data-step="11">
+                <h3>Step 11: Monitoring & Alerting</h3>
+                <p>Keep track of your pipeline health and get notified of issues!</p>
+                
+                <pre><code class="language-python">from airflow.operators.python import PythonOperator
+from airflow.operators.email import EmailOperator
+from airflow.utils.trigger_rule import TriggerRule
+
+def check_data_quality(**context):
+    """Validate processed data quality"""
+    # Connect to database and run quality checks
+    quality_issues = []
+    
+    # Example quality checks
+    null_check = "SELECT COUNT(*) FROM processed_data WHERE important_field IS NULL"
+    duplicate_check = "SELECT COUNT(*) - COUNT(DISTINCT id) FROM processed_data"
+    
+    # Run checks and collect issues
+    # ... quality check logic ...
+    
+    if quality_issues:
+        raise ValueError(f"Data quality issues found: {quality_issues}")
+    
+    return "Data quality passed all checks"
+
+def send_success_notification(**context):
+    """Send success notification with stats"""
+    # Get processing stats
+    stats = {
+        'execution_date': context['ds'],
+        'records_processed': 10000,
+        'processing_time': '45 minutes'
+    }
+    
+    return f"Pipeline completed successfully: {stats}"
+
+def send_failure_alert(**context):
+    """Custom failure handling"""
+    task_instance = context['task_instance']
+    dag_run = context['dag_run']
+    
+    alert_message = f"""
+    🚨 PIPELINE FAILURE ALERT 🚨
+    
+    DAG: {dag_run.dag_id}
+    Task: {task_instance.task_id}
+    Execution Date: {context['ds']}
+    Log URL: {task_instance.log_url}
+    """
+    
+    # Send to Slack, PagerDuty, etc.
+    print(alert_message)
+
+# Monitoring DAG structure
+monitoring_dag = DAG(
+    'production_etl_with_monitoring',
+    schedule_interval='0 2 * * *',
+    default_args={
+        'owner': 'data_team',
+        'retries': 2,
+        'retry_delay': timedelta(minutes=15),
+        'on_failure_callback': send_failure_alert,
+    },
+    start_date=datetime(2025, 1, 1),
+)
+
+# Main pipeline tasks
+extract = PythonOperator(task_id='extract_data', ...)
+transform = PythonOperator(task_id='transform_data', ...)  
+load = PythonOperator(task_id='load_data', ...)
+
+# Quality check
+quality_check = PythonOperator(
+    task_id='data_quality_check',
+    python_callable=check_data_quality,
+    dag=monitoring_dag,
+)
+
+# Success notification
+success_notify = PythonOperator(
+    task_id='send_success_notification',
+    python_callable=send_success_notification,
+    trigger_rule=TriggerRule.ALL_SUCCESS,
+    dag=monitoring_dag,
+)
+
+# Failure notification (runs only if upstream fails)
+failure_notify = EmailOperator(
+    task_id='send_failure_email',
+    to=['oncall@company.com'],
+    subject='🚨 ETL Pipeline Failed - {{ ds }}',
+    html_content='Check Airflow logs for details.',
+    trigger_rule=TriggerRule.ONE_FAILED,
+    dag=monitoring_dag,
+)
+
+# Pipeline flow
+extract >> transform >> load >> quality_check >> success_notify
+[extract, transform, load, quality_check] >> failure_notify</code></pre>
+                
+                <div class="warning-box">
+                    <strong>⚠️ Production Tip:</strong> Always implement proper monitoring and alerting in production environments. Silent failures are the worst kind of failures!
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="next-section">
+                <button class="section-quiz-btn" onclick="startSectionQuiz('sensors')">📝 Take Sensors Quiz</button>
+                <button class="next-btn" onclick="showSection('examples')">Next: Real-World Examples →</button>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section id="examples" class="content-section">
+            <h2>💡 Real-World Examples</h2>
+            
+            <div class="lesson-card" data-step="12">
+                <h3>Example 1: E-commerce ETL Pipeline</h3>
+                <p>Complete data pipeline for an e-commerce platform</p>
+                <pre><code class="language-python">from datetime import datetime, timedelta
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.operators.postgres_operator import PostgresOperator
+from airflow.sensors.s3_key_sensor import S3KeySensor
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+import pandas as pd
+
+default_args = {
+    'owner': 'ecommerce_team',
+    'depends_on_past': False,
+    'start_date': datetime(2025, 1, 1),
+    'email_on_failure': True,
+    'email_on_retry': False,
+    'retries': 2,
+    'retry_delay': timedelta(minutes=10)
+}
+
+ecommerce_dag = DAG(
+    'ecommerce_daily_etl',
+    default_args=default_args,
+    description='Daily e-commerce data processing',
+    schedule_interval='0 3 * * *',  # 3 AM daily
+    catchup=False,
+    tags=['ecommerce', 'etl', 'production']
+)
+
+def extract_orders_data(**context):
+    """Extract orders from operational database"""
+    execution_date = context['ds']
+    
+    pg_hook = PostgresHook(postgres_conn_id='ecommerce_db')
+    
+    # Extract yesterday's orders
+    sql = f"""
+    SELECT 
+        order_id,
+        customer_id,
+        product_id,
+        quantity,
+        price,
+        order_timestamp,
+        status
+    FROM orders 
+    WHERE DATE(order_timestamp) = '{execution_date}'
+    """
+    
+    df = pg_hook.get_pandas_df(sql)
+    
+    # Save to staging
+    df.to_csv(f'/tmp/orders_{execution_date}.csv', index=False)
+    
+    return f"Extracted {len(df)} orders for {execution_date}"
+
+def transform_orders_data(**context):
+    """Transform and enrich orders data"""
+    execution_date = context['ds']
+    
+    # Read extracted data
+    df = pd.read_csv(f'/tmp/orders_{execution_date}.csv')
+    
+    # Data transformations
+    df['order_value'] = df['quantity'] * df['price']
+    df['order_date'] = pd.to_datetime(df['order_timestamp']).dt.date
+    df['order_hour'] = pd.to_datetime(df['order_timestamp']).dt.hour
+    
+    # Calculate customer metrics
+    customer_metrics = df.groupby('customer_id').agg({
+        'order_value': 'sum',
+        'order_id': 'count'
+    }).rename(columns={'order_id': 'order_count'}).reset_index()
+    
+    # Save transformed data
+    df.to_csv(f'/tmp/orders_transformed_{execution_date}.csv', index=False)
+    customer_metrics.to_csv(f'/tmp/customer_metrics_{execution_date}.csv', index=False)
+    
+    return f"Transformed {len(df)} orders and {len(customer_metrics)} customer records"
+
+# Wait for source data
+wait_for_orders = S3KeySensor(
+    task_id='wait_for_order_export',
+    bucket_name='ecommerce-exports',
+    bucket_key='orders/{{ ds }}/orders_export.json',
+    poke_interval=300,
+    timeout=3600,
+    dag=ecommerce_dag,
+)
+
+# ETL Tasks
+extract_orders = PythonOperator(
+    task_id='extract_orders',
+    python_callable=extract_orders_data,
+    dag=ecommerce_dag,
+)
+
+transform_orders = PythonOperator(
+    task_id='transform_orders', 
+    python_callable=transform_orders_data,
+    dag=ecommerce_dag,
+)
+
+# Dependencies
+wait_for_orders >> extract_orders >> transform_orders</code></pre>
+                
+                <div class="explanation">
+                    <strong>🎯 Pipeline Components:</strong>
+                    <ul>
+                        <li><strong>Sensor:</strong> Waits for source data availability</li>
+                        <li><strong>Extract:</strong> Pulls data from operational database</li>
+                        <li><strong>Transform:</strong> Cleans and enriches data</li>
+                        <li><strong>Load:</strong> Inserts into data warehouse</li>
+                        <li><strong>Quality Check:</strong> Validates successful processing</li>
+                    </ul>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="lesson-card" data-step="13">
+                <h3>Example 2: Machine Learning Pipeline</h3>
+                <p>Automated ML model training and deployment pipeline</p>
+                <pre><code class="language-python">from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
+
+ml_dag = DAG(
+    'ml_model_pipeline',
+    default_args=default_args,
+    description='ML model training and deployment',
+    schedule_interval='0 4 * * 1',  # Weekly on Monday at 4 AM
+    catchup=False,
+    tags=['ml', 'training', 'production']
+)
+
+def prepare_training_data(**context):
+    """Prepare data for model training"""
+    execution_date = context['ds']
+    
+    # Extract features from data warehouse
+    pg_hook = PostgresHook(postgres_conn_id='data_warehouse')
+    
+    sql = """
+    SELECT 
+        customer_id,
+        age,
+        income,
+        total_purchases,
+        avg_order_value,
+        days_since_last_order,
+        CASE WHEN next_purchase_within_30_days = 1 THEN 1 ELSE 0 END as target
+    FROM customer_features 
+    WHERE feature_date >= CURRENT_DATE - INTERVAL '90 days'
+    """
+    
+    df = pg_hook.get_pandas_df(sql)
+    
+    # Data preprocessing
+    df = df.dropna()
+    features = ['age', 'income', 'total_purchases', 'avg_order_value', 'days_since_last_order']
+    
+    X = df[features]
+    y = df['target']
+    
+    # Split and save data
+    # ... implementation details ...
+    
+    return f"Prepared training data: {len(X)} samples"
+
+def train_model(**context):
+    """Train the machine learning model"""
+    # Load training data and train model
+    # ... implementation details ...
+    
+    return "Model training completed"
+
+def deploy_model(**context):
+    """Deploy model to production"""
+    # Deploy model and update registry
+    # ... implementation details ...
+    
+    return "Model deployed to production"
+
+# ML Pipeline Tasks
+prepare_data = PythonOperator(
+    task_id='prepare_training_data',
+    python_callable=prepare_training_data,
+    dag=ml_dag,
+)
+
+train = PythonOperator(
+    task_id='train_model',
+    python_callable=train_model,
+    dag=ml_dag,
+)
+
+deploy = PythonOperator(
+    task_id='deploy_model',
+    python_callable=deploy_model,
+    dag=ml_dag,
+)
+
+# Pipeline flow
+prepare_data >> train >> deploy</code></pre>
+                
+                <div class="insight-box">
+                    <strong>🤖 ML Pipeline Benefits:</strong>
+                    <ul>
+                        <li>Automated retraining with fresh data</li>
+                        <li>Built-in quality checks before deployment</li>
+                        <li>Version tracking and rollback capability</li>
+                        <li>Consistent deployment process</li>
+                    </ul>
+                </div>
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" onchange="updateProgress()"> I understand this!
+                </label>
+            </div>
+
+            <div class="next-section">
+                <button class="section-quiz-btn" onclick="startSectionQuiz('examples')">📝 Take Examples Quiz</button>
+                <button class="next-btn" onclick="showSection('exercises')">Next: Practice Exercises →</button>
+            </div>
+        </section>
+
+        <!-- Exercises Section -->
+        <section id="exercises" class="content-section">
+            <h2>🎯 Practice Exercises</h2>
+            
+            <div class="exercise-card beginner">
+                <h3>🟢 Beginner Level</h3>
+                
+                <div class="exercise">
+                    <h4>Exercise 1: Simple Data Pipeline</h4>
+                    <p>Create a DAG that processes CSV files daily. Include extract, validate, and load tasks.</p>
+                    <pre><code class="language-python"># Your task:
+# 1. Create a DAG that runs daily at 6 AM
+# 2. Add a FileSensor to wait for data file
+# 3. Create tasks to: extract CSV → validate data → load to database
+# 4. Add proper error handling and retries</code></pre>
+                    <details>
+                        <summary>💡 Show Solution</summary>
+                        <pre><code class="language-python">from datetime import datetime, timedelta
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.sensors.filesystem import FileSensor
+import pandas as pd
+
+default_args = {
+    'owner': 'student',
+    'retries': 2,
+    'retry_delay': timedelta(minutes=5),
+    'start_date': datetime(2025, 1, 1),
+}
+
+dag = DAG(
+    'csv_processing_pipeline',
+    default_args=default_args,
+    schedule_interval='0 6 * * *',
+    catchup=False,
+)
+
+wait_for_file = FileSensor(
+    task_id='wait_for_csv',
+    filepath='/data/input_{{ ds }}.csv',
+    poke_interval=60,
+    timeout=3600,
+    dag=dag,
+)
+
+def extract_csv(**context):
+    df = pd.read_csv(f'/data/input_{context["ds"]}.csv')
+    df.to_csv(f'/tmp/extracted_{context["ds"]}.csv', index=False)
+    return f"Extracted {len(df)} records"
+
+def validate_data(**context):
+    df = pd.read_csv(f'/tmp/extracted_{context["ds"]}.csv')
+    if df.isnull().sum().sum() > 0:
+        raise ValueError("Data contains null values")
+    return "Validation passed"
+
+extract = PythonOperator(task_id='extract', python_callable=extract_csv, dag=dag)
+validate = PythonOperator(task_id='validate', python_callable=validate_data, dag=dag)
+
+wait_for_file >> extract >> validate</code></pre>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 2: Multi-Database ETL</h4>
+                    <p>Create a pipeline that extracts from PostgreSQL, transforms data, and loads to another database.</p>
+                    <pre><code class="language-python"># Your task:
+# 1. Extract customer data from source PostgreSQL
+# 2. Calculate customer lifetime value
+# 3. Load enriched data to analytics database
+# 4. Send email notification on completion</code></pre>
+                    <details>
+                        <summary>💡 Show Solution</summary>
+                        <pre><code class="language-python">from airflow.providers.postgres.operators.postgres import PostgresOperator
+from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.operators.email import EmailOperator
+
+def calculate_customer_ltv(**context):
+    # Extract from source
+    source_hook = PostgresHook(postgres_conn_id='source_db')
+    df = source_hook.get_pandas_df("""
+        SELECT customer_id, total_orders, avg_order_value, 
+               customer_since_days, churn_probability
+        FROM customers 
+        WHERE updated_date = %s
+    """, parameters=[context['ds']])
+    
+    # Calculate LTV
+    df['ltv'] = (df['avg_order_value'] * df['total_orders'] * 
+                (1 - df['churn_probability']) * df['customer_since_days'] / 365)
+    
+    # Load to analytics DB
+    analytics_hook = PostgresHook(postgres_conn_id='analytics_db')
+    df.to_sql('customer_ltv', analytics_hook.get_sqlalchemy_engine(), 
+              if_exists='append', index=False)
+    
+    return f"Processed {len(df)} customers"
+
+ltv_calculation = PythonOperator(
+    task_id='calculate_ltv',
+    python_callable=calculate_customer_ltv,
+    dag=dag,
+)
+
+notification = EmailOperator(
+    task_id='send_notification',
+    to=['analytics@company.com'],
+    subject='Customer LTV Processing Complete',
+    html_content='Daily customer LTV calculation completed for {{ ds }}',
+    dag=dag,
+)
+
+ltv_calculation >> notification</code></pre>
+                    </details>
+                </div>
+            </div>
+
+            <div class="exercise-card intermediate">
+                <h3>🟡 Intermediate Level</h3>
+                
+                <div class="exercise">
+                    <h4>Exercise 3: Dynamic DAG with Branching</h4>
+                    <p>Create a DAG that processes different data sources based on day of week.</p>
+                    <pre><code class="language-python"># Your task:
+# 1. Check day of week in execution date
+# 2. Monday-Friday: Process transactional data
+# 3. Saturday-Sunday: Process analytical reports  
+# 4. Use BranchPythonOperator for decision making
+# 5. Include proper joins and error handling</code></pre>
+                    <details>
+                        <summary>💡 Show Hint</summary>
+                        <p>Use <code>context['execution_date'].weekday()</code> to get day of week (0=Monday, 6=Sunday)</p>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 4: API Integration Pipeline</h4>
+                    <p>Build a pipeline that fetches data from REST API, processes it, and stores results.</p>
+                    <pre><code class="language-python"># Your task:
+# 1. Use HttpOperator to call external API
+# 2. Parse JSON response and validate data
+# 3. Enrich data with lookup tables
+# 4. Store in database with conflict resolution
+# 5. Handle rate limiting and API failures</code></pre>
+                    <details>
+                        <summary>💡 Show Hint</summary>
+                        <p>Use <code>HttpHook</code> for API calls, implement exponential backoff for retries</p>
+                    </details>
+                </div>
+            </div>
+
+            <div class="exercise-card advanced">
+                <h3>🔴 Advanced Level</h3>
+                
+                <div class="exercise">
+                    <h4>Exercise 5: Real-time Data Processing</h4>
+                    <p>Create a near real-time processing pipeline using sensors and short intervals.</p>
+                    <details>
+                        <summary>💡 Show Hint</summary>
+                        <p>Use FileSensor with short poke_interval, consider using reschedule mode for efficiency</p>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercise 6: Multi-Cloud Data Sync</h4>
+                    <p>Build a pipeline that syncs data between AWS S3, Google Cloud Storage, and local database.</p>
+                    <details>
+                        <summary>💡 Show Hint</summary>
+                        <p>Use cloud provider operators (S3Operator, GCSOperator) and implement proper authentication</p>
+                    </details>
+                </div>
+            </div>
+
+            <div class="completion-box">
+                <h3>🎉 Ready for Airflow Certification?</h3>
+                <p>You've mastered Apache Airflow! You can now build production-ready data pipelines.</p>
+                <p>Your learning progress: <span id="finalProgress">0%</span></p>
+                <p style="margin-top: 1rem;">Take the final exam to earn your Airflow Expert certificate!</p>
+                <button class="final-quiz-btn" onclick="startFinalQuiz()">🏆 Take Final Certification Exam</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <img src="logo.svg" alt="FKTI Logo" class="footer-logo">
+                <div class="footer-text">
+                    <h3>FKTI - Fakhruddin Khambaty Training Institute</h3>
+                    <p>Building the next generation of Data Engineers 🚀</p>
+                    <p>Made with ❤️ for scalable data processing</p>
+                    <p class="copyright">© 2025 FKTI. All rights reserved. | Keep orchestrating! 🌊</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Certificate Modal -->
+    <div id="certificateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCertificate()">&times;</span>
+            <div class="certificate">
+                <h1>🏆 Certificate of Completion</h1>
+                <p class="cert-text">This certifies that</p>
+                <input type="text" id="studentName" placeholder="Enter your name" class="cert-input">
+                <p class="cert-text">has successfully completed</p>
+                <h2>Apache Airflow Mastery</h2>
+                <p class="cert-text">Advanced Data Pipeline Orchestration</p>
+                <p class="cert-date" id="certDate"></p>
+                <button onclick="downloadCertificate()" class="download-btn">📥 Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Quiz Modal -->
+    <div id="sectionQuizModal" class="modal">
+        <div id="sectionQuizContainer">
+            <!-- Quiz content will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Final Quiz Modal -->
+    <div id="finalQuizModal" class="modal">
+        <div id="finalQuizContainer">
+            <!-- Final quiz content will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- External CDN removed for offline functionality -->
+    <script>
+        // Basic code highlighting replacement
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeBlocks = document.querySelectorAll('pre code, .code-example code');
+            codeBlocks.forEach(block => {
+                block.classList.add('hljs');
+            });
+        });
+    </script>
+    <script src="quiz-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

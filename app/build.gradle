@@ -1,0 +1,115 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.fkti.learninghub'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.fkti.learninghub"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            
+            // Optimize for app store release
+            shrinkResources true
+            debuggable false
+        }
+        debug {
+            minifyEnabled false
+            debuggable true
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    
+    buildFeatures {
+        viewBinding true
+    }
+    
+    // Force use of AndroidX libraries only
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.core:core:1.12.0'
+            force 'androidx.appcompat:appcompat:1.6.1'
+        }
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    
+    // Optimize APK size
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+}
+
+dependencies {
+    // AndroidX Core Libraries
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    
+    // Material Design Components
+    implementation 'com.google.android.material:material:1.11.0'
+    
+    // WebView and JavaScript Bridge
+    implementation 'androidx.webkit:webkit:1.8.0'
+    
+    // Navigation Components
+    implementation 'androidx.navigation:navigation-fragment:2.7.6'
+    implementation 'androidx.navigation:navigation-ui:2.7.6'
+    
+    // ViewModel and LiveData
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.7.0'
+    
+    // Room Database (for offline progress storage)
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+    
+    // SharedPreferences (for settings)
+    implementation 'androidx.preference:preference:1.2.1'
+    
+    // Splash Screen
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+    
+    // File Provider
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    
+    // Progress Tracking - exclude old support library
+    implementation('com.github.lecho:hellocharts-library:1.5.8') {
+        exclude group: 'com.android.support'
+    }
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+}
