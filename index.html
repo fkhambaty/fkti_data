@@ -4,39 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FKTI Learning Hub | Fakhruddin Khambaty Training Institute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/minimalistic-theme.css">
     <link rel="stylesheet" href="css/hub-styles.css">
-    <!-- External CDN links removed for offline functionality -->
-    <style>
-        /* Fallback system fonts for offline use */
-        body, * {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-        }
-        
-        /* Replace Font Awesome icons with Unicode symbols */
-        .fa-python::before { content: '🐍'; }
-        .fa-code::before { content: '💻'; }
-        .fa-chart-line::before { content: '📊'; }
-        .fa-play::before { content: '▶'; }
-        .fa-book::before { content: '📚'; }
-        .fa-graduation-cap::before { content: '🎓'; }
-        .fa-users::before { content: '👥'; }
-        .fa-trophy::before { content: '🏆'; }
-        .fa-star::before { content: '⭐'; }
-        .fa-check::before { content: '✓'; }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation Header -->
     <nav class="main-nav">
         <div class="nav-container">
             <div class="nav-brand">
-                <img src="assets/logo.svg" alt="FKTI Logo" class="nav-logo">
+                <a href="#" onclick="scrollToTop()" class="logo-link">
+                <img src="assets/fkti.png" alt="FKTI Logo" class="nav-logo">
                 <span class="nav-title">FKTI Learning Hub</span>
+                </a>
             </div>
             <div class="nav-links">
                 <a href="#courses" class="nav-link">Courses</a>
                 <a href="#about" class="nav-link">About</a>
                 <a href="#contact" class="nav-link">Contact</a>
+                <div class="theme-selector">
+                    <button class="theme-toggle" onclick="toggleThemeSelector()">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                    <div class="theme-dropdown" id="themeDropdown">
+                        <div class="theme-option" onclick="setTheme('blue')" data-theme="blue">
+                            <div class="theme-preview theme-blue"></div>
+                            <span>Ocean Blue</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('green')" data-theme="green">
+                            <div class="theme-preview theme-green"></div>
+                            <span>Forest Green</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('purple')" data-theme="purple">
+                            <div class="theme-preview theme-purple"></div>
+                            <span>Royal Purple</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('orange')" data-theme="orange">
+                            <div class="theme-preview theme-orange"></div>
+                            <span>Sunset Orange</span>
+                        </div>
+                        <div class="theme-option" onclick="setTheme('dark')" data-theme="dark">
+                            <div class="theme-preview theme-dark"></div>
+                            <span>Midnight Dark</span>
+                        </div>
+                    </div>
+                </div>
                 <button class="nav-cta" onclick="scrollToCourses()">Start Learning</button>
             </div>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
@@ -45,64 +58,263 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Modern Hero Section -->
+    <section class="hero-modern">
         <div class="hero-container">
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fas fa-graduation-cap"></i>
-                    <span>University-Level Courses</span>
+                    <span>Professional Data Engineering Education</span>
                 </div>
-                <h1 class="hero-title">
-                    Master Modern 
-                    <span class="gradient-text">Data Engineering</span>
-                </h1>
-                <p class="hero-subtitle">
-                    Comprehensive, university-level courses in Python for Data Science and Apache Airflow. 
-                    Build production-ready skills with hands-on projects, real-world examples, and industry certifications.
+                <h1 class="hero-title">Master Modern Data Engineering</h1>
+                <p class="hero-description">
+                    Learn industry-standard tools and techniques from basic concepts to advanced implementations. 
+                    Build real-world projects and advance your career with comprehensive, hands-on courses.
                 </p>
                 <div class="hero-stats">
-                    <div class="stat">
-                        <div class="stat-number">2</div>
-                        <div class="stat-label">Complete Courses</div>
+                    <div class="stat-item">
+                        <div class="stat-number">7</div>
+                        <div class="stat-label">Comprehensive Courses</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Interactive Lessons</div>
-                    </div>
-                    <div class="stat">
+                    <div class="stat-item">
                         <div class="stat-number">100+</div>
-                        <div class="stat-label">Practice Exercises</div>
+                        <div class="stat-label">Hours of Content</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-number">24/7</div>
-                        <div class="stat-label">Access</div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Real-World Projects</div>
                     </div>
                 </div>
                 <div class="hero-cta">
-                    <button class="cta-primary" onclick="scrollToCourses()">
-                        <i class="fas fa-rocket"></i>
-                        Explore Courses
+                    <button class="btn btn-primary" onclick="scrollToCourses()">
+                        <span>Explore Courses</span>
+                        <i class="fas fa-arrow-right"></i>
                     </button>
-                    <button class="cta-secondary" onclick="openDemo()">
-                        <i class="fas fa-play"></i>
-                        Watch Demo
+                    <button class="btn btn-secondary" onclick="scrollToSection('about')">
+                        <span>Learn More</span>
                     </button>
                 </div>
             </div>
             <div class="hero-visual">
-                <div class="visual-container">
-                    <div class="floating-card card-python">
-                        <div class="card-icon">🐍</div>
-                        <div class="card-text">Python for Data Science</div>
+                <div class="tech-stack">
+                    <div class="tech-item" style="animation-delay: 0s;">
+                        <img src="assets/python-logo.svg" alt="Python">
                     </div>
-                    <div class="floating-card card-airflow">
-                        <div class="card-icon">🌊</div>
-                        <div class="card-text">Apache Airflow</div>
+                    <div class="tech-item" style="animation-delay: 0.1s;">
+                        <img src="assets/airflow-logo.svg" alt="Airflow">
                     </div>
-                    <div class="floating-card card-cert">
-                        <div class="card-icon">🏆</div>
-                        <div class="card-text">Certification</div>
+                    <div class="tech-item" style="animation-delay: 0.2s;">
+                        <img src="assets/terraform-logo.svg" alt="Terraform">
+                    </div>
+                    <div class="tech-item" style="animation-delay: 0.3s;">
+                        <img src="assets/redshift-logo.svg" alt="Redshift">
+                    </div>
+                    <div class="tech-item" style="animation-delay: 0.4s;">
+                        <img src="assets/mssql-logo.svg" alt="MSSQL">
+                    </div>
+                    <div class="tech-item" style="animation-delay: 0.5s;">
+                        <img src="assets/dbt-logo.svg" alt="DBT">
+                    </div>
+                    <div class="tech-item" style="animation-delay: 0.6s;">
+                        <img src="assets/metabase-logo.svg" alt="Metabase">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Journey Section -->
+    <section class="data-journey">
+        <div class="journey-container">
+            <div class="section-header">
+                <h2 class="section-title">Meet DataBot 🤖 - Your Data Engineering Guide!</h2>
+                <p class="section-subtitle">
+                    Follow DataBot as he transforms messy business data into beautiful insights using our 7 essential tools!
+                </p>
+            </div>
+
+            <div class="journey-story">
+                <div class="story-character">
+                    <div class="databot">
+                        <div class="databot-head">
+                            <div class="databot-eyes">
+                                <div class="eye left-eye"></div>
+                                <div class="eye right-eye"></div>
+                            </div>
+                            <div class="databot-mouth"></div>
+                        </div>
+                        <div class="databot-body">
+                            <div class="databot-chest">
+                                <i class="fas fa-database"></i>
+                            </div>
+                        </div>
+                        <div class="databot-arms">
+                            <div class="arm left-arm"></div>
+                            <div class="arm right-arm"></div>
+                        </div>
+                    </div>
+                    <div class="speech-bubble">
+                        <p id="databot-speech">Let me show you how we turn chaos into insights!</p>
+                    </div>
+                </div>
+
+                <div class="journey-steps">
+                    <!-- Step 1: MSSQL -->
+                    <div class="journey-step" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-icon mssql-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3>MSSQL - The Messy Kitchen</h3>
+                            <p class="step-description">
+                                "Imagine your business data as a chaotic restaurant kitchen! 🍳 Orders flying everywhere, 
+                                ingredients scattered, recipes mixed up. That's your MSSQL application database - 
+                                it works for serving customers, but good luck finding anything for analysis!"
+                            </p>
+                            <div class="step-example">
+                                <strong>Real Example:</strong> "Customer John bought pizza, but his data is spread across 
+                                Orders table, Customers table, and Products table. It's like having the recipe on the ceiling!"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Python -->
+                    <div class="journey-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-icon python-icon">
+                            <i class="fab fa-python"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3>Python - The Smart Detective</h3>
+                            <p class="step-description">
+                                "Enter Python - our brilliant detective! 🔍 It sneaks into that chaotic kitchen, 
+                                finds all the scattered ingredients (data), and says 'Aha! I know where everything is!' 
+                                It reads the messy data and makes sense of it."
+                            </p>
+                            <div class="step-example">
+                                <strong>Python says:</strong> "Found John's pizza order! Let me connect his customer info, 
+                                order details, and payment. Now I see he's a regular who loves pepperoni!"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Terraform -->
+                    <div class="journey-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-icon terraform-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3>Terraform - The Master Architect</h3>
+                            <p class="step-description">
+                                "Time for Terraform, our master architect! 🏗️ Like building IKEA furniture but for the cloud. 
+                                'I need a data warehouse here, some servers there, and make sure everything talks to each other!' 
+                                It builds our cloud infrastructure automatically."
+                            </p>
+                            <div class="step-example">
+                                <strong>Terraform declares:</strong> "Creating 1 AWS Redshift cluster, 3 EC2 instances, 
+                                1 S3 bucket... Done! Your cloud kitchen is ready for serious cooking!"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Redshift -->
+                    <div class="journey-step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-icon redshift-icon">
+                            <i class="fab fa-aws"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3>Redshift - The Organized Warehouse</h3>
+                            <p class="step-description">
+                                "Meet Redshift - the Marie Kondo of data! ✨ It takes all that messy restaurant data 
+                                and organizes it into a beautiful, spotless warehouse. Everything has its place, 
+                                everything is labeled, and finding anything takes seconds!"
+                            </p>
+                            <div class="step-example">
+                                <strong>Redshift organizes:</strong> "All pizzas in aisle A, all customers in section B, 
+                                all payments in zone C. Want to find all pepperoni lovers? Boom - 0.3 seconds!"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Airflow -->
+                    <div class="journey-step" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-icon airflow-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3>Airflow - The Reliable Robot Butler</h3>
+                            <p class="step-description">
+                                "Airflow is like having a super-reliable robot butler! 🤖 Every day at 3 AM, it wakes up and says: 
+                                'Time to collect today's data, clean it up, and put it in the warehouse!' 
+                                It never forgets, never sleeps in, never calls in sick!"
+                            </p>
+                            <div class="step-example">
+                                <strong>Airflow's daily routine:</strong> "Good morning! Extracting yesterday's orders... 
+                                Cleaning data... Loading to Redshift... Sending success email... See you tomorrow!"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 6: DBT -->
+                    <div class="journey-step" data-step="6">
+                        <div class="step-number">6</div>
+                        <div class="step-icon dbt-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3>DBT - The Master Chef</h3>
+                            <p class="step-description">
+                                "DBT is our Gordon Ramsay of data! 👨‍🍳 It takes those organized ingredients from Redshift 
+                                and transforms them into gourmet business insights. 'This raw data is BLAND! 
+                                Let me add some calculations, mix in some business logic, and... BOOM! Masterpiece!'"
+                            </p>
+                            <div class="step-example">
+                                <strong>DBT transforms:</strong> "Raw pizza orders + customer data + seasonality = 
+                                'John buys 23% more pizza during football season and prefers thin crust on Fridays!'"
+                </div>
+            </div>
+                    </div>
+
+                    <!-- Step 7: Metabase -->
+                    <div class="journey-step" data-step="7">
+                        <div class="step-number">7</div>
+                        <div class="step-icon metabase-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3>Metabase - The Storyteller</h3>
+                            <p class="step-description">
+                                "Finally, Metabase - our brilliant storyteller! 📊 It takes all those beautiful insights 
+                                and turns them into stunning visual stories. Charts that make CEOs go 'Wow!', 
+                                dashboards that make data dance, and reports that actually make sense!"
+                            </p>
+                            <div class="step-example">
+                                <strong>Metabase presents:</strong> "Here's your pizza empire dashboard! Sales are up 34%, 
+                                John and 2,847 other customers love pepperoni, and Friday is your money day! 💰"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="journey-result">
+                    <div class="result-card">
+                        <div class="result-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3>The Magic Result! ✨</h3>
+                        <p>
+                            From chaotic restaurant kitchen to crystal-clear business insights! Your executives now have 
+                            beautiful dashboards showing exactly what's happening in your business, powered by all 7 tools 
+                            working together like a perfect orchestra! 🎵
+                        </p>
+                        <div class="final-example">
+                            <strong>Before:</strong> "How are pizza sales?" → *3 weeks of manual spreadsheet hell* 😵<br>
+                            <strong>After:</strong> "How are pizza sales?" → *Click* → "Here's your real-time dashboard!" 🎉
+                        </div>
                     </div>
                 </div>
             </div>
@@ -243,6 +455,201 @@
                         Start Airflow Course
                     </button>
                 </div>
+
+                <!-- Terraform Course Card -->
+                <div class="course-card terraform-card">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div class="course-badge intermediate">Infrastructure</div>
+                    </div>
+                    <h3 class="course-title">Terraform Infrastructure as Code</h3>
+                    <p class="course-description">
+                        Master infrastructure provisioning with Terraform. Build, change, and version 
+                        infrastructure safely across AWS, Azure, and Google Cloud.
+                    </p>
+                    
+                    <div class="course-features">
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <span>14-Week Course</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tasks"></i>
+                            <span>25+ Lessons</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-cloud"></i>
+                            <span>Multi-Cloud Projects</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-certificate"></i>
+                            <span>IaC Certification</span>
+                        </div>
+                    </div>
+
+                    <button class="course-cta terraform-cta" onclick="enterCourse('terraform')">
+                        <i class="fas fa-cube"></i>
+                        Start Terraform Course
+                    </button>
+                </div>
+
+                <!-- AWS Redshift Course Card -->
+                <div class="course-card redshift-card">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fab fa-aws"></i>
+                        </div>
+                        <div class="course-badge advanced">Data Warehouse</div>
+                    </div>
+                    <h3 class="course-title">AWS Redshift Data Warehousing</h3>
+                    <p class="course-description">
+                        Build petabyte-scale data warehouses with AWS Redshift. Learn columnar storage, 
+                        MPP architecture, and enterprise analytics optimization.
+                    </p>
+                    
+                    <div class="course-features">
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <span>16-Week Course</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tasks"></i>
+                            <span>35+ Lessons</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-database"></i>
+                            <span>Enterprise Projects</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-award"></i>
+                            <span>AWS Certification</span>
+                        </div>
+                    </div>
+                    
+                    <button class="course-cta redshift-cta" onclick="enterCourse('redshift')">
+                        <i class="fab fa-aws"></i>
+                        Start Redshift Course
+                    </button>
+                </div>
+
+                <!-- MSSQL Course Card -->
+                <div class="course-card mssql-card">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="course-badge intermediate">Database</div>
+                    </div>
+                    <h3 class="course-title">Microsoft SQL Server Mastery</h3>
+                    <p class="course-description">
+                        Master SQL Server from installation to enterprise administration. Learn T-SQL, 
+                        performance tuning, and production database management.
+                    </p>
+                    
+                    <div class="course-features">
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <span>18-Week Course</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tasks"></i>
+                            <span>40+ Lessons</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-server"></i>
+                            <span>Enterprise Systems</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-certificate"></i>
+                            <span>MCSA Preparation</span>
+                        </div>
+                    </div>
+
+                    <button class="course-cta mssql-cta" onclick="enterCourse('mssql')">
+                        <i class="fas fa-database"></i>
+                        Start MSSQL Course
+                    </button>
+                </div>
+
+                <!-- DBT Course Card -->
+                <div class="course-card dbt-card">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fas fa-transform"></i>
+                        </div>
+                        <div class="course-badge advanced">Data Transformation</div>
+                    </div>
+                    <h3 class="course-title">DBT Data Transformation</h3>
+                    <p class="course-description">
+                        Transform data with DBT (Data Build Tool). Learn modern analytics engineering 
+                        from basics to enterprise deployment patterns.
+                    </p>
+                    
+                    <div class="course-features">
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <span>12-Week Course</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tasks"></i>
+                            <span>28+ Lessons</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-code"></i>
+                            <span>SQL Transformations</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-award"></i>
+                            <span>Analytics Certification</span>
+                        </div>
+                    </div>
+
+                    <button class="course-cta dbt-cta" onclick="enterCourse('dbt')">
+                        <i class="fas fa-transform"></i>
+                        Start DBT Course
+                    </button>
+                </div>
+
+                <!-- Metabase Course Card -->
+                <div class="course-card metabase-card">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="course-badge beginner">Business Intelligence</div>
+                    </div>
+                    <h3 class="course-title">Metabase Business Intelligence</h3>
+                    <p class="course-description">
+                        Create stunning dashboards and reports with Metabase. Build self-service analytics 
+                        and beautiful visualizations for business insights.
+                    </p>
+                    
+                    <div class="course-features">
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <span>10-Week Course</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tasks"></i>
+                            <span>22+ Lessons</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Dashboard Projects</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-certificate"></i>
+                            <span>BI Certification</span>
+                        </div>
+                    </div>
+
+                    <button class="course-cta metabase-cta" onclick="enterCourse('metabase')">
+                        <i class="fas fa-chart-bar"></i>
+                        Start Metabase Course
+                    </button>
+                </div>
             </div>
 
             <!-- Learning Path Visualization -->
@@ -252,24 +659,32 @@
                     <div class="path-step">
                         <div class="step-number">1</div>
                         <div class="step-content">
-                            <h4>Python Fundamentals</h4>
-                            <p>Start with Python basics and data science foundations</p>
+                            <h4>Foundation</h4>
+                            <p>Python programming and database fundamentals (Python, MSSQL)</p>
                         </div>
                     </div>
                     <div class="path-arrow">→</div>
                     <div class="path-step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>Data Engineering</h4>
-                            <p>Master workflow orchestration with Apache Airflow</p>
+                            <h4>Infrastructure</h4>
+                            <p>Cloud infrastructure and data warehousing (Terraform, AWS Redshift)</p>
                         </div>
                     </div>
                     <div class="path-arrow">→</div>
                     <div class="path-step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>Industry Ready</h4>
-                            <p>Build production-grade data systems</p>
+                            <h4>Data Engineering</h4>
+                            <p>Orchestration and transformation (Airflow, DBT)</p>
+                        </div>
+                    </div>
+                    <div class="path-arrow">→</div>
+                    <div class="path-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Analytics & BI</h4>
+                            <p>Visualization and business intelligence (Metabase)</p>
                         </div>
                     </div>
                 </div>
@@ -362,45 +777,12 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="contact-container">
-            <h2 class="section-title">Get Started Today</h2>
-            <p class="contact-subtitle">
-                Ready to begin your data engineering journey? Choose a course and start learning immediately.
-            </p>
-            <div class="contact-actions">
-                <button class="contact-cta primary" onclick="enterCourse('python')">
-                    <i class="fab fa-python"></i>
-                    Start with Python
-                </button>
-                <button class="contact-cta secondary" onclick="enterCourse('airflow')">
-                    <i class="fas fa-project-diagram"></i>
-                    Begin Airflow Course
-                </button>
-            </div>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <span>support@fkti.edu</span>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-globe"></i>
-                    <span>www.fkti.edu</span>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-clock"></i>
-                    <span>24/7 Online Access</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <img src="assets/logo.svg" alt="FKTI Logo" class="footer-logo">
+                <img src="assets/fkti.png" alt="FKTI Logo" class="footer-logo">
                 <p class="footer-tagline">Empowering the next generation of data professionals</p>
             </div>
             <div class="footer-links">
@@ -418,7 +800,7 @@
                 </div>
                 <div class="footer-column">
                     <h4>Connect</h4>
-                    <a href="mailto:support@fkti.edu">Email Support</a>
+                    <a href="mailto:fktiindia@gmail.com">Email Support</a>
                     <a href="#contact">Contact Us</a>
                     <a href="#courses">All Courses</a>
                 </div>

@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FKTI - AWS Redshift Data Warehousing | Fakhruddin Khambaty Training Institute</title>
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="../assets/design-system.css">
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <img src="../assets/redshift-logo.svg" alt="AWS Redshift Logo" class="logo">
+                <div class="header-text">
+                    <h1>☁️ Master AWS Redshift Data Warehousing</h1>
+                    <p class="institute-name">FKTI - Fakhruddin Khambaty Training Institute</p>
+                    <p class="tagline">Petabyte-Scale Data Analytics Made Simple</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-section">
+                <button class="nav-btn hub-btn" onclick="goToHub()">← FKTI Hub</button>
+            </div>
+            <div class="nav-section main-nav">
+                <button class="nav-btn" onclick="showSection('welcome')">🏠 Welcome</button>
+                <button class="nav-btn" onclick="showSection('history')">📜 History</button>
+                <button class="nav-btn" onclick="showSection('setup')">⚙️ Setup</button>
+                <button class="nav-btn" onclick="showSection('architecture')">🏗️ Architecture</button>
+                <button class="nav-btn" onclick="showSection('clusters')">🔗 Clusters</button>
+                <button class="nav-btn" onclick="showSection('loading')">📤 Data Loading</button>
+                <button class="nav-btn" onclick="showSection('querying')">🔍 Querying</button>
+                <button class="nav-btn" onclick="showSection('optimization')">⚡ Optimization</button>
+                <button class="nav-btn" onclick="showSection('security')">🔒 Security</button>
+                <button class="nav-btn" onclick="showSection('projects')">💡 Projects</button>
+                <button class="nav-btn" onclick="showSection('exercises')">🎯 Exercises</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-text" id="progressText">0% Complete</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Welcome Section -->
+        <section id="welcome" class="content-section active">
+            <h2>🎯 Welcome to AWS Redshift Mastery!</h2>
+            
+            <div class="welcome-card">
+                <h3>What You'll Learn</h3>
+                <ul class="feature-list">
+                    <li>✅ Redshift architecture and concepts</li>
+                    <li>✅ Cluster setup and configuration</li>
+                    <li>✅ Data loading strategies and best practices</li>
+                    <li>✅ Query optimization techniques</li>
+                    <li>✅ Security and access management</li>
+                    <li>✅ Performance monitoring and tuning</li>
+                    <li>✅ Real-world enterprise data warehouse projects</li>
+                    <li>✅ Integration with AWS ecosystem</li>
+                </ul>
+            </div>
+
+            <div class="welcome-card">
+                <h3>Why AWS Redshift?</h3>
+                <p>AWS Redshift revolutionized cloud data warehousing, making petabyte-scale analytics affordable and accessible. It's the backbone of data-driven decisions at:</p>
+                <ul class="company-list">
+                    <li>📺 Netflix - analyzing 200+ billion events daily</li>
+                    <li>🎵 Spotify - processing 100+ TB of data for recommendations</li>
+                    <li>🚖 Lyft - real-time ride analytics and pricing</li>
+                    <li>🏪 McDonald's - supply chain and sales optimization</li>
+                    <li>🏥 Johnson & Johnson - drug research data analysis</li>
+                    <li>📊 Thomson Reuters - financial data processing</li>
+                </ul>
+            </div>
+
+            <div class="screenshot-placeholder">
+                <h4>📸 Screenshot: Redshift Console Overview</h4>
+                <p>The AWS Redshift management console showing cluster status, recent queries, and performance metrics dashboard.</p>
+                <div class="mock-screenshot">
+                    <div class="screenshot-header">AWS Redshift - Console Dashboard</div>
+                    <div class="screenshot-content">
+                        <div class="cluster-status">
+                            <span class="status running">●</span> production-dw (dc2.large x4)
+                            <small>Running • 96% CPU • 2.1TB data</small>
+                        </div>
+                        <div class="cluster-status">
+                            <span class="status available">●</span> analytics-cluster (dc2.large x2)
+                            <small>Available • 45% CPU • 850GB data</small>
+                        </div>
+                        <div class="metrics-row">
+                            <span>Recent Queries: 45,231</span>
+                            <span>Avg Query Time: 1.2s</span>
+                            <span>Data Loaded: 15.3GB/hr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="real-world-example">
+                <h3>🌟 Real-World Success Story</h3>
+                <div class="story-card">
+                    <h4>Netflix's Data Analytics Revolution</h4>
+                    <p><strong>Challenge:</strong> Netflix needed to analyze 200+ billion events daily to power their recommendation engine and business intelligence.</p>
+                    <p><strong>Before Redshift:</strong></p>
+                    <ul>
+                        <li>⏰ 12+ hours for nightly ETL processes</li>
+                        <li>💰 $2M+ annual data infrastructure costs</li>
+                        <li>👥 Team of 50+ engineers managing Hadoop clusters</li>
+                        <li>📈 Limited ability to scale during peak loads</li>
+                    </ul>
+                    <p><strong>After Redshift Migration:</strong></p>
+                    <ul>
+                        <li>⚡ 2 hours for same ETL processes (6x faster)</li>
+                        <li>💸 60% reduction in data infrastructure costs</li>
+                        <li>👨‍💻 Team reduced to 12 engineers</li>
+                        <li>🚀 Auto-scaling handles 10x peak loads seamlessly</li>
+                        <li>📊 Real-time analytics enabled new product features</li>
+                    </ul>
+                    <p><strong>Result:</strong> Netflix can now make data-driven decisions in minutes, not hours, leading to better user recommendations and business outcomes.</p>
+                </div>
+            </div>
+
+            <div class="comparison-card">
+                <h3>🔍 Redshift vs Traditional Data Warehouses</h3>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Traditional DW</th>
+                                <th>AWS Redshift</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Setup Time</td>
+                                <td>6-12 months</td>
+                                <td>15 minutes</td>
+                            </tr>
+                            <tr>
+                                <td>Initial Cost</td>
+                                <td>$100K - $1M+</td>
+                                <td>$180/month</td>
+                            </tr>
+                            <tr>
+                                <td>Scaling</td>
+                                <td>Hardware purchase + setup</td>
+                                <td>Click to resize</td>
+                            </tr>
+                            <tr>
+                                <td>Maintenance</td>
+                                <td>Full-time DBA team</td>
+                                <td>AWS managed service</td>
+                            </tr>
+                            <tr>
+                                <td>Backup/Recovery</td>
+                                <td>Manual processes</td>
+                                <td>Automated snapshots</td>
+                            </tr>
+                            <tr>
+                                <td>Security</td>
+                                <td>Custom implementation</td>
+                                <td>Enterprise-grade built-in</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="content-section">
+            <h2>📜 The Evolution of AWS Redshift</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2006-2010</div>
+                    <div class="timeline-content">
+                        <h3>🏗️ The Data Warehouse Problem</h3>
+                        <p>Before cloud data warehouses, organizations faced massive challenges:</p>
+                        <ul>
+                            <li>💰 Millions in upfront hardware costs</li>
+                            <li>⏰ 6-18 months implementation timelines</li>
+                            <li>👥 Teams of specialized DBAs required</li>
+                            <li>🔧 Complex maintenance and upgrades</li>
+                            <li>📈 Inability to handle sudden data growth</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Traditional Data Center</h4>
+                            <p>A traditional enterprise data center with rows of expensive servers and complex networking equipment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2010</div>
+                    <div class="timeline-content">
+                        <h3>💡 AWS Recognizes the Opportunity</h3>
+                        <p>Amazon's data science team, led by Kal Patel, identified a massive market gap:</p>
+                        <ul>
+                            <li>Companies needed big data analytics but couldn't afford traditional solutions</li>
+                            <li>Cloud computing was mature enough for enterprise workloads</li>
+                            <li>Amazon had internal expertise from their own data challenges</li>
+                        </ul>
+                        <div class="real-world-example">
+                            <h4>Amazon's Internal Challenge</h4>
+                            <p>Amazon.com was processing terabytes of customer data daily for recommendations, but even they struggled with traditional data warehouse limitations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2011-2012</div>
+                    <div class="timeline-content">
+                        <h3>🔬 Research and Development</h3>
+                        <p>AWS began developing what would become Redshift:</p>
+                        <ul>
+                            <li>Studied PostgreSQL as base architecture</li>
+                            <li>Developed columnar storage optimizations</li>
+                            <li>Created massively parallel processing (MPP) architecture</li>
+                            <li>Built cloud-native management layer</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Early Architecture Diagrams</h4>
+                            <p>AWS internal architecture diagrams showing the columnar storage and MPP design concepts.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">February 15, 2013</div>
+                    <div class="timeline-content">
+                        <h3>🚀 Redshift Launch</h3>
+                        <p>AWS announced Redshift with revolutionary pricing:</p>
+                        <ul>
+                            <li>💰 Starting at $0.25/hour (1/10th the cost of traditional solutions)</li>
+                            <li>⚡ Columnar storage for 10x faster queries</li>
+                            <li>📈 Petabyte-scale analytics capability</li>
+                            <li>🔧 Fully managed service - no DBAs required</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Original Redshift Launch</h4>
+                            <p>AWS re:Invent 2013 presentation slide showing Redshift's disruptive pricing model.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2013-2015</div>
+                    <div class="timeline-content">
+                        <h3>📈 Rapid Adoption</h3>
+                        <p>Redshift became the fastest-growing service in AWS history:</p>
+                        <ul>
+                            <li>🎯 10,000+ customers in first year</li>
+                            <li>💼 Fortune 500 companies migrating from Teradata, Oracle</li>
+                            <li>📊 Processing exabytes of data across all customers</li>
+                            <li>🌍 Global expansion to multiple regions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2016-2018</div>
+                    <div class="timeline-content">
+                        <h3>🔧 Major Enhancements</h3>
+                        <p>AWS continuously improved Redshift:</p>
+                        <ul>
+                            <li>🚀 Redshift Spectrum - Query S3 data directly</li>
+                            <li>📊 Enhanced VPC support for security</li>
+                            <li>⚡ Workload Management (WLM) improvements</li>
+                            <li>🔍 Query performance insights</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Redshift Spectrum Architecture</h4>
+                            <p>Diagram showing how Spectrum allows querying S3 data without loading it into Redshift.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2019</div>
+                    <div class="timeline-content">
+                        <h3>🎯 RA3 Instances Revolution</h3>
+                        <p>AWS introduced RA3 instances with game-changing features:</p>
+                        <ul>
+                            <li>💾 Managed storage separate from compute</li>
+                            <li>📈 Automatic scaling based on workload</li>
+                            <li>💰 50% better price/performance</li>
+                            <li>🔧 Pause/resume capability for dev clusters</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2020-2021</div>
+                    <div class="timeline-content">
+                        <h3>🤖 Machine Learning Integration</h3>
+                        <p>Redshift evolved into a complete analytics platform:</p>
+                        <ul>
+                            <li>🧠 Redshift ML - SQL-based machine learning</li>
+                            <li>📊 Integration with SageMaker</li>
+                            <li>⚡ Auto WLM with ML-powered query optimization</li>
+                            <li>🔍 Advanced query monitoring</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Redshift ML in Action</h4>
+                            <p>Query editor showing SQL commands that create and use machine learning models.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2022-2024</div>
+                    <div class="timeline-content">
+                        <h3>🌟 Modern Data Warehouse</h3>
+                        <p>Today's Redshift is a complete modern data platform:</p>
+                        <ul>
+                            <li>📱 Serverless option - zero infrastructure management</li>
+                            <li>🔄 Multi-AZ deployment for high availability</li>
+                            <li>🌊 Streaming ingestion from Kinesis</li>
+                            <li>🎯 Materialized views for sub-second queries</li>
+                            <li>🔐 Advanced security with AWS Lake Formation</li>
+                            <li>📈 Concurrency scaling to 10+ concurrent users</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-impact-card">
+                <h3>📊 Market Impact Today</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">100,000+</div>
+                        <div class="stat-label">Active Customers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">2.6 EB</div>
+                        <div class="stat-label">Data Queried Daily</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">80%</div>
+                        <div class="stat-label">Cost Reduction vs Traditional</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10x</div>
+                        <div class="stat-label">Performance Improvement</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Setup Section -->
+        <section id="setup" class="content-section">
+            <h2>⚙️ Complete AWS Redshift Setup Guide</h2>
+            
+            <div class="setup-tabs">
+                <button class="tab-btn active" onclick="showTab('aws-account')">🔧 AWS Account</button>
+                <button class="tab-btn" onclick="showTab('first-cluster')">🚀 First Cluster</button>
+                <button class="tab-btn" onclick="showTab('security-setup')">🔒 Security</button>
+                <button class="tab-btn" onclick="showTab('client-tools')">🛠️ Client Tools</button>
+            </div>
+
+            <div id="aws-account" class="tab-content active">
+                <h3>AWS Account Setup & Prerequisites</h3>
+                <div class="step-by-step">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Create AWS Account</h4>
+                            <p>Visit <a href="https://aws.amazon.com" target="_blank">aws.amazon.com</a> and click "Create AWS Account"</p>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: AWS Account Creation</h4>
+                                <p>AWS homepage showing the "Create AWS Account" button and account setup form.</p>
+                            </div>
+                            <div class="real-world-tip">
+                                <h5>💡 Real-World Tip</h5>
+                                <p><strong>Enterprise Setup:</strong> Use AWS Organizations to manage multiple accounts. Netflix has 100+ AWS accounts organized by team and environment.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Configure Billing Alerts</h4>
+                            <p>Set up billing alerts to avoid unexpected charges</p>
+                            <div class="code-block">
+                                <pre><code># Navigate to AWS Console
+1. Services → Billing → Billing preferences
+2. Enable "Receive Billing Alerts"
+3. Create CloudWatch billing alarm
+4. Set threshold (e.g., $100/month for learning)</code></pre>
+                            </div>
+                            <div class="cost-breakdown">
+                                <h5>💰 Expected Costs for Learning</h5>
+                                <ul>
+                                    <li>🔸 Redshift dc2.large: $0.25/hour = $6/day</li>
+                                    <li>🔸 Free tier: First 2 months free (750 hours)</li>
+                                    <li>🔸 Storage: $0.085/GB/month</li>
+                                    <li>🔸 Data transfer: Usually minimal for learning</li>
+                                </ul>
+                                <p><strong>Total monthly cost for learning: ~$50-100</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Create IAM User for Redshift</h4>
+                            <div class="code-block">
+                                <pre><code># IAM Console Steps:
+1. Services → IAM → Users → Add user
+2. User name: redshift-admin
+3. Access type: ✓ Programmatic ✓ AWS Console
+4. Attach policies:
+   - AmazonRedshiftFullAccess
+   - AmazonS3ReadOnlyAccess (for data loading)
+5. Download credentials CSV file</code></pre>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: IAM User Creation</h4>
+                                <p>IAM console showing user creation form with Redshift permissions selected.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Choose AWS Region</h4>
+                            <p>Select region based on your needs:</p>
+                            <div class="region-guide">
+                                <h5>🌍 Region Selection Criteria</h5>
+                                <ul>
+                                    <li><strong>us-east-1 (N. Virginia):</strong> Lowest cost, most services</li>
+                                    <li><strong>us-west-2 (Oregon):</strong> Good performance, slightly higher cost</li>
+                                    <li><strong>eu-west-1 (Ireland):</strong> GDPR compliance, EU data residency</li>
+                                    <li><strong>ap-southeast-1 (Singapore):</strong> Asia-Pacific, good for regional data</li>
+                                </ul>
+                            </div>
+                            <div class="real-world-example">
+                                <h5>🌟 Real-World Example: Spotify's Multi-Region Strategy</h5>
+                                <p>Spotify runs Redshift clusters in multiple regions:</p>
+                                <ul>
+                                    <li>🇺🇸 <strong>us-east-1:</strong> US user analytics and recommendations</li>
+                                    <li>🇪🇺 <strong>eu-west-1:</strong> European user data (GDPR compliance)</li>
+                                    <li>🇯🇵 <strong>ap-northeast-1:</strong> Asian market analytics</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="first-cluster" class="tab-content">
+                <h3>Creating Your First Redshift Cluster</h3>
+                <div class="step-by-step">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Launch Redshift Console</h4>
+                            <p>Navigate to AWS Redshift service</p>
+                            <div class="code-block">
+                                <pre><code># AWS Console Navigation:
+1. Sign in to AWS Console
+2. Services → Analytics → Amazon Redshift
+3. Click "Create cluster"</code></pre>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: Redshift Console</h4>
+                                <p>AWS Redshift dashboard showing the "Create cluster" button and existing clusters overview.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Configure Cluster Settings</h4>
+                            <div class="configuration-form">
+                                <h5>🔧 Basic Configuration</h5>
+                                <div class="form-group">
+                                    <label>Cluster identifier:</label>
+                                    <code>my-first-redshift-cluster</code>
+                                </div>
+                                <div class="form-group">
+                                    <label>Database name:</label>
+                                    <code>analytics_db</code>
+                                </div>
+                                <div class="form-group">
+                                    <label>Master username:</label>
+                                    <code>admin</code>
+                                </div>
+                                <div class="form-group">
+                                    <label>Master password:</label>
+                                    <code>Create strong password (8+ chars, mixed case, numbers)</code>
+                                </div>
+                            </div>
+                            
+                            <div class="node-type-guide">
+                                <h5>💻 Node Type Selection Guide</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Node Type</th>
+                                            <th>Use Case</th>
+                                            <th>Storage</th>
+                                            <th>Cost/Hour</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>dc2.large</td>
+                                            <td>Learning, small datasets</td>
+                                            <td>160 GB SSD</td>
+                                            <td>$0.25</td>
+                                        </tr>
+                                        <tr>
+                                            <td>dc2.8xlarge</td>
+                                            <td>Production workloads</td>
+                                            <td>2.56 TB SSD</td>
+                                            <td>$4.80</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ra3.xlplus</td>
+                                            <td>Modern, scalable</td>
+                                            <td>Managed storage</td>
+                                            <td>$0.75</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p><strong>Recommendation for Learning:</strong> Start with dc2.large (1 node)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Network & Security Configuration</h4>
+                            <div class="security-checklist">
+                                <h5>🔒 Security Settings</h5>
+                                <ul class="checklist">
+                                    <li>✓ <strong>VPC:</strong> Use default VPC for learning</li>
+                                    <li>✓ <strong>Publicly accessible:</strong> No (recommended)</li>
+                                    <li>✓ <strong>Security group:</strong> Create new allowing your IP</li>
+                                    <li>✓ <strong>Encryption:</strong> Enable encryption at rest</li>
+                                    <li>✓ <strong>Parameter group:</strong> Use default</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: Security Group Configuration</h4>
+                                <p>AWS security group settings showing inbound rules for Redshift access on port 5439.</p>
+                            </div>
+
+                            <div class="real-world-example">
+                                <h5>🌟 Enterprise Security Example</h5>
+                                <p><strong>Goldman Sachs Redshift Security:</strong></p>
+                                <ul>
+                                    <li>🔐 All data encrypted with customer-managed KMS keys</li>
+                                    <li>🏢 Private subnets with no internet access</li>
+                                    <li>🔍 VPC flow logs for network monitoring</li>
+                                    <li>👥 IAM roles for fine-grained access control</li>
+                                    <li>📊 CloudTrail logging for all API calls</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Launch Cluster</h4>
+                            <div class="code-block">
+                                <pre><code># Final steps:
+1. Review all configuration settings
+2. Estimated monthly cost: ~$180 for dc2.large
+3. Click "Create cluster"
+4. Wait 10-15 minutes for cluster creation
+5. Status will change from "Creating" to "Available"</code></pre>
+                            </div>
+
+                            <div class="launch-timeline">
+                                <h5>⏱️ Cluster Creation Timeline</h5>
+                                <div class="timeline-step">
+                                    <span class="time">0-2 min:</span>
+                                    <span class="status">Initializing cluster resources</span>
+                                </div>
+                                <div class="timeline-step">
+                                    <span class="time">2-8 min:</span>
+                                    <span class="status">Configuring network and security</span>
+                                </div>
+                                <div class="timeline-step">
+                                    <span class="time">8-12 min:</span>
+                                    <span class="status">Installing Redshift software</span>
+                                </div>
+                                <div class="timeline-step">
+                                    <span class="time">12-15 min:</span>
+                                    <span class="status">Final configuration and health checks</span>
+                                </div>
+                            </div>
+                            
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: Cluster Creation Progress</h4>
+                                <p>Redshift console showing cluster in "Creating" status with progress indicators.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="security-setup" class="tab-content">
+                <h3>Security Configuration</h3>
+                <div class="step-by-step">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Create Security Group</h4>
+                            <p>Think of a security group like a firewall for your database - it controls who can connect.</p>
+                            <div class="code-block">
+                                <pre><code># Security Group Configuration:
+1. Go to EC2 → Security Groups → Create security group
+2. Name: redshift-learning-sg
+3. Description: Security group for Redshift learning
+4. VPC: Select default VPC
+
+# Inbound Rules:
+Type: Custom TCP
+Port: 5439 (Redshift default port)
+Source: My IP (automatically detects your IP address)
+
+# This means only YOUR computer can connect to the database</code></pre>
+                            </div>
+                            <div class="real-world-example">
+                                <h5>🏢 Real-World Example: Bank Security</h5>
+                                <p>Just like a bank vault, Redshift security works in layers:</p>
+                                <ul>
+                                    <li>🚪 <strong>Security Group</strong> = Building entrance (who can enter)</li>
+                                    <li>🔐 <strong>Database Password</strong> = Vault combination</li>
+                                    <li>🎫 <strong>User Permissions</strong> = Individual safe deposit box keys</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="client-tools" class="tab-content">
+                <h3>Install Client Tools</h3>
+                <div class="tool-options">
+                    <div class="tool-card">
+                        <h4>🌐 Option 1: Web Query Editor (Easiest)</h4>
+                        <p>No downloads needed - use your web browser!</p>
+                        <div class="step-list">
+                            <p>1. Go to Redshift console</p>
+                            <p>2. Click your cluster name</p>
+                            <p>3. Click "Query data" button</p>
+                            <p>4. Start writing SQL immediately!</p>
+                        </div>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Web Query Editor</h4>
+                            <p>Browser-based query editor showing SQL commands and results table.</p>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <h4>💻 Option 2: SQL Workbench (Professional)</h4>
+                        <p>Download a powerful database client for advanced features.</p>
+                        <div class="step-list">
+                            <p>1. Download from: <code>sql-workbench.eu</code></p>
+                            <p>2. Install Java if not already installed</p>
+                            <p>3. Download Redshift JDBC driver</p>
+                            <p>4. Configure connection with cluster details</p>
+                        </div>
+                        <div class="connection-details">
+                            <h5>Connection Information Needed:</h5>
+                            <ul>
+                                <li><strong>Host:</strong> Your cluster endpoint (from AWS console)</li>
+                                <li><strong>Port:</strong> 5439</li>
+                                <li><strong>Database:</strong> analytics_db (what you named it)</li>
+                                <li><strong>Username:</strong> admin (what you set)</li>
+                                <li><strong>Password:</strong> Your master password</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Section -->
+        <section id="architecture" class="content-section">
+            <h2>🏗️ Understanding Redshift Architecture</h2>
+            
+            <div class="architecture-intro">
+                <h3>What Makes Redshift So Fast?</h3>
+                <p>Imagine you have a huge library with millions of books, and you need to find all books about "space exploration" written after 2020. A traditional approach would be like having one librarian check each book individually - very slow!</p>
+                <p>Redshift is like having 100 librarians work together, each checking different sections simultaneously. That's the power of <strong>Massively Parallel Processing (MPP)</strong>!</p>
+            </div>
+
+            <div class="architecture-diagram">
+                <h3>🎯 How Redshift Works (Simple Explanation)</h3>
+                <div class="simple-architecture">
+                    <div class="arch-component leader">
+                        <h4>🎯 Leader Node</h4>
+                        <p>The "Manager"</p>
+                        <ul>
+                            <li>Receives your SQL query</li>
+                            <li>Creates a plan to answer it</li>
+                            <li>Distributes work to compute nodes</li>
+                            <li>Combines results and sends back to you</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="arch-component compute">
+                        <h4>⚡ Compute Nodes</h4>
+                        <p>The "Workers"</p>
+                        <ul>
+                            <li>Store slices of your data</li>
+                            <li>Run queries on their data slice</li>
+                            <li>Work in parallel (all at the same time)</li>
+                            <li>Send results back to leader</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <h4>📸 Screenshot: Redshift Architecture Diagram</h4>
+                    <p>Visual diagram showing leader node distributing queries to multiple compute nodes in parallel.</p>
+                </div>
+            </div>
+
+            <div class="columnar-storage">
+                <h3>📊 Columnar Storage: The Secret Sauce</h3>
+                <div class="storage-comparison">
+                    <div class="storage-type">
+                        <h4>🗂️ Traditional Databases (Row Storage)</h4>
+                        <p>Store data like this (each row together):</p>
+                        <div class="code-block">
+                            <pre><code>Row 1: John, 25, Engineer, 75000
+Row 2: Sarah, 30, Manager, 90000  
+Row 3: Mike, 28, Designer, 65000</code></pre>
+                        </div>
+                        <p><strong>Problem:</strong> To calculate average salary, must read ALL data for ALL people!</p>
+                    </div>
+                    
+                    <div class="storage-type">
+                        <h4>📋 Redshift (Column Storage)</h4>
+                        <p>Store data like this (each column together):</p>
+                        <div class="code-block">
+                            <pre><code>Names:    John, Sarah, Mike
+Ages:     25, 30, 28
+Jobs:     Engineer, Manager, Designer  
+Salaries: 75000, 90000, 65000</code></pre>
+                        </div>
+                        <p><strong>Advantage:</strong> To calculate average salary, only read the salary column!</p>
+                    </div>
+                </div>
+                
+                <div class="real-world-example">
+                    <h4>🌟 Real Example: Netflix Analytics</h4>
+                    <p>When Netflix wants to know "average viewing time by country":</p>
+                    <ul>
+                        <li>📺 <strong>Traditional DB:</strong> Reads user profiles, viewing history, preferences, recommendations - everything!</li>
+                        <li>⚡ <strong>Redshift:</strong> Only reads "viewing_time" and "country" columns</li>
+                        <li>🚀 <strong>Result:</strong> 100x faster queries, saving millions in compute costs</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="compression-explanation">
+                <h3>🗜️ Data Compression Magic</h3>
+                <p>Redshift is like a master of compression - it can squeeze data to 1/4 its original size!</p>
+                
+                <div class="compression-examples">
+                    <h4>How Compression Works:</h4>
+                    <div class="example">
+                        <h5>Example 1: Repetitive Data</h5>
+                        <p><strong>Original:</strong> "CALIFORNIA, CALIFORNIA, CALIFORNIA, CALIFORNIA"</p>
+                        <p><strong>Compressed:</strong> "CALIFORNIA x4" (75% smaller!)</p>
+                    </div>
+                    
+                    <div class="example">
+                        <h5>Example 2: Date Patterns</h5>
+                        <p><strong>Original:</strong> "2024-01-01, 2024-01-02, 2024-01-03, 2024-01-04"</p>
+                        <p><strong>Compressed:</strong> "2024-01-01 + daily sequence for 4 days"</p>
+                    </div>
+                </div>
+                
+                <div class="compression-benefits">
+                    <h4>💰 Why This Matters:</h4>
+                    <ul>
+                        <li>🏠 <strong>Less Storage:</strong> Pay for 1TB instead of 4TB</li>
+                        <li>⚡ <strong>Faster Queries:</strong> Less data to read from disk</li>
+                        <li>💸 <strong>Lower Costs:</strong> Cheaper storage and faster processing</li>
+                        <li>🌱 <strong>Greener:</strong> Less energy used for storage and processing</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clusters Section -->
+        <section id="clusters" class="content-section">
+            <h2>🔗 Understanding and Managing Clusters</h2>
+            
+            <div class="cluster-basics">
+                <h3>What is a Redshift Cluster?</h3>
+                <p>Think of a Redshift cluster like a team of workers in a factory. Each worker (node) has a specific job, but they all work together to complete tasks faster than any single worker could alone.</p>
+                
+                <div class="cluster-analogy">
+                    <div class="analogy-card">
+                        <h4>🏭 Factory Analogy</h4>
+                        <ul>
+                            <li>🎯 <strong>Factory Manager</strong> = Leader Node (coordinates everything)</li>
+                            <li>👷 <strong>Assembly Line Workers</strong> = Compute Nodes (do the actual work)</li>
+                            <li>📦 <strong>Products Being Made</strong> = Your data and query results</li>
+                            <li>⚡ <strong>More Workers</strong> = Faster production (more nodes = faster queries)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="node-types-explained">
+                <h3>🏷️ Types of Nodes (Simple Guide)</h3>
+                
+                <div class="node-comparison">
+                    <div class="node-card dc2">
+                        <h4>💾 DC2 Nodes (Dense Compute)</h4>
+                        <p><strong>Best For:</strong> Learning and small to medium datasets</p>
+                        <div class="specs">
+                            <p><strong>Storage:</strong> Fast SSD drives (like your laptop)</p>
+                            <p><strong>Speed:</strong> Very fast for smaller data</p>
+                            <p><strong>Cost:</strong> Lower cost for learning</p>
+                            <p><strong>Example:</strong> Analyzing sales data for one store chain</p>
+                        </div>
+                        <div class="real-world-example">
+                            <p><strong>🏪 Real Example:</strong> A regional retailer with 50 stores uses DC2 nodes to analyze daily sales, inventory, and customer patterns.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="node-card ra3">
+                        <h4>🚀 RA3 Nodes (Latest Technology)</h4>
+                        <p><strong>Best For:</strong> Modern, scalable applications</p>
+                        <div class="specs">
+                            <p><strong>Storage:</strong> Separated from compute (can scale independently)</p>
+                            <p><strong>Speed:</strong> Very fast with intelligent caching</p>
+                            <p><strong>Cost:</strong> Better price/performance for large data</p>
+                            <p><strong>Example:</strong> Analyzing global customer behavior across multiple countries</p>
+                        </div>
+                        <div class="real-world-example">
+                            <p><strong>🌍 Real Example:</strong> Spotify uses RA3 nodes to analyze listening patterns from 400+ million users worldwide.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scaling-explanation">
+                <h3>📈 How Scaling Works</h3>
+                <p>Scaling in Redshift is like adding more workers to your team when you get busier.</p>
+                
+                <div class="scaling-scenarios">
+                    <div class="scenario">
+                        <h4>📊 Scenario 1: Small E-commerce Business</h4>
+                        <p><strong>Data Size:</strong> 100GB of customer orders</p>
+                        <p><strong>Recommended:</strong> 1 DC2.large node ($180/month)</p>
+                        <p><strong>Query Time:</strong> Simple reports in 2-5 seconds</p>
+                    </div>
+                    
+                    <div class="scenario">
+                        <h4>🏢 Scenario 2: Growing Company</h4>
+                        <p><strong>Data Size:</strong> 2TB of sales, customer, and product data</p>
+                        <p><strong>Recommended:</strong> 3 DC2.large nodes ($540/month)</p>
+                        <p><strong>Query Time:</strong> Complex analytics in 10-30 seconds</p>
+                    </div>
+                    
+                    <div class="scenario">
+                        <h4>🌍 Scenario 3: Enterprise Corporation</h4>
+                        <p><strong>Data Size:</strong> 50TB+ multi-source data warehouse</p>
+                        <p><strong>Recommended:</strong> 6+ RA3.xlplus nodes ($2,700+/month)</p>
+                        <p><strong>Query Time:</strong> Enterprise dashboards in 5-15 seconds</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cluster-management">
+                <h3>🛠️ Managing Your Cluster</h3>
+                
+                <div class="management-tasks">
+                    <div class="task-card">
+                        <h4>📊 Monitoring Performance</h4>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Cluster Performance Dashboard</h4>
+                            <p>AWS console showing CPU utilization, disk usage, and query performance metrics over time.</p>
+                        </div>
+                        <p><strong>What to Watch:</strong></p>
+                        <ul>
+                            <li>🔍 <strong>CPU Usage:</strong> Should be 60-80% during busy times</li>
+                            <li>💾 <strong>Disk Space:</strong> Keep under 85% full</li>
+                            <li>⏱️ <strong>Query Time:</strong> Most queries under 30 seconds</li>
+                            <li>🔄 <strong>Queue Time:</strong> Queries shouldn't wait more than 1-2 seconds</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="task-card">
+                        <h4>⏸️ Pausing and Resuming</h4>
+                        <p>Save money by pausing your cluster when not in use (like turning off your car engine at a red light).</p>
+                        <div class="code-block">
+                            <pre><code># When to Pause:
+- After work hours (5 PM - 8 AM)
+- Weekends for development clusters  
+- During maintenance windows
+- When doing large data loads (pause, load, resume)
+
+# How to Pause:
+1. Go to Redshift Console
+2. Select your cluster  
+3. Actions → Pause
+4. Cluster stops charging for compute (storage still charges)
+
+# How to Resume:
+1. Go to Redshift Console
+2. Select paused cluster
+3. Actions → Resume
+4. Takes 2-3 minutes to be ready</code></pre>
+                        </div>
+                        <div class="cost-savings">
+                            <h5>💰 Cost Savings Example:</h5>
+                            <p>A dc2.large cluster costs $0.25/hour:</p>
+                            <ul>
+                                <li>🕘 <strong>Running 24/7:</strong> $180/month</li>
+                                <li>⏸️ <strong>Paused nights/weekends:</strong> $54/month (70% savings!)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Loading Section -->
+        <section id="loading" class="content-section">
+            <h2>📤 Loading Data into Redshift</h2>
+            
+            <div class="loading-intro">
+                <h3>Why Data Loading Matters</h3>
+                <p>Getting data into Redshift is like moving into a new house - you want to organize everything efficiently so you can find what you need quickly later!</p>
+                
+                <div class="loading-methods-overview">
+                    <h4>🚚 Different Ways to Move Data (Like Different Moving Trucks)</h4>
+                    <div class="method-comparison">
+                        <div class="method">
+                            <h5>🏃‍♂️ COPY Command (Fastest - Like a Moving Company)</h5>
+                            <p>Best for large amounts of data from S3, other databases</p>
+                        </div>
+                        <div class="method">
+                            <h5>🚶‍♀️ INSERT Statements (Slowest - Like Moving Boxes Yourself)</h5>
+                            <p>Best for small amounts of data or real-time updates</p>
+                        </div>
+                        <div class="method">
+                            <h5>🔄 ETL Tools (Automated - Like Hiring Full Service Movers)</h5>
+                            <p>Best for regular, scheduled data movements</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="copy-command-section">
+                <h3>🚀 COPY Command: The Fast Way</h3>
+                <p>The COPY command is like having a superhighway directly into your data warehouse. It's the fastest way to load large amounts of data.</p>
+                
+                <div class="copy-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Prepare Your Data in S3</h4>
+                            <p>Think of S3 as a staging area where you prepare your data before moving it into the warehouse.</p>
+                            <div class="code-block">
+                                <pre><code># Example: Upload CSV file to S3
+# Let's say you have a file called "sales_data.csv"
+
+# Upload using AWS CLI:
+aws s3 cp sales_data.csv s3://your-bucket-name/data/sales_data.csv
+
+# Your file structure should look like:
+s3://your-bucket-name/
+  └── data/
+      └── sales_data.csv</code></pre>
+                            </div>
+                            <div class="data-format-tips">
+                                <h5>📋 Data Format Best Practices:</h5>
+                                <ul>
+                                    <li>📄 <strong>CSV Files:</strong> Most common, easy to work with</li>
+                                    <li>📊 <strong>Pipe-delimited (|):</strong> Better than commas if your data contains commas</li>
+                                    <li>🗜️ <strong>Compressed (GZIP):</strong> Faster uploads and downloads</li>
+                                    <li>📦 <strong>Split Large Files:</strong> Break files bigger than 1GB into smaller pieces</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Create Your Table</h4>
+                            <p>Before loading data, you need to create a table - like preparing labeled boxes before moving.</p>
+                            <div class="code-block">
+                                <pre><code>-- Example: Create a sales table
+CREATE TABLE sales (
+    sale_id INTEGER,
+    customer_name VARCHAR(100),
+    product_name VARCHAR(200),  
+    sale_amount DECIMAL(10,2),
+    sale_date DATE,
+    region VARCHAR(50)
+);
+
+-- Explanation of data types (like describing what goes in each box):
+-- INTEGER: Whole numbers (1, 2, 3, 1000)
+-- VARCHAR(100): Text up to 100 characters  
+-- DECIMAL(10,2): Numbers with decimals (like money: 99.99)
+-- DATE: Dates in YYYY-MM-DD format (2024-01-15)</code></pre>
+                            </div>
+                            <div class="real-world-example">
+                                <h5>🛍️ Real Example: E-commerce Store</h5>
+                                <p>An online store might have these tables:</p>
+                                <ul>
+                                    <li>👥 <strong>customers:</strong> Customer information (name, email, address)</li>
+                                    <li>📦 <strong>products:</strong> Product details (name, price, category)</li>
+                                    <li>🛒 <strong>orders:</strong> Order information (date, customer, total amount)</li>
+                                    <li>📋 <strong>order_items:</strong> Individual items in each order</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Run the COPY Command</h4>
+                            <p>Now the magic happens - Redshift loads your data super fast using parallel processing!</p>
+                            <div class="code-block">
+                                <pre><code>-- Basic COPY command (like calling the moving company)
+COPY sales 
+FROM 's3://your-bucket-name/data/sales_data.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/RedshiftRole'
+CSV;
+
+-- Advanced COPY command with options
+COPY sales 
+FROM 's3://your-bucket-name/data/sales_data.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/RedshiftRole'  
+CSV
+DELIMITER '|'           -- Use pipe instead of comma
+IGNOREHEADER 1         -- Skip the first row (column names)
+DATEFORMAT 'MM/DD/YYYY' -- Handle different date formats
+COMPUPDATE ON;         -- Let Redshift optimize compression</code></pre>
+                            </div>
+                            <div class="copy-performance">
+                                <h5>⚡ Performance Magic:</h5>
+                                <p>When you run COPY, here's what happens behind the scenes:</p>
+                                <ul>
+                                    <li>🔀 <strong>Parallel Loading:</strong> All compute nodes work together</li>
+                                    <li>📊 <strong>Automatic Distribution:</strong> Data spread evenly across nodes</li>
+                                    <li>🗜️ <strong>Compression:</strong> Data automatically compressed</li>
+                                    <li>📈 <strong>Statistics:</strong> Query optimizer learns about your data</li>
+                                </ul>
+                                <p><strong>Result:</strong> Loading 1 million rows takes seconds, not hours!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screenshot-placeholder">
+                    <h4>📸 Screenshot: COPY Command Execution</h4>
+                    <p>Query editor showing a COPY command running with progress indicators and completion statistics.</p>
+                </div>
+            </div>
+
+            <div class="data-formats-section">
+                <h3>📁 Working with Different Data Formats</h3>
+                
+                <div class="format-examples">
+                    <div class="format-card">
+                        <h4>📄 CSV Files (Most Common)</h4>
+                        <div class="code-block">
+                            <pre><code>-- Sample CSV data:
+sale_id,customer_name,product,amount,date
+1,John Smith,Laptop,999.99,2024-01-15
+2,Sarah Johnson,Mouse,29.99,2024-01-15
+
+-- COPY command for CSV:
+COPY sales FROM 's3://bucket/file.csv'
+IAM_ROLE 'your-role'
+CSV IGNOREHEADER 1;</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="format-card">
+                        <h4>📊 JSON Files (Web Data)</h4>
+                        <div class="code-block">
+                            <pre><code>-- Sample JSON data:
+{"user_id": 123, "action": "purchase", "amount": 99.99}
+{"user_id": 456, "action": "view", "amount": 0}
+
+-- COPY command for JSON:
+COPY events FROM 's3://bucket/events.json'  
+IAM_ROLE 'your-role'
+JSON 'auto';</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="format-card">
+                        <h4>📋 Delimited Files (Custom Separators)</h4>
+                        <div class="code-block">
+                            <pre><code>-- Sample pipe-delimited data:
+1|John Smith|Laptop|999.99|2024-01-15
+2|Sarah Johnson|Mouse|29.99|2024-01-15
+
+-- COPY command for pipe-delimited:
+COPY sales FROM 's3://bucket/file.txt'
+IAM_ROLE 'your-role'  
+DELIMITER '|';</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="troubleshooting-section">
+                <h3>🔧 Common Loading Problems and Solutions</h3>
+                
+                <div class="problem-solutions">
+                    <div class="problem-card">
+                        <h4>❌ Problem: "No such file or directory"</h4>
+                        <p><strong>What it means:</strong> Redshift can't find your file in S3</p>
+                        <div class="solution">
+                            <h5>✅ Solutions:</h5>
+                            <ul>
+                                <li>🔍 Check S3 path is correct (case-sensitive!)</li>
+                                <li>🔑 Verify IAM role has S3 access permissions</li>
+                                <li>🌐 Ensure S3 bucket and Redshift are in same region</li>
+                                <li>📂 Confirm file actually exists in S3</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-card">
+                        <h4>❌ Problem: "Invalid character data was found"</h4>
+                        <p><strong>What it means:</strong> Data doesn't match your table structure</p>
+                        <div class="solution">
+                            <h5>✅ Solutions:</h5>
+                            <ul>
+                                <li>📊 Check data types match (numbers in number columns)</li>
+                                <li>📅 Verify date formats (use DATEFORMAT option)</li>
+                                <li>🔤 Ensure text fits in VARCHAR length</li>
+                                <li>🧹 Clean data before loading (remove special characters)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-card">
+                        <h4>❌ Problem: Loading is Very Slow</h4>
+                        <p><strong>What it means:</strong> Not using Redshift's parallel power</p>
+                        <div class="solution">
+                            <h5>✅ Solutions:</h5>
+                            <ul>
+                                <li>📦 Split large files into multiple smaller files</li>
+                                <li>🗜️ Use GZIP compression</li>
+                                <li>⚡ Use COPY instead of INSERT statements</li>
+                                <li>📈 Add more compute nodes if needed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Querying Section -->
+        <section id="querying" class="content-section">
+            <h2>🔍 Writing Queries in Redshift</h2>
+            
+            <div class="querying-intro">
+                <h3>SQL in Redshift: Like Asking Questions to Your Data</h3>
+                <p>Think of SQL as a way to have a conversation with your data. Instead of saying "Hey computer, show me all customers who bought more than $1000 worth of products last month," you write it in SQL language that the computer understands.</p>
+            </div>
+
+            <div class="basic-queries">
+                <h3>🎯 Basic Queries (Your First Conversations)</h3>
+                
+                <div class="query-example">
+                    <h4>Example 1: "Show me everything"</h4>
+                    <div class="code-block">
+                        <pre><code>-- This is like asking "What's in the sales table?"
+SELECT * FROM sales;
+
+-- Translation: 
+-- SELECT = "Show me"
+-- * = "everything" (all columns)  
+-- FROM sales = "from the sales table"</code></pre>
+                    </div>
+                    <div class="result-explanation">
+                        <p><strong>What happens:</strong> Redshift shows you every row and every column in the sales table. Like opening a filing cabinet and looking at all the folders.</p>
+                    </div>
+                </div>
+                
+                <div class="query-example">
+                    <h4>Example 2: "Show me specific information"</h4>
+                    <div class="code-block">
+                        <pre><code>-- This is like asking "What are the customer names and how much did they spend?"
+SELECT customer_name, sale_amount 
+FROM sales;
+
+-- Translation:
+-- SELECT customer_name, sale_amount = "Show me just these two pieces of info"
+-- FROM sales = "from the sales table"</code></pre>
+                    </div>
+                    <div class="result-explanation">
+                        <p><strong>What happens:</strong> Instead of seeing everything, you only see customer names and sale amounts. Like asking for just the summary instead of the full report.</p>
+                    </div>
+                </div>
+
+                <div class="query-example">
+                    <h4>Example 3: "Show me specific customers"</h4>
+                    <div class="code-block">
+                        <pre><code>-- This is like asking "Show me only sales where the amount is more than $500"
+SELECT customer_name, sale_amount 
+FROM sales 
+WHERE sale_amount > 500;
+
+-- Translation:
+-- WHERE sale_amount > 500 = "but only include rows where sale_amount is greater than 500"</code></pre>
+                    </div>
+                    <div class="result-explanation">
+                        <p><strong>What happens:</strong> You only see customers who spent more than $500. Like filtering a list to show only the important items.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advanced-queries">
+                <h3>🚀 Advanced Queries (More Sophisticated Questions)</h3>
+                
+                <div class="query-category">
+                    <h4>📊 Aggregations (Summarizing Your Data)</h4>
+                    <p>Aggregations are like asking "What's the total?" or "What's the average?" - getting summary information.</p>
+                    
+                    <div class="aggregation-examples">
+                        <div class="agg-example">
+                            <h5>💰 Total Sales</h5>
+                            <div class="code-block">
+                                <pre><code>-- "What's the total amount of all sales?"
+SELECT SUM(sale_amount) as total_sales
+FROM sales;
+
+-- Result: Adds up all sale amounts to give you one number</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="agg-example">
+                            <h5>📈 Average Sale</h5>
+                            <div class="code-block">
+                                <pre><code>-- "What's the average sale amount?"
+SELECT AVG(sale_amount) as average_sale
+FROM sales;
+
+-- Result: Calculates the average of all sale amounts</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="agg-example">
+                            <h5>🔢 Count of Sales</h5>
+                            <div class="code-block">
+                                <pre><code>-- "How many sales do we have?"
+SELECT COUNT(*) as number_of_sales
+FROM sales;
+
+-- Result: Counts the total number of rows (sales)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="query-category">
+                    <h4>📋 GROUP BY (Organizing Your Summaries)</h4>
+                    <p>GROUP BY is like sorting your data into categories and then summarizing each category.</p>
+                    
+                    <div class="code-block">
+                        <pre><code>-- "How much did each customer spend in total?"
+SELECT 
+    customer_name,
+    SUM(sale_amount) as customer_total
+FROM sales 
+GROUP BY customer_name
+ORDER BY customer_total DESC;
+
+-- Translation:
+-- GROUP BY customer_name = "Organize by customer"
+-- SUM(sale_amount) = "Add up their purchases"  
+-- ORDER BY customer_total DESC = "Show biggest spenders first"</code></pre>
+                    </div>
+                    
+                    <div class="real-world-example">
+                        <h5>🏪 Real Example: Store Manager's Question</h5>
+                        <p>A store manager asks: "Which products are selling best this month?"</p>
+                        <div class="code-block">
+                            <pre><code>SELECT 
+    product_name,
+    COUNT(*) as times_sold,
+    SUM(sale_amount) as total_revenue
+FROM sales 
+WHERE sale_date >= '2024-01-01'
+GROUP BY product_name
+ORDER BY total_revenue DESC
+LIMIT 10;
+
+-- This shows the top 10 products by revenue this year</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="query-category">
+                    <h4>🔄 JOINs (Combining Data from Multiple Tables)</h4>
+                    <p>JOINs are like connecting puzzle pieces - combining information from different tables to get a complete picture.</p>
+                    
+                    <div class="join-explanation">
+                        <h5>🧩 Why JOINs Matter</h5>
+                        <p>Imagine you have two tables:</p>
+                        <ul>
+                            <li>📋 <strong>orders:</strong> order_id, customer_id, order_date, total_amount</li>
+                            <li>👥 <strong>customers:</strong> customer_id, customer_name, email, city</li>
+                        </ul>
+                        <p>To see "customer names with their order totals," you need to JOIN these tables!</p>
+                    </div>
+                    
+                    <div class="code-block">
+                        <pre><code>-- "Show me customer names with their order amounts"
+SELECT 
+    c.customer_name,
+    o.total_amount,
+    o.order_date
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+ORDER BY o.order_date DESC;
+
+-- Translation:
+-- FROM orders o = "Start with the orders table (nickname 'o')"
+-- JOIN customers c = "Connect it to customers table (nickname 'c')"  
+-- ON o.customer_id = c.customer_id = "Match them using customer_id"</code></pre>
+                    </div>
+                    
+                    <div class="screenshot-placeholder">
+                        <h4>📸 Screenshot: JOIN Query Results</h4>
+                        <p>Query result showing customer names, order amounts, and dates in a combined table view.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-tips">
+                <h3>⚡ Making Queries Run Faster</h3>
+                
+                <div class="tip-cards">
+                    <div class="tip-card">
+                        <h4>🎯 Use Specific Columns (Not SELECT *)</h4>
+                        <div class="comparison">
+                            <div class="slow">
+                                <h5>❌ Slower</h5>
+                                <code>SELECT * FROM large_table;</code>
+                                <p>Reads ALL columns even if you only need a few</p>
+                            </div>
+                            <div class="fast">
+                                <h5>✅ Faster</h5>
+                                <code>SELECT name, amount FROM large_table;</code>
+                                <p>Only reads the columns you actually need</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4>📅 Use Date Filters</h4>
+                        <div class="comparison">
+                            <div class="slow">
+                                <h5>❌ Slower</h5>
+                                <code>SELECT * FROM sales;</code>
+                                <p>Reads ALL data from the beginning of time</p>
+                            </div>
+                            <div class="fast">
+                                <h5>✅ Faster</h5>
+                                <code>SELECT * FROM sales WHERE date >= '2024-01-01';</code>
+                                <p>Only reads data from this year</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4>🔢 Use LIMIT for Testing</h4>
+                        <div class="comparison">
+                            <div class="slow">
+                                <h5>❌ Slower</h5>
+                                <code>SELECT * FROM million_row_table;</code>
+                                <p>Returns all million rows</p>
+                            </div>
+                            <div class="fast">
+                                <h5>✅ Faster</h5>
+                                <code>SELECT * FROM million_row_table LIMIT 100;</code>
+                                <p>Returns only first 100 rows for testing</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optimization Section -->
+        <section id="optimization" class="content-section">
+            <h2>⚡ Performance Optimization</h2>
+            
+            <div class="optimization-intro">
+                <h3>Why Optimization Matters</h3>
+                <p>Think of optimization like organizing your bedroom. A messy room makes it hard to find things quickly. An organized room (optimized database) helps you find what you need instantly!</p>
+                
+                <div class="performance-analogy">
+                    <div class="analogy-card">
+                        <h4>🏠 Library Analogy</h4>
+                        <ul>
+                            <li>📚 <strong>Unorganized Library:</strong> Books scattered randomly - takes hours to find one book</li>
+                            <li>🏷️ <strong>Organized Library:</strong> Books sorted by subject, author, alphabetically - find any book in minutes</li>
+                            <li>🔍 <strong>Card Catalog:</strong> Index tells you exactly where to look - find books in seconds</li>
+                        </ul>
+                        <p><strong>Your data warehouse works the same way!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="distribution-keys">
+                <h3>🔑 Distribution Keys (How Data is Organized)</h3>
+                <p>Distribution keys tell Redshift how to spread your data across multiple computers. It's like deciding which books go on which shelf in your library.</p>
+                
+                <div class="distribution-strategies">
+                    <div class="strategy-card">
+                        <h4>📊 EVEN Distribution (Default)</h4>
+                        <p><strong>Like:</strong> Putting books randomly on any available shelf</p>
+                        <p><strong>Good for:</strong> Tables you don't join with other tables often</p>
+                        <div class="code-block">
+                            <pre><code>-- Create table with EVEN distribution
+CREATE TABLE products (
+    product_id INTEGER,
+    product_name VARCHAR(200),
+    price DECIMAL(10,2)
+) DISTSTYLE EVEN;
+
+-- Data gets spread evenly across all nodes</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>🎯 KEY Distribution (Most Common)</h4>
+                        <p><strong>Like:</strong> Putting all books by the same author on the same shelf</p>
+                        <p><strong>Good for:</strong> Tables you frequently join with other tables</p>
+                        <div class="code-block">
+                            <pre><code>-- Create table with KEY distribution  
+CREATE TABLE orders (
+    order_id INTEGER,
+    customer_id INTEGER,
+    order_date DATE,
+    total_amount DECIMAL(10,2)
+) DISTKEY(customer_id);
+
+-- All orders for the same customer stay together</code></pre>
+                        </div>
+                        <div class="real-world-example">
+                            <h5>🛍️ Real Example: E-commerce</h5>
+                            <p>If you often ask "Show me all orders for customer John Smith," using customer_id as distribution key means all of John's orders are stored together, making queries super fast!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="strategy-card">
+                        <h4>📋 ALL Distribution (Small Tables)</h4>
+                        <p><strong>Like:</strong> Keeping a copy of the library catalog at every desk</p>
+                        <p><strong>Good for:</strong> Small reference tables (under 2 million rows)</p>
+                        <div class="code-block">
+                            <pre><code>-- Create table with ALL distribution
+CREATE TABLE regions (
+    region_id INTEGER,
+    region_name VARCHAR(50),
+    country VARCHAR(50)
+) DISTSTYLE ALL;
+
+-- Every compute node gets a full copy</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sort-keys">
+                <h3>🗂️ Sort Keys (How Data is Arranged)</h3>
+                <p>Sort keys are like organizing books alphabetically on each shelf. It makes finding specific books much faster!</p>
+                
+                <div class="sort-examples">
+                    <div class="sort-card">
+                        <h4>📅 Date-based Sorting (Most Common)</h4>
+                        <p>Perfect for time-series data - most queries ask for recent data first.</p>
+                        <div class="code-block">
+                            <pre><code>-- Orders sorted by date (newest first)
+CREATE TABLE orders (
+    order_id INTEGER,
+    customer_id INTEGER, 
+    order_date DATE,
+    total_amount DECIMAL(10,2)
+) SORTKEY(order_date);
+
+-- Queries like "orders from last week" become super fast!</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="sort-card">
+                        <h4>🔢 ID-based Sorting</h4>
+                        <p>Good when you frequently look up specific records by ID.</p>
+                        <div class="code-block">
+                            <pre><code>-- Products sorted by product_id
+CREATE TABLE products (
+    product_id INTEGER,
+    product_name VARCHAR(200),
+    category VARCHAR(100)
+) SORTKEY(product_id);
+
+-- Queries like "show me product #12345" become instant!</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="sort-card">
+                        <h4>🎯 Compound Sort Keys</h4>
+                        <p>Multiple columns for more specific organization.</p>
+                        <div class="code-block">
+                            <pre><code>-- First sort by region, then by date
+CREATE TABLE sales (
+    sale_id INTEGER,
+    region VARCHAR(50),
+    sale_date DATE,
+    amount DECIMAL(10,2)
+) COMPOUND SORTKEY(region, sale_date);
+
+-- Perfect for queries like "sales in California last month"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="compression">
+                <h3>🗜️ Data Compression</h3>
+                <p>Redshift automatically compresses your data, but you can help it do even better!</p>
+                
+                <div class="compression-benefits">
+                    <h4>💰 Why Compression Matters:</h4>
+                    <div class="benefit-cards">
+                        <div class="benefit">
+                            <h5>💾 Less Storage</h5>
+                            <p>Pay for 500GB instead of 2TB</p>
+                        </div>
+                        <div class="benefit">
+                            <h5>⚡ Faster Queries</h5>
+                            <p>Less data to read from disk</p>
+                        </div>
+                        <div class="benefit">
+                            <h5>🚀 Better Performance</h5>
+                            <p>More data fits in memory</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="compression-commands">
+                    <h4>🔧 Compression Commands</h4>
+                    <div class="code-block">
+                        <pre><code>-- Let Redshift analyze and recommend compression
+ANALYZE COMPRESSION products;
+
+-- Apply compression to existing table  
+VACUUM products;
+
+-- Check current compression ratios
+SELECT 
+    schemaname,
+    tablename,
+    size_in_mb,
+    pct_used
+FROM svv_table_info
+WHERE schemaname = 'public'
+ORDER BY size_in_mb DESC;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="monitoring-performance">
+                <h3>📊 Monitoring Query Performance</h3>
+                
+                <div class="monitoring-tools">
+                    <div class="tool-card">
+                        <h4>🔍 Query Performance Insights</h4>
+                        <p>Built-into AWS console - shows you which queries are slow and why.</p>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Performance Insights Dashboard</h4>
+                            <p>AWS console showing query performance metrics, slow query analysis, and optimization recommendations.</p>
+                        </div>
+                        <div class="metrics-explanation">
+                            <h5>📈 Key Metrics to Watch:</h5>
+                            <ul>
+                                <li>⏱️ <strong>Query Time:</strong> Most should finish under 30 seconds</li>
+                                <li>🔄 <strong>Queue Time:</strong> Should be near zero (queries shouldn't wait)</li>
+                                <li>📊 <strong>Disk I/O:</strong> Lower is better (means data is in memory)</li>
+                                <li>🧠 <strong>CPU Usage:</strong> 60-80% during busy periods is good</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>📋 System Tables</h4>
+                        <p>Built-in tables that show you what's happening inside Redshift.</p>
+                        <div class="code-block">
+                            <pre><code>-- Find your slowest queries
+SELECT 
+    query,
+    total_exec_time,
+    query_text
+FROM stl_query_metrics 
+WHERE userid > 1  -- Exclude system queries
+ORDER BY total_exec_time DESC
+LIMIT 10;
+
+-- See what queries are running right now
+SELECT 
+    pid,
+    user_name,
+    starttime,
+    query_text
+FROM stv_recents 
+WHERE status = 'Running';</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Section -->  
+        <section id="security" class="content-section">
+            <h2>🔒 Security and Access Control</h2>
+            
+            <div class="security-intro">
+                <h3>Why Security Matters</h3>
+                <p>Think of database security like protecting your home. You wouldn't give house keys to strangers, and you shouldn't give database access to unauthorized users. Your data is valuable - customer information, financial records, business secrets - it all needs protection!</p>
+                
+                <div class="security-layers">
+                    <h4>🏰 Security Layers (Like Castle Defenses)</h4>
+                    <div class="layer-cards">
+                        <div class="layer">
+                            <h5>🌐 Network Security</h5>
+                            <p>The moat around the castle - controls who can even reach your database</p>
+                        </div>
+                        <div class="layer">
+                            <h5>🔑 Authentication</h5>
+                            <p>The gate guards - verifies you are who you say you are</p>
+                        </div>
+                        <div class="layer">
+                            <h5>👥 Authorization</h5>
+                            <p>The key system - controls what you can do once inside</p>
+                        </div>
+                        <div class="layer">
+                            <h5>🔐 Encryption</h5>
+                            <p>The secret code - scrambles data so even if stolen, it's unreadable</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-management">
+                <h3>👥 Creating and Managing Users</h3>
+                <p>Users are like employees in your company - each person should only have access to what they need for their job.</p>
+                
+                <div class="user-examples">
+                    <div class="user-role-card">
+                        <h4>👨‍💼 Database Administrator (Full Access)</h4>
+                        <div class="code-block">
+                            <pre><code>-- Create a database admin user
+CREATE USER db_admin 
+PASSWORD 'StrongPassword123!'
+CREATEDB CREATEUSER;
+
+-- Grant admin privileges  
+GRANT ALL ON ALL TABLES IN SCHEMA public TO db_admin;</code></pre>
+                        </div>
+                        <p><strong>Can do:</strong> Everything - create tables, manage users, delete data</p>
+                        <p><strong>Use for:</strong> Senior database team members</p>
+                    </div>
+                    
+                    <div class="user-role-card">
+                        <h4>📊 Data Analyst (Read + Limited Write)</h4>
+                        <div class="code-block">
+                            <pre><code>-- Create a data analyst user
+CREATE USER analyst_jane 
+PASSWORD 'SecurePass456!';
+
+-- Grant read access to all tables
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO analyst_jane;
+
+-- Grant write access to specific tables for their work
+GRANT INSERT, UPDATE ON reports_table TO analyst_jane;</code></pre>
+                        </div>
+                        <p><strong>Can do:</strong> Run queries, create reports, update specific tables</p>
+                        <p><strong>Use for:</strong> Business analysts, data scientists</p>
+                    </div>
+                    
+                    <div class="user-role-card">
+                        <h4>📈 Business User (Read Only)</h4>
+                        <div class="code-block">
+                            <pre><code>-- Create a business user  
+CREATE USER manager_mike 
+PASSWORD 'BusinessPass789!';
+
+-- Grant read access to specific tables only
+GRANT SELECT ON sales, customers, products TO manager_mike;</code></pre>
+                        </div>
+                        <p><strong>Can do:</strong> View dashboards, run basic reports</p>
+                        <p><strong>Use for:</strong> Managers, executives, business stakeholders</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="groups-and-roles">
+                <h3>👨‍👩‍👧‍👦 Groups and Roles (Team Management)</h3>
+                <p>Instead of giving permissions to each person individually, create groups - like departments in a company.</p>
+                
+                <div class="group-examples">
+                    <div class="code-block">
+                        <pre><code>-- Create groups for different departments
+CREATE GROUP sales_team;
+CREATE GROUP finance_team;  
+CREATE GROUP analytics_team;
+
+-- Grant permissions to groups
+GRANT SELECT ON sales, customers TO sales_team;
+GRANT SELECT ON financials, budgets TO finance_team;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO analytics_team;
+
+-- Add users to groups
+ALTER GROUP sales_team ADD USER sales_manager, sales_rep1, sales_rep2;
+ALTER GROUP finance_team ADD USER cfo, accountant1;
+ALTER GROUP analytics_team ADD USER data_scientist, analyst_jane;</code></pre>
+                    </div>
+                </div>
+                
+                <div class="real-world-example">
+                    <h4>🏢 Real Example: E-commerce Company Security</h4>
+                    <div class="company-structure">
+                        <div class="department">
+                            <h5>🛒 Sales Team</h5>
+                            <ul>
+                                <li>Can see: Customer info, orders, products</li>
+                                <li>Cannot see: Financial data, employee salaries</li>
+                            </ul>
+                        </div>
+                        <div class="department">
+                            <h5>💰 Finance Team</h5>
+                            <ul>
+                                <li>Can see: All financial data, costs, revenues</li>
+                                <li>Cannot see: Individual customer details (privacy)</li>
+                            </ul>
+                        </div>
+                        <div class="department">
+                            <h5>📊 Analytics Team</h5>
+                            <ul>
+                                <li>Can see: Aggregated data, trends, patterns</li>
+                                <li>Cannot see: Individual customer names or emails</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="encryption">
+                <h3>🔐 Data Encryption</h3>
+                <p>Encryption is like writing in a secret code. Even if someone steals your data, they can't read it without the key!</p>
+                
+                <div class="encryption-types">
+                    <div class="encryption-card">
+                        <h4>💾 Encryption at Rest</h4>
+                        <p>Protects data while it's stored on disk (like a locked safe)</p>
+                        <div class="code-block">
+                            <pre><code>-- Enable encryption when creating cluster
+# In AWS Console:
+1. During cluster creation
+2. Encrypt database: Yes  
+3. Choose KMS key or use default
+4. All data automatically encrypted on disk</code></pre>
+                        </div>
+                        <div class="benefit-list">
+                            <p><strong>What this protects against:</strong></p>
+                            <ul>
+                                <li>🔒 Physical theft of hard drives</li>
+                                <li>💻 Unauthorized access to AWS storage</li>
+                                <li>🏢 Data center security breaches</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="encryption-card">
+                        <h4>🌐 Encryption in Transit</h4>
+                        <p>Protects data while traveling over the network (like a sealed envelope)</p>
+                        <div class="code-block">
+                            <pre><code>-- Connect using SSL (automatically encrypts connection)
+# Connection string example:
+jdbc:redshift://cluster.region.redshift.amazonaws.com:5439/database?ssl=true
+
+# All data traveling between your computer and Redshift is encrypted</code></pre>
+                        </div>
+                        <div class="benefit-list">
+                            <p><strong>What this protects against:</strong></p>
+                            <ul>
+                                <li>📡 Network eavesdropping</li>
+                                <li>🕵️ Man-in-the-middle attacks</li>
+                                <li>📶 Public WiFi security risks</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="compliance">
+                <h3>📋 Compliance and Auditing</h3>
+                <p>Compliance is like following school rules - there are regulations about how to handle certain types of data, especially personal information.</p>
+                
+                <div class="compliance-standards">
+                    <div class="standard-card">
+                        <h4>🛡️ GDPR (European Privacy Law)</h4>
+                        <p><strong>What it means:</strong> If you have European customers, you must protect their personal data and give them control over it.</p>
+                        <div class="gdpr-requirements">
+                            <h5>🔍 Key Requirements:</h5>
+                            <ul>
+                                <li>🔐 <strong>Data Encryption:</strong> Personal data must be encrypted</li>
+                                <li>👥 <strong>Access Control:</strong> Only authorized people can see personal data</li>
+                                <li>📝 <strong>Audit Logs:</strong> Track who accessed what data when</li>
+                                <li>🗑️ <strong>Right to Delete:</strong> Customers can request their data be deleted</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="standard-card">
+                        <h4>🏥 HIPAA (Healthcare Data)</h4>
+                        <p><strong>What it means:</strong> If you handle medical information, you must follow strict security rules.</p>
+                        <div class="hipaa-requirements">
+                            <h5>🏥 Key Requirements:</h5>
+                            <ul>
+                                <li>🔒 <strong>Physical Safeguards:</strong> Control who can access systems</li>
+                                <li>🛡️ <strong>Technical Safeguards:</strong> Encryption, access controls, audit logs</li>
+                                <li>📋 <strong>Administrative Safeguards:</strong> Policies, training, assigned security responsibilities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="audit-logging">
+                    <h4>📊 Setting Up Audit Logging</h4>
+                    <div class="code-block">
+                        <pre><code>-- Enable audit logging in Redshift
+# In AWS Console:
+1. Go to your cluster configuration
+2. Parameter groups → Create new parameter group
+3. Set enable_user_activity_logging = true
+4. Set log_statement = 'all' (logs all SQL statements)
+5. Associate parameter group with your cluster
+
+-- Query audit logs
+SELECT 
+    recordtime,
+    username, 
+    database_name,
+    query_text
+FROM stl_querytext 
+WHERE userid > 1  -- Exclude system queries
+ORDER BY recordtime DESC 
+LIMIT 100;</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="content-section">
+            <h2>💡 Real-World Projects</h2>
+            
+            <div class="projects-intro">
+                <h3>Learn by Doing: Hands-On Projects</h3>
+                <p>The best way to learn Redshift is by building real projects. These projects simulate actual business scenarios you'll encounter in your career!</p>
+            </div>
+
+            <div class="project-beginner">
+                <h3>🌱 Beginner Project: Online Store Analytics</h3>
+                <p><strong>Scenario:</strong> You work for a small online store that sells books. The owner wants to understand their sales better to make business decisions.</p>
+                
+                <div class="project-setup">
+                    <h4>📊 Project Setup</h4>
+                    <p><strong>Sample Data:</strong> We'll create fake but realistic e-commerce data</p>
+                    
+                    <div class="step-by-step">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Create Your Tables</h5>
+                                <div class="code-block">
+                                    <pre><code>-- Create customers table
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    city VARCHAR(50),
+    state VARCHAR(20),
+    signup_date DATE
+);
+
+-- Create products table  
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    book_title VARCHAR(200),
+    author VARCHAR(100),
+    genre VARCHAR(50),
+    price DECIMAL(8,2),
+    publication_year INTEGER
+);
+
+-- Create orders table
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    order_date DATE,
+    total_amount DECIMAL(10,2),
+    status VARCHAR(20)
+);
+
+-- Create order_items table (what was bought in each order)
+CREATE TABLE order_items (
+    order_item_id INTEGER PRIMARY KEY,
+    order_id INTEGER,
+    product_id INTEGER,
+    quantity INTEGER,
+    price_per_item DECIMAL(8,2)
+);</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Load Sample Data</h5>
+                                <div class="code-block">
+                                    <pre><code>-- Insert sample customers
+INSERT INTO customers VALUES 
+(1, 'John', 'Smith', 'john@email.com', 'New York', 'NY', '2023-01-15'),
+(2, 'Sarah', 'Johnson', 'sarah@email.com', 'Los Angeles', 'CA', '2023-02-20'),
+(3, 'Mike', 'Brown', 'mike@email.com', 'Chicago', 'IL', '2023-03-10'),
+(4, 'Emma', 'Davis', 'emma@email.com', 'Houston', 'TX', '2023-04-05');
+
+-- Insert sample products
+INSERT INTO products VALUES
+(1, 'The Great Gatsby', 'F. Scott Fitzgerald', 'Classic', 12.99, 1925),
+(2, 'To Kill a Mockingbird', 'Harper Lee', 'Classic', 13.99, 1960),
+(3, 'Harry Potter Book 1', 'J.K. Rowling', 'Fantasy', 15.99, 1997),
+(4, 'The Martian', 'Andy Weir', 'Sci-Fi', 14.99, 2011);
+
+-- Insert sample orders  
+INSERT INTO orders VALUES
+(1, 1, '2024-01-20', 28.98, 'completed'),
+(2, 2, '2024-01-22', 15.99, 'completed'),
+(3, 1, '2024-02-01', 14.99, 'completed'),
+(4, 3, '2024-02-15', 42.97, 'completed');</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-questions">
+                    <h4>🎯 Business Questions to Answer</h4>
+                    <p>Now let's answer real business questions the store owner might ask:</p>
+                    
+                    <div class="question-cards">
+                        <div class="question-card">
+                            <h5>❓ Question 1: "Who are our best customers?"</h5>
+                            <div class="code-block">
+                                <pre><code>-- Find customers who spent the most money
+SELECT 
+    c.first_name + ' ' + c.last_name as customer_name,
+    c.email,
+    SUM(o.total_amount) as total_spent,
+    COUNT(o.order_id) as number_of_orders
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.first_name, c.last_name, c.email
+ORDER BY total_spent DESC;</code></pre>
+                            </div>
+                            <div class="business-insight">
+                                <p><strong>📈 Business Insight:</strong> This helps identify VIP customers for special promotions and loyalty programs!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="question-card">
+                            <h5>❓ Question 2: "What are our bestselling books?"</h5>
+                            <div class="code-block">
+                                <pre><code>-- Find most popular books by number sold
+SELECT 
+    p.book_title,
+    p.author,
+    p.genre,
+    SUM(oi.quantity) as total_sold,
+    SUM(oi.quantity * oi.price_per_item) as total_revenue
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+JOIN orders o ON oi.order_id = o.order_id
+WHERE o.status = 'completed'
+GROUP BY p.product_id, p.book_title, p.author, p.genre
+ORDER BY total_sold DESC;</code></pre>
+                            </div>
+                            <div class="business-insight">
+                                <p><strong>📚 Business Insight:</strong> Stock more of these popular books and find similar titles to recommend!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="question-card">
+                            <h5>❓ Question 3: "How are our monthly sales trending?"</h5>
+                            <div class="code-block">
+                                <pre><code>-- Monthly sales trend analysis
+SELECT 
+    DATE_TRUNC('month', order_date) as sales_month,
+    COUNT(order_id) as orders_count,
+    SUM(total_amount) as monthly_revenue,
+    AVG(total_amount) as avg_order_value
+FROM orders 
+WHERE status = 'completed'
+GROUP BY DATE_TRUNC('month', order_date)
+ORDER BY sales_month;</code></pre>
+                            </div>
+                            <div class="business-insight">
+                                <p><strong>📊 Business Insight:</strong> Identify seasonal patterns and plan marketing campaigns for slow months!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-intermediate">
+                <h3>🚀 Intermediate Project: Marketing Campaign Analysis</h3>
+                <p><strong>Scenario:</strong> You work for a growing e-commerce company. The marketing team ran several campaigns and wants to know which ones drove the most sales.</p>
+                
+                <div class="project-challenge">
+                    <h4>🎯 Your Challenge</h4>
+                    <p>Build a complete marketing dashboard that tracks:</p>
+                    <ul>
+                        <li>📈 Campaign performance (clicks, conversions, revenue)</li>
+                        <li>💰 Return on investment (ROI) for each campaign</li>
+                        <li>👥 Customer acquisition cost</li>
+                        <li>🔄 Customer lifetime value</li>
+                    </ul>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <h4>📸 Screenshot: Marketing Dashboard</h4>
+                    <p>Business intelligence dashboard showing campaign performance metrics, conversion funnels, and ROI calculations.</p>
+                </div>
+            </div>
+
+            <div class="project-advanced">
+                <h3>🎓 Advanced Project: Real-Time Data Pipeline</h3>
+                <p><strong>Scenario:</strong> You're building a modern data platform for a streaming service (like Netflix). You need to process viewing data in near real-time to power recommendations.</p>
+                
+                <div class="architecture-overview">
+                    <h4>🏗️ System Architecture</h4>
+                    <div class="pipeline-steps">
+                        <div class="pipeline-step">
+                            <h5>1️⃣ Data Ingestion</h5>
+                            <p>Streaming viewing events from mobile apps and web browsers</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <h5>2️⃣ Real-time Processing</h5>
+                            <p>Amazon Kinesis processes events as they arrive</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <h5>3️⃣ Data Loading</h5>
+                            <p>Batch load processed events into Redshift every 15 minutes</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <h5>4️⃣ Analytics</h5>
+                            <p>Run complex queries to generate recommendations</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="real-world-complexity">
+                    <h4>🌟 Real-World Challenges You'll Solve</h4>
+                    <ul>
+                        <li>⚡ <strong>Performance:</strong> Queries must return results in under 2 seconds</li>
+                        <li>📊 <strong>Scale:</strong> Handle 10 million viewing events per hour</li>
+                        <li>🔄 <strong>Freshness:</strong> Recommendations based on last 24 hours of data</li>
+                        <li>💰 <strong>Cost:</strong> Stay under $10,000/month budget</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="project-resources">
+                <h3>📚 Additional Resources</h3>
+                <div class="resource-cards">
+                    <div class="resource-card">
+                        <h4>📊 Sample Datasets</h4>
+                        <ul>
+                            <li>🛒 E-commerce sales data (100K orders)</li>
+                            <li>📱 Mobile app analytics (1M events)</li>
+                            <li>🎬 Movie ratings and reviews (IMDb-style)</li>
+                            <li>🏦 Financial transactions (banking simulation)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <h4>🛠️ Tools and Templates</h4>
+                        <ul>
+                            <li>📋 Project planning templates</li>
+                            <li>📊 Dashboard mockups</li>
+                            <li>🔧 SQL query templates</li>
+                            <li>📈 Performance monitoring scripts</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <h4>🎯 Career Preparation</h4>
+                        <ul>
+                            <li>💼 Portfolio project ideas</li>
+                            <li>📝 Technical interview questions</li>
+                            <li>🏆 Certification practice exams</li>
+                            <li>🤝 Networking and community resources</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Quiz Section -->
+    <div id="quiz-container" class="quiz-container" style="display: none;">
+        <div class="quiz-header">
+            <h3>🎯 Test Your Redshift Knowledge</h3>
+            <button class="close-quiz" onclick="closeQuiz()">×</button>
+        </div>
+        <div class="quiz-content">
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="quiz-footer">
+                <button class="quiz-btn" onclick="submitAnswer()">Submit Answer</button>
+                <div class="quiz-progress">
+                    <span id="quiz-progress">Question 1 of 20</span>
+                </div>
+            </div>
+        </div>
+        <div class="quiz-result" id="quiz-result" style="display: none;">
+            <h4 id="result-title"></h4>
+            <p id="result-text"></p>
+            <button class="quiz-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="quiz-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

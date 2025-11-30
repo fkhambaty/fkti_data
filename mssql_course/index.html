@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FKTI - Microsoft SQL Server Mastery | Fakhruddin Khambaty Training Institute</title>
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="../assets/design-system.css">
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <img src="../assets/mssql-logo.svg" alt="Microsoft SQL Server Logo" class="logo">
+                <div class="header-text">
+                    <h1>🗄️ Master Microsoft SQL Server</h1>
+                    <p class="institute-name">FKTI - Fakhruddin Khambaty Training Institute</p>
+                    <p class="tagline">From T-SQL Basics to Enterprise Administration</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-section">
+                <button class="nav-btn hub-btn" onclick="goToHub()">← FKTI Hub</button>
+            </div>
+            <div class="nav-section main-nav">
+                <button class="nav-btn" onclick="showSection('welcome')">🏠 Welcome</button>
+                <button class="nav-btn" onclick="showSection('history')">📜 History</button>
+                <button class="nav-btn" onclick="showSection('installation')">⚙️ Installation</button>
+                <button class="nav-btn" onclick="showSection('basics')">📚 T-SQL Basics</button>
+                <button class="nav-btn" onclick="showSection('advanced')">🚀 Advanced</button>
+                <button class="nav-btn" onclick="showSection('administration')">⚙️ Administration</button>
+                <button class="nav-btn" onclick="showSection('performance')">⚡ Performance</button>
+                <button class="nav-btn" onclick="showSection('security')">🔒 Security</button>
+                <button class="nav-btn" onclick="showSection('projects')">💡 Projects</button>
+                <button class="nav-btn" onclick="showSection('exercises')">🎯 Exercises</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-text" id="progressText">0% Complete</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Welcome Section -->
+        <section id="welcome" class="content-section active">
+            <h2>🎯 Welcome to SQL Server Mastery!</h2>
+            
+            <div class="welcome-card">
+                <h3>What You'll Learn</h3>
+                <ul class="feature-list">
+                    <li>✅ T-SQL programming from basics to advanced</li>
+                    <li>✅ Database design and normalization principles</li>
+                    <li>✅ Performance tuning and query optimization</li>
+                    <li>✅ Backup, recovery, and high availability</li>
+                    <li>✅ Security implementation and best practices</li>
+                    <li>✅ Integration Services (SSIS) and Reporting</li>
+                    <li>✅ Enterprise administration and monitoring</li>
+                    <li>✅ Real-world database projects</li>
+                </ul>
+            </div>
+
+            <div class="welcome-card">
+                <h3>Why Microsoft SQL Server?</h3>
+                <p>SQL Server powers the data infrastructure of countless organizations worldwide. It's the backbone of enterprise applications at:</p>
+                <ul class="company-list">
+                    <li>🏦 JPMorgan Chase - core banking systems and risk management</li>
+                    <li>🏥 Kaiser Permanente - patient records and healthcare analytics</li>
+                    <li>🛒 Walmart - inventory management and supply chain</li>
+                    <li>✈️ American Airlines - reservation systems and operations</li>
+                    <li>🎮 Xbox - gaming services and user data</li>
+                    <li>📱 Stack Overflow - powering the developer community</li>
+                </ul>
+            </div>
+
+            <div class="screenshot-placeholder">
+                <h4>📸 Screenshot: SQL Server Management Studio Overview</h4>
+                <div class="mock-screenshot">
+                    <div class="screenshot-header">SQL Server Management Studio - Object Explorer</div>
+                    <div class="screenshot-content">
+                        <div class="db-item">
+                            <span class="db-icon">📊</span> AdventureWorks2019
+                            <small>Ready • 2.3GB</small>
+                        </div>
+                        <div class="db-item">
+                            <span class="db-icon">🏪</span> NorthwindTraders
+                            <small>Online • 15MB</small>
+                        </div>
+                        <div class="db-item">
+                            <span class="db-icon">📈</span> SalesAnalytics
+                            <small>Backup running... • 850MB</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="real-world-example">
+                <h3>🌟 Real-World Success Story</h3>
+                <div class="story-card">
+                    <h4>Stack Overflow's Database Architecture</h4>
+                    <p><strong>Challenge:</strong> Stack Overflow serves 100 million+ page views monthly with complex Q&A data relationships and real-time search.</p>
+                    <p><strong>SQL Server Solution:</strong></p>
+                    <ul>
+                        <li>🔍 **Advanced indexing strategies** for millisecond search performance</li>
+                        <li>📊 **Optimized T-SQL queries** handling millions of posts and comments</li>
+                        <li>⚡ **In-memory OLTP** for real-time voting and reputation systems</li>
+                        <li>🔄 **Always On Availability Groups** for 99.99% uptime</li>
+                        <li>📈 **Query Store** for automatic performance optimization</li>
+                    </ul>
+                    <p><strong>Results:</strong></p>
+                    <ul>
+                        <li>✨ **Sub-second search** across 50+ million questions</li>
+                        <li>🚀 **40ms average page load** times</li>
+                        <li>💪 **99.99% uptime** serving millions of developers</li>
+                        <li>💰 **50% reduction** in hardware costs through optimization</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="comparison-card">
+                <h3>🔍 SQL Server vs Other Database Systems</h3>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>SQL Server</th>
+                                <th>MySQL</th>
+                                <th>Oracle</th>
+                                <th>PostgreSQL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Enterprise Features</td>
+                                <td>✅ Complete suite</td>
+                                <td>🔶 Limited</td>
+                                <td>✅ Extensive</td>
+                                <td>🔶 Good</td>
+                            </tr>
+                            <tr>
+                                <td>Windows Integration</td>
+                                <td>✅ Native</td>
+                                <td>❌ Third-party</td>
+                                <td>🔶 Supported</td>
+                                <td>🔶 Supported</td>
+                            </tr>
+                            <tr>
+                                <td>BI & Reporting</td>
+                                <td>✅ Built-in SSRS/SSIS</td>
+                                <td>❌ External tools</td>
+                                <td>✅ Extensive</td>
+                                <td>🔶 Third-party</td>
+                            </tr>
+                            <tr>
+                                <td>Cloud Integration</td>
+                                <td>✅ Azure native</td>
+                                <td>🔶 Multi-cloud</td>
+                                <td>✅ Oracle Cloud</td>
+                                <td>🔶 Multi-cloud</td>
+                            </tr>
+                            <tr>
+                                <td>Cost (Enterprise)</td>
+                                <td>$$$ High</td>
+                                <td>$ Low</td>
+                                <td>$$$$ Very High</td>
+                                <td>$ Free</td>
+                            </tr>
+                            <tr>
+                                <td>Learning Curve</td>
+                                <td>🔶 Moderate</td>
+                                <td>✅ Easy</td>
+                                <td>❌ Steep</td>
+                                <td>🔶 Moderate</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="content-section">
+            <h2>📜 The Evolution of Microsoft SQL Server</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1988</div>
+                    <div class="timeline-content">
+                        <h3>🌱 The Birth of SQL Server</h3>
+                        <p>Microsoft partnered with Sybase and Ashton-Tate to create SQL Server 1.0:</p>
+                        <ul>
+                            <li>📱 Designed for OS/2 operating system</li>
+                            <li>🤝 Joint development with Sybase expertise</li>
+                            <li>💾 16MB RAM requirement (huge at the time!)</li>
+                            <li>🏢 Targeting small to medium businesses</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: SQL Server 1.0 Interface</h4>
+                            <p>Original text-based SQL Server 1.0 command interface running on OS/2.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1993</div>
+                    <div class="timeline-content">
+                        <h3>🪟 Windows NT Revolution</h3>
+                        <p>SQL Server 4.2 introduced Windows NT support:</p>
+                        <ul>
+                            <li>🖥️ First GUI-based management tools</li>
+                            <li>🔄 Improved backup and recovery systems</li>
+                            <li>📈 Better performance on Windows NT</li>
+                            <li>🎯 Competing directly with Oracle</li>
+                        </ul>
+                        <div class="real-world-example">
+                            <h4>Microsoft's Internal Challenge</h4>
+                            <p>Microsoft was using Oracle for their own internal systems. SQL Server had to prove itself by replacing Oracle in Microsoft's own operations - a bold internal test!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1995</div>
+                    <div class="timeline-content">
+                        <h3>🚀 SQL Server 6.0 - Game Changer</h3>
+                        <p>Complete rewrite that established SQL Server as enterprise-ready:</p>
+                        <ul>
+                            <li>🏗️ New storage engine architecture</li>
+                            <li>🔍 Advanced query optimizer</li>
+                            <li>⚡ Dramatic performance improvements</li>
+                            <li>🏢 Enterprise scalability features</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: SQL Server 6.0 Enterprise Manager</h4>
+                            <p>The revolutionary Enterprise Manager interface that made database administration visual and intuitive.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1998</div>
+                    <div class="timeline-content">
+                        <h3>🌐 SQL Server 7.0 - Web Era</h3>
+                        <p>Designed for the emerging web and e-commerce boom:</p>
+                        <ul>
+                            <li>🌍 Web integration capabilities</li>
+                            <li>🤖 Self-tuning database engine</li>
+                            <li>📊 Integrated data warehousing (OLAP)</li>
+                            <li>🔄 Replication improvements</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2000</div>
+                    <div class="timeline-content">
+                        <h3>🏢 SQL Server 2000 - Enterprise Dominance</h3>
+                        <p>Microsoft's answer to Oracle's enterprise dominance:</p>
+                        <ul>
+                            <li>📈 Multi-instance support (up to 16 instances)</li>
+                            <li>🔍 Full-text search capabilities</li>
+                            <li>📊 Analysis Services (OLAP cubes)</li>
+                            <li>🔄 Enhanced replication and clustering</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: SQL Server 2000 Analysis Services</h4>
+                            <div class="mock-screenshot">
+                                <div class="screenshot-header">Analysis Services - Cube Browser</div>
+                                <div class="screenshot-content">
+                                    <div class="cube-dimension">
+                                        <span class="cube-icon">📊</span> <strong>Sales Cube</strong>
+                                        <small>5 dimensions, 8 measures</small>
+                                    </div>
+                                    <div class="cube-dimension">
+                                        <span class="cube-icon">📈</span> <strong>Time Dimension</strong>
+                                        <small>Year → Quarter → Month → Day</small>
+                                    </div>
+                                    <div class="cube-dimension">
+                                        <span class="cube-icon">👥</span> <strong>Customer Dimension</strong>
+                                        <small>Region → Country → City</small>
+                                    </div>
+                                    <div class="cube-measure">
+                                        <strong>Measures:</strong> Sales Amount, Quantity, Profit Margin
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2005</div>
+                    <div class="timeline-content">
+                        <h3>🧬 SQL Server 2005 - .NET Integration</h3>
+                        <p>Revolutionary integration with Microsoft's development ecosystem:</p>
+                        <ul>
+                            <li>💻 .NET CLR integration (C# stored procedures!)</li>
+                            <li>📊 SQL Server Reporting Services (SSRS)</li>
+                            <li>📈 SQL Server Integration Services (SSIS)</li>
+                            <li>🔒 Enhanced security with encryption</li>
+                        </ul>
+                        <div class="real-world-example">
+                            <h4>Enterprise Adoption Explosion</h4>
+                            <p><strong>Major migrations:</strong> Companies like E*TRADE, Dell, and Xerox migrated from Oracle to SQL Server 2005, saving millions in licensing costs while improving performance.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2008</div>
+                    <div class="timeline-content">
+                        <h3>📊 SQL Server 2008 - Data Platform</h3>
+                        <p>Transformation into a comprehensive data platform:</p>
+                        <ul>
+                            <li>🗺️ Spatial data types (geography/geometry)</li>
+                            <li>📷 FILESTREAM for large binary data</li>
+                            <li>🔍 Change Data Capture (CDC)</li>
+                            <li>⚡ Policy-based management</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2012</div>
+                    <div class="timeline-content">
+                        <h3>☁️ SQL Server 2012 - Cloud Ready</h3>
+                        <p>First cloud-aware version with hybrid capabilities:</p>
+                        <ul>
+                            <li>☁️ Always On Availability Groups</li>
+                            <li>📊 Columnstore indexes for analytics</li>
+                            <li>🔍 Full-text semantic search</li>
+                            <li>🌐 Azure integration features</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2014</div>
+                    <div class="timeline-content">
+                        <h3>💾 SQL Server 2014 - In-Memory Revolution</h3>
+                        <p>Breakthrough in-memory technology:</p>
+                        <ul>
+                            <li>🚀 In-Memory OLTP (Hekaton) - 30x performance boost</li>
+                            <li>🔄 Updateable clustered columnstore indexes</li>
+                            <li>☁️ Hybrid cloud capabilities</li>
+                            <li>📱 Mobile device support</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: In-Memory OLTP Performance</h4>
+                            <div class="mock-screenshot">
+                                <div class="screenshot-header">Performance Monitor - In-Memory OLTP Comparison</div>
+                                <div class="screenshot-content">
+                                    <div class="perf-comparison">
+                                        <div class="perf-metric">
+                                            <strong>Traditional Tables:</strong>
+                                            <span class="perf-value slow">2.3 seconds</span>
+                                        </div>
+                                        <div class="perf-metric">
+                                            <strong>In-Memory OLTP:</strong>
+                                            <span class="perf-value fast">0.08 seconds</span>
+                                        </div>
+                                        <div class="perf-improvement">
+                                            <span class="improvement-badge">29x Faster!</span>
+                                        </div>
+                                        <div class="perf-stats">
+                                            <div class="stat-item">
+                                                <span>Transactions/sec:</span> <strong>45,000</strong>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span>Memory Usage:</span> <strong>1.2 GB</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2016</div>
+                    <div class="timeline-content">
+                        <h3>🤖 SQL Server 2016 - Intelligence Built-In</h3>
+                        <p>Integration of advanced analytics and machine learning:</p>
+                        <ul>
+                            <li>🧠 R integration for machine learning</li>
+                            <li>🔐 Always Encrypted for data protection</li>
+                            <li>📊 Real-time operational analytics</li>
+                            <li>🔍 Query Store for performance insights</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2017</div>
+                    <div class="timeline-content">
+                        <h3>🐧 SQL Server 2017 - Cross-Platform</h3>
+                        <p>Historic expansion beyond Windows:</p>
+                        <ul>
+                            <li>🐧 Linux support (Ubuntu, RHEL, SUSE)</li>
+                            <li>🐳 Docker container support</li>
+                            <li>🧠 Python integration for ML</li>
+                            <li>📊 Graph database capabilities</li>
+                        </ul>
+                        <div class="real-world-example">
+                            <h4>Cross-Platform Success</h4>
+                            <p><strong>Breakthrough:</strong> Companies like GoDaddy and PayPal adopted SQL Server on Linux, reducing infrastructure costs by 40% while maintaining Windows application compatibility.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2019-2022</div>
+                    <div class="timeline-content">
+                        <h3>🌟 Modern SQL Server - Intelligent & Hybrid</h3>
+                        <p>Current generation with AI and cloud-first features:</p>
+                        <ul>
+                            <li>🤖 **Intelligent Query Processing** with machine learning</li>
+                            <li>☁️ **Azure Arc** for hybrid management</li>
+                            <li>⚡ **Accelerated Database Recovery** (ADR)</li>
+                            <li>🔄 **Big Data Clusters** with Kubernetes</li>
+                            <li>🧠 **Machine Learning Services** built-in</li>
+                            <li>📊 **Ledger** for blockchain-like immutability</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-impact-card">
+                <h3>📊 SQL Server Today</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">1.4 Billion</div>
+                        <div class="stat-label">Licenses Worldwide</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">#2</div>
+                        <div class="stat-label">Database Market Share</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Fortune 500 Usage</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$6.2B</div>
+                        <div class="stat-label">Annual Revenue (2023)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Section -->
+        <section id="installation" class="content-section">
+            <h2>⚙️ Complete SQL Server Installation Guide</h2>
+            
+            <div class="installation-tabs">
+                <button class="tab-btn active" onclick="showTab('developer-edition')">💻 Developer Edition</button>
+                <button class="tab-btn" onclick="showTab('express-edition')">🆓 Express Edition</button>
+                <button class="tab-btn" onclick="showTab('enterprise-setup')">🏢 Enterprise</button>
+                <button class="tab-btn" onclick="showTab('azure-sql')">☁️ Azure SQL</button>
+            </div>
+
+            <div id="developer-edition" class="tab-content active">
+                <h3>SQL Server Developer Edition (Recommended for Learning)</h3>
+                <div class="step-by-step">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Download SQL Server Developer Edition</h4>
+                            <p>Visit the official Microsoft download page</p>
+                            <div class="code-block">
+                                <pre><code># Download links:
+https://www.microsoft.com/en-us/sql-server/sql-server-downloads
+
+# Choose: Developer Edition (Free)
+# File size: ~1.4 GB
+# Includes: Full enterprise features for development</code></pre>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: SQL Server Download Page</h4>
+                                <p>Microsoft SQL Server downloads page highlighting the free Developer Edition option.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Run Installation Media</h4>
+                            <div class="code-block">
+                                <pre><code># System Requirements:
+- Windows 10 / Windows Server 2016+
+- 4GB RAM minimum (8GB+ recommended)
+- 4GB available disk space
+- .NET Framework 4.6+
+
+# Run as Administrator:
+1. Right-click setup.exe
+2. Choose "Run as administrator"
+3. Select "New SQL Server installation"</code></pre>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: SQL Server Installation Center</h4>
+                                <p>SQL Server Installation Center main screen with installation options highlighted.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Feature Selection (Recommended for Learning)</h4>
+                            <div class="feature-checklist">
+                                <h5>✅ Essential Features to Install:</h5>
+                                <ul class="checklist">
+                                    <li>✅ **Database Engine Services** (Core functionality)</li>
+                                    <li>✅ **SQL Server Management Tools - Basic** (SSMS)</li>
+                                    <li>✅ **SQL Server Management Tools - Complete** (Advanced tools)</li>
+                                    <li>✅ **Integration Services** (SSIS for ETL)</li>
+                                    <li>✅ **Reporting Services** (SSRS for reports)</li>
+                                    <li>✅ **Analysis Services** (SSAS for OLAP)</li>
+                                    <li>✅ **Machine Learning Services** (Python/R)</li>
+                                </ul>
+                                
+                                <h5>🔶 Optional Features:</h5>
+                                <ul class="checklist optional">
+                                    <li>🔶 **Full-Text and Semantic Extractions** (Text search)</li>
+                                    <li>🔶 **Data Quality Services** (DQS for data cleansing)</li>
+                                    <li>🔶 **Master Data Services** (MDS for data management)</li>
+                                </ul>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: SQL Server Feature Selection Screen</h4>
+                                <div class="mock-screenshot">
+                                    <div class="screenshot-header">SQL Server Installation Center - Feature Selection</div>
+                                    <div class="screenshot-content">
+                                        <div class="feature-option checked">
+                                            <span class="checkbox">✅</span> Database Engine Services
+                                            <small>Core SQL Server functionality</small>
+                                        </div>
+                                        <div class="feature-option checked">
+                                            <span class="checkbox">✅</span> SQL Server Management Tools - Basic
+                                            <small>SSMS for database management</small>
+                                        </div>
+                                        <div class="feature-option checked">
+                                            <span class="checkbox">✅</span> Documentation Components
+                                            <small>Help and documentation</small>
+                                        </div>
+                                        <div class="feature-option unchecked">
+                                            <span class="checkbox">☐</span> Analysis Services
+                                            <small>Advanced analytics (optional)</small>
+                                        </div>
+                                        <div class="feature-option unchecked">
+                                            <span class="checkbox">☐</span> Reporting Services
+                                            <small>Report generation (optional)</small>
+                                        </div>
+                                        <div class="install-info">
+                                            <strong>Total Size:</strong> 1.2 GB
+                                            <button class="install-btn">Next →</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Instance Configuration</h4>
+                            <div class="config-options">
+                                <h5>🎯 Recommended Configuration:</h5>
+                                <div class="form-group">
+                                    <label>Instance type:</label>
+                                    <code>Default instance (MSSQLSERVER)</code>
+                                </div>
+                                <div class="form-group">
+                                    <label>Instance ID:</label>
+                                    <code>MSSQLSERVER</code>
+                                </div>
+                                <div class="form-group">
+                                    <label>Install directory:</label>
+                                    <code>C:\Program Files\Microsoft SQL Server\</code>
+                                </div>
+                            </div>
+                            <div class="real-world-tip">
+                                <h5>💡 Enterprise Tip</h5>
+                                <p><strong>Multiple Instances:</strong> In production, companies like Microsoft run multiple SQL Server instances on powerful servers - one for OLTP, another for reporting, and a third for data warehousing.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Database Engine Configuration</h4>
+                            <div class="auth-setup">
+                                <h5>🔐 Authentication Mode Setup:</h5>
+                                <div class="auth-options">
+                                    <div class="auth-option recommended">
+                                        <h6>✅ Mixed Mode (Recommended for Learning)</h6>
+                                        <ul>
+                                            <li>Supports both Windows and SQL Server authentication</li>
+                                            <li>Create strong password for 'sa' account</li>
+                                            <li>Add current Windows user as administrator</li>
+                                        </ul>
+                                    </div>
+                                    <div class="auth-option">
+                                        <h6>🔶 Windows Authentication Only</h6>
+                                        <ul>
+                                            <li>More secure for domain environments</li>
+                                            <li>Uses Active Directory credentials</li>
+                                            <li>Recommended for production</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: Database Engine Configuration</h4>
+                                <p>Authentication mode selection and administrator account configuration screen.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <h4>Complete Installation</h4>
+                            <div class="installation-progress">
+                                <h5>⏱️ Installation Timeline:</h5>
+                                <div class="timeline-step">
+                                    <span class="time">0-5 min:</span>
+                                    <span class="status">Copying installation files</span>
+                                </div>
+                                <div class="timeline-step">
+                                    <span class="time">5-15 min:</span>
+                                    <span class="status">Installing selected features</span>
+                                </div>
+                                <div class="timeline-step">
+                                    <span class="time">15-20 min:</span>
+                                    <span class="status">Configuring services and databases</span>
+                                </div>
+                                <div class="timeline-step">
+                                    <span class="time">20-25 min:</span>
+                                    <span class="status">Final configuration and startup</span>
+                                </div>
+                            </div>
+                            
+                            <div class="verification-steps">
+                                <h5>✅ Verify Installation:</h5>
+                                <div class="code-block">
+                                    <pre><code># Check if SQL Server service is running:
+1. Press Win+R, type "services.msc"
+2. Look for "SQL Server (MSSQLSERVER)" - should be "Running"
+
+# Test connection:
+1. Open SQL Server Management Studio (SSMS)
+2. Server name: localhost or (local)
+3. Authentication: Windows Authentication
+4. Click "Connect"</code></pre>
+                                </div>
+                            </div>
+                            
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: Successful Installation</h4>
+                                <p>SQL Server installation completion screen with all components successfully installed.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Continue with other installation tabs... -->
+
+        </section>
+
+        <!-- T-SQL Basics Section -->
+        <section id="basics" class="content-section">
+            <h2>📚 T-SQL Fundamentals</h2>
+            
+            <div class="concept-card">
+                <h3>🔤 What is T-SQL?</h3>
+                <p>T-SQL (Transact-SQL) is Microsoft's extension of SQL that adds procedural programming, local variables, exception handling, and many other features to standard SQL.</p>
+                
+                <div class="tsql-features">
+                    <h4>🚀 Key T-SQL Features</h4>
+                    <ul>
+                        <li>🔄 **Control flow** - IF/ELSE, WHILE loops, TRY/CATCH</li>
+                        <li>📊 **Window functions** - ROW_NUMBER(), RANK(), PARTITION BY</li>
+                        <li>🔗 **Common Table Expressions (CTEs)** - Recursive queries</li>
+                        <li>📦 **Stored procedures and functions** - Reusable code blocks</li>
+                        <li>⚡ **Advanced joins** - MERGE, APPLY operators</li>
+                        <li>🎯 **Pivot/Unpivot** - Data transformation operations</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <h3>📝 Basic T-SQL Syntax</h3>
+                
+                <div class="syntax-example">
+                    <h4>🔍 SELECT Statement Structure</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">SELECT 
+    column1,
+    column2,
+    SUM(column3) as total_amount
+FROM schema.table_name
+WHERE condition
+GROUP BY column1, column2
+HAVING SUM(column3) > 1000
+ORDER BY column1 DESC;</code></pre>
+                    </div>
+                </div>
+
+                <div class="syntax-example">
+                    <h4>📊 Window Functions</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- Ranking functions
+SELECT 
+    CustomerID,
+    OrderDate,
+    OrderTotal,
+    ROW_NUMBER() OVER (PARTITION BY CustomerID ORDER BY OrderDate) as OrderSequence,
+    RANK() OVER (ORDER BY OrderTotal DESC) as OrderRank,
+    LAG(OrderTotal) OVER (PARTITION BY CustomerID ORDER BY OrderDate) as PreviousOrder
+FROM Orders;</code></pre>
+                    </div>
+                </div>
+
+                <div class="real-world-example">
+                    <h4>🌟 Real-World Application</h4>
+                    <p><strong>Banking Example:</strong> JPMorgan Chase uses similar T-SQL queries to calculate customer account rankings, track transaction sequences, and identify unusual spending patterns in real-time fraud detection systems.</p>
+                </div>
+            </div>
+
+            <div class="hands-on-exercise">
+                <h3>🔬 Try It Yourself</h3>
+                <div class="exercise-steps">
+                    <p><strong>Exercise 1: Customer Analysis Query</strong></p>
+                    <ol>
+                        <li>Open SQL Server Management Studio (SSMS)</li>
+                        <li>Connect to your SQL Server instance</li>
+                        <li>Create a sample Customers table with test data</li>
+                        <li>Write a query to find top 10 customers by total purchases</li>
+                        <li>Add ranking and calculate running totals</li>
+                    </ol>
+                </div>
+
+                <div class="sample-data">
+                    <h4>📊 Sample Data Setup</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- Create sample tables
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    FirstName NVARCHAR(50),
+    LastName NVARCHAR(50),
+    Email NVARCHAR(100),
+    City NVARCHAR(50)
+);
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    OrderDate DATE,
+    TotalAmount DECIMAL(10,2),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Insert sample data
+INSERT INTO Customers VALUES 
+(1, 'John', 'Doe', 'john@email.com', 'New York'),
+(2, 'Jane', 'Smith', 'jane@email.com', 'Chicago'),
+(3, 'Mike', 'Johnson', 'mike@email.com', 'Los Angeles');</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced T-SQL Section -->
+        <section id="advanced" class="content-section">
+            <h2>🚀 Advanced T-SQL Techniques</h2>
+            
+            <div class="advanced-concept">
+                <h3>🔄 Common Table Expressions (CTEs)</h3>
+                <p>CTEs provide a way to write more readable queries and enable recursive operations.</p>
+                
+                <div class="cte-examples">
+                    <div class="cte-example">
+                        <h4>📊 Basic CTE for Complex Joins</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Calculate customer lifetime value using CTE
+WITH CustomerSummary AS (
+    SELECT 
+        c.CustomerID,
+        c.FirstName + ' ' + c.LastName as CustomerName,
+        COUNT(o.OrderID) as TotalOrders,
+        SUM(o.TotalAmount) as LifetimeValue,
+        AVG(o.TotalAmount) as AverageOrderValue,
+        MIN(o.OrderDate) as FirstOrder,
+        MAX(o.OrderDate) as LastOrder
+    FROM Customers c
+    LEFT JOIN Orders o ON c.CustomerID = o.CustomerID
+    GROUP BY c.CustomerID, c.FirstName, c.LastName
+),
+CustomerSegments AS (
+    SELECT 
+        *,
+        CASE 
+            WHEN LifetimeValue >= 10000 THEN 'Platinum'
+            WHEN LifetimeValue >= 5000 THEN 'Gold'
+            WHEN LifetimeValue >= 1000 THEN 'Silver'
+            ELSE 'Bronze'
+        END as CustomerTier
+    FROM CustomerSummary
+)
+SELECT * FROM CustomerSegments
+ORDER BY LifetimeValue DESC;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="cte-example">
+                        <h4>🔄 Recursive CTE for Hierarchical Data</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Employee hierarchy with recursive CTE
+WITH EmployeeHierarchy AS (
+    -- Anchor: Top level managers
+    SELECT 
+        EmployeeID,
+        ManagerID,
+        FirstName,
+        LastName,
+        Title,
+        0 as Level,
+        CAST(FirstName + ' ' + LastName AS NVARCHAR(1000)) as HierarchyPath
+    FROM Employees 
+    WHERE ManagerID IS NULL
+    
+    UNION ALL
+    
+    -- Recursive: All subordinates
+    SELECT 
+        e.EmployeeID,
+        e.ManagerID,
+        e.FirstName,
+        e.LastName,
+        e.Title,
+        eh.Level + 1,
+        CAST(eh.HierarchyPath + ' -> ' + e.FirstName + ' ' + e.LastName AS NVARCHAR(1000))
+    FROM Employees e
+    INNER JOIN EmployeeHierarchy eh ON e.ManagerID = eh.EmployeeID
+    WHERE eh.Level < 10  -- Prevent infinite recursion
+)
+SELECT * FROM EmployeeHierarchy
+ORDER BY Level, HierarchyPath;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advanced-concept">
+                <h3>🔗 MERGE Statement</h3>
+                <p>The MERGE statement performs INSERT, UPDATE, or DELETE operations in a single statement based on the results of a JOIN.</p>
+                
+                <div class="merge-example">
+                    <h4>🔄 Upsert Operations with MERGE</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- Synchronize customer data from staging table
+MERGE Customers AS target
+USING StagingCustomers AS source
+ON target.CustomerID = source.CustomerID
+
+WHEN MATCHED AND (
+    target.Email != source.Email OR 
+    target.FirstName != source.FirstName OR 
+    target.LastName != source.LastName
+) THEN
+    UPDATE SET 
+        Email = source.Email,
+        FirstName = source.FirstName,
+        LastName = source.LastName,
+        ModifiedDate = GETDATE()
+
+WHEN NOT MATCHED BY TARGET THEN
+    INSERT (CustomerID, FirstName, LastName, Email, CreatedDate)
+    VALUES (source.CustomerID, source.FirstName, source.LastName, source.Email, GETDATE())
+
+WHEN NOT MATCHED BY SOURCE THEN
+    UPDATE SET IsActive = 0, ModifiedDate = GETDATE()
+
+OUTPUT $action, inserted.CustomerID, deleted.CustomerID;</code></pre>
+                    </div>
+                    
+                    <div class="real-world-example">
+                        <h4>🏦 Enterprise Use Case</h4>
+                        <p><strong>Bank of America Example:</strong> Uses MERGE statements to synchronize customer data across multiple systems, handling millions of records nightly while maintaining data consistency and audit trails.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advanced-concept">
+                <h3>📊 Pivot and Unpivot Operations</h3>
+                
+                <div class="pivot-examples">
+                    <div class="pivot-example">
+                        <h4>↔️ PIVOT Example</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Transform rows to columns for sales by quarter
+SELECT 
+    ProductName,
+    ISNULL([Q1], 0) as Q1_Sales,
+    ISNULL([Q2], 0) as Q2_Sales,
+    ISNULL([Q3], 0) as Q3_Sales,
+    ISNULL([Q4], 0) as Q4_Sales,
+    ISNULL([Q1], 0) + ISNULL([Q2], 0) + ISNULL([Q3], 0) + ISNULL([Q4], 0) as Total_Sales
+FROM (
+    SELECT 
+        ProductName,
+        'Q' + CAST(DATEPART(QUARTER, OrderDate) AS VARCHAR) as Quarter,
+        TotalAmount
+    FROM Products p
+    INNER JOIN OrderDetails od ON p.ProductID = od.ProductID
+    INNER JOIN Orders o ON od.OrderID = o.OrderID
+    WHERE YEAR(OrderDate) = 2024
+) as SourceTable
+PIVOT (
+    SUM(TotalAmount)
+    FOR Quarter IN ([Q1], [Q2], [Q3], [Q4])
+) as PivotTable
+ORDER BY Total_Sales DESC;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="pivot-example">
+                        <h4>↕️ Dynamic PIVOT</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Dynamic PIVOT for unknown number of categories
+DECLARE @columns NVARCHAR(MAX), @sql NVARCHAR(MAX)
+
+-- Get distinct categories
+SELECT @columns = COALESCE(@columns + ',', '') + QUOTENAME(Category)
+FROM (SELECT DISTINCT Category FROM Products) as Categories
+
+-- Build dynamic SQL
+SET @sql = '
+SELECT ProductName, ' + @columns + ' 
+FROM (
+    SELECT p.ProductName, p.Category, od.Quantity
+    FROM Products p
+    INNER JOIN OrderDetails od ON p.ProductID = od.ProductID
+) as src
+PIVOT (
+    SUM(Quantity) FOR Category IN (' + @columns + ')
+) as pvt
+ORDER BY ProductName'
+
+EXEC sp_executesql @sql</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Administration Section -->
+        <section id="administration" class="content-section">
+            <h2>⚙️ SQL Server Administration</h2>
+            
+            <div class="admin-concept">
+                <h3>🗄️ Database Management</h3>
+                
+                <div class="database-operations">
+                    <div class="operation-card">
+                        <h4>🆕 Database Creation and Configuration</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Create database with custom settings
+CREATE DATABASE [CompanyDB]
+ON (
+    NAME = 'CompanyDB_Data',
+    FILENAME = 'C:\Data\CompanyDB_Data.mdf',
+    SIZE = 100MB,
+    MAXSIZE = 10GB,
+    FILEGROWTH = 10MB
+)
+LOG ON (
+    NAME = 'CompanyDB_Log',
+    FILENAME = 'C:\Logs\CompanyDB_Log.ldf',
+    SIZE = 10MB,
+    MAXSIZE = 1GB,
+    FILEGROWTH = 10%
+);
+
+-- Set database options
+ALTER DATABASE [CompanyDB] SET RECOVERY FULL;
+ALTER DATABASE [CompanyDB] SET AUTO_SHRINK OFF;
+ALTER DATABASE [CompanyDB] SET PAGE_VERIFY CHECKSUM;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="operation-card">
+                        <h4>👥 User Management and Security</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Create login and user
+CREATE LOGIN [AppUser] WITH PASSWORD = 'SecureP@ssw0rd123';
+USE [CompanyDB];
+CREATE USER [AppUser] FOR LOGIN [AppUser];
+
+-- Create custom role
+CREATE ROLE [DataReader_Writer];
+GRANT SELECT, INSERT, UPDATE ON SCHEMA::dbo TO [DataReader_Writer];
+
+-- Add user to role
+ALTER ROLE [DataReader_Writer] ADD MEMBER [AppUser];
+
+-- Grant specific permissions
+GRANT EXECUTE ON [dbo].[GetCustomerOrders] TO [AppUser];</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-concept">
+                <h3>💾 Backup and Recovery</h3>
+                
+                <div class="backup-strategies">
+                    <div class="backup-type">
+                        <h4>🔄 Automated Backup Strategy</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Full backup (Weekly)
+BACKUP DATABASE [CompanyDB] 
+TO DISK = 'C:\Backups\CompanyDB_Full_20241201.bak'
+WITH FORMAT, INIT, COMPRESSION, STATS = 10;
+
+-- Differential backup (Daily)
+BACKUP DATABASE [CompanyDB] 
+TO DISK = 'C:\Backups\CompanyDB_Diff_20241201.bak'
+WITH DIFFERENTIAL, COMPRESSION, STATS = 10;
+
+-- Transaction log backup (Every 15 minutes)
+BACKUP LOG [CompanyDB] 
+TO DISK = 'C:\Backups\CompanyDB_Log_202412011500.trn'
+WITH COMPRESSION, STATS = 10;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="backup-type">
+                        <h4>🔧 Point-in-Time Recovery</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Restore database to specific point in time
+USE master;
+
+-- Restore full backup
+RESTORE DATABASE [CompanyDB_Recovery] 
+FROM DISK = 'C:\Backups\CompanyDB_Full_20241201.bak'
+WITH REPLACE, NORECOVERY;
+
+-- Restore differential backup
+RESTORE DATABASE [CompanyDB_Recovery] 
+FROM DISK = 'C:\Backups\CompanyDB_Diff_20241201.bak'
+WITH NORECOVERY;
+
+-- Restore log to specific time
+RESTORE LOG [CompanyDB_Recovery] 
+FROM DISK = 'C:\Backups\CompanyDB_Log_202412011500.trn'
+WITH STOPAT = '2024-12-01 15:30:00', RECOVERY;</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="disaster-recovery">
+                    <h4>🛡️ High Availability Options</h4>
+                    <div class="ha-options">
+                        <div class="ha-option">
+                            <h5>⚡ Always On Availability Groups</h5>
+                            <ul>
+                                <li>Multiple readable secondary replicas</li>
+                                <li>Automatic failover capabilities</li>
+                                <li>Cross-datacenter disaster recovery</li>
+                                <li>Backup offloading to secondary replicas</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="ha-option">
+                            <h5>🔄 Database Mirroring</h5>
+                            <ul>
+                                <li>Real-time data synchronization</li>
+                                <li>Automatic failover with witness</li>
+                                <li>Lower resource requirements</li>
+                                <li>Legacy but still widely used</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-concept">
+                <h3>📊 Monitoring and Maintenance</h3>
+                
+                <div class="monitoring-tools">
+                    <div class="tool-card">
+                        <h4>🔍 Performance Monitoring Queries</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Top 10 most expensive queries
+SELECT TOP 10
+    qs.execution_count,
+    qs.total_elapsed_time / qs.execution_count as avg_elapsed_time,
+    qs.total_cpu_time / qs.execution_count as avg_cpu_time,
+    qs.total_physical_reads / qs.execution_count as avg_physical_reads,
+    SUBSTRING(st.text, (qs.statement_start_offset/2)+1, 
+        ((CASE qs.statement_end_offset
+            WHEN -1 THEN DATALENGTH(st.text)
+            ELSE qs.statement_end_offset
+        END - qs.statement_start_offset)/2) + 1) as query_text
+FROM sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) st
+ORDER BY avg_elapsed_time DESC;
+
+-- Database space usage
+SELECT 
+    DB_NAME() as DatabaseName,
+    type_desc as FileType,
+    name as LogicalName,
+    size * 8 / 1024 as SizeMB,
+    FILEPROPERTY(name, 'SpaceUsed') * 8 / 1024 as UsedMB,
+    (size - FILEPROPERTY(name, 'SpaceUsed')) * 8 / 1024 as FreeMB
+FROM sys.database_files;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <h4>🔧 Index Maintenance</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Index fragmentation analysis
+SELECT 
+    OBJECT_NAME(i.object_id) as TableName,
+    i.name as IndexName,
+    s.avg_fragmentation_in_percent,
+    s.page_count,
+    CASE 
+        WHEN s.avg_fragmentation_in_percent > 30 THEN 'REBUILD'
+        WHEN s.avg_fragmentation_in_percent > 10 THEN 'REORGANIZE'
+        ELSE 'NO ACTION'
+    END as Recommendation
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, 'LIMITED') s
+INNER JOIN sys.indexes i ON s.object_id = i.object_id AND s.index_id = i.index_id
+WHERE s.page_count > 100
+ORDER BY s.avg_fragmentation_in_percent DESC;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Section -->
+        <section id="performance" class="content-section">
+            <h2>⚡ Performance Tuning</h2>
+            
+            <div class="performance-concept">
+                <h3>🔍 Query Optimization Fundamentals</h3>
+                
+                <div class="optimization-techniques">
+                    <div class="technique-card">
+                        <h4>📊 Execution Plan Analysis</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Enable execution plan display
+SET SHOWPLAN_ALL ON;
+-- or use: SET STATISTICS IO ON; SET STATISTICS TIME ON;
+
+-- Example query to analyze
+SELECT 
+    c.CustomerID,
+    c.FirstName,
+    c.LastName,
+    COUNT(o.OrderID) as OrderCount,
+    SUM(o.TotalAmount) as TotalSpent
+FROM Customers c
+LEFT JOIN Orders o ON c.CustomerID = o.CustomerID
+WHERE c.City = 'New York'
+    AND o.OrderDate >= '2024-01-01'
+GROUP BY c.CustomerID, c.FirstName, c.LastName
+HAVING COUNT(o.OrderID) > 5
+ORDER BY TotalSpent DESC;
+
+-- Analyze index usage
+SELECT 
+    i.name as IndexName,
+    s.user_seeks,
+    s.user_scans,
+    s.user_lookups,
+    s.user_updates,
+    s.user_seeks + s.user_scans + s.user_lookups as TotalReads
+FROM sys.dm_db_index_usage_stats s
+INNER JOIN sys.indexes i ON s.object_id = i.object_id AND s.index_id = i.index_id
+WHERE s.database_id = DB_ID()
+ORDER BY TotalReads DESC;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="technique-card">
+                        <h4>🎯 Index Strategy</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Create covering index for frequently used query
+CREATE NONCLUSTERED INDEX IX_Orders_CustomerID_OrderDate_Covering
+ON Orders (CustomerID, OrderDate)
+INCLUDE (TotalAmount, ProductID, Quantity);
+
+-- Filtered index for specific conditions
+CREATE NONCLUSTERED INDEX IX_Orders_ActiveOrders
+ON Orders (OrderDate, CustomerID)
+WHERE Status = 'Active' AND TotalAmount > 100;
+
+-- Columnstore index for analytics
+CREATE NONCLUSTERED COLUMNSTORE INDEX NCCX_Orders_Analytics
+ON Orders (CustomerID, OrderDate, TotalAmount, ProductID, Quantity);</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-concept">
+                <h3>💾 Memory and Storage Optimization</h3>
+                
+                <div class="memory-optimization">
+                    <div class="optimization-example">
+                        <h4>🚀 In-Memory OLTP</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Create memory-optimized table
+CREATE TABLE SessionData (
+    SessionID UNIQUEIDENTIFIER PRIMARY KEY NONCLUSTERED HASH WITH (BUCKET_COUNT = 1000000),
+    UserID INT NOT NULL,
+    LoginTime DATETIME2 NOT NULL,
+    LastActivity DATETIME2 NOT NULL,
+    SessionData NVARCHAR(MAX),
+    INDEX IX_UserID NONCLUSTERED (UserID)
+) WITH (MEMORY_OPTIMIZED = ON, DURABILITY = SCHEMA_AND_DATA);
+
+-- Memory-optimized stored procedure
+CREATE PROCEDURE UpdateSessionActivity
+    @SessionID UNIQUEIDENTIFIER,
+    @NewActivity DATETIME2
+WITH NATIVE_COMPILATION, SCHEMABINDING, EXECUTE AS OWNER
+AS
+BEGIN ATOMIC WITH (
+    TRANSACTION_ISOLATION_LEVEL = SNAPSHOT,
+    LANGUAGE = N'us_english'
+)
+    UPDATE dbo.SessionData 
+    SET LastActivity = @NewActivity
+    WHERE SessionID = @SessionID;
+END;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-benchmarks">
+                <h3>📈 Real-World Performance Results</h3>
+                <div class="benchmark-card">
+                    <h4>🏦 Enterprise Banking System</h4>
+                    <p><strong>Challenge:</strong> Process 1M+ daily transactions with sub-second response times</p>
+                    <div class="benchmark-results">
+                        <div class="result-item">
+                            <span class="metric">Query Response Time</span>
+                            <span class="before">2.3s → </span>
+                            <span class="after">0.15s</span>
+                            <span class="improvement">-93%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="metric">Concurrent Users</span>
+                            <span class="before">500 → </span>
+                            <span class="after">5,000</span>
+                            <span class="improvement">+900%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="metric">CPU Utilization</span>
+                            <span class="before">85% → </span>
+                            <span class="after">35%</span>
+                            <span class="improvement">-59%</span>
+                        </div>
+                    </div>
+                    <p><strong>Key optimizations:</strong> Columnstore indexes, partitioning, in-memory OLTP for session data</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Section -->
+        <section id="security" class="content-section">
+            <h2>🔒 SQL Server Security</h2>
+            
+            <div class="security-concept">
+                <h3>🛡️ Authentication and Authorization</h3>
+                
+                <div class="auth-methods">
+                    <div class="auth-card">
+                        <h4>🔐 Windows Authentication (Recommended)</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Create Windows-based login
+CREATE LOGIN [DOMAIN\ApplicationService] FROM WINDOWS;
+
+-- Create database user
+USE [CompanyDB];
+CREATE USER [AppService] FOR LOGIN [DOMAIN\ApplicationService];
+
+-- Grant permissions through roles
+ALTER ROLE db_datareader ADD MEMBER [AppService];
+ALTER ROLE db_datawriter ADD MEMBER [AppService];</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="auth-card">
+                        <h4>👤 SQL Server Authentication</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Create SQL login with strong password policy
+CREATE LOGIN [AppUser] WITH 
+    PASSWORD = 'Str0ngP@ssw0rd!123',
+    CHECK_EXPIRATION = ON,
+    CHECK_POLICY = ON;
+
+-- Create contained database user (SQL Server 2012+)
+USE [CompanyDB];
+CREATE USER [ContainedUser] WITH 
+    PASSWORD = 'Str0ngP@ssw0rd!123',
+    DEFAULT_SCHEMA = dbo;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-concept">
+                <h3>🔒 Data Encryption</h3>
+                
+                <div class="encryption-types">
+                    <div class="encryption-card">
+                        <h4>🔐 Transparent Data Encryption (TDE)</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Step 1: Create master key
+USE master;
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'MasterKeyP@ssw0rd!';
+
+-- Step 2: Create certificate
+CREATE CERTIFICATE TDECertificate WITH SUBJECT = 'TDE Certificate';
+
+-- Step 3: Create database encryption key
+USE [CompanyDB];
+CREATE DATABASE ENCRYPTION KEY
+WITH ALGORITHM = AES_256
+ENCRYPTION BY SERVER CERTIFICATE TDECertificate;
+
+-- Step 4: Enable encryption
+ALTER DATABASE [CompanyDB] SET ENCRYPTION ON;
+
+-- Monitor encryption progress
+SELECT 
+    db_name(database_id) as DatabaseName,
+    encryption_state,
+    percent_complete,
+    key_algorithm,
+    key_length
+FROM sys.dm_database_encryption_keys;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="encryption-card">
+                        <h4>🛡️ Always Encrypted</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Create column master key
+CREATE COLUMN MASTER KEY CMK_Auto1
+WITH (
+    KEY_STORE_PROVIDER_NAME = 'MSSQL_CERTIFICATE_STORE',
+    KEY_PATH = 'CurrentUser/My/A66BB0F6DD70BDFF02B62D0F87E340288F6F13EE'
+);
+
+-- Create column encryption key
+CREATE COLUMN ENCRYPTION KEY CEK_Auto1
+WITH VALUES (
+    COLUMN_MASTER_KEY = CMK_Auto1,
+    ALGORITHM = 'RSA_OAEP',
+    ENCRYPTED_VALUE = 0x016E000001630075007200720065006E0074...
+);
+
+-- Create table with encrypted columns
+CREATE TABLE Customers_Secure (
+    CustomerID int IDENTITY(1,1) PRIMARY KEY,
+    FirstName NVARCHAR(50),
+    LastName NVARCHAR(50),
+    SSN CHAR(11) ENCRYPTED WITH (
+        COLUMN_ENCRYPTION_KEY = CEK_Auto1,
+        ENCRYPTION_TYPE = DETERMINISTIC,
+        ALGORITHM = 'AEAD_AES_256_CBC_HMAC_SHA_256'
+    ),
+    CreditCardNumber NVARCHAR(20) ENCRYPTED WITH (
+        COLUMN_ENCRYPTION_KEY = CEK_Auto1,
+        ENCRYPTION_TYPE = RANDOMIZED,
+        ALGORITHM = 'AEAD_AES_256_CBC_HMAC_SHA_256'
+    )
+);</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-concept">
+                <h3>🔍 Auditing and Compliance</h3>
+                
+                <div class="auditing-setup">
+                    <h4>📊 SQL Server Audit</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- Create server audit
+CREATE SERVER AUDIT ComplianceAudit
+TO FILE (
+    FILEPATH = 'C:\Audit\',
+    MAXSIZE = 1024 MB,
+    MAX_ROLLOVER_FILES = 5
+)
+WITH (ON_FAILURE = CONTINUE);
+
+-- Enable server audit
+ALTER SERVER AUDIT ComplianceAudit WITH (STATE = ON);
+
+-- Create database audit specification
+USE [CompanyDB];
+CREATE DATABASE AUDIT SPECIFICATION DB_ComplianceAudit
+FOR SERVER AUDIT ComplianceAudit
+ADD (SELECT, INSERT, UPDATE, DELETE ON dbo.Customers BY public),
+ADD (EXECUTE ON dbo.GetSensitiveData BY public);
+
+-- Enable database audit specification
+ALTER DATABASE AUDIT SPECIFICATION DB_ComplianceAudit WITH (STATE = ON);
+
+-- Query audit logs
+SELECT 
+    event_time,
+    action_id,
+    succeeded,
+    database_name,
+    schema_name,
+    object_name,
+    statement,
+    server_principal_name
+FROM sys.fn_get_audit_file('C:\Audit\*.sqlaudit', DEFAULT, DEFAULT)
+WHERE event_time >= DATEADD(day, -7, GETDATE())
+ORDER BY event_time DESC;</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="content-section">
+            <h2>💡 Real-World SQL Server Projects</h2>
+            
+            <div class="project-card">
+                <h3>🏦 Project 1: Banking Transaction System</h3>
+                <p>Design and implement a high-performance banking system handling millions of daily transactions with ACID compliance.</p>
+                
+                <div class="project-architecture">
+                    <h4>🏗️ System Architecture</h4>
+                    <ul>
+                        <li>🏦 **Account Management** - Customer accounts with balance tracking</li>
+                        <li>💸 **Transaction Processing** - Real-time debits and credits</li>
+                        <li>🔒 **Security Layer** - Encryption, auditing, and fraud detection</li>
+                        <li>📊 **Reporting Engine** - Regulatory compliance and analytics</li>
+                        <li>⚡ **High Availability** - Always On with cross-region replication</li>
+                        <li>🚨 **Monitoring** - Performance metrics and alerting</li>
+                    </ul>
+                </div>
+
+                <div class="project-code">
+                    <h4>🔧 Core Implementation</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- Account table with optimized indexing
+CREATE TABLE Accounts (
+    AccountID BIGINT IDENTITY(1,1) PRIMARY KEY,
+    AccountNumber CHAR(12) NOT NULL UNIQUE,
+    CustomerID INT NOT NULL,
+    AccountType TINYINT NOT NULL, -- 1=Checking, 2=Savings, etc.
+    Balance DECIMAL(19,4) NOT NULL DEFAULT 0,
+    Status TINYINT NOT NULL DEFAULT 1, -- 1=Active, 0=Inactive
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    ModifiedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    
+    INDEX IX_Accounts_Customer NONCLUSTERED (CustomerID),
+    INDEX IX_Accounts_AccountNumber NONCLUSTERED (AccountNumber),
+    CHECK (Balance >= 0 OR AccountType = 3) -- Allow overdraft for credit accounts
+);
+
+-- Transaction processing stored procedure
+CREATE PROCEDURE ProcessTransaction
+    @FromAccount BIGINT,
+    @ToAccount BIGINT,
+    @Amount DECIMAL(19,4),
+    @TransactionType TINYINT,
+    @Description NVARCHAR(200),
+    @TransactionID BIGINT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @ErrorMessage NVARCHAR(500);
+    
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        -- Insert transaction record first
+        INSERT INTO Transactions (FromAccount, ToAccount, Amount, TransactionType, Description, Status)
+        VALUES (@FromAccount, @ToAccount, @Amount, @TransactionType, @Description, 1);
+        
+        SET @TransactionID = SCOPE_IDENTITY();
+        
+        -- Update source account (with pessimistic locking)
+        UPDATE Accounts WITH (UPDLOCK, SERIALIZABLE)
+        SET Balance = Balance - @Amount,
+            ModifiedDate = GETDATE()
+        WHERE AccountID = @FromAccount;
+        
+        -- Check for sufficient funds
+        IF EXISTS (SELECT 1 FROM Accounts WHERE AccountID = @FromAccount AND Balance < 0 AND AccountType != 3)
+        BEGIN
+            SET @ErrorMessage = 'Insufficient funds';
+            THROW 50001, @ErrorMessage, 1;
+        END
+        
+        -- Update destination account
+        UPDATE Accounts WITH (UPDLOCK, SERIALIZABLE)
+        SET Balance = Balance + @Amount,
+            ModifiedDate = GETDATE()
+        WHERE AccountID = @ToAccount;
+        
+        -- Mark transaction as completed
+        UPDATE Transactions 
+        SET Status = 2, CompletedDate = GETDATE()
+        WHERE TransactionID = @TransactionID;
+        
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        
+        -- Mark transaction as failed
+        UPDATE Transactions 
+        SET Status = 3, ErrorMessage = ERROR_MESSAGE()
+        WHERE TransactionID = @TransactionID;
+        
+        THROW;
+    END CATCH
+END;</code></pre>
+                    </div>
+                </div>
+
+                <div class="project-performance">
+                    <h4>⚡ Performance Targets</h4>
+                    <ul>
+                        <li>🎯 **Transaction throughput:** 10,000 TPS during peak hours</li>
+                        <li>⏱️ **Response time:** < 100ms for 95% of transactions</li>
+                        <li>🔄 **Availability:** 99.99% uptime (4.38 minutes downtime/year)</li>
+                        <li>💾 **Data retention:** 7 years with automated archiving</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <h3>📊 Project 2: Data Warehouse and Analytics</h3>
+                <p>Build a comprehensive data warehousing solution with ETL processes, dimensional modeling, and real-time reporting.</p>
+                
+                <div class="project-components">
+                    <h4>🧩 Key Components</h4>
+                    <ul>
+                        <li>📥 **ETL Pipeline** - SSIS packages for data integration</li>
+                        <li>🏗️ **Star Schema Design** - Optimized for analytics queries</li>
+                        <li>📊 **OLAP Cubes** - Multidimensional analysis with SSAS</li>
+                        <li>📈 **Reporting Layer** - SSRS reports and Power BI dashboards</li>
+                        <li>⚡ **Real-time Processing** - Stream analytics for live data</li>
+                        <li>🔄 **Data Governance** - Quality checks and lineage tracking</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <h3>🏥 Project 3: Healthcare Management System</h3>
+                <p>Develop a HIPAA-compliant healthcare system with patient records, appointment scheduling, and clinical data management.</p>
+                
+                <div class="project-compliance">
+                    <h4>🔒 Compliance Requirements</h4>
+                    <ul>
+                        <li>🛡️ **HIPAA Compliance** - PHI encryption and access controls</li>
+                        <li>📋 **Audit Trail** - Complete logging of all data access</li>
+                        <li>🔐 **Role-Based Security** - Granular permissions by user role</li>
+                        <li>⚡ **High Availability** - 24/7 operations for emergency access</li>
+                        <li>💾 **Disaster Recovery** - RTO < 2 hours, RPO < 15 minutes</li>
+                        <li>🔍 **Data Quality** - Validation and consistency checks</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercises Section -->
+        <section id="exercises" class="content-section">
+            <h2>🎯 Hands-On SQL Server Exercises</h2>
+            
+            <div class="exercise-card">
+                <h3>🔰 Exercise 1: Database Design and Setup</h3>
+                <div class="exercise-difficulty">Beginner Level</div>
+                
+                <div class="exercise-objective">
+                    <h4>🎯 Objective</h4>
+                    <p>Design and implement a normalized e-commerce database with proper relationships, constraints, and indexing.</p>
+                </div>
+
+                <div class="exercise-tasks">
+                    <h4>📋 Tasks</h4>
+                    <ol>
+                        <li>Create database with appropriate file settings</li>
+                        <li>Design tables for customers, products, orders, and order details</li>
+                        <li>Implement primary keys, foreign keys, and check constraints</li>
+                        <li>Create appropriate indexes for common query patterns</li>
+                        <li>Insert sample data using T-SQL scripts</li>
+                        <li>Write queries to validate data integrity</li>
+                        <li>Create views for commonly accessed data combinations</li>
+                    </ol>
+                </div>
+
+                <div class="exercise-starter">
+                    <h4>🚀 Starter Schema</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- Create the database
+CREATE DATABASE EcommerceDB;
+USE EcommerceDB;
+
+-- Customers table (implement the rest)
+CREATE TABLE Customers (
+    CustomerID INT IDENTITY(1,1) PRIMARY KEY,
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100) UNIQUE NOT NULL,
+    Phone NVARCHAR(20),
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+-- Products table
+CREATE TABLE Products (
+    ProductID INT IDENTITY(1,1) PRIMARY KEY,
+    ProductName NVARCHAR(100) NOT NULL,
+    CategoryID INT NOT NULL,
+    Description NVARCHAR(500),
+    UnitPrice DECIMAL(10,2) NOT NULL,
+    UnitsInStock INT NOT NULL DEFAULT 0,
+    Discontinued BIT NOT NULL DEFAULT 0,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+-- Categories table
+CREATE TABLE Categories (
+    CategoryID INT IDENTITY(1,1) PRIMARY KEY,
+    CategoryName NVARCHAR(50) NOT NULL,
+    Description NVARCHAR(200)
+);
+
+-- Orders table
+CREATE TABLE Orders (
+    OrderID INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    OrderDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    RequiredDate DATETIME2,
+    ShippedDate DATETIME2,
+    ShipAddress NVARCHAR(100),
+    ShipCity NVARCHAR(50),
+    ShipPostalCode NVARCHAR(20),
+    TotalAmount DECIMAL(12,2) NOT NULL DEFAULT 0,
+    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending'
+);
+
+-- Order Details table (connects Orders to Products)
+CREATE TABLE OrderDetails (
+    OrderDetailID INT IDENTITY(1,1) PRIMARY KEY,
+    OrderID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(10,2) NOT NULL,
+    Discount DECIMAL(4,2) NOT NULL DEFAULT 0
+);
+
+-- Add Foreign Key Constraints (ensures data integrity)
+ALTER TABLE Products 
+ADD CONSTRAINT FK_Products_Categories 
+FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID);
+
+ALTER TABLE Orders 
+ADD CONSTRAINT FK_Orders_Customers 
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID);
+
+ALTER TABLE OrderDetails 
+ADD CONSTRAINT FK_OrderDetails_Orders 
+FOREIGN KEY (OrderID) REFERENCES Orders(OrderID);
+
+ALTER TABLE OrderDetails 
+ADD CONSTRAINT FK_OrderDetails_Products 
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID);
+
+-- Create Indexes for Better Performance
+CREATE NONCLUSTERED INDEX IX_Customers_Email ON Customers(Email);
+CREATE NONCLUSTERED INDEX IX_Products_CategoryID ON Products(CategoryID);
+CREATE NONCLUSTERED INDEX IX_Orders_CustomerID ON Orders(CustomerID);
+CREATE NONCLUSTERED INDEX IX_Orders_OrderDate ON Orders(OrderDate);
+CREATE NONCLUSTERED INDEX IX_OrderDetails_OrderID ON OrderDetails(OrderID);
+CREATE NONCLUSTERED INDEX IX_OrderDetails_ProductID ON OrderDetails(ProductID);
+
+-- Insert Sample Categories
+INSERT INTO Categories (CategoryName, Description) VALUES
+('Electronics', 'Electronic devices and accessories'),
+('Clothing', 'Fashion and apparel items'),
+('Books', 'Educational and entertainment books'),
+('Home & Garden', 'Home improvement and gardening supplies'),
+('Sports', 'Sports equipment and fitness gear');
+
+-- Insert Sample Products
+INSERT INTO Products (ProductName, CategoryID, Description, UnitPrice, UnitsInStock) VALUES
+('Smartphone Pro Max', 1, 'Latest flagship smartphone with advanced features', 999.99, 50),
+('Wireless Headphones', 1, 'High-quality Bluetooth headphones with noise cancellation', 199.99, 75),
+('Cotton T-Shirt', 2, 'Premium quality cotton t-shirt in various colors', 24.99, 200),
+('Denim Jeans', 2, 'Classic fit denim jeans for everyday wear', 79.99, 120),
+('Python Programming Book', 3, 'Comprehensive guide to Python programming', 39.99, 85),
+('Data Science Handbook', 3, 'Essential techniques for data analysis and visualization', 49.99, 60),
+('Smart Garden Kit', 4, 'Automated indoor gardening system', 149.99, 30),
+('LED Desk Lamp', 4, 'Energy-efficient LED lamp with adjustable brightness', 34.99, 90),
+('Yoga Mat Premium', 5, 'High-density foam yoga mat with carrying strap', 29.99, 100),
+('Resistance Bands Set', 5, 'Complete set of resistance bands for strength training', 19.99, 150);
+
+-- Insert Sample Customers
+INSERT INTO Customers (FirstName, LastName, Email, Phone) VALUES
+('John', 'Smith', 'john.smith@email.com', '555-0101'),
+('Sarah', 'Johnson', 'sarah.johnson@email.com', '555-0102'),
+('Michael', 'Brown', 'michael.brown@email.com', '555-0103'),
+('Emma', 'Davis', 'emma.davis@email.com', '555-0104'),
+('James', 'Wilson', 'james.wilson@email.com', '555-0105'),
+('Lisa', 'Miller', 'lisa.miller@email.com', '555-0106'),
+('David', 'Garcia', 'david.garcia@email.com', '555-0107'),
+('Jennifer', 'Martinez', 'jennifer.martinez@email.com', '555-0108');
+
+-- Insert Sample Orders
+INSERT INTO Orders (CustomerID, OrderDate, RequiredDate, ShipAddress, ShipCity, ShipPostalCode, Status) VALUES
+(1, '2024-01-15', '2024-01-22', '123 Main St', 'New York', '10001', 'Shipped'),
+(2, '2024-01-16', '2024-01-23', '456 Oak Ave', 'Los Angeles', '90210', 'Processing'),
+(3, '2024-01-17', '2024-01-24', '789 Pine Rd', 'Chicago', '60601', 'Delivered'),
+(4, '2024-01-18', '2024-01-25', '321 Elm Dr', 'Houston', '77001', 'Shipped'),
+(5, '2024-01-19', '2024-01-26', '654 Maple Ln', 'Phoenix', '85001', 'Processing'),
+(1, '2024-01-20', '2024-01-27', '123 Main St', 'New York', '10001', 'Pending'),
+(2, '2024-01-21', '2024-01-28', '456 Oak Ave', 'Los Angeles', '90210', 'Delivered');
+
+-- Insert Sample Order Details
+INSERT INTO OrderDetails (OrderID, ProductID, Quantity, UnitPrice, Discount) VALUES
+-- Order 1: John Smith
+(1, 1, 1, 999.99, 0.00),  -- Smartphone
+(1, 2, 1, 199.99, 0.05),  -- Headphones with 5% discount
+-- Order 2: Sarah Johnson  
+(2, 3, 2, 24.99, 0.00),   -- 2 T-shirts
+(2, 4, 1, 79.99, 0.00),   -- Jeans
+-- Order 3: Michael Brown
+(3, 5, 1, 39.99, 0.00),   -- Python book
+(3, 6, 1, 49.99, 0.10),   -- Data Science book with 10% discount
+(3, 9, 1, 29.99, 0.00),   -- Yoga mat
+-- Order 4: Emma Davis
+(4, 7, 1, 149.99, 0.00),  -- Garden kit
+(4, 8, 2, 34.99, 0.00),   -- 2 LED lamps
+-- Order 5: James Wilson
+(5, 10, 3, 19.99, 0.15),  -- 3 Resistance band sets with 15% discount
+-- Order 6: John Smith (repeat customer)
+(6, 3, 1, 24.99, 0.00),   -- T-shirt
+-- Order 7: Sarah Johnson (repeat customer)
+(7, 1, 1, 999.99, 0.08);  -- Smartphone with 8% discount
+
+-- Update order totals
+UPDATE Orders 
+SET TotalAmount = (
+    SELECT SUM(od.Quantity * od.UnitPrice * (1 - od.Discount))
+    FROM OrderDetails od 
+    WHERE od.OrderID = Orders.OrderID
+);
+
+-- Create a view for order summary (makes reporting easier)
+CREATE VIEW OrderSummary AS
+SELECT 
+    o.OrderID,
+    c.FirstName + ' ' + c.LastName as CustomerName,
+    c.Email,
+    o.OrderDate,
+    o.Status,
+    o.TotalAmount,
+    COUNT(od.OrderDetailID) as ItemCount
+FROM Orders o
+INNER JOIN Customers c ON o.CustomerID = c.CustomerID
+INNER JOIN OrderDetails od ON o.OrderID = od.OrderID
+GROUP BY o.OrderID, c.FirstName, c.LastName, c.Email, o.OrderDate, o.Status, o.TotalAmount;
+
+-- Example queries to test your database
+-- 1. Show all orders with customer information
+SELECT * FROM OrderSummary ORDER BY OrderDate DESC;
+
+-- 2. Find top-selling products
+SELECT 
+    p.ProductName,
+    SUM(od.Quantity) as TotalSold,
+    SUM(od.Quantity * od.UnitPrice * (1 - od.Discount)) as TotalRevenue
+FROM Products p
+INNER JOIN OrderDetails od ON p.ProductID = od.ProductID
+GROUP BY p.ProductID, p.ProductName
+ORDER BY TotalSold DESC;
+
+-- 3. Customer spending analysis
+SELECT 
+    c.FirstName + ' ' + c.LastName as CustomerName,
+    COUNT(o.OrderID) as OrderCount,
+    SUM(o.TotalAmount) as TotalSpent,
+    AVG(o.TotalAmount) as AverageOrderValue
+FROM Customers c
+LEFT JOIN Orders o ON c.CustomerID = o.CustomerID
+GROUP BY c.CustomerID, c.FirstName, c.LastName
+ORDER BY TotalSpent DESC;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise-card">
+                <h3>⚡ Exercise 2: Performance Optimization</h3>
+                <div class="exercise-difficulty">Intermediate Level</div>
+                
+                <div class="exercise-objective">
+                    <h4>🎯 Objective</h4>
+                    <p>Optimize a slow-performing query through index tuning, query rewriting, and execution plan analysis.</p>
+                </div>
+
+                <div class="exercise-scenario">
+                    <h4>🔍 Scenario</h4>
+                    <p>You have a report query that takes 45 seconds to run. The query joins multiple tables and aggregates sales data. Your task is to optimize it to run in under 2 seconds.</p>
+                    
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- Slow query to optimize
+SELECT 
+    c.FirstName + ' ' + c.LastName as CustomerName,
+    COUNT(o.OrderID) as OrderCount,
+    SUM(od.Quantity * od.UnitPrice) as TotalRevenue,
+    AVG(od.Quantity * od.UnitPrice) as AverageOrderValue
+FROM Customers c
+INNER JOIN Orders o ON c.CustomerID = o.CustomerID
+INNER JOIN OrderDetails od ON o.OrderID = od.OrderID
+INNER JOIN Products p ON od.ProductID = p.ProductID
+WHERE o.OrderDate >= '2023-01-01'
+    AND p.CategoryID IN (1, 2, 3, 4, 5)
+GROUP BY c.CustomerID, c.FirstName, c.LastName
+HAVING COUNT(o.OrderID) > 10
+ORDER BY TotalRevenue DESC;</code></pre>
+                    </div>
+                </div>
+
+                <div class="exercise-steps">
+                    <h4>📋 Optimization Steps</h4>
+                    <ol>
+                        <li>Enable execution plan and identify bottlenecks</li>
+                        <li>Analyze index usage and missing index recommendations</li>
+                        <li>Create appropriate covering indexes</li>
+                        <li>Consider query rewriting strategies</li>
+                        <li>Test different join order approaches</li>
+                        <li>Measure performance improvements</li>
+                        <li>Document the optimization process</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="exercise-card">
+                <h3>🏢 Exercise 3: Enterprise Security Implementation</h3>
+                <div class="exercise-difficulty">Advanced Level</div>
+                
+                <div class="exercise-objective">
+                    <h4>🎯 Objective</h4>
+                    <p>Implement a comprehensive security model with role-based access, encryption, and auditing for a multi-tenant application.</p>
+                </div>
+
+                <div class="exercise-requirements">
+                    <h4>🔒 Security Requirements</h4>
+                    <ul>
+                        <li>Row-level security for multi-tenant data isolation</li>
+                        <li>Column-level encryption for sensitive data</li>
+                        <li>Custom roles with principle of least privilege</li>
+                        <li>Comprehensive auditing of all data access</li>
+                        <li>Login security with password policies</li>
+                        <li>Dynamic data masking for non-production environments</li>
+                    </ul>
+                </div>
+
+                <div class="exercise-evaluation">
+                    <h4>✅ Evaluation Criteria</h4>
+                    <ul>
+                        <li>Security architecture design and documentation</li>
+                        <li>Proper implementation of all security features</li>
+                        <li>Performance impact analysis and mitigation</li>
+                        <li>Compliance with security best practices</li>
+                        <li>Testing and validation procedures</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="exercise-resources">
+                <h3>📚 Learning Resources</h3>
+                
+                <div class="resource-categories">
+                    <div class="resource-category">
+                        <h4>📖 Official Documentation</h4>
+                        <ul>
+                            <li><a href="https://docs.microsoft.com/en-us/sql/" target="_blank">SQL Server Technical Documentation</a></li>
+                            <li><a href="https://docs.microsoft.com/en-us/sql/t-sql/" target="_blank">T-SQL Reference</a></li>
+                            <li><a href="https://docs.microsoft.com/en-us/sql/ssms/" target="_blank">SQL Server Management Studio</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="resource-category">
+                        <h4>🎓 Learning Paths</h4>
+                        <ul>
+                            <li>Microsoft Learn SQL Server modules</li>
+                            <li>SQL Server certification preparation</li>
+                            <li>Performance tuning specialization</li>
+                            <li>Database administration track</li>
+                        </ul>
+                    </div>
+
+                    <div class="resource-category">
+                        <h4>🛠️ Tools and Utilities</h4>
+                        <ul>
+                            <li>SQL Server Management Studio (SSMS)</li>
+                            <li>Azure Data Studio</li>
+                            <li>SQL Server Profiler / Extended Events</li>
+                            <li>Database Engine Tuning Advisor</li>
+                            <li>SentryOne Plan Explorer (free)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Quiz Section -->
+    <div id="quiz-container" class="quiz-container" style="display: none;">
+        <div class="quiz-header">
+            <h3>🎯 Test Your SQL Server Knowledge</h3>
+            <button class="close-quiz" onclick="closeQuiz()">×</button>
+        </div>
+        <div class="quiz-content">
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="quiz-footer">
+                <button class="quiz-btn" onclick="submitAnswer()">Submit Answer</button>
+                <div class="quiz-progress">
+                    <span id="quiz-progress">Question 1 of 20</span>
+                </div>
+            </div>
+        </div>
+        <div class="quiz-result" id="quiz-result" style="display: none;">
+            <h4 id="result-title"></h4>
+            <p id="result-text"></p>
+            <button class="quiz-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="quiz-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FKTI - DBT Data Transformation | Fakhruddin Khambaty Training Institute</title>
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="../assets/design-system.css">
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <img src="../assets/dbt-logo.svg" alt="FKTI Logo" class="logo">
+                <div class="header-text">
+                    <h1>🔄 Master DBT Data Transformation</h1>
+                    <p class="institute-name">FKTI - Fakhruddin Khambaty Training Institute</p>
+                    <p class="tagline">Modern Analytics Engineering Made Simple</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-section">
+                <button class="nav-btn hub-btn" onclick="goToHub()">← FKTI Hub</button>
+            </div>
+            <div class="nav-section main-nav">
+                <button class="nav-btn" onclick="showSection('welcome')">🏠 Welcome</button>
+                <button class="nav-btn" onclick="showSection('history')">📜 History</button>
+                <button class="nav-btn" onclick="showSection('installation')">⚙️ Installation</button>
+                <button class="nav-btn" onclick="showSection('basics')">📚 DBT Basics</button>
+                <button class="nav-btn" onclick="showSection('models')">🏗️ Models</button>
+                <button class="nav-btn" onclick="showSection('testing')">🧪 Testing</button>
+                <button class="nav-btn" onclick="showSection('deployment')">🚀 Deployment</button>
+                <button class="nav-btn" onclick="showSection('advanced')">⚡ Advanced</button>
+                <button class="nav-btn" onclick="showSection('projects')">💡 Projects</button>
+                <button class="nav-btn" onclick="showSection('exercises')">🎯 Exercises</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <span class="progress-text" id="progressText">0% Complete</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Welcome Section -->
+        <section id="welcome" class="content-section active">
+            <h2>🎯 Welcome to DBT Analytics Engineering!</h2>
+            
+            <div class="welcome-card">
+                <h3>What You'll Learn</h3>
+                <ul class="feature-list">
+                    <li>✅ DBT fundamentals and modern data stack</li>
+                    <li>✅ SQL transformations and data modeling</li>
+                    <li>✅ Testing strategies and data quality</li>
+                    <li>✅ Documentation and lineage tracking</li>
+                    <li>✅ Deployment with DBT Cloud and CI/CD</li>
+                    <li>✅ Advanced features: macros, packages, seeds</li>
+                    <li>✅ Real-world analytics engineering projects</li>
+                    <li>✅ Integration with data warehouses and BI tools</li>
+                </ul>
+            </div>
+
+            <div class="welcome-card">
+                <h3>Why DBT (Data Build Tool)?</h3>
+                <p>DBT revolutionized analytics engineering by bringing software engineering practices to data transformation. It's the backbone of modern data teams at:</p>
+                <ul class="company-list">
+                    <li>📈 Stripe - processing billions in payment data transformations</li>
+                    <li>🎵 Spotify - modeling music streaming and user behavior</li>
+                    <li>🏪 Shopify - e-commerce analytics and merchant insights</li>
+                    <li>🚗 GitLab - product usage analytics and DevOps metrics</li>
+                    <li>🏦 Monzo - real-time financial data modeling</li>
+                    <li>📱 Discord - community engagement and usage analytics</li>
+                </ul>
+            </div>
+
+            <div class="screenshot-placeholder">
+                <h4>📸 Screenshot: DBT Cloud Project Overview</h4>
+                <p>DBT Cloud interface showing project structure, model lineage, and recent run status for a production analytics project.</p>
+                <div class="mock-screenshot">
+                    <div class="screenshot-header">DBT Cloud - Project Dashboard</div>
+                    <div class="screenshot-content">
+                        <div class="model-item">
+                            <span class="status success">✓</span> dim_customers
+                            <small>Ran 5 mins ago • 125K rows</small>
+                        </div>
+                        <div class="model-item">
+                            <span class="status running">⟲</span> fct_orders
+                            <small>Running... • Expected 2.1M rows</small>
+                        </div>
+                        <div class="model-item">
+                            <span class="status pending">⏸</span> mart_sales_daily
+                            <small>Queued • Depends on fct_orders</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="real-world-example">
+                <h3>🌟 Real-World Success Story</h3>
+                <div class="story-card">
+                    <h4>GitLab's Analytics Engineering Transformation</h4>
+                    <p><strong>Challenge:</strong> GitLab's data team was spending 80% of time on data pipeline maintenance instead of analysis, with inconsistent business logic across different tools.</p>
+                    <p><strong>Before DBT:</strong></p>
+                    <ul>
+                        <li>⏰ **5-hour daily pipeline maintenance** by data engineers</li>
+                        <li>🔧 **Fragmented SQL code** across Airflow, Looker, and notebooks</li>
+                        <li>❌ **Frequent data quality issues** going undetected</li>
+                        <li>📊 **Inconsistent metrics** between different dashboards</li>
+                    </ul>
+                    <p><strong>After DBT Implementation:</strong></p>
+                    <ul>
+                        <li>⚡ **15-minute daily maintenance** with automated testing</li>
+                        <li>🔄 **Single source of truth** for all business logic</li>
+                        <li>✅ **400+ automated data tests** catching issues before production</li>
+                        <li>📈 **99.9% data freshness SLA** with automated monitoring</li>
+                        <li>👥 **5x faster onboarding** for new analytics engineers</li>
+                    </ul>
+                    <p><strong>Results:</strong> GitLab's data team now spends 80% of time on analysis and insights instead of maintenance, leading to faster product decisions and better customer outcomes.</p>
+                </div>
+            </div>
+
+            <div class="comparison-card">
+                <h3>🔍 Traditional ETL vs Modern ELT with DBT</h3>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Traditional ETL</th>
+                                <th>Modern ELT + DBT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Data Movement</td>
+                                <td>Extract → Transform → Load</td>
+                                <td>Extract → Load → Transform</td>
+                            </tr>
+                            <tr>
+                                <td>Processing Location</td>
+                                <td>Separate ETL server</td>
+                                <td>In data warehouse</td>
+                            </tr>
+                            <tr>
+                                <td>Tool Complexity</td>
+                                <td>Heavy GUI tools (Informatica, SSIS)</td>
+                                <td>SQL + Version control</td>
+                            </tr>
+                            <tr>
+                                <td>Testing</td>
+                                <td>Manual, often after deployment</td>
+                                <td>Automated, built into workflow</td>
+                            </tr>
+                            <tr>
+                                <td>Documentation</td>
+                                <td>External, often outdated</td>
+                                <td>Built-in, always current</td>
+                            </tr>
+                            <tr>
+                                <td>Collaboration</td>
+                                <td>Difficult, proprietary formats</td>
+                                <td>Git-based, easy collaboration</td>
+                            </tr>
+                            <tr>
+                                <td>Scalability</td>
+                                <td>Limited by ETL server</td>
+                                <td>Scales with data warehouse</td>
+                            </tr>
+                            <tr>
+                                <td>Cost</td>
+                                <td>High licensing + infrastructure</td>
+                                <td>Low, mostly warehouse compute</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="content-section">
+            <h2>📜 The Birth and Evolution of DBT</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2012-2015</div>
+                    <div class="timeline-content">
+                        <h3>🌱 The Analytics Engineering Problem</h3>
+                        <p>Data teams were struggling with traditional approaches:</p>
+                        <ul>
+                            <li>📊 **Analysts copying SQL** between tools (Excel, Tableau, notebooks)</li>
+                            <li>🔧 **Data engineers building custom ETL** for every transformation</li>
+                            <li>❌ **No version control** for business logic</li>
+                            <li>🐛 **Data quality issues** discovered by business users</li>
+                            <li>📈 **Scaling bottlenecks** as data teams grew</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: Traditional Data Pipeline Chaos</h4>
+                            <p>Diagram showing fragmented SQL code scattered across multiple tools and environments.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2016</div>
+                    <div class="timeline-content">
+                        <h3>💡 Drew Banin's Vision at RJMetrics</h3>
+                        <p>Drew Banin, working as a data analyst at RJMetrics (now Magento BI), experienced the pain firsthand:</p>
+                        <ul>
+                            <li>📊 **Maintaining identical SQL** in 5 different tools</li>
+                            <li>🔄 **Manual deployment** of data transformations</li>
+                            <li>❌ **Breaking dashboards** with schema changes</li>
+                            <li>🤔 **"Why can't data be like software development?"**</li>
+                        </ul>
+                        <div class="real-world-example">
+                            <h4>The Eureka Moment</h4>
+                            <p><strong>Drew's insight:</strong> "What if we could apply software engineering best practices to data transformations? Version control, testing, documentation, modularity - all the things that make software reliable."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2017</div>
+                    <div class="timeline-content">
+                        <h3>🚀 DBT 0.1.0 - The First Release</h3>
+                        <p>Drew Banin open-sourced the first version of DBT:</p>
+                        <ul>
+                            <li>🛠️ **Simple Python CLI** tool</li>
+                            <li>📝 **SQL templating** with Jinja2</li>
+                            <li>🔗 **Model dependency management**</li>
+                            <li>🎯 **"Transform data in your warehouse"** philosophy</li>
+                        </ul>
+                        <div class="code-example">
+                            <h5>DBT 0.1.0 Example Model:</h5>
+                            <div class="code-block">
+                                <pre><code class="language-sql">-- models/customers.sql
+{{ config(materialized='table') }}
+
+select
+    customer_id,
+    first_name,
+    last_name,
+    email
+from {{ ref('raw_customers') }}
+where customer_id is not null</code></pre>
+                            </div>
+                        </div>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: First DBT Project Structure</h4>
+                            <p>Simple file structure of an early DBT project with models and configuration files.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2018</div>
+                    <div class="timeline-content">
+                        <h3>🏢 Fishtown Analytics Founded</h3>
+                        <p>Drew Banin and Tristan Handy founded Fishtown Analytics to commercialize DBT:</p>
+                        <ul>
+                            <li>💰 **Seed funding** to build a sustainable business</li>
+                            <li>👥 **Growing community** of early adopters</li>
+                            <li>🔧 **DBT 0.8.0** with major improvements</li>
+                            <li>📊 **First enterprise customers** (Warby Parker, Casper)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2019</div>
+                    <div class="timeline-content">
+                        <h3>📈 Rapid Adoption and Growth</h3>
+                        <p>DBT gained significant traction in the data community:</p>
+                        <ul>
+                            <li>🎯 **DBT 0.13.0** with testing framework</li>
+                            <li>📚 **Documentation generation** with `dbt docs`</li>
+                            <li>🏢 **Fortune 500 adoptions** (including major financial institutions)</li>
+                            <li>🌟 **Modern Data Stack** movement begins</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: DBT Documentation Site</h4>
+                            <p>Auto-generated DBT documentation showing model lineage and descriptions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-content">
+                        <h3>☁️ DBT Cloud Launch</h3>
+                        <p>Fishtown Analytics launched DBT Cloud as a managed service:</p>
+                        <ul>
+                            <li>🌐 **Web-based IDE** for DBT development</li>
+                            <li>🔄 **Automated scheduling** and orchestration</li>
+                            <li>👥 **Team collaboration** features</li>
+                            <li>📊 **Integrated monitoring** and alerting</li>
+                        </ul>
+                        <div class="real-world-example">
+                            <h4>COVID-19 Impact</h4>
+                            <p><strong>Acceleration:</strong> Remote work drove massive adoption as companies needed reliable, collaborative data tools. DBT downloads increased 10x during 2020.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                        <h3>💰 Major Funding and Ecosystem Growth</h3>
+                        <p>DBT became the center of the Modern Data Stack:</p>
+                        <ul>
+                            <li>💵 **$52M Series B** funding round</li>
+                            <li>🏢 **Renamed to DBT Labs** from Fishtown Analytics</li>
+                            <li>🌟 **DBT 0.20.0** with major architectural improvements</li>
+                            <li>🔌 **Adapter ecosystem** for 20+ data platforms</li>
+                            <li>📦 **DBT package hub** with reusable transformations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                        <h3>🎯 DBT 1.0 and Standardization</h3>
+                        <p>Maturity milestone with enterprise-grade stability:</p>
+                        <ul>
+                            <li>🎉 **DBT 1.0** with semantic versioning commitment</li>
+                            <li>📊 **DBT Semantic Layer** for consistent metrics</li>
+                            <li>🏢 **Enterprise features** (access controls, audit logs)</li>
+                            <li>🌍 **Global expansion** with international data centers</li>
+                        </ul>
+                        <div class="screenshot-placeholder">
+                            <h4>📸 Screenshot: DBT 1.0 Release Announcement</h4>
+                            <p>DBT Labs blog post announcing the 1.0 release with stability guarantees.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2023-2024</div>
+                    <div class="timeline-content">
+                        <h3>🤖 AI and Modern Features</h3>
+                        <p>Current state with cutting-edge capabilities:</p>
+                        <ul>
+                            <li>🧠 **DBT Copilot** - AI-powered SQL generation</li>
+                            <li>⚡ **Incremental models 2.0** for massive datasets</li>
+                            <li>🔍 **Advanced lineage** with column-level tracking</li>
+                            <li>🎯 **DBT Mesh** for large-scale project management</li>
+                            <li>📊 **Real-time transformations** integration</li>
+                            <li>🌐 **50+ data platform adapters**</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-impact-card">
+                <h3>📊 DBT's Impact Today</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">100,000+</div>
+                        <div class="stat-label">Active Projects</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">75%</div>
+                        <div class="stat-label">Top Data Teams Using DBT</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8M+</div>
+                        <div class="stat-label">Models Run Daily</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$200M</div>
+                        <div class="stat-label">Valuation (2023)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Section -->
+        <section id="installation" class="content-section">
+            <h2>⚙️ Complete DBT Installation Guide</h2>
+            
+            <div class="installation-tabs">
+                <button class="tab-btn active" onclick="showTab('dbt-core')">🆓 DBT Core</button>
+                <button class="tab-btn" onclick="showTab('dbt-cloud')">☁️ DBT Cloud</button>
+                <button class="tab-btn" onclick="showTab('local-setup')">💻 Local Setup</button>
+                <button class="tab-btn" onclick="showTab('warehouse-setup')">🏢 Warehouse Connection</button>
+            </div>
+
+            <div id="dbt-core" class="tab-content active">
+                <h3>DBT Core Installation (Open Source)</h3>
+                <div class="step-by-step">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Install Python and pip</h4>
+                            <p>DBT requires Python 3.7 or higher</p>
+                            <div class="code-block">
+                                <pre><code># Check Python version
+python --version
+# Should be 3.7+
+
+# Install pip if not available
+python -m ensurepip --upgrade
+
+# Create virtual environment (recommended)
+python -m venv dbt-env
+source dbt-env/bin/activate  # On Windows: dbt-env\Scripts\activate</code></pre>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: Python Version Check</h4>
+                                <p>Terminal showing Python version verification and virtual environment creation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Install DBT with Data Warehouse Adapter</h4>
+                            <div class="adapter-options">
+                                <h5>🎯 Choose Your Data Warehouse Adapter:</h5>
+                                <div class="adapter-grid">
+                                    <div class="adapter-card">
+                                        <h6>🟦 Snowflake</h6>
+                                        <div class="code-block">
+                                            <pre><code>pip install dbt-snowflake</code></pre>
+                                        </div>
+                                    </div>
+                                    <div class="adapter-card">
+                                        <h6>📊 BigQuery</h6>
+                                        <div class="code-block">
+                                            <pre><code>pip install dbt-bigquery</code></pre>
+                                        </div>
+                                    </div>
+                                    <div class="adapter-card">
+                                        <h6>🔴 Redshift</h6>
+                                        <div class="code-block">
+                                            <pre><code>pip install dbt-redshift</code></pre>
+                                        </div>
+                                    </div>
+                                    <div class="adapter-card">
+                                        <h6>🟢 PostgreSQL</h6>
+                                        <div class="code-block">
+                                            <pre><code>pip install dbt-postgres</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="real-world-tip">
+                                <h5>💡 Enterprise Tip</h5>
+                                <p><strong>Multi-warehouse setup:</strong> Companies like Stripe install multiple adapters to manage transformations across different warehouses (Snowflake for analytics, Postgres for operational data).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Verify DBT Installation</h4>
+                            <div class="code-block">
+                                <pre><code># Check DBT version
+dbt --version
+
+# Expected output:
+# Core:
+#   - installed: 1.7.0
+#   - latest:    1.7.0
+# Plugins:
+#   - snowflake: 1.7.0 - Up to date!</code></pre>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: DBT Version Output</h4>
+                                <p>Terminal showing successful DBT installation with version information and adapter details.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Initialize Your First DBT Project</h4>
+                            <div class="code-block">
+                                <pre><code># Create new DBT project
+dbt init my_analytics_project
+
+# Navigate to project
+cd my_analytics_project
+
+# Project structure created:
+# ├── dbt_project.yml
+# ├── models/
+# │   └── example/
+# ├── macros/
+# ├── seeds/
+# ├── snapshots/
+# └── tests/</code></pre>
+                            </div>
+                            <div class="project-structure">
+                                <h5>📁 DBT Project Structure Explained:</h5>
+                                <ul>
+                                    <li>📄 **dbt_project.yml** - Project configuration</li>
+                                    <li>📁 **models/** - SQL transformation files</li>
+                                    <li>🔧 **macros/** - Reusable SQL functions</li>
+                                    <li>🌱 **seeds/** - CSV files for reference data</li>
+                                    <li>📸 **snapshots/** - Slowly changing dimensions</li>
+                                    <li>🧪 **tests/** - Data quality tests</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dbt-cloud" class="tab-content">
+                <h3>DBT Cloud Setup (Managed Service)</h3>
+                <div class="step-by-step">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Create DBT Cloud Account</h4>
+                            <p>Sign up for DBT Cloud at <a href="https://cloud.getdbt.com" target="_blank">cloud.getdbt.com</a></p>
+                            <div class="pricing-info">
+                                <h5>💰 DBT Cloud Pricing (2024):</h5>
+                                <ul>
+                                    <li>🆓 **Developer** - Free (1 developer seat)</li>
+                                    <li>💼 **Team** - $100/month per developer</li>
+                                    <li>🏢 **Enterprise** - Custom pricing</li>
+                                </ul>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: DBT Cloud Signup</h4>
+                                <p>DBT Cloud registration page with account setup options and pricing tiers.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Connect Your Data Warehouse</h4>
+                            <div class="connection-options">
+                                <h5>🔗 Supported Connections:</h5>
+                                <div class="connection-grid">
+                                    <div class="connection-card">
+                                        <h6>❄️ Snowflake</h6>
+                                        <p>Account, username, password, warehouse</p>
+                                    </div>
+                                    <div class="connection-card">
+                                        <h6>📊 BigQuery</h6>
+                                        <p>Service account JSON key</p>
+                                    </div>
+                                    <div class="connection-card">
+                                        <h6>🔴 Redshift</h6>
+                                        <p>Host, port, database, credentials</p>
+                                    </div>
+                                    <div class="connection-card">
+                                        <h6>🏢 Databricks</h6>
+                                        <p>Server hostname, HTTP path, token</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Connect Git Repository</h4>
+                            <div class="git-setup">
+                                <h5>📂 Repository Options:</h5>
+                                <ul>
+                                    <li>🐙 **GitHub** (recommended for beginners)</li>
+                                    <li>🦊 **GitLab** (popular for enterprises)</li>
+                                    <li>🔵 **Azure DevOps** (Microsoft ecosystem)</li>
+                                    <li>🪣 **Bitbucket** (Atlassian integration)</li>
+                                </ul>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                <h4>📸 Screenshot: Git Integration Setup</h4>
+                                <p>DBT Cloud git connection interface showing repository selection and authentication.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Continue with other installation tabs... -->
+
+        </section>
+
+        <!-- Basics Section -->
+        <section id="basics" class="content-section">
+            <h2>📚 DBT Fundamentals</h2>
+            
+            <div class="concept-card">
+                <h3>🔄 What is DBT?</h3>
+                <p>DBT (Data Build Tool) enables analytics engineers to transform data in their warehouse by simply writing SELECT statements. DBT handles turning these SELECT statements into tables and views.</p>
+                
+                <div class="dbt-benefits">
+                    <h4>🎯 Key Benefits of DBT</h4>
+                    <ul>
+                        <li>📊 **SQL-based transformations** - Use the language you already know</li>
+                        <li>🔄 **Version control** - Track changes with Git</li>
+                        <li>🧪 **Built-in testing** - Ensure data quality automatically</li>
+                        <li>📚 **Auto-generated docs** - Documentation that stays current</li>
+                        <li>🏗️ **Dependency management** - Automatic execution ordering</li>
+                        <li>🎯 **Modular design** - Reusable transformations</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <h3>🏗️ DBT Project Structure</h3>
+                <div class="code-block">
+                    <pre><code>my_dbt_project/
+├── dbt_project.yml    # Project configuration
+├── models/            # SQL transformation files
+│   ├── staging/       # Raw data cleaning
+│   ├── intermediate/  # Business logic building blocks
+│   └── marts/         # Final business-ready tables
+├── macros/            # Reusable SQL functions
+├── seeds/             # CSV reference data
+├── snapshots/         # Point-in-time captures
+├── tests/             # Custom data tests
+└── analysis/          # Ad-hoc analytical queries</code></pre>
+                </div>
+                
+                <div class="screenshot-placeholder">
+                    <h4>📸 Screenshot: DBT Project in VS Code</h4>
+                    <p>VS Code showing a DBT project structure with the dbt Power User extension highlighting SQL models and their relationships.</p>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <h3>📝 Your First DBT Model</h3>
+                <p>Let's create a simple model to understand DBT basics:</p>
+                
+                <div class="code-block">
+                    <pre><code class="language-sql">-- models/staging/stg_customers.sql
+-- This model cleans raw customer data
+
+{{ config(materialized='view') }}
+
+select
+    customer_id,
+    lower(trim(first_name)) as first_name,
+    lower(trim(last_name)) as last_name,
+    lower(trim(email)) as email,
+    created_at,
+    updated_at
+from {{ source('raw_data', 'customers') }}
+where customer_id is not null</code></pre>
+                </div>
+
+                <div class="real-world-example">
+                    <h4>🌟 Real-World Context</h4>
+                    <p><strong>Stripe's Approach:</strong> Stripe uses similar staging models to clean and standardize payment data from multiple sources before building their financial reporting models.</p>
+                </div>
+            </div>
+
+            <div class="hands-on-exercise">
+                <h3>🔬 Try It Yourself</h3>
+                <div class="exercise-steps">
+                    <p><strong>Exercise 1: Create your first DBT model</strong></p>
+                    <ol>
+                        <li>Initialize a new DBT project: <code>dbt init my_project</code></li>
+                        <li>Configure your database connection in profiles.yml</li>
+                        <li>Create the staging model above</li>
+                        <li>Run: <code>dbt run --models stg_customers</code></li>
+                        <li>Check your data warehouse for the new view</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Models Section -->
+        <section id="models" class="content-section">
+            <h2>🏗️ DBT Models Deep Dive</h2>
+            
+            <div class="model-types">
+                <h3>🎯 Model Materialization Types</h3>
+                
+                <div class="materialization-grid">
+                    <div class="materialization-card">
+                        <h4>👁️ Views (Default)</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">{{ config(materialized='view') }}
+
+select * from {{ ref('stg_customers') }}</code></pre>
+                        </div>
+                        <p><strong>Use case:</strong> Lightweight transformations, frequently changing logic</p>
+                        <p><strong>Performance:</strong> Query-time execution, no storage cost</p>
+                    </div>
+
+                    <div class="materialization-card">
+                        <h4>🗃️ Tables</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">{{ config(materialized='table') }}
+
+select
+    customer_id,
+    count(*) as order_count,
+    sum(order_value) as total_spent
+from {{ ref('fct_orders') }}
+group by customer_id</code></pre>
+                        </div>
+                        <p><strong>Use case:</strong> Complex aggregations, stable business logic</p>
+                        <p><strong>Performance:</strong> Pre-computed, fast queries, storage cost</p>
+                    </div>
+
+                    <div class="materialization-card">
+                        <h4>⚡ Incremental</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">{{ config(
+    materialized='incremental',
+    unique_key='order_id'
+) }}
+
+select * from {{ source('raw_data', 'orders') }}
+
+{% if is_incremental() %}
+where updated_at > (select max(updated_at) from {{ this }})
+{% endif %}</code></pre>
+                        </div>
+                        <p><strong>Use case:</strong> Large datasets, append-only or upsert patterns</p>
+                        <p><strong>Performance:</strong> Only processes new/changed data</p>
+                    </div>
+
+                    <div class="materialization-card">
+                        <h4>📸 Snapshots</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">{% snapshot customers_snapshot %}
+{{
+    config(
+      target_schema='snapshots',
+      unique_key='customer_id',
+      strategy='timestamp',
+      updated_at='updated_at',
+    )
+}}
+
+select * from {{ source('raw_data', 'customers') }}
+
+{% endsnapshot %}</code></pre>
+                        </div>
+                        <p><strong>Use case:</strong> Slowly changing dimensions, historical tracking</p>
+                        <p><strong>Performance:</strong> Captures point-in-time data states</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="model-organization">
+                <h3>📁 Model Organization Best Practices</h3>
+                
+                <div class="layer-architecture">
+                    <h4>🏗️ Recommended Layer Architecture</h4>
+                    
+                    <div class="layer-card">
+                        <h5>🔸 Staging Layer (models/staging/)</h5>
+                        <p>One-to-one with source tables. Light transformations only:</p>
+                        <ul>
+                            <li>Renaming columns to standard conventions</li>
+                            <li>Data type casting</li>
+                            <li>Basic cleaning (trim, lower case)</li>
+                            <li>Light filtering (remove test records)</li>
+                        </ul>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- models/staging/stg_stripe__customers.sql
+select
+    id as customer_id,
+    lower(email) as email,
+    created::timestamp as created_at
+from {{ source('stripe', 'customers') }}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="layer-card">
+                        <h5>🔸 Intermediate Layer (models/intermediate/)</h5>
+                        <p>Complex business logic building blocks:</p>
+                        <ul>
+                            <li>Complex joins across multiple staging tables</li>
+                            <li>Window functions and advanced SQL</li>
+                            <li>Business rule implementations</li>
+                            <li>Reusable components for marts</li>
+                        </ul>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- models/intermediate/int_customer_order_summary.sql
+select
+    customer_id,
+    count(*) as total_orders,
+    sum(order_value) as lifetime_value,
+    min(order_date) as first_order_date,
+    max(order_date) as last_order_date
+from {{ ref('stg_orders') }}
+group by customer_id</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="layer-card">
+                        <h5>🔸 Marts Layer (models/marts/)</h5>
+                        <p>Final business-ready tables for end users:</p>
+                        <ul>
+                            <li>Organized by business domains (finance, marketing, etc.)</li>
+                            <li>Optimized for end-user consumption</li>
+                            <li>Well-documented with business definitions</li>
+                            <li>Performance-optimized (tables or incremental)</li>
+                        </ul>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- models/marts/finance/fct_monthly_revenue.sql
+select
+    date_trunc('month', order_date) as month,
+    sum(order_value) as total_revenue,
+    count(distinct customer_id) as unique_customers,
+    count(*) as total_orders
+from {{ ref('stg_orders') }}
+group by 1
+order by 1</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="real-world-example">
+                <h3>🌟 Enterprise Model Organization</h3>
+                <div class="story-card">
+                    <h4>Shopify's DBT Model Strategy</h4>
+                    <p>Shopify organizes their 2,000+ DBT models using this structure:</p>
+                    <ul>
+                        <li>🔸 **staging/** - 500+ models, one per source table</li>
+                        <li>🔸 **intermediate/** - 800+ models with reusable business logic</li>
+                        <li>🔸 **marts/finance/** - Revenue, costs, and financial KPIs</li>
+                        <li>🔸 **marts/marketing/** - Customer acquisition and retention</li>
+                        <li>🔸 **marts/product/** - Feature usage and product analytics</li>
+                        <li>🔸 **marts/operations/** - Fulfillment and logistics metrics</li>
+                    </ul>
+                    <p>This organization allows 200+ analysts to work independently while maintaining data consistency.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testing Section -->
+        <section id="testing" class="content-section">
+            <h2>🧪 Data Testing with DBT</h2>
+            
+            <div class="testing-overview">
+                <h3>🎯 Why Test Your Data?</h3>
+                <p>Data tests ensure your transformations produce reliable, accurate results. DBT makes testing a first-class citizen in analytics engineering.</p>
+                
+                <div class="testing-benefits">
+                    <h4>✅ Benefits of Data Testing</h4>
+                    <ul>
+                        <li>🛡️ **Catch data quality issues early** - Before they reach dashboards</li>
+                        <li>🔄 **Regression protection** - Ensure changes don't break existing logic</li>
+                        <li>📊 **Documentation** - Tests serve as executable documentation</li>
+                        <li>👥 **Team confidence** - Deploy changes with confidence</li>
+                        <li>🚨 **Alerting** - Get notified when data quality degrades</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="test-types">
+                <h3>🧪 Types of DBT Tests</h3>
+                
+                <div class="test-category">
+                    <h4>🔧 Schema Tests (Built-in)</h4>
+                    <p>Configure tests directly in your schema.yml files:</p>
+                    
+                    <div class="code-block">
+                        <pre><code class="language-yaml"># models/staging/schema.yml
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Cleaned customer data from raw source"
+    columns:
+      - name: customer_id
+        description: "Unique identifier for customers"
+        tests:
+          - unique
+          - not_null
+      
+      - name: email
+        description: "Customer email address"
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('stg_email_subscriptions')
+              field: email
+      
+      - name: created_at
+        description: "Customer registration date"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: "2020-01-01"
+              max_value: "{{ var('max_date') }}"</code></pre>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h4>📝 Data Tests (Custom SQL)</h4>
+                    <p>Write custom SQL tests for complex business logic:</p>
+                    
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- tests/assert_positive_order_values.sql
+-- All order values should be positive
+
+select *
+from {{ ref('fct_orders') }}
+where order_value <= 0</code></pre>
+                    </div>
+
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- tests/assert_customer_order_consistency.sql
+-- Every order should belong to an existing customer
+
+select 
+    o.order_id,
+    o.customer_id
+from {{ ref('fct_orders') }} o
+left join {{ ref('dim_customers') }} c
+  on o.customer_id = c.customer_id
+where c.customer_id is null</code></pre>
+                    </div>
+                </div>
+
+                <div class="test-category">
+                    <h4>🎯 Advanced Testing Patterns</h4>
+                    
+                    <div class="pattern-example">
+                        <h5>📊 Volume Testing</h5>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- tests/assert_reasonable_daily_orders.sql
+-- Daily order volume should be within expected range
+
+select
+    order_date,
+    count(*) as daily_orders
+from {{ ref('fct_orders') }}
+where order_date >= current_date - interval '7 days'
+group by order_date
+having count(*) < 10 or count(*) > 10000</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="pattern-example">
+                        <h5>🔄 Freshness Testing</h5>
+                        <div class="code-block">
+                            <pre><code class="language-yaml"># models/staging/schema.yml
+sources:
+  - name: raw_data
+    description: "Raw data from operational systems"
+    freshness:
+      warn_after: {count: 1, period: hour}
+      error_after: {count: 6, period: hour}
+    tables:
+      - name: orders
+        description: "Raw order data"
+        loaded_at_field: _loaded_at</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testing-workflow">
+                <h3>🚀 Testing Workflow</h3>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Run Tests Locally</h4>
+                            <div class="code-block">
+                                <pre><code># Run all tests
+dbt test
+
+# Run tests for specific model
+dbt test --models stg_customers
+
+# Run only schema tests
+dbt test --data
+
+# Run only data tests
+dbt test --schema</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>CI/CD Integration</h4>
+                            <div class="code-block">
+                                <pre><code class="language-yaml"># .github/workflows/dbt_test.yml
+name: DBT Test
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup DBT
+        run: pip install dbt-snowflake
+      - name: Run DBT Tests
+        run: |
+          dbt deps
+          dbt run --models state:modified+
+          dbt test --models state:modified+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Production Monitoring</h4>
+                            <div class="code-block">
+                                <pre><code># Schedule regular test runs
+dbt test --vars '{"max_date": "2024-01-01"}'
+
+# Store test results for monitoring
+dbt test --store-failures</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deployment Section -->
+        <section id="deployment" class="content-section">
+            <h2>🚀 DBT Deployment Strategies</h2>
+            
+            <div class="deployment-overview">
+                <h3>🎯 Deployment Approaches</h3>
+                <p>Moving your DBT transformations from development to production requires careful orchestration and monitoring.</p>
+                
+                <div class="deployment-comparison">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Best For</th>
+                                <th>Complexity</th>
+                                <th>Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>DBT Cloud</td>
+                                <td>Teams wanting managed service</td>
+                                <td>Low</td>
+                                <td>$$</td>
+                            </tr>
+                            <tr>
+                                <td>Airflow</td>
+                                <td>Complex orchestration needs</td>
+                                <td>High</td>
+                                <td>$</td>
+                            </tr>
+                            <tr>
+                                <td>GitHub Actions</td>
+                                <td>Simple CI/CD workflows</td>
+                                <td>Medium</td>
+                                <td>$</td>
+                            </tr>
+                            <tr>
+                                <td>Kubernetes CronJobs</td>
+                                <td>Container-based infrastructure</td>
+                                <td>High</td>
+                                <td>$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="deployment-method">
+                <h3>☁️ DBT Cloud Deployment</h3>
+                
+                <div class="cloud-setup">
+                    <h4>📋 Setup Process</h4>
+                    <ol>
+                        <li>Connect your Git repository to DBT Cloud</li>
+                        <li>Configure data warehouse connection</li>
+                        <li>Set up development and production environments</li>
+                        <li>Create deployment jobs with scheduling</li>
+                        <li>Configure notifications and monitoring</li>
+                    </ol>
+                </div>
+
+                <div class="cloud-job-config">
+                    <h4>⚙️ Production Job Configuration</h4>
+                    <div class="screenshot-placeholder">
+                        <h4>📸 Screenshot: DBT Cloud Job Settings</h4>
+                        <p>DBT Cloud job configuration showing environment selection, command configuration, and scheduling options.</p>
+                    </div>
+                    
+                    <div class="job-commands">
+                        <h5>🔧 Typical Production Commands</h5>
+                        <div class="code-block">
+                            <pre><code># Full refresh on weekends
+dbt seed
+dbt run --full-refresh
+dbt test
+
+# Incremental updates on weekdays  
+dbt run
+dbt test
+dbt run-operation grant_select_on_schemas</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deployment-method">
+                <h3>🌊 Airflow Integration</h3>
+                
+                <div class="airflow-dag">
+                    <h4>📜 DBT Airflow DAG Example</h4>
+                    <div class="code-block">
+                        <pre><code class="language-python">from datetime import datetime, timedelta
+from airflow import DAG
+from airflow_dbt.operators.dbt_operator import (
+    DbtSeedOperator,
+    DbtRunOperator,
+    DbtTestOperator
+)
+
+default_args = {
+    'owner': 'data-team',
+    'depends_on_past': False,
+    'start_date': datetime(2024, 1, 1),
+    'email_on_failure': True,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5)
+}
+
+dag = DAG(
+    'dbt_analytics_pipeline',
+    default_args=default_args,
+    description='Daily DBT run for analytics',
+    schedule_interval='0 6 * * *',  # Run at 6 AM daily
+    catchup=False
+)
+
+# Load reference data
+dbt_seed = DbtSeedOperator(
+    task_id='dbt_seed',
+    dir='/opt/airflow/dbt_project',
+    dag=dag
+)
+
+# Run transformations
+dbt_run = DbtRunOperator(
+    task_id='dbt_run',
+    dir='/opt/airflow/dbt_project',
+    dag=dag
+)
+
+# Run tests
+dbt_test = DbtTestOperator(
+    task_id='dbt_test',
+    dir='/opt/airflow/dbt_project',
+    dag=dag
+)
+
+# Define dependencies
+dbt_seed >> dbt_run >> dbt_test</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deployment-best-practices">
+                <h3>✅ Production Best Practices</h3>
+                
+                <div class="practices-grid">
+                    <div class="practice-card">
+                        <h4>🔒 Environment Isolation</h4>
+                        <ul>
+                            <li>Separate schemas for dev/staging/prod</li>
+                            <li>Different warehouse compute resources</li>
+                            <li>Isolated service accounts and permissions</li>
+                            <li>Environment-specific variables</li>
+                        </ul>
+                    </div>
+
+                    <div class="practice-card">
+                        <h4>📊 Monitoring & Alerting</h4>
+                        <ul>
+                            <li>Model execution time monitoring</li>
+                            <li>Data freshness checks</li>
+                            <li>Test failure notifications</li>
+                            <li>Resource usage tracking</li>
+                        </ul>
+                    </div>
+
+                    <div class="practice-card">
+                        <h4>🔄 Change Management</h4>
+                        <ul>
+                            <li>Feature branch workflows</li>
+                            <li>Automated testing in CI/CD</li>
+                            <li>Staged deployments (dev → staging → prod)</li>
+                            <li>Rollback procedures</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Section -->
+        <section id="advanced" class="content-section">
+            <h2>⚡ Advanced DBT Features</h2>
+            
+            <div class="advanced-feature">
+                <h3>🔧 Macros and Jinja</h3>
+                <p>Macros allow you to write reusable SQL functions and implement complex logic using Jinja templating.</p>
+                
+                <div class="macro-examples">
+                    <div class="macro-example">
+                        <h4>📅 Date Manipulation Macro</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- macros/date_spine.sql
+{% macro date_spine(start_date, end_date) %}
+
+    {% set num_days = (end_date - start_date).days + 1 %}
+    
+    with date_spine as (
+        {% for i in range(num_days) %}
+        select '{{ start_date + timedelta(days=i) }}'::date as date_day
+        {% if not loop.last %}union all{% endif %}
+        {% endfor %}
+    )
+    
+    select * from date_spine
+
+{% endmacro %}</code></pre>
+                        </div>
+
+                        <div class="macro-usage">
+                            <h5>Using the Macro</h5>
+                            <div class="code-block">
+                                <pre><code class="language-sql">-- models/utilities/dim_date.sql
+{{ date_spine('2020-01-01'::date, '2025-12-31'::date) }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="macro-example">
+                        <h4>🔄 Dynamic SQL Generation</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- macros/generate_columns.sql
+{% macro generate_revenue_columns(countries) %}
+    {% for country in countries %}
+    sum(case when country = '{{ country }}' then revenue else 0 end) as {{ country | lower }}_revenue
+    {%- if not loop.last -%},{%- endif -%}
+    {% endfor %}
+{% endmacro %}
+
+-- Usage in model
+select
+    date,
+    {{ generate_revenue_columns(['USA', 'Canada', 'Mexico']) }}
+from {{ ref('stg_orders') }}
+group by date</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advanced-feature">
+                <h3>📦 Packages and Dependencies</h3>
+                <p>DBT packages allow you to use pre-built transformations and utilities from the community.</p>
+                
+                <div class="packages-setup">
+                    <h4>📋 packages.yml Configuration</h4>
+                    <div class="code-block">
+                        <pre><code class="language-yaml"># packages.yml
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 1.1.1
+    
+  - package: calogica/dbt_expectations
+    version: 0.10.1
+    
+  - package: dbt-labs/audit_helper
+    version: 0.9.0
+    
+  - git: "https://github.com/your-org/internal-dbt-utils.git"
+    revision: v1.2.0</code></pre>
+                    </div>
+                </div>
+
+                <div class="popular-packages">
+                    <h4>🌟 Popular DBT Packages</h4>
+                    <div class="package-grid">
+                        <div class="package-card">
+                            <h5>🛠️ dbt_utils</h5>
+                            <p>Essential utility macros for common transformations</p>
+                            <div class="code-block">
+                                <pre><code class="language-sql">-- Surrogate key generation
+{{ dbt_utils.generate_surrogate_key(['customer_id', 'order_date']) }}
+
+-- Pivot tables
+{{ dbt_utils.pivot('status', dbt_utils.get_column_values(ref('orders'), 'status')) }}
+
+-- Date spines
+{{ dbt_utils.date_spine('day', '2020-01-01', '2024-12-31') }}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="package-card">
+                            <h5>🧪 dbt_expectations</h5>
+                            <p>Advanced data quality testing inspired by Great Expectations</p>
+                            <div class="code-block">
+                                <pre><code class="language-yaml">tests:
+  - dbt_expectations.expect_column_values_to_be_between:
+      min_value: 0
+      max_value: 100
+  - dbt_expectations.expect_column_mean_to_be_between:
+      min_value: 10
+      max_value: 50</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="advanced-feature">
+                <h3>🎯 Performance Optimization</h3>
+                
+                <div class="optimization-techniques">
+                    <div class="technique-card">
+                        <h4>⚡ Query Optimization</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">-- Instead of this (slow)
+select *
+from {{ ref('large_fact_table') }}
+where date_column >= '2024-01-01'
+
+-- Do this (fast with proper partitioning)
+select *
+from {{ ref('large_fact_table') }}
+where date_partition >= '2024-01-01'
+  and date_column >= '2024-01-01'</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="technique-card">
+                        <h4>🔄 Incremental Strategy Tuning</h4>
+                        <div class="code-block">
+                            <pre><code class="language-sql">{{ config(
+    materialized='incremental',
+    unique_key='id',
+    on_schema_change='sync_all_columns',
+    incremental_strategy='merge'
+) }}
+
+select
+    id,
+    updated_at,
+    -- Include all relevant columns
+from {{ source('app', 'users') }}
+
+{% if is_incremental() %}
+  -- Efficient incremental logic
+  where updated_at > (select max(updated_at) from {{ this }})
+{% endif %}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="content-section">
+            <h2>💡 Real-World DBT Projects</h2>
+            
+            <div class="project-card">
+                <h3>🛒 Project 1: E-commerce Analytics Pipeline</h3>
+                <p>Build a complete analytics pipeline for an e-commerce platform with customer segmentation, product analytics, and financial reporting.</p>
+                
+                <div class="project-scope">
+                    <h4>🎯 What You'll Build</h4>
+                    <ul>
+                        <li>📊 **Customer Lifetime Value** models with cohort analysis</li>
+                        <li>🛍️ **Product performance** tracking with inventory optimization</li>
+                        <li>💰 **Revenue attribution** across marketing channels</li>
+                        <li>📈 **Real-time dashboards** with key business metrics</li>
+                        <li>🧪 **A/B testing framework** for product experiments</li>
+                        <li>🤖 **Automated anomaly detection** for key metrics</li>
+                    </ul>
+                </div>
+
+                <div class="project-models">
+                    <h4>🏗️ Key Models Structure</h4>
+                    <div class="code-block">
+                        <pre><code>models/
+├── staging/
+│   ├── stg_orders.sql
+│   ├── stg_customers.sql
+│   └── stg_products.sql
+├── intermediate/
+│   ├── int_customer_orders.sql
+│   └── int_product_metrics.sql
+└── marts/
+    ├── marketing/
+    │   ├── customer_segments.sql
+    │   └── channel_attribution.sql
+    └── finance/
+        ├── monthly_revenue.sql
+        └── cohort_retention.sql</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <h3>🏦 Project 2: SaaS Metrics Dashboard</h3>
+                <p>Create a comprehensive SaaS metrics pipeline covering MRR, churn, user engagement, and growth analytics.</p>
+                
+                <div class="project-metrics">
+                    <h4>📊 Key Metrics Implementation</h4>
+                    <ul>
+                        <li>💰 **Monthly Recurring Revenue (MRR)** with expansion/contraction tracking</li>
+                        <li>📉 **Churn analysis** by customer segment and cohort</li>
+                        <li>👥 **User engagement scoring** with product adoption metrics</li>
+                        <li>🚀 **Growth accounting** (new, expansion, contraction, churn)</li>
+                        <li>💡 **Feature usage analytics** for product development</li>
+                        <li>🎯 **Customer health scoring** for success team prioritization</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <h3>📱 Project 3: Mobile App Analytics</h3>
+                <p>Build event-driven analytics for mobile applications including user journeys, funnel analysis, and retention modeling.</p>
+                
+                <div class="project-architecture">
+                    <h4>🏗️ Event Processing Pipeline</h4>
+                    <ul>
+                        <li>📱 **Event stream processing** from mobile SDKs</li>
+                        <li>🔄 **Session reconstruction** and user journey mapping</li>
+                        <li>📊 **Funnel analysis** for key conversion points</li>
+                        <li>🎯 **Push notification effectiveness** tracking</li>
+                        <li>⭐ **App store performance** metrics and reviews analysis</li>
+                        <li>🤖 **Predictive churn modeling** using behavioral data</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercises Section -->
+        <section id="exercises" class="content-section">
+            <h2>🎯 Hands-On DBT Exercises</h2>
+            
+            <div class="exercise-card">
+                <h3>🔰 Exercise 1: Your First DBT Project</h3>
+                <div class="exercise-difficulty">Beginner Level</div>
+                
+                <div class="exercise-objective">
+                    <h4>🎯 Objective</h4>
+                    <p>Set up a complete DBT project with staging, intermediate, and mart models using sample e-commerce data.</p>
+                </div>
+
+                <div class="exercise-tasks">
+                    <h4>📋 Tasks</h4>
+                    <ol>
+                        <li>Initialize a new DBT project and connect to your data warehouse</li>
+                        <li>Create staging models for customers, orders, and products tables</li>
+                        <li>Build an intermediate model joining customers and their order history</li>
+                        <li>Create a mart model calculating customer lifetime value</li>
+                        <li>Add schema tests for data quality validation</li>
+                        <li>Generate and review DBT documentation</li>
+                        <li>Run the full pipeline and validate results</li>
+                    </ol>
+                </div>
+
+                <div class="exercise-starter">
+                    <h4>🚀 Starter Code</h4>
+                    <div class="code-block">
+                        <pre><code class="language-sql">-- models/staging/stg_customers.sql
+select
+    customer_id,
+    first_name,
+    last_name,
+    email,
+    created_at
+from {{ source('raw_data', 'customers') }}
+
+-- models/staging/stg_orders.sql  
+select
+    order_id,
+    customer_id,
+    order_date,
+    order_value,
+    status
+from {{ source('raw_data', 'orders') }}
+where status != 'cancelled'</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise-card">
+                <h3>🔧 Exercise 2: Advanced Transformations</h3>
+                <div class="exercise-difficulty">Intermediate Level</div>
+                
+                <div class="exercise-objective">
+                    <h4>🎯 Objective</h4>
+                    <p>Implement complex business logic using DBT macros, incremental models, and advanced SQL patterns.</p>
+                </div>
+
+                <div class="exercise-tasks">
+                    <h4>📋 Tasks</h4>
+                    <ol>
+                        <li>Create a macro for calculating customer segments (bronze, silver, gold)</li>
+                        <li>Implement an incremental model for daily sales summaries</li>
+                        <li>Build a cohort retention analysis using window functions</li>
+                        <li>Create snapshots to track slowly changing customer data</li>
+                        <li>Implement custom tests for business rule validation</li>
+                        <li>Use dbt_utils package for advanced transformations</li>
+                        <li>Set up CI/CD testing with GitHub Actions</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="exercise-card">
+                <h3>🏢 Exercise 3: Enterprise Data Pipeline</h3>
+                <div class="exercise-difficulty">Advanced Level</div>
+                
+                <div class="exercise-objective">
+                    <h4>🎯 Objective</h4>
+                    <p>Build a production-ready DBT project with proper organization, testing, documentation, and deployment.</p>
+                </div>
+
+                <div class="exercise-requirements">
+                    <h4>📋 Requirements</h4>
+                    <ol>
+                        <li>Multi-source data integration (databases, APIs, files)</li>
+                        <li>Layered architecture with clear data lineage</li>
+                        <li>Comprehensive testing strategy (>90% model coverage)</li>
+                        <li>Performance optimization for large datasets (>1M rows)</li>
+                        <li>Data governance with proper documentation</li>
+                        <li>Automated deployment pipeline</li>
+                        <li>Monitoring and alerting setup</li>
+                    </ol>
+                </div>
+
+                <div class="exercise-evaluation">
+                    <h4>✅ Evaluation Criteria</h4>
+                    <ul>
+                        <li>Code organization and maintainability</li>
+                        <li>Test coverage and data quality validation</li>
+                        <li>Performance and resource optimization</li>
+                        <li>Documentation completeness and clarity</li>
+                        <li>Deployment automation and reliability</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="exercise-resources">
+                <h3>📚 Additional Resources</h3>
+                
+                <div class="resource-links">
+                    <h4>🔗 Essential Links</h4>
+                    <ul>
+                        <li>📖 <a href="https://docs.getdbt.com" target="_blank">Official DBT Documentation</a></li>
+                        <li>🏘️ <a href="https://www.getdbt.com/community/" target="_blank">DBT Community Slack</a></li>
+                        <li>📦 <a href="https://hub.getdbt.com/" target="_blank">DBT Package Hub</a></li>
+                        <li>🎓 <a href="https://courses.getdbt.com/" target="_blank">DBT Learn Courses</a></li>
+                        <li>📊 <a href="https://www.getdbt.com/blog/" target="_blank">DBT Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="sample-datasets">
+                    <h4>🗃️ Sample Datasets for Practice</h4>
+                    <ul>
+                        <li>🛒 **Jaffle Shop** - E-commerce sample data from DBT</li>
+                        <li>🎵 **Spotify Tracks** - Music streaming analytics</li>
+                        <li>🏦 **Banking Transactions** - Financial data modeling</li>
+                        <li>📱 **Mobile App Events** - User behavior analysis</li>
+                        <li>🚗 **Taxi Rides** - Transportation analytics</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Quiz Section -->
+    <div id="quiz-container" class="quiz-container" style="display: none;">
+        <div class="quiz-header">
+            <h3>🎯 Test Your DBT Knowledge</h3>
+            <button class="close-quiz" onclick="closeQuiz()">×</button>
+        </div>
+        <div class="quiz-content">
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="quiz-footer">
+                <button class="quiz-btn" onclick="submitAnswer()">Submit Answer</button>
+                <div class="quiz-progress">
+                    <span id="quiz-progress">Question 1 of 20</span>
+                </div>
+            </div>
+        </div>
+        <div class="quiz-result" id="quiz-result" style="display: none;">
+            <h4 id="result-title"></h4>
+            <p id="result-text"></p>
+            <button class="quiz-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="quiz-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

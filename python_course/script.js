@@ -1,6 +1,6 @@
 // Initialize syntax highlighting
 document.addEventListener('DOMContentLoaded', function() {
-    // hljs.highlightAll() removed - using basic highlighting
+    hljs.highlightAll();
     updateProgress();
     setDate();
     loadQuizData();

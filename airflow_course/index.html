@@ -4,22 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FKTI - Apache Airflow Mastery | Fakhruddin Khambaty Training Institute</title>
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="../assets/design-system.css">
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
     <link rel="stylesheet" href="styles.css">
-    <!-- External CDN removed for offline functionality -->
-    <style>
-        /* Basic code highlighting styles */
-        .hljs { 
-            background: #282c34; 
-            color: #abb2bf; 
-            padding: 12px; 
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-        }
-        .hljs-keyword { color: #c678dd; }
-        .hljs-string { color: #98c379; }
-        .hljs-number { color: #d19a66; }
-        .hljs-comment { color: #5c6370; }
-    </style>
+    <link rel="stylesheet" href="../css/minimalistic-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
 </head>
 <body>
     <!-- Header -->
@@ -103,7 +93,27 @@
                 <div class="screenshot-placeholder">
                     <div class="screenshot-box">
                         <h4>📸 Screenshot 1.1: Airflow Architecture Overview</h4>
-                        <div class="placeholder-image">🖼️ [Architecture Diagram Placeholder]</div>
+                        <div class="mock-screenshot">
+                            <div class="screenshot-header">Airflow Architecture Components</div>
+                            <div class="screenshot-content">
+                                <div class="arch-component">
+                                    <span class="comp-icon">🌐</span> <strong>Web Server</strong>
+                                    <small>User interface for monitoring</small>
+                                </div>
+                                <div class="arch-component">
+                                    <span class="comp-icon">⚡</span> <strong>Scheduler</strong>
+                                    <small>Triggers task execution</small>
+                                </div>
+                                <div class="arch-component">
+                                    <span class="comp-icon">🗄️</span> <strong>Metadata Database</strong>
+                                    <small>Stores workflow information</small>
+                                </div>
+                                <div class="arch-component">
+                                    <span class="comp-icon">⚙️</span> <strong>Executor</strong>
+                                    <small>Runs tasks on workers</small>
+                                </div>
+                            </div>
+                        </div>
                         <p><strong>Description:</strong> High-level view of Airflow components including Web Server, Scheduler, Metadata Database, and Worker Nodes. This diagram illustrates the distributed nature of the system and data flow between components.</p>
                     </div>
                 </div>
@@ -253,8 +263,8 @@
             <div class="screenshot-section">
                 <div class="screenshot-placeholder large">
                     <i class="fas fa-desktop"></i>
-                    <h4>What Does Airflow Look Like?</h4>
-                    <p><strong>Screenshot:</strong> Simple Airflow web interface showing a basic data pipeline</p>
+                    <h4>📸 Screenshot: Airflow Web Interface Overview</h4>
+                    <p>Simple Airflow web interface showing a basic data pipeline</p>
                     <div class="screenshot-details">
                         <ul>
                             <li>Clean web interface with colorful boxes (these are "tasks")</li>
@@ -494,7 +504,23 @@
                 <div class="screenshot-placeholder">
                     <div class="screenshot-box">
                         <h4>📸 Figure 1.1: Airflow Web UI - DAG Overview</h4>
-                        <div class="placeholder-image">🖼️ [Airflow Web Interface Screenshot]</div>
+                        <div class="mock-screenshot">
+                            <div class="screenshot-header">Apache Airflow - DAG Overview</div>
+                            <div class="screenshot-content">
+                                <div class="dag-item">
+                                    <span class="dag-status success">●</span> data_pipeline_daily
+                                    <small>Last run: 2 mins ago • Success</small>
+                                </div>
+                                <div class="dag-item">
+                                    <span class="dag-status running">●</span> etl_workflow
+                                    <small>Currently running • 5 tasks</small>
+                                </div>
+                                <div class="dag-item">
+                                    <span class="dag-status success">●</span> data_validation
+                                    <small>Last run: 1 hour ago • Success</small>
+                                </div>
+                            </div>
+                        </div>
                         <p><strong>Expected Content:</strong> Screenshot showing the main Airflow web interface with DAG list view, displaying DAG names, status indicators, last run times, and success/failure metrics. Students should observe the clean, intuitive interface design.</p>
                         <p><strong>Learning Objective:</strong> Familiarize with the primary user interface for workflow monitoring and management.</p>
                     </div>
@@ -539,7 +565,26 @@
                 <div class="screenshot-placeholder">
                     <div class="screenshot-box">
                         <h4>📸 Figure 1.2: Component Interaction Diagram</h4>
-                        <div class="placeholder-image">🖼️ [Architecture Diagram with Data Flow]</div>
+                        <div class="mock-screenshot">
+                            <div class="screenshot-header">Data Flow Between Components</div>
+                            <div class="screenshot-content">
+                                <div class="flow-step">
+                                    <span class="step-num">1</span> User submits DAG → Web Server
+                                </div>
+                                <div class="flow-step">
+                                    <span class="step-num">2</span> Web Server → Metadata Database
+                                </div>
+                                <div class="flow-step">
+                                    <span class="step-num">3</span> Scheduler reads → Metadata Database
+                                </div>
+                                <div class="flow-step">
+                                    <span class="step-num">4</span> Scheduler triggers → Executor
+                                </div>
+                                <div class="flow-step">
+                                    <span class="step-num">5</span> Executor runs → Worker Nodes
+                                </div>
+                            </div>
+                        </div>
                         <p><strong>Expected Content:</strong> Detailed architectural diagram showing data flow between Web Server, Scheduler, Metadata DB, and Executors. Include arrow indicators for request/response patterns and data persistence flows.</p>
                         <p><strong>Analysis Points:</strong> Students should identify potential bottlenecks, single points of failure, and scaling considerations in this architecture.</p>
                     </div>
@@ -705,7 +750,24 @@ hello_task = PythonOperator(
                 <div class="screenshot-placeholder">
                     <div class="screenshot-box">
                         <h4>📸 Figure 1.3: DAG Graph View</h4>
-                        <div class="placeholder-image">🖼️ [DAG Graph Visualization]</div>
+                        <div class="mock-screenshot">
+                            <div class="screenshot-header">hello_world_dag - Graph View</div>
+                            <div class="screenshot-content">
+                                <div class="dag-graph">
+                                    <div class="task-node success">
+                                        <span class="task-icon">✓</span>
+                                        <div class="task-info">
+                                            <strong>hello_task</strong>
+                                            <small>Duration: 0.5s</small>
+                                        </div>
+                                    </div>
+                                    <div class="task-details">
+                                        <span>📅 Start: 2024-01-15 10:00:00</span>
+                                        <span>⏱️ End: 2024-01-15 10:00:01</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <p><strong>Expected Content:</strong> Screenshot of the Airflow web UI showing the graph view of our hello_world_dag. The single task should appear as a node with status indicators and execution metadata.</p>
                         <p><strong>Analysis Focus:</strong> Observe how the logical DAG structure translates to visual representation. Note the task status colors, execution timing, and interactive elements.</p>
                     </div>
@@ -751,7 +813,29 @@ hello_task = PythonOperator(
                 <div class="screenshot-placeholder">
                     <div class="screenshot-box">
                         <h4>📸 Figure 1.4: Task Instance Details</h4>
-                        <div class="placeholder-image">🖼️ [Task Instance Detail View]</div>
+                        <div class="mock-screenshot">
+                            <div class="screenshot-header">Task Instance - hello_task Details</div>
+                            <div class="screenshot-content">
+                                <div class="task-detail-row">
+                                    <strong>Task ID:</strong> hello_task
+                                </div>
+                                <div class="task-detail-row">
+                                    <strong>State:</strong> <span class="status-success">Success</span>
+                                </div>
+                                <div class="task-detail-row">
+                                    <strong>Start Date:</strong> 2024-01-15T10:00:00+00:00
+                                </div>
+                                <div class="task-detail-row">
+                                    <strong>End Date:</strong> 2024-01-15T10:00:01+00:00
+                                </div>
+                                <div class="task-detail-row">
+                                    <strong>Duration:</strong> 0.5 seconds
+                                </div>
+                                <div class="log-output">
+                                    <code>INFO - Hello World from Airflow!</code>
+                                </div>
+                            </div>
+                        </div>
                         <p><strong>Expected Content:</strong> Screenshot showing the detailed view of a task instance, including logs, duration, context variables, and XCom data. Students should see the execution timeline and output data.</p>
                         <p><strong>Learning Focus:</strong> Understanding task execution lifecycle, context data availability, and debugging capabilities in the Airflow UI.</p>
                     </div>
@@ -1958,16 +2042,7 @@ ltv_calculation >> notification</code></pre>
         </div>
     </div>
 
-    <!-- External CDN removed for offline functionality -->
-    <script>
-        // Basic code highlighting replacement
-        document.addEventListener('DOMContentLoaded', function() {
-            const codeBlocks = document.querySelectorAll('pre code, .code-example code');
-            codeBlocks.forEach(block => {
-                block.classList.add('hljs');
-            });
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="quiz-data.js"></script>
     <script src="script.js"></script>
 </body>

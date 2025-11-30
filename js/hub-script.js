@@ -29,6 +29,12 @@ function initializeHub() {
     // Setup course cards hover effects
     setupCourseCardEffects();
     
+    // Initialize DataBot interactions
+    initializeDataBot();
+    
+    // Initialize theme system
+    initializeThemes();
+    
     console.log('FKTI Learning Hub initialized');
 }
 
@@ -156,7 +162,12 @@ function enterCourse(courseType) {
     // Course routing
     const courseUrls = {
         'python': 'python_course/index.html',
-        'airflow': 'airflow_course/index.html'
+        'airflow': 'airflow_course/index.html',
+        'terraform': 'terraform_course/index.html',
+        'redshift': 'redshift_course/index.html',
+        'mssql': 'mssql_course/index.html',
+        'dbt': 'dbt_course/index.html',
+        'metabase': 'metabase_course/index.html'
     };
     
     const url = courseUrls[courseType];
@@ -348,6 +359,9 @@ function setupScrollEffects() {
  * Add keyboard navigation support
  */
 document.addEventListener('keydown', function(e) {
+    // Only trigger if not in input field
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
     // Press 'P' to go to Python course
     if (e.key.toLowerCase() === 'p' && !e.ctrlKey && !e.altKey) {
         enterCourse('python');
@@ -356,6 +370,31 @@ document.addEventListener('keydown', function(e) {
     // Press 'A' to go to Airflow course
     if (e.key.toLowerCase() === 'a' && !e.ctrlKey && !e.altKey) {
         enterCourse('airflow');
+    }
+    
+    // Press 'T' to go to Terraform course
+    if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.altKey) {
+        enterCourse('terraform');
+    }
+    
+    // Press 'R' to go to Redshift course
+    if (e.key.toLowerCase() === 'r' && !e.ctrlKey && !e.altKey) {
+        enterCourse('redshift');
+    }
+    
+    // Press 'M' to go to MSSQL course
+    if (e.key.toLowerCase() === 'm' && !e.ctrlKey && !e.altKey) {
+        enterCourse('mssql');
+    }
+    
+    // Press 'D' to go to DBT course
+    if (e.key.toLowerCase() === 'd' && !e.ctrlKey && !e.altKey) {
+        enterCourse('dbt');
+    }
+    
+    // Press 'B' to go to Metabase course
+    if (e.key.toLowerCase() === 'b' && !e.ctrlKey && !e.altKey) {
+        enterCourse('metabase');
     }
     
     // Press 'Escape' to scroll to top
@@ -416,8 +455,170 @@ function updateCourseCardProgress(courseType, completedSections) {
 // Initialize progress checking when page loads
 document.addEventListener('DOMContentLoaded', checkCourseProgress);
 
+/**
+ * Scroll to top of page (for logo click)
+ */
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+/**
+ * Initialize DataBot interactions
+ */
+function initializeDataBot() {
+    const databotSpeech = document.getElementById('databot-speech');
+    const journeySteps = document.querySelectorAll('.journey-step');
+    
+    if (!databotSpeech || journeySteps.length === 0) return;
+    
+    // DataBot speech messages for each step
+    const speechMessages = {
+        default: "Let me show you how we turn chaos into insights! 🤖",
+        1: "Look at this mess! MSSQL has data everywhere! 😵",
+        2: "Python to the rescue! Let me investigate this data! 🔍",
+        3: "Time to build our cloud empire with Terraform! 🏗️",
+        4: "Redshift will organize everything perfectly! ✨",
+        5: "Airflow will automate everything! No more manual work! 🤖",
+        6: "DBT time! Let's cook up some insights! 👨‍🍳",
+        7: "Metabase will make beautiful dashboards! 📊",
+        result: "Mission accomplished! From chaos to clarity! 🎉"
+    };
+    
+    // Intersection Observer for DataBot speech
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const step = entry.target.getAttribute('data-step');
+                if (step && speechMessages[step]) {
+                    updateDatabotSpeech(speechMessages[step]);
+                }
+            }
+        });
+    }, {
+        threshold: 0.6,
+        rootMargin: '-50px 0px'
+    });
+    
+    // Observe all journey steps
+    journeySteps.forEach(step => {
+        observer.observe(step);
+    });
+    
+    // Also observe the result card
+    const resultCard = document.querySelector('.journey-result');
+    if (resultCard) {
+        const resultObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    updateDatabotSpeech(speechMessages.result);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+        resultObserver.observe(resultCard);
+    }
+    
+    // Add click interaction to DataBot
+    const databot = document.querySelector('.databot');
+    if (databot) {
+        databot.addEventListener('click', () => {
+            const funnyMessages = [
+                "Beep boop! Want to learn data engineering? 🤖",
+                "I love organizing messy data! It's like LEGO for adults! 🧱",
+                "Fun fact: I run on coffee and SQL queries! ☕",
+                "My favorite hobby? Making data pipelines go BRRRR! 🚀",
+                "I dream in JSON and wake up in SQL! 💭",
+                "Click a course below to start your data journey! 👇"
+            ];
+            const randomMessage = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+            updateDatabotSpeech(randomMessage);
+            
+            // Add bounce animation
+            databot.style.animation = 'bounce 0.6s ease-in-out';
+            setTimeout(() => {
+                databot.style.animation = 'bounce 2s ease-in-out infinite';
+            }, 600);
+        });
+    }
+}
+
+/**
+ * Update DataBot speech bubble
+ */
+function updateDatabotSpeech(message) {
+    const speechElement = document.getElementById('databot-speech');
+    if (speechElement) {
+        // Add typing animation
+        speechElement.style.opacity = '0.5';
+        setTimeout(() => {
+            speechElement.textContent = message;
+            speechElement.style.opacity = '1';
+            
+            // Add pulse animation to speech bubble
+            const speechBubble = speechElement.parentElement;
+            speechBubble.style.animation = 'pulse 0.8s ease-in-out';
+            setTimeout(() => {
+                speechBubble.style.animation = 'pulse 2s ease-in-out infinite';
+            }, 800);
+        }, 300);
+    }
+}
+
+/**
+ * Theme Management Functions
+ */
+
+// Initialize theme system
+function initializeThemes() {
+    // Load saved theme or default to blue
+    const savedTheme = localStorage.getItem('fkti-theme') || 'blue';
+    setTheme(savedTheme);
+    
+    // Close theme dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.theme-selector')) {
+            const dropdown = document.getElementById('themeDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('active');
+            }
+        }
+    });
+}
+
+// Toggle theme selector dropdown
+function toggleThemeSelector() {
+    const dropdown = document.getElementById('themeDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('active');
+    }
+}
+
+// Set theme
+function setTheme(themeName) {
+    // Apply theme to document
+    document.documentElement.setAttribute('data-theme', themeName);
+    
+    // Save to localStorage
+    localStorage.setItem('fkti-theme', themeName);
+    
+    // Close dropdown
+    const dropdown = document.getElementById('themeDropdown');
+    if (dropdown) {
+        dropdown.classList.remove('active');
+    }
+    
+    console.log(`Theme changed to: ${themeName}`);
+}
+
 // Export functions for global access
 window.enterCourse = enterCourse;
 window.scrollToCourses = scrollToCourses;
 window.toggleMobileMenu = toggleMobileMenu;
 window.openDemo = openDemo;
+window.toggleThemeSelector = toggleThemeSelector;
+window.setTheme = setTheme;
+window.scrollToTop = scrollToTop;
