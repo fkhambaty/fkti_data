@@ -8,6 +8,38 @@
     <link rel="stylesheet" href="css/fkti-light-theme.css">
     <link rel="stylesheet" href="css/hub-styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Firebase SDK for Centralized Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase configuration - REPLACE WITH YOUR FIREBASE CONFIG
+        // Get this from: Firebase Console > Project Settings > General > Your apps > Web app
+        // See FIREBASE_SETUP.md for detailed instructions
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyReplaceWithYourOwn",
+            authDomain: "fkti-analytics.firebaseapp.com",
+            projectId: "fkti-analytics",
+            storageBucket: "fkti-analytics.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+        
+        // Initialize Firebase (only if config is valid)
+        if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "AIzaSyDummyKeyReplaceWithYourOwn") {
+            try {
+                if (typeof firebase !== 'undefined') {
+                    firebase.initializeApp(firebaseConfig);
+                    window.fktiFirestore = firebase.firestore();
+                    console.log('✅ Firebase initialized for centralized analytics');
+                }
+            } catch (e) {
+                console.log('⚠️ Firebase initialization error:', e);
+            }
+        } else {
+            console.log('⚠️ Firebase not configured - using localStorage only. See FIREBASE_SETUP.md');
+        }
+    </script>
 </head>
 <body>
     <!-- Navigation Header -->
@@ -115,43 +147,43 @@
                     </div>
                     
                     <!-- Floating tech icons - scattered layout -->
-                    <div class="tech-float tech-1">
+                    <div class="tech-float tech-1" onclick="scrollToCourseCard('python')" style="cursor: pointer;">
                         <img src="assets/python-logo.svg" alt="Python">
                         <span class="tech-label">Python</span>
                     </div>
-                    <div class="tech-float tech-2">
+                    <div class="tech-float tech-2" onclick="scrollToCourseCard('airflow')" style="cursor: pointer;">
                         <img src="assets/airflow-logo.svg" alt="Airflow">
                         <span class="tech-label">Airflow</span>
                     </div>
-                    <div class="tech-float tech-3">
+                    <div class="tech-float tech-3" onclick="scrollToCourseCard('terraform')" style="cursor: pointer;">
                         <img src="assets/terraform-logo.svg" alt="Terraform">
                         <span class="tech-label">Terraform</span>
                     </div>
-                    <div class="tech-float tech-4">
+                    <div class="tech-float tech-4" onclick="scrollToCourseCard('redshift')" style="cursor: pointer;">
                         <img src="assets/redshift-logo.svg" alt="Redshift">
                         <span class="tech-label">Redshift</span>
                     </div>
-                    <div class="tech-float tech-5">
+                    <div class="tech-float tech-5" onclick="scrollToCourseCard('mssql')" style="cursor: pointer;">
                         <img src="assets/mssql-logo.svg" alt="SQL">
                         <span class="tech-label">SQL</span>
                     </div>
-                    <div class="tech-float tech-6">
+                    <div class="tech-float tech-6" onclick="scrollToCourseCard('dbt')" style="cursor: pointer;">
                         <img src="assets/dbt-logo.svg" alt="DBT">
                         <span class="tech-label">DBT</span>
                     </div>
-                    <div class="tech-float tech-7">
+                    <div class="tech-float tech-7" onclick="scrollToCourseCard('metabase')" style="cursor: pointer;">
                         <img src="assets/metabase-logo.svg" alt="Metabase">
                         <span class="tech-label">Analytics</span>
                     </div>
-                    <div class="tech-float tech-8">
+                    <div class="tech-float tech-8" onclick="scrollToCourseCard('postgres')" style="cursor: pointer;">
                         <i class="fas fa-database" style="font-size: 32px; color: #22c55e;"></i>
                         <span class="tech-label">PostgreSQL</span>
                     </div>
-                    <div class="tech-float tech-9">
+                    <div class="tech-float tech-9" onclick="scrollToCourseCard('dms')" style="cursor: pointer;">
                         <i class="fas fa-truck-loading" style="font-size: 32px; color: #ec4899;"></i>
                         <span class="tech-label">DMS</span>
                     </div>
-                    <div class="tech-float tech-10">
+                    <div class="tech-float tech-10" onclick="scrollToCourseCard('datascience')" style="cursor: pointer;">
                         <i class="fas fa-chart-line" style="font-size: 32px; color: #667eea;"></i>
                         <span class="tech-label">Data Science</span>
                     </div>
@@ -234,6 +266,11 @@
                     <div class="theme-name">E-Commerce</div>
                     <div class="theme-subtitle">Online Shopping</div>
                 </button>
+                <button class="theme-card" data-theme="datascience" onclick="selectStoryTheme('datascience')">
+                    <div class="theme-icon">📊</div>
+                    <div class="theme-name">Data Science</div>
+                    <div class="theme-subtitle">AI & Analytics</div>
+                </button>
             </div>
         </div>
     </section>
@@ -287,7 +324,7 @@
 
                 <div class="journey-steps" id="journey-steps">
                     <!-- Step 1: SQL Database -->
-                    <div class="journey-step" data-step="1">
+                    <div class="journey-step" data-step="1" onclick="scrollToCourseCard('postgres')" style="cursor: pointer;">
                         <div class="step-number">1</div>
                         <div class="step-icon mssql-icon">
                             <i class="fas fa-database"></i>
@@ -304,7 +341,7 @@
                     </div>
 
                     <!-- Step 2: Python -->
-                    <div class="journey-step" data-step="2">
+                    <div class="journey-step" data-step="2" onclick="scrollToCourseCard('python')" style="cursor: pointer;">
                         <div class="step-number">2</div>
                         <div class="step-icon python-icon">
                             <i class="fab fa-python"></i>
@@ -321,7 +358,7 @@
                     </div>
 
                     <!-- Step 3: AWS DMS -->
-                    <div class="journey-step" data-step="3">
+                    <div class="journey-step" data-step="3" onclick="scrollToCourseCard('dms')" style="cursor: pointer;">
                         <div class="step-number">3</div>
                         <div class="step-icon dms-icon">
                             <i class="fas fa-truck-loading"></i>
@@ -338,7 +375,7 @@
                     </div>
 
                     <!-- Step 4: Terraform -->
-                    <div class="journey-step" data-step="4">
+                    <div class="journey-step" data-step="4" onclick="scrollToCourseCard('terraform')" style="cursor: pointer;">
                         <div class="step-number">4</div>
                         <div class="step-icon terraform-icon">
                             <i class="fas fa-cubes"></i>
@@ -355,7 +392,7 @@
                     </div>
 
                     <!-- Step 5: Terraform -->
-                    <div class="journey-step" data-step="5">
+                    <div class="journey-step" data-step="5" onclick="scrollToCourseCard('terraform')" style="cursor: pointer;">
                         <div class="step-number">5</div>
                         <div class="step-icon terraform-icon">
                             <i class="fas fa-cubes"></i>
@@ -375,7 +412,7 @@
                     </div>
 
                     <!-- Step 6: Redshift -->
-                    <div class="journey-step" data-step="6">
+                    <div class="journey-step" data-step="6" onclick="scrollToCourseCard('redshift')" style="cursor: pointer;">
                         <div class="step-number">6</div>
                         <div class="step-icon redshift-icon">
                             <i class="fab fa-aws"></i>
@@ -395,7 +432,7 @@
                     </div>
 
                     <!-- Step 7: Airflow -->
-                    <div class="journey-step" data-step="7">
+                    <div class="journey-step" data-step="7" onclick="scrollToCourseCard('airflow')" style="cursor: pointer;">
                         <div class="step-number">7</div>
                         <div class="step-icon airflow-icon">
                             <i class="fas fa-project-diagram"></i>
@@ -415,7 +452,7 @@
                     </div>
 
                     <!-- Step 8: DBT -->
-                    <div class="journey-step" data-step="8">
+                    <div class="journey-step" data-step="8" onclick="scrollToCourseCard('dbt')" style="cursor: pointer;">
                         <div class="step-number">8</div>
                         <div class="step-icon dbt-icon">
                             <i class="fas fa-magic"></i>
@@ -435,7 +472,7 @@
                     </div>
 
                     <!-- Step 9: Metabase -->
-                    <div class="journey-step" data-step="9">
+                    <div class="journey-step" data-step="9" onclick="scrollToCourseCard('metabase')" style="cursor: pointer;">
                         <div class="step-number">9</div>
                         <div class="step-icon metabase-icon">
                             <i class="fas fa-chart-line"></i>
@@ -450,6 +487,26 @@
                             <div class="step-example" id="step9-example">
                                 <strong>Metabase shows:</strong> "Live dashboard: Sales up 12% today! Store #4521 is the MVP! 
                                 Hot product: Organic avocados! Alert: Store #2847 running low on eggs! 🥚"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 10: Data Science -->
+                    <div class="journey-step" data-step="10" onclick="scrollToCourseCard('datascience')" style="cursor: pointer;">
+                        <div class="step-number">10</div>
+                        <div class="step-icon datascience-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="step-content">
+                            <h3 id="step10-title">Data Science - The Pattern Detective</h3>
+                            <p class="step-description" id="step10-desc">
+                                "Data Science is like having a super detective who finds hidden patterns in millions of numbers! 🔍 
+                                It uses math, statistics, and machine learning to predict what customers will buy, when sales will spike, 
+                                and which products will be hits. Turn chaos into insights, data into dollars!"
+                            </p>
+                            <div class="step-example" id="step10-example">
+                                <strong>Data Science predicts:</strong> "Analyzed 10 million customer behaviors! Predicted: Customers who buy 
+                                organic milk on Tuesdays will buy avocados on Fridays (87% accuracy)! Stock up avocados on Thursdays! 🥑"
                             </div>
                         </div>
                     </div>
@@ -545,7 +602,7 @@
                 </div>
 
                 <!-- Data Science Basics Course Card -->
-                <div class="course-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                <div class="course-card datascience-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
                     <div class="course-header">
                         <div class="course-icon" style="background: rgba(255,255,255,0.2);">
                             <i class="fas fa-chart-line" style="color: white;"></i>
@@ -1180,7 +1237,7 @@
                 <div class="footer-column">
                     <h4>Programming</h4>
                     <a href="python_course/index.html">Python for Data Science</a>
-                    <a href="data-science-basics.html">Data Science Fundamentals</a>
+                    <a href="data-science.html">Data Science Fundamentals</a>
                     <a href="#" onclick="enterCourse('mssql'); return false;">Microsoft SQL Server</a>
                     <a href="postgres_course/index.html">PostgreSQL & DBeaver</a>
                 </div>
@@ -1838,9 +1895,8 @@
             saveToCloud(analytics);
         })();
 
-        // Save to cloud - Central storage on internet
-        // Using a free backend service to store analytics centrally
-        // This ensures data is synced across all devices
+        // Save to cloud - Central storage on internet using Firebase Firestore
+        // This ensures data is synced across all devices (laptop, mobile, different networks)
         async function saveToCloud(data) {
             try {
                 data.lastUpdated = new Date().toISOString();
@@ -1849,92 +1905,74 @@
                 // Store locally as backup
                 localStorage.setItem('fkti_analytics', JSON.stringify(data));
                 
-                // Send to central server (using a free API service)
-                // Option 1: Using a simple backend endpoint (you'll need to set this up)
-                const API_ENDPOINT = 'https://api.jsonbin.io/v3/b'; // JSONBin.io free tier
-                const BIN_ID = 'YOUR_BIN_ID'; // Replace with your actual bin ID
-                const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
-                
-                // Central Storage Implementation
-                // Using a free backend service to store analytics centrally
-                // This ensures data syncs across all devices (laptop, mobile, etc.)
-                
-                // Option 1: Using Firebase (Recommended - Free tier available)
-                // Uncomment and configure Firebase:
-                /*
-                if (typeof firebase !== 'undefined') {
-                    const db = firebase.firestore();
-                    db.collection('analytics').doc('main').set(data, { merge: true })
-                        .then(() => console.log('Saved to Firebase'))
-                        .catch(e => console.log('Firebase save failed:', e));
-                }
-                */
-                
-                // Option 2: Using Supabase (Free tier available)
-                // Uncomment and configure Supabase:
-                /*
-                if (typeof supabase !== 'undefined') {
-                    supabase.from('analytics').upsert({ id: 'main', data: data })
-                        .then(() => console.log('Saved to Supabase'))
-                        .catch(e => console.log('Supabase save failed:', e));
-                }
-                */
-                
-                // Option 3: Using a simple backend API endpoint
-                // Create a free backend on Vercel/Netlify/Heroku and update the URL:
-                const BACKEND_URL = 'https://fkti-analytics.vercel.app/api/analytics'; // Replace with your backend URL
-                
-                try {
-                    const response = await fetch(BACKEND_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            analytics: data,
-                            timestamp: new Date().toISOString(),
-                            source: 'fkti_website'
-                        }),
-                        // Don't wait for response to avoid blocking
-                        signal: AbortSignal.timeout(3000)
-                    }).catch(() => {
-                        // Silently fail if backend is not available
-                        console.log('Central storage not configured - using localStorage only');
-                    });
-                    
-                    if (response && response.ok) {
-                        console.log('Analytics saved to central storage');
+                // Save to Firebase Firestore (centralized storage)
+                if (window.fktiFirestore && typeof firebase !== 'undefined') {
+                    try {
+                        const db = window.fktiFirestore;
+                        
+                        // Get existing data from Firestore
+                        const analyticsRef = db.collection('analytics').doc('main');
+                        const existingDoc = await analyticsRef.get();
+                        const existingData = existingDoc.exists ? existingDoc.data() : {};
+                        
+                        // Merge data intelligently
+                        const mergedData = {
+                            totalVisits: Math.max(existingData.totalVisits || 0, data.totalVisits || 0),
+                            pageViews: Math.max(existingData.pageViews || 0, data.pageViews || 0),
+                            uniqueVisitors: [...new Set([...(existingData.uniqueVisitors || []), ...(data.uniqueVisitors || [])])],
+                            dailyStats: { ...(existingData.dailyStats || {}), ...(data.dailyStats || {}) },
+                            recentVisits: [...(data.recentVisits || []), ...(existingData.recentVisits || [])]
+                                .sort((a, b) => {
+                                    const timeA = a.time || a.timestamp || '';
+                                    const timeB = b.time || b.timestamp || '';
+                                    return timeB.localeCompare(timeA);
+                                })
+                                .slice(0, 20),
+                            courseCounts: { ...(existingData.courseCounts || {}), ...(data.courseCounts || {}) },
+                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        
+                        // Save merged data to Firestore
+                        await analyticsRef.set(mergedData, { merge: true });
+                        console.log('✅ Analytics saved to Firebase (centralized storage)');
+                        
+                        // Update local storage with merged data
+                        localStorage.setItem('fkti_analytics', JSON.stringify({
+                            ...mergedData,
+                            lastUpdated: new Date().toISOString() // Convert timestamp for localStorage
+                        }));
+                    } catch (firebaseError) {
+                        console.log('⚠️ Firebase save failed, using localStorage:', firebaseError.message);
                     }
-                } catch (e) {
-                    // Backend not available - continue with localStorage
-                    console.log('Using localStorage (backend not configured):', e.message);
+                } else {
+                    console.log('⚠️ Firebase not configured - using localStorage only. See FIREBASE_SETUP.md');
                 }
             } catch (e) {
                 console.log('Analytics save error:', e);
             }
         }
         
-        // Load analytics from central storage
+        // Load analytics from central storage (Firebase Firestore)
         async function loadAnalyticsFromCloud() {
             try {
-                const BACKEND_URL = 'https://fkti-analytics.vercel.app/api/analytics'; // Replace with your backend URL
-                
-                // Try to load from central server first
-                const response = await fetch(BACKEND_URL, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }).catch(() => null);
-                
-                if (response && response.ok) {
-                    const cloudData = await response.json();
-                    if (cloudData && cloudData.analytics) {
-                        // Merge with local data
-                        const localData = JSON.parse(localStorage.getItem('fkti_analytics') || '{}');
-                        const merged = mergeAnalytics(localData, cloudData.analytics);
-                        localStorage.setItem('fkti_analytics', JSON.stringify(merged));
-                        return merged;
+                // Try to load from Firebase Firestore first
+                if (window.fktiFirestore && typeof firebase !== 'undefined') {
+                    try {
+                        const db = window.fktiFirestore;
+                        const analyticsRef = db.collection('analytics').doc('main');
+                        const docSnap = await analyticsRef.get();
+                        
+                        if (docSnap.exists) {
+                            const cloudData = docSnap.data();
+                            // Merge with local data
+                            const localData = JSON.parse(localStorage.getItem('fkti_analytics') || '{}');
+                            const merged = mergeAnalytics(localData, cloudData);
+                            localStorage.setItem('fkti_analytics', JSON.stringify(merged));
+                            console.log('✅ Analytics loaded from Firebase (centralized storage)');
+                            return merged;
+                        }
+                    } catch (firebaseError) {
+                        console.log('⚠️ Firebase load failed, using localStorage:', firebaseError.message);
                     }
                 }
                 

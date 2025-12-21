@@ -162,7 +162,7 @@ function enterCourse(courseType) {
     // Course routing
     const courseUrls = {
         'python': 'python_course/index.html',
-        'datascience': 'data-science-basics.html',
+        'datascience': 'data-science.html',
         'airflow': 'airflow_course/index.html',
         'terraform': 'terraform_course/index.html',
         'redshift': 'redshift_course/index.html',
@@ -183,6 +183,70 @@ function enterCourse(courseType) {
         console.error('Course type not found:', courseType);
         hideLoadingAnimation();
     }
+}
+
+/**
+ * Scroll to specific course card in courses section
+ */
+function scrollToCourseCard(courseType) {
+    // First scroll to courses section
+    const coursesSection = document.getElementById('courses');
+    if (!coursesSection) return;
+    
+    // Map course types to CSS class names
+    const courseClassMap = {
+        'python': 'python-card',
+        'datascience': 'datascience-card', // Data Science card
+        'airflow': 'airflow-card',
+        'terraform': 'terraform-card',
+        'redshift': 'redshift-card',
+        'mssql': 'mssql-card',
+        'dbt': 'dbt-card',
+        'metabase': 'metabase-card',
+        'postgres': 'postgres-card',
+        'dms': 'dms-card'
+    };
+    
+    const courseClass = courseClassMap[courseType];
+    if (!courseClass) {
+        // Fallback: just scroll to courses section
+        coursesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
+    
+    // Scroll to courses section first
+    coursesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // Then find and scroll to the specific course card
+    setTimeout(() => {
+        let courseCard;
+        
+        if (courseType === 'datascience') {
+            // Try to find by class first, then by data attribute or content
+            courseCard = document.querySelector('.datascience-card') || 
+                        document.querySelector('.course-card[data-course="datascience"]') ||
+                        Array.from(document.querySelectorAll('.course-card')).find(card => 
+                            card.querySelector('.course-title') && 
+                            card.querySelector('.course-title').textContent.includes('Data Science')
+                        );
+        } else {
+            courseCard = document.querySelector(`.${courseClass}`);
+        }
+        
+        if (courseCard) {
+            courseCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Add a highlight effect
+            courseCard.style.transition = 'all 0.3s ease';
+            courseCard.style.transform = 'scale(1.02)';
+            courseCard.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.15)';
+            
+            setTimeout(() => {
+                courseCard.style.transform = 'scale(1)';
+                courseCard.style.boxShadow = '';
+            }, 1000);
+        }
+    }, 500); // Wait for initial scroll to complete
 }
 
 /**
@@ -963,6 +1027,44 @@ const storyThemes = {
             after: "How do we increase sales?",
             afterResult: "*AI Insight* → 'User #78234 hesitating! Send 10% off push notification NOW!' → PURCHASED! 💰"
         }
+    },
+    datascience: {
+        name: "Data Science",
+        icon: "📊",
+        badge: "AI",
+        title: "Meet DataBot 🤖 - Your Data Science Mentor!",
+        subtitle: "Learn with DataBot as he transforms raw data into powerful predictions and insights!",
+        speech: "Welcome to the world of Data Science! Let me show you how we turn numbers into superpowers!",
+        steps: {
+            step1: {
+                title: "PostgreSQL - The Data Treasure Chest",
+                desc: "Data Science starts with data! 📦 Customer behavior, sales trends, sensor readings, social media posts - millions of records waiting to tell a story! But raw data is messy, incomplete, and scattered. Like a library with books in random languages!",
+                example: "10 million customer transactions, 500,000 product reviews, 2 million website clicks. All separate, all waiting to reveal hidden patterns! 🔍"
+            },
+            step2: {
+                title: "Python - The Pattern Detective",
+                desc: "Python is the superpower of Data Science! 🐍 It reads millions of rows, finds correlations humans miss, and says 'Aha! Customers who buy Product A on Tuesdays also buy Product B on Fridays!' It's like having a detective who never sleeps!",
+                example: "Analyzed 5 years of sales data! Discovered that ice cream sales spike 340% when temperature exceeds 85°F. Stocked up before heatwave. Profit up 50%! 🍦"
+            },
+            step3: {
+                title: "Statistics - The Truth Finder",
+                desc: "Statistics separates signal from noise! 📈 Is this pattern real or just random luck? Mean, median, standard deviation, correlation - these tools tell you what's actually happening vs what you think is happening!",
+                example: "Found correlation: Study hours vs Test scores = 0.85! Strong relationship! But wait... correlation doesn't mean causation. Maybe smart students just study more? 🤔"
+            },
+            step4: {
+                title: "Machine Learning - The Prediction Engine",
+                desc: "Machine Learning learns from the past to predict the future! 🤖 Train it on historical data, and it learns patterns. Then ask: 'Will this customer churn?' 'What's the stock price tomorrow?' 'Which movie will they like?' It gets smarter with more data!",
+                example: "Trained ML model on 10 million movie ratings. Now predicts what you'll watch with 94% accuracy! Netflix-level recommendations! 🎬"
+            }
+        },
+        result: {
+            title: "The Data Science Revolution! 🚀",
+            desc: "From guessing to knowing! Data scientists now predict customer behavior, optimize business decisions, and solve problems before they happen. Turn data into dollars, insights into impact! 💡",
+            before: "Will customers like this new product?",
+            beforeResult: "*Market research for months* → 'Maybe? 60% think so?' 🤷",
+            after: "Will customers like this new product?",
+            afterResult: "*ML Prediction* → '87% will love it! Target: Millennials, urban areas, launch in Q2!' 🎯"
+        }
     }
 };
 
@@ -1001,6 +1103,13 @@ function selectStoryTheme(themeName) {
     
     // Update journey steps (first 4 for demo)
     const steps = theme.steps;
+    const stepLabels = {
+        1: 'Real Scenario:',
+        2: themeName === 'datascience' ? 'Python discovers:' : 'DBeaver reveals:',
+        3: themeName === 'datascience' ? 'Statistics finds:' : 'Python discovers:',
+        4: themeName === 'datascience' ? 'ML predicts:' : 'DMS in action:'
+    };
+    
     Object.keys(steps).forEach((key, index) => {
         const stepNum = index + 1;
         const titleEl = document.getElementById(`step${stepNum}-title`);
@@ -1009,7 +1118,7 @@ function selectStoryTheme(themeName) {
         
         if (titleEl) titleEl.textContent = steps[key].title;
         if (descEl) descEl.textContent = steps[key].desc;
-        if (exampleEl) exampleEl.innerHTML = `<strong>${stepNum === 1 ? 'Real Scenario:' : stepNum === 2 ? 'DBeaver reveals:' : stepNum === 3 ? 'Python discovers:' : 'DMS in action:'}</strong> "${steps[key].example}"`;
+        if (exampleEl) exampleEl.innerHTML = `<strong>${stepLabels[stepNum] || 'Example:'}</strong> "${steps[key].example}"`;
     });
     
     // Update result card
@@ -1039,6 +1148,7 @@ function selectStoryTheme(themeName) {
 // Export functions for global access
 window.enterCourse = enterCourse;
 window.scrollToCourses = scrollToCourses;
+window.scrollToCourseCard = scrollToCourseCard;
 window.toggleMobileMenu = toggleMobileMenu;
 window.openDemo = openDemo;
 window.toggleThemeSelector = toggleThemeSelector;

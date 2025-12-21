@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Science Fundamentals | FKTI Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/fkti-light-theme.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.8;
+            color: var(--gray-900, #1d1d1f);
+            background: var(--bg, #ffffff);
+            padding: 0;
+        }
+        
+        /* Navigation */
+        .course-nav {
+            background: linear-gradient(90deg, 
+                rgba(252,231,243,0.5) 0%,
+                rgba(254,243,199,0.5) 25%,
+                rgba(220,252,231,0.5) 50%,
+                rgba(224,242,254,0.5) 75%,
+                rgba(243,232,255,0.5) 100%
+            );
+            backdrop-filter: saturate(120%) blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 12px 20px;
+        }
+        
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        .nav-hub {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-600, #6e6e73);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .nav-hub:hover {
+            background: rgba(0,0,0,0.05);
+            color: var(--primary-blue, #3b82f6);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--primary-blue, #3b82f6);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--gray-600, #6e6e73);
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            font-style: italic;
+            font-weight: 500;
+        }
+        
+        .topic {
+            margin: 60px 0;
+            padding: 30px;
+            background: var(--gray-50, #fafafa);
+            border-radius: 15px;
+            border-left: 5px solid var(--primary-blue, #3b82f6);
+            box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.07));
+        }
+        
+        .topic h2 {
+            color: var(--primary-blue, #3b82f6);
+            font-size: 2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+        
+        .topic-number {
+            background: linear-gradient(180deg, var(--primary-blue, #3b82f6) 0%, var(--primary-dark, #2563eb) 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #1d4ed8, 0 6px 12px rgba(37, 99, 235, 0.35);
+        }
+        
+        .explanation {
+            font-size: 1.1em;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary-blue, #3b82f6);
+        }
+        
+        .example h3 {
+            color: var(--primary-dark, #2563eb);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin: 10px;
+        }
+        
+        .mindmap-container {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            margin: 30px 0;
+            background: white;
+        }
+        
+        .key-points {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--amber, #f59e0b);
+        }
+        
+        .key-points h3 {
+            color: #b45309;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .key-points li {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .key-points li:before {
+            content: "✓";
+            position: absolute;
+            left: 10px;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .analogy {
+            background: #f3e8ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--purple, #8b5cf6);
+        }
+        
+        .analogy h3 {
+            color: var(--purple-dark, #7c3aed);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .formula {
+            background: #dcfce7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Fira Code', 'SF Mono', Monaco, monospace;
+            font-size: 1.2em;
+            color: #15803d;
+            border: 2px solid var(--green, #22c55e);
+            font-weight: 500;
+        }
+        
+        .visual-demo {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+        
+        .demo-item {
+            text-align: center;
+            margin: 10px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            min-width: 150px;
+        }
+        
+        .demo-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .topic h2 {
+                font-size: 1.5em;
+            }
+            
+            .mindmap-container {
+                height: 400px;
+            }
+        }
+        
+        /* Back to Top Button - Floating Arrow */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(180deg, var(--primary-blue, #3b82f6) 0%, var(--primary-dark, #2563eb) 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 0 #1d4ed8, 0 6px 12px rgba(37, 99, 235, 0.35);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .back-to-top.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 0 #1d4ed8, 0 10px 20px rgba(37, 99, 235, 0.4);
+        }
+        
+        .back-to-top:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1d4ed8, 0 3px 8px rgba(37, 99, 235, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="course-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-hub">
+                <span>←</span> FKTI Hub
+            </a>
+            <div style="flex: 1;"></div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>🎓 Data Science Fundamentals</h1>
+        <p class="subtitle">Made Super Simple - Even if Math Was Never Your Thing!</p>
+
+        <!-- TOPIC 1: PROBABILITY -->
+        <div class="topic">
+            <h2><span class="topic-number">1</span>Probability</h2>
+            
+            <div class="explanation">
+                <p><strong>What is Probability? (Super Simple Version!)</strong></p>
+                <p>Imagine you're guessing if it will rain today. Probability is just a fancy way to say "how likely is this to happen?"</p>
+                <p style="font-size: 1.3em; text-align: center; margin: 20px 0; padding: 15px; background: #f0f7ff; border-radius: 8px;">
+                    <strong>Probability = How likely something is to happen</strong>
+                </p>
+                <p><strong>Step 1: Understanding the Scale</strong></p>
+                <p>Probability is ALWAYS a number between 0 and 1 (or 0% to 100%). Think of it like a volume knob:</p>
+                <ul style="margin: 15px 0; padding-left: 30px; font-size: 1.05em;">
+                    <li><strong>0 (0%)</strong> = Volume OFF = Impossible (like a cat becoming a dog) 🐱→🐶</li>
+                    <li><strong>0.5 (50%)</strong> = Volume at half = Equal chance (like flipping a coin) 🪙</li>
+                    <li><strong>1 (100%)</strong> = Volume MAX = Certain (like the sun rising tomorrow) ☀️</li>
+                </ul>
+                <p><strong>Step 2: The Magic Formula</strong></p>
+                <p>To find probability, you just need to answer TWO questions:</p>
+                <ol style="margin: 15px 0; padding-left: 30px; font-size: 1.05em;">
+                    <li>How many ways can the thing you want happen? (Favorable outcomes)</li>
+                    <li>How many total ways can ANYTHING happen? (Total possible outcomes)</li>
+                </ol>
+            </div>
+
+            <div class="analogy">
+                <h3>🍕 Real-Life Analogy: Pizza Party!</h3>
+                <p>Imagine you have a pizza with 8 slices. Your friend takes 3 slices. What's the probability you'll get a slice?</p>
+                <p><strong>Answer:</strong> You have 5 slices left out of 8 total. So probability = 5/8 = 0.625 or 62.5%</p>
+                <p>That's it! Probability is just "favorable outcomes" divided by "total possible outcomes"!</p>
+            </div>
+
+            <div class="example">
+                <h3>📚 Everyday Examples:</h3>
+                <p><strong>Example 1: Rolling a Die</strong></p>
+                <p>You have a 6-sided die. What's the probability of rolling a 4?</p>
+                <p>Only 1 side has a 4, and there are 6 total sides. So: Probability = 1/6 = 0.167 or 16.7%</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 2: Weather Forecast</strong></p>
+                <p>If the weather app says "30% chance of rain," it means out of 100 similar days, it rained on 30 of them!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 3: Lottery Ticket</strong></p>
+                <p>If 1 million people buy tickets, and you have 1 ticket, your probability of winning = 1/1,000,000 = 0.000001 (very small!)</p>
+            </div>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=800&h=400&fit=crop" alt="Probability dice and coins" style="max-width: 100%;">
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;"><em>Just like rolling dice - each outcome has a probability!</em></p>
+            </div>
+
+            <div class="formula">
+                <strong>The Probability Formula (Remember This!):</strong><br><br>
+                P(Event) = Favorable Outcomes ÷ Total Possible Outcomes<br><br>
+                <strong style="font-size: 0.9em;">Or in simple words:</strong><br>
+                Probability = What you want ÷ Everything that could happen
+            </div>
+            
+            <div class="example">
+                <h3>📊 More Real-Life Equations:</h3>
+                
+                <p><strong>Equation 1: Drawing a Red Card from a Deck</strong></p>
+                <p><strong>Scenario:</strong> You have a deck of 52 cards. Half are red (26), half are black (26).</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    P(Red Card) = 26 red cards ÷ 52 total cards = 26/52 = 0.5 = 50%
+                </div>
+                <p><strong>Real meaning:</strong> You have a 50% chance of drawing a red card - exactly like flipping a coin!</p>
+                
+                <p style="margin-top: 20px;"><strong>Equation 2: Passing a Test</strong></p>
+                <p><strong>Scenario:</strong> A test has 20 questions. You need 12 correct to pass. You randomly guess all answers.</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    P(Passing) = Ways to get 12+ right ÷ All possible answer combinations
+                </div>
+                <p><strong>Real meaning:</strong> This is why studying helps! More correct answers = higher probability of passing!</p>
+                
+                <p style="margin-top: 20px;"><strong>Equation 3: Weather Prediction</strong></p>
+                <p><strong>Scenario:</strong> Out of the last 100 days with similar weather, it rained 30 times.</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    P(Rain) = 30 rainy days ÷ 100 similar days = 30/100 = 0.3 = 30%
+                </div>
+                <p><strong>Real meaning:</strong> Based on history, there's a 30% chance it will rain today!</p>
+                
+                <p style="margin-top: 20px;"><strong>Equation 4: Winning a Raffle</strong></p>
+                <p><strong>Scenario:</strong> 500 people bought raffle tickets. You bought 5 tickets.</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    P(You Win) = Your 5 tickets ÷ 500 total tickets = 5/500 = 0.01 = 1%
+                </div>
+                <p><strong>Real meaning:</strong> You have a 1% chance of winning. That's why buying more tickets increases your probability!</p>
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Probability is always between 0 and 1</li>
+                    <li>0 = impossible, 1 = certain, 0.5 = 50/50 chance</li>
+                    <li>It's just counting favorable outcomes vs total outcomes</li>
+                    <li>Used in weather, games, insurance, and data science predictions</li>
+                </ul>
+            </div>
+
+            <div class="mindmap-container" id="mindmap-probability"></div>
+        </div>
+
+        <!-- TOPIC 2: SCALAR AND VECTOR -->
+        <div class="topic">
+            <h2><span class="topic-number">2</span>Scalar and Vector</h2>
+            
+            <div class="explanation">
+                <p><strong>Scalar:</strong> A number with just a value (like temperature, weight, or price). It's just a single number - no direction!</p>
+                <p><strong>Vector:</strong> A number with BOTH value AND direction. Like telling someone "walk 5 steps to the right" - that's a vector!</p>
+            </div>
+
+            <div class="analogy">
+                <h3>🚗 Real-Life Analogy: Driving Your Car</h3>
+                <p><strong>Scalar Example:</strong> "I drove 60 miles" - This is just a number (60), no direction. It's a scalar!</p>
+                <p><strong>Vector Example:</strong> "I drove 60 miles NORTH" - This has both distance (60 miles) AND direction (north). It's a vector!</p>
+                <p>Think of it this way: Scalar = "How much?" | Vector = "How much AND which way?"</p>
+            </div>
+
+            <div class="visual-demo">
+                <div class="demo-item">
+                    <strong>Scalar Examples</strong>
+                    <p>Temperature: 25°C</p>
+                    <p>Weight: 70 kg</p>
+                    <p>Price: $50</p>
+                    <p>Speed: 60 mph</p>
+                </div>
+                <div class="demo-item">
+                    <strong>Vector Examples</strong>
+                    <p>Velocity: 60 mph EAST</p>
+                    <p>Force: 10N DOWN</p>
+                    <p>Displacement: 5m LEFT</p>
+                    <p>Wind: 20 km/h NORTH</p>
+                </div>
+            </div>
+
+            <div class="example">
+                <h3>📚 Everyday Examples:</h3>
+                <p><strong>Example 1: Shopping</strong></p>
+                <p>Scalar: "I bought 3 apples" (just a number)</p>
+                <p>Vector: "I walked 100 meters to the store" (distance + direction)</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 2: GPS Navigation</strong></p>
+                <p>Scalar: "You're 2 miles away" (just distance)</p>
+                <p>Vector: "Go 2 miles NORTH, then 1 mile EAST" (distance + direction)</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 3: Weather</strong></p>
+                <p>Scalar: "Temperature is 20°C" (just a number)</p>
+                <p>Vector: "Wind is blowing 15 km/h from the WEST" (speed + direction)</p>
+            </div>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop" alt="Compass showing direction" style="max-width: 100%;">
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;"><em>Vectors have direction, just like a compass!</em></p>
+            </div>
+
+            <div class="formula">
+                <strong>Visual Representation:</strong><br>
+                Scalar: 5 (just a number)<br>
+                Vector: →5 (number with arrow showing direction)
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Scalar = Just a number (temperature, weight, price)</li>
+                    <li>Vector = Number + Direction (velocity, force, displacement)</li>
+                    <li>Think: "How much?" vs "How much and which way?"</li>
+                    <li>In data science, vectors are used to represent data points with multiple features</li>
+                </ul>
+            </div>
+
+            <div class="mindmap-container" id="mindmap-scalar-vector"></div>
+        </div>
+
+        <!-- TOPIC 3: DISTANCE METRICS -->
+        <div class="topic">
+            <h2><span class="topic-number">3</span>Distance Metrics</h2>
+            
+            <div class="explanation">
+                <p><strong>What are Distance Metrics?</strong> They're different ways to measure "how far apart" two things are. Just like you can measure distance in miles, kilometers, or even "walking time" - there are different ways to measure distance in data science!</p>
+                <p>The most common ones are:</p>
+                <ul style="margin: 15px 0; padding-left: 30px;">
+                    <li><strong>Euclidean Distance:</strong> Straight-line distance (like a crow flies)</li>
+                    <li><strong>Manhattan Distance:</strong> Distance following city blocks (like walking in NYC)</li>
+                    <li><strong>Cosine Similarity:</strong> Measures angle between two things (like comparing directions)</li>
+                </ul>
+            </div>
+
+            <div class="analogy">
+                <h3>🗺️ Real-Life Analogy: Finding Your Way</h3>
+                <p><strong>Euclidean Distance (Straight Line):</strong> Like a bird flying directly from point A to point B - the shortest path!</p>
+                <p><strong>Manhattan Distance (City Blocks):</strong> Like walking in New York City - you can only go up/down and left/right along streets. You can't cut through buildings!</p>
+                <p><strong>Example:</strong> To go from corner (0,0) to (3,4):</p>
+                <ul style="margin: 10px 0; padding-left: 30px;">
+                    <li>Euclidean: √(3² + 4²) = 5 blocks (straight line)</li>
+                    <li>Manhattan: 3 + 4 = 7 blocks (must follow streets)</li>
+                </ul>
+            </div>
+
+            <div class="example">
+                <h3>📚 Everyday Examples:</h3>
+                <p><strong>Example 1: Shopping Similarity</strong></p>
+                <p>You want to find customers with similar buying habits. If Customer A bought [3 apples, 2 bananas] and Customer B bought [5 apples, 1 banana], distance metrics help measure how similar they are!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 2: Movie Recommendations</strong></p>
+                <p>Netflix uses distance metrics to find users with similar movie preferences. If you like Action and Comedy, it finds other users with similar taste!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 3: GPS Navigation</strong></p>
+                <p>When GPS says "2.5 miles away" - that's Euclidean distance (straight line). But "5 minutes drive" considers Manhattan-like paths following roads!</p>
+            </div>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=400&fit=crop" alt="City map with routes" style="max-width: 100%;">
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;"><em>Different ways to measure distance - straight line vs following roads!</em></p>
+            </div>
+
+            <div class="formula">
+                <strong>Euclidean Distance Formula:</strong><br>
+                Distance = √[(x₂-x₁)² + (y₂-y₁)²]<br><br>
+                <strong>Manhattan Distance Formula:</strong><br>
+                Distance = |x₂-x₁| + |y₂-y₁|
+            </div>
+
+            <div class="visual-demo">
+                <div class="demo-item">
+                    <strong>Euclidean</strong>
+                    <p>Point A: (1, 1)</p>
+                    <p>Point B: (4, 5)</p>
+                    <p>Distance: √[(4-1)² + (5-1)²]</p>
+                    <p>= √[9 + 16] = 5</p>
+                </div>
+                <div class="demo-item">
+                    <strong>Manhattan</strong>
+                    <p>Point A: (1, 1)</p>
+                    <p>Point B: (4, 5)</p>
+                    <p>Distance: |4-1| + |5-1|</p>
+                    <p>= 3 + 4 = 7</p>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Euclidean = straight line distance (shortest path)</li>
+                    <li>Manhattan = distance following grid/streets (like city blocks)</li>
+                    <li>Used to find similar items, recommend products, group data</li>
+                    <li>Different metrics work better for different situations</li>
+                </ul>
+            </div>
+
+            <div class="mindmap-container" id="mindmap-distance"></div>
+        </div>
+
+        <!-- TOPIC 4: MATRIX OPERATIONS -->
+        <div class="topic">
+            <h2><span class="topic-number">4</span>Matrix Operations</h2>
+            
+            <div class="explanation">
+                <p><strong>What is a Matrix?</strong> A matrix is just a fancy word for a table or grid of numbers arranged in rows and columns. Think of it like an Excel spreadsheet!</p>
+                <p>Matrix operations are ways to do math with these tables - adding, subtracting, multiplying them together.</p>
+            </div>
+
+            <div class="analogy">
+                <h3>📊 Real-Life Analogy: Grade Book</h3>
+                <p>Imagine a teacher's grade book with students in rows and subjects in columns:</p>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #667eea; color: white;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">Student</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Math</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Science</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">English</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Alice</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">85</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">90</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">88</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Bob</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">92</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">87</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">91</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>That's a matrix! Each number is in a specific row and column position.</p>
+            </div>
+
+            <div class="example">
+                <h3>📚 Types of Matrix Operations:</h3>
+                <p><strong>1. Addition:</strong> Just add numbers in the same position!</p>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0; text-align: center;">
+                    [2  3]   +   [1  2]   =   [3  5]<br>
+                    [4  5]       [3  4]       [7  9]
+                </div>
+                
+                <p style="margin-top: 15px;"><strong>2. Multiplication:</strong> A bit trickier - you multiply rows by columns!</p>
+                <p>Think of it like: Row 1 × Column 1 = First number in result</p>
+                
+                <p style="margin-top: 15px;"><strong>3. Transpose:</strong> Flip rows and columns!</p>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0; text-align: center;">
+                    Original: [1  2  3]  →  Transpose: [1]<br>
+                              [4  5  6]                [2]<br>
+                                                       [3]<br>
+                                                       [4]<br>
+                                                       [5]<br>
+                                                       [6]
+                </div>
+            </div>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop" alt="Data visualization grid" style="max-width: 100%;">
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;"><em>Matrices are like organized grids of data!</em></p>
+            </div>
+
+            <div class="example">
+                <h3>💡 Real-World Use Cases:</h3>
+                <p><strong>Example 1: Image Processing</strong></p>
+                <p>Digital images are stored as matrices! Each pixel is a number representing color. Matrix operations help blur, sharpen, or transform images!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 2: Recommendation Systems</strong></p>
+                <p>Netflix uses matrices where rows = users, columns = movies, values = ratings. Matrix operations help find similar users and recommend movies!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 3: Google Search</strong></p>
+                <p>Google uses massive matrices to rank web pages. Each web page connection is stored in a matrix, and operations help determine which pages are most important!</p>
+            </div>
+
+            <div class="formula">
+                <strong>Matrix Addition:</strong> Add corresponding elements<br>
+                <strong>Matrix Multiplication:</strong> Row × Column (dot product)<br>
+                <strong>Matrix Transpose:</strong> Swap rows and columns
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Matrix = Table/grid of numbers in rows and columns</li>
+                    <li>Addition = Add numbers in same position</li>
+                    <li>Multiplication = Multiply rows by columns</li>
+                    <li>Used everywhere: images, recommendations, search engines, AI!</li>
+                </ul>
+            </div>
+
+            <div class="mindmap-container" id="mindmap-matrix"></div>
+        </div>
+
+        <!-- TOPIC 5: LINEAR AND NON-LINEAR FUNCTIONS -->
+        <div class="topic">
+            <h2><span class="topic-number">5</span>Linear and Non-linear Functions</h2>
+            
+            <div class="explanation">
+                <p><strong>What is a Function?</strong> A function is like a machine: you put something in, and it gives you something out based on a rule!</p>
+                <p><strong>Linear Function:</strong> Makes a straight line when you graph it. Simple and predictable!</p>
+                <p><strong>Non-linear Function:</strong> Makes curves, waves, or other shapes. More complex but can model real-world situations better!</p>
+            </div>
+
+            <div class="analogy">
+                <h3>💰 Real-Life Analogy: Salary vs Tips</h3>
+                <p><strong>Linear Function Example:</strong> Your salary</p>
+                <p>If you work 1 hour, you get $20. Work 2 hours, get $40. Work 3 hours, get $60. It's a straight line: Money = 20 × Hours</p>
+                
+                <p style="margin-top: 15px;"><strong>Non-linear Function Example:</strong> Restaurant tips</p>
+                <p>If you serve 1 table, you might get $5 tip. Serve 2 tables, get $12 (not double!). Serve 10 tables, you're exhausted and tips might decrease! It's not a straight line - it curves!</p>
+            </div>
+
+            <div class="visual-demo">
+                <div class="demo-item">
+                    <strong>Linear Function</strong>
+                    <p>y = 2x + 1</p>
+                    <p>Always straight!</p>
+                    <p>Predictable</p>
+                    <p>Example: Hourly wage</p>
+                </div>
+                <div class="demo-item">
+                    <strong>Non-linear Function</strong>
+                    <p>y = x²</p>
+                    <p>Curved shape!</p>
+                    <p>Complex</p>
+                    <p>Example: Population growth</p>
+                </div>
+            </div>
+
+            <div class="example">
+                <h3>📚 Everyday Examples:</h3>
+                <p><strong>Linear Examples:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 30px;">
+                    <li><strong>Taxi Fare:</strong> $2 per mile. 1 mile = $2, 2 miles = $4, 3 miles = $6 (straight line!)</li>
+                    <li><strong>Printing Cost:</strong> $0.10 per page. Always the same rate!</li>
+                    <li><strong>Distance = Speed × Time:</strong> If you drive 60 mph for 2 hours, you go 120 miles. Simple!</li>
+                </ul>
+                
+                <p style="margin-top: 15px;"><strong>Non-linear Examples:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 30px;">
+                    <li><strong>Population Growth:</strong> Starts slow, then grows faster and faster (exponential curve!)</li>
+                    <li><strong>Learning Curve:</strong> You learn fast at first, then it gets harder (curved, not straight!)</li>
+                    <li><strong>Stock Prices:</strong> Go up and down in unpredictable patterns (very non-linear!)</li>
+                    <li><strong>Temperature Changes:</strong> Heats up quickly, then slows down as it reaches target (curved!)</li>
+                </ul>
+            </div>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop" alt="Graph showing linear vs curved lines" style="max-width: 100%;">
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;"><em>Linear = straight line, Non-linear = curves and waves!</em></p>
+            </div>
+
+            <div class="formula">
+                <strong>Linear Function:</strong> y = mx + b (straight line)<br>
+                <strong>Non-linear Examples:</strong><br>
+                y = x² (parabola - U shape)<br>
+                y = sin(x) (wave - goes up and down)<br>
+                y = eˣ (exponential - grows very fast)
+            </div>
+
+            <div class="example">
+                <h3>🤖 Why This Matters in Data Science:</h3>
+                <p><strong>Linear Models:</strong> Simple, fast, easy to understand. Good for simple relationships like "more hours = more money"</p>
+                <p><strong>Non-linear Models:</strong> Complex, can find hidden patterns. Good for real-world problems like image recognition, speech recognition, predicting stock prices!</p>
+                <p>Think of it like: Linear = using a ruler, Non-linear = using a flexible curve tool!</p>
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Linear = straight line, simple, predictable</li>
+                    <li>Non-linear = curves/waves, complex, can model real-world better</li>
+                    <li>Linear: Hourly wage, taxi fare (constant rate)</li>
+                    <li>Non-linear: Population growth, learning, stock prices (changing rate)</li>
+                    <li>Both are important in data science for different problems!</li>
+                </ul>
+            </div>
+
+            <div class="mindmap-container" id="mindmap-linear"></div>
+        </div>
+
+        <!-- TOPIC 6: DERIVATIVE -->
+        <div class="topic">
+            <h2><span class="topic-number">6</span>Derivative</h2>
+            
+            <div class="explanation">
+                <p><strong>What is a Derivative?</strong> A derivative tells you "how fast something is changing" at any moment. It's like the speedometer in your car - it shows your speed RIGHT NOW, not your average speed!</p>
+                <p>Think of it as the "instantaneous rate of change" - how steep a hill is at a specific point, or how fast your bank account is growing at this exact moment!</p>
+            </div>
+
+            <div class="analogy">
+                <h3>🚗 Real-Life Analogy: Driving a Car</h3>
+                <p><strong>Position:</strong> Where you are (like mile marker 50)</p>
+                <p><strong>Speed (Derivative):</strong> How fast you're going RIGHT NOW (like 60 mph)</p>
+                <p><strong>Acceleration (2nd Derivative):</strong> How fast your speed is changing (like pressing the gas pedal!)</p>
+                <p>If you're at position 50 miles and driving 60 mph, the derivative of your position = 60 mph!</p>
+            </div>
+
+            <div class="example">
+                <h3>📚 Everyday Examples:</h3>
+                <p><strong>Example 1: Temperature Change</strong></p>
+                <p>If it's 20°C now and getting warmer by 2°C per hour, the derivative of temperature = 2°C/hour. It tells you how fast it's changing RIGHT NOW!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 2: Bank Account</strong></p>
+                <p>If you have $1000 and it's growing by $50 per month, the derivative = $50/month. This is your "growth rate" at this moment!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 3: Climbing a Hill</strong></p>
+                <p>If you're climbing and gaining 10 feet of elevation for every 100 feet you walk forward, the derivative (slope) = 10/100 = 0.1. This tells you how steep the hill is!</p>
+                
+                <p style="margin-top: 15px;"><strong>Example 4: Population Growth</strong></p>
+                <p>If a city has 1 million people and is growing by 10,000 people per year, the derivative = 10,000 people/year. This is the growth rate RIGHT NOW!</p>
+            </div>
+
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop" alt="Graph showing slope and rate of change" style="max-width: 100%;">
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;"><em>The derivative is the slope - how steep the line is at any point!</em></p>
+            </div>
+
+            <div class="formula">
+                <strong>Simple Explanation:</strong><br>
+                Derivative = How much Y changes when X changes by a tiny amount<br><br>
+                <strong>Example:</strong><br>
+                If y = x², then derivative = 2x<br>
+                At x = 3, derivative = 2(3) = 6<br>
+                This means: when x is 3, y is changing 6 times faster than x!
+            </div>
+
+            <div class="visual-demo">
+                <div class="demo-item">
+                    <strong>Steep Hill</strong>
+                    <p>High derivative</p>
+                    <p>Fast change</p>
+                    <p>Like going 80 mph</p>
+                </div>
+                <div class="demo-item">
+                    <strong>Flat Road</strong>
+                    <p>Low derivative</p>
+                    <p>Slow change</p>
+                    <p>Like going 5 mph</p>
+                </div>
+                <div class="demo-item">
+                    <strong>Going Downhill</strong>
+                    <p>Negative derivative</p>
+                    <p>Decreasing</p>
+                    <p>Like -20 mph</p>
+                </div>
+            </div>
+
+            <div class="example">
+                <h3>🤖 Why Derivatives Matter in Data Science:</h3>
+                <p><strong>1. Finding Best Solutions:</strong> Derivatives help find the "best" values - like the price that maximizes profit, or the settings that minimize errors!</p>
+                <p><strong>2. Machine Learning:</strong> When training AI, derivatives tell us which direction to adjust to make the AI smarter. It's like a GPS telling you which way to go!</p>
+                <p><strong>3. Optimization:</strong> Companies use derivatives to find optimal production levels, best prices, most efficient routes!</p>
+                <p><strong>4. Understanding Trends:</strong> Derivatives show if something is increasing, decreasing, or staying the same - crucial for predictions!</p>
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Derivative = "How fast is it changing RIGHT NOW?"</li>
+                    <li>Like a speedometer - shows current rate, not average</li>
+                    <li>Positive derivative = increasing, Negative = decreasing</li>
+                    <li>Zero derivative = not changing (flat line)</li>
+                    <li>Used in machine learning to train AI, find best solutions, optimize everything!</li>
+                </ul>
+            </div>
+
+            <div class="mindmap-container" id="mindmap-derivative"></div>
+        </div>
+
+        <!-- TOPIC 7: STATISTICS BASICS -->
+        <div class="topic">
+            <h2><span class="topic-number">7</span>Statistics Basics (Mean, Median, Mode)</h2>
+            
+            <div class="explanation">
+                <p><strong>What are Statistics? (Super Simple!)</strong></p>
+                <p>Statistics is just a fancy way to describe a bunch of numbers with simple words! Instead of saying "I have these 100 test scores: 85, 92, 78, 95, 88...", you can say "The average is 87!"</p>
+                <p><strong>Three Most Important Words:</strong></p>
+                <ul style="margin: 15px 0; padding-left: 30px; font-size: 1.05em;">
+                    <li><strong>Mean (Average):</strong> Add all numbers, divide by how many you have</li>
+                    <li><strong>Median:</strong> The middle number when you line them up</li>
+                    <li><strong>Mode:</strong> The number that appears most often</li>
+                </ul>
+            </div>
+
+            <div class="analogy">
+                <h3>📊 Real-Life Analogy: Class Test Scores</h3>
+                <p>Imagine your class took a test. Here are the scores: 60, 70, 80, 80, 90, 100</p>
+                <p><strong>Mean (Average):</strong> (60+70+80+80+90+100) ÷ 6 = 480 ÷ 6 = 80</p>
+                <p><strong>Median (Middle):</strong> Line them up: 60, 70, 80, 80, 90, 100. The middle is between 80 and 80, so median = 80</p>
+                <p><strong>Mode (Most Common):</strong> 80 appears twice, so mode = 80</p>
+                <p><strong>Why it matters:</strong> If one student got 20 (very low), the mean would drop to 70, but median stays 80! Median ignores extreme values!</p>
+            </div>
+
+            <div class="example">
+                <h3>📚 Real-Life Examples with Equations:</h3>
+                
+                <p><strong>Example 1: Monthly Grocery Spending</strong></p>
+                <p>You spent: $200, $250, $180, $220, $300 in 5 months</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    Mean = (200 + 250 + 180 + 220 + 300) ÷ 5 = 1150 ÷ 5 = $230/month
+                </div>
+                <p><strong>Real meaning:</strong> On average, you spend $230 per month on groceries!</p>
+                
+                <p style="margin-top: 20px;"><strong>Example 2: House Prices in Your Street</strong></p>
+                <p>Houses cost: $100k, $120k, $150k, $200k, $500k</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    Mean = (100+120+150+200+500) ÷ 5 = $214k<br>
+                    Median = $150k (the middle value)
+                </div>
+                <p><strong>Real meaning:</strong> One expensive house ($500k) makes the mean high, but median ($150k) is more realistic!</p>
+                
+                <p style="margin-top: 20px;"><strong>Example 3: Shoe Sizes Sold</strong></p>
+                <p>In a day, you sold: Size 7, 8, 8, 8, 9, 10</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    Mode = Size 8 (appears 3 times - most common!)
+                </div>
+                <p><strong>Real meaning:</strong> Size 8 is your bestseller! Stock more of it!</p>
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Mean = Average (add all, divide by count)</li>
+                    <li>Median = Middle value (ignores extreme numbers)</li>
+                    <li>Mode = Most common value</li>
+                    <li>Use mean for normal data, median when you have outliers (extreme values)</li>
+                    <li>Used everywhere: grades, salaries, prices, temperatures!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TOPIC 8: CORRELATION -->
+        <div class="topic">
+            <h2><span class="topic-number">8</span>Correlation</h2>
+            
+            <div class="explanation">
+                <p><strong>What is Correlation? (Super Simple!)</strong></p>
+                <p>Correlation tells you if two things are related. Like: "Do taller people weigh more?" or "Does studying more lead to better grades?"</p>
+                <p><strong>Three Types:</strong></p>
+                <ul style="margin: 15px 0; padding-left: 30px; font-size: 1.05em;">
+                    <li><strong>Positive:</strong> When one goes up, the other goes up (like height and weight)</li>
+                    <li><strong>Negative:</strong> When one goes up, the other goes down (like exercise and weight)</li>
+                    <li><strong>No Correlation:</strong> They're not related (like shoe size and intelligence)</li>
+                </ul>
+            </div>
+
+            <div class="analogy">
+                <h3>📈 Real-Life Analogy: Ice Cream and Sunscreen</h3>
+                <p><strong>Positive Correlation:</strong> When it's hot (more sun), people buy more ice cream AND more sunscreen. Both go up together!</p>
+                <p><strong>But wait!</strong> Does ice cream CAUSE sunscreen sales? No! They're both caused by hot weather. Correlation doesn't mean one causes the other!</p>
+                <p><strong>Key lesson:</strong> Correlation shows relationship, but NOT cause! Just because two things happen together doesn't mean one causes the other!</p>
+            </div>
+
+            <div class="example">
+                <h3>📚 Real-Life Examples:</h3>
+                
+                <p><strong>Example 1: Study Hours vs Test Scores</strong></p>
+                <p>Students who study more hours tend to get higher scores. This is POSITIVE correlation!</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    Correlation Coefficient (r) = +0.85<br>
+                    (Close to +1 = strong positive relationship)
+                </div>
+                <p><strong>Real meaning:</strong> More study hours = higher test scores (strong positive correlation!)</p>
+                
+                <p style="margin-top: 20px;"><strong>Example 2: Exercise vs Weight</strong></p>
+                <p>People who exercise more tend to weigh less. This is NEGATIVE correlation!</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    Correlation Coefficient (r) = -0.70<br>
+                    (Close to -1 = strong negative relationship)
+                </div>
+                <p><strong>Real meaning:</strong> More exercise = lower weight (negative correlation!)</p>
+                
+                <p style="margin-top: 20px;"><strong>Example 3: Shoe Size vs Math Skills</strong></p>
+                <p>Bigger feet don't mean better at math! This is NO correlation!</p>
+                <div class="formula" style="margin: 10px 0; background: #f0f7ff; border-color: var(--primary-blue);">
+                    Correlation Coefficient (r) = 0.05<br>
+                    (Close to 0 = no relationship)
+                </div>
+                <p><strong>Real meaning:</strong> These two things are NOT related at all!</p>
+            </div>
+
+            <div class="key-points">
+                <h3>🎯 Key Points to Remember:</h3>
+                <ul>
+                    <li>Correlation shows if two things are related (not if one causes the other!)</li>
+                    <li>Positive: Both go up together (height ↑, weight ↑)</li>
+                    <li>Negative: One goes up, other goes down (exercise ↑, weight ↓)</li>
+                    <li>Correlation coefficient: -1 to +1 (closer to ±1 = stronger relationship)</li>
+                    <li>Remember: Correlation ≠ Causation! (Ice cream sales don't cause drowning!)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 60px; padding: 40px; background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border-radius: 15px; border: 2px solid var(--primary-blue, #3b82f6);">
+            <h2 style="color: var(--primary-blue, #3b82f6); margin-bottom: 15px; font-weight: 800;">🎉 Congratulations!</h2>
+            <p style="font-size: 1.1em; color: var(--gray-600, #6e6e73); margin-bottom: 10px;">You've learned the fundamentals of data science! These concepts are the building blocks for everything in machine learning and AI.</p>
+            <p style="margin-top: 15px; color: var(--purple, #8b5cf6); font-weight: 700; font-size: 1.05em;">Remember: Even the best data scientists started exactly where you are now. Keep practicing! 🚀</p>
+            <div style="margin-top: 30px;">
+                <a href="index.html" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-home"></i>
+                    Back to FKTI Hub
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mind Map 1: Probability - Enhanced with FKTI colors
+        const probabilityNodes = [
+            {id: 1, label: 'Probability', shape: 'box', color: {background: '#3b82f6', border: '#2563eb', highlight: {background: '#2563eb'}}, font: {size: 24, bold: true, color: '#ffffff'}},
+            {id: 2, label: '0 to 1 Scale', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 3, label: '0 = Impossible', shape: 'ellipse', color: {background: '#fee2e2', border: '#ef4444'}},
+            {id: 4, label: '0.5 = 50/50', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 5, label: '1 = Certain', shape: 'ellipse', color: {background: '#d1fae5', border: '#22c55e'}},
+            {id: 6, label: 'Formula', shape: 'box', color: {background: '#dcfce7', border: '#22c55e'}},
+            {id: 7, label: 'Favorable / Total', shape: 'ellipse', color: {background: '#dcfce7', border: '#22c55e'}},
+            {id: 8, label: 'Real Examples', shape: 'box', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 9, label: 'Weather Forecast', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 10, label: 'Dice Rolling', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 11, label: 'Lottery', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}}
+        ];
+        const probabilityEdges = [
+            {from: 1, to: 2}, {from: 1, to: 6}, {from: 1, to: 8},
+            {from: 2, to: 3}, {from: 2, to: 4}, {from: 2, to: 5},
+            {from: 6, to: 7},
+            {from: 8, to: 9}, {from: 8, to: 10}, {from: 8, to: 11}
+        ];
+        const probabilityData = {nodes: probabilityNodes, edges: probabilityEdges};
+        const probabilityOptions = {
+            layout: {
+                hierarchical: {
+                    direction: 'UD',
+                    sortMethod: 'directed',
+                    levelSeparation: 100,
+                    nodeSpacing: 150,
+                    treeSpacing: 200
+                }
+            },
+            nodes: {
+                font: {size: 16, face: 'Nunito', bold: true},
+                shapeProperties: {useBorderWithImage: true},
+                borderWidth: 2,
+                shadow: true,
+                margin: 10
+            },
+            edges: {
+                smooth: {type: 'continuous', roundness: 0.5},
+                width: 3,
+                color: {color: '#3b82f6', highlight: '#2563eb'},
+                arrows: {to: {enabled: true, scaleFactor: 1.2}}
+            },
+            physics: {
+                enabled: false
+            }
+        };
+        const probabilityNetwork = new vis.Network(document.getElementById('mindmap-probability'), probabilityData, probabilityOptions);
+
+        // Mind Map 2: Scalar and Vector - Enhanced
+        const scalarVectorNodes = [
+            {id: 1, label: 'Scalar & Vector', shape: 'box', color: {background: '#3b82f6', border: '#2563eb'}, font: {size: 24, bold: true, color: '#ffffff'}},
+            {id: 2, label: 'Scalar', shape: 'box', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 3, label: 'Just a Number', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 4, label: 'Examples: Temp, Weight, Price', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 5, label: 'Vector', shape: 'box', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 6, label: 'Number + Direction', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 7, label: 'Examples: Velocity, Force', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 8, label: 'Key Difference', shape: 'box', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 9, label: 'Scalar: How much?', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 10, label: 'Vector: How much + Which way?', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}}
+        ];
+        const scalarVectorEdges = [
+            {from: 1, to: 2}, {from: 1, to: 5}, {from: 1, to: 8},
+            {from: 2, to: 3}, {from: 2, to: 4},
+            {from: 5, to: 6}, {from: 5, to: 7},
+            {from: 8, to: 9}, {from: 8, to: 10}
+        ];
+        const scalarVectorData = {nodes: scalarVectorNodes, edges: scalarVectorEdges};
+        const scalarVectorNetwork = new vis.Network(document.getElementById('mindmap-scalar-vector'), scalarVectorData, probabilityOptions);
+        
+        // Apply same enhanced options to all mind maps
+        const distanceData = {nodes: distanceNodes, edges: distanceEdges};
+        const distanceNetwork = new vis.Network(document.getElementById('mindmap-distance'), distanceData, probabilityOptions);
+        
+        const matrixData = {nodes: matrixNodes, edges: matrixEdges};
+        const matrixNetwork = new vis.Network(document.getElementById('mindmap-matrix'), matrixData, probabilityOptions);
+        
+        const linearData = {nodes: linearNodes, edges: linearEdges};
+        const linearNetwork = new vis.Network(document.getElementById('mindmap-linear'), linearData, probabilityOptions);
+        
+        const derivativeData = {nodes: derivativeNodes, edges: derivativeEdges};
+        const derivativeNetwork = new vis.Network(document.getElementById('mindmap-derivative'), derivativeData, probabilityOptions);
+
+        // Mind Map 3: Distance Metrics - Enhanced
+        const distanceNodes = [
+            {id: 1, label: 'Distance Metrics', shape: 'box', color: {background: '#3b82f6', border: '#2563eb'}, font: {size: 24, bold: true, color: '#ffffff'}},
+            {id: 2, label: 'Euclidean', shape: 'box', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 3, label: 'Straight Line', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 4, label: 'Shortest Path', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 5, label: 'Manhattan', shape: 'box', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 6, label: 'City Blocks', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 7, label: 'Follow Grid', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 8, label: 'Uses', shape: 'box', color: {background: '#dcfce7', border: '#22c55e'}},
+            {id: 9, label: 'Find Similar Items', shape: 'ellipse', color: {background: '#dcfce7', border: '#22c55e'}},
+            {id: 10, label: 'Recommendations', shape: 'ellipse', color: {background: '#dcfce7', border: '#22c55e'}},
+            {id: 11, label: 'Group Data', shape: 'ellipse', color: {background: '#dcfce7', border: '#22c55e'}}
+        ];
+        const distanceEdges = [
+            {from: 1, to: 2}, {from: 1, to: 5}, {from: 1, to: 8},
+            {from: 2, to: 3}, {from: 2, to: 4},
+            {from: 5, to: 6}, {from: 5, to: 7},
+            {from: 8, to: 9}, {from: 8, to: 10}, {from: 8, to: 11}
+        ];
+
+        // Mind Map 4: Matrix Operations - Enhanced
+        const matrixNodes = [
+            {id: 1, label: 'Matrix Operations', shape: 'box', color: {background: '#3b82f6', border: '#2563eb'}, font: {size: 24, bold: true, color: '#ffffff'}},
+            {id: 2, label: 'What is Matrix?', shape: 'box', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 3, label: 'Table of Numbers', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 4, label: 'Rows & Columns', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 5, label: 'Operations', shape: 'box', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 6, label: 'Addition', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 7, label: 'Multiplication', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 8, label: 'Transpose', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 9, label: 'Applications', shape: 'box', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 10, label: 'Images', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 11, label: 'Recommendations', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 12, label: 'Search Engines', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}}
+        ];
+        const matrixEdges = [
+            {from: 1, to: 2}, {from: 1, to: 5}, {from: 1, to: 9},
+            {from: 2, to: 3}, {from: 2, to: 4},
+            {from: 5, to: 6}, {from: 5, to: 7}, {from: 5, to: 8},
+            {from: 9, to: 10}, {from: 9, to: 11}, {from: 9, to: 12}
+        ];
+
+        // Mind Map 5: Linear and Non-linear - Enhanced
+        const linearNodes = [
+            {id: 1, label: 'Linear & Non-linear', shape: 'box', color: {background: '#3b82f6', border: '#2563eb'}, font: {size: 24, bold: true, color: '#ffffff'}},
+            {id: 2, label: 'Linear Function', shape: 'box', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 3, label: 'Straight Line', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 4, label: 'Simple & Predictable', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 5, label: 'Example: y = 2x + 1', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 6, label: 'Non-linear Function', shape: 'box', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 7, label: 'Curves & Waves', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 8, label: 'Complex Patterns', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 9, label: 'Example: y = x²', shape: 'ellipse', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 10, label: 'Real Examples', shape: 'box', color: {background: '#dcfce7', border: '#22c55e'}},
+            {id: 11, label: 'Linear: Hourly Wage', shape: 'ellipse', color: {background: '#dcfce7', border: '#22c55e'}},
+            {id: 12, label: 'Non-linear: Population Growth', shape: 'ellipse', color: {background: '#dcfce7', border: '#22c55e'}}
+        ];
+        const linearEdges = [
+            {from: 1, to: 2}, {from: 1, to: 6}, {from: 1, to: 10},
+            {from: 2, to: 3}, {from: 2, to: 4}, {from: 2, to: 5},
+            {from: 6, to: 7}, {from: 6, to: 8}, {from: 6, to: 9},
+            {from: 10, to: 11}, {from: 10, to: 12}
+        ];
+
+        // Mind Map 6: Derivative - Enhanced
+        const derivativeNodes = [
+            {id: 1, label: 'Derivative', shape: 'box', color: {background: '#3b82f6', border: '#2563eb'}, font: {size: 24, bold: true, color: '#ffffff'}},
+            {id: 2, label: 'Definition', shape: 'box', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 3, label: 'Rate of Change', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 4, label: 'How Fast?', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 5, label: 'Like Speedometer', shape: 'ellipse', color: {background: '#dbeafe', border: '#3b82f6'}},
+            {id: 6, label: 'Types', shape: 'box', color: {background: '#fef3c7', border: '#f59e0b'}},
+            {id: 7, label: 'Positive = Increasing', shape: 'ellipse', color: {background: '#d1fae5', border: '#22c55e'}},
+            {id: 8, label: 'Negative = Decreasing', shape: 'ellipse', color: {background: '#fee2e2', border: '#ef4444'}},
+            {id: 9, label: 'Zero = No Change', shape: 'ellipse', color: {background: '#f3f4f6', border: '#6b7280'}},
+            {id: 10, label: 'Applications', shape: 'box', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 11, label: 'Machine Learning', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 12, label: 'Optimization', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}},
+            {id: 13, label: 'Finding Best Solutions', shape: 'ellipse', color: {background: '#f3e8ff', border: '#8b5cf6'}}
+        ];
+        const derivativeEdges = [
+            {from: 1, to: 2}, {from: 1, to: 6}, {from: 1, to: 10},
+            {from: 2, to: 3}, {from: 2, to: 4}, {from: 2, to: 5},
+            {from: 6, to: 7}, {from: 6, to: 8}, {from: 6, to: 9},
+            {from: 10, to: 11}, {from: 10, to: 12}, {from: 10, to: 13}
+        ];
+        
+        // Back to Top Button Functionality
+        const backToTopButton = document.createElement('button');
+        backToTopButton.className = 'back-to-top';
+        backToTopButton.id = 'backToTop';
+        backToTopButton.setAttribute('aria-label', 'Back to top');
+        backToTopButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        backToTopButton.onclick = function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+        document.body.appendChild(backToTopButton);
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
+

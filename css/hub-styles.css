@@ -3042,15 +3042,70 @@ li {
     display: none;
 }
 
-/* Responsive for mobile */
-@media (max-width: 768px) {
-    .journey-header-row {
-        flex-direction: column;
-        gap: 16px;
+/* Responsive for mobile - Additional improvements */
+@media (max-width: 480px) {
+    .theme-card {
+        min-width: 75px;
+        padding: 8px 10px;
+        flex: 0 0 calc(50% - 5px);
+        max-width: calc(50% - 5px);
     }
     
-    .journey-header-row .section-header {
-        text-align: center;
+    .theme-icon {
+        font-size: 20px;
+    }
+    
+    .theme-name {
+        font-size: 9px;
+    }
+    
+    .theme-subtitle {
+        font-size: 7px;
+    }
+    
+    .journey-step {
+        padding: 12px;
+    }
+    
+    .step-content h3 {
+        font-size: 1rem;
+    }
+    
+    .step-description {
+        font-size: 0.85rem;
+    }
+    
+    .step-example {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+    
+    .databot-container {
+        max-width: 150px;
+    }
+    
+    .databot-robot {
+        width: 100px;
+        height: 120px;
+    }
+    
+    .robot-head {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .robot-screen {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .robot-hat-icon {
+        font-size: 28px;
+    }
+    
+    .databot-speech {
+        font-size: 8px;
+        max-width: 100px;
     }
 }
 
@@ -3060,6 +3115,11 @@ li {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 16px;
     margin-bottom: 24px;
+}
+
+/* Data Science icon styling */
+.datascience-icon {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
 }
 
 .journey-step {
@@ -3283,10 +3343,14 @@ li {
         font-size: 0.9rem;
     }
     
+    .journey-steps {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+    
     .journey-step {
-        grid-template-columns: 1fr;
-        text-align: center;
-        gap: var(--spacing-md);
+        padding: 14px;
+        gap: 10px;
     }
     
     .step-number,
@@ -3296,20 +3360,118 @@ li {
     
     .step-content h3 {
         font-size: 1.1rem;
+        line-height: 1.3;
     }
     
-    .step-description,
-    .step-example {
+    .step-description {
         font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .step-example {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+        line-height: 1.4;
     }
     
     .result-card {
         padding: var(--spacing-lg);
         margin: 0 var(--spacing-md);
+        flex-direction: column;
+        text-align: center;
     }
     
     .result-card h3 {
         font-size: 1.5rem;
+    }
+    
+    .result-icon {
+        font-size: 2rem;
+    }
+    
+    /* Theme Cards Mobile */
+    .theme-cards {
+        gap: 10px;
+        padding: 0 10px;
+    }
+    
+    .theme-card {
+        min-width: 85px;
+        padding: 10px 12px;
+        flex: 0 0 calc(33.333% - 7px);
+        max-width: calc(33.333% - 7px);
+    }
+    
+    .theme-icon {
+        font-size: 22px;
+        margin-bottom: 3px;
+    }
+    
+    .theme-name {
+        font-size: 10px;
+        line-height: 1.2;
+    }
+    
+    .theme-subtitle {
+        font-size: 8px;
+        line-height: 1.2;
+    }
+    
+    .selector-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .selector-header p {
+        font-size: 0.9rem;
+        padding: 0 10px;
+    }
+    
+    /* DataBot Container Mobile */
+    .databot-container {
+        width: 100%;
+        max-width: 180px;
+        margin: 0 auto 16px;
+    }
+    
+    .databot-robot {
+        width: 120px;
+        height: 140px;
+    }
+    
+    .robot-head {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .robot-screen {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .robot-hat-icon {
+        font-size: 32px;
+    }
+    
+    .robot-badge {
+        font-size: 6px;
+        padding: 1px 5px;
+    }
+    
+    .databot-speech {
+        font-size: 9px;
+        padding: 5px 8px;
+        max-width: 120px;
+        line-height: 1.3;
+    }
+    
+    .journey-header-row {
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 16px;
+    }
+    
+    .journey-header-row .section-header {
+        text-align: center;
     }
 }
 
@@ -3955,6 +4117,10 @@ li {
     letter-spacing: 0.5px;
 }
 
+.tech-float {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .tech-float:hover {
     transform: translateY(-8px) scale(1.1);
     box-shadow: 
@@ -3962,6 +4128,13 @@ li {
         0 4px 12px rgba(0, 0, 0, 0.1);
     border-color: rgba(59, 130, 246, 0.3);
     z-index: 20;
+}
+
+.tech-float:active {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 
+        0 8px 20px rgba(59, 130, 246, 0.15),
+        0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .tech-float:hover .tech-label {
