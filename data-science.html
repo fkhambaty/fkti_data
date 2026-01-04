@@ -211,38 +211,46 @@
             box-shadow: 0 2px 0 #1d4ed8, 0 4px 15px rgba(37, 99, 235, 0.3);
         }
         
-        /* Back to Top Button */
+        /* Back to Top Button - Floating Arrow */
         .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            z-index: 1000;
-            box-shadow: 0 4px 0 #1d4ed8, 0 6px 12px rgba(37, 99, 235, 0.35);
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            width: 50px !important;
+            height: 50px !important;
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 20px !important;
+            z-index: 10000 !important;
+            box-shadow: 0 4px 0 #1d4ed8, 0 6px 12px rgba(37, 99, 235, 0.35) !important;
+            transition: all 0.3s ease !important;
+            opacity: 0 !important;
+            transform: translateY(20px) !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
         }
         
         .back-to-top.show {
-            display: flex;
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            pointer-events: auto !important;
+            visibility: visible !important;
         }
         
         .back-to-top:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 0 #1d4ed8, 0 10px 20px rgba(37, 99, 235, 0.4);
+            transform: translateY(-3px) !important;
+            box-shadow: 0 6px 0 #1d4ed8, 0 10px 20px rgba(37, 99, 235, 0.4) !important;
+        }
+
+        .back-to-top:active {
+            transform: translateY(2px) !important;
+            box-shadow: 0 2px 0 #1d4ed8, 0 3px 8px rgba(37, 99, 235, 0.3) !important;
         }
         
         @media (max-width: 768px) {
@@ -458,14 +466,30 @@
     </div>
 
     <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Back to top">
+    <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">
         <i class="fas fa-arrow-up"></i>
     </button>
 
     <script>
-        // Back to Top Button
-        const backToTopButton = document.getElementById('backToTop');
-        if (backToTopButton) {
+        // Back to Top Button Functionality - Enhanced
+        function initBackToTop() {
+            const backToTopButton = document.getElementById('backToTop');
+            if (!backToTopButton) {
+                console.error('Back to top button not found!');
+                return;
+            }
+
+            // Force button to be visible and accessible
+            backToTopButton.style.setProperty('display', 'flex', 'important');
+            backToTopButton.style.setProperty('z-index', '10000', 'important');
+            backToTopButton.style.setProperty('position', 'fixed', 'important');
+            backToTopButton.style.setProperty('bottom', '30px', 'important');
+            backToTopButton.style.setProperty('right', '30px', 'important');
+            backToTopButton.style.setProperty('opacity', '0', 'important');
+            backToTopButton.style.setProperty('visibility', 'hidden', 'important');
+            backToTopButton.style.setProperty('pointer-events', 'none', 'important');
+
+            // Scroll event listener
             window.addEventListener('scroll', function() {
                 if (window.pageYOffset > 300) {
                     backToTopButton.classList.add('show');
@@ -473,6 +497,23 @@
                     backToTopButton.classList.remove('show');
                 }
             });
+
+            // Click handler
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            console.log('✅ Back to top button initialized');
+        }
+
+        // Initialize on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initBackToTop);
+        } else {
+            initBackToTop();
         }
     </script>
 </body>

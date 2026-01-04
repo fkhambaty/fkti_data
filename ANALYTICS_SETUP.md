@@ -82,3 +82,4 @@ The code is ready but needs a backend to be deployed. Currently, it falls back t
 - Add authentication to protect the analytics endpoint
 - Consider rate limiting to prevent abuse
 
+
