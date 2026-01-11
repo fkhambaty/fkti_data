@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session 14: Enhanced Visualizations | 🐍 Python Mastery</title>
+  <link rel="stylesheet" href="light-theme.css">
+  <style>
+    /* Session 14 Custom Styles */
+    .viz-hero {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      border: 2px solid #f59e0b;
+    }
+    .viz-hero h2 { color: #b45309; margin-bottom: 0.5rem; }
+    
+    .chart-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .chart-item {
+      background: white;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .chart-item:hover {
+      border-color: #f59e0b;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.2);
+    }
+    .chart-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .chart-name { font-weight: 700; color: var(--text-primary); font-size: 0.85rem; }
+    
+    .viz-section {
+      background: white;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    .viz-section h3 {
+      color: var(--accent-blue);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .what-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1rem 0;
+    }
+    .what-box h4 { color: #1d4ed8; margin-bottom: 0.75rem; }
+    
+    .analogy-box {
+      background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+      border: 2px dashed #d946ef;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+    }
+    .analogy-box h4 { color: #a855f7; margin-bottom: 0.5rem; }
+    
+    .output-box {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      color: #1e293b;
+      overflow-x: auto;
+    }
+    .output-box .title {
+      color: #059669;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #10b981;
+      padding-bottom: 0.5rem;
+    }
+    .output-box pre {
+      color: #334155;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    .observation-box {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-left: 4px solid #f59e0b;
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1rem 0;
+    }
+    .observation-box h4 { color: #b45309; margin-bottom: 0.5rem; }
+    
+    .warning-box {
+      background: #fff7ed;
+      border: 2px solid #f97316;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .warning-box h4 { color: #ea580c; margin-bottom: 0.75rem; }
+    
+    .code-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    @media (max-width: 768px) {
+      .code-compare { grid-template-columns: 1fr; }
+    }
+    .old-way {
+      background: #fef2f2;
+      border: 2px solid #fca5a5;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    .old-way h5 { color: #dc2626; margin-bottom: 0.5rem; }
+    .new-way {
+      background: #f0fdf4;
+      border: 2px solid #86efac;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    .new-way h5 { color: #16a34a; margin-bottom: 0.5rem; }
+    
+    .key-points {
+      background: #ecfeff;
+      border: 2px solid #06b6d4;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    .key-points h4 { color: #0891b2; margin-bottom: 0.75rem; }
+    .key-points ul { list-style: none; padding: 0; margin: 0; }
+    .key-points li {
+      padding: 0.4rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    .key-points li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #0891b2;
+      font-weight: bold;
+    }
+    
+    .visual-chart {
+      background: #fffbeb;
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+    .visual-chart .chart-title {
+      font-weight: bold;
+      color: #b45309;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    .visual-chart pre {
+      color: #1e293b;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    
+    .dataset-box {
+      background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+      border: 2px solid #c084fc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .dataset-box h4 { color: #7c3aed; margin-bottom: 1rem; }
+    
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #22c55e;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0.5rem 0;
+      transition: all 0.2s;
+    }
+    .download-btn:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+    }
+    
+    .columns-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .col-tag {
+      background: #e9d5ff;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+    }
+    
+    .step-box {
+      background: #f8fafc;
+      border-left: 4px solid var(--accent-blue);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .step-box strong { color: var(--accent-blue); }
+    
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .summary-card {
+      background: white;
+      border-left: 4px solid;
+      padding: 1rem;
+      border-radius: 0 12px 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .summary-card h5 { margin-bottom: 0.5rem; font-size: 1rem; }
+    .summary-card p { font-size: 0.85rem; color: #64748b; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="course-container">
+    <!-- Header -->
+    <header class="course-header">
+      <a href="complete-course.html" class="back-btn">← Back to Course</a>
+      <div class="session-badge">Session 14</div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="viz-hero">
+      <h2>📊 Enhanced Data Visualizations</h2>
+      <p>Master 8 Essential Chart Types with Real Loan Approval Dataset</p>
+      <div class="chart-showcase">
+        <div class="chart-item"><div class="chart-icon">🥧</div><div class="chart-name">Pie</div></div>
+        <div class="chart-item"><div class="chart-icon">📊</div><div class="chart-name">Count</div></div>
+        <div class="chart-item"><div class="chart-icon">📈</div><div class="chart-name">Bar</div></div>
+        <div class="chart-item"><div class="chart-icon">📦</div><div class="chart-name">Box</div></div>
+        <div class="chart-item"><div class="chart-icon">🌊</div><div class="chart-name">KDE</div></div>
+        <div class="chart-item"><div class="chart-icon">🎻</div><div class="chart-name">Violin</div></div>
+        <div class="chart-item"><div class="chart-icon">⚫</div><div class="chart-name">Scatter</div></div>
+        <div class="chart-item"><div class="chart-icon">📶</div><div class="chart-name">Histogram</div></div>
+      </div>
+    </div>
+
+    <!-- Dataset Section -->
+    <section class="content-section">
+      <h2>📂 Step 1: Setting Up Our Dataset</h2>
+      
+      <div class="dataset-box">
+        <h4>🏦 About the Loan Approval Dataset</h4>
+        <p>We're using a real-world dataset with <strong>4,269 loan applications</strong>. Each row is one person who applied for a loan. The columns tell us about that person and whether their loan was approved or rejected.</p>
+        
+        <a href="https://www.kaggle.com/datasets/architsharma01/loan-approval-prediction-dataset" target="_blank" class="download-btn">
+          📥 Download from Kaggle
+        </a>
+        
+        <div class="columns-list">
+          <span class="col-tag">loan_id</span>
+          <span class="col-tag">no_of_dependents</span>
+          <span class="col-tag">education</span>
+          <span class="col-tag">self_employed</span>
+          <span class="col-tag">income_annum</span>
+          <span class="col-tag">loan_amount</span>
+          <span class="col-tag">loan_term</span>
+          <span class="col-tag">cibil_score</span>
+          <span class="col-tag">residential_assets</span>
+          <span class="col-tag">commercial_assets</span>
+          <span class="col-tag">luxury_assets</span>
+          <span class="col-tag">bank_asset_value</span>
+          <span class="col-tag">loan_status ⭐</span>
+        </div>
+      </div>
+
+      <div class="step-box">
+        <strong>🐍 Step 1.1:</strong> Import the libraries we need
+      </div>
+      <div class="code-block"><pre><code># These are our tools - like a painter's brushes!
+import pandas as pd          # For handling data (like Excel in Python)
+import seaborn as sns        # For beautiful, easy charts
+import matplotlib.pyplot as plt  # For customizing charts
+
+# What each one does:
+# pandas (pd)      → Read CSV files, manipulate data tables
+# seaborn (sns)    → Create statistical visualizations easily  
+# matplotlib (plt) → Fine-tune chart appearance</code></pre></div>
+
+      <div class="step-box">
+        <strong>🐍 Step 1.2:</strong> Load and explore the dataset
+      </div>
+      <div class="code-block"><pre><code># Load the CSV file into a DataFrame (a table)
+df = pd.read_csv('loan_approval_dataset.csv')
+
+# Set a clean visual style
+sns.set(style='whitegrid')
+
+# Look at first 5 rows - like peeking at the first page
+df.head()</code></pre></div>
+
+      <div class="output-box">
+        <div class="title">📤 OUTPUT: First 5 rows of our data</div>
+<pre>   loan_id  no_of_dependents   education self_employed  income_annum  loan_amount  loan_term  cibil_score  loan_status
+0        1                 2    Graduate           No       9600000     29900000         12          778     Approved
+1        2                 0    Graduate          Yes       4100000     12200000          8          417     Rejected
+2        3                 3    Graduate           No       9100000     29700000         20          506     Rejected
+3        4                 3    Graduate           No       8200000     30700000          8          467     Rejected
+4        5                 5    Graduate           No       9800000     24200000         20          382     Rejected</pre>
+      </div>
+
+      <div class="step-box">
+        <strong>🐍 Step 1.3:</strong> Check data structure with df.info()
+      </div>
+      <div class="code-block"><pre><code># This tells us about our data's structure
+df.info()</code></pre></div>
+
+      <div class="output-box">
+        <div class="title">📤 OUTPUT: Data structure information</div>
+<pre>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 4269 entries, 0 to 4268
+Data columns (total 13 columns):
+ #   Column                     Non-Null Count  Dtype 
+---  ------                     --------------  ----- 
+ 0   loan_id                    4269 non-null   int64   ← Numbers (ID)
+ 1   no_of_dependents           4269 non-null   int64   ← Numbers (0,1,2,3...)
+ 2   education                  4269 non-null   object  ← Text (Graduate/Not Graduate)
+ 3   self_employed              4269 non-null   object  ← Text (Yes/No)
+ 4   income_annum               4269 non-null   int64   ← Numbers (salary)
+ 5   loan_amount                4269 non-null   int64   ← Numbers (loan size)
+ 6   loan_term                  4269 non-null   int64   ← Numbers (years)
+ 7   cibil_score                4269 non-null   int64   ← Numbers (credit score)
+ 8   residential_assets_value   4269 non-null   int64   ← Numbers
+ 9   commercial_assets_value    4269 non-null   int64   ← Numbers
+ 10  luxury_assets_value        4269 non-null   int64   ← Numbers
+ 11  bank_asset_value           4269 non-null   int64   ← Numbers
+ 12  loan_status                4269 non-null   object  ← Text (Approved/Rejected) ⭐
+
+memory usage: 433.7+ KB</pre>
+      </div>
+
+      <div class="analogy-box">
+        <h4>🎓 Understanding Data Types (For Beginners)</h4>
+        <p><strong>int64</strong> = Integer numbers (whole numbers like 1, 2, 3, 9600000)</p>
+        <p><strong>object</strong> = Text/Categories (words like "Graduate", "Approved", "Yes")</p>
+        <p><strong>Non-Null</strong> = No missing values! All 4269 rows have data in every column. 🎉</p>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 1: PIE CHART ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>🥧 Chart 1: Pie Chart - Loan Status Distribution</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a Pie Chart?</h4>
+          <p>A <strong>pie chart</strong> is a circular graph divided into slices, where:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>The whole circle</strong> = 100% of your data</li>
+            <li><strong>Each slice</strong> = One category (like "Approved" or "Rejected")</li>
+            <li><strong>Slice size</strong> = Percentage of that category</li>
+          </ul>
+          <p style="margin-top: 0.5rem;"><strong>Best for:</strong> Showing parts of a whole when you have 2-5 categories.</p>
+        </div>
+
+        <div class="analogy-box">
+          <h4>🍕 Pizza Analogy</h4>
+          <p>Imagine sharing a pizza between friends. If Rahul ate 62% and Priya ate 38%, Rahul's slice would be bigger. A pie chart does exactly this with data - bigger slice = bigger percentage!</p>
+        </div>
+
+        <div class="step-box">
+          <strong>🐍 Step 1:</strong> First, count how many loans are Approved vs Rejected
+        </div>
+        <div class="code-block"><pre><code># value_counts() = "Count how many of each type"
+# It's like sorting playing cards and counting each suit!
+
+loan_status_counts = df[' loan_status'].value_counts()
+print(loan_status_counts)</code></pre></div>
+
+        <div class="output-box">
+          <div class="title">📤 OUTPUT: Loan status counts</div>
+<pre> Approved    2656
+ Rejected    1613
+Name:  loan_status, dtype: int64
+
+# This means:
+# 2656 people got their loans APPROVED ✅
+# 1613 people got REJECTED ❌
+# Total: 2656 + 1613 = 4269 applications</pre>
+        </div>
+
+        <div class="step-box">
+          <strong>🐍 Step 2:</strong> Create the pie chart
+        </div>
+        <div class="code-block"><pre><code># Create a new figure (canvas) - 8 inches by 8 inches
+plt.figure(figsize=(8, 8))
+
+# Draw the pie chart
+plt.pie(
+    loan_status_counts,              # Data: the counts we calculated
+    labels=loan_status_counts.index, # Labels: "Approved", "Rejected"
+    autopct='%1.2f%%',               # Show percentage with 2 decimal places
+    shadow=True,                     # Add 3D shadow effect
+    explode=(0, 0.1),                # Pull "Rejected" slice out a bit
+    colors=['#4CAF50', '#f44336'],   # Green for approved, Red for rejected
+    startangle=90                    # Start from top (12 o'clock position)
+)
+
+# Add a title
+plt.title('Loan Status Distribution', fontsize=16, fontweight='bold')
+
+# Display the chart
+plt.show()</code></pre></div>
+
+        <div class="key-points">
+          <h4>💡 Code Explained Line by Line</h4>
+          <ul>
+            <li><code>figsize=(8, 8)</code> → Makes chart 8 inches × 8 inches (a square)</li>
+            <li><code>autopct='%1.2f%%'</code> → Shows "62.22%" format (%1=1 digit before decimal, .2f=2 after)</li>
+            <li><code>shadow=True</code> → Adds shadow for 3D look</li>
+            <li><code>explode=(0, 0.1)</code> → First slice stays (0), second moves out 10% (0.1)</li>
+            <li><code>startangle=90</code> → Starts drawing from top instead of right side</li>
+          </ul>
+        </div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 PIE CHART OUTPUT</div>
+          <pre style="font-size: 0.9rem; line-height: 1.4;">
+                    Loan Status Distribution
+                    
+                         ████████
+                    ████ Approved ████
+                  ██     62.22%      ██
+                 █                     █
+                █                       █
+               █                         █
+               █          🟢            █
+               █                         █
+                █                       █
+                 █                     █
+                  ██    Rejected    ██
+                    ████ 37.78% ████
+                         ████████
+                              ↗
+                        (exploded out)
+          </pre>
+        </div>
+
+        <div class="observation-box">
+          <h4>👀 Key Observations</h4>
+          <p><strong>Finding:</strong> 62.22% of loan applications are APPROVED! 🎉</p>
+          <p>This means if you apply for a loan, you have roughly a <strong>2 in 3 chance</strong> of getting approved.</p>
+          <p style="margin-top: 0.5rem;"><strong>Business Insight:</strong> The bank approves more loans than it rejects. This could mean:</p>
+          <ul style="margin: 0.5rem 0 0 1.5rem;">
+            <li>The bank has lenient criteria</li>
+            <li>Most applicants are well-qualified</li>
+            <li>The bank wants to grow its loan portfolio</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 2: COUNT PLOT ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>📊 Chart 2: Count Plot - Education Distribution</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a Count Plot?</h4>
+          <p>A <strong>count plot</strong> is one of the simplest charts. It:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>Takes a <strong>categorical column</strong> (like Education)</li>
+            <li><strong>Counts</strong> how many rows are in each category</li>
+            <li>Shows result as <strong>vertical bars</strong></li>
+          </ul>
+          <p style="margin-top: 0.5rem;"><strong>Formula:</strong> X-axis = Categories, Y-axis = Count of each</p>
+        </div>
+
+        <div class="analogy-box">
+          <h4>🏫 Classroom Analogy</h4>
+          <p>Ask 100 students: "Are you a graduate?" Draw two bars - one for "Yes" and one for "No". The bar heights show how many said each. That's a count plot!</p>
+        </div>
+
+        <div class="step-box">
+          <strong>🐍 Step 1:</strong> Check what education categories exist
+        </div>
+        <div class="code-block"><pre><code># See unique values and their counts
+print(df[' education'].value_counts())</code></pre></div>
+
+        <div class="output-box">
+          <div class="title">📤 OUTPUT: Education counts</div>
+<pre> Graduate        2144
+ Not Graduate    2125
+Name:  education, dtype: int64
+
+# Almost equal! About half are graduates, half are not.</pre>
+        </div>
+
+        <div class="warning-box">
+          <h4>⚠️ IMPORTANT: Seaborn v0.14+ Warning Fix</h4>
+          <p>If you use the old code, you'll see this warning:</p>
+          <code style="background: #fef2f2; padding: 0.25rem 0.5rem; border-radius: 4px; display: block; margin: 0.5rem 0;">
+            FutureWarning: Passing `palette` without assigning `hue` is deprecated
+          </code>
+          <p style="margin-top: 0.5rem;"><strong>Why?</strong> Seaborn now wants you to explicitly say which variable controls colors.</p>
+          
+          <div class="code-compare">
+            <div class="old-way">
+              <h5>❌ OLD WAY (Shows Warning)</h5>
+              <div class="code-block"><pre><code>sns.countplot(
+    x=' education', 
+    data=df, 
+    palette='magma'
+)</code></pre></div>
+            </div>
+            <div class="new-way">
+              <h5>✅ NEW WAY (Correct)</h5>
+              <div class="code-block"><pre><code>sns.countplot(
+    x=' education', 
+    data=df, 
+    hue=' education',  # ADD THIS
+    palette='magma',
+    legend=False       # ADD THIS
+)</code></pre></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <strong>🐍 Step 2:</strong> Create the count plot (correct way)
+        </div>
+        <div class="code-block"><pre><code># Create figure
+plt.figure(figsize=(8, 5))
+
+# Create count plot - counts how many in each education category
+sns.countplot(
+    x=' education',      # Column to count
+    data=df,             # Our DataFrame
+    hue=' education',    # Color by education (required in v0.14+)
+    palette='magma',     # Color scheme (magma = purple-orange-yellow)
+    legend=False         # Don't show legend (x-axis already shows categories)
+)
+
+# Add labels and title
+plt.title('Education Status Distribution', fontsize=14, fontweight='bold')
+plt.xlabel('Education Level')
+plt.ylabel('Number of Applicants')
+plt.show()</code></pre></div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 COUNT PLOT OUTPUT</div>
+          <pre style="font-size: 0.9rem;">
+         Education Status Distribution
+         
+    2200 ┤
+         │  ████████
+    2100 ┤  ████████    ████████
+         │  ████████    ████████
+    2000 ┤  ████████    ████████
+         │  ████████    ████████
+    1900 ┤  ████████    ████████
+         │  ████████    ████████
+    1800 ┤  ████████    ████████
+         ├──────────────────────────
+            Graduate   Not Graduate
+          </pre>
+        </div>
+
+        <div class="observation-box">
+          <h4>👀 Key Observation</h4>
+          <p><strong>Finding:</strong> Almost a 50-50 split! Graduate (2144) vs Not Graduate (2125)</p>
+          <p>This is great for analysis because we have balanced data - neither group dominates.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 3: BAR PLOT ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>📈 Chart 3: Bar Plot - Average Loan Amount by Education</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a Bar Plot? (Different from Count Plot!)</h4>
+          <p>A <strong>bar plot</strong> shows the <strong>average (mean) value</strong> of a numeric column for each category.</p>
+          <table style="margin: 1rem 0; border-collapse: collapse; width: 100%;">
+            <tr style="background: #f1f5f9;">
+              <th style="padding: 0.5rem; border: 1px solid #e2e8f0;">Plot Type</th>
+              <th style="padding: 0.5rem; border: 1px solid #e2e8f0;">Shows</th>
+              <th style="padding: 0.5rem; border: 1px solid #e2e8f0;">Example</th>
+            </tr>
+            <tr>
+              <td style="padding: 0.5rem; border: 1px solid #e2e8f0;"><strong>Count Plot</strong></td>
+              <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">How many?</td>
+              <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">"2144 graduates applied"</td>
+            </tr>
+            <tr>
+              <td style="padding: 0.5rem; border: 1px solid #e2e8f0;"><strong>Bar Plot</strong></td>
+              <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">What's the average?</td>
+              <td style="padding: 0.5rem; border: 1px solid #e2e8f0;">"Graduates borrow ₹15L on average"</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="analogy-box">
+          <h4>💰 Salary Analogy</h4>
+          <p>If you want to compare "average salary of Engineers vs Doctors vs Teachers", you'd use a bar plot. It doesn't count how many people - it calculates and shows the average!</p>
+        </div>
+
+        <div class="code-block"><pre><code># Bar plot showing AVERAGE loan amount for each education level
+plt.figure(figsize=(8, 5))
+
+sns.barplot(
+    x=' education',           # Categories: Graduate, Not Graduate
+    y=' loan_amount',         # Numeric column to average
+    data=df,
+    hue=' education',         # Color by education
+    palette='Blues',          # Blue color scheme
+    legend=False,
+    errorbar=None             # Hide error bars for cleaner look
+)
+
+plt.title('Average Loan Amount by Education', fontsize=14, fontweight='bold')
+plt.xlabel('Education Level')
+plt.ylabel('Average Loan Amount (₹)')
+plt.show()</code></pre></div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 BAR PLOT OUTPUT</div>
+          <pre style="font-size: 0.9rem;">
+        Average Loan Amount by Education
+         
+  ₹18M ┤
+       │
+  ₹16M ┤  ████████    ████████
+       │  ████████    ████████
+  ₹14M ┤  ████████    ████████
+       │  ████████    ████████
+  ₹12M ┤  ████████    ████████
+       │  ████████    ████████
+  ₹10M ┤  ████████    ████████
+       ├──────────────────────────
+           Graduate   Not Graduate
+          </pre>
+        </div>
+
+        <div class="observation-box">
+          <h4>👀 Key Observation</h4>
+          <p><strong>Question:</strong> Do graduates take bigger loans?</p>
+          <p>Look at the bar heights. If they're similar, education doesn't affect loan size much in this dataset.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 4: BOX PLOT ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>📦 Chart 4: Box Plot - CIBIL Score by Loan Status</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a Box Plot?</h4>
+          <p>A <strong>box plot</strong> (box-and-whisker plot) shows the distribution of a numeric variable:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>Line in middle of box</strong> = Median (middle value)</li>
+            <li><strong>Box edges</strong> = 25th and 75th percentile (where 50% of data lives)</li>
+            <li><strong>Whiskers</strong> = Range of most data</li>
+            <li><strong>Dots outside</strong> = Outliers (unusual values)</li>
+          </ul>
+        </div>
+
+        <div class="analogy-box">
+          <h4>📊 Exam Scores Analogy</h4>
+          <p>Imagine comparing exam scores of Class A vs Class B:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>Box</strong> = Most students scored between these marks</li>
+            <li><strong>Line in box</strong> = The "typical" student's score</li>
+            <li><strong>Dots outside</strong> = That one genius who scored 100% or someone who scored 10%!</li>
+          </ul>
+        </div>
+
+        <div class="code-block"><pre><code># Box plot comparing CIBIL scores for Approved vs Rejected loans
+plt.figure(figsize=(8, 6))
+
+sns.boxplot(
+    x=' loan_status',        # Categories: Approved, Rejected
+    y=' cibil_score',        # Numeric: CIBIL credit score (300-900)
+    data=df,
+    hue=' loan_status',      # Color by status
+    palette='Set3',          # Pastel color palette
+    legend=False
+)
+
+plt.title('CIBIL Score Distribution by Loan Status', fontsize=14, fontweight='bold')
+plt.xlabel('Loan Status')
+plt.ylabel('CIBIL Score')
+plt.show()</code></pre></div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 BOX PLOT OUTPUT</div>
+          <pre style="font-size: 0.85rem;">
+      CIBIL Score Distribution by Loan Status
+      
+  900 ┤         •           •    ← Outliers (very high scores)
+      │      ┌─────┐     ┌─────┐
+  800 ┤      │     │     │     │
+      │      │──●──│     │     │  ← Median line (●)
+  700 ┤      │     │     │──●──│
+      │      └─────┘     │     │
+  600 ┤         │        └─────┘
+      │         │           │
+  500 ┤         │           │    ← Whiskers
+      │                     •    ← Outliers (very low scores)
+  400 ┤
+      ├────────────────────────────
+          Approved      Rejected
+      </pre>
+        </div>
+
+        <div class="key-points">
+          <h4>💡 How to Read This Box Plot</h4>
+          <ul>
+            <li>If "Approved" box is <strong>higher</strong> → People with higher CIBIL get approved</li>
+            <li>If boxes <strong>overlap a lot</strong> → CIBIL alone doesn't determine approval</li>
+            <li>If "Rejected" has <strong>more dots at bottom</strong> → Low scores get rejected</li>
+          </ul>
+        </div>
+
+        <div class="observation-box">
+          <h4>👀 Key Observation</h4>
+          <p><strong>Business Insight:</strong> Banks typically approve loans for CIBIL scores above 700. Compare where the median lines are - this tells you the "typical" score for approved vs rejected!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 5: KDE PLOT ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>🌊 Chart 5: KDE Plot - CIBIL Score Distribution</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a KDE Plot?</h4>
+          <p><strong>KDE</strong> stands for <strong>Kernel Density Estimate</strong>. It's a smooth curve showing where your data is concentrated.</p>
+          <p style="margin-top: 0.5rem;">Think of it as a <strong>smoothed histogram</strong> - instead of jagged bars, you get a beautiful flowing curve!</p>
+        </div>
+
+        <div class="analogy-box">
+          <h4>🏔️ Mountain Analogy</h4>
+          <p>Imagine your data as a landscape:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li><strong>Peaks (high points)</strong> = Where most data is concentrated</li>
+            <li><strong>Valleys (low points)</strong> = Where data is sparse</li>
+            <li><strong>Width of curve</strong> = How spread out your data is</li>
+          </ul>
+          <p>A KDE draws this "data mountain" for you!</p>
+        </div>
+
+        <div class="code-block"><pre><code># KDE plot of CIBIL scores
+plt.figure(figsize=(10, 5))
+
+sns.kdeplot(
+    data=df[' cibil_score'],  # The numeric column
+    fill=True,                 # Fill the area under curve
+    color='steelblue',         # Color of the curve
+    linewidth=2                # Thickness of the line
+)
+
+plt.title('Distribution of CIBIL Scores', fontsize=14, fontweight='bold')
+plt.xlabel('CIBIL Score')
+plt.ylabel('Density (how common)')
+
+# Add a reference line at 700 (good score threshold)
+plt.axvline(x=700, color='red', linestyle='--', label='700 (Good Score)')
+plt.legend()
+plt.show()</code></pre></div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 KDE PLOT OUTPUT</div>
+          <pre style="font-size: 0.85rem;">
+        Distribution of CIBIL Scores
+                     
+  Density            Peak (most common scores)
+     ↑                    ╱╲
+     │                   ╱  ╲
+     │                  ╱    ╲
+     │                 ╱      ╲
+     │               ╱          ╲
+     │             ╱              ╲
+     │          _╱                  ╲_
+     │       _-'                      '-_
+     └───────────────│───────────────────→
+       300   400   500 600  700  800  900
+                          ↑
+                    Red dashed line
+                    (Good score = 700)
+      </pre>
+        </div>
+
+        <div class="key-points">
+          <h4>💡 What KDE Shapes Tell You</h4>
+          <ul>
+            <li><strong>Single peak</strong> → Most people have similar scores (normal distribution)</li>
+            <li><strong>Two peaks</strong> → Two groups exist (maybe good vs bad credit holders)</li>
+            <li><strong>Skewed right</strong> → Most have lower scores, few have high</li>
+            <li><strong>Flat curve</strong> → Scores are evenly spread (no clustering)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 6: VIOLIN PLOT ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>🎻 Chart 6: Violin Plot - CIBIL Score by Loan Status</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a Violin Plot?</h4>
+          <p>A <strong>violin plot</strong> is the <strong>best of both worlds</strong>:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>Shows <strong>distribution shape</strong> (like KDE)</li>
+            <li>Shows <strong>median and quartiles</strong> (like box plot)</li>
+          </ul>
+          <p style="margin-top: 0.5rem;">It's called "violin" because the shape looks like a violin! 🎻</p>
+        </div>
+
+        <div class="analogy-box">
+          <h4>🎭 Best of Both Worlds</h4>
+          <p><strong>Box Plot says:</strong> "Here's the median and spread"</p>
+          <p><strong>KDE Plot says:</strong> "Here's where data is concentrated"</p>
+          <p><strong>Violin Plot says:</strong> "Why choose? I'll show you BOTH!"</p>
+          <p style="margin-top: 0.5rem;">The <strong>wider the violin at any point</strong>, the <strong>more data exists at that value</strong>.</p>
+        </div>
+
+        <div class="code-block"><pre><code># Violin plot comparing CIBIL scores for Approved vs Rejected
+plt.figure(figsize=(10, 6))
+
+sns.violinplot(
+    x=' loan_status',        # Categories on X-axis
+    y=' cibil_score',        # Numeric on Y-axis
+    data=df,
+    hue=' loan_status',      # Color by status (REQUIRED in v0.14+)
+    palette='muted',         # Muted color palette
+    legend=False
+)
+
+plt.title('CIBIL Score Distribution by Loan Status', fontsize=14, fontweight='bold')
+plt.xlabel('Loan Status')
+plt.ylabel('CIBIL Score')
+plt.show()</code></pre></div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 VIOLIN PLOT OUTPUT</div>
+          <pre style="font-size: 0.85rem;">
+     CIBIL Score Distribution by Loan Status
+     
+ 900 ┤    ╱╲                 ╱╲
+     │   ╱  ╲               ╱  ╲
+ 800 ┤  ╱ ●  ╲   ← Wide    ╱    ╲
+     │ ╱      ╲  (many)   ╱      ╲
+ 700 ┤ ╲      ╱           ╲  ●   ╱  ← Median
+     │  ╲    ╱             ╲    ╱
+ 600 ┤   ╲  ╱               ╲  ╱
+     │    ╲╱ ← Narrow       ╲╱
+ 500 ┤       (few)
+     ├─────────────────────────────
+         Approved        Rejected
+         
+     Width = How many people have that score
+      </pre>
+        </div>
+
+        <div class="observation-box">
+          <h4>👀 How to Compare Violins</h4>
+          <p><strong>Look for:</strong></p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>If "Approved" violin is <strong>wider at top</strong> → Higher scores get approved</li>
+            <li>If "Rejected" violin is <strong>wider at bottom</strong> → Lower scores get rejected</li>
+            <li>If shapes are <strong>similar</strong> → CIBIL score alone doesn't decide approval</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 7: SCATTER PLOT ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>⚫ Chart 7: Scatter Plot - Income vs Loan Amount</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a Scatter Plot?</h4>
+          <p>A <strong>scatter plot</strong> shows the <strong>relationship between two numbers</strong>:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>Each <strong>dot</strong> = One loan application</li>
+            <li><strong>X position</strong> = First number (Income)</li>
+            <li><strong>Y position</strong> = Second number (Loan Amount)</li>
+            <li><strong>Color</strong> = Can show a third variable (Approved/Rejected)</li>
+          </ul>
+        </div>
+
+        <div class="analogy-box">
+          <h4>🎯 Pattern Detection</h4>
+          <p>A scatter plot answers: <strong>"Do these two things move together?"</strong></p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>Dots go <strong>up-right</strong> → YES! Both increase together (positive correlation)</li>
+            <li>Dots go <strong>down-right</strong> → Opposite! One goes up, other goes down (negative)</li>
+            <li>Dots are <strong>random cloud</strong> → No relationship</li>
+          </ul>
+        </div>
+
+        <div class="code-block"><pre><code># Scatter plot: Income vs Loan Amount, colored by Status
+plt.figure(figsize=(10, 7))
+
+sns.scatterplot(
+    x=' income_annum',       # X-axis: Annual Income
+    y=' loan_amount',        # Y-axis: Loan Amount requested
+    hue=' loan_status',      # Color dots by Approved/Rejected
+    data=df,
+    palette='coolwarm',      # Blue for one, Red for other
+    alpha=0.6                # 60% opacity (see overlapping dots)
+)
+
+plt.title('Income vs Loan Amount by Loan Status', fontsize=14, fontweight='bold')
+plt.xlabel('Annual Income (₹)')
+plt.ylabel('Loan Amount (₹)')
+plt.legend(title='Loan Status')
+plt.show()</code></pre></div>
+
+        <div class="step-box">
+          <strong>🔍 Looking at the actual data points:</strong>
+        </div>
+        <div class="code-block"><pre><code># Let's see what data creates these dots
+scatter_data = df[[' income_annum', ' loan_amount', ' loan_status']]
+print(scatter_data.head(10))
+print(f"\nTotal points on scatter plot: {len(scatter_data)}")</code></pre></div>
+
+        <div class="output-box">
+          <div class="title">📤 OUTPUT: Data behind the scatter plot</div>
+<pre>    income_annum   loan_amount  loan_status
+0        9600000      29900000     Approved   ← Point at (9.6M, 29.9M) - Blue
+1        4100000      12200000     Rejected   ← Point at (4.1M, 12.2M) - Red
+2        9100000      29700000     Rejected   ← Point at (9.1M, 29.7M) - Red
+3        8200000      30700000     Rejected
+4        9800000      24200000     Rejected
+5        8700000      23100000     Rejected
+6        4100000      12000000     Approved
+7        8400000      25700000     Approved
+8        4800000      17500000     Rejected
+9        4400000      13500000     Approved
+
+Total points on scatter plot: 4269</pre>
+        </div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 SCATTER PLOT OUTPUT</div>
+          <pre style="font-size: 0.8rem;">
+       Income vs Loan Amount by Loan Status
+       
+ ₹35M ┤                    • •  •  •
+      │                  •  ◦ • ◦  •  •
+ ₹30M ┤              • ◦  • ◦ •  • ◦  •
+      │            ◦  • ◦ • ◦ • ◦ •  ◦ •
+ ₹25M ┤          • ◦ • ◦ • ◦ • ◦ • ◦ • •
+      │        • ◦ • ◦ • ◦ • ◦ • ◦ • ◦ •
+ ₹20M ┤      ◦ • ◦ • ◦ • ◦ • ◦ • ◦ • ◦
+      │    ◦ • ◦ • ◦ • ◦ • ◦ • ◦ •
+ ₹15M ┤  • ◦ • ◦ • ◦ • ◦ • ◦ •
+      │ ◦ • ◦ • ◦ • ◦ • ◦ •
+ ₹10M ┤• ◦ • ◦ • ◦ • ◦ •
+      │◦ • ◦ • ◦ • ◦           • = Approved (Blue)
+  ₹5M ┤• ◦ • ◦ •               ◦ = Rejected (Red)
+      ├────────────────────────────────────
+      ₹2M   ₹4M   ₹6M   ₹8M   ₹10M
+                 Annual Income
+      </pre>
+        </div>
+
+        <div class="observation-box">
+          <h4>👀 Key Observations</h4>
+          <p><strong>Pattern:</strong> Dots trend <strong>upward</strong> → Higher income people request larger loans! ✅</p>
+          <p><strong>Colors mixed</strong> → Both approved (blue) and rejected (red) exist at all income/loan levels.</p>
+          <p><strong>Insight:</strong> Income and loan amount are related, but approval depends on other factors too (like CIBIL score)!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART 8: HISTOGRAM ==================== -->
+    <section class="content-section">
+      <div class="viz-section">
+        <h3>📶 Chart 8: Histogram - Income Distribution</h3>
+        
+        <div class="what-box">
+          <h4>📚 What Is a Histogram?</h4>
+          <p>A <strong>histogram</strong> groups data into <strong>bins (ranges)</strong> and counts how many fall into each:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>Data is divided into <strong>equal-width ranges (bins)</strong></li>
+            <li>Each bar shows <strong>how many values fall in that range</strong></li>
+            <li><strong>Taller bar</strong> = More data in that range</li>
+          </ul>
+        </div>
+
+        <div class="analogy-box">
+          <h4>🎂 Age Groups Analogy</h4>
+          <p>Imagine sorting people by age into groups:</p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>0-20 years: 50 people</li>
+            <li>21-40 years: 120 people ← Tallest bar!</li>
+            <li>41-60 years: 80 people</li>
+            <li>61+ years: 30 people</li>
+          </ul>
+          <p>That's a histogram! It shows which ranges are most common.</p>
+        </div>
+
+        <div class="code-block"><pre><code># Basic histogram of income
+plt.figure(figsize=(10, 5))
+
+plt.hist(
+    df[' income_annum'],    # Data column
+    bins=20,                 # Divide into 20 ranges
+    color='steelblue',       # Bar color
+    edgecolor='white',       # White borders between bars
+    alpha=0.7                # 70% opacity
+)
+
+plt.xlabel('Annual Income (₹)', fontsize=12)
+plt.ylabel('Number of Applicants', fontsize=12)
+plt.title('Income Distribution of Loan Applicants', fontsize=14, fontweight='bold')
+plt.show()</code></pre></div>
+
+        <div class="step-box">
+          <strong>🎨 Even better:</strong> Seaborn histogram with KDE overlay!
+        </div>
+        <div class="code-block"><pre><code># Seaborn histogram with KDE curve on top
+plt.figure(figsize=(10, 5))
+
+sns.histplot(
+    data=df,
+    x=' income_annum',
+    bins=25,
+    kde=True,              # Add smooth KDE curve!
+    color='steelblue'
+)
+
+plt.title('Income Distribution with KDE Overlay', fontsize=14, fontweight='bold')
+plt.xlabel('Annual Income (₹)')
+plt.ylabel('Count')
+plt.show()</code></pre></div>
+
+        <div class="visual-chart">
+          <div class="chart-title">📊 HISTOGRAM OUTPUT</div>
+          <pre style="font-size: 0.85rem;">
+       Income Distribution of Loan Applicants
+                        
+  250 ┤ ████  ████  ████  ████  ████
+      │ ████  ████  ████  ████  ████
+  200 ┤ ████  ████  ████  ████  ████  ████
+      │ ████  ████  ████  ████  ████  ████
+  150 ┤ ████  ████  ████  ████  ████  ████  ████
+      │ ████  ████  ████  ████  ████  ████  ████
+  100 ┤ ████  ████  ████  ████  ████  ████  ████  ████
+      │ ████  ████  ████  ████  ████  ████  ████  ████
+   50 ┤ ████  ████  ████  ████  ████  ████  ████  ████
+      ├────────────────────────────────────────────────
+        ₹1M  ₹2M  ₹3M  ₹4M  ₹5M  ₹6M  ₹7M  ₹8M  ₹9M
+                        Annual Income
+          </pre>
+        </div>
+
+        <div class="key-points">
+          <h4>💡 Histogram Shapes & What They Mean</h4>
+          <ul>
+            <li><strong>Bell shape</strong> → Normal distribution (most common in middle)</li>
+            <li><strong>Skewed right</strong> → Most data on left, tail on right (e.g., real income)</li>
+            <li><strong>Flat bars</strong> → Uniform distribution (evenly spread)</li>
+            <li><strong>Two humps</strong> → Bimodal (two groups in your data)</li>
+          </ul>
+        </div>
+
+        <div class="observation-box">
+          <h4>👀 Key Observation</h4>
+          <p><strong>For this dataset:</strong> The bars are roughly equal height → Income is evenly distributed.</p>
+          <p><strong>Note:</strong> Real-world income data usually skews right (most earn moderate, few earn a lot). This suggests the dataset might be synthetic or pre-processed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SUMMARY ==================== -->
+    <section class="content-section">
+      <h2>🎉 Summary: Your Visualization Toolkit</h2>
+      
+      <div class="summary-grid">
+        <div class="summary-card" style="border-color: #ef4444;">
+          <h5>🥧 Pie Chart</h5>
+          <p>Parts of a whole (62% vs 38%)</p>
+        </div>
+        <div class="summary-card" style="border-color: #f97316;">
+          <h5>📊 Count Plot</h5>
+          <p>How many in each category</p>
+        </div>
+        <div class="summary-card" style="border-color: #eab308;">
+          <h5>📈 Bar Plot</h5>
+          <p>Average value per group</p>
+        </div>
+        <div class="summary-card" style="border-color: #22c55e;">
+          <h5>📦 Box Plot</h5>
+          <p>Spread, median, outliers</p>
+        </div>
+        <div class="summary-card" style="border-color: #06b6d4;">
+          <h5>🌊 KDE Plot</h5>
+          <p>Smooth distribution curve</p>
+        </div>
+        <div class="summary-card" style="border-color: #8b5cf6;">
+          <h5>🎻 Violin Plot</h5>
+          <p>Distribution + box plot</p>
+        </div>
+        <div class="summary-card" style="border-color: #ec4899;">
+          <h5>⚫ Scatter Plot</h5>
+          <p>Relationship between 2 variables</p>
+        </div>
+        <div class="summary-card" style="border-color: #6366f1;">
+          <h5>📶 Histogram</h5>
+          <p>Frequency distribution</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Reference Code -->
+    <section class="content-section">
+      <h2>📋 Quick Reference - All 8 Charts</h2>
+      <div class="code-block"><pre><code># 🚀 QUICK REFERENCE - Copy & Use!
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('loan_approval_dataset.csv')
+sns.set(style='whitegrid')
+
+# 1. PIE CHART - Proportions
+plt.pie(df[' loan_status'].value_counts(), labels=['Approved','Rejected'], autopct='%1.1f%%')
+
+# 2. COUNT PLOT - Count categories (v0.14+ syntax)
+sns.countplot(x=' education', data=df, hue=' education', legend=False)
+
+# 3. BAR PLOT - Average by category
+sns.barplot(x=' education', y=' loan_amount', data=df, hue=' education', legend=False)
+
+# 4. BOX PLOT - Distribution with outliers
+sns.boxplot(x=' loan_status', y=' cibil_score', data=df, hue=' loan_status', legend=False)
+
+# 5. KDE PLOT - Smooth distribution
+sns.kdeplot(data=df[' cibil_score'], fill=True)
+
+# 6. VIOLIN PLOT - Distribution + box
+sns.violinplot(x=' loan_status', y=' cibil_score', data=df, hue=' loan_status', legend=False)
+
+# 7. SCATTER PLOT - Two variables relationship
+sns.scatterplot(x=' income_annum', y=' loan_amount', hue=' loan_status', data=df)
+
+# 8. HISTOGRAM - Frequency distribution
+plt.hist(df[' income_annum'], bins=20)
+# OR with KDE: sns.histplot(data=df, x=' income_annum', kde=True)</code></pre></div>
+    </section>
+
+    <!-- Practice Challenge -->
+    <div class="quiz-box">
+      <h4>✍️ Practice Challenge</h4>
+      <p>Download the loan dataset and create these visualizations:</p>
+      <ul class="quiz-list">
+        <li>1️⃣ Pie chart of self_employed (Yes vs No)</li>
+        <li>2️⃣ Box plot of loan_amount by education</li>
+        <li>3️⃣ Scatter plot of cibil_score vs loan_amount</li>
+        <li>4️⃣ Histogram of loan_term</li>
+        <li>5️⃣ Violin plot of income_annum by loan_status</li>
+      </ul>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="page-navigation">
+      <a href="s13-dataviz.html" class="nav-prev">
+        <span class="nav-arrow">←</span>
+        <span class="nav-text">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">Basic Data Viz</span>
+        </span>
+      </a>
+      <a href="complete-course.html" class="nav-home">🏠</a>
+      <a href="assignments.html" class="nav-next">
+        <span class="nav-text">
+          <span class="nav-label">Practice</span>
+          <span class="nav-title">Assignments</span>
+        </span>
+        <span class="nav-arrow">→</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

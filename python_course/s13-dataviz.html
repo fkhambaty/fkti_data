@@ -612,11 +612,41 @@ sns.barplot(x=cats, y=vals)         # Bar plot
 sns.histplot(data, kde=True)        # Histogram
 sns.heatmap(matrix, annot=True)     # Heatmap
 sns.scatterplot(x=x, y=y)           # Scatter plot
+sns.violinplot(x=x, y=y, hue=x, legend=False)  # Violin plot
 
 # Color palettes
 cmap="viridis"     # Yellow-green-blue
 cmap="coolwarm"    # Blue-red
 cmap="Blues"       # Shades of blue</code></pre></div>
+      </div>
+
+      <!-- Important Warning Section -->
+      <div class="concept-card" style="background: #fff7ed; border: 2px solid #f97316; border-radius: 16px; padding: 1.5rem; margin-top: 1.5rem;">
+        <h3 style="color: #ea580c;">⚠️ Seaborn v0.14+ FutureWarning Fix</h3>
+        <p style="margin-bottom: 1rem;">Starting from Seaborn v0.14, passing <code>palette</code> without <code>hue</code> is deprecated. Here's how to fix it:</p>
+        
+        <div style="display: grid; gap: 1rem;">
+          <div style="background: #fef2f2; padding: 1rem; border-radius: 8px; border-left: 4px solid #ef4444;">
+            <strong style="color: #dc2626;">❌ OLD (Deprecated - will show warning):</strong>
+            <div class="code-block" style="margin-top: 0.5rem;"><pre><code># This will show FutureWarning in Seaborn v0.14+
+sns.violinplot(x='loan_status', y='cibil_score', data=df, palette='muted')
+sns.boxplot(x='category', y='value', data=df, palette='Set2')
+sns.barplot(x='group', y='score', data=df, palette='viridis')</code></pre></div>
+          </div>
+          
+          <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border-left: 4px solid #22c55e;">
+            <strong style="color: #16a34a;">✅ NEW (Correct way):</strong>
+            <div class="code-block" style="margin-top: 0.5rem;"><pre><code># Assign the x variable to hue and set legend=False
+sns.violinplot(x='loan_status', y='cibil_score', data=df, hue='loan_status', palette='muted', legend=False)
+sns.boxplot(x='category', y='value', data=df, hue='category', palette='Set2', legend=False)
+sns.barplot(x='group', y='score', data=df, hue='group', palette='viridis', legend=False)</code></pre></div>
+          </div>
+        </div>
+        
+        <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+          <strong>💡 Why this change?</strong>
+          <p style="margin: 0.5rem 0 0 0;">Seaborn wants to be explicit about which variable controls the colors. By assigning <code>hue</code> to the same variable as <code>x</code>, you're explicitly saying "color by this variable". The <code>legend=False</code> prevents a redundant legend since x-axis already shows the categories.</p>
+        </div>
       </div>
     </section>
 
@@ -672,10 +702,10 @@ cmap="Blues"       # Shades of blue</code></pre></div>
         </span>
       </a>
       <a href="complete-course.html" class="nav-home">🏠</a>
-      <a href="assignments.html" class="nav-next">
+      <a href="s14-enhanced-viz.html" class="nav-next">
         <span class="nav-text">
-          <span class="nav-label">Practice</span>
-          <span class="nav-title">Assignments</span>
+          <span class="nav-label">Next</span>
+          <span class="nav-title">Enhanced Viz</span>
         </span>
         <span class="nav-arrow">→</span>
       </a>
