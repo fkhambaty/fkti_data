@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistic Regression - Complete Guide | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #0284c7; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0369a1; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(14, 165, 233, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #bae6fd;
+        }
+        
+        .section h2 { color: #0284c7; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #e0f2fe; }
+        .section h3 { color: #0369a1; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #0ea5e9; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #10b981;
+            text-align: center;
+        }
+        .visual-example h4 { color: #047857; font-size: 1.2em; margin-bottom: 20px; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #e0f2fe; }
+        
+        .comparison-visual {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+            font-family: 'Fira Code', monospace;
+        }
+        .comparison-visual h4 { color: #7c3aed; margin-bottom: 20px; font-family: 'Nunito', sans-serif; }
+        .comparison-visual pre { color: #581c87; font-size: 0.9em; line-height: 1.6; }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .warning-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .warning-box p { color: #991b1b; }
+        
+        .success-box {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+        }
+        .success-box h4 { color: #166534; margin-bottom: 10px; }
+        .success-box p { color: #14532d; }
+        
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+        }
+        .metric-card h5 { color: #0284c7; margin-bottom: 10px; font-size: 1.1em; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="linear-regression.html"><i class="fas fa-arrow-left"></i><span>Previous: Linear Regression</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">🏥 REAL HEALTHCARE CASE STUDY</span>
+            <h1>📊 Logistic Regression</h1>
+            <p>Predict heart disease risk! Learn classification, probability, confusion matrix, and how to handle imbalanced data.</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS LOGISTIC REGRESSION -->
+        <div class="section">
+            <h2><i class="fas fa-heart-pulse"></i> Chapter 1: What is Logistic Regression?</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Linear vs Logistic - What's the Difference?</h4>
+                <p><strong>Linear Regression:</strong> Predicts a NUMBER (house price = $350,000)</p>
+                <p><strong>Logistic Regression:</strong> Predicts a CATEGORY (Will get heart disease? Yes/No)</p>
+                <p>Despite the name "Regression", Logistic Regression is used for <strong>Classification</strong>!</p>
+            </div>
+
+            <div class="comparison-visual">
+                <h4>🔢 Linear vs 📋 Logistic</h4>
+<pre>
+LINEAR REGRESSION (Predict Numbers):
+─────────────────────────────────────
+Input: House size, bedrooms, location
+Output: $425,000 (continuous number)
+
+            Price
+              ^
+         450K │        ●
+         400K │      ●
+         350K │    ●
+         300K │  ●
+              └─────────────────→ Size
+
+
+LOGISTIC REGRESSION (Predict Categories):
+─────────────────────────────────────────
+Input: Age, BP, cholesterol, smoking
+Output: 0 (No heart disease) or 1 (Yes)
+
+         Probability
+              ^
+          1.0 │          ●●●●●●
+              │        ●
+          0.5 │      ●    ← S-shaped curve!
+              │    ●
+          0.0 │●●●●●
+              └─────────────────→ Risk Score
+</pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🤔 Why Not Just Use Linear Regression for Yes/No?</h4>
+                <p>Linear Regression can output 1.5 or -0.3 (doesn't make sense for Yes/No!)</p>
+                <p>Logistic Regression uses a <strong>Sigmoid function</strong> to squeeze outputs between 0 and 1.</p>
+                <p>Output > 0.5 → Predict "Yes" (1)</p>
+                <p>Output ≤ 0.5 → Predict "No" (0)</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: THE DATASET -->
+        <div class="section">
+            <h2><i class="fas fa-database"></i> Chapter 2: Understanding Our Dataset</h2>
+            
+            <p>We're using the <strong>Framingham Heart Study</strong> dataset to predict <strong>10-year risk of Coronary Heart Disease (CHD)</strong>.</p>
+            
+            <div class="success-box" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div style="flex: 1;">
+                    <h4>📥 Download the Dataset to Follow Along!</h4>
+                    <p style="margin-bottom: 0;">Download this CSV file and save it in your working directory to run the code examples.</p>
+                </div>
+                <a href="datasets/heart_disease_dataset.csv" download="heart_disease_dataset.csv" 
+                   style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); 
+                          color: white; padding: 15px 30px; border-radius: 12px; 
+                          text-decoration: none; font-weight: 700; display: inline-flex; 
+                          align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+                          transition: transform 0.2s, box-shadow 0.2s;">
+                    <i class="fas fa-download"></i> Download CSV (191 KB)
+                </a>
+            </div>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                </tr>
+                <tr>
+                    <td><strong>male</strong></td>
+                    <td>Gender (1 = male, 0 = female)</td>
+                    <td>Categorical</td>
+                </tr>
+                <tr>
+                    <td><strong>age</strong></td>
+                    <td>Age of patient</td>
+                    <td>Numerical</td>
+                </tr>
+                <tr>
+                    <td><strong>currentSmoker</strong></td>
+                    <td>Is patient a current smoker?</td>
+                    <td>Categorical</td>
+                </tr>
+                <tr>
+                    <td><strong>cigsPerDay</strong></td>
+                    <td>Cigarettes smoked per day</td>
+                    <td>Numerical</td>
+                </tr>
+                <tr>
+                    <td><strong>BPMeds</strong></td>
+                    <td>On blood pressure medication?</td>
+                    <td>Categorical</td>
+                </tr>
+                <tr>
+                    <td><strong>prevalentStroke</strong></td>
+                    <td>Had a stroke before?</td>
+                    <td>Categorical</td>
+                </tr>
+                <tr>
+                    <td><strong>prevalentHyp</strong></td>
+                    <td>Is patient hypertensive?</td>
+                    <td>Categorical</td>
+                </tr>
+                <tr>
+                    <td><strong>diabetes</strong></td>
+                    <td>Has diabetes?</td>
+                    <td>Categorical</td>
+                </tr>
+                <tr>
+                    <td><strong>totChol</strong></td>
+                    <td>Total cholesterol level</td>
+                    <td>Numerical</td>
+                </tr>
+                <tr>
+                    <td><strong>sysBP / diaBP</strong></td>
+                    <td>Systolic / Diastolic blood pressure</td>
+                    <td>Numerical</td>
+                </tr>
+                <tr>
+                    <td><strong>BMI</strong></td>
+                    <td>Body Mass Index</td>
+                    <td>Numerical</td>
+                </tr>
+                <tr>
+                    <td><strong>glucose</strong></td>
+                    <td>Blood glucose level</td>
+                    <td>Numerical</td>
+                </tr>
+                <tr style="background: #fef3c7;">
+                    <td><strong>TenYearCHD</strong> 🎯</td>
+                    <td>10-year risk of heart disease (TARGET)</td>
+                    <td>0 = No, 1 = Yes</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 3: STEP BY STEP CODE -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Chapter 3: Building the Model Step-by-Step</h2>
+            
+            <h3>Step 1: Import Libraries & Load Data</h3>
+            
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Machine Learning imports</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix, accuracy_score, classification_report
+
+<span class="comment"># Load the heart disease dataset (download from link above!)</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"heart_disease_dataset.csv"</span>)
+<span class="function">print</span>(<span class="string">f"Dataset shape: {data.shape}"</span>)
+<span class="function">print</span>(data.<span class="function">head</span>())
+
+<span class="output"># Dataset shape: (4238, 16)</span>
+<span class="output">#    male  age  education  currentSmoker  cigsPerDay  ...</span></pre>
+            </div>
+
+            <h3>Step 2: Check for Missing Values</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Check missing values</span>
+<span class="function">print</span>(data.<span class="function">isnull</span>().<span class="function">sum</span>())
+
+<span class="output"># male                 0</span>
+<span class="output"># age                  0</span>
+<span class="output"># cigsPerDay          29  ← Missing!</span>
+<span class="output"># totChol             50  ← Missing!</span>
+<span class="output"># BMI                 19  ← Missing!</span>
+<span class="output"># heartRate            1  ← Missing!</span>
+<span class="output"># glucose            388  ← Missing!</span>
+<span class="output"># TenYearCHD           0</span></pre>
+            </div>
+
+            <h3>Step 3: Handle Missing Values</h3>
+            
+            <div class="eli5-box">
+                <h4>🤔 Why Median Instead of Mean?</h4>
+                <p><strong>Mean</strong> is affected by outliers (extreme values pull it up/down)</p>
+                <p><strong>Median</strong> is robust - it's the middle value, unaffected by outliers!</p>
+                <p>For medical data with potential extreme values, median is safer.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Fill missing values with MEDIAN (robust to outliers)</span>
+numerical_columns = [<span class="string">'cigsPerDay'</span>, <span class="string">'totChol'</span>, <span class="string">'BMI'</span>, <span class="string">'heartRate'</span>, <span class="string">'glucose'</span>]
+
+<span class="keyword">for</span> col <span class="keyword">in</span> numerical_columns:
+    median_value = data[col].<span class="function">median</span>()
+    data[col] = data[col].<span class="function">fillna</span>(median_value)
+    <span class="function">print</span>(<span class="string">f"{col}: filled with median = {median_value}"</span>)
+
+<span class="comment"># Verify no more missing values</span>
+<span class="function">print</span>(<span class="string">"\nMissing values after imputation:"</span>)
+<span class="function">print</span>(data.<span class="function">isnull</span>().<span class="function">sum</span>().<span class="function">sum</span>())  <span class="output"># Output: 0</span></pre>
+            </div>
+
+            <h3>Step 4: Visualize Numerical Features</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Boxplots: Compare features between heart disease (1) vs no heart disease (0)</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">20</span>, <span class="number">12</span>))
+
+features_to_plot = [<span class="string">'age'</span>, <span class="string">'totChol'</span>, <span class="string">'sysBP'</span>, <span class="string">'diaBP'</span>, <span class="string">'BMI'</span>, 
+                    <span class="string">'heartRate'</span>, <span class="string">'glucose'</span>, <span class="string">'cigsPerDay'</span>]
+
+<span class="keyword">for</span> i, col <span class="keyword">in</span> <span class="function">enumerate</span>(features_to_plot, <span class="number">1</span>):
+    plt.<span class="function">subplot</span>(<span class="number">3</span>, <span class="number">3</span>, i)
+    sns.<span class="function">boxplot</span>(x=<span class="string">'TenYearCHD'</span>, y=col, data=data, hue=<span class="string">'TenYearCHD'</span>, palette=<span class="string">'Set2'</span>, legend=<span class="keyword">False</span>)
+    plt.<span class="function">title</span>(<span class="string">f'{col} by Heart Disease Risk'</span>)
+
+plt.<span class="function">tight_layout</span>()
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 What the Boxplots Tell Us</h4>
+                <ul style="text-align: left; margin-left: 30px;">
+                    <li><strong>Age:</strong> Heart disease patients are generally OLDER</li>
+                    <li><strong>sysBP (Systolic BP):</strong> Higher in heart disease group</li>
+                    <li><strong>Glucose:</strong> Higher in heart disease group</li>
+                    <li><strong>Cholesterol:</strong> Slightly higher in heart disease group</li>
+                </ul>
+            </div>
+
+            <h3>Step 5: Check Correlation</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Correlation heatmap for numerical features</span>
+numerical_cols = [<span class="string">'age'</span>, <span class="string">'cigsPerDay'</span>, <span class="string">'totChol'</span>, <span class="string">'BMI'</span>, <span class="string">'heartRate'</span>, 
+                  <span class="string">'glucose'</span>, <span class="string">'sysBP'</span>, <span class="string">'diaBP'</span>]
+
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">8</span>))
+sns.<span class="function">heatmap</span>(data[numerical_cols].<span class="function">corr</span>(), cmap=<span class="string">"YlGnBu"</span>, annot=<span class="keyword">True</span>, fmt=<span class="string">".2f"</span>)
+plt.<span class="function">title</span>(<span class="string">"Correlation Between Numerical Features"</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🔍 Key Finding: sysBP & diaBP are Highly Correlated (0.79)</h4>
+                <p><strong>sysBP</strong> (Systolic): Pressure when heart beats</p>
+                <p><strong>diaBP</strong> (Diastolic): Pressure when heart relaxes</p>
+                <p>They measure similar things, so they're correlated. In advanced models, you might drop one!</p>
+            </div>
+
+            <h3>Step 6: Split Data & Scale Features</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Separate features (X) and target (y)</span>
+y = data[<span class="string">"TenYearCHD"</span>]              <span class="comment"># What we want to predict</span>
+X = data.<span class="function">drop</span>(<span class="string">'TenYearCHD'</span>, axis=<span class="number">1</span>)  <span class="comment"># Everything else</span>
+
+<span class="comment"># Train-test split (80% train, 20% test)</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=<span class="number">0.20</span>, random_state=<span class="number">0</span>
+)
+
+<span class="comment"># Scale features to 0-1 range (important for Logistic Regression!)</span>
+scaler = <span class="function">MinMaxScaler</span>()
+X_train = scaler.<span class="function">fit_transform</span>(X_train)  <span class="comment"># Fit AND transform on training</span>
+X_test = scaler.<span class="function">transform</span>(X_test)         <span class="comment"># Only transform on test</span>
+
+<span class="function">print</span>(<span class="string">f"Training samples: {len(X_train)}"</span>)
+<span class="function">print</span>(<span class="string">f"Test samples: {len(X_test)}"</span>)
+<span class="output"># Training samples: 3390</span>
+<span class="output"># Test samples: 848</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 4: TRAINING & EVALUATION -->
+        <div class="section">
+            <h2><i class="fas fa-brain"></i> Chapter 4: Train & Evaluate the Model</h2>
+            
+            <h3>Step 7: Train the Model</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Create and train Logistic Regression model</span>
+model = <span class="function">LogisticRegression</span>()
+model.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Make predictions</span>
+y_pred = model.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Check accuracy</span>
+accuracy = <span class="function">accuracy_score</span>(y_test, y_pred)
+<span class="function">print</span>(<span class="string">f"Accuracy: {accuracy:.2%}"</span>)
+<span class="output"># Accuracy: 84.55%</span></pre>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Wait! 84.55% Accuracy Sounds Great... But Is It?</h4>
+                <p>Let's look deeper at what the model is actually doing!</p>
+            </div>
+
+            <h3>Step 8: The Confusion Matrix</h3>
+            
+            <div class="eli5-box">
+                <h4>🤷 What is a Confusion Matrix?</h4>
+                <p>It shows WHERE your model makes mistakes:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>True Negative (TN):</strong> Predicted NO, Actually NO ✅</li>
+                    <li><strong>True Positive (TP):</strong> Predicted YES, Actually YES ✅</li>
+                    <li><strong>False Positive (FP):</strong> Predicted YES, Actually NO ❌ (False Alarm)</li>
+                    <li><strong>False Negative (FN):</strong> Predicted NO, Actually YES ❌ (MISSED!)</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Generate confusion matrix</span>
+cm = <span class="function">confusion_matrix</span>(y_test, y_pred)
+<span class="function">print</span>(<span class="string">"Confusion Matrix:"</span>)
+<span class="function">print</span>(cm)
+
+<span class="output">#              Predicted</span>
+<span class="output">#              NO    YES</span>
+<span class="output"># Actual NO   [[710     0]</span>
+<span class="output"># Actual YES   [131     7]]</span></pre>
+            </div>
+
+            <div class="comparison-visual">
+                <h4>📊 What the Confusion Matrix Reveals</h4>
+<pre>
+                    PREDICTED
+                   NO      YES
+              ┌────────┬────────┐
+    Actual NO │  710   │    0   │  ← Great! No false alarms
+              ├────────┼────────┤
+   Actual YES │  131   │    7   │  ← PROBLEM! Only caught 7 out of 138!
+              └────────┴────────┘
+
+    Out of 138 people who WILL get heart disease:
+    - Model correctly identified: 7 (5%)  😢
+    - Model MISSED: 131 (95%)  😱
+    
+    ⚠️ This is TERRIBLE for healthcare!
+    Missing heart disease patients is DANGEROUS!
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Full classification report</span>
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred))
+
+<span class="output">#               precision    recall  f1-score   support</span>
+<span class="output">#</span>
+<span class="output">#            0       0.84      1.00      0.92       710</span>
+<span class="output">#            1       1.00      0.05      0.10       138  ← Recall is only 5%!</span>
+<span class="output">#</span>
+<span class="output">#     accuracy                           0.85       848</span></pre>
+            </div>
+
+            <h3>Understanding the Metrics</h3>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Metric</th>
+                    <th>Formula</th>
+                    <th>Our Value</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td><strong>Accuracy</strong></td>
+                    <td>(TP+TN) / Total</td>
+                    <td>84.5%</td>
+                    <td>Overall correct predictions (MISLEADING here!)</td>
+                </tr>
+                <tr>
+                    <td><strong>Precision</strong></td>
+                    <td>TP / (TP+FP)</td>
+                    <td>100%</td>
+                    <td>When we predict YES, how often correct?</td>
+                </tr>
+                <tr style="background: #fef2f2;">
+                    <td><strong>Recall</strong> 🚨</td>
+                    <td>TP / (TP+FN)</td>
+                    <td>5%</td>
+                    <td>Of actual YES cases, how many did we catch?</td>
+                </tr>
+                <tr>
+                    <td><strong>F1-Score</strong></td>
+                    <td>2*(P*R)/(P+R)</td>
+                    <td>10%</td>
+                    <td>Balance between Precision and Recall</td>
+                </tr>
+            </table>
+
+            <div class="eli5-box">
+                <h4>🏥 In Healthcare: Recall is CRITICAL!</h4>
+                <p>We'd rather have some false alarms (tell healthy people to get checked) than <strong>MISS</strong> someone who actually has heart disease!</p>
+                <p>Missing 95% of heart disease patients is unacceptable!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 5: THE IMBALANCED DATA PROBLEM -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Chapter 5: The Imbalanced Data Problem</h2>
+            
+            <div class="code-block">
+<pre><span class="comment"># Check class distribution</span>
+<span class="keyword">from</span> collections <span class="keyword">import</span> Counter
+
+<span class="function">print</span>(<span class="string">"Training set distribution:"</span>)
+<span class="function">print</span>(<span class="function">Counter</span>(y_train))
+<span class="output"># Counter({0: 2875, 1: 515})</span>
+
+<span class="function">print</span>(<span class="string">"\nPercentages:"</span>)
+<span class="function">print</span>(<span class="string">f"No heart disease (0): {2875/3390:.1%}"</span>)
+<span class="function">print</span>(<span class="string">f"Heart disease (1): {515/3390:.1%}"</span>)
+<span class="output"># No heart disease (0): 84.8%</span>
+<span class="output"># Heart disease (1): 15.2%</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🤔 Why is Imbalanced Data a Problem?</h4>
+                <p>The model learns: "If I just predict NO for everyone, I'll be right 85% of the time!"</p>
+                <p>It's taking the lazy path instead of learning the actual patterns!</p>
+            </div>
+
+            <h3>Solution: Class Weights</h3>
+            
+            <div class="eli5-box">
+                <h4>⚖️ What are Class Weights?</h4>
+                <p>We tell the model: "Mistakes on the MINORITY class (heart disease) are MORE EXPENSIVE!"</p>
+                <p><strong>Weight {0:1, 1:4}</strong> means missing a heart disease case costs 4x more than a false alarm.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Train with class weights to handle imbalance</span>
+weight = {<span class="number">0</span>: <span class="number">1</span>, <span class="number">1</span>: <span class="number">4</span|}  <span class="comment"># Penalize missing heart disease 4x more</span>
+
+model_balanced = <span class="function">LogisticRegression</span>(class_weight=weight)
+model_balanced.<span class="function">fit</span>(X_train, y_train)
+
+y_pred_balanced = model_balanced.<span class="function">predict</span>(X_test)
+
+<span class="function">print</span>(<span class="string">"Confusion Matrix (Balanced):"</span>)
+<span class="function">print</span>(<span class="function">confusion_matrix</span>(y_test, y_pred_balanced))
+
+<span class="output">#              Predicted</span>
+<span class="output">#              NO    YES</span>
+<span class="output"># Actual NO   [[567   143]</span>
+<span class="output"># Actual YES   [ 61    77]]</span></pre>
+            </div>
+
+            <div class="comparison-visual">
+                <h4>📊 Before vs After Class Weights</h4>
+<pre>
+BEFORE (No weights):              AFTER (With weights):
+─────────────────────             ─────────────────────
+Caught: 7 out of 138 (5%)         Caught: 77 out of 138 (56%) ✅
+Missed: 131 patients 😱           Missed: 61 patients (better!)
+
+Trade-off: More false alarms (143 vs 0), but that's OK in healthcare!
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre><span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred_balanced))
+
+<span class="output">#               precision    recall  f1-score   support</span>
+<span class="output">#</span>
+<span class="output">#            0       0.90      0.80      0.85       710</span>
+<span class="output">#            1       0.35      0.56      0.43       138  ← Recall improved: 5% → 56%!</span>
+<span class="output">#</span>
+<span class="output">#     accuracy                           0.76       848</span></pre>
+            </div>
+
+            <div class="success-box">
+                <h4>✅ Success! Recall Improved from 5% to 56%!</h4>
+                <p>Accuracy dropped from 85% to 76%, but that's a GOOD trade-off in healthcare.</p>
+                <p>We're now catching 56% of heart disease patients instead of just 5%!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: MODEL INTERPRETATION -->
+        <div class="section">
+            <h2><i class="fas fa-magnifying-glass"></i> Chapter 6: Model Interpretation - Odds Ratios</h2>
+            
+            <div class="eli5-box">
+                <h4>🎲 What is an Odds Ratio?</h4>
+                <p>It tells you how much each feature affects the probability of heart disease:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Odds Ratio > 1:</strong> INCREASES risk (higher is worse)</li>
+                    <li><strong>Odds Ratio < 1:</strong> DECREASES risk (protective)</li>
+                    <li><strong>Odds Ratio ≈ 1:</strong> No significant effect</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Calculate odds ratios</span>
+features = X.<span class="function">columns</span>.<span class="function">tolist</span>()
+odds_ratios = np.<span class="function">exp</span>(model_balanced.coef_)[<span class="number">0</span>]
+
+<span class="function">print</span>(<span class="string">"Feature Importance (Odds Ratios):"</span>)
+<span class="function">print</span>(<span class="string">"="</span> * <span class="number">50</span>)
+<span class="keyword">for</span> feature, odds <span class="keyword">in</span> <span class="function">zip</span>(features, odds_ratios):
+    <span class="function">print</span>(<span class="string">f"{feature:20s}: {odds:.2f}"</span>)
+
+<span class="output"># Feature Importance (Odds Ratios):</span>
+<span class="output"># ==================================================</span>
+<span class="output"># male                : 1.52  ← Being male increases risk</span>
+<span class="output"># age                 : 11.37 ← AGE is HUGE risk factor!</span>
+<span class="output"># education           : 1.00  ← No effect</span>
+<span class="output"># currentSmoker       : 1.11  ← Slight increase</span>
+<span class="output"># cigsPerDay          : 4.23  ← Major risk factor!</span>
+<span class="output"># BPMeds              : 1.17  ← Slight increase</span>
+<span class="output"># prevalentStroke     : 2.34  ← Previous stroke increases risk</span>
+<span class="output"># prevalentHyp        : 1.47  ← Hypertension increases risk</span>
+<span class="output"># diabetes            : 1.78  ← Diabetes increases risk</span>
+<span class="output"># totChol             : 2.33  ← High cholesterol increases risk</span>
+<span class="output"># sysBP               : 5.59  ← HIGH blood pressure = big risk!</span>
+<span class="output"># diaBP               : 0.69  ← Slightly protective (after controlling for sysBP)</span>
+<span class="output"># BMI                 : 1.48  ← Higher BMI increases risk</span>
+<span class="output"># heartRate           : 0.89  ← Slight protective effect</span>
+<span class="output"># glucose             : 2.75  ← High glucose increases risk</span></pre>
+            </div>
+
+            <div class="visual-example">
+                <h4>🏆 Top 5 Heart Disease Risk Factors</h4>
+                <ol style="text-align: left; margin-left: 30px; font-size: 1.1em;">
+                    <li><strong>Age (11.37x)</strong> - Older = much higher risk</li>
+                    <li><strong>Systolic BP (5.59x)</strong> - High blood pressure is dangerous</li>
+                    <li><strong>Cigarettes/Day (4.23x)</strong> - Smoking kills</li>
+                    <li><strong>Glucose (2.75x)</strong> - High blood sugar is risky</li>
+                    <li><strong>Previous Stroke (2.34x)</strong> - History matters</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- CHAPTER 7: SAVE & LOAD MODEL -->
+        <div class="section">
+            <h2><i class="fas fa-save"></i> Chapter 7: Save & Load Your Model</h2>
+            
+            <div class="code-block">
+<pre><span class="keyword">import</span> joblib
+
+<span class="comment"># Save the model to a file</span>
+joblib.<span class="function">dump</span>(model_balanced, <span class="string">'heart_disease_model.pkl'</span>)
+<span class="function">print</span>(<span class="string">"✅ Model saved!"</span>)
+
+<span class="comment"># Load the model later</span>
+loaded_model = joblib.<span class="function">load</span>(<span class="string">'heart_disease_model.pkl'</span>)
+
+<span class="comment"># Use loaded model to predict</span>
+new_predictions = loaded_model.<span class="function">predict</span>(X_test)
+<span class="function">print</span>(<span class="string">"✅ Model loaded and working!"</span>)
+
+<span class="comment"># Check model parameters</span>
+<span class="function">print</span>(<span class="string">"Model intercept:"</span>, loaded_model.intercept_)
+<span class="output"># Model intercept: [-3.07863041]</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>💾 Why Save Models?</h4>
+                <p>Training takes time! Save your trained model so you can:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Use it later without retraining</li>
+                    <li>Deploy it to a website or app</li>
+                    <li>Share it with your team</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CHAPTER 8: PROBABILITY PREDICTIONS -->
+        <div class="section">
+            <h2><i class="fas fa-percentage"></i> Chapter 8: Getting Probability Predictions</h2>
+            
+            <div class="code-block">
+<pre><span class="comment"># Get probabilities instead of just 0/1</span>
+probabilities = model_balanced.<span class="function">predict_proba</span>(X_test)
+
+<span class="comment"># Create a nice DataFrame to view results</span>
+results = pd.<span class="function">DataFrame</span>({
+    <span class="string">'Prob_No_HeartDisease'</span>: probabilities[:, <span class="number">0</span>],
+    <span class="string">'Prob_HeartDisease'</span>: probabilities[:, <span class="number">1</span>],
+    <span class="string">'Predicted'</span>: model_balanced.<span class="function">predict</span>(X_test),
+    <span class="string">'Actual'</span>: y_test.<span class="function">values</span>
+})
+
+<span class="function">print</span>(results.<span class="function">head</span>(<span class="number">10</span>))
+
+<span class="output">#    Prob_No_HeartDisease  Prob_HeartDisease  Predicted  Actual</span>
+<span class="output"># 0              0.73                 0.27          0       0</span>
+<span class="output"># 1              0.92                 0.08          0       0</span>
+<span class="output"># 2              0.68                 0.32          0       1  ← Missed!</span>
+<span class="output"># 3              0.45                 0.55          1       1  ← Correct!</span>
+<span class="output"># 4              0.89                 0.11          0       0</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🎯 Why Probabilities Matter</h4>
+                <p>Instead of just "Yes/No", you can say:</p>
+                <p>"This patient has a <strong>55% probability</strong> of heart disease in 10 years."</p>
+                <p>Doctors can then decide: High-risk patients need immediate intervention!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 9: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>Simple Explanation</th>
+                </tr>
+                <tr>
+                    <td><strong>Logistic Regression</strong></td>
+                    <td>Predicts probability of belonging to a class (0-1)</td>
+                </tr>
+                <tr>
+                    <td><strong>Sigmoid Function</strong></td>
+                    <td>S-shaped curve that squishes values between 0 and 1</td>
+                </tr>
+                <tr>
+                    <td><strong>Confusion Matrix</strong></td>
+                    <td>Shows TP, TN, FP, FN - where model makes mistakes</td>
+                </tr>
+                <tr>
+                    <td><strong>Accuracy</strong></td>
+                    <td>% of correct predictions (can be misleading!)</td>
+                </tr>
+                <tr>
+                    <td><strong>Recall</strong></td>
+                    <td>Of actual positives, how many did we catch?</td>
+                </tr>
+                <tr>
+                    <td><strong>Precision</strong></td>
+                    <td>Of predicted positives, how many were correct?</td>
+                </tr>
+                <tr>
+                    <td><strong>Class Weights</strong></td>
+                    <td>Fix imbalanced data by penalizing minority class mistakes more</td>
+                </tr>
+                <tr>
+                    <td><strong>Odds Ratio</strong></td>
+                    <td>How much each feature increases/decreases risk</td>
+                </tr>
+            </table>
+
+            <div class="visual-example">
+                <h4>🎉 You've Mastered Logistic Regression!</h4>
+                <p>You can now build classification models for healthcare, finance, marketing, and more!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="linear-regression.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Linear Regression</a>
+            <a href="index.html" class="nav-btn next">Back to Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>
