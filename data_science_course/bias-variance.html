@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bias, Variance & Gradient Descent | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #fce7f3 50%, #fdf4ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #ec4899; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .nav a:hover { color: #be185d; transform: translateX(-3px); }
+        
+        .header {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.3);
+        }
+        .header h1 { font-size: 2.8em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #ec4899;
+        }
+        .section h2 { color: #ec4899; font-size: 2em; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .section h3 { color: #be185d; font-size: 1.5em; margin: 30px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #fce7f3; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 15px; }
+        
+        .analogy-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 10px; }
+        .analogy-box p { color: #1e3a8a; margin-bottom: 0; }
+        
+        .example-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .example-box h4 { color: #065f46; font-size: 1.2em; margin-bottom: 10px; }
+        .example-box p, .example-box li { color: #064e3b; }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #ef4444;
+        }
+        .warning-box h4 { color: #991b1b; font-size: 1.2em; margin-bottom: 10px; }
+        .warning-box p { color: #7f1d1d; }
+        
+        .key-point {
+            background: linear-gradient(135deg, #fdf4ff 0%, #f5d0fe 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #a855f7;
+        }
+        .key-point h4 { color: #7c3aed; margin-bottom: 10px; }
+        .key-point p { color: #6b21a8; margin-bottom: 0; }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+            text-align: center;
+        }
+        .formula-box h4 { color: #92400e; font-size: 1.1em; margin-bottom: 15px; }
+        .formula {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.3em;
+            color: #78350f;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.6; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .data-table td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:nth-child(even) { background: #fdf4ff; }
+        
+        .visual-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            border: 1px solid #86efac;
+        }
+        .visual-box h4 { color: #166534; margin-bottom: 20px; }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .compare-card {
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .compare-card.high-bias {
+            background: linear-gradient(135deg, #fef2f2, #fecaca);
+            border: 2px solid #f87171;
+        }
+        .compare-card.high-variance {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #fbbf24;
+        }
+        .compare-card.balanced {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border: 2px solid #34d399;
+        }
+        .compare-card h4 { margin-bottom: 15px; font-size: 1.2em; }
+        .compare-card .icon { font-size: 3em; margin-bottom: 15px; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white; border: none; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        .back-to-top:hover { transform: translateY(-3px); }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 2em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="linear-regression.html"><i class="fas fa-arrow-left"></i><span>Previous: Linear Regression</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <h1>⚖️ Bias, Variance & Gradient Descent</h1>
+            <p>Understand why models fail and how they learn. Master the fundamental concepts behind all ML algorithms!</p>
+        </div>
+
+        <!-- Part 1: Bias vs Variance -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 1: The Bias-Variance Tradeoff</h2>
+            
+            <p>Every ML model makes errors. These errors come from two sources: <strong>Bias</strong> and <strong>Variance</strong>. Understanding this tradeoff is KEY to building good models!</p>
+
+            <div class="formula-box">
+                <h4>📐 Total Error Formula</h4>
+                <div class="formula">Total Error = Bias² + Variance + Irreducible Noise</div>
+            </div>
+
+            <h3>What is Bias?</h3>
+            <p><strong>Bias</strong> = Error from wrong assumptions. A high-bias model is too simple and misses important patterns.</p>
+
+            <div class="analogy-box">
+                <h4>🎯 Archery Analogy: Bias</h4>
+                <p>Imagine shooting arrows at a target. <strong>High Bias</strong> = Your arrows consistently miss the center, landing in the same wrong spot every time.</p>
+                <p style="margin-top: 10px;">The bow is miscalibrated! No matter how many times you shoot, you'll always miss in the same direction.</p>
+            </div>
+
+            <h3>What is Variance?</h3>
+            <p><strong>Variance</strong> = Error from sensitivity to training data. A high-variance model changes dramatically with different training sets.</p>
+
+            <div class="analogy-box">
+                <h4>🎯 Archery Analogy: Variance</h4>
+                <p><strong>High Variance</strong> = Your arrows scatter all over the place - sometimes left, sometimes right, sometimes high, sometimes low.</p>
+                <p style="margin-top: 10px;">Your hand is shaky! Even if on average you hit the center, individual shots are unpredictable.</p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="compare-card high-bias">
+                    <div class="icon">😔</div>
+                    <h4 style="color: #991b1b;">High Bias (Underfitting)</h4>
+                    <p style="color: #7f1d1d;">Model too simple</p>
+                    <p style="color: #7f1d1d;">Misses patterns</p>
+                    <p style="color: #7f1d1d;">Low train & test accuracy</p>
+                    <p style="color: #7f1d1d; margin-top: 10px;"><strong>Fix:</strong> Use more complex model, add features</p>
+                </div>
+                
+                <div class="compare-card high-variance">
+                    <div class="icon">😵</div>
+                    <h4 style="color: #92400e;">High Variance (Overfitting)</h4>
+                    <p style="color: #78350f;">Model too complex</p>
+                    <p style="color: #78350f;">Memorizes noise</p>
+                    <p style="color: #78350f;">High train, low test accuracy</p>
+                    <p style="color: #78350f; margin-top: 10px;"><strong>Fix:</strong> Simplify model, regularization, more data</p>
+                </div>
+                
+                <div class="compare-card balanced">
+                    <div class="icon">🎯</div>
+                    <h4 style="color: #166534;">Balanced (Good Fit)</h4>
+                    <p style="color: #14532d;">Model just right</p>
+                    <p style="color: #14532d;">Captures true patterns</p>
+                    <p style="color: #14532d;">Good train & test accuracy</p>
+                    <p style="color: #14532d; margin-top: 10px;"><strong>Goal:</strong> Sweet spot between simple & complex</p>
+                </div>
+            </div>
+
+            <div class="visual-box">
+                <h4>📊 Bias-Variance Tradeoff Visualization</h4>
+                <div style="margin-top: 20px; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                    <div>
+                        <p style="font-weight: 700; color: #166534;">As Model Complexity ↑</p>
+                        <p style="color: #dc2626;">Bias ↓ (better at fitting)</p>
+                        <p style="color: #f59e0b;">Variance ↑ (more sensitive)</p>
+                    </div>
+                    <div>
+                        <p style="font-weight: 700; color: #166534;">Sweet Spot</p>
+                        <p style="color: #166534;">Minimum Total Error</p>
+                        <p style="color: #166534;">Best Generalization</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2: Detecting Bias and Variance -->
+        <div class="section">
+            <h2><i class="fas fa-search"></i> Part 2: Detecting Bias & Variance</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Symptom</th>
+                    <th>Training Accuracy</th>
+                    <th>Test Accuracy</th>
+                    <th>Diagnosis</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>Both low</td>
+                    <td>60%</td>
+                    <td>55%</td>
+                    <td><strong style="color: #dc2626;">High Bias</strong></td>
+                    <td>More complex model, more features</td>
+                </tr>
+                <tr>
+                    <td>Big gap</td>
+                    <td>98%</td>
+                    <td>65%</td>
+                    <td><strong style="color: #f59e0b;">High Variance</strong></td>
+                    <td>Regularization, more data, simplify</td>
+                </tr>
+                <tr>
+                    <td>Both good, close</td>
+                    <td>88%</td>
+                    <td>85%</td>
+                    <td><strong style="color: #22c55e;">Good Fit!</strong></td>
+                    <td>You're doing great! 🎉</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="comment"># Detecting Bias vs Variance in Python</span>
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+<span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> r2_score
+
+<span class="comment"># Split data</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, y, test_size=<span class="number">0.2</span>)
+
+<span class="comment"># Simple model (might have high bias)</span>
+simple_model = <span class="function">LinearRegression</span>()
+simple_model.<span class="function">fit</span>(X_train, y_train)
+
+train_score = <span class="function">r2_score</span>(y_train, simple_model.<span class="function">predict</span>(X_train))
+test_score = <span class="function">r2_score</span>(y_test, simple_model.<span class="function">predict</span>(X_test))
+
+<span class="function">print</span>(<span class="string">f"Simple Model - Train: {train_score:.2f}, Test: {test_score:.2f}"</span>)
+
+<span class="comment"># Complex model (might have high variance)</span>
+complex_model = <span class="function">DecisionTreeRegressor</span>(max_depth=<span class="keyword">None</span>)  <span class="comment"># No limit = overfits!</span>
+complex_model.<span class="function">fit</span>(X_train, y_train)
+
+train_score = <span class="function">r2_score</span>(y_train, complex_model.<span class="function">predict</span>(X_train))
+test_score = <span class="function">r2_score</span>(y_test, complex_model.<span class="function">predict</span>(X_test))
+
+<span class="function">print</span>(<span class="string">f"Complex Model - Train: {train_score:.2f}, Test: {test_score:.2f}"</span>)
+
+<span class="comment"># Output:
+# Simple Model - Train: 0.65, Test: 0.62  ← High Bias (both low)
+# Complex Model - Train: 1.00, Test: 0.55 ← High Variance (big gap!)</span></pre>
+            </div>
+        </div>
+
+        <!-- Part 3: Gradient Descent -->
+        <div class="section">
+            <h2><i class="fas fa-mountain"></i> Part 3: Gradient Descent (How Models Learn)</h2>
+            
+            <p>Gradient Descent is the engine that powers most ML algorithms. It's how models find the best parameters!</p>
+
+            <div class="analogy-box">
+                <h4>⛰️ The Blindfolded Hiker Analogy</h4>
+                <p>Imagine you're blindfolded on a mountain and need to reach the lowest valley.</p>
+                <p style="margin-top: 10px;"><strong>Strategy:</strong> Feel the ground around you. Step in the direction that goes downhill. Repeat until you can't go any lower.</p>
+                <p style="margin-top: 10px;"><strong>Gradient Descent does the same!</strong> It measures the "slope" of the error and moves parameters in the direction that reduces error.</p>
+            </div>
+
+            <h3>The Process</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0;">
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">1</div>
+                    <div>
+                        <h5 style="color: #be185d;">Start with Random Weights</h5>
+                        <p style="color: #475569; margin: 0;">Initialize model parameters randomly (or with zeros)</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">2</div>
+                    <div>
+                        <h5 style="color: #be185d;">Calculate Error (Loss)</h5>
+                        <p style="color: #475569; margin: 0;">Measure how wrong the predictions are</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">3</div>
+                    <div>
+                        <h5 style="color: #be185d;">Compute Gradient</h5>
+                        <p style="color: #475569; margin: 0;">Find the direction that reduces error the most</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">4</div>
+                    <div>
+                        <h5 style="color: #be185d;">Update Weights</h5>
+                        <p style="color: #475569; margin: 0;">Move parameters in that direction (by learning rate amount)</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #22c55e, #10b981); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">5</div>
+                    <div>
+                        <h5 style="color: #166534;">Repeat Until Convergence</h5>
+                        <p style="color: #475569; margin: 0;">Stop when error stops decreasing significantly</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                <h4>📐 Weight Update Formula</h4>
+                <div class="formula">new_weight = old_weight - learning_rate × gradient</div>
+            </div>
+
+            <h3>Learning Rate: The Step Size</h3>
+            <p>Learning rate controls how big each step is. Too big or too small causes problems!</p>
+
+            <div class="comparison-grid">
+                <div class="compare-card high-bias">
+                    <div class="icon">🐢</div>
+                    <h4 style="color: #991b1b;">Learning Rate Too Small</h4>
+                    <p style="color: #7f1d1d;">Takes forever to converge</p>
+                    <p style="color: #7f1d1d;">Might get stuck</p>
+                    <p style="color: #7f1d1d;">Wastes computation</p>
+                </div>
+                
+                <div class="compare-card high-variance">
+                    <div class="icon">🦘</div>
+                    <h4 style="color: #92400e;">Learning Rate Too Large</h4>
+                    <p style="color: #78350f;">Overshoots the minimum</p>
+                    <p style="color: #78350f;">Bounces around chaotically</p>
+                    <p style="color: #78350f;">May never converge!</p>
+                </div>
+                
+                <div class="compare-card balanced">
+                    <div class="icon">👍</div>
+                    <h4 style="color: #166534;">Learning Rate Just Right</h4>
+                    <p style="color: #14532d;">Converges smoothly</p>
+                    <p style="color: #14532d;">Finds good minimum</p>
+                    <p style="color: #14532d;">Efficient training</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Simple Gradient Descent Implementation</span>
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="keyword">def</span> <span class="function">gradient_descent</span>(X, y, learning_rate=<span class="number">0.01</span>, iterations=<span class="number">1000</span>):
+    <span class="comment"># Initialize weights randomly</span>
+    n_features = X.shape[<span class="number">1</span>]
+    weights = np.random.<span class="function">randn</span>(n_features)
+    bias = <span class="number">0</span>
+    
+    m = len(y)  <span class="comment"># Number of samples</span>
+    
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(iterations):
+        <span class="comment"># Step 2: Make predictions</span>
+        predictions = np.<span class="function">dot</span>(X, weights) + bias
+        
+        <span class="comment"># Step 3: Calculate error (MSE)</span>
+        error = predictions - y
+        
+        <span class="comment"># Step 4: Compute gradients</span>
+        gradient_weights = (<span class="number">1</span>/m) * np.<span class="function">dot</span>(X.T, error)
+        gradient_bias = (<span class="number">1</span>/m) * np.<span class="function">sum</span>(error)
+        
+        <span class="comment"># Step 5: Update weights</span>
+        weights = weights - learning_rate * gradient_weights
+        bias = bias - learning_rate * gradient_bias
+        
+        <span class="comment"># Print progress every 100 iterations</span>
+        <span class="keyword">if</span> i % <span class="number">100</span> == <span class="number">0</span>:
+            mse = np.<span class="function">mean</span>(error**<span class="number">2</span>)
+            <span class="function">print</span>(<span class="string">f"Iteration {i}: MSE = {mse:.4f}"</span>)
+    
+    <span class="keyword">return</span> weights, bias
+
+<span class="comment"># Example usage
+# weights, bias = gradient_descent(X_train, y_train)</span></pre>
+            </div>
+        </div>
+
+        <!-- Part 4: Regularization -->
+        <div class="section">
+            <h2><i class="fas fa-shield-alt"></i> Part 4: Regularization (Fighting Overfitting)</h2>
+            
+            <p>Regularization adds a penalty for complex models, forcing them to be simpler and generalize better.</p>
+
+            <div class="analogy-box">
+                <h4>📝 The Essay Analogy</h4>
+                <p>Imagine writing an essay with a word limit. You can't use unnecessary words - you must be concise!</p>
+                <p style="margin-top: 10px;"><strong>Regularization does the same for models:</strong> It penalizes large weights, forcing the model to use only the most important features.</p>
+            </div>
+
+            <h3>Types of Regularization</h3>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Type</th>
+                    <th>Penalty Term</th>
+                    <th>Effect</th>
+                    <th>Best For</th>
+                </tr>
+                <tr>
+                    <td><strong>L1 (Lasso)</strong></td>
+                    <td>Sum of |weights|</td>
+                    <td>Pushes some weights to exactly 0</td>
+                    <td>Feature selection (removes unimportant features)</td>
+                </tr>
+                <tr>
+                    <td><strong>L2 (Ridge)</strong></td>
+                    <td>Sum of weights²</td>
+                    <td>Shrinks all weights toward 0</td>
+                    <td>When all features might be useful</td>
+                </tr>
+                <tr>
+                    <td><strong>Elastic Net</strong></td>
+                    <td>Mix of L1 + L2</td>
+                    <td>Combines both effects</td>
+                    <td>When you want balance</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="comment"># Using Regularization in Sklearn</span>
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Ridge, Lasso, ElasticNet
+
+<span class="comment"># Ridge Regression (L2 Regularization)</span>
+ridge_model = <span class="function">Ridge</span>(alpha=<span class="number">1.0</span>)  <span class="comment"># alpha controls regularization strength</span>
+ridge_model.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"Ridge R²: {ridge_model.score(X_test, y_test):.3f}"</span>)
+
+<span class="comment"># Lasso Regression (L1 Regularization)</span>
+lasso_model = <span class="function">Lasso</span>(alpha=<span class="number">1.0</span>)
+lasso_model.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"Lasso R²: {lasso_model.score(X_test, y_test):.3f}"</span>)
+
+<span class="comment"># Check which features Lasso removed (coefficients = 0)</span>
+<span class="function">print</span>(<span class="string">"Features kept by Lasso:"</span>)
+<span class="keyword">for</span> feature, coef <span class="keyword">in</span> <span class="function">zip</span>(feature_names, lasso_model.coef_):
+    <span class="keyword">if</span> coef != <span class="number">0</span>:
+        <span class="function">print</span>(<span class="string">f"  {feature}: {coef:.2f}"</span>)</pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Choosing Alpha (Regularization Strength)</h4>
+                <p><strong>Higher alpha:</strong> Stronger regularization → Simpler model → May increase bias</p>
+                <p><strong>Lower alpha:</strong> Weaker regularization → More complex model → May increase variance</p>
+                <p style="margin-top: 10px;"><strong>Use cross-validation to find the best alpha!</strong></p>
+            </div>
+        </div>
+
+        <!-- Part 5: Cross-Validation -->
+        <div class="section">
+            <h2><i class="fas fa-sync-alt"></i> Part 5: Cross-Validation</h2>
+            
+            <p>A single train-test split might give misleading results. Cross-validation provides a more reliable estimate!</p>
+
+            <div class="analogy-box">
+                <h4>📊 K-Fold Cross-Validation</h4>
+                <p>Instead of one split, divide data into K parts (folds). Train on K-1 folds, test on 1 fold. Repeat K times!</p>
+                <p style="margin-top: 10px;"><strong>Example (5-Fold):</strong> Each sample appears in the test set exactly once. Average of 5 scores gives reliable estimate.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score, KFold
+
+<span class="comment"># 5-Fold Cross-Validation</span>
+model = <span class="function">LinearRegression</span>()
+cv_scores = <span class="function">cross_val_score</span>(model, X, y, cv=<span class="number">5</span>, scoring=<span class="string">'r2'</span>)
+
+<span class="function">print</span>(<span class="string">"Cross-Validation Results:"</span>)
+<span class="function">print</span>(<span class="string">f"  Scores: {cv_scores}"</span>)
+<span class="function">print</span>(<span class="string">f"  Mean R²: {cv_scores.mean():.3f}"</span>)
+<span class="function">print</span>(<span class="string">f"  Std Dev: {cv_scores.std():.3f}"</span>)
+
+<span class="comment"># Output:
+# Cross-Validation Results:
+#   Scores: [0.68, 0.71, 0.65, 0.69, 0.72]
+#   Mean R²: 0.690
+#   Std Dev: 0.025  ← Low std = stable model!</span>
+
+<span class="comment"># If std is HIGH, model has high variance (unstable)</span></pre>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary: Key Concepts</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>What It Means</th>
+                    <th>How to Address</th>
+                </tr>
+                <tr>
+                    <td><strong>High Bias</strong></td>
+                    <td>Model too simple, underfits</td>
+                    <td>More complex model, more features</td>
+                </tr>
+                <tr>
+                    <td><strong>High Variance</strong></td>
+                    <td>Model too complex, overfits</td>
+                    <td>Regularization, more data, simpler model</td>
+                </tr>
+                <tr>
+                    <td><strong>Gradient Descent</strong></td>
+                    <td>How models learn optimal weights</td>
+                    <td>Tune learning rate, iterations</td>
+                </tr>
+                <tr>
+                    <td><strong>Learning Rate</strong></td>
+                    <td>Step size in gradient descent</td>
+                    <td>Start with 0.01, adjust based on convergence</td>
+                </tr>
+                <tr>
+                    <td><strong>Regularization</strong></td>
+                    <td>Penalty for complexity</td>
+                    <td>L1 for feature selection, L2 for shrinkage</td>
+                </tr>
+                <tr>
+                    <td><strong>Cross-Validation</strong></td>
+                    <td>Reliable model evaluation</td>
+                    <td>Use 5-10 folds, report mean ± std</td>
+                </tr>
+            </table>
+
+            <div class="key-point">
+                <h4>🎯 Golden Rules</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #6b21a8;">
+                    <li>Always compare train vs test performance to detect bias/variance</li>
+                    <li>Use cross-validation, not just a single train-test split</li>
+                    <li>Start simple, add complexity only if needed</li>
+                    <li>Regularization is your friend against overfitting</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="linear-regression.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Linear Regression</a>
+            <a href="decision-trees.html" class="nav-btn next">Next: Decision Trees <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

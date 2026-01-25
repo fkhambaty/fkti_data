@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Science Course Hub | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #475569;
+        }
+        
+        .nav a { color: #38bdf8; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #7dd3fc; }
+        
+        .header {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #db2777 100%);
+            border-radius: 25px;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 { font-size: 3em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.9; max-width: 700px; margin: 0 auto 20px; }
+        
+        .header-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .progress-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid #475569;
+        }
+        
+        .progress-section h3 { color: #38bdf8; margin-bottom: 15px; }
+        
+        .progress-bar-bg {
+            background: #334155;
+            border-radius: 10px;
+            height: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+            height: 100%;
+            width: 40%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9em;
+        }
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .module-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid #475569;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--module-color, #3b82f6) 0%, var(--module-color-2, #60a5fa) 100%);
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border-color: var(--module-color, #3b82f6);
+        }
+        
+        .module-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .module-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 12px;
+            color: white;
+        }
+        
+        .module-card p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .module-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .status-ready { background: #22c55e; color: white; }
+        .status-coming { background: #f59e0b; color: #1e293b; }
+        .status-locked { background: #64748b; color: white; }
+        
+        .module-lessons {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #475569;
+        }
+        
+        .lesson-link {
+            display: block;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+            color: #7dd3fc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .lesson-link:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .lesson-link i { margin-right: 8px; }
+        
+        /* Module Colors */
+        .module-python { --module-color: #0ea5e9; --module-color-2: #38bdf8; }
+        .module-math { --module-color: #eab308; --module-color-2: #facc15; }
+        .module-stats { --module-color: #8b5cf6; --module-color-2: #a78bfa; }
+        .module-ml { --module-color: #ec4899; --module-color-2: #f472b6; }
+        .module-dl { --module-color: #ef4444; --module-color-2: #f87171; }
+        .module-applied { --module-color: #22c55e; --module-color-2: #4ade80; }
+        .module-deploy { --module-color: #f97316; --module-color-2: #fb923c; }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 0.95em;
+        }
+        
+        .footer a { color: #38bdf8; text-decoration: none; }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .module-card { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i><span>Main Website</span></a>
+            <a href="../data-science.html"><span>Data Science Intro</span><i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="header-badge">🎓 COMPLETE DATA SCIENCE CURRICULUM</span>
+            <h1>📊 Data Science Course Hub</h1>
+            <p>From zero programming knowledge to building real machine learning models. Every concept explained like you're 5 years old!</p>
+        </div>
+
+        <div class="progress-section">
+            <h3>📈 Course Progress</h3>
+            <div class="progress-bar-bg">
+                <div class="progress-bar" style="width: 85%;">85% Complete</div>
+            </div>
+            <p style="margin-top: 15px; color: #94a3b8;">Python, Data Structures, Math, Statistics, Linear Regression, Decision Trees, Deep Learning, NLP, and A/B Testing are ready!</p>
+        </div>
+
+        <div class="modules-grid">
+            <!-- Module 1: Python Basics -->
+            <div class="module-card module-python">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🐍</div>
+                <h3>Module 1: Python Basics</h3>
+                <p>Start here if you've never programmed before! Learn variables, data types, strings, loops, and conditions.</p>
+                <div class="module-lessons">
+                    <a href="python-basics.html" class="lesson-link"><i class="fas fa-play-circle"></i> Python Fundamentals (Start Here!)</a>
+                    <a href="python-data-structures.html" class="lesson-link"><i class="fas fa-play-circle"></i> Data Structures (Lists, Tuples, Sets, Dicts)</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Functions (Coming Soon)</a>
+                </div>
+            </div>
+
+            <!-- Module 2: Math for Data Science -->
+            <div class="module-card module-math">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📐</div>
+                <h3>Module 2: Math for Data Science</h3>
+                <p>Don't worry, we make math easy! Learn mean, median, variance, percentiles, and normalization.</p>
+                <div class="module-lessons">
+                    <a href="math-foundations.html" class="lesson-link"><i class="fas fa-play-circle"></i> Math Foundations (Super Simple!)</a>
+                </div>
+            </div>
+
+            <!-- Module 3: Statistics -->
+            <div class="module-card module-stats">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📊</div>
+                <h3>Module 3: Statistics</h3>
+                <p>Statistics is just asking questions about data! Learn normal distribution, correlation, Chi-Square, and T-Tests.</p>
+                <div class="module-lessons">
+                    <a href="statistics-foundations.html" class="lesson-link"><i class="fas fa-play-circle"></i> Statistics Foundations</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Hypothesis Testing Deep Dive (Coming Soon)</a>
+                </div>
+            </div>
+
+            <!-- Module 4: Machine Learning Basics -->
+            <div class="module-card module-ml">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🤖</div>
+                <h3>Module 4: Machine Learning Basics</h3>
+                <p>Your first ML algorithm! Learn Linear Regression from data preparation to making predictions.</p>
+                <div class="module-lessons">
+                    <a href="linear-regression.html" class="lesson-link"><i class="fas fa-play-circle"></i> Linear Regression (Complete Guide)</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Logistic Regression (Coming Soon)</a>
+                </div>
+            </div>
+
+            <!-- Module 5: Advanced ML -->
+            <div class="module-card module-ml">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🌳</div>
+                <h3>Module 5: Advanced ML</h3>
+                <p>Decision Trees, Random Forests, Boosting algorithms, and Feature Engineering techniques.</p>
+                <div class="module-lessons">
+                    <a href="decision-trees.html" class="lesson-link"><i class="fas fa-play-circle"></i> Decision Trees & Random Forests</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Boosting (XGBoost, AdaBoost) - Coming</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Feature Engineering - Coming</a>
+                </div>
+            </div>
+
+            <!-- Module 6: Clustering -->
+            <div class="module-card module-stats">
+                <span class="module-status status-coming">🔜 COMING SOON</span>
+                <div class="module-icon">🎯</div>
+                <h3>Module 6: Clustering & Unsupervised</h3>
+                <p>Find patterns without labels! K-Means, Hierarchical Clustering, and PCA dimensionality reduction.</p>
+                <div class="module-lessons">
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> K-Means Clustering</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> PCA (Principal Component Analysis)</a>
+                </div>
+            </div>
+
+            <!-- Module 7: Deep Learning -->
+            <div class="module-card module-dl">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🧠</div>
+                <h3>Module 7: Deep Learning</h3>
+                <p>Neural Networks, CNNs for images, and introduction to TensorFlow/Keras.</p>
+                <div class="module-lessons">
+                    <a href="deep-learning.html" class="lesson-link"><i class="fas fa-play-circle"></i> Neural Network Basics (Complete Guide)</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> CNNs for Image Classification - Coming</a>
+                </div>
+            </div>
+
+            <!-- Module 8: NLP -->
+            <div class="module-card module-python">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">💬</div>
+                <h3>Module 8: Natural Language Processing</h3>
+                <p>Work with text data! Tokenization, TF-IDF, Sentiment Analysis, and more.</p>
+                <div class="module-lessons">
+                    <a href="nlp-basics.html" class="lesson-link"><i class="fas fa-play-circle"></i> NLP Basics (Complete Guide)</a>
+                </div>
+            </div>
+
+            <!-- Module 9: Applied DS -->
+            <div class="module-card module-applied">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🧪</div>
+                <h3>Module 9: Applied Data Science</h3>
+                <p>Real-world applications: A/B Testing, Market Basket Analysis, Time Series.</p>
+                <div class="module-lessons">
+                    <a href="ab-testing.html" class="lesson-link"><i class="fas fa-play-circle"></i> A/B Testing (Complete Guide)</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Market Basket Analysis - Coming</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Time Series Forecasting - Coming</a>
+                </div>
+            </div>
+
+            <!-- Module 10: Deployment -->
+            <div class="module-card module-deploy">
+                <span class="module-status status-coming">🔜 COMING SOON</span>
+                <div class="module-icon">🚀</div>
+                <h3>Module 10: Deployment & Advanced</h3>
+                <p>Deploy models to production! AWS, Docker, Explainable AI, and GenAI introduction.</p>
+                <div class="module-lessons">
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Deploy on AWS</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Docker Basics</a>
+                    <a href="#" class="lesson-link" style="opacity: 0.5;"><i class="fas fa-lock"></i> Introduction to GenAI</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 Content based on comprehensive Data Science curriculum</p>
+            <p>Created by <a href="../index.html">Fakhruddin Khambaty</a> | Last updated: January 2026</p>
+        </div>
+    </div>
+</body>
+</html>

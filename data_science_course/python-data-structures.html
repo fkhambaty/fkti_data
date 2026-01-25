@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Data Structures (Lists, Tuples, Sets, Dicts) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 50%, #86efac 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #16a34a; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #15803d; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #bbf7d0;
+        }
+        
+        .section h2 { color: #16a34a; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #dcfce7; }
+        .section h3 { color: #15803d; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #22c55e; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+            text-align: center;
+        }
+        .visual-example h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .comparison-table th { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 15px; text-align: center; }
+        .comparison-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; text-align: center; }
+        .comparison-table tr:nth-child(even) { background: #f0fdf4; }
+        
+        .data-type-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid;
+        }
+        .data-type-card.list { border-color: #3b82f6; }
+        .data-type-card.tuple { border-color: #f59e0b; }
+        .data-type-card.set { border-color: #ec4899; }
+        .data-type-card.dict { border-color: #8b5cf6; }
+        
+        .data-type-card h3 { margin: 0 0 15px 0; padding: 0; border: none; }
+        
+        .real-life {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+        }
+        .real-life h4 { color: #7c3aed; font-size: 1.2em; margin-bottom: 15px; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="python-basics.html"><i class="fas fa-arrow-left"></i><span>Previous: Python Basics</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>📦 Python Data Structures</h1>
+            <p>Learn how to organize and store data! Lists, Tuples, Sets, and Dictionaries - explained with real-life examples.</p>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div class="section">
+            <h2><i class="fas fa-th-large"></i> The 4 Data Structures You MUST Know</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Imagine you have different types of containers at home:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Drawer (List):</strong> Store things in order, can add/remove anytime</li>
+                    <li><strong>Display Case (Tuple):</strong> Things are locked in, can't change</li>
+                    <li><strong>Bag of Unique Marbles (Set):</strong> No duplicates allowed!</li>
+                    <li><strong>Address Book (Dictionary):</strong> Look up by name to find number</li>
+                </ul>
+            </div>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>Type</th>
+                    <th>Symbol</th>
+                    <th>Ordered?</th>
+                    <th>Changeable?</th>
+                    <th>Duplicates?</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong style="color: #3b82f6;">List</strong></td>
+                    <td><code>[ ]</code></td>
+                    <td>✅ Yes</td>
+                    <td>✅ Yes</td>
+                    <td>✅ Yes</td>
+                    <td><code>[1, 2, 2, "a"]</code></td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #f59e0b;">Tuple</strong></td>
+                    <td><code>( )</code></td>
+                    <td>✅ Yes</td>
+                    <td>❌ No</td>
+                    <td>✅ Yes</td>
+                    <td><code>(1, 2, 2, "a")</code></td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #ec4899;">Set</strong></td>
+                    <td><code>{ }</code></td>
+                    <td>❌ No</td>
+                    <td>✅ Yes</td>
+                    <td>❌ No</td>
+                    <td><code>{1, 2, "a"}</code></td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #8b5cf6;">Dict</strong></td>
+                    <td><code>{k:v}</code></td>
+                    <td>✅ Yes*</td>
+                    <td>✅ Yes</td>
+                    <td>❌ No keys</td>
+                    <td><code>{"name": "Ali"}</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- LISTS -->
+        <div class="section">
+            <h2 style="color: #3b82f6;"><i class="fas fa-list"></i> Chapter 1: Lists - The Flexible Container</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 What is a List?</h4>
+                <p>A <strong>list</strong> is like a <strong>shopping list</strong> - you can add items, remove items, and change them anytime!</p>
+                <p>Items stay in the order you put them. You can have the same item twice!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Creating a list - use square brackets []</span>
+fruits = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>]
+numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
+mixed = [<span class="number">1</span>, <span class="string">"hello"</span>, <span class="number">3.14</span>, <span class="keyword">True</span>]  <span class="comment"># Can mix different types!</span>
+
+<span class="function">print</span>(fruits)
+<span class="output"># Output: ['apple', 'banana', 'cherry']</span></pre>
+            </div>
+
+            <h3>Accessing Items (Indexing)</h3>
+            
+            <div class="visual-example">
+                <h4>📊 List Index Positions</h4>
+<pre style="font-size: 1.2em; color: #1e40af; font-family: monospace; text-align: left;">
+fruits = ["apple", "banana", "cherry", "date"]
+
+Index:       0         1         2        3
+          +-------+--------+--------+------+
+          | apple | banana | cherry | date |
+          +-------+--------+--------+------+
+Negative:   -4        -3       -2      -1
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre>fruits = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>, <span class="string">"date"</span>]
+
+<span class="comment"># Access by index</span>
+<span class="function">print</span>(fruits[<span class="number">0</span>])       <span class="output"># Output: apple (first item)</span>
+<span class="function">print</span>(fruits[<span class="number">2</span>])       <span class="output"># Output: cherry (third item)</span>
+<span class="function">print</span>(fruits[<span class="number">-1</span>])      <span class="output"># Output: date (last item)</span>
+
+<span class="comment"># Slicing - get multiple items</span>
+<span class="function">print</span>(fruits[<span class="number">1</span>:<span class="number">3</span>])     <span class="output"># Output: ['banana', 'cherry']</span>
+<span class="function">print</span>(fruits[::<span class="number">2</span>])     <span class="output"># Output: ['apple', 'cherry'] (every 2nd)</span></pre>
+            </div>
+
+            <h3>Common List Operations</h3>
+            
+            <div class="code-block">
+<pre>fruits = [<span class="string">"apple"</span>, <span class="string">"banana"</span>]
+
+<span class="comment"># ADD items</span>
+fruits.<span class="function">append</span>(<span class="string">"cherry"</span>)      <span class="comment"># Add to end</span>
+<span class="function">print</span>(fruits)  <span class="output"># ['apple', 'banana', 'cherry']</span>
+
+fruits.<span class="function">insert</span>(<span class="number">1</span>, <span class="string">"mango"</span>)    <span class="comment"># Add at specific position</span>
+<span class="function">print</span>(fruits)  <span class="output"># ['apple', 'mango', 'banana', 'cherry']</span>
+
+<span class="comment"># REMOVE items</span>
+fruits.<span class="function">remove</span>(<span class="string">"mango"</span>)       <span class="comment"># Remove by value</span>
+fruits.<span class="function">pop</span>()                  <span class="comment"># Remove last item</span>
+fruits.<span class="function">pop</span>(<span class="number">0</span>)                 <span class="comment"># Remove by index</span>
+
+<span class="comment"># MODIFY items</span>
+fruits[<span class="number">0</span>] = <span class="string">"orange"</span>         <span class="comment"># Change first item</span>
+
+<span class="comment"># OTHER useful operations</span>
+<span class="function">print</span>(<span class="function">len</span>(fruits))           <span class="output"># Count items</span>
+fruits.<span class="function">sort</span>()                 <span class="comment"># Sort alphabetically</span>
+fruits.<span class="function">reverse</span>()              <span class="comment"># Reverse order</span>
+<span class="function">print</span>(<span class="string">"apple"</span> <span class="keyword">in</span> fruits)     <span class="output"># Check if item exists: True/False</span></pre>
+            </div>
+
+            <div class="real-life">
+                <h4>✈️ Real Example: Airport Flight Queue</h4>
+                <div class="code-block">
+<pre>landing_queue = []
+
+<span class="comment"># Flights arrive and enter queue</span>
+landing_queue.<span class="function">append</span>(<span class="string">"AI202"</span>)
+landing_queue.<span class="function">append</span>(<span class="string">"BA450"</span>)
+landing_queue.<span class="function">append</span>(<span class="string">"EK713"</span>)
+<span class="function">print</span>(<span class="string">"Queue:"</span>, landing_queue)  <span class="output"># ['AI202', 'BA450', 'EK713']</span>
+
+<span class="comment"># Emergency flight gets priority (insert at front!)</span>
+landing_queue.<span class="function">insert</span>(<span class="number">0</span>, <span class="string">"EM999"</span>)
+<span class="function">print</span>(<span class="string">"After emergency:"</span>, landing_queue)  <span class="output"># ['EM999', 'AI202', 'BA450', 'EK713']</span>
+
+<span class="comment"># First flight lands (remove from front)</span>
+landed = landing_queue.<span class="function">pop</span>(<span class="number">0</span>)
+<span class="function">print</span>(<span class="string">f"{landed} has landed!"</span>)  <span class="output"># EM999 has landed!</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- TUPLES -->
+        <div class="section">
+            <h2 style="color: #f59e0b;"><i class="fas fa-lock"></i> Chapter 2: Tuples - The Unchangeable Container</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 What is a Tuple?</h4>
+                <p>A <strong>tuple</strong> is like a <strong>locked display case</strong> - once you put items in, you CAN'T change them!</p>
+                <p>Use tuples when data should NEVER change (like days of the week, coordinates, etc.)</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Creating a tuple - use parentheses ()</span>
+days = (<span class="string">"Monday"</span>, <span class="string">"Tuesday"</span>, <span class="string">"Wednesday"</span>)
+coordinates = (<span class="number">10.5</span>, <span class="number">20.3</span>)
+single_item = (<span class="string">"only one"</span>,)  <span class="comment"># Note the comma for single item!</span>
+
+<span class="function">print</span>(days)
+<span class="output"># Output: ('Monday', 'Tuesday', 'Wednesday')</span>
+
+<span class="comment"># Accessing items - same as lists!</span>
+<span class="function">print</span>(days[<span class="number">0</span>])       <span class="output"># Output: Monday</span>
+<span class="function">print</span>(days[<span class="number">-1</span>])      <span class="output"># Output: Wednesday</span>
+<span class="function">print</span>(days[<span class="number">1</span>:<span class="number">3</span>])     <span class="output"># Output: ('Tuesday', 'Wednesday')</span>
+
+<span class="comment"># TRY to change? ERROR!</span>
+days[<span class="number">0</span>] = <span class="string">"Sunday"</span>   <span class="output"># ❌ TypeError: tuple doesn't support assignment</span></pre>
+            </div>
+
+            <div class="visual-example">
+                <h4>🆚 List vs Tuple</h4>
+                <table class="comparison-table" style="max-width: 600px; margin: 0 auto;">
+                    <tr>
+                        <th>Feature</th>
+                        <th style="background: #3b82f6;">List [ ]</th>
+                        <th style="background: #f59e0b;">Tuple ( )</th>
+                    </tr>
+                    <tr>
+                        <td>Can change items?</td>
+                        <td>✅ Yes</td>
+                        <td>❌ No</td>
+                    </tr>
+                    <tr>
+                        <td>Can add/remove?</td>
+                        <td>✅ Yes</td>
+                        <td>❌ No</td>
+                    </tr>
+                    <tr>
+                        <td>Speed</td>
+                        <td>Slower</td>
+                        <td>Faster</td>
+                    </tr>
+                    <tr>
+                        <td>Use when</td>
+                        <td>Data may change</td>
+                        <td>Data is fixed</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- SETS -->
+        <div class="section">
+            <h2 style="color: #ec4899;"><i class="fas fa-fingerprint"></i> Chapter 3: Sets - Only Unique Items!</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 What is a Set?</h4>
+                <p>A <strong>set</strong> is like a <strong>bag of unique marbles</strong> - no duplicates allowed!</p>
+                <p>If you try to add the same thing twice, it just ignores it.</p>
+                <p>Items have NO order (can't access by index!)</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Creating a set - use curly braces {}</span>
+fruits = {<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>}
+
+<span class="comment"># Duplicates are automatically removed!</span>
+numbers = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>}
+<span class="function">print</span>(numbers)       <span class="output"># Output: {1, 2, 3} - duplicates gone!</span>
+
+<span class="comment"># Convert list with duplicates to set</span>
+my_list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>]
+unique = <span class="function">set</span>(my_list)
+<span class="function">print</span>(unique)        <span class="output"># Output: {1, 2, 3}</span>
+
+<span class="comment"># CAN'T access by index!</span>
+<span class="function">print</span>(fruits[<span class="number">0</span>])     <span class="output"># ❌ TypeError: set doesn't support indexing</span></pre>
+            </div>
+
+            <h3>Set Operations</h3>
+            
+            <div class="code-block">
+<pre>fruits = {<span class="string">"apple"</span>, <span class="string">"banana"</span>}
+
+<span class="comment"># ADD items</span>
+fruits.<span class="function">add</span>(<span class="string">"cherry"</span>)
+<span class="function">print</span>(fruits)        <span class="output"># {'apple', 'banana', 'cherry'}</span>
+
+<span class="comment"># REMOVE items</span>
+fruits.<span class="function">remove</span>(<span class="string">"banana"</span>)    <span class="comment"># Raises error if not found</span>
+fruits.<span class="function">discard</span>(<span class="string">"mango"</span>)    <span class="comment"># No error if not found</span>
+
+<span class="comment"># Check membership (VERY fast!)</span>
+<span class="function">print</span>(<span class="string">"apple"</span> <span class="keyword">in</span> fruits)  <span class="output"># True</span>
+
+<span class="comment"># Set math operations</span>
+a = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>}
+b = {<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>}
+
+<span class="function">print</span>(a.<span class="function">union</span>(b))        <span class="output"># {1, 2, 3, 4} - ALL items</span>
+<span class="function">print</span>(a.<span class="function">intersection</span>(b)) <span class="output"># {2, 3} - COMMON items</span>
+<span class="function">print</span>(a.<span class="function">difference</span>(b))   <span class="output"># {1} - In a but NOT in b</span></pre>
+            </div>
+
+            <div class="real-life">
+                <h4>🌐 Real Example: Website Unique Visitors</h4>
+                <div class="code-block">
+<pre><span class="comment"># Track unique IP addresses (no duplicates!)</span>
+unique_visitors = <span class="function">set</span>()
+
+unique_visitors.<span class="function">add</span>(<span class="string">"192.168.1.1"</span>)
+unique_visitors.<span class="function">add</span>(<span class="string">"192.168.1.2"</span>)
+unique_visitors.<span class="function">add</span>(<span class="string">"192.168.1.1"</span>)  <span class="comment"># Same person, ignored!</span>
+
+<span class="function">print</span>(<span class="string">"Unique visitors:"</span>, <span class="function">len</span>(unique_visitors))
+<span class="output"># Output: Unique visitors: 2</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- DICTIONARIES -->
+        <div class="section">
+            <h2 style="color: #8b5cf6;"><i class="fas fa-book"></i> Chapter 4: Dictionaries - Key-Value Pairs</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 What is a Dictionary?</h4>
+                <p>A <strong>dictionary</strong> is like a <strong>phone book</strong> or <strong>real dictionary</strong>!</p>
+                <p>You look up a <strong>key</strong> (name/word) to find its <strong>value</strong> (phone number/definition).</p>
+                <p>Each key must be UNIQUE - you can't have two "John"s with different numbers!</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>📖 Dictionary Structure</h4>
+<pre style="font-size: 1.1em; color: #1e40af; font-family: monospace; text-align: left;">
+person = {
+    "name": "Alice",      ← KEY: VALUE
+    "age": 25,            ← KEY: VALUE
+    "city": "New York"    ← KEY: VALUE
+}
+
+Access: person["name"] → "Alice"
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Creating a dictionary - use curly braces with key:value pairs</span>
+person = {
+    <span class="string">"name"</span>: <span class="string">"Alice"</span>,
+    <span class="string">"age"</span>: <span class="number">25</span>,
+    <span class="string">"city"</span>: <span class="string">"New York"</span>
+}
+
+<span class="comment"># Access values by KEY (not index!)</span>
+<span class="function">print</span>(person[<span class="string">"name"</span>])    <span class="output"># Output: Alice</span>
+<span class="function">print</span>(person.<span class="function">get</span>(<span class="string">"age"</span>)) <span class="output"># Output: 25</span>
+
+<span class="comment"># person[0] would give an ERROR! Must use key.</span></pre>
+            </div>
+
+            <h3>Dictionary Operations</h3>
+            
+            <div class="code-block">
+<pre>person = {<span class="string">"name"</span>: <span class="string">"Alice"</span>, <span class="string">"age"</span>: <span class="number">25</span>}
+
+<span class="comment"># ADD or UPDATE items</span>
+person[<span class="string">"city"</span>] = <span class="string">"New York"</span>    <span class="comment"># Add new key</span>
+person[<span class="string">"age"</span>] = <span class="number">26</span>              <span class="comment"># Update existing key</span>
+<span class="function">print</span>(person)
+<span class="output"># {'name': 'Alice', 'age': 26, 'city': 'New York'}</span>
+
+<span class="comment"># REMOVE items</span>
+person.<span class="function">pop</span>(<span class="string">"city"</span>)              <span class="comment"># Remove by key</span>
+<span class="keyword">del</span> person[<span class="string">"age"</span>]              <span class="comment"># Alternative way</span>
+
+<span class="comment"># GET all keys, values, or both</span>
+<span class="function">print</span>(person.<span class="function">keys</span>())          <span class="output"># dict_keys(['name'])</span>
+<span class="function">print</span>(person.<span class="function">values</span>())        <span class="output"># dict_values(['Alice'])</span>
+<span class="function">print</span>(person.<span class="function">items</span>())         <span class="output"># dict_items([('name', 'Alice')])</span>
+
+<span class="comment"># LOOP through dictionary</span>
+person = {<span class="string">"name"</span>: <span class="string">"Alice"</span>, <span class="string">"age"</span>: <span class="number">25</span>}
+<span class="keyword">for</span> key, value <span class="keyword">in</span> person.<span class="function">items</span>():
+    <span class="function">print</span>(<span class="string">f"{key}: {value}"</span>)
+<span class="output"># name: Alice</span>
+<span class="output"># age: 25</span></pre>
+            </div>
+
+            <div class="real-life">
+                <h4>🍽️ Real Example: Restaurant Table Booking</h4>
+                <div class="code-block">
+<pre><span class="comment"># Track which customer is at which table</span>
+bookings = {}
+
+<span class="comment"># Customer books table 3</span>
+bookings[<span class="number">3</span>] = <span class="string">"Arjun"</span>
+bookings[<span class="number">1</span>] = <span class="string">"Priya"</span>
+
+<span class="function">print</span>(<span class="string">"Bookings:"</span>, bookings)
+<span class="output"># {3: 'Arjun', 1: 'Priya'}</span>
+
+<span class="comment"># Who is at table 3?</span>
+<span class="function">print</span>(<span class="string">f"Table 3: {bookings[3]}"</span>)
+<span class="output"># Table 3: Arjun</span>
+
+<span class="comment"># Customer leaves</span>
+<span class="keyword">del</span> bookings[<span class="number">3</span>]
+<span class="function">print</span>(<span class="string">"After checkout:"</span>, bookings)
+<span class="output"># {1: 'Priya'}</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary: When to Use What?</h2>
+            
+            <table class="comparison-table">
+                <tr>
+                    <th>Situation</th>
+                    <th>Use This</th>
+                    <th>Why?</th>
+                </tr>
+                <tr>
+                    <td>Shopping list that changes</td>
+                    <td><strong style="color: #3b82f6;">List</strong></td>
+                    <td>Need to add/remove items</td>
+                </tr>
+                <tr>
+                    <td>Days of the week</td>
+                    <td><strong style="color: #f59e0b;">Tuple</strong></td>
+                    <td>Never changes, faster</td>
+                </tr>
+                <tr>
+                    <td>Track unique visitors</td>
+                    <td><strong style="color: #ec4899;">Set</strong></td>
+                    <td>No duplicates needed</td>
+                </tr>
+                <tr>
+                    <td>Student grades by name</td>
+                    <td><strong style="color: #8b5cf6;">Dict</strong></td>
+                    <td>Look up by key (name)</td>
+                </tr>
+                <tr>
+                    <td>Ordered collection, duplicates OK</td>
+                    <td><strong style="color: #3b82f6;">List</strong></td>
+                    <td>Most flexible</td>
+                </tr>
+                <tr>
+                    <td>GPS coordinates</td>
+                    <td><strong style="color: #f59e0b;">Tuple</strong></td>
+                    <td>Shouldn't change</td>
+                </tr>
+            </table>
+
+            <div class="visual-example">
+                <h4>🎉 You Now Know Python Data Structures!</h4>
+                <p>These are the building blocks of ALL Python programs!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="python-basics.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Python Basics</a>
+            <a href="index.html" class="nav-btn next">Back to Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

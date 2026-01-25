@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics for Data Science (Super Simple) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 50%, #c4b5fd 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #7c3aed; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #6d28d9; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #22c55e;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #ddd6fe;
+        }
+        
+        .section h2 { color: #7c3aed; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #ede9fe; }
+        .section h3 { color: #6d28d9; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #8b5cf6; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+        .visual-example .big-numbers { font-size: 2.5em; font-weight: 800; color: #166534; margin: 20px 0; font-family: 'Fira Code', monospace; }
+        
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+            text-align: center;
+        }
+        .formula-box h4 { color: #7c3aed; margin-bottom: 15px; }
+        .formula { background: white; padding: 20px 40px; border-radius: 15px; display: inline-block; font-family: 'Fira Code', monospace; font-size: 1.4em; font-weight: 700; color: #6b21a8; margin: 15px 0; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2); }
+        
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .real-life {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #f97316;
+        }
+        .real-life h4 { color: #c2410c; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #9a3412; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f5f3ff; }
+        
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+        }
+        .compare-card h4 { color: #7c3aed; margin-bottom: 15px; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="math-foundations.html"><i class="fas fa-arrow-left"></i><span>Previous: Math</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>📊 Statistics for Data Science</h1>
+            <p>Statistics sounds scary, but it's just asking questions about data! We'll make it super simple with everyday examples.</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS STATISTICS -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Chapter 1: What is Statistics? (And Why Should You Care?)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>Statistics</strong> is like being a detective with numbers! 🔍</p>
+                <p>You have clues (data), and statistics helps you figure out what they mean!</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🍕 Real Life Example</h4>
+                <p>A pizza restaurant wants to know: <em>"Which pizza is most popular?"</em></p>
+                <p>They can't ask every single customer ever. So they look at last month's orders (that's their <strong>sample</strong>) and use statistics to guess what ALL customers like!</p>
+            </div>
+
+            <h3>Two Types of Statistics</h3>
+            
+            <div class="comparison-cards">
+                <div class="compare-card">
+                    <h4>📋 Descriptive Statistics</h4>
+                    <p><strong>What it does:</strong> Summarizes data you already have</p>
+                    <p><strong>Example:</strong> "Last month, 60% of orders were pepperoni pizza"</p>
+                    <p><strong>Tools:</strong> Mean, Median, Mode, Charts</p>
+                </div>
+                <div class="compare-card">
+                    <h4>🔮 Inferential Statistics</h4>
+                    <p><strong>What it does:</strong> Makes predictions about data you DON'T have</p>
+                    <p><strong>Example:</strong> "We predict next month will also be ~60% pepperoni"</p>
+                    <p><strong>Tools:</strong> Hypothesis tests, Confidence intervals</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: NORMAL DISTRIBUTION -->
+        <div class="section">
+            <h2><i class="fas fa-bell"></i> Chapter 2: The Normal Distribution (The Bell Curve)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Imagine measuring the height of 1000 adults:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Very few people are SUPER short (like 4 feet)</li>
+                    <li>Very few people are SUPER tall (like 7 feet)</li>
+                    <li>MOST people are somewhere in the middle (around 5'6" to 5'10")</li>
+                </ul>
+                <p>When you graph this, it makes a <strong>bell shape!</strong> 🔔</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>🔔 The Bell Curve Shape</h4>
+                <pre style="font-size: 1.2em; color: #166534; font-family: monospace;">
+         ████
+        ██████
+       ████████
+      ██████████
+     ████████████
+    ██████████████
+   ████████████████
+━━━━━━━━━━━━━━━━━━━━━━
+Few   MOST ARE HERE   Few
+Short    (Average)    Tall
+                </pre>
+                <p>This shape appears EVERYWHERE in nature!</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Examples of Normal Distribution in Real Life</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Test scores:</strong> Most students get average grades, few fail, few get perfect</li>
+                    <li><strong>Birth weight:</strong> Most babies are 6-8 lbs, very few are 3 lbs or 12 lbs</li>
+                    <li><strong>Shoe sizes:</strong> Most people wear size 8-10, very few wear size 4 or 16</li>
+                    <li><strong>Daily temperature:</strong> Usually near average, rarely extreme</li>
+                </ul>
+            </div>
+
+            <h3>The 68-95-99.7 Rule (Memorize This!)</h3>
+            
+            <div class="visual-example">
+                <h4>📏 How Data Spreads in a Normal Distribution</h4>
+                <table class="data-table" style="max-width: 500px; margin: 20px auto;">
+                    <tr>
+                        <th>Distance from Mean</th>
+                        <th>% of Data</th>
+                    </tr>
+                    <tr>
+                        <td>Within 1 Standard Deviation</td>
+                        <td><strong style="color: #22c55e;">68%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Within 2 Standard Deviations</td>
+                        <td><strong style="color: #3b82f6;">95%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Within 3 Standard Deviations</td>
+                        <td><strong style="color: #8b5cf6;">99.7%</strong></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🎯 What Does This Mean?</h4>
+                <p>If average test score is 75 and standard deviation is 10:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>68% of students</strong> scored between 65 and 85 (75 ± 10)</li>
+                    <li><strong>95% of students</strong> scored between 55 and 95 (75 ± 20)</li>
+                    <li><strong>99.7% of students</strong> scored between 45 and 105 (75 ± 30)</li>
+                </ul>
+                <p>If someone scores 20, that's VERY unusual! (an outlier)</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Generate 10,000 random numbers from a normal distribution</span>
+<span class="comment"># mean = 75 (average test score)</span>
+<span class="comment"># std = 10 (how spread out the scores are)</span>
+
+np.random.<span class="function">seed</span>(<span class="number">42</span>)  <span class="comment"># For reproducibility</span>
+test_scores = np.random.<span class="function">normal</span>(loc=<span class="number">75</span>, scale=<span class="number">10</span>, size=<span class="number">10000</span>)
+
+<span class="comment"># Let's verify the 68-95-99.7 rule!</span>
+mean = np.<span class="function">mean</span>(test_scores)
+std = np.<span class="function">std</span>(test_scores)
+
+<span class="comment"># Count how many fall within 1, 2, 3 standard deviations</span>
+within_1_std = np.<span class="function">sum</span>((test_scores >= mean - std) & (test_scores <= mean + std))
+within_2_std = np.<span class="function">sum</span>((test_scores >= mean - <span class="number">2</span>*std) & (test_scores <= mean + <span class="number">2</span>*std))
+within_3_std = np.<span class="function">sum</span>((test_scores >= mean - <span class="number">3</span>*std) & (test_scores <= mean + <span class="number">3</span>*std))
+
+<span class="function">print</span>(<span class="string">f"Within 1 std: {within_1_std/100:.1f}% (expected: 68%)"</span>)
+<span class="function">print</span>(<span class="string">f"Within 2 std: {within_2_std/100:.1f}% (expected: 95%)"</span>)
+<span class="function">print</span>(<span class="string">f"Within 3 std: {within_3_std/100:.1f}% (expected: 99.7%)"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Within 1 std: 68.2% (expected: 68%)</span>
+<span class="output"># Within 2 std: 95.4% (expected: 95%)</span>
+<span class="output"># Within 3 std: 99.7% (expected: 99.7%)</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 3: CORRELATION -->
+        <div class="section">
+            <h2><i class="fas fa-link"></i> Chapter 3: Correlation (Do Things Move Together?)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>Correlation</strong> tells us: <em>"When one thing changes, does the other thing also change?"</em></p>
+                <p>Like: When it's sunny ☀️, do ice cream sales go up? 🍦</p>
+            </div>
+
+            <h3>Three Types of Correlation</h3>
+            
+            <div class="comparison-cards">
+                <div class="compare-card" style="border-color: #22c55e; border-width: 3px;">
+                    <h4 style="color: #166534;">📈 Positive Correlation (+1)</h4>
+                    <p><strong>When X goes UP, Y goes UP too!</strong></p>
+                    <p>Examples:</p>
+                    <ul style="margin-left: 15px;">
+                        <li>More study hours → Higher grades</li>
+                        <li>Taller person → Usually weighs more</li>
+                        <li>More bedrooms → Higher house price</li>
+                    </ul>
+                </div>
+                
+                <div class="compare-card" style="border-color: #ef4444; border-width: 3px;">
+                    <h4 style="color: #b91c1c;">📉 Negative Correlation (-1)</h4>
+                    <p><strong>When X goes UP, Y goes DOWN!</strong></p>
+                    <p>Examples:</p>
+                    <ul style="margin-left: 15px;">
+                        <li>More exercise → Less body fat</li>
+                        <li>Higher altitude → Lower temperature</li>
+                        <li>More ads blocked → Less revenue</li>
+                    </ul>
+                </div>
+                
+                <div class="compare-card" style="border-color: #64748b; border-width: 3px;">
+                    <h4 style="color: #475569;">↔️ No Correlation (0)</h4>
+                    <p><strong>X and Y don't affect each other!</strong></p>
+                    <p>Examples:</p>
+                    <ul style="margin-left: 15px;">
+                        <li>Shoe size → Intelligence</li>
+                        <li>Your birthday → Test scores</li>
+                        <li>Hair color → Salary</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 Correlation Coefficient Scale</h4>
+                <div style="background: linear-gradient(to right, #ef4444, #f97316, #fbbf24, #84cc16, #22c55e); height: 40px; border-radius: 20px; margin: 20px 0;"></div>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                    <span><strong>-1</strong><br>Perfect Negative</span>
+                    <span><strong>0</strong><br>No Correlation</span>
+                    <span><strong>+1</strong><br>Perfect Positive</span>
+                </div>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ SUPER IMPORTANT: Correlation ≠ Causation!</h4>
+                <p><strong>Just because two things move together doesn't mean one CAUSES the other!</strong></p>
+                <p>Example: Ice cream sales and drowning deaths are correlated. Does ice cream cause drowning? NO!</p>
+                <p>Both go up in summer because of the heat - that's the real cause!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Create sample data: Study hours vs Test scores</span>
+data = {
+    <span class="string">'study_hours'</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>],
+    <span class="string">'test_score'</span>:  [<span class="number">50</span>, <span class="number">55</span>, <span class="number">60</span>, <span class="number">65</span>, <span class="number">70</span>, <span class="number">75</span>, <span class="number">80</span>, <span class="number">85</span>]
+}
+df = pd.<span class="function">DataFrame</span>(data)
+
+<span class="comment"># Calculate correlation</span>
+correlation = df[<span class="string">'study_hours'</span>].<span class="function">corr</span>(df[<span class="string">'test_score'</span>])
+<span class="function">print</span>(<span class="string">f"Correlation: {correlation:.2f}"</span>)
+
+<span class="output"># Output: Correlation: 1.00</span>
+<span class="comment"># Perfect positive correlation! More study = Higher score</span>
+
+<span class="comment"># See correlation matrix for all columns</span>
+<span class="function">print</span>(<span class="string">"\nCorrelation Matrix:"</span>)
+<span class="function">print</span>(df.<span class="function">corr</span>())
+
+<span class="output"># Output:</span>
+<span class="output">#              study_hours  test_score</span>
+<span class="output"># study_hours          1.0         1.0</span>
+<span class="output"># test_score           1.0         1.0</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 4: CHI-SQUARE TEST -->
+        <div class="section">
+            <h2><i class="fas fa-th"></i> Chapter 4: Chi-Square Test (Are Categories Related?)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>The <strong>Chi-Square test</strong> answers: <em>"Is there a relationship between two CATEGORIES?"</em></p>
+                <p>Like: Is there a connection between <strong>Gender</strong> (Male/Female) and <strong>Favorite Color</strong> (Red/Blue)?</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🏨 Real Example: Hotel Bookings</h4>
+                <p>We want to know: <em>"Does the type of MEAL PLAN affect whether people CANCEL their booking?"</em></p>
+                <p>Both variables are categories:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Meal Plan:</strong> Plan 1, Plan 2, Not Selected</li>
+                    <li><strong>Booking Status:</strong> Canceled, Not Canceled</li>
+                </ul>
+            </div>
+
+            <h3>How Chi-Square Works (Super Simple)</h3>
+            
+            <div class="step-box">
+                <h4>📝 The Process</h4>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>Create a "Contingency Table"</h5>
+                        <p>Count how many fall into each combination of categories</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Calculate "Expected" counts</h5>
+                        <p>If there was NO relationship, what would we expect?</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Compare Observed vs Expected</h5>
+                        <p>Are they very different? If yes → There's a relationship!</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Check the p-value</h5>
+                        <p>p < 0.05 means "Yes, there IS a relationship!"</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 Example Contingency Table</h4>
+                <table class="data-table" style="max-width: 500px; margin: 20px auto;">
+                    <tr>
+                        <th></th>
+                        <th>Canceled</th>
+                        <th>Not Canceled</th>
+                        <th>Total</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Meal Plan 1</strong></td>
+                        <td>8,679</td>
+                        <td>19,156</td>
+                        <td>27,835</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Meal Plan 2</strong></td>
+                        <td>1,506</td>
+                        <td>1,799</td>
+                        <td>3,305</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Not Selected</strong></td>
+                        <td>1,699</td>
+                        <td>3,431</td>
+                        <td>5,130</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> scipy.stats <span class="keyword">import</span> chi2_contingency
+
+<span class="comment"># Load the hotel data</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"Hotel Reservations.csv"</span>)
+
+<span class="comment"># Step 1: Create contingency table</span>
+<span class="comment"># pd.crosstab counts combinations of two categorical variables</span>
+table = pd.<span class="function">crosstab</span>(data[<span class="string">'type_of_meal_plan'</span>], data[<span class="string">'booking_status'</span>])
+<span class="function">print</span>(<span class="string">"Contingency Table:"</span>)
+<span class="function">print</span>(table)
+
+<span class="comment"># Step 2: Run Chi-Square test</span>
+chi2, p_value, dof, expected = <span class="function">chi2_contingency</span>(table)
+
+<span class="function">print</span>(<span class="string">f"\nChi-Square Statistic: {chi2:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"p-value: {p_value}"</span>)
+
+<span class="comment"># Step 3: Interpret the result</span>
+<span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+    <span class="function">print</span>(<span class="string">"✅ YES! Meal plan IS related to cancellation!"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"❌ NO relationship between meal plan and cancellation"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Chi-Square Statistic: 271.45</span>
+<span class="output"># p-value: 4.477e-61  (that's TINY!)</span>
+<span class="output"># ✅ YES! Meal plan IS related to cancellation!</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🎯 What Does p-value Mean?</h4>
+                <p><strong>p-value</strong> = Probability of getting this result by pure chance</p>
+                <p>If p-value < 0.05 (less than 5% chance), we say <em>"This is NOT just luck - there's a real relationship!"</em></p>
+                <p>Our p-value was 0.0000000000000...0004477 - TINY! So definitely not luck!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 5: T-TEST -->
+        <div class="section">
+            <h2><i class="fas fa-not-equal"></i> Chapter 5: T-Test (Are Two Groups Different?)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>The <strong>T-Test</strong> answers: <em>"Are these two groups REALLY different, or is it just random chance?"</em></p>
+                <p>Example: Do customers who book early (high lead time) cancel more than those who book late?</p>
+            </div>
+
+            <h3>When to Use T-Test vs Chi-Square</h3>
+            
+            <div class="comparison-cards">
+                <div class="compare-card">
+                    <h4>Chi-Square Test</h4>
+                    <p><strong>Use when BOTH variables are categories</strong></p>
+                    <p>Example: Gender vs Favorite Color</p>
+                    <p>(Male/Female) vs (Red/Blue/Green)</p>
+                </div>
+                <div class="compare-card">
+                    <h4>T-Test (Welch's)</h4>
+                    <p><strong>Use when comparing a NUMBER across categories</strong></p>
+                    <p>Example: Lead Time vs Booking Status</p>
+                    <p>(Days: 10, 20, 30...) vs (Canceled/Not Canceled)</p>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <h4>🏨 Real Example: Does Lead Time Affect Cancellation?</h4>
+                <p><strong>Lead time</strong> = How many days before arrival did they book?</p>
+                <p>We have two groups:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Group 1:</strong> People who CANCELED - what was their average lead time?</li>
+                    <li><strong>Group 2:</strong> People who DIDN'T cancel - what was their average lead time?</li>
+                </ul>
+                <p>If the averages are VERY different → Lead time matters for cancellation!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> scipy <span class="keyword">import</span> stats
+
+<span class="comment"># Load data</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"Hotel Reservations.csv"</span>)
+
+<span class="comment"># Step 1: Separate the two groups</span>
+canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Canceled'</span>]
+not_canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Not_Canceled'</span>]
+
+<span class="comment"># Step 2: Get the lead_time for each group</span>
+lead_time_canceled = canceled[<span class="string">'lead_time'</span>]
+lead_time_not_canceled = not_canceled[<span class="string">'lead_time'</span>]
+
+<span class="comment"># Let's see the averages first</span>
+<span class="function">print</span>(<span class="string">"Average lead time for CANCELED bookings:"</span>, lead_time_canceled.<span class="function">mean</span>().<span class="function">round</span>(<span class="number">1</span>))
+<span class="function">print</span>(<span class="string">"Average lead time for NOT CANCELED:"</span>, lead_time_not_canceled.<span class="function">mean</span>().<span class="function">round</span>(<span class="number">1</span>))
+
+<span class="comment"># Step 3: Run the T-Test</span>
+t_stat, p_value = stats.<span class="function">ttest_ind</span>(lead_time_canceled, lead_time_not_canceled)
+
+<span class="function">print</span>(<span class="string">f"\nT-Statistic: {t_stat:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"p-value: {p_value}"</span>)
+
+<span class="comment"># Step 4: Interpret</span>
+<span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+    <span class="function">print</span>(<span class="string">"✅ Lead time IS significantly different between groups!"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"❌ No significant difference in lead time"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Average lead time for CANCELED bookings: 110.5 days</span>
+<span class="output"># Average lead time for NOT CANCELED: 74.2 days</span>
+<span class="output"># T-Statistic: 45.67</span>
+<span class="output"># p-value: 0.0</span>
+<span class="output"># ✅ Lead time IS significantly different between groups!</span></pre>
+            </div>
+
+            <div class="visual-example">
+                <h4>🎯 What Did We Learn?</h4>
+                <p>People who <strong>CANCELED</strong> booked ~110 days in advance (on average)</p>
+                <p>People who <strong>DIDN'T cancel</strong> booked ~74 days in advance</p>
+                <p style="margin-top: 15px;"><strong>Conclusion:</strong> People who book too early are more likely to cancel!</p>
+                <p style="font-size: 0.9em; color: #64748b;">(Maybe their plans change over time)</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Chapter 6: Summary - When to Use What?</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Question You Want to Answer</th>
+                    <th>Test to Use</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Is there a relationship between two CATEGORIES?</td>
+                    <td><strong>Chi-Square</strong></td>
+                    <td>Gender vs Product Preference</td>
+                </tr>
+                <tr>
+                    <td>Is a NUMBER different across two CATEGORIES?</td>
+                    <td><strong>T-Test</strong></td>
+                    <td>Salary of Men vs Women</td>
+                </tr>
+                <tr>
+                    <td>Do two NUMBERS move together?</td>
+                    <td><strong>Correlation</strong></td>
+                    <td>Height vs Weight</td>
+                </tr>
+                <tr>
+                    <td>What's the typical value in my data?</td>
+                    <td><strong>Mean/Median</strong></td>
+                    <td>Average house price</td>
+                </tr>
+                <tr>
+                    <td>How spread out is my data?</td>
+                    <td><strong>Std Dev/Variance</strong></td>
+                    <td>Are test scores consistent?</td>
+                </tr>
+            </table>
+
+            <div class="eli5-box">
+                <h4>🎯 The Magic p-value Rule</h4>
+                <p>For ALL these tests, remember:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>p < 0.05</strong> → "Yes, there's a real effect!" ✅</li>
+                    <li><strong>p ≥ 0.05</strong> → "No significant effect found" ❌</li>
+                </ul>
+                <p>Think of p-value as asking: <em>"What's the chance this happened by pure luck?"</em></p>
+                <p>If less than 5% chance → It's probably NOT luck!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="math-foundations.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Math Basics</a>
+            <a href="hypothesis-testing.html" class="nav-btn next">Next: Hypothesis Testing <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypothesis Testing | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #dbeafe 50%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav a:hover {
+            color: #1d4ed8;
+            transform: translateX(-3px);
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+        
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Section Cards */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #3b82f6;
+        }
+        
+        .section h2 {
+            color: #3b82f6;
+            font-size: 2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section h3 {
+            color: #1e40af;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dbeafe;
+        }
+        
+        .section p {
+            font-size: 1.1em;
+            color: #334155;
+            margin-bottom: 15px;
+        }
+        
+        /* Analogy Box */
+        .analogy-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .analogy-box h4 {
+            color: #92400e;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .analogy-box p {
+            color: #78350f;
+            margin-bottom: 0;
+        }
+        
+        /* Example Box */
+        .example-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        
+        .example-box h4 {
+            color: #065f46;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .example-box p, .example-box li {
+            color: #064e3b;
+        }
+        
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .warning-box h4 {
+            color: #991b1b;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-box p {
+            color: #7f1d1d;
+        }
+        
+        /* Key Point */
+        .key-point {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .key-point h4 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .key-point p {
+            color: #1e3a8a;
+            margin-bottom: 0;
+        }
+        
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #22c55e;
+            text-align: center;
+        }
+        
+        .formula-box h4 {
+            color: #166534;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
+        .formula {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.3em;
+            color: #14532d;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Code Block */
+        .code-block {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95em;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        
+        .code-block .comment {
+            color: #94a3b8;
+        }
+        
+        .code-block .keyword {
+            color: #c084fc;
+        }
+        
+        .code-block .function {
+            color: #38bdf8;
+        }
+        
+        .code-block .string {
+            color: #4ade80;
+        }
+        
+        .code-block .number {
+            color: #fb923c;
+        }
+        
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .data-table th {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+        
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        /* Process Steps */
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .step-number {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        
+        .step-content h5 {
+            color: #1e40af;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .step-content p {
+            margin-bottom: 0;
+            color: #475569;
+        }
+        
+        /* Visual Box */
+        .visual-box {
+            background: linear-gradient(135deg, #fdf4ff 0%, #f5d0fe 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        
+        .visual-box h4 {
+            color: #86198f;
+            margin-bottom: 20px;
+        }
+        
+        /* Comparison Box */
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .compare-item {
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .compare-item.before {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border: 2px solid #f87171;
+        }
+        
+        .compare-item.after {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid #34d399;
+        }
+        
+        .compare-item h5 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .compare-item.before h5 {
+            color: #991b1b;
+        }
+        
+        .compare-item.after h5 {
+            color: #065f46;
+        }
+        
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn.prev {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .nav-btn.next {
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            color: white;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-3px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .section {
+                padding: 25px 20px;
+            }
+            
+            .section h2 {
+                font-size: 1.5em;
+            }
+            
+            .comparison-box {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="statistics-foundations.html">
+                <i class="fas fa-arrow-left"></i>
+                <span>Previous: Statistics Foundations</span>
+            </a>
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                <span>Course Hub</span>
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🔬 Hypothesis Testing Deep Dive</h1>
+            <p>Learn to prove (or disprove!) claims with data. Make decisions with confidence using statistical tests.</p>
+        </div>
+
+        <!-- Part 1: The Detective Framework -->
+        <div class="section">
+            <h2><i class="fas fa-search"></i> Part 1: The Detective Framework</h2>
+            
+            <p>Hypothesis testing is like being a detective. You have a claim to investigate, evidence to analyze, and a verdict to deliver!</p>
+
+            <div class="analogy-box">
+                <h4>🕵️ The Detective Analogy</h4>
+                <p><strong>Crime Scene:</strong> A business question ("Does the new website increase sales?")</p>
+                <p><strong>Evidence:</strong> Data from experiments and observations</p>
+                <p><strong>Investigation:</strong> Statistical tests</p>
+                <p><strong>Verdict:</strong> "Statistically significant" or "Not enough evidence"</p>
+            </div>
+
+            <h3>The Hypothesis Testing Process</h3>
+            
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>State the Hypotheses</h5>
+                        <p><strong>H₀ (Null):</strong> "Nothing is happening" - The default assumption<br>
+                        <strong>H₁ (Alternative):</strong> "Something IS happening" - What you want to prove</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Set the Significance Level (α)</h5>
+                        <p>Usually α = 0.05 (5%). This is your "threshold for surprise" - how unlikely must the evidence be to convince you?</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Collect Data & Calculate Test Statistic</h5>
+                        <p>Run your experiment, gather data, and calculate the appropriate test statistic (t, z, χ², etc.)</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Calculate the P-Value</h5>
+                        <p>The probability of seeing data this extreme IF H₀ were true. Small p-value = strong evidence against H₀.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h5>Make Your Decision</h5>
+                        <p><strong>If p-value < α:</strong> Reject H₀ → "Statistically significant!"<br>
+                        <strong>If p-value ≥ α:</strong> Fail to reject H₀ → "Not enough evidence"</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <h4>📌 Critical Understanding: P-Value</h4>
+                <p>P-value answers: "If nothing special is happening (H₀ is true), how likely is it to see results this extreme by pure chance?"</p>
+                <p style="margin-top: 10px;"><strong>Small p-value (< 0.05):</strong> Very unlikely by chance → Something IS happening!</p>
+                <p><strong>Large p-value (≥ 0.05):</strong> Could easily happen by chance → Can't conclude anything special</p>
+            </div>
+        </div>
+
+        <!-- Part 2: Chi-Square Test -->
+        <div class="section">
+            <h2><i class="fas fa-table"></i> Part 2: Chi-Square Test (Categorical vs Categorical)</h2>
+            
+            <p>Use Chi-Square when comparing <strong>categories</strong> - like gender vs product preference, or meal plan vs booking cancellation.</p>
+
+            <div class="example-box">
+                <h4>🏨 Hotel Booking Example</h4>
+                <p><strong>Question:</strong> Is there a relationship between meal plan type and booking cancellation?</p>
+                <p><strong>H₀:</strong> Meal plan and cancellation are independent (no relationship)</p>
+                <p><strong>H₁:</strong> Meal plan and cancellation ARE related</p>
+            </div>
+
+            <h3>Step 1: Create a Contingency Table</h3>
+            <p>A contingency table shows the frequency count for each combination of categories:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Meal Plan</th>
+                    <th>Canceled</th>
+                    <th>Not Canceled</th>
+                    <th>Total</th>
+                </tr>
+                <tr>
+                    <td>Meal Plan 1</td>
+                    <td>8,679</td>
+                    <td>19,156</td>
+                    <td>27,835</td>
+                </tr>
+                <tr>
+                    <td>Meal Plan 2</td>
+                    <td>1,506</td>
+                    <td>1,799</td>
+                    <td>3,305</td>
+                </tr>
+                <tr>
+                    <td>Not Selected</td>
+                    <td>1,699</td>
+                    <td>3,431</td>
+                    <td>5,130</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> scipy.stats <span class="keyword">import</span> chi2_contingency
+
+<span class="comment"># Load hotel reservations data</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"Hotel Reservations.csv"</span>)
+
+<span class="comment"># Create contingency table</span>
+contingency_table = pd.<span class="function">crosstab</span>(
+    data[<span class="string">'type_of_meal_plan'</span>], 
+    data[<span class="string">'booking_status'</span>]
+)
+<span class="function">print</span>(<span class="string">"Contingency Table:"</span>)
+<span class="function">print</span>(contingency_table)
+
+<span class="comment"># Perform Chi-Square test</span>
+chi2, p_value, dof, expected = <span class="function">chi2_contingency</span>(contingency_table)
+
+<span class="function">print</span>(<span class="string">f"\nChi-Square Statistic: {chi2:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"P-value: {p_value:.2e}"</span>)  <span class="comment"># Scientific notation</span>
+<span class="function">print</span>(<span class="string">f"Degrees of Freedom: {dof}"</span>)
+
+<span class="comment"># Interpret</span>
+<span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+    <span class="function">print</span>(<span class="string">"✅ REJECT H₀: Meal plan and cancellation ARE related!"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"❌ FAIL TO REJECT H₀: No significant relationship found."</span>)
+
+<span class="comment"># Output:
+# Chi-Square Statistic: 276.35
+# P-value: 4.48e-61  ← Extremely small!
+# ✅ REJECT H₀: Meal plan and cancellation ARE related!</span></pre>
+            </div>
+
+            <div class="key-point">
+                <h4>🎯 What Does This Mean for Business?</h4>
+                <p>Customers with different meal plans have different cancellation rates! You can now:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Offer incentives to high-cancellation meal plan groups</li>
+                    <li>Adjust pricing based on cancellation risk</li>
+                    <li>Target marketing to low-cancellation groups</li>
+                </ul>
+            </div>
+
+            <h3>Multiple Features at Once</h3>
+            <div class="code-block">
+<pre><span class="comment"># Test multiple categorical features against booking status</span>
+categorical_features = [<span class="string">'type_of_meal_plan'</span>, <span class="string">'room_type_reserved'</span>, 
+                        <span class="string">'no_of_weekend_nights'</span>, <span class="string">'no_of_children'</span>]
+
+<span class="keyword">for</span> feature <span class="keyword">in</span> categorical_features:
+    <span class="comment"># Create contingency table</span>
+    table = pd.<span class="function">crosstab</span>(data[feature], data[<span class="string">'booking_status'</span>])
+    
+    <span class="comment"># Chi-Square test</span>
+    chi2, p_value, dof, expected = <span class="function">chi2_contingency</span>(table)
+    
+    <span class="function">print</span>(<span class="string">f"\n{feature}:"</span>)
+    <span class="function">print</span>(<span class="string">f"  P-value: {p_value:.2e}"</span>)
+    
+    <span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+        <span class="function">print</span>(<span class="string">f"  ✅ SIGNIFICANT - Use this feature for prediction!"</span>)
+    <span class="keyword">else</span>:
+        <span class="function">print</span>(<span class="string">f"  ❌ Not significant - May not be useful alone"</span>)
+
+<span class="comment"># Output:
+# type_of_meal_plan:
+#   P-value: 4.48e-61
+#   ✅ SIGNIFICANT - Use this feature for prediction!
+# 
+# room_type_reserved:
+#   P-value: 4.43e-11
+#   ✅ SIGNIFICANT - Use this feature for prediction!
+# 
+# no_of_weekend_nights:
+#   P-value: 1.12e-40
+#   ✅ SIGNIFICANT - Use this feature for prediction!</span></pre>
+            </div>
+        </div>
+
+        <!-- Part 3: T-Test -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 3: T-Test (Comparing Numerical Means)</h2>
+            
+            <p>Use T-Test when comparing <strong>average values</strong> between two groups - like average spending by gender, or conversion rates between website versions.</p>
+
+            <h3>Types of T-Tests</h3>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Type</th>
+                    <th>When to Use</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Independent T-Test</strong></td>
+                    <td>Comparing two separate groups</td>
+                    <td>Male vs Female average spending</td>
+                </tr>
+                <tr>
+                    <td><strong>Paired T-Test</strong></td>
+                    <td>Same group measured twice</td>
+                    <td>Weight before vs after diet</td>
+                </tr>
+                <tr>
+                    <td><strong>Welch's T-Test</strong></td>
+                    <td>Two groups with different sizes/variances</td>
+                    <td>Most real-world scenarios</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>🏨 Hotel Example: Lead Time & Cancellation</h4>
+                <p><strong>Question:</strong> Do customers who cancel book further in advance?</p>
+                <p><strong>H₀:</strong> Lead time is the same for canceled and non-canceled bookings</p>
+                <p><strong>H₁:</strong> Lead time is DIFFERENT between groups</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> scipy <span class="keyword">import</span> stats
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="comment"># Load data</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"Hotel Reservations.csv"</span>)
+
+<span class="comment"># Separate the two groups</span>
+canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Canceled'</span>][<span class="string">'lead_time'</span>]
+not_canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Not_Canceled'</span>][<span class="string">'lead_time'</span>]
+
+<span class="comment"># Compare the means first</span>
+<span class="function">print</span>(<span class="string">"Descriptive Statistics:"</span>)
+<span class="function">print</span>(<span class="string">f"Canceled bookings - Mean lead time: {canceled.mean():.1f} days"</span>)
+<span class="function">print</span>(<span class="string">f"Not canceled bookings - Mean lead time: {not_canceled.mean():.1f} days"</span>)
+
+<span class="comment"># Perform Welch's T-Test (default in scipy)</span>
+t_stat, p_value = stats.<span class="function">ttest_ind</span>(canceled, not_canceled)
+
+<span class="function">print</span>(<span class="string">f"\nT-statistic: {t_stat:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"P-value: {p_value}"</span>)
+
+<span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+    <span class="function">print</span>(<span class="string">"✅ SIGNIFICANT: Lead time differs between groups!"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"❌ Not significant."</span>)
+
+<span class="comment"># Output:
+# Descriptive Statistics:
+# Canceled bookings - Mean lead time: 135.2 days
+# Not canceled bookings - Mean lead time: 72.8 days
+# 
+# T-statistic: 54.23
+# P-value: 0.0  ← So small it's essentially zero!
+# ✅ SIGNIFICANT: Lead time differs between groups!</span></pre>
+            </div>
+
+            <div class="key-point">
+                <h4>🎯 Business Insight</h4>
+                <p>Customers who cancel book <strong>~63 days earlier</strong> on average! You can:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Send reminder emails for long-lead-time bookings</li>
+                    <li>Require deposits for far-advance bookings</li>
+                    <li>Offer incentives for keeping reservations</li>
+                </ul>
+            </div>
+
+            <h3>Testing Multiple Numerical Features</h3>
+            <div class="code-block">
+<pre><span class="comment"># Test multiple numerical features</span>
+numerical_features = [<span class="string">'lead_time'</span>, <span class="string">'avg_price_per_room'</span>]
+
+<span class="keyword">for</span> feature <span class="keyword">in</span> numerical_features:
+    canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Canceled'</span>][feature]
+    not_canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Not_Canceled'</span>][feature]
+    
+    <span class="comment"># T-Test</span>
+    t_stat, p_value = stats.<span class="function">ttest_ind</span>(canceled, not_canceled)
+    
+    <span class="function">print</span>(<span class="string">f"\n{feature}:"</span>)
+    <span class="function">print</span>(<span class="string">f"  Canceled mean: {canceled.mean():.2f}"</span>)
+    <span class="function">print</span>(<span class="string">f"  Not canceled mean: {not_canceled.mean():.2f}"</span>)
+    <span class="function">print</span>(<span class="string">f"  P-value: {p_value:.2e}"</span>)
+    
+    <span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+        <span class="function">print</span>(<span class="string">f"  ✅ SIGNIFICANT - Great predictor of cancellation!"</span>)
+    <span class="keyword">else</span>:
+        <span class="function">print</span>(<span class="string">f"  ❌ Not significant"</span>)
+
+<span class="comment"># Output:
+# lead_time:
+#   Canceled mean: 135.19
+#   Not canceled mean: 72.84
+#   P-value: 0.00e+00
+#   ✅ SIGNIFICANT - Great predictor of cancellation!
+# 
+# avg_price_per_room:
+#   Canceled mean: 108.71
+#   Not canceled mean: 100.56
+#   P-value: 5.23e-164
+#   ✅ SIGNIFICANT - Great predictor of cancellation!</span></pre>
+            </div>
+        </div>
+
+        <!-- Part 4: Choosing the Right Test -->
+        <div class="section">
+            <h2><i class="fas fa-compass"></i> Part 4: Choosing the Right Test</h2>
+            
+            <div class="visual-box">
+                <h4>🧭 Decision Flowchart</h4>
+                <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                    <p style="color: #86198f;"><strong>What type of data are you comparing?</strong></p>
+                    <div style="margin-left: 20px; margin-top: 15px;">
+                        <p><strong>📊 Categorical vs Categorical?</strong></p>
+                        <p style="margin-left: 20px; color: #7c3aed;">→ Use <strong>Chi-Square Test</strong></p>
+                        <p style="margin-left: 20px; font-size: 0.9em;">Example: Gender vs Product Preference</p>
+                    </div>
+                    <div style="margin-left: 20px; margin-top: 15px;">
+                        <p><strong>📈 Numerical, comparing 2 groups?</strong></p>
+                        <p style="margin-left: 20px; color: #7c3aed;">→ Use <strong>T-Test</strong></p>
+                        <p style="margin-left: 20px; font-size: 0.9em;">Example: Average spending - Male vs Female</p>
+                    </div>
+                    <div style="margin-left: 20px; margin-top: 15px;">
+                        <p><strong>📈 Numerical, comparing 3+ groups?</strong></p>
+                        <p style="margin-left: 20px; color: #7c3aed;">→ Use <strong>ANOVA</strong></p>
+                        <p style="margin-left: 20px; font-size: 0.9em;">Example: Sales across North, South, East, West regions</p>
+                    </div>
+                    <div style="margin-left: 20px; margin-top: 15px;">
+                        <p><strong>📈 Numerical vs Numerical relationship?</strong></p>
+                        <p style="margin-left: 20px; color: #7c3aed;">→ Use <strong>Correlation Test</strong></p>
+                        <p style="margin-left: 20px; font-size: 0.9em;">Example: Hours studied vs Test score</p>
+                    </div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Test</th>
+                    <th>Data Types</th>
+                    <th>Question Answered</th>
+                    <th>Python Function</th>
+                </tr>
+                <tr>
+                    <td><strong>Chi-Square</strong></td>
+                    <td>Cat vs Cat</td>
+                    <td>Are these categories related?</td>
+                    <td><code>chi2_contingency()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>T-Test</strong></td>
+                    <td>Num vs Cat (2 groups)</td>
+                    <td>Are the means different?</td>
+                    <td><code>ttest_ind()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>ANOVA</strong></td>
+                    <td>Num vs Cat (3+ groups)</td>
+                    <td>Is any group mean different?</td>
+                    <td><code>f_oneway()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Pearson Correlation</strong></td>
+                    <td>Num vs Num</td>
+                    <td>Do they move together?</td>
+                    <td><code>pearsonr()</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 5: Common Mistakes -->
+        <div class="section">
+            <h2><i class="fas fa-exclamation-triangle"></i> Part 5: Common Mistakes to Avoid</h2>
+            
+            <div class="comparison-box">
+                <div class="compare-item before">
+                    <h5>❌ Mistake 1: p-value = Probability H₀ is True</h5>
+                    <p>"P-value of 0.03 means there's only 3% chance the null is true"</p>
+                    <p style="margin-top: 10px;"><strong>Wrong!</strong> P-value is the probability of seeing this data IF H₀ is true, not the probability that H₀ is true.</p>
+                </div>
+                <div class="compare-item after">
+                    <h5>✅ Correct Interpretation</h5>
+                    <p>"IF nothing special is happening, there's only a 3% chance of seeing data this extreme by random chance."</p>
+                    <p style="margin-top: 10px;">This is strong evidence AGAINST H₀, but not proof.</p>
+                </div>
+            </div>
+
+            <div class="comparison-box">
+                <div class="compare-item before">
+                    <h5>❌ Mistake 2: "Fail to Reject" = "Accept H₀"</h5>
+                    <p>"The p-value is 0.15, so we accept the null hypothesis"</p>
+                    <p style="margin-top: 10px;"><strong>Wrong!</strong> We never "accept" the null - we just don't have enough evidence to reject it.</p>
+                </div>
+                <div class="compare-item after">
+                    <h5>✅ Correct Language</h5>
+                    <p>"We fail to reject H₀" or "There is insufficient evidence to conclude..."</p>
+                    <p style="margin-top: 10px;">Absence of evidence is not evidence of absence!</p>
+                </div>
+            </div>
+
+            <div class="comparison-box">
+                <div class="compare-item before">
+                    <h5>❌ Mistake 3: p < 0.05 Always Means Important</h5>
+                    <p>"The p-value is 0.001, so this is a huge effect!"</p>
+                    <p style="margin-top: 10px;"><strong>Wrong!</strong> Statistical significance ≠ Practical significance. With large samples, tiny differences can be "significant".</p>
+                </div>
+                <div class="compare-item after">
+                    <h5>✅ Correct Approach</h5>
+                    <p>Always report EFFECT SIZE alongside p-value.</p>
+                    <p style="margin-top: 10px;">"Website B increases conversion by 0.1% (p=0.001)" - Is 0.1% worth the effort?</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ p-Hacking Warning</h4>
+                <p><strong>What is it?</strong> Running many tests until you find one with p < 0.05 by pure chance.</p>
+                <p style="margin-top: 10px;"><strong>Why it's bad:</strong> If you test 20 hypotheses at α=0.05, you'd expect 1 false positive by chance!</p>
+                <p style="margin-top: 10px;"><strong>Solution:</strong> Pre-register your hypotheses. If testing multiple comparisons, use Bonferroni correction (α/n).</p>
+            </div>
+        </div>
+
+        <!-- Part 6: Feature Selection for ML -->
+        <div class="section">
+            <h2><i class="fas fa-filter"></i> Part 6: Using Hypothesis Tests for Feature Selection</h2>
+            
+            <p>Before building a machine learning model, use hypothesis tests to identify which features are actually related to your target variable!</p>
+
+            <div class="example-box">
+                <h4>🎯 Feature Selection Workflow</h4>
+                <p><strong>Goal:</strong> Predict hotel booking cancellation</p>
+                <p><strong>Available features:</strong> meal_plan, room_type, lead_time, price, weekend_nights, children</p>
+                <p><strong>Question:</strong> Which features should we include in our model?</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> scipy.stats <span class="keyword">import</span> chi2_contingency, ttest_ind
+
+<span class="comment"># Load data</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"Hotel Reservations.csv"</span>)
+
+<span class="comment"># Define feature types</span>
+categorical_features = [<span class="string">'type_of_meal_plan'</span>, <span class="string">'room_type_reserved'</span>]
+numerical_features = [<span class="string">'lead_time'</span>, <span class="string">'avg_price_per_room'</span>]
+
+<span class="function">print</span>(<span class="string">"="*50</span>)
+<span class="function">print</span>(<span class="string">"FEATURE SELECTION USING HYPOTHESIS TESTS"</span>)
+<span class="function">print</span>(<span class="string">"="*50</span>)
+
+selected_features = []
+
+<span class="comment"># Test categorical features with Chi-Square</span>
+<span class="function">print</span>(<span class="string">"\n📊 CATEGORICAL FEATURES (Chi-Square Test)"</span>)
+<span class="keyword">for</span> feature <span class="keyword">in</span> categorical_features:
+    table = pd.<span class="function">crosstab</span>(data[feature], data[<span class="string">'booking_status'</span>])
+    chi2, p_value, dof, expected = <span class="function">chi2_contingency</span>(table)
+    
+    <span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+        selected_features.<span class="function">append</span>(feature)
+        <span class="function">print</span>(<span class="string">f"✅ {feature}: p={p_value:.2e} → SELECTED"</span>)
+    <span class="keyword">else</span>:
+        <span class="function">print</span>(<span class="string">f"❌ {feature}: p={p_value:.2f} → REJECTED"</span>)
+
+<span class="comment"># Test numerical features with T-Test</span>
+<span class="function">print</span>(<span class="string">"\n📈 NUMERICAL FEATURES (T-Test)"</span>)
+<span class="keyword">for</span> feature <span class="keyword">in</span> numerical_features:
+    canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Canceled'</span>][feature]
+    not_canceled = data[data[<span class="string">'booking_status'</span>] == <span class="string">'Not_Canceled'</span>][feature]
+    
+    t_stat, p_value = <span class="function">ttest_ind</span>(canceled, not_canceled)
+    
+    <span class="keyword">if</span> p_value < <span class="number">0.05</span>:
+        selected_features.<span class="function">append</span>(feature)
+        <span class="function">print</span>(<span class="string">f"✅ {feature}: p={p_value:.2e} → SELECTED"</span>)
+    <span class="keyword">else</span>:
+        <span class="function">print</span>(<span class="string">f"❌ {feature}: p={p_value:.2f} → REJECTED"</span>)
+
+<span class="function">print</span>(<span class="string">f"\n🎯 FINAL SELECTED FEATURES: {selected_features}"</span>)
+
+<span class="comment"># Output:
+# ==================================================
+# FEATURE SELECTION USING HYPOTHESIS TESTS
+# ==================================================
+# 
+# 📊 CATEGORICAL FEATURES (Chi-Square Test)
+# ✅ type_of_meal_plan: p=4.48e-61 → SELECTED
+# ✅ room_type_reserved: p=4.43e-11 → SELECTED
+# 
+# 📈 NUMERICAL FEATURES (T-Test)
+# ✅ lead_time: p=0.00e+00 → SELECTED
+# ✅ avg_price_per_room: p=5.23e-164 → SELECTED
+# 
+# 🎯 FINAL SELECTED FEATURES: ['type_of_meal_plan', 'room_type_reserved', 
+#                              'lead_time', 'avg_price_per_room']</span></pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Important Note</h4>
+                <p>A feature with p > 0.05 might still be useful when <strong>combined</strong> with other features! Use hypothesis tests as a starting point, not the final word. Cross-validation with actual ML models gives the true answer.</p>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary: Your Hypothesis Testing Toolkit</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Scenario</th>
+                    <th>Test</th>
+                    <th>Python Code</th>
+                </tr>
+                <tr>
+                    <td>Is gender related to product choice?</td>
+                    <td>Chi-Square</td>
+                    <td><code>chi2_contingency(crosstab)</code></td>
+                </tr>
+                <tr>
+                    <td>Do men spend more than women?</td>
+                    <td>T-Test</td>
+                    <td><code>ttest_ind(group1, group2)</code></td>
+                </tr>
+                <tr>
+                    <td>Do sales differ across 4 regions?</td>
+                    <td>ANOVA</td>
+                    <td><code>f_oneway(g1, g2, g3, g4)</code></td>
+                </tr>
+                <tr>
+                    <td>Which features predict churn?</td>
+                    <td>Multiple tests</td>
+                    <td>Chi-Square + T-Test loop</td>
+                </tr>
+            </table>
+
+            <div class="formula-box">
+                <h4>📐 The Golden Rule</h4>
+                <div class="formula" style="font-size: 1.1em;">
+                    If p-value < 0.05 → Reject H₀ (statistically significant)<br>
+                    If p-value ≥ 0.05 → Cannot reject H₀ (not enough evidence)
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <a href="statistics-foundations.html" class="nav-btn prev">
+                <i class="fas fa-arrow-left"></i>
+                Previous: Statistics Foundations
+            </a>
+            <a href="ml-introduction.html" class="nav-btn next">
+                Next: Introduction to ML
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Back to Top functionality
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

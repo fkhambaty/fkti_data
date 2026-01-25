@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A/B Testing (Split Testing) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #db2777; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #be185d; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #22c55e;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #fbcfe8;
+        }
+        
+        .section h2 { color: #db2777; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fce7f3; }
+        .section h3 { color: #be185d; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #ec4899; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .real-life {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .real-life h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #1e3a8a; }
+        
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .version-card {
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .version-a { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 3px solid #3b82f6; }
+        .version-b { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; }
+        .version-card h4 { font-size: 1.3em; margin-bottom: 15px; }
+        .version-a h4 { color: #1e40af; }
+        .version-b h4 { color: #b45309; }
+        
+        .step-box {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+        }
+        .step-box h4 { color: #7c3aed; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #7c3aed; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+        
+        .result-box {
+            padding: 30px;
+            border-radius: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .result-box.winner { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 3px solid #22c55e; }
+        .result-box.no-winner { background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border: 3px solid #ef4444; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #fdf2f8; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+            .comparison-box { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-arrow-left"></i><span>Back to Course Hub</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>🧪 A/B Testing</h1>
+            <p>Learn how companies like Facebook, Netflix, and Amazon test new features to make data-driven decisions!</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS A/B TESTING -->
+        <div class="section">
+            <h2><i class="fas fa-flask"></i> Chapter 1: What is A/B Testing?</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Imagine you're selling lemonade and want to know which sign attracts more customers:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Sign A:</strong> "Fresh Lemonade - $1"</li>
+                    <li><strong>Sign B:</strong> "Ice Cold Lemonade - Only $1!"</li>
+                </ul>
+                <p>You show Sign A to half the people walking by, and Sign B to the other half.</p>
+                <p>After counting who bought more, you know which sign is better! 🍋</p>
+                <p><strong>That's A/B Testing!</strong></p>
+            </div>
+
+            <div class="visual-example">
+                <h4>🔬 A/B Testing in Action</h4>
+<pre style="font-size: 1.1em; color: #166534; font-family: monospace; text-align: left;">
+                    100% of Users
+                          |
+            ┌─────────────┴─────────────┐
+            ▼                           ▼
+       Version A                   Version B
+    (Current Design)            (New Design)
+     [Blue Button]              [Red Button]
+            |                           |
+         50 Users                   50 Users
+            |                           |
+     5 Purchases                 12 Purchases
+     (10% Convert)              (24% Convert)
+            |                           |
+            └───────────┬───────────────┘
+                        ▼
+               🏆 VERSION B WINS! 
+</pre>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Companies That Use A/B Testing</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Facebook:</strong> Tests which news feed layout keeps users engaged longer</li>
+                    <li><strong>Netflix:</strong> Tests different thumbnail images for movies</li>
+                    <li><strong>Amazon:</strong> Tests button colors, prices, and product recommendations</li>
+                    <li><strong>Google:</strong> Tests search result layouts and ad placements</li>
+                    <li><strong>Booking.com:</strong> Tests over 1000 experiments simultaneously!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: HOW IT WORKS -->
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> Chapter 2: How A/B Testing Works</h2>
+            
+            <div class="step-box">
+                <h4>📋 The A/B Testing Process</h4>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>Ask a Question</h5>
+                        <p>"Will changing the button color from blue to green increase sign-ups?"</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Create Two Versions</h5>
+                        <p><strong>Version A (Control):</strong> The current design (blue button)</p>
+                        <p><strong>Version B (Variant):</strong> The new design (green button)</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Split Your Users Randomly</h5>
+                        <p>50% see Version A, 50% see Version B (randomly assigned)</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Measure Results</h5>
+                        <p>Count conversions (sign-ups, purchases, clicks) for each version</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h5>Analyze Statistically</h5>
+                        <p>Use a T-test to check if the difference is REAL or just random chance</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-box">
+                <div class="version-card version-a">
+                    <h4>🅰️ Version A (Control)</h4>
+                    <div style="font-size: 3em;">📱</div>
+                    <p style="margin-top: 15px;"><strong>Current Website Design</strong></p>
+                    <p style="color: #1e40af;">Blue "Sign Up" Button</p>
+                    <p style="font-size: 0.9em;">This is what users see now</p>
+                </div>
+                <div class="version-card version-b">
+                    <h4>🅱️ Version B (Variant)</h4>
+                    <div style="font-size: 3em;">📱</div>
+                    <p style="margin-top: 15px;"><strong>New Website Design</strong></p>
+                    <p style="color: #b45309;">Green "Sign Up" Button</p>
+                    <p style="font-size: 0.9em;">This is what we're testing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER 3: THE MATH (SIMPLIFIED) -->
+        <div class="section">
+            <h2><i class="fas fa-calculator"></i> Chapter 3: The Statistics (Super Simple!)</h2>
+            
+            <div class="eli5-box">
+                <h4>🤔 The Big Question</h4>
+                <p>Version A had 10% conversion rate. Version B had 12% conversion rate.</p>
+                <p><strong>But wait!</strong> Is that 2% difference REAL, or just random luck?</p>
+                <p>Maybe if we tested again, A might do better? 🤷</p>
+                <p><strong>That's why we use statistics!</strong></p>
+            </div>
+
+            <h3>The T-Test</h3>
+            
+            <div class="eli5-box">
+                <h4>👶 What is a T-Test?</h4>
+                <p>The <strong>T-Test</strong> answers: "Is the difference between two groups REAL or just coincidence?"</p>
+                <p>It gives us a <strong>p-value</strong>:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>p < 0.05:</strong> "The difference is REAL!" ✅ (less than 5% chance it's random)</li>
+                    <li><strong>p ≥ 0.05:</strong> "Probably just random luck" ❌</li>
+                </ul>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>p-value</th>
+                    <th>Meaning</th>
+                    <th>Decision</th>
+                </tr>
+                <tr>
+                    <td><strong>p < 0.01</strong></td>
+                    <td>Very strong evidence</td>
+                    <td>✅✅ Definitely implement B!</td>
+                </tr>
+                <tr>
+                    <td><strong>p < 0.05</strong></td>
+                    <td>Strong evidence</td>
+                    <td>✅ Safe to implement B</td>
+                </tr>
+                <tr>
+                    <td><strong>p < 0.10</strong></td>
+                    <td>Weak evidence</td>
+                    <td>🤔 Maybe test longer</td>
+                </tr>
+                <tr>
+                    <td><strong>p ≥ 0.10</strong></td>
+                    <td>No evidence</td>
+                    <td>❌ Probably no real difference</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 4: PYTHON CODE -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Chapter 4: A/B Testing in Python</h2>
+            
+            <h3>Step 1: Load the Data</h3>
+            
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> scipy <span class="keyword">import</span> stats
+
+<span class="comment"># Load A/B test data</span>
+<span class="comment"># This data has conversion rates for 35 days</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"AB_testing_data.csv"</span>)
+
+<span class="comment"># Let's look at the data</span>
+<span class="function">print</span>(data.<span class="function">head</span>(<span class="number">10</span>))
+
+<span class="output"># Output:</span>
+<span class="output">#    Day  Conversion fraction A  Conversion fraction B</span>
+<span class="output"># 0    1                  0.102                  0.189</span>
+<span class="output"># 1    2                  0.095                  0.178</span>
+<span class="output"># 2    3                  0.108                  0.192</span>
+<span class="output"># ...</span></pre>
+            </div>
+
+            <h3>Step 2: Look at the Averages</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Calculate average conversion rate for each version</span>
+avg_A = data[<span class="string">'Conversion fraction A'</span>].<span class="function">mean</span>()
+avg_B = data[<span class="string">'Conversion fraction B'</span>].<span class="function">mean</span>()
+
+<span class="function">print</span>(<span class="string">f"Version A average conversion: {avg_A:.1%}"</span>)
+<span class="function">print</span>(<span class="string">f"Version B average conversion: {avg_B:.1%}"</span>)
+<span class="function">print</span>(<span class="string">f"Difference: {(avg_B - avg_A):.1%}"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Version A average conversion: 10.2%</span>
+<span class="output"># Version B average conversion: 18.5%</span>
+<span class="output"># Difference: 8.3%</span>
+
+<span class="comment"># Wow! B looks much better! But is it STATISTICALLY significant?</span></pre>
+            </div>
+
+            <h3>Step 3: Run the T-Test</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Get the conversion rates for each version</span>
+group_A = data[<span class="string">'Conversion fraction A'</span>]
+group_B = data[<span class="string">'Conversion fraction B'</span>]
+
+<span class="comment"># Run the T-Test!</span>
+t_stat, p_value = stats.<span class="function">ttest_ind</span>(group_A, group_B)
+
+<span class="function">print</span>(<span class="string">"="</span> * <span class="number">50</span>)
+<span class="function">print</span>(<span class="string">"       A/B TEST RESULTS"</span>)
+<span class="function">print</span>(<span class="string">"="</span> * <span class="number">50</span>)
+<span class="function">print</span>(<span class="string">f"T-statistic: {t_stat:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"P-value: {p_value:.6f}"</span>)
+<span class="function">print</span>(<span class="string">"="</span> * <span class="number">50</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># ==================================================</span>
+<span class="output">#        A/B TEST RESULTS</span>
+<span class="output"># ==================================================</span>
+<span class="output"># T-statistic: -3.74</span>
+<span class="output"># P-value: 0.000347</span>
+<span class="output"># ==================================================</span></pre>
+            </div>
+
+            <h3>Step 4: Interpret the Results</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Make a decision based on p-value</span>
+alpha = <span class="number">0.05</span>  <span class="comment"># Significance threshold (5%)</span>
+
+<span class="keyword">if</span> p_value < alpha:
+    <span class="function">print</span>(<span class="string">"✅ STATISTICALLY SIGNIFICANT!"</span>)
+    <span class="function">print</span>(<span class="string">"The difference is REAL, not random luck."</span>)
+    <span class="function">print</span>(<span class="string">f"We are {(1 - p_value) * 100:.2f}% confident Version B is better!"</span>)
+    <span class="function">print</span>(<span class="string">"\n👉 RECOMMENDATION: Implement Version B!"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"❌ NOT statistically significant."</span>)
+    <span class="function">print</span>(<span class="string">"The difference might just be random chance."</span>)
+    <span class="function">print</span>(<span class="string">"\n👉 RECOMMENDATION: Keep Version A or test longer."</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># ✅ STATISTICALLY SIGNIFICANT!</span>
+<span class="output"># The difference is REAL, not random luck.</span>
+<span class="output"># We are 99.97% confident Version B is better!</span>
+<span class="output">#</span>
+<span class="output"># 👉 RECOMMENDATION: Implement Version B!</span></pre>
+            </div>
+
+            <div class="result-box winner">
+                <h3 style="color: #166534; margin-bottom: 15px;">🏆 VERSION B WINS!</h3>
+                <p style="color: #166534;">With p-value = 0.000347 (much less than 0.05), we can confidently say:</p>
+                <p style="color: #166534; font-weight: bold; font-size: 1.2em;">"Version B truly performs better - it's not just luck!"</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 5: COMMON MISTAKES -->
+        <div class="section">
+            <h2><i class="fas fa-exclamation-triangle"></i> Chapter 5: Common Mistakes to Avoid</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Mistake</th>
+                    <th>Why It's Bad</th>
+                    <th>What to Do Instead</th>
+                </tr>
+                <tr>
+                    <td><strong>Stopping too early</strong></td>
+                    <td>Small sample = unreliable results</td>
+                    <td>Wait for enough data (usually 1000+ users per version)</td>
+                </tr>
+                <tr>
+                    <td><strong>Testing too many things</strong></td>
+                    <td>Can't tell which change made the difference</td>
+                    <td>Change ONE thing at a time</td>
+                </tr>
+                <tr>
+                    <td><strong>Peeking at results</strong></td>
+                    <td>Leads to false positives</td>
+                    <td>Set a fixed end date before starting</td>
+                </tr>
+                <tr>
+                    <td><strong>Not randomizing properly</strong></td>
+                    <td>Biased groups</td>
+                    <td>Use proper random assignment</td>
+                </tr>
+                <tr>
+                    <td><strong>Ignoring seasonality</strong></td>
+                    <td>Weekend vs weekday behavior differs</td>
+                    <td>Test for at least 1-2 full weeks</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 6: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Chapter 6: Summary</h2>
+            
+            <div class="eli5-box">
+                <h4>📋 A/B Testing Checklist</h4>
+                <ol style="margin-left: 20px;">
+                    <li>❓ Define what you want to test (hypothesis)</li>
+                    <li>🅰️🅱️ Create two versions (A = current, B = new)</li>
+                    <li>👥 Split users randomly 50/50</li>
+                    <li>📊 Collect enough data (be patient!)</li>
+                    <li>🧮 Run a T-test to check statistical significance</li>
+                    <li>📈 If p < 0.05 → Implement the winner!</li>
+                </ol>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>Simple Explanation</th>
+                </tr>
+                <tr>
+                    <td><strong>A/B Test</strong></td>
+                    <td>Comparing two versions to see which performs better</td>
+                </tr>
+                <tr>
+                    <td><strong>Control (A)</strong></td>
+                    <td>The current version (what we're comparing against)</td>
+                </tr>
+                <tr>
+                    <td><strong>Variant (B)</strong></td>
+                    <td>The new version we're testing</td>
+                </tr>
+                <tr>
+                    <td><strong>Conversion Rate</strong></td>
+                    <td>% of users who took the desired action</td>
+                </tr>
+                <tr>
+                    <td><strong>p-value</strong></td>
+                    <td>Probability that the difference is just random luck</td>
+                </tr>
+                <tr>
+                    <td><strong>Significance (p < 0.05)</strong></td>
+                    <td>Less than 5% chance it's random → real difference!</td>
+                </tr>
+            </table>
+
+            <div class="visual-example">
+                <h4>🎉 Congratulations!</h4>
+                <p>You now understand A/B testing - a skill used by data scientists at top tech companies!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Back to Course Hub</a>
+            <a href="index.html" class="nav-btn next">Explore More <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

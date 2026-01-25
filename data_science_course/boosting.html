@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bagging & Boosting | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #d97706; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .nav a:hover { color: #b45309; }
+        
+        .header {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(245, 158, 11, 0.3);
+        }
+        .header h1 { font-size: 2.8em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #f59e0b;
+        }
+        .section h2 { color: #d97706; font-size: 2em; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .section h3 { color: #b45309; font-size: 1.5em; margin: 30px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #fef3c7; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 15px; }
+        
+        .analogy-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 10px; }
+        .analogy-box p { color: #1e3a8a; }
+        
+        .example-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .example-box h4 { color: #065f46; font-size: 1.2em; margin-bottom: 10px; }
+        .example-box p, .example-box li { color: #064e3b; }
+        
+        .key-point {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        .key-point h4 { color: #92400e; margin-bottom: 10px; }
+        .key-point p { color: #78350f; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.6; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .data-table td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+        .data-table tr:nth-child(even) { background: #fffbeb; }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .compare-card {
+            padding: 25px;
+            border-radius: 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+        .compare-card .icon { font-size: 3em; margin-bottom: 15px; }
+        .compare-card h4 { color: #d97706; margin-bottom: 10px; font-size: 1.3em; }
+        
+        .algo-card {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #22c55e;
+        }
+        .algo-card h4 { color: #166534; margin-bottom: 15px; font-size: 1.3em; display: flex; align-items: center; gap: 10px; }
+        .algo-card .badge {
+            background: #22c55e;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+        }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white; border: none; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 2em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="decision-trees.html"><i class="fas fa-arrow-left"></i><span>Previous: Decision Trees</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <h1>🚀 Bagging & Boosting</h1>
+            <p>Master the algorithms winning Kaggle competitions! XGBoost, LightGBM, and friends - ensemble methods that combine weak learners into powerful predictors.</p>
+        </div>
+
+        <!-- Part 1: Ensemble Methods -->
+        <div class="section">
+            <h2><i class="fas fa-users"></i> Part 1: Ensemble Methods - The Power of Many</h2>
+            
+            <p>An <strong>ensemble method</strong> combines multiple models to create a stronger predictor. Just like a team of experts is better than one expert alone!</p>
+
+            <div class="analogy-box">
+                <h4>🗳️ The Jury Analogy</h4>
+                <p>In a jury, 12 people vote on a verdict. One person might be biased or mistaken, but the group decision is usually more reliable.</p>
+                <p style="margin-top: 10px;"><strong>Ensemble methods work the same way:</strong> Multiple models "vote" on predictions, reducing individual errors!</p>
+            </div>
+
+            <h3>Two Main Approaches</h3>
+            <div class="comparison-grid">
+                <div class="compare-card">
+                    <div class="icon">🎒</div>
+                    <h4>Bagging (Bootstrap Aggregating)</h4>
+                    <p style="color: #22c55e; font-weight: 600;">Train in PARALLEL</p>
+                    <p>Each model sees different random data samples</p>
+                    <p>Final: Average or vote all predictions</p>
+                    <p style="margin-top: 10px; color: #3b82f6;"><strong>Example:</strong> Random Forest</p>
+                </div>
+                <div class="compare-card">
+                    <div class="icon">⬆️</div>
+                    <h4>Boosting</h4>
+                    <p style="color: #f59e0b; font-weight: 600;">Train SEQUENTIALLY</p>
+                    <p>Each model focuses on previous model's mistakes</p>
+                    <p>Final: Weighted sum of all predictions</p>
+                    <p style="margin-top: 10px; color: #3b82f6;"><strong>Examples:</strong> XGBoost, LightGBM, AdaBoost</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2: Bagging -->
+        <div class="section">
+            <h2><i class="fas fa-random"></i> Part 2: Bagging (Bootstrap Aggregating)</h2>
+            
+            <p>Bagging reduces variance by training multiple models on different random subsets of data.</p>
+
+            <div class="example-box">
+                <h4>🎒 How Bagging Works</h4>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Bootstrap:</strong> Create multiple random samples from training data (with replacement)</li>
+                    <li><strong>Train:</strong> Build a separate model on each sample (in parallel)</li>
+                    <li><strong>Aggregate:</strong> Combine predictions (vote for classification, average for regression)</li>
+                </ol>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Bagging Classifier</span>
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> BaggingClassifier
+<span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier
+
+<span class="comment"># Bagging with Decision Trees as base estimator</span>
+bagging_model = <span class="function">BaggingClassifier</span>(
+    estimator=<span class="function">DecisionTreeClassifier</span>(),  <span class="comment"># Base model</span>
+    n_estimators=<span class="number">100</span>,                     <span class="comment"># Number of models</span>
+    max_samples=<span class="number">0.8</span>,                      <span class="comment"># 80% of data per model</span>
+    max_features=<span class="number">0.8</span>,                     <span class="comment"># 80% of features per model</span>
+    bootstrap=<span class="keyword">True</span>,                       <span class="comment"># Sample with replacement</span>
+    random_state=<span class="number">42</span>,
+    n_jobs=-<span class="number">1</span>                             <span class="comment"># Use all CPUs</span>
+)
+
+bagging_model.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"Bagging Accuracy: {bagging_model.score(X_test, y_test):.2%}"</span>)
+
+<span class="comment"># Note: Random Forest IS a special case of Bagging
+# where base estimators are Decision Trees with random feature selection</span></pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Bagging vs Random Forest</h4>
+                <p><strong>Bagging:</strong> Can use ANY base model (decision trees, SVMs, etc.)</p>
+                <p><strong>Random Forest:</strong> Bagging specifically with Decision Trees + random feature selection at each split</p>
+            </div>
+        </div>
+
+        <!-- Part 3: Boosting -->
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> Part 3: Boosting - Learning from Mistakes</h2>
+            
+            <p>Boosting builds models <strong>sequentially</strong>, where each new model focuses on correcting the errors of previous models.</p>
+
+            <div class="analogy-box">
+                <h4>📚 The Student Learning Analogy</h4>
+                <p>Imagine a student taking practice tests:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Test 1:</strong> Gets questions 5, 8, 12 wrong</li>
+                    <li><strong>Test 2:</strong> Focuses extra on questions like 5, 8, 12</li>
+                    <li><strong>Test 3:</strong> Focuses even more on remaining weak areas</li>
+                    <li><strong>Final:</strong> Combines learning from all practice sessions</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Boosting works the same way!</strong> Each model pays more attention to samples the previous models got wrong.</p>
+            </div>
+
+            <h3>Key Boosting Algorithms</h3>
+            
+            <div class="algo-card">
+                <h4>🎯 AdaBoost (Adaptive Boosting) <span class="badge">Classic</span></h4>
+                <p style="color: #14532d;"><strong>Idea:</strong> Increase weights on misclassified samples</p>
+                <ul style="margin-left: 20px; color: #14532d;">
+                    <li>Train a weak model</li>
+                    <li>Increase weights on misclassified samples</li>
+                    <li>Train next model on reweighted data</li>
+                    <li>Repeat and combine with weighted vote</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># AdaBoost</span>
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> AdaBoostClassifier
+
+adaboost = <span class="function">AdaBoostClassifier</span>(
+    n_estimators=<span class="number">100</span>,
+    learning_rate=<span class="number">0.1</span>,
+    random_state=<span class="number">42</span>
+)
+adaboost.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"AdaBoost Accuracy: {adaboost.score(X_test, y_test):.2%}"</span>)</pre>
+            </div>
+
+            <div class="algo-card">
+                <h4>📈 Gradient Boosting <span class="badge">Powerful</span></h4>
+                <p style="color: #14532d;"><strong>Idea:</strong> Each model predicts the RESIDUAL (error) of previous models</p>
+                <ul style="margin-left: 20px; color: #14532d;">
+                    <li>Train Model 1 → Prediction = 100</li>
+                    <li>Actual = 150 → Residual = 50</li>
+                    <li>Train Model 2 to predict residual (50)</li>
+                    <li>Final prediction = Model 1 + Model 2 + ...</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Gradient Boosting</span>
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> GradientBoostingClassifier
+
+gb_model = <span class="function">GradientBoostingClassifier</span>(
+    n_estimators=<span class="number">100</span>,
+    learning_rate=<span class="number">0.1</span>,
+    max_depth=<span class="number">3</span>,
+    random_state=<span class="number">42</span>
+)
+gb_model.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"Gradient Boosting Accuracy: {gb_model.score(X_test, y_test):.2%}"</span>)</pre>
+            </div>
+        </div>
+
+        <!-- Part 4: XGBoost & LightGBM -->
+        <div class="section">
+            <h2><i class="fas fa-trophy"></i> Part 4: XGBoost & LightGBM (The Champions)</h2>
+            
+            <p>These are optimized versions of Gradient Boosting that are faster, more accurate, and used in most Kaggle winning solutions!</p>
+
+            <div class="algo-card" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b;">
+                <h4 style="color: #92400e;">⚡ XGBoost (Extreme Gradient Boosting) <span class="badge" style="background: #f59e0b;">Most Popular</span></h4>
+                <p style="color: #78350f;"><strong>Why it's better:</strong></p>
+                <ul style="margin-left: 20px; color: #78350f;">
+                    <li><strong>Regularization:</strong> Built-in L1 and L2 to prevent overfitting</li>
+                    <li><strong>Parallel processing:</strong> Faster training</li>
+                    <li><strong>Handles missing values:</strong> Automatically finds best direction</li>
+                    <li><strong>Tree pruning:</strong> More efficient tree building</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># XGBoost - The Kaggle King!</span>
+<span class="comment"># pip install xgboost</span>
+<span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb
+
+xgb_model = xgb.<span class="function">XGBClassifier</span>(
+    n_estimators=<span class="number">100</span>,
+    max_depth=<span class="number">5</span>,
+    learning_rate=<span class="number">0.1</span>,
+    subsample=<span class="number">0.8</span>,           <span class="comment"># 80% of rows per tree</span>
+    colsample_bytree=<span class="number">0.8</span>,    <span class="comment"># 80% of features per tree</span>
+    reg_alpha=<span class="number">0.1</span>,           <span class="comment"># L1 regularization</span>
+    reg_lambda=<span class="number">1.0</span>,          <span class="comment"># L2 regularization</span>
+    use_label_encoder=<span class="keyword">False</span>,
+    eval_metric=<span class="string">'logloss'</span>,
+    random_state=<span class="number">42</span>
+)
+
+xgb_model.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"XGBoost Accuracy: {xgb_model.score(X_test, y_test):.2%}"</span>)
+
+<span class="comment"># Feature importance</span>
+xgb.<span class="function">plot_importance</span>(xgb_model, max_num_features=<span class="number">10</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="algo-card" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-color: #3b82f6;">
+                <h4 style="color: #1e40af;">💨 LightGBM (Light Gradient Boosting Machine) <span class="badge" style="background: #3b82f6;">Fastest</span></h4>
+                <p style="color: #1e3a8a;"><strong>Why it's faster:</strong></p>
+                <ul style="margin-left: 20px; color: #1e3a8a;">
+                    <li><strong>Leaf-wise growth:</strong> Grows deepest leaf first (vs level-wise)</li>
+                    <li><strong>Histogram-based:</strong> Bins continuous features for speed</li>
+                    <li><strong>Lower memory:</strong> Great for large datasets</li>
+                    <li><strong>Native categorical support:</strong> No need to encode!</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># LightGBM - The Speed Demon!</span>
+<span class="comment"># pip install lightgbm</span>
+<span class="keyword">import</span> lightgbm <span class="keyword">as</span> lgb
+
+lgb_model = lgb.<span class="function">LGBMClassifier</span>(
+    n_estimators=<span class="number">100</span>,
+    max_depth=<span class="number">-1</span>,           <span class="comment"># No limit (use num_leaves instead)</span>
+    num_leaves=<span class="number">31</span>,          <span class="comment"># Control tree complexity</span>
+    learning_rate=<span class="number">0.1</span>,
+    subsample=<span class="number">0.8</span>,
+    colsample_bytree=<span class="number">0.8</span>,
+    reg_alpha=<span class="number">0.1</span>,
+    reg_lambda=<span class="number">0.1</span>,
+    random_state=<span class="number">42</span>,
+    verbose=-<span class="number">1</span>              <span class="comment"># Suppress warnings</span>
+)
+
+lgb_model.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"LightGBM Accuracy: {lgb_model.score(X_test, y_test):.2%}"</span>)</pre>
+            </div>
+
+            <h3>Comparison: When to Use What?</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Speed</th>
+                    <th>Accuracy</th>
+                    <th>Best For</th>
+                </tr>
+                <tr>
+                    <td><strong>Random Forest</strong></td>
+                    <td>Fast (parallel)</td>
+                    <td>Good</td>
+                    <td>Quick baseline, interpretability</td>
+                </tr>
+                <tr>
+                    <td><strong>XGBoost</strong></td>
+                    <td>Medium</td>
+                    <td>Excellent</td>
+                    <td>Structured/tabular data, competitions</td>
+                </tr>
+                <tr>
+                    <td><strong>LightGBM</strong></td>
+                    <td>Very Fast</td>
+                    <td>Excellent</td>
+                    <td>Large datasets, speed-critical</td>
+                </tr>
+                <tr>
+                    <td><strong>CatBoost</strong></td>
+                    <td>Fast</td>
+                    <td>Excellent</td>
+                    <td>Lots of categorical features</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 5: Hyperparameter Tuning -->
+        <div class="section">
+            <h2><i class="fas fa-sliders-h"></i> Part 5: Hyperparameter Tuning</h2>
+            
+            <h3>Key Parameters to Tune</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Effect</th>
+                    <th>Typical Range</th>
+                </tr>
+                <tr>
+                    <td><strong>n_estimators</strong></td>
+                    <td>Number of trees</td>
+                    <td>100-1000 (more = better but slower)</td>
+                </tr>
+                <tr>
+                    <td><strong>learning_rate</strong></td>
+                    <td>Contribution of each tree</td>
+                    <td>0.01-0.3 (lower = more trees needed)</td>
+                </tr>
+                <tr>
+                    <td><strong>max_depth</strong></td>
+                    <td>Tree depth</td>
+                    <td>3-10 (deeper = more complex)</td>
+                </tr>
+                <tr>
+                    <td><strong>subsample</strong></td>
+                    <td>Fraction of rows per tree</td>
+                    <td>0.6-1.0</td>
+                </tr>
+                <tr>
+                    <td><strong>colsample_bytree</strong></td>
+                    <td>Fraction of features per tree</td>
+                    <td>0.6-1.0</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="comment"># Hyperparameter Tuning with Optuna (fast & modern)</span>
+<span class="comment"># pip install optuna</span>
+<span class="keyword">import</span> optuna
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score
+
+<span class="keyword">def</span> <span class="function">objective</span>(trial):
+    params = {
+        <span class="string">'n_estimators'</span>: trial.<span class="function">suggest_int</span>(<span class="string">'n_estimators'</span>, <span class="number">50</span>, <span class="number">300</span>),
+        <span class="string">'max_depth'</span>: trial.<span class="function">suggest_int</span>(<span class="string">'max_depth'</span>, <span class="number">3</span>, <span class="number">10</span>),
+        <span class="string">'learning_rate'</span>: trial.<span class="function">suggest_float</span>(<span class="string">'learning_rate'</span>, <span class="number">0.01</span>, <span class="number">0.3</span>),
+        <span class="string">'subsample'</span>: trial.<span class="function">suggest_float</span>(<span class="string">'subsample'</span>, <span class="number">0.6</span>, <span class="number">1.0</span>),
+        <span class="string">'colsample_bytree'</span>: trial.<span class="function">suggest_float</span>(<span class="string">'colsample_bytree'</span>, <span class="number">0.6</span>, <span class="number">1.0</span>),
+    }
+    
+    model = xgb.<span class="function">XGBClassifier</span>(**params, random_state=<span class="number">42</span>, use_label_encoder=<span class="keyword">False</span>)
+    score = <span class="function">cross_val_score</span>(model, X_train, y_train, cv=<span class="number">5</span>, scoring=<span class="string">'accuracy'</span>).<span class="function">mean</span>()
+    <span class="keyword">return</span> score
+
+<span class="comment"># Run optimization</span>
+study = optuna.<span class="function">create_study</span>(direction=<span class="string">'maximize'</span>)
+study.<span class="function">optimize</span>(objective, n_trials=<span class="number">50</span>, show_progress_bar=<span class="keyword">True</span>)
+
+<span class="function">print</span>(<span class="string">"Best parameters:"</span>, study.best_params)
+<span class="function">print</span>(<span class="string">"Best CV score:"</span>, study.best_value)</pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Quick Tuning Strategy</h4>
+                <ol style="margin-left: 20px; color: #78350f;">
+                    <li>Start with default parameters</li>
+                    <li>Set n_estimators high (500) with early stopping</li>
+                    <li>Tune max_depth and num_leaves first</li>
+                    <li>Then tune learning_rate (lower) and increase n_estimators</li>
+                    <li>Finally tune subsample and colsample_bytree</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>Key Idea</th>
+                </tr>
+                <tr>
+                    <td><strong>Bagging</strong></td>
+                    <td>Train many models in parallel on random subsets, then vote/average</td>
+                </tr>
+                <tr>
+                    <td><strong>Boosting</strong></td>
+                    <td>Train models sequentially, each fixing previous mistakes</td>
+                </tr>
+                <tr>
+                    <td><strong>XGBoost</strong></td>
+                    <td>Optimized gradient boosting with regularization - Kaggle favorite</td>
+                </tr>
+                <tr>
+                    <td><strong>LightGBM</strong></td>
+                    <td>Fastest boosting, great for large data</td>
+                </tr>
+                <tr>
+                    <td><strong>learning_rate</strong></td>
+                    <td>Lower = slower learning, need more trees, but better generalization</td>
+                </tr>
+            </table>
+
+            <div class="key-point">
+                <h4>🎯 Pro Tips</h4>
+                <ul style="margin-left: 20px; color: #78350f;">
+                    <li><strong>Always use early stopping</strong> to find optimal n_estimators</li>
+                    <li><strong>Start with XGBoost or LightGBM</strong> for tabular data - they usually win</li>
+                    <li><strong>Learning rate ↓ + n_estimators ↑</strong> = better but slower</li>
+                    <li><strong>Use cross-validation</strong> for reliable evaluation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="decision-trees.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Decision Trees</a>
+            <a href="clustering.html" class="nav-btn next">Next: Clustering <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

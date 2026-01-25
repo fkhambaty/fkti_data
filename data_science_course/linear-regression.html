@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression (Super Detailed) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #db2777; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #be185d; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #22c55e;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #fbcfe8;
+        }
+        
+        .section h2 { color: #db2777; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fce7f3; }
+        .section h3 { color: #be185d; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #ec4899; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+        .visual-example .big-numbers { font-size: 2.5em; font-weight: 800; color: #166534; margin: 20px 0; font-family: 'Fira Code', monospace; }
+        
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+            text-align: center;
+        }
+        .formula-box h4 { color: #7c3aed; margin-bottom: 15px; }
+        .formula { background: white; padding: 20px 40px; border-radius: 15px; display: inline-block; font-family: 'Fira Code', monospace; font-size: 1.4em; font-weight: 700; color: #6b21a8; margin: 15px 0; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2); }
+        
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .real-life {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #f97316;
+        }
+        .real-life h4 { color: #c2410c; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #9a3412; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #fdf2f8; }
+        
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+        }
+        .compare-card h4 { color: #db2777; margin-bottom: 15px; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="statistics-foundations.html"><i class="fas fa-arrow-left"></i><span>Previous: Statistics</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>📈 Linear Regression</h1>
+            <p>Your first REAL Machine Learning algorithm! We'll explain it so simply that you'll wonder why you were ever scared of ML!</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS LINEAR REGRESSION -->
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> Chapter 1: What is Linear Regression?</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>Linear Regression</strong> is like drawing the BEST possible straight line through a bunch of dots!</p>
+                <p>The line helps you PREDICT new values you haven't seen before!</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🏠 Real Life Example: House Prices</h4>
+                <p>You have data about houses:</p>
+                <ul style="margin-left: 20px;">
+                    <li>House A: 1000 sq ft → $100,000</li>
+                    <li>House B: 1500 sq ft → $150,000</li>
+                    <li>House C: 2000 sq ft → $200,000</li>
+                </ul>
+                <p>Now someone asks: <em>"How much for a 1750 sq ft house?"</em></p>
+                <p>Linear regression draws a line and says: <strong>"About $175,000!"</strong></p>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 What Linear Regression Does</h4>
+<pre style="font-size: 1em; color: #166534; font-family: monospace; text-align: left; max-width: 400px; margin: 0 auto;">
+Price
+$200K |             ✷
+      |           ●
+$150K |       ✷
+      |     ●        ← Best fit line!
+$100K |  ✷
+      |
+     ─┼────────────────
+       1000  1500  2000
+           Area (sq ft)
+
+✷ = Actual house prices
+● = Predicted prices on the line
+</pre>
+            </div>
+
+            <div class="formula-box">
+                <h4>📐 The Magic Formula</h4>
+                <div class="formula">y = mx + b</div>
+                <p style="color: #7c3aed; margin-top: 15px;">Where:</p>
+                <ul style="text-align: left; max-width: 400px; margin: 15px auto; color: #6b21a8;">
+                    <li><strong>y</strong> = What we want to predict (house price)</li>
+                    <li><strong>x</strong> = What we know (house area)</li>
+                    <li><strong>m</strong> = How steep the line is (slope)</li>
+                    <li><strong>b</strong> = Where the line starts (intercept)</li>
+                </ul>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🧮 What Does m and b Mean?</h4>
+                <p><strong>m (slope)</strong> = "For every 1 sq ft increase, price goes up by $m"</p>
+                <p>If m = 100, then each extra sq ft adds $100 to the price!</p>
+                <br>
+                <p><strong>b (intercept)</strong> = "The starting price even for 0 sq ft"</p>
+                <p>(In reality, a 0 sq ft house doesn't exist, but mathematically we need this!)</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: PREPARING DATA -->
+        <div class="section">
+            <h2><i class="fas fa-broom"></i> Chapter 2: Preparing Data (VERY Important!)</h2>
+            
+            <div class="important-box">
+                <h4>⚠️ Golden Rule of Machine Learning</h4>
+                <p><strong>Garbage In = Garbage Out!</strong></p>
+                <p>If your data has problems, your predictions will be wrong. So we MUST clean the data first!</p>
+            </div>
+
+            <h3>Step 2.1: Load and Explore the Data</h3>
+            
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Load the housing data</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"Housing.csv"</span>)
+
+<span class="comment"># Let's see what our data looks like</span>
+<span class="function">print</span>(<span class="string">"First 5 rows:"</span>)
+<span class="function">print</span>(data.<span class="function">head</span>())
+
+<span class="output"># Output:</span>
+<span class="output">#     price    area  bedrooms  bathrooms  stories mainroad ...</span>
+<span class="output"># 0  13300000  7420       4         2        3      yes</span>
+<span class="output"># 1  12250000  8960       4         4        4      yes</span>
+<span class="output"># 2  12250000  9960       3         2        2      yes</span>
+<span class="output"># 3  12215000  7500       4         2        2      yes</span>
+<span class="output"># 4  11410000  7420       4         1        2      yes</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>👀 What Are We Looking At?</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>price</strong> = What we want to PREDICT (the answer)</li>
+                    <li><strong>area</strong> = House size in sq ft</li>
+                    <li><strong>bedrooms</strong> = Number of bedrooms</li>
+                    <li><strong>bathrooms</strong> = Number of bathrooms</li>
+                    <li><strong>mainroad</strong> = Is it on a main road? (yes/no)</li>
+                </ul>
+            </div>
+
+            <h3>Step 2.2: Handle Outliers (Remove Weird Values)</h3>
+            
+            <div class="eli5-box">
+                <h4>🤔 Why Remove Outliers?</h4>
+                <p>Imagine most houses cost $100K-$500K, but ONE costs $50 Million!</p>
+                <p>That one mansion will pull our prediction line UP, making predictions wrong for normal houses!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Draw boxplots to SEE the outliers</span>
+fig, axs = plt.<span class="function">subplots</span>(<span class="number">1</span>, <span class="number">2</span>, figsize=(<span class="number">12</span>, <span class="number">5</span>))
+
+<span class="comment"># Boxplot for price</span>
+sns.<span class="function">boxplot</span>(data[<span class="string">'price'</span>], ax=axs[<span class="number">0</span>])
+axs[<span class="number">0</span>].<span class="function">set_title</span>(<span class="string">'Price Distribution'</span>)
+
+<span class="comment"># Boxplot for area</span>
+sns.<span class="function">boxplot</span>(data[<span class="string">'area'</span>], ax=axs[<span class="number">1</span>])
+axs[<span class="number">1</span>].<span class="function">set_title</span>(<span class="string">'Area Distribution'</span>)
+
+plt.<span class="function">show</span>()
+
+<span class="comment"># The dots outside the "whiskers" are OUTLIERS!</span></pre>
+            </div>
+
+            <div class="visual-example">
+                <h4>📦 What is a Boxplot?</h4>
+<pre style="font-size: 1em; color: #166534; font-family: monospace; text-align: left; max-width: 400px; margin: 0 auto;">
+   o   ← Outlier (unusual!)
+   |
+┌──┴──┐
+│     │ ← Box (middle 50% of data)
+├─────┤ ← Median line
+│     │
+└──┬──┘
+   |
+   o   ← Outlier (unusual!)
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Remove outliers using the IQR method</span>
+
+<span class="comment"># For PRICE:</span>
+Q1_price = data[<span class="string">'price'</span>].<span class="function">quantile</span>(<span class="number">0.25</span>)  <span class="comment"># 25th percentile</span>
+Q3_price = data[<span class="string">'price'</span>].<span class="function">quantile</span>(<span class="number">0.75</span>)  <span class="comment"># 75th percentile</span>
+IQR_price = Q3_price - Q1_price           <span class="comment"># Interquartile Range</span>
+
+<span class="comment"># Keep only houses within normal price range</span>
+data = data[(data[<span class="string">'price'</span>] >= Q1_price - <span class="number">1.5</span> * IQR_price) & 
+            (data[<span class="string">'price'</span>] <= Q3_price + <span class="number">1.5</span> * IQR_price)]
+
+<span class="function">print</span>(<span class="string">f"After removing price outliers: {len(data)} houses"</span>)
+
+<span class="comment"># For AREA:</span>
+Q1_area = data[<span class="string">'area'</span>].<span class="function">quantile</span>(<span class="number">0.25</span>)
+Q3_area = data[<span class="string">'area'</span>].<span class="function">quantile</span>(<span class="number">0.75</span>)
+IQR_area = Q3_area - Q1_area
+
+data = data[(data[<span class="string">'area'</span>] >= Q1_area - <span class="number">1.5</span> * IQR_area) & 
+            (data[<span class="string">'area'</span>] <= Q3_area + <span class="number">1.5</span> * IQR_area)]
+
+<span class="function">print</span>(<span class="string">f"After removing area outliers: {len(data)} houses"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># After removing price outliers: 510 houses</span>
+<span class="output"># After removing area outliers: 497 houses</span></pre>
+            </div>
+
+            <h3>Step 2.3: Check Correlation (Which Features Matter?)</h3>
+            
+            <div class="eli5-box">
+                <h4>🤔 Why Check Correlation?</h4>
+                <p>We want to use features that ACTUALLY affect the price!</p>
+                <p>If "number of windows" has 0 correlation with price, why include it?</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Create a correlation heatmap</span>
+<span class="comment"># This shows how strongly each feature relates to others</span>
+
+<span class="comment"># Select only numeric columns</span>
+numeric_cols = [<span class="string">'price'</span>, <span class="string">'area'</span>, <span class="string">'bedrooms'</span>, <span class="string">'bathrooms'</span>, <span class="string">'stories'</span>, <span class="string">'parking'</span>]
+
+<span class="comment"># Create heatmap</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">8</span>))
+sns.<span class="function">heatmap</span>(data[numeric_cols].<span class="function">corr</span>(), 
+            annot=<span class="keyword">True</span>,  <span class="comment"># Show numbers on the heatmap</span>
+            cmap=<span class="string">'YlGnBu'</span>,  <span class="comment"># Color scheme</span>
+            center=<span class="number">0</span>)
+plt.<span class="function">title</span>(<span class="string">'Correlation Heatmap'</span>)
+plt.<span class="function">show</span>()
+
+<span class="output"># What to look for:</span>
+<span class="output"># - Numbers close to +1 or -1 = Strong correlation</span>
+<span class="output"># - Numbers close to 0 = No correlation</span>
+<span class="output"># - "area" has ~0.54 correlation with "price" = GOOD!</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 3: CONVERTING CATEGORICAL DATA -->
+        <div class="section">
+            <h2><i class="fas fa-exchange-alt"></i> Chapter 3: Converting Yes/No to Numbers</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Computers don't understand "yes" or "no" - they only understand numbers!</p>
+                <p>So we convert: <strong>"yes" → 1</strong> and <strong>"no" → 0</strong></p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># List of columns that have "yes/no" values</span>
+yes_no_columns = [<span class="string">'mainroad'</span>, <span class="string">'guestroom'</span>, <span class="string">'basement'</span>, 
+                  <span class="string">'hotwaterheating'</span>, <span class="string">'airconditioning'</span>, <span class="string">'prefarea'</span>]
+
+<span class="comment"># Create a function to convert yes/no to 1/0</span>
+<span class="keyword">def</span> <span class="function">convert_yes_no</span>(x):
+    <span class="keyword">return</span> x.<span class="function">map</span>({<span class="string">'yes'</span>: <span class="number">1</span>, <span class="string">'no'</span>: <span class="number">0</span>})
+
+<span class="comment"># Apply the function to all yes/no columns</span>
+data[yes_no_columns] = data[yes_no_columns].<span class="function">apply</span>(convert_yes_no)
+
+<span class="comment"># Let's verify it worked</span>
+<span class="function">print</span>(data[[<span class="string">'mainroad'</span>, <span class="string">'guestroom'</span>, <span class="string">'basement'</span>]].<span class="function">head</span>())
+
+<span class="output"># Output:</span>
+<span class="output">#    mainroad  guestroom  basement</span>
+<span class="output"># 0         1          0         0</span>
+<span class="output"># 1         1          0         0</span>
+<span class="output"># 2         1          0         1</span>
+<span class="output"># 3         1          0         1</span>
+<span class="output"># 4         1          1         1</span></pre>
+            </div>
+
+            <h3>What About "furnishingstatus"? (More Than 2 Options!)</h3>
+            
+            <div class="eli5-box">
+                <h4>🪑 The Problem</h4>
+                <p>"furnishingstatus" has 3 options: furnished, semi-furnished, unfurnished</p>
+                <p>We can't just say: furnished=1, semi=2, unfurnished=3</p>
+                <p>Because then the computer thinks unfurnished is "3 times more" than furnished!</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>✅ The Solution: One-Hot Encoding</h4>
+                <p>Create SEPARATE columns for each option:</p>
+                <table class="data-table" style="max-width: 500px; margin: 20px auto;">
+                    <tr>
+                        <th>Original</th>
+                        <th>is_furnished</th>
+                        <th>is_semi</th>
+                        <th>is_unfurnished</th>
+                    </tr>
+                    <tr>
+                        <td>furnished</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>semi-furnished</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>unfurnished</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># One-hot encode furnishingstatus</span>
+<span class="comment"># drop_first=True removes one column (to avoid redundancy)</span>
+
+dummies = pd.<span class="function">get_dummies</span>(data[<span class="string">'furnishingstatus'</span>], drop_first=<span class="keyword">True</span>)
+<span class="function">print</span>(<span class="string">"New columns created:"</span>)
+<span class="function">print</span>(dummies.<span class="function">head</span>())
+
+<span class="output"># Output:</span>
+<span class="output">#    semi-furnished  unfurnished</span>
+<span class="output"># 0               0            0  ← This means "furnished"</span>
+<span class="output"># 1               0            0  ← This means "furnished"</span>
+<span class="output"># 2               1            0  ← This means "semi-furnished"</span>
+<span class="output"># 3               0            1  ← This means "unfurnished"</span>
+
+<span class="comment"># Add these new columns to our data</span>
+data = pd.<span class="function">concat</span>([data, dummies], axis=<span class="number">1</span>)
+
+<span class="comment"># Remove the original column</span>
+data.<span class="function">drop</span>([<span class="string">'furnishingstatus'</span>], axis=<span class="number">1</span>, inplace=<span class="keyword">True</span>)</pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 4: TRAIN-TEST SPLIT -->
+        <div class="section">
+            <h2><i class="fas fa-divide"></i> Chapter 4: Train-Test Split (Don't Cheat!)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Imagine studying for a test by memorizing the answers...</p>
+                <p>You'd get 100% on THAT test, but fail any NEW test!</p>
+                <p>That's called <strong>cheating</strong> (or "overfitting" in ML)!</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ The Right Way</h4>
+                <p><strong>Split your data into TWO parts:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Training data (80%):</strong> Used to LEARN the pattern</li>
+                    <li><strong>Test data (20%):</strong> Used to CHECK if learning worked</li>
+                </ul>
+                <p style="margin-top: 10px;">The model NEVER sees test data during training. It's like a surprise quiz!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+
+<span class="comment"># Separate the data into X (features) and y (target)</span>
+<span class="comment"># Features = What we use to predict</span>
+<span class="comment"># Target = What we want to predict</span>
+
+y = data[<span class="string">'price'</span>]  <span class="comment"># TARGET: house price</span>
+X = data.<span class="function">drop</span>(<span class="string">'price'</span>, axis=<span class="number">1</span>)  <span class="comment"># FEATURES: everything else</span>
+
+<span class="comment"># Split: 80% for training, 20% for testing</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, 
+    train_size=<span class="number">0.8</span>,       <span class="comment"># 80% for training</span>
+    test_size=<span class="number">0.2</span>,        <span class="comment"># 20% for testing</span>
+    random_state=<span class="number">42</span>       <span class="comment"># For reproducibility</span>
+)
+
+<span class="function">print</span>(<span class="string">f"Training set size: {len(X_train)} houses"</span>)
+<span class="function">print</span>(<span class="string">f"Test set size: {len(X_test)} houses"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Training set size: 397 houses</span>
+<span class="output"># Test set size: 100 houses</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 5: SCALING DATA -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Chapter 5: Scaling Data (Make It Fair)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Imagine comparing:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Area:</strong> 5000 sq ft</li>
+                    <li><strong>Bedrooms:</strong> 3</li>
+                </ul>
+                <p>5000 is WAY bigger than 3, so the model might think "area is more important!"</p>
+                <p>But that's not fair! Scaling puts them on the SAME scale (like 0 to 1).</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler
+
+<span class="comment"># Create the scaler</span>
+scaler = <span class="function">MinMaxScaler</span>()
+
+<span class="comment"># Only scale NUMERIC columns (not the yes/no columns)</span>
+numeric_features = [<span class="string">'area'</span>, <span class="string">'bedrooms'</span>, <span class="string">'bathrooms'</span>, <span class="string">'stories'</span>, <span class="string">'parking'</span>]
+
+<span class="comment"># IMPORTANT: Fit scaler on TRAINING data only!</span>
+X_train[numeric_features] = scaler.<span class="function">fit_transform</span>(X_train[numeric_features])
+
+<span class="comment"># Apply the SAME scaling to test data (without fitting again)</span>
+X_test[numeric_features] = scaler.<span class="function">transform</span>(X_test[numeric_features])
+
+<span class="comment"># Check the result</span>
+<span class="function">print</span>(<span class="string">"Before scaling, area ranged from ~2000 to ~10000"</span>)
+<span class="function">print</span>(<span class="string">f"After scaling, area ranges from {X_train['area'].min():.2f} to {X_train['area'].max():.2f}"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Before scaling, area ranged from ~2000 to ~10000</span>
+<span class="output"># After scaling, area ranges from 0.00 to 1.00</span></pre>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ Why fit_transform vs transform?</h4>
+                <p><strong>fit_transform</strong> on training data = "Learn the min/max AND apply scaling"</p>
+                <p><strong>transform</strong> on test data = "Use the SAME min/max learned before"</p>
+                <p>If you fit on test data too, you're "cheating" by peeking at test information!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: BUILD THE MODEL -->
+        <div class="section">
+            <h2><i class="fas fa-robot"></i> Chapter 6: Building the Model (The Fun Part!)</h2>
+            
+            <div class="eli5-box">
+                <h4>🎉 Finally! The Actual Machine Learning!</h4>
+                <p>After all that preparation, building the model is just 3 lines of code!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+
+<span class="comment"># Step 1: Create the model</span>
+model = <span class="function">LinearRegression</span>()
+
+<span class="comment"># Step 2: Train the model (find the best line!)</span>
+model.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># That's it! The model has learned! 🎉</span>
+
+<span class="comment"># Let's see what it learned:</span>
+<span class="function">print</span>(<span class="string">"Intercept (b):"</span>, model.intercept_)
+<span class="function">print</span>(<span class="string">"\nCoefficients (m for each feature):"</span>)
+<span class="keyword">for</span> feature, coef <span class="keyword">in</span> <span class="function">zip</span>(X_train.columns, model.coef_):
+    <span class="function">print</span>(<span class="string">f"  {feature}: {coef:,.0f}"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Intercept (b): 2,189,813</span>
+<span class="output"># </span>
+<span class="output"># Coefficients (m for each feature):</span>
+<span class="output">#   area: 2,527,089 ← Most important!</span>
+<span class="output">#   bedrooms: 193,001</span>
+<span class="output">#   bathrooms: 1,520,868 ← Very important!</span>
+<span class="output">#   stories: 1,471,086</span>
+<span class="output">#   airconditioning: 657,332</span>
+<span class="output">#   ...</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🔍 What Do These Numbers Mean?</h4>
+                <p><strong>area: 2,527,089</strong></p>
+                <p>This means: When area increases from 0 to 1 (in our scaled data), price goes up by ~$2.5 million!</p>
+                <p>Since we scaled area to 0-1, the coefficient shows the IMPORTANCE of each feature.</p>
+                <p>Area and bathrooms are the most important predictors!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 7: MAKE PREDICTIONS -->
+        <div class="section">
+            <h2><i class="fas fa-magic"></i> Chapter 7: Making Predictions</h2>
+            
+            <div class="code-block">
+<pre><span class="comment"># Make predictions on the TEST data</span>
+<span class="comment"># (data the model has NEVER seen before!)</span>
+
+y_pred = model.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Compare predictions vs actual prices</span>
+comparison = pd.<span class="function">DataFrame</span>({
+    <span class="string">'Actual Price'</span>: y_test.<span class="function">values</span>,
+    <span class="string">'Predicted Price'</span>: y_pred,
+    <span class="string">'Difference'</span>: y_test.<span class="function">values</span> - y_pred
+})
+
+<span class="function">print</span>(comparison.<span class="function">head</span>(<span class="number">10</span>))
+
+<span class="output"># Output:</span>
+<span class="output">#    Actual Price  Predicted Price    Difference</span>
+<span class="output"># 0     4,200,000        4,350,000      -150,000</span>
+<span class="output"># 1     5,950,000        5,800,000       150,000</span>
+<span class="output"># 2     3,640,000        3,500,000       140,000</span>
+<span class="output"># ...</span></pre>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 Visualize Predictions vs Actual</h4>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Create a scatter plot</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">8</span>))
+plt.<span class="function">scatter</span>(y_test, y_pred, alpha=<span class="number">0.5</span>)
+
+<span class="comment"># Draw a perfect prediction line</span>
+plt.<span class="function">plot</span>([y_test.<span class="function">min</span>(), y_test.<span class="function">max</span>()], 
+         [y_test.<span class="function">min</span>(), y_test.<span class="function">max</span>()], 
+         <span class="string">'r--'</span>, label=<span class="string">'Perfect Prediction'</span>)
+
+plt.<span class="function">xlabel</span>(<span class="string">'Actual Price'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Predicted Price'</span>)
+plt.<span class="function">title</span>(<span class="string">'Actual vs Predicted House Prices'</span>)
+plt.<span class="function">legend</span>()
+plt.<span class="function">show</span>()
+
+<span class="comment"># If all points are ON the red line = Perfect predictions!</span>
+<span class="comment"># If points are SCATTERED far from line = Poor predictions</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 8: EVALUATE THE MODEL -->
+        <div class="section">
+            <h2><i class="fas fa-chart-bar"></i> Chapter 8: How Good is Our Model?</h2>
+            
+            <div class="eli5-box">
+                <h4>📏 We Need Numbers to Measure "Good"</h4>
+                <p>Just looking at predictions isn't enough. We need concrete metrics!</p>
+            </div>
+
+            <h3>Metric 1: R² Score (0 to 1)</h3>
+            
+            <div class="formula-box">
+                <h4>📐 R² Score Explained</h4>
+                <p style="color: #7c3aed;"><strong>R² = 0%:</strong> Model is useless (just guessing the average)</p>
+                <p style="color: #7c3aed;"><strong>R² = 100%:</strong> Model is PERFECT (predicts exactly right)</p>
+                <p style="color: #7c3aed;"><strong>R² = 70%:</strong> Model explains 70% of the variation in prices</p>
+            </div>
+
+            <h3>Metric 2: Mean Absolute Percentage Error (MAPE)</h3>
+            
+            <div class="eli5-box">
+                <h4>🎯 MAPE Explained</h4>
+                <p><strong>MAPE = 15%</strong> means "On average, our predictions are off by 15%"</p>
+                <p>Lower is better! MAPE < 20% is usually considered acceptable.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> r2_score, mean_absolute_percentage_error
+
+<span class="comment"># Calculate R² Score</span>
+r2 = <span class="function">r2_score</span>(y_test, y_pred)
+<span class="function">print</span>(<span class="string">f"R² Score: {r2:.2%}"</span>)
+
+<span class="comment"># Calculate MAPE</span>
+mape = <span class="function">mean_absolute_percentage_error</span>(y_test, y_pred)
+<span class="function">print</span>(<span class="string">f"MAPE: {mape:.2%}"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># R² Score: 68.45%</span>
+<span class="output"># MAPE: 16.23%</span>
+
+<span class="comment"># Interpretation:</span>
+<span class="comment"># - Our model explains ~68% of price variation</span>
+<span class="comment"># - On average, predictions are off by ~16%</span>
+<span class="comment"># - For a house worth $5M, we might be off by ~$800K</span></pre>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 Is This Good?</h4>
+                <table class="data-table" style="max-width: 500px; margin: 20px auto;">
+                    <tr>
+                        <th>R² Score</th>
+                        <th>Quality</th>
+                    </tr>
+                    <tr>
+                        <td>> 90%</td>
+                        <td>🌟 Excellent</td>
+                    </tr>
+                    <tr>
+                        <td>70-90%</td>
+                        <td>✅ Good</td>
+                    </tr>
+                    <tr>
+                        <td>50-70%</td>
+                        <td>🆗 Acceptable</td>
+                    </tr>
+                    <tr>
+                        <td>< 50%</td>
+                        <td>❌ Needs improvement</td>
+                    </tr>
+                </table>
+                <p>Our 68% is in the "Acceptable" range - not bad for a simple model!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 9: RESIDUAL ANALYSIS -->
+        <div class="section">
+            <h2><i class="fas fa-search"></i> Chapter 9: Residual Analysis (Finding Patterns in Errors)</h2>
+            
+            <div class="eli5-box">
+                <h4>🔍 What is a Residual?</h4>
+                <p><strong>Residual = Actual Value - Predicted Value</strong></p>
+                <p>It's how much we were WRONG by. Also called "error."</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Calculate residuals on TRAINING data</span>
+y_train_pred = model.<span class="function">predict</span>(X_train)
+residuals = y_train - y_train_pred
+
+<span class="comment"># Plot 1: Distribution of errors</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">12</span>, <span class="number">5</span>))
+
+plt.<span class="function">subplot</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>)
+sns.<span class="function">histplot</span>(residuals, kde=<span class="keyword">True</span>)
+plt.<span class="function">title</span>(<span class="string">'Distribution of Residuals (Errors)'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Error Amount'</span>)
+
+<span class="comment"># Plot 2: Residuals vs Predicted values</span>
+plt.<span class="function">subplot</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>)
+plt.<span class="function">scatter</span>(y_train_pred, residuals, alpha=<span class="number">0.5</span>)
+plt.<span class="function">axhline</span>(y=<span class="number">0</span>, color=<span class="string">'r'</span>, linestyle=<span class="string">'--'</span>)
+plt.<span class="function">title</span>(<span class="string">'Residuals vs Predicted Values'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Predicted Price'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Residual (Error)'</span>)
+
+plt.<span class="function">tight_layout</span>()
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>✅ What Should Good Residuals Look Like?</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Histogram:</strong> Should look like a bell curve centered at 0</li>
+                    <li><strong>Scatter plot:</strong> Should have NO pattern - just random scatter around 0</li>
+                </ul>
+                <p>If you see patterns, your model is missing something important!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 10: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Chapter 10: Complete Summary</h2>
+            
+            <div class="step-box">
+                <h4>📋 The Complete Linear Regression Pipeline</h4>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>Load & Explore Data</h5>
+                        <p>Understand your data - what columns? Any missing values?</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Handle Outliers</h5>
+                        <p>Remove extreme values using IQR method</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Check Correlations</h5>
+                        <p>Find which features actually relate to your target</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Convert Categorical Data</h5>
+                        <p>yes/no → 1/0, multiple categories → one-hot encoding</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h5>Train-Test Split</h5>
+                        <p>80% for training, 20% for testing (don't cheat!)</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h5>Scale Features</h5>
+                        <p>Put all features on the same scale (0 to 1)</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">7</div>
+                    <div class="step-content">
+                        <h5>Build & Train Model</h5>
+                        <p>model = LinearRegression(); model.fit(X_train, y_train)</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">8</div>
+                    <div class="step-content">
+                        <h5>Make Predictions</h5>
+                        <p>y_pred = model.predict(X_test)</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">9</div>
+                    <div class="step-content">
+                        <h5>Evaluate Model</h5>
+                        <p>Calculate R² score and MAPE</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">10</div>
+                    <div class="step-content">
+                        <h5>Analyze Residuals</h5>
+                        <p>Check for patterns in errors</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-example">
+                <h4>🎉 Congratulations!</h4>
+                <p>You just learned your FIRST machine learning algorithm!</p>
+                <p>Linear Regression is the foundation - almost all other algorithms build on these concepts!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="statistics-foundations.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Statistics</a>
+            <a href="index.html" class="nav-btn next">Back to Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

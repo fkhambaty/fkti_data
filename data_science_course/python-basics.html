@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Basics (From Zero) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #0284c7; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0369a1; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(14, 165, 233, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #22c55e;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #bae6fd;
+        }
+        
+        .section h2 { color: #0284c7; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #e0f2fe; }
+        .section h3 { color: #0369a1; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #0ea5e9; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+        .visual-example .big-numbers { font-size: 2.5em; font-weight: 800; color: #166534; margin: 20px 0; font-family: 'Fira Code', monospace; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .real-life {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #f97316;
+        }
+        .real-life h4 { color: #c2410c; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #9a3412; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0f9ff; }
+        
+        .try-it {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+        }
+        .try-it h4 { color: #7c3aed; font-size: 1.2em; margin-bottom: 15px; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-arrow-left"></i><span>Back to Course Hub</span></a>
+            <a href="python-data-structures.html"><span>Next: Data Structures</span><i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 STARTING FROM ZERO</span>
+            <h1>🐍 Python Basics</h1>
+            <p>Never programmed before? Perfect! We'll teach you Python like you're learning your ABCs. By the end, you'll write actual code!</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS PYTHON -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Chapter 1: What is Python?</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>Python</strong> is a language that lets you talk to computers!</p>
+                <p>Just like you speak English to friends, you write Python to make computers do things.</p>
+                <p>Python is EASY - it reads almost like English!</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 What Can You Build With Python?</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Websites:</strong> Instagram, YouTube, Spotify use Python!</li>
+                    <li><strong>AI & Machine Learning:</strong> ChatGPT, image recognition</li>
+                    <li><strong>Data Analysis:</strong> Analyzing sales, predicting trends</li>
+                    <li><strong>Automation:</strong> Auto-send emails, rename 1000 files</li>
+                    <li><strong>Games:</strong> Simple games and simulations</li>
+                </ul>
+            </div>
+
+            <h3>Your First Python Code!</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># This is my first Python program!</span>
+<span class="comment"># Lines starting with # are comments (notes for humans)</span>
+
+<span class="function">print</span>(<span class="string">"Hello, World!"</span>)
+
+<span class="output"># Output: Hello, World!</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🔍 What Just Happened?</h4>
+                <p><code>print()</code> is a <strong>function</strong> (a command) that displays something on screen</p>
+                <p><code>"Hello, World!"</code> is a <strong>string</strong> (text in quotes)</p>
+                <p>Python reads this and shows "Hello, World!" on your screen!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: VARIABLES -->
+        <div class="section">
+            <h2><i class="fas fa-box"></i> Chapter 2: Variables (Storage Boxes)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>A <strong>variable</strong> is like a labeled box where you store stuff!</p>
+                <p>You give the box a name (like "age") and put something inside (like 25).</p>
+                <p>Later, you can open the box and use what's inside!</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>📦 Think of Variables as Boxes</h4>
+<pre style="font-size: 1.2em; color: #166534; font-family: monospace;">
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│    age      │    │    name     │    │   height    │
+├─────────────┤    ├─────────────┤    ├─────────────┤
+│     25      │    │   "Alice"   │    │    5.6      │
+└─────────────┘    └─────────────┘    └─────────────┘
+   integer            string            float
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Creating variables (putting stuff in boxes)</span>
+
+age = <span class="number">25</span>                  <span class="comment"># Box named "age" holds number 25</span>
+name = <span class="string">"Alice"</span>            <span class="comment"># Box named "name" holds text "Alice"</span>
+height = <span class="number">5.6</span>              <span class="comment"># Box named "height" holds decimal 5.6</span>
+is_student = <span class="keyword">True</span>         <span class="comment"># Box named "is_student" holds True/False</span>
+
+<span class="comment"># Using the variables</span>
+<span class="function">print</span>(<span class="string">"Name:"</span>, name)
+<span class="function">print</span>(<span class="string">"Age:"</span>, age)
+<span class="function">print</span>(<span class="string">"Height:"</span>, height, <span class="string">"feet"</span>)
+<span class="function">print</span>(<span class="string">"Is student?"</span>, is_student)
+
+<span class="output"># Output:</span>
+<span class="output"># Name: Alice</span>
+<span class="output"># Age: 25</span>
+<span class="output"># Height: 5.6 feet</span>
+<span class="output"># Is student? True</span></pre>
+            </div>
+
+            <div class="try-it">
+                <h4>✏️ Try It Yourself!</h4>
+                <p>Create variables for:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Your favorite color</li>
+                    <li>Your birth year</li>
+                    <li>Price of a pizza</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CHAPTER 3: DATA TYPES -->
+        <div class="section">
+            <h2><i class="fas fa-shapes"></i> Chapter 3: Data Types (Different Kinds of Stuff)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Just like real life has different things (numbers, words, yes/no answers)...</p>
+                <p>Python has different <strong>types</strong> of data!</p>
+                <p>The type matters because you can't add "apple" + 5 (that makes no sense!)</p>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Data Type</th>
+                    <th>Python Name</th>
+                    <th>Example</th>
+                    <th>Used For</th>
+                </tr>
+                <tr>
+                    <td><strong>Integer</strong></td>
+                    <td><code>int</code></td>
+                    <td>42, -7, 0</td>
+                    <td>Whole numbers (age, count)</td>
+                </tr>
+                <tr>
+                    <td><strong>Float</strong></td>
+                    <td><code>float</code></td>
+                    <td>3.14, -0.5, 2.0</td>
+                    <td>Decimal numbers (price, weight)</td>
+                </tr>
+                <tr>
+                    <td><strong>String</strong></td>
+                    <td><code>str</code></td>
+                    <td>"Hello", 'World'</td>
+                    <td>Text (names, messages)</td>
+                </tr>
+                <tr>
+                    <td><strong>Boolean</strong></td>
+                    <td><code>bool</code></td>
+                    <td>True, False</td>
+                    <td>Yes/No, On/Off questions</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="comment"># Different data types</span>
+
+my_age = <span class="number">25</span>                  <span class="comment"># Integer (whole number)</span>
+my_height = <span class="number">5.9</span>              <span class="comment"># Float (decimal number)</span>
+my_name = <span class="string">"John"</span>             <span class="comment"># String (text)</span>
+is_happy = <span class="keyword">True</span>              <span class="comment"># Boolean (True or False)</span>
+
+<span class="comment"># Check what type a variable is using type()</span>
+<span class="function">print</span>(<span class="function">type</span>(my_age))        <span class="output"># Output: &lt;class 'int'&gt;</span>
+<span class="function">print</span>(<span class="function">type</span>(my_height))     <span class="output"># Output: &lt;class 'float'&gt;</span>
+<span class="function">print</span>(<span class="function">type</span>(my_name))       <span class="output"># Output: &lt;class 'str'&gt;</span>
+<span class="function">print</span>(<span class="function">type</span>(is_happy))      <span class="output"># Output: &lt;class 'bool'&gt;</span></pre>
+            </div>
+
+            <h3>Converting Between Types (Type Casting)</h3>
+            
+            <div class="eli5-box">
+                <h4>🔄 Why Convert Types?</h4>
+                <p>Sometimes you get a number as text (like from user input): <code>"25"</code></p>
+                <p>You can't do math with text! You need to convert it to an actual number.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Type conversion examples</span>
+
+<span class="comment"># String to Integer</span>
+age_text = <span class="string">"25"</span>
+age_number = <span class="function">int</span>(age_text)
+<span class="function">print</span>(age_number + <span class="number">5</span>)        <span class="output"># Output: 30</span>
+
+<span class="comment"># Integer to String</span>
+year = <span class="number">2024</span>
+year_text = <span class="function">str</span>(year)
+<span class="function">print</span>(<span class="string">"Year is: "</span> + year_text)  <span class="output"># Output: Year is: 2024</span>
+
+<span class="comment"># Float to Integer (cuts off decimals!)</span>
+price = <span class="number">99.99</span>
+<span class="function">print</span>(<span class="function">int</span>(price))           <span class="output"># Output: 99</span>
+
+<span class="comment"># Integer to Float</span>
+count = <span class="number">5</span>
+<span class="function">print</span>(<span class="function">float</span>(count))         <span class="output"># Output: 5.0</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 4: STRINGS -->
+        <div class="section">
+            <h2><i class="fas fa-font"></i> Chapter 4: Strings (Working with Text)</h2>
+            
+            <div class="eli5-box">
+                <h4>📝 Strings are Text!</h4>
+                <p>Anything in quotes is a string: <code>"Hello"</code>, <code>'World'</code>, <code>"123"</code></p>
+                <p>Note: <code>"123"</code> is text, not a number! You can't do math with it.</p>
+            </div>
+
+            <h3>String Methods (Text Superpowers!)</h3>
+            <p>Python gives you many ways to manipulate text:</p>
+
+            <div class="code-block">
+<pre><span class="comment"># String methods - text manipulation superpowers!</span>
+
+text = <span class="string">"  Hello World  "</span>
+
+<span class="comment"># Convert to UPPERCASE</span>
+<span class="function">print</span>(text.<span class="function">upper</span>())           <span class="output"># Output: "  HELLO WORLD  "</span>
+
+<span class="comment"># Convert to lowercase</span>
+<span class="function">print</span>(text.<span class="function">lower</span>())           <span class="output"># Output: "  hello world  "</span>
+
+<span class="comment"># Remove spaces from both sides</span>
+<span class="function">print</span>(text.<span class="function">strip</span>())           <span class="output"># Output: "Hello World"</span>
+
+<span class="comment"># Replace words</span>
+<span class="function">print</span>(text.<span class="function">replace</span>(<span class="string">"World"</span>, <span class="string">"Python"</span>))   <span class="output"># Output: "  Hello Python  "</span>
+
+<span class="comment"># Split into a list of words</span>
+words = <span class="string">"apple,banana,cherry"</span>
+<span class="function">print</span>(words.<span class="function">split</span>(<span class="string">","</span>))        <span class="output"># Output: ['apple', 'banana', 'cherry']</span>
+
+<span class="comment"># Check if text contains something</span>
+<span class="function">print</span>(<span class="string">"World"</span> <span class="keyword">in</span> text)       <span class="output"># Output: True</span>
+<span class="function">print</span>(<span class="string">"Python"</span> <span class="keyword">in</span> text)      <span class="output"># Output: False</span>
+
+<span class="comment"># Count occurrences</span>
+message = <span class="string">"I love Python. Python is great!"</span>
+<span class="function">print</span>(message.<span class="function">count</span>(<span class="string">"Python"</span>))  <span class="output"># Output: 2</span>
+
+<span class="comment"># Get length of string</span>
+<span class="function">print</span>(<span class="function">len</span>(<span class="string">"Hello"</span>))          <span class="output"># Output: 5</span></pre>
+            </div>
+
+            <h3>String Indexing (Finding Characters)</h3>
+            
+            <div class="eli5-box">
+                <h4>🔢 Every Character Has a Position!</h4>
+                <p>Think of a string as a row of lockers. Each locker has a number starting from 0!</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 String Index Positions</h4>
+<pre style="font-size: 1.2em; color: #166534; font-family: monospace;">
+String: "Python"
+
+Position:  0   1   2   3   4   5
+         +---+---+---+---+---+---+
+         | P | y | t | h | o | n |
+         +---+---+---+---+---+---+
+Negative: -6  -5  -4  -3  -2  -1
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre>word = <span class="string">"Python"</span>
+
+<span class="comment"># Access single characters</span>
+<span class="function">print</span>(word[<span class="number">0</span>])       <span class="output"># Output: P (first character)</span>
+<span class="function">print</span>(word[<span class="number">1</span>])       <span class="output"># Output: y (second character)</span>
+<span class="function">print</span>(word[<span class="number">-1</span>])      <span class="output"># Output: n (last character)</span>
+<span class="function">print</span>(word[<span class="number">-2</span>])      <span class="output"># Output: o (second to last)</span>
+
+<span class="comment"># Slicing - get a portion of the string</span>
+<span class="comment"># syntax: word[start:stop] (stop is NOT included!)</span>
+<span class="function">print</span>(word[<span class="number">0</span>:<span class="number">3</span>])     <span class="output"># Output: Pyt (characters 0, 1, 2)</span>
+<span class="function">print</span>(word[<span class="number">2</span>:])      <span class="output"># Output: thon (from position 2 to end)</span>
+<span class="function">print</span>(word[:<span class="number">4</span>])      <span class="output"># Output: Pyth (from start to position 3)</span>
+<span class="function">print</span>(word[::<span class="number">2</span>])     <span class="output"># Output: Pto (every 2nd character)</span>
+<span class="function">print</span>(word[::-<span class="number">1</span>])    <span class="output"># Output: nohtyP (reversed!)</span></pre>
+            </div>
+
+            <h3>F-Strings (Easy Text Formatting)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># F-strings - the easiest way to insert variables into text!</span>
+<span class="comment"># Put 'f' before the quotes, then use {variable} inside</span>
+
+name = <span class="string">"Alice"</span>
+age = <span class="number">25</span>
+salary = <span class="number">50000.789</span>
+
+<span class="comment"># Simple f-string</span>
+<span class="function">print</span>(<span class="string">f"My name is {name} and I am {age} years old."</span>)
+<span class="output"># Output: My name is Alice and I am 25 years old.</span>
+
+<span class="comment"># Format numbers</span>
+<span class="function">print</span>(<span class="string">f"My salary is ${salary:.2f}"</span>)  <span class="comment"># .2f = 2 decimal places</span>
+<span class="output"># Output: My salary is $50000.79</span>
+
+<span class="comment"># Do calculations inside {}</span>
+<span class="function">print</span>(<span class="string">f"In 5 years I will be {age + 5}"</span>)
+<span class="output"># Output: In 5 years I will be 30</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 5: OPERATORS -->
+        <div class="section">
+            <h2><i class="fas fa-calculator"></i> Chapter 5: Operators (Doing Math & Comparisons)</h2>
+            
+            <h3>Arithmetic Operators (Math!)</h3>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Operator</th>
+                    <th>Name</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+                <tr>
+                    <td><code>+</code></td>
+                    <td>Addition</td>
+                    <td>5 + 3</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td><code>-</code></td>
+                    <td>Subtraction</td>
+                    <td>10 - 4</td>
+                    <td>6</td>
+                </tr>
+                <tr>
+                    <td><code>*</code></td>
+                    <td>Multiplication</td>
+                    <td>6 * 7</td>
+                    <td>42</td>
+                </tr>
+                <tr>
+                    <td><code>/</code></td>
+                    <td>Division</td>
+                    <td>10 / 3</td>
+                    <td>3.333...</td>
+                </tr>
+                <tr>
+                    <td><code>//</code></td>
+                    <td>Floor Division</td>
+                    <td>10 // 3</td>
+                    <td>3 (no decimals)</td>
+                </tr>
+                <tr>
+                    <td><code>%</code></td>
+                    <td>Modulus (Remainder)</td>
+                    <td>10 % 3</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><code>**</code></td>
+                    <td>Power/Exponent</td>
+                    <td>2 ** 3</td>
+                    <td>8 (2³)</td>
+                </tr>
+            </table>
+
+            <h3>Comparison Operators (True or False?)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Comparison operators return True or False</span>
+
+<span class="function">print</span>(<span class="number">5</span> == <span class="number">5</span>)      <span class="output"># Equal to? True</span>
+<span class="function">print</span>(<span class="number">5</span> != <span class="number">3</span>)      <span class="output"># Not equal to? True</span>
+<span class="function">print</span>(<span class="number">7</span> > <span class="number">4</span>)       <span class="output"># Greater than? True</span>
+<span class="function">print</span>(<span class="number">2</span> < <span class="number">8</span>)       <span class="output"># Less than? True</span>
+<span class="function">print</span>(<span class="number">6</span> >= <span class="number">6</span>)      <span class="output"># Greater than or equal? True</span>
+<span class="function">print</span>(<span class="number">3</span> <= <span class="number">5</span>)      <span class="output"># Less than or equal? True</span></pre>
+            </div>
+
+            <h3>Logical Operators (Combining Conditions)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Logical operators combine True/False values</span>
+
+age = <span class="number">25</span>
+has_license = <span class="keyword">True</span>
+
+<span class="comment"># AND - Both must be True</span>
+<span class="function">print</span>(age >= <span class="number">18</span> <span class="keyword">and</span> has_license)    <span class="output"># True (can drive!)</span>
+
+<span class="comment"># OR - At least one must be True</span>
+<span class="function">print</span>(age < <span class="number">18</span> <span class="keyword">or</span> has_license)      <span class="output"># True (has license)</span>
+
+<span class="comment"># NOT - Reverses the result</span>
+<span class="function">print</span>(<span class="keyword">not</span> has_license)               <span class="output"># False (opposite of True)</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: IF STATEMENTS -->
+        <div class="section">
+            <h2><i class="fas fa-code-branch"></i> Chapter 6: If Statements (Making Decisions)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>An <strong>if statement</strong> is like a question with a plan:</p>
+                <p><em>"IF it's raining, THEN take an umbrella. ELSE, wear sunglasses."</em></p>
+                <p>Python does the same thing with code!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Basic if statement</span>
+age = <span class="number">20</span>
+
+<span class="keyword">if</span> age >= <span class="number">18</span>:
+    <span class="function">print</span>(<span class="string">"You are an adult!"</span>)
+    <span class="function">print</span>(<span class="string">"You can vote!"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># You are an adult!</span>
+<span class="output"># You can vote!</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>⚠️ Important: Indentation!</h4>
+                <p>Notice the spaces before <code>print()</code>? That's called <strong>indentation</strong>.</p>
+                <p>Python uses indentation to know which code belongs to the <code>if</code>!</p>
+                <p>Always use 4 spaces (or 1 Tab) for indentation.</p>
+            </div>
+
+            <h3>if-else (Two Options)</h3>
+            
+            <div class="code-block">
+<pre>age = <span class="number">15</span>
+
+<span class="keyword">if</span> age >= <span class="number">18</span>:
+    <span class="function">print</span>(<span class="string">"You are an adult!"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"You are a minor."</span>)
+
+<span class="output"># Output: You are a minor.</span></pre>
+            </div>
+
+            <h3>if-elif-else (Multiple Options)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Grade calculator</span>
+score = <span class="number">75</span>
+
+<span class="keyword">if</span> score >= <span class="number">90</span>:
+    <span class="function">print</span>(<span class="string">"Grade: A - Excellent!"</span>)
+<span class="keyword">elif</span> score >= <span class="number">80</span>:
+    <span class="function">print</span>(<span class="string">"Grade: B - Good!"</span>)
+<span class="keyword">elif</span> score >= <span class="number">70</span>:
+    <span class="function">print</span>(<span class="string">"Grade: C - Average"</span>)
+<span class="keyword">elif</span> score >= <span class="number">60</span>:
+    <span class="function">print</span>(<span class="string">"Grade: D - Below Average"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"Grade: F - Fail"</span>)
+
+<span class="output"># Output: Grade: C - Average</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 7: LOOPS -->
+        <div class="section">
+            <h2><i class="fas fa-redo"></i> Chapter 7: Loops (Repeating Stuff)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>A <strong>loop</strong> is like saying: <em>"Do this 10 times"</em> or <em>"Do this for each item in the list"</em></p>
+                <p>Instead of writing the same code 100 times, you write it once and loop!</p>
+            </div>
+
+            <h3>For Loop (Do This for Each Item)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># For loop - repeat for each item in a sequence</span>
+
+<span class="comment"># Loop through a list</span>
+fruits = [<span class="string">"apple"</span>, <span class="string">"banana"</span>, <span class="string">"cherry"</span>]
+
+<span class="keyword">for</span> fruit <span class="keyword">in</span> fruits:
+    <span class="function">print</span>(<span class="string">f"I like {fruit}!"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># I like apple!</span>
+<span class="output"># I like banana!</span>
+<span class="output"># I like cherry!</span></pre>
+            </div>
+
+            <h3>The range() Function</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># range() generates a sequence of numbers</span>
+
+<span class="comment"># Print numbers 0 to 4</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>):
+    <span class="function">print</span>(i)
+
+<span class="output"># Output: 0, 1, 2, 3, 4</span>
+
+<span class="comment"># Print numbers 1 to 5</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">1</span>, <span class="number">6</span>):
+    <span class="function">print</span>(i)
+
+<span class="output"># Output: 1, 2, 3, 4, 5</span>
+
+<span class="comment"># Print even numbers 0 to 10</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">0</span>, <span class="number">11</span>, <span class="number">2</span>):  <span class="comment"># Start, Stop, Step</span>
+    <span class="function">print</span>(i)
+
+<span class="output"># Output: 0, 2, 4, 6, 8, 10</span></pre>
+            </div>
+
+            <h3>While Loop (Keep Going Until...)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># While loop - repeat WHILE a condition is True</span>
+
+count = <span class="number">1</span>
+
+<span class="keyword">while</span> count <= <span class="number">5</span>:
+    <span class="function">print</span>(<span class="string">f"Count is: {count}"</span>)
+    count = count + <span class="number">1</span>  <span class="comment"># Don't forget to increment!</span>
+
+<span class="output"># Output:</span>
+<span class="output"># Count is: 1</span>
+<span class="output"># Count is: 2</span>
+<span class="output"># Count is: 3</span>
+<span class="output"># Count is: 4</span>
+<span class="output"># Count is: 5</span></pre>
+            </div>
+
+            <h3>Break and Continue (Loop Control)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># break - exit the loop immediately</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">10</span>):
+    <span class="keyword">if</span> i == <span class="number">5</span>:
+        <span class="function">print</span>(<span class="string">"Found 5! Breaking out..."</span>)
+        <span class="keyword">break</span>
+    <span class="function">print</span>(i)
+
+<span class="output"># Output: 0, 1, 2, 3, 4, Found 5! Breaking out...</span>
+
+<span class="comment"># continue - skip this iteration, go to next</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>):
+    <span class="keyword">if</span> i == <span class="number">2</span>:
+        <span class="keyword">continue</span>  <span class="comment"># Skip when i is 2</span>
+    <span class="function">print</span>(i)
+
+<span class="output"># Output: 0, 1, 3, 4 (skipped 2!)</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 8: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Chapter 8: Summary - What You Learned!</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>What It Does</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Variables</strong></td>
+                    <td>Store data</td>
+                    <td><code>age = 25</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Data Types</strong></td>
+                    <td>Different kinds of data</td>
+                    <td><code>int, float, str, bool</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Strings</strong></td>
+                    <td>Work with text</td>
+                    <td><code>"Hello".upper()</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Operators</strong></td>
+                    <td>Math & comparisons</td>
+                    <td><code>+ - * / == > <</code></td>
+                </tr>
+                <tr>
+                    <td><strong>If Statements</strong></td>
+                    <td>Make decisions</td>
+                    <td><code>if age >= 18:</code></td>
+                </tr>
+                <tr>
+                    <td><strong>For Loops</strong></td>
+                    <td>Repeat for each item</td>
+                    <td><code>for x in list:</code></td>
+                </tr>
+                <tr>
+                    <td><strong>While Loops</strong></td>
+                    <td>Repeat while condition is True</td>
+                    <td><code>while count < 10:</code></td>
+                </tr>
+            </table>
+
+            <div class="visual-example">
+                <h4>🎉 Congratulations!</h4>
+                <p>You now know the fundamentals of Python programming!</p>
+                <p>Next up: Data Structures (Lists, Tuples, Dictionaries) →</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Back to Course Hub</a>
+            <a href="python-data-structures.html" class="nav-btn next">Next: Data Structures <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

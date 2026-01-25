@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Language Processing (NLP) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #d97706; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #b45309; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(245, 158, 11, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #22c55e;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #fde68a;
+        }
+        
+        .section h2 { color: #d97706; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fef3c7; }
+        .section h3 { color: #b45309; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #f59e0b; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #0ea5e9;
+        }
+        .eli5-box h4 { color: #0369a1; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #075985; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .real-life {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+        }
+        .real-life h4 { color: #7c3aed; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #6b21a8; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #fffbeb; }
+        
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-arrow-left"></i><span>Back to Course Hub</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>💬 Natural Language Processing (NLP)</h1>
+            <p>Teach computers to understand human language! From text messages to AI chatbots - NLP makes it possible.</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS NLP -->
+        <div class="section">
+            <h2><i class="fas fa-comments"></i> Chapter 1: What is NLP?</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>NLP</strong> stands for <strong>Natural Language Processing</strong>.</p>
+                <p>It's teaching computers to understand human language - the way we talk and write!</p>
+                <p>Just like you learned to read and understand words, NLP teaches machines to do the same.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 You Use NLP Every Day!</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Siri/Alexa:</strong> Understanding your voice commands</li>
+                    <li><strong>Gmail:</strong> Suggesting responses, detecting spam</li>
+                    <li><strong>Google Translate:</strong> Converting languages</li>
+                    <li><strong>ChatGPT:</strong> Having conversations with AI</li>
+                    <li><strong>Auto-correct:</strong> Fixing your typos</li>
+                    <li><strong>Netflix:</strong> "Similar movies" based on descriptions</li>
+                </ul>
+            </div>
+
+            <div class="visual-example">
+                <h4>🧩 The Challenge</h4>
+                <p style="text-align: left;">Computers understand numbers, not words!</p>
+                <p style="text-align: left;"><strong>Human:</strong> "I love pizza!" 🍕❤️</p>
+                <p style="text-align: left;"><strong>Computer:</strong> "01001001 00100000..." 🤖❓</p>
+                <p style="margin-top: 15px;">NLP converts human language → Numbers the computer understands!</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: TOKENIZATION -->
+        <div class="section">
+            <h2><i class="fas fa-cut"></i> Chapter 2: Tokenization (Breaking Text Into Pieces)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>Tokenization</strong> is like cutting a sentence into individual words!</p>
+                <p>Just like cutting a pizza into slices 🍕, we cut text into pieces called "tokens."</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>✂️ Tokenization Example</h4>
+<pre style="font-size: 1.2em; color: #166534; font-family: monospace; text-align: left;">
+Original Sentence:
+"Elon Musk founded SpaceX in California in 2002."
+
+After Tokenization (cut into pieces):
+┌──────┬──────┬─────────┬────────┬────┬────────────┬────┬──────┬───┐
+│ Elon │ Musk │ founded │ SpaceX │ in │ California │ in │ 2002 │ . │
+└──────┴──────┴─────────┴────────┴────┴────────────┴────┴──────┴───┘
+  [0]    [1]     [2]       [3]    [4]      [5]      [6]   [7]  [8]
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> nltk
+<span class="keyword">from</span> nltk <span class="keyword">import</span> word_tokenize
+
+<span class="comment"># Download the tokenizer data (only needed once)</span>
+nltk.<span class="function">download</span>(<span class="string">'punkt'</span>)
+
+<span class="comment"># Our sentence</span>
+sentence = <span class="string">"Elon Musk founded SpaceX in California in 2002."</span>
+
+<span class="comment"># Tokenize - break into individual words</span>
+tokens = <span class="function">word_tokenize</span>(sentence)
+
+<span class="function">print</span>(<span class="string">"Original sentence:"</span>, sentence)
+<span class="function">print</span>(<span class="string">"Tokens:"</span>, tokens)
+<span class="function">print</span>(<span class="string">"Number of tokens:"</span>, <span class="function">len</span>(tokens))
+
+<span class="output"># Output:</span>
+<span class="output"># Original sentence: Elon Musk founded SpaceX in California in 2002.</span>
+<span class="output"># Tokens: ['Elon', 'Musk', 'founded', 'SpaceX', 'in', 'California', 'in', '2002', '.']</span>
+<span class="output"># Number of tokens: 9</span></pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🤔 Why is Tokenization Useful?</h4>
+                <p>Computers can't read sentences like humans. They need individual pieces!</p>
+                <p>After tokenization, we can:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Count how often each word appears</li>
+                    <li>Find important words</li>
+                    <li>Look up words in dictionaries</li>
+                    <li>Convert words to numbers for machine learning</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CHAPTER 3: POS TAGGING -->
+        <div class="section">
+            <h2><i class="fas fa-tags"></i> Chapter 3: POS Tagging (What Type of Word?)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>POS</strong> stands for <strong>Part of Speech</strong>.</p>
+                <p>Remember in school when you learned about nouns, verbs, adjectives?</p>
+                <p>POS tagging is teaching the computer: "This word is a noun, this one is a verb..."</p>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>POS Tag</th>
+                    <th>Meaning</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>NNP</strong></td>
+                    <td>Proper Noun (names)</td>
+                    <td>Elon, California, SpaceX</td>
+                </tr>
+                <tr>
+                    <td><strong>VBD</strong></td>
+                    <td>Verb, Past Tense</td>
+                    <td>founded, walked, said</td>
+                </tr>
+                <tr>
+                    <td><strong>IN</strong></td>
+                    <td>Preposition</td>
+                    <td>in, on, at, to</td>
+                </tr>
+                <tr>
+                    <td><strong>CD</strong></td>
+                    <td>Cardinal Number</td>
+                    <td>2002, five, 100</td>
+                </tr>
+                <tr>
+                    <td><strong>JJ</strong></td>
+                    <td>Adjective</td>
+                    <td>big, happy, fast</td>
+                </tr>
+                <tr>
+                    <td><strong>RB</strong></td>
+                    <td>Adverb</td>
+                    <td>quickly, very, well</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> nltk
+<span class="keyword">from</span> nltk <span class="keyword">import</span> word_tokenize, pos_tag
+
+<span class="comment"># Download necessary data</span>
+nltk.<span class="function">download</span>(<span class="string">'averaged_perceptron_tagger'</span>)
+
+sentence = <span class="string">"Elon Musk founded SpaceX in California in 2002."</span>
+
+<span class="comment"># Step 1: Tokenize</span>
+tokens = <span class="function">word_tokenize</span>(sentence)
+
+<span class="comment"># Step 2: POS Tag each token</span>
+tagged = <span class="function">pos_tag</span>(tokens)
+
+<span class="function">print</span>(<span class="string">"Word → Part of Speech:"</span>)
+<span class="keyword">for</span> word, tag <span class="keyword">in</span> tagged:
+    <span class="function">print</span>(<span class="string">f"  {word} → {tag}"</span>)
+
+<span class="output"># Output:</span>
+<span class="output"># Word → Part of Speech:</span>
+<span class="output">#   Elon → NNP (Proper Noun)</span>
+<span class="output">#   Musk → NNP (Proper Noun)</span>
+<span class="output">#   founded → VBD (Verb, Past Tense)</span>
+<span class="output">#   SpaceX → NNP (Proper Noun)</span>
+<span class="output">#   in → IN (Preposition)</span>
+<span class="output">#   California → NNP (Proper Noun)</span>
+<span class="output">#   in → IN (Preposition)</span>
+<span class="output">#   2002 → CD (Cardinal Number)</span>
+<span class="output">#   . → . (Punctuation)</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 4: NER -->
+        <div class="section">
+            <h2><i class="fas fa-user-tag"></i> Chapter 4: Named Entity Recognition (Finding Important Things)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>NER</strong> stands for <strong>Named Entity Recognition</strong>.</p>
+                <p>It's like a highlighter that finds IMPORTANT things in text:</p>
+                <ul style="margin-left: 20px;">
+                    <li><span style="background: #fef08a;">People's names</span> (PERSON)</li>
+                    <li><span style="background: #bfdbfe;">Companies/Organizations</span> (ORGANIZATION)</li>
+                    <li><span style="background: #d1fae5;">Places</span> (GPE - Geo-Political Entity)</li>
+                    <li><span style="background: #fce7f3;">Dates</span> (DATE)</li>
+                </ul>
+            </div>
+
+            <div class="visual-example">
+                <h4>🔍 NER in Action</h4>
+<pre style="font-size: 1.1em; color: #166534; font-family: monospace; text-align: left;">
+Original: "Elon Musk founded SpaceX in California in 2002."
+
+After NER:
+┌──────────────────┬────────────────┐
+│      Entity      │     Type       │
+├──────────────────┼────────────────┤
+│    Elon Musk     │   PERSON       │
+│    SpaceX        │   ORGANIZATION │
+│    California    │   GPE (Place)  │
+│    2002          │   DATE         │
+└──────────────────┴────────────────┘
+</pre>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> nltk
+<span class="keyword">from</span> nltk <span class="keyword">import</span> word_tokenize, pos_tag, ne_chunk
+
+<span class="comment"># Download necessary data</span>
+nltk.<span class="function">download</span>(<span class="string">'maxent_ne_chunker'</span>)
+nltk.<span class="function">download</span>(<span class="string">'words'</span>)
+
+sentence = <span class="string">"Elon Musk founded SpaceX in California in 2002."</span>
+
+<span class="comment"># Step 1: Tokenize</span>
+tokens = <span class="function">word_tokenize</span>(sentence)
+
+<span class="comment"># Step 2: POS Tag</span>
+tagged = <span class="function">pos_tag</span>(tokens)
+
+<span class="comment"># Step 3: Named Entity Recognition</span>
+entities = <span class="function">ne_chunk</span>(tagged)
+
+<span class="function">print</span>(<span class="string">"Named Entities Found:"</span>)
+<span class="function">print</span>(entities)
+
+<span class="output"># Output:</span>
+<span class="output"># (S</span>
+<span class="output">#   (PERSON Elon/NNP)      ← Person's name!</span>
+<span class="output">#   (PERSON Musk/NNP)      ← Person's name!</span>
+<span class="output">#   founded/VBD</span>
+<span class="output">#   (ORGANIZATION SpaceX/NNP)  ← Company!</span>
+<span class="output">#   in/IN</span>
+<span class="output">#   (GPE California/NNP)   ← Place!</span>
+<span class="output">#   in/IN</span>
+<span class="output">#   2002/CD</span>
+<span class="output">#   ./.)</span></pre>
+            </div>
+
+            <div class="real-life">
+                <h4>🎯 Real-World Uses of NER</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>News:</strong> Automatically categorize articles by people/companies mentioned</li>
+                    <li><strong>Customer Support:</strong> Extract product names from complaints</li>
+                    <li><strong>Finance:</strong> Find company names in news for stock analysis</li>
+                    <li><strong>Healthcare:</strong> Extract drug names and conditions from medical records</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CHAPTER 5: TF-IDF -->
+        <div class="section">
+            <h2><i class="fas fa-weight-hanging"></i> Chapter 5: TF-IDF (Finding Important Words)</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>TF-IDF</strong> answers: "Which words in this document are REALLY important?"</p>
+                <p>Words like "the", "is", "and" appear everywhere - they're NOT important.</p>
+                <p>Words that appear a lot in ONE document but rarely in others - THOSE are important!</p>
+            </div>
+
+            <h3>What Does TF-IDF Stand For?</h3>
+            
+            <div class="step-box">
+                <h4>📊 TF-IDF = TF × IDF</h4>
+                
+                <div class="step">
+                    <div class="step-number">TF</div>
+                    <div class="step-content">
+                        <h5>Term Frequency</h5>
+                        <p>How often does this word appear in THIS document?</p>
+                        <p><code>TF = (times word appears) / (total words in doc)</code></p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">IDF</div>
+                    <div class="step-content">
+                        <h5>Inverse Document Frequency</h5>
+                        <p>How RARE is this word across ALL documents?</p>
+                        <p><code>IDF = log(total docs / docs containing word)</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-example">
+                <h4>📝 Example with 3 Documents</h4>
+                <table class="data-table" style="margin: 20px auto;">
+                    <tr>
+                        <th>Document</th>
+                        <th>Text</th>
+                    </tr>
+                    <tr>
+                        <td>D1</td>
+                        <td>"Data Science is fun"</td>
+                    </tr>
+                    <tr>
+                        <td>D2</td>
+                        <td>"Python makes Data Analysis easy"</td>
+                    </tr>
+                    <tr>
+                        <td>D3</td>
+                        <td>"AI and Data Science are related"</td>
+                    </tr>
+                </table>
+                <p><strong>"Data"</strong> appears in ALL 3 docs → IDF is LOW (common word)</p>
+                <p><strong>"Python"</strong> appears in only 1 doc → IDF is HIGH (unique word!)</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer
+
+<span class="comment"># Our 3 documents</span>
+docs = [
+    <span class="string">"Data Science is fun"</span>,
+    <span class="string">"Python makes Data Analysis easy"</span>,
+    <span class="string">"AI and Data Science are related"</span>
+]
+
+<span class="comment"># Create the TF-IDF vectorizer</span>
+vectorizer = <span class="function">TfidfVectorizer</span>()
+
+<span class="comment"># Calculate TF-IDF for each word in each document</span>
+tfidf_matrix = vectorizer.<span class="function">fit_transform</span>(docs)
+
+<span class="comment"># See the vocabulary (unique words)</span>
+<span class="function">print</span>(<span class="string">"Words found:"</span>)
+<span class="function">print</span>(vectorizer.<span class="function">get_feature_names_out</span>())
+
+<span class="output"># Output: ['ai', 'analysis', 'and', 'are', 'data', 'easy', 'fun', </span>
+<span class="output">#          'is', 'makes', 'python', 'related', 'science']</span>
+
+<span class="comment"># See the TF-IDF scores</span>
+<span class="function">print</span>(<span class="string">"\nTF-IDF Matrix (rows=docs, cols=words):"</span>)
+<span class="function">print</span>(tfidf_matrix.<span class="function">toarray</span>().<span class="function">round</span>(<span class="number">2</span>))
+
+<span class="output"># Note: Higher numbers = more important in that document!</span>
+<span class="output"># "data" has low scores (common), "python" has high score (unique)</span></pre>
+            </div>
+
+            <h3>Remove Unimportant Words (Stop Words)</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Remove common words like "is", "and", "the"</span>
+vectorizer = <span class="function">TfidfVectorizer</span>(stop_words=<span class="string">'english'</span>)
+tfidf_matrix = vectorizer.<span class="function">fit_transform</span>(docs)
+
+<span class="function">print</span>(<span class="string">"Words after removing stop words:"</span>)
+<span class="function">print</span>(vectorizer.<span class="function">get_feature_names_out</span>())
+
+<span class="output"># Output: ['ai', 'analysis', 'data', 'easy', 'fun', </span>
+<span class="output">#          'makes', 'python', 'related', 'science']</span>
+<span class="comment"># Notice: 'is', 'and', 'are' are removed!</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: STEMMING & LEMMATIZATION -->
+        <div class="section">
+            <h2><i class="fas fa-tree"></i> Chapter 6: Stemming & Lemmatization (Finding Word Roots)</h2>
+            
+            <div class="eli5-box">
+                <h4>🤔 The Problem</h4>
+                <p>Consider: "playing", "plays", "played", "player"</p>
+                <p>These are all forms of the same word "play"!</p>
+                <p>But a computer sees them as 4 DIFFERENT words.</p>
+                <p>We need to reduce them to their ROOT form!</p>
+            </div>
+
+            <h3>Two Ways to Find Roots</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 25px 0;">
+                <div style="background: #fef2f2; padding: 25px; border-radius: 15px; border: 2px solid #ef4444;">
+                    <h4 style="color: #b91c1c; margin-bottom: 15px;">✂️ Stemming (Quick & Rough)</h4>
+                    <p style="color: #7f1d1d;">Just chops off the end of words!</p>
+                    <ul style="margin-left: 20px; color: #7f1d1d;">
+                        <li>playing → play</li>
+                        <li>happily → happili ❌</li>
+                        <li>running → run</li>
+                    </ul>
+                    <p style="color: #7f1d1d; margin-top: 10px;">Fast but can create non-words!</p>
+                </div>
+                <div style="background: #ecfdf5; padding: 25px; border-radius: 15px; border: 2px solid #22c55e;">
+                    <h4 style="color: #166534; margin-bottom: 15px;">📚 Lemmatization (Proper & Smart)</h4>
+                    <p style="color: #166534;">Uses dictionary to find real root!</p>
+                    <ul style="margin-left: 20px; color: #166534;">
+                        <li>playing → play ✅</li>
+                        <li>happily → happy ✅</li>
+                        <li>better → good ✅</li>
+                    </ul>
+                    <p style="color: #166534; margin-top: 10px;">Slower but always real words!</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> nltk.stem <span class="keyword">import</span> PorterStemmer, WordNetLemmatizer
+<span class="keyword">from</span> nltk.tokenize <span class="keyword">import</span> word_tokenize
+<span class="keyword">import</span> nltk
+
+nltk.<span class="function">download</span>(<span class="string">'wordnet'</span>)
+
+sentence = <span class="string">"The children are playing happily while their teacher watches them."</span>
+
+<span class="comment"># Create stemmer and lemmatizer</span>
+stemmer = <span class="function">PorterStemmer</span>()
+lemmatizer = <span class="function">WordNetLemmatizer</span>()
+
+<span class="comment"># Tokenize the sentence</span>
+tokens = <span class="function">word_tokenize</span>(sentence)
+
+<span class="comment"># Apply stemming and lemmatization to each token</span>
+stems = [stemmer.<span class="function">stem</span>(word) <span class="keyword">for</span> word <span class="keyword">in</span> tokens]
+lemmas = [lemmatizer.<span class="function">lemmatize</span>(word) <span class="keyword">for</span> word <span class="keyword">in</span> tokens]
+
+<span class="function">print</span>(<span class="string">"Original:"</span>, tokens)
+<span class="function">print</span>(<span class="string">"Stems:"</span>, stems)
+<span class="function">print</span>(<span class="string">"Lemmas:"</span>, lemmas)
+
+<span class="output"># Output:</span>
+<span class="output"># Original: ['The', 'children', 'are', 'playing', 'happily', 'while', 'their', 'teacher', 'watches', 'them', '.']</span>
+<span class="output"># Stems:    ['the', 'children', 'are', 'play', 'happili', 'while', 'their', 'teacher', 'watch', 'them', '.']</span>
+<span class="output">#           Note: 'happili' is not a real word! ❌</span>
+<span class="output"># Lemmas:   ['The', 'child', 'are', 'playing', 'happily', 'while', 'their', 'teacher', 'watch', 'them', '.']</span>
+<span class="output">#           Note: 'children' → 'child' (proper!) ✅</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 7: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Chapter 7: Summary - NLP Pipeline</h2>
+            
+            <div class="step-box">
+                <h4>📋 Complete NLP Preprocessing Pipeline</h4>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>Tokenization</h5>
+                        <p>Break text into individual words/tokens</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Lowercasing</h5>
+                        <p>"Hello" and "hello" should be the same word</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Remove Stop Words</h5>
+                        <p>Remove common words like "the", "is", "and"</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Stemming/Lemmatization</h5>
+                        <p>Reduce words to their root form</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h5>Vectorization (TF-IDF)</h5>
+                        <p>Convert text to numbers for ML</p>
+                    </div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>What It Does</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Tokenization</strong></td>
+                    <td>Splits text into words</td>
+                    <td>"Hello world" → ["Hello", "world"]</td>
+                </tr>
+                <tr>
+                    <td><strong>POS Tagging</strong></td>
+                    <td>Labels word types</td>
+                    <td>"run" → VB (verb)</td>
+                </tr>
+                <tr>
+                    <td><strong>NER</strong></td>
+                    <td>Finds named entities</td>
+                    <td>"Elon" → PERSON</td>
+                </tr>
+                <tr>
+                    <td><strong>TF-IDF</strong></td>
+                    <td>Measures word importance</td>
+                    <td>Unique words get high scores</td>
+                </tr>
+                <tr>
+                    <td><strong>Stemming</strong></td>
+                    <td>Chops word endings</td>
+                    <td>"running" → "run"</td>
+                </tr>
+                <tr>
+                    <td><strong>Lemmatization</strong></td>
+                    <td>Finds proper root</td>
+                    <td>"better" → "good"</td>
+                </tr>
+            </table>
+
+            <div class="visual-example">
+                <h4>🎉 Congratulations!</h4>
+                <p>You now understand the basics of NLP!</p>
+                <p>These techniques power chatbots, search engines, and AI assistants!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Back to Course Hub</a>
+            <a href="index.html" class="nav-btn next">Explore More <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP - Natural Language Processing | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fbbf24 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #b45309; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .nav a:hover { color: #92400e; }
+        
+        .header {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(245, 158, 11, 0.3);
+        }
+        .header h1 { font-size: 2.8em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #f59e0b;
+        }
+        .section h2 { color: #b45309; font-size: 2em; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .section h3 { color: #d97706; font-size: 1.5em; margin: 30px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #fef3c7; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 15px; }
+        
+        .analogy-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 10px; }
+        .analogy-box p { color: #1e3a8a; }
+        
+        .example-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .example-box h4 { color: #065f46; font-size: 1.2em; margin-bottom: 10px; }
+        .example-box p, .example-box li { color: #064e3b; }
+        
+        .key-point {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        .key-point h4 { color: #92400e; margin-bottom: 10px; }
+        .key-point p { color: #78350f; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.6; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .data-table td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+        .data-table tr:nth-child(even) { background: #fffbeb; }
+        
+        .step-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .step-box {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 2px solid #f59e0b;
+        }
+        .step-box .label { font-size: 0.85em; color: #78350f; font-weight: 600; }
+        .step-box .content { font-size: 0.9em; color: #334155; margin-top: 5px; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white; border: none; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 2em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="deep-learning.html"><i class="fas fa-arrow-left"></i><span>Previous: Deep Learning</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <h1>💬 NLP - Natural Language Processing</h1>
+            <p>Teach machines to understand human language! From chatbots to sentiment analysis, NLP powers the AI revolution.</p>
+        </div>
+
+        <!-- Part 1: What is NLP -->
+        <div class="section">
+            <h2><i class="fas fa-language"></i> Part 1: What is NLP?</h2>
+            
+            <p>NLP (Natural Language Processing) is a field of AI that helps computers understand, interpret, and generate human language.</p>
+
+            <div class="analogy-box">
+                <h4>🤖 The Translation Problem</h4>
+                <p>Computers speak in 0s and 1s. Humans speak in words with context, sarcasm, and nuance.</p>
+                <p style="margin-top: 10px;"><strong>NLP bridges this gap!</strong> It converts human language into numbers that machines can process.</p>
+            </div>
+
+            <h3>Real-World NLP Applications</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Application</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Chatbots & Virtual Assistants</td>
+                    <td>Siri, Alexa, ChatGPT</td>
+                </tr>
+                <tr>
+                    <td>Sentiment Analysis</td>
+                    <td>Analyzing product reviews, social media</td>
+                </tr>
+                <tr>
+                    <td>Machine Translation</td>
+                    <td>Google Translate</td>
+                </tr>
+                <tr>
+                    <td>Text Summarization</td>
+                    <td>News article summaries</td>
+                </tr>
+                <tr>
+                    <td>Spam Detection</td>
+                    <td>Email spam filters</td>
+                </tr>
+                <tr>
+                    <td>Named Entity Recognition</td>
+                    <td>Extracting names, dates, locations</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 2: Text Preprocessing -->
+        <div class="section">
+            <h2><i class="fas fa-broom"></i> Part 2: Text Preprocessing</h2>
+            
+            <p>Raw text is messy! Before analysis, we need to clean and standardize it.</p>
+
+            <div class="step-visual">
+                <div class="step-box">
+                    <div class="label">Original</div>
+                    <div class="content">"The QUICK brown Fox!!!"</div>
+                </div>
+                <div style="color: #f59e0b; font-weight: 700;">→</div>
+                <div class="step-box">
+                    <div class="label">Lowercase</div>
+                    <div class="content">"the quick brown fox!!!"</div>
+                </div>
+                <div style="color: #f59e0b; font-weight: 700;">→</div>
+                <div class="step-box">
+                    <div class="label">Remove Punctuation</div>
+                    <div class="content">"the quick brown fox"</div>
+                </div>
+                <div style="color: #f59e0b; font-weight: 700;">→</div>
+                <div class="step-box">
+                    <div class="label">Tokenize</div>
+                    <div class="content">["the", "quick", "brown", "fox"]</div>
+                </div>
+            </div>
+
+            <h3>Common Preprocessing Steps</h3>
+            <div class="code-block">
+<pre><span class="keyword">import</span> re
+<span class="keyword">import</span> nltk
+<span class="keyword">from</span> nltk.corpus <span class="keyword">import</span> stopwords
+<span class="keyword">from</span> nltk.tokenize <span class="keyword">import</span> word_tokenize
+<span class="keyword">from</span> nltk.stem <span class="keyword">import</span> WordNetLemmatizer
+
+<span class="comment"># Download required data</span>
+nltk.<span class="function">download</span>(<span class="string">'punkt'</span>)
+nltk.<span class="function">download</span>(<span class="string">'stopwords'</span>)
+nltk.<span class="function">download</span>(<span class="string">'wordnet'</span>)
+
+text = <span class="string">"The QUICK brown foxes are jumping over the lazy dogs!!!"</span>
+
+<span class="comment"># Step 1: Lowercase</span>
+text = text.<span class="function">lower</span>()
+<span class="function">print</span>(<span class="string">"Lowercase:"</span>, text)
+
+<span class="comment"># Step 2: Remove punctuation and special characters</span>
+text = re.<span class="function">sub</span>(<span class="string">r'[^a-zA-Z\s]'</span>, <span class="string">''</span>, text)
+<span class="function">print</span>(<span class="string">"No punctuation:"</span>, text)
+
+<span class="comment"># Step 3: Tokenize (split into words)</span>
+tokens = <span class="function">word_tokenize</span>(text)
+<span class="function">print</span>(<span class="string">"Tokens:"</span>, tokens)
+
+<span class="comment"># Step 4: Remove stopwords (common words like "the", "is", "are")</span>
+stop_words = <span class="function">set</span>(stopwords.<span class="function">words</span>(<span class="string">'english'</span>))
+tokens = [word <span class="keyword">for</span> word <span class="keyword">in</span> tokens <span class="keyword">if</span> word <span class="keyword">not in</span> stop_words]
+<span class="function">print</span>(<span class="string">"Without stopwords:"</span>, tokens)
+
+<span class="comment"># Step 5: Lemmatization (reduce to base form)</span>
+lemmatizer = <span class="function">WordNetLemmatizer</span>()
+tokens = [lemmatizer.<span class="function">lemmatize</span>(word) <span class="keyword">for</span> word <span class="keyword">in</span> tokens]
+<span class="function">print</span>(<span class="string">"Lemmatized:"</span>, tokens)
+
+<span class="comment"># Output:
+# Lowercase: the quick brown foxes are jumping over the lazy dogs!!!
+# No punctuation: the quick brown foxes are jumping over the lazy dogs
+# Tokens: ['the', 'quick', 'brown', 'foxes', 'are', 'jumping', 'over', 'the', 'lazy', 'dogs']
+# Without stopwords: ['quick', 'brown', 'foxes', 'jumping', 'lazy', 'dogs']
+# Lemmatized: ['quick', 'brown', 'fox', 'jumping', 'lazy', 'dog']</span></pre>
+            </div>
+
+            <h3>Stemming vs Lemmatization</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Method</th>
+                    <th>How it Works</th>
+                    <th>Example</th>
+                    <th>Pros/Cons</th>
+                </tr>
+                <tr>
+                    <td><strong>Stemming</strong></td>
+                    <td>Chops off word endings</td>
+                    <td>"running" → "runn"</td>
+                    <td>Fast, but crude</td>
+                </tr>
+                <tr>
+                    <td><strong>Lemmatization</strong></td>
+                    <td>Uses dictionary to find base form</td>
+                    <td>"running" → "run"</td>
+                    <td>Accurate, but slower</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 3: Text Vectorization -->
+        <div class="section">
+            <h2><i class="fas fa-vector-square"></i> Part 3: Converting Text to Numbers</h2>
+            
+            <p>ML models need numbers, not words! We need to convert text into numerical vectors.</p>
+
+            <h3>Method 1: Bag of Words (CountVectorizer)</h3>
+            <div class="analogy-box">
+                <h4>📦 The Bag of Words Concept</h4>
+                <p>Imagine throwing all words from a document into a bag. We count how many times each word appears.</p>
+                <p style="margin-top: 10px;">"The cat sat on the mat" → {the: 2, cat: 1, sat: 1, on: 1, mat: 1}</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer
+
+documents = [
+    <span class="string">"I love machine learning"</span>,
+    <span class="string">"Machine learning is awesome"</span>,
+    <span class="string">"I love deep learning too"</span>
+]
+
+<span class="comment"># Create vectorizer</span>
+vectorizer = <span class="function">CountVectorizer</span>()
+X = vectorizer.<span class="function">fit_transform</span>(documents)
+
+<span class="comment"># View the vocabulary</span>
+<span class="function">print</span>(<span class="string">"Vocabulary:"</span>, vectorizer.<span class="function">get_feature_names_out</span>())
+
+<span class="comment"># View the vectors</span>
+<span class="function">print</span>(<span class="string">"Vectors:\n"</span>, X.<span class="function">toarray</span>())
+
+<span class="comment"># Output:
+# Vocabulary: ['awesome' 'deep' 'is' 'learning' 'love' 'machine' 'too']
+# Vectors:
+# [[0 0 0 1 1 1 0]    # "I love machine learning"
+#  [1 0 1 1 0 1 0]    # "Machine learning is awesome"
+#  [0 1 0 1 1 0 1]]   # "I love deep learning too"</span></pre>
+            </div>
+
+            <h3>Method 2: TF-IDF (Better!)</h3>
+            <div class="analogy-box">
+                <h4>⚖️ TF-IDF: Term Frequency × Inverse Document Frequency</h4>
+                <p><strong>TF:</strong> How often a word appears in THIS document</p>
+                <p><strong>IDF:</strong> How rare the word is across ALL documents</p>
+                <p style="margin-top: 10px;">Words appearing in every document (like "the") get LOW scores. Unique, important words get HIGH scores!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer
+
+<span class="comment"># TF-IDF Vectorizer</span>
+tfidf = <span class="function">TfidfVectorizer</span>()
+X_tfidf = tfidf.<span class="function">fit_transform</span>(documents)
+
+<span class="function">print</span>(<span class="string">"TF-IDF Vectors:\n"</span>, X_tfidf.<span class="function">toarray</span>().<span class="function">round</span>(<span class="number">2</span>))
+
+<span class="comment"># Notice: "learning" (appears in all docs) has lower scores
+# "awesome", "deep" (unique) have higher scores</span></pre>
+            </div>
+        </div>
+
+        <!-- Part 4: Sentiment Analysis -->
+        <div class="section">
+            <h2><i class="fas fa-smile"></i> Part 4: Sentiment Analysis Example</h2>
+            
+            <p>Let's build a simple sentiment classifier to predict if reviews are positive or negative!</p>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> MultinomialNB
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score, classification_report
+
+<span class="comment"># Sample data</span>
+reviews = [
+    <span class="string">"This movie was amazing! I loved it"</span>,
+    <span class="string">"Terrible film, waste of time"</span>,
+    <span class="string">"Great acting and wonderful story"</span>,
+    <span class="string">"Boring and predictable, would not recommend"</span>,
+    <span class="string">"Best movie I've seen this year"</span>,
+    <span class="string">"Awful experience, horrible plot"</span>,
+    <span class="string">"Fantastic! A must watch"</span>,
+    <span class="string">"Disappointing and dull"</span>
+]
+labels = [<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>]  <span class="comment"># 1=positive, 0=negative</span>
+
+<span class="comment"># Vectorize</span>
+tfidf = <span class="function">TfidfVectorizer</span>(stop_words=<span class="string">'english'</span>)
+X = tfidf.<span class="function">fit_transform</span>(reviews)
+
+<span class="comment"># Split data</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, labels, test_size=<span class="number">0.25</span>)
+
+<span class="comment"># Train Naive Bayes classifier</span>
+model = <span class="function">MultinomialNB</span>()
+model.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Predict</span>
+predictions = model.<span class="function">predict</span>(X_test)
+<span class="function">print</span>(<span class="string">"Accuracy:"</span>, <span class="function">accuracy_score</span>(y_test, predictions))
+
+<span class="comment"># Test with new reviews</span>
+new_reviews = [<span class="string">"This was absolutely wonderful!"</span>, <span class="string">"I hated every minute"</span>]
+new_vectors = tfidf.<span class="function">transform</span>(new_reviews)
+<span class="function">print</span>(<span class="string">"Predictions:"</span>, model.<span class="function">predict</span>(new_vectors))  <span class="comment"># [1, 0]</span></pre>
+            </div>
+        </div>
+
+        <!-- Part 5: Named Entity Recognition -->
+        <div class="section">
+            <h2><i class="fas fa-tag"></i> Part 5: Named Entity Recognition (NER)</h2>
+            
+            <p>NER extracts important entities like names, places, dates, and organizations from text.</p>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> spacy
+
+<span class="comment"># Load English model</span>
+nlp = spacy.<span class="function">load</span>(<span class="string">'en_core_web_sm'</span>)
+
+text = <span class="string">"Apple Inc. was founded by Steve Jobs in California on April 1, 1976. The company is worth $2 trillion."</span>
+
+<span class="comment"># Process text</span>
+doc = <span class="function">nlp</span>(text)
+
+<span class="comment"># Extract entities</span>
+<span class="function">print</span>(<span class="string">"Named Entities:"</span>)
+<span class="keyword">for</span> ent <span class="keyword">in</span> doc.ents:
+    <span class="function">print</span>(<span class="string">f"  {ent.text} → {ent.label_}"</span>)
+
+<span class="comment"># Output:
+# Named Entities:
+#   Apple Inc. → ORG (Organization)
+#   Steve Jobs → PERSON
+#   California → GPE (Geopolitical Entity/Location)
+#   April 1, 1976 → DATE
+#   $2 trillion → MONEY</span></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>📋 Common Entity Types</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>PERSON:</strong> People names</li>
+                    <li><strong>ORG:</strong> Companies, organizations</li>
+                    <li><strong>GPE:</strong> Countries, cities, states</li>
+                    <li><strong>DATE:</strong> Dates and times</li>
+                    <li><strong>MONEY:</strong> Monetary values</li>
+                    <li><strong>PRODUCT:</strong> Product names</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 6: Word Embeddings -->
+        <div class="section">
+            <h2><i class="fas fa-project-diagram"></i> Part 6: Word Embeddings (Word2Vec)</h2>
+            
+            <p>Word embeddings capture <strong>meaning</strong> of words as dense vectors. Similar words have similar vectors!</p>
+
+            <div class="analogy-box">
+                <h4>🎯 The Magic of Word Embeddings</h4>
+                <p>Word2Vec learns that:</p>
+                <p style="margin-top: 10px; font-family: monospace; font-size: 1.1em; color: #1e40af;">
+                    King - Man + Woman ≈ Queen
+                </p>
+                <p style="margin-top: 10px;">It captures semantic relationships between words!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> gensim.models <span class="keyword">import</span> Word2Vec
+<span class="keyword">from</span> gensim.models <span class="keyword">import</span> KeyedVectors
+
+<span class="comment"># Sample sentences (typically you'd use MUCH more data)</span>
+sentences = [
+    [<span class="string">'king'</span>, <span class="string">'queen'</span>, <span class="string">'royal'</span>, <span class="string">'palace'</span>],
+    [<span class="string">'man'</span>, <span class="string">'woman'</span>, <span class="string">'child'</span>, <span class="string">'family'</span>],
+    [<span class="string">'python'</span>, <span class="string">'programming'</span>, <span class="string">'code'</span>, <span class="string">'computer'</span>],
+    [<span class="string">'machine'</span>, <span class="string">'learning'</span>, <span class="string">'data'</span>, <span class="string">'algorithm'</span>]
+]
+
+<span class="comment"># Train Word2Vec model</span>
+model = <span class="function">Word2Vec</span>(sentences, vector_size=<span class="number">100</span>, window=<span class="number">5</span>, min_count=<span class="number">1</span>)
+
+<span class="comment"># Get vector for a word</span>
+king_vector = model.wv[<span class="string">'king'</span>]
+<span class="function">print</span>(<span class="string">"Vector for 'king' (first 10 dims):"</span>, king_vector[:<span class="number">10</span>])
+
+<span class="comment"># Find similar words</span>
+similar = model.wv.<span class="function">most_similar</span>(<span class="string">'python'</span>, topn=<span class="number">3</span>)
+<span class="function">print</span>(<span class="string">"Similar to 'python':"</span>, similar)
+
+<span class="comment"># Using pre-trained embeddings (much better!)</span>
+<span class="comment"># Download: https://nlp.stanford.edu/projects/glove/</span>
+<span class="comment"># glove = KeyedVectors.load_word2vec_format('glove.6B.100d.txt')</span></pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Pre-trained Embeddings</h4>
+                <p>For real projects, use pre-trained embeddings trained on billions of words:</p>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #78350f;">
+                    <li><strong>GloVe:</strong> Stanford's pre-trained vectors</li>
+                    <li><strong>FastText:</strong> Facebook's embeddings (handles unknown words)</li>
+                    <li><strong>BERT:</strong> Context-aware embeddings from Google</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>Key Points</th>
+                </tr>
+                <tr>
+                    <td><strong>Text Preprocessing</strong></td>
+                    <td>Lowercase, remove punctuation, tokenize, remove stopwords, lemmatize</td>
+                </tr>
+                <tr>
+                    <td><strong>Bag of Words</strong></td>
+                    <td>Count word occurrences - simple but ignores order</td>
+                </tr>
+                <tr>
+                    <td><strong>TF-IDF</strong></td>
+                    <td>Weights words by importance - penalizes common words</td>
+                </tr>
+                <tr>
+                    <td><strong>Named Entity Recognition</strong></td>
+                    <td>Extract names, places, dates, organizations from text</td>
+                </tr>
+                <tr>
+                    <td><strong>Word Embeddings</strong></td>
+                    <td>Dense vectors capturing word meaning and relationships</td>
+                </tr>
+            </table>
+
+            <div class="key-point">
+                <h4>🎯 NLP Pipeline</h4>
+                <ol style="margin-left: 20px; color: #78350f;">
+                    <li><strong>Collect text data</strong></li>
+                    <li><strong>Preprocess</strong> (clean, tokenize, remove stopwords)</li>
+                    <li><strong>Vectorize</strong> (TF-IDF or embeddings)</li>
+                    <li><strong>Train model</strong> (Naive Bayes, SVM, or neural network)</li>
+                    <li><strong>Evaluate and iterate</strong></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="deep-learning.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Deep Learning</a>
+            <a href="classification.html" class="nav-btn next">Next: Classification Algorithms <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

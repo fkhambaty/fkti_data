@@ -691,63 +691,43 @@ const storyThemes = {
         icon: "🛒",
         badge: "RETAIL",
         title: "Meet DataBot 🤖 - Your Retail Data Guide!",
-        subtitle: "Follow DataBot as he transforms messy store data into sales insights using our 10 essential tools!",
+        subtitle: "Follow DataBot as he transforms messy store data into sales insights using our 9 essential tools!",
         speech: "Welcome to the world of Retail! Let me show you how we turn messy store data into golden sales insights!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Busy Store Register",
-                desc: "Imagine thousands of cash registers across 5,000 stores! 🏪 Every beep, every scan, every 'Have a nice day!' creates data. But it's all scattered - frozen pizza in one table, customer info in another, inventory somewhere else!",
+                desc: "Imagine thousands of cash registers across 5,000 stores! 🏪 Every beep, every scan, every 'Have a nice day!' creates data. But it's all scattered - frozen pizza in one table, customer info in another, inventory somewhere else. Like finding a specific sock in a warehouse of socks!",
                 example: "Customer Sarah bought diapers, beer, and chips at Store #4521 at 8:47 PM. But this data is split across 12 different tables! 😱"
             },
             step2: {
                 title: "DBeaver - The X-Ray Vision Glasses",
-                desc: "DBeaver is like putting on magical X-ray glasses! 👓 You can SEE inside any database. 'Oh look, there's the customers table! And there's the products!'",
+                desc: "DBeaver is like putting on magical X-ray glasses! 👓 You can SEE inside any database. 'Oh look, there's the customers table! And there's the products! Let me write a query to peek at Sarah's shopping cart!'",
                 example: "Connected to 15 different stores! I can see 2.3 million transactions from last week. Let me show you which products are selling like hotcakes! 🥞"
             },
             step3: {
                 title: "Python - The Smart Shopping Assistant",
-                desc: "Python is that super-smart employee who memorizes EVERYTHING! 🧠 It reads millions of receipts, spots patterns humans would miss!",
+                desc: "Python is that super-smart employee who memorizes EVERYTHING! 🧠 It reads millions of receipts, spots patterns humans would miss, and says 'Aha! People who buy diapers also buy beer! And it happens more on Friday evenings!'",
                 example: "Analyzed 50 million transactions! Found that putting bananas near cereal increases banana sales by 23%! 🍌"
             },
             step4: {
                 title: "AWS DMS - The Data Moving Truck",
-                desc: "DMS is like having a magical moving truck! 🚚 It takes data from your old store system and moves it to the fancy new cloud warehouse - WITHOUT closing the store!",
+                desc: "DMS is like having a magical moving truck! 🚚 It takes data from your old store system and moves it to the fancy new cloud warehouse - WITHOUT closing the store! Zero downtime, zero data loss!",
                 example: "Moving 500GB of sales data from Store Server to AWS... Customers still shopping... Done! Not a single receipt lost! 🎉"
             },
             step5: {
                 title: "Terraform - The Store Builder Robot",
-                desc: "Need a new data center? Terraform builds it in 10 minutes! 🏗️ Like LEGO for the cloud - 'I need 1 data warehouse, 5 servers, 3 storage buckets!'",
-                example: "Creating analytics infrastructure for Black Friday... Scaling to handle 10x normal traffic... Ready! 💪"
+                desc: "Need a new data center? Terraform builds it in 10 minutes! 🏗️ Like LEGO for the cloud - 'I need 1 data warehouse, 5 servers, 3 storage buckets, and connect them all together!' Click. Done. No calling IT for 6 months!",
+                example: "Creating analytics infrastructure for Black Friday... Scaling to handle 10x normal traffic... Ready to process 1 million transactions per hour! 💪"
             },
             step6: {
                 title: "Redshift - The Super Organized Warehouse",
-                desc: "Redshift is like having a warehouse where EVERYTHING is perfectly organized! 📦 5 billion rows of data, but finding specific customers takes 2 seconds!",
+                desc: "Redshift is like having a warehouse where EVERYTHING is perfectly organized! 📦 5 billion rows of data, but finding 'all customers who bought organic milk on Tuesdays' takes 2 seconds! It's the Marie Kondo of data storage!",
                 example: "'Which stores sold out of toilet paper last March?' Searching 10 years of data... Found 847 stores in 0.8 seconds! 🚀"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Store Manager",
-                desc: "Airflow is that manager who NEVER sleeps! ⏰ Every night: 'Collect all store sales! Update inventory! Send restock alerts!' 365 days a year!",
-                example: "12:00 AM - Extract sales ✓, 12:30 AM - Clean data ✓, 1:00 AM - Load to warehouse ✓, 1:30 AM - Update dashboards ✓ ☕"
-            },
-            step8: {
-                title: "DBT - The Business Translator",
-                desc: "DBT translates 'txn_id: 847291' into 'Sarah bought groceries worth $47.52 and is a loyal customer for 3 years!' Business-friendly data! 🎭",
-                example: "Customer Lifetime Value ready! Sarah = $12,847 over 3 years. Top 5% customer! Time for VIP coupon! 👑"
-            },
-            step9: {
-                title: "Metabase - The Beautiful Storyteller",
-                desc: "Metabase turns numbers into stories! 📊 No more spreadsheets with 10,000 rows. Beautiful charts and dashboards that make the CEO say 'WOW!'",
-                example: "Live dashboard: Sales up 12% today! Store #4521 is the MVP! Hot product: Organic produce! Alert: Store #2847 low on essentials! 📊"
-            },
-            step10: {
-                title: "Data Science - The Pattern Detective",
-                desc: "Data Science finds hidden patterns in millions of shopping transactions! 🔍 Predicts what customers will buy before THEY even know!",
-                example: "Predicted: Customers who buy baby products on Mondays buy snacks on Fridays (87% accuracy)! Stock up snacks on Thursdays! 🎯"
             }
         },
         result: {
             title: "The Retail Magic! ✨",
-            desc: "From 5,000 chaotic stores to one beautiful command center! Store managers now see real-time sales, inventory alerts, and customer trends!",
+            desc: "From 5,000 chaotic stores to one beautiful command center! Store managers now see real-time sales, inventory alerts, and customer trends. All 9 tools working together like a symphony! 🎵",
             before: "How did we do on Black Friday?",
             beforeResult: "*2 weeks of number crunching* 😵",
             after: "How did we do?",
@@ -759,63 +739,43 @@ const storyThemes = {
         icon: "🎬",
         badge: "CINEMA",
         title: "Meet DataBot 🤖 - Your Box Office Analyst!",
-        subtitle: "Watch DataBot turn ticket stubs into blockbuster predictions using all 10 data tools!",
+        subtitle: "Watch DataBot turn ticket stubs into blockbuster predictions using our 9 data tools!",
         speech: "Lights, Camera, DATA! Let me show you how we predict the next blockbuster hit!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Ticket Counter Chaos",
-                desc: "Picture 500 movie theatres with popcorn-sticky keyboards! 🎟️ Every ticket sale, every large popcorn upgrade gets logged. But data is everywhere!",
+                desc: "Picture 500 movie theatres with popcorn-sticky keyboards! 🎟️ Every ticket sale, every large popcorn upgrade, every 'extra butter please!' gets logged. But data is everywhere - ticket sales here, concessions there, movie schedules in another system!",
                 example: "John bought 2 tickets for 'Avatar 5' at 7:30 PM, large popcorn combo, and snuck in his own candy (we know, John!) 🍿"
             },
             step2: {
                 title: "DBeaver - The Film Critic's Notebook",
-                desc: "DBeaver lets you explore movie data like a detective! 🔍 'Show me all Friday 7 PM screenings... which snacks sold most during Marvel movies!'",
-                example: "Discovered that 'horror movie + nachos' is the most popular combo! Romantic comedies sell 40% more chocolate! 🍫"
+                desc: "DBeaver lets you explore movie data like a detective! 🔍 'Show me all Friday 7 PM screenings... Now show me which snacks sold the most during Marvel movies!' It's like having a crystal ball for cinema!",
+                example: "Discovered that 'horror movie + nachos' is the most popular combo! And romantic comedies sell 40% more chocolate! 🍫"
             },
             step3: {
                 title: "Python - The Prediction Machine",
-                desc: "Python analyzes years of movie data and predicts hits! 🎯 Based on director, cast, genre - it predicts opening weekend revenue!",
+                desc: "Python analyzes years of movie data and predicts hits! 🎯 'Based on director, cast, genre, and release date... this movie will make $150M opening weekend!' It's like having a time-traveling film critic!",
                 example: "Predicted 'Superhero Movie X' would flop based on runtime + similar films. Saved $2M in marketing! 💰"
             },
             step4: {
                 title: "AWS DMS - The Reel-to-Digital Converter",
-                desc: "DMS migrates all historical ticket data to the cloud! 📼 10 years of box office history, now searchable in seconds!",
-                example: "Migrated 15 years of ticket sales while theatres stayed open. 500 million tickets worth of data! 🎬"
+                desc: "DMS migrates all historical ticket data to the cloud! 📼 Like converting all those old film reels to digital - but for data! 10 years of box office history, now searchable in seconds!",
+                example: "Migrated 15 years of ticket sales while theatres stayed open. That's 500 million tickets worth of data! 🎬"
             },
             step5: {
                 title: "Terraform - The Cinema Infrastructure Builder",
-                desc: "Need servers for streaming analytics? Terraform builds infrastructure in minutes! 🏗️ Auto-scaling for opening weekends!",
-                example: "Building infrastructure for 'Avengers 10' opening weekend... Ready for 10 million ticket sales! 🎬"
+                desc: "Need new servers for streaming analytics? Terraform builds the entire infrastructure in minutes! 🏗️ 'I need 3 data warehouses, 10 compute instances, and auto-scaling for opening weekend!' Click. Done. No IT tickets!",
+                example: "Building infrastructure for 'Avengers 10' opening weekend... Scaling for 10 million ticket sales... Ready in 8 minutes! 🎬"
             },
             step6: {
                 title: "Redshift - The Box Office Archive",
-                desc: "Redshift stores decades of movie data perfectly organized! 📦 Finding 'all horror movies that sold out on Fridays' takes 1 second!",
-                example: "'Which movies had the best popcorn sales?' Found top 10 in 0.5 seconds! Horror + nachos = gold! 🍿"
-            },
-            step7: {
-                title: "Airflow - The Showtime Scheduler",
-                desc: "Airflow runs nightly! ⏰ 'Update box office totals! Calculate seat fill rates! Refresh concession inventory! Send restock alerts!'",
-                example: "2:00 AM - Collect ticket sales ✓, 2:30 AM - Update revenue ✓, 3:00 AM - Refresh dashboards ✓, Alert: Screen 5 projector maintenance due! 🎥"
-            },
-            step8: {
-                title: "DBT - The Cinema Translator",
-                desc: "DBT transforms 'txn: 847291, seat: G7' into 'John watched Avatar 5 in premium seats, spent $47 on concessions, 3rd visit this month!' 🎭",
-                example: "Movie Performance Model ready! Avatar 5 = $2.1M this week, 94% capacity, top concession: large popcorn combo! 🍿"
-            },
-            step9: {
-                title: "Metabase - The Box Office Dashboard",
-                desc: "Metabase shows real-time cinema performance! 📊 Which screens are full? Which movies are trending? What's selling at concessions?",
-                example: "Live dashboard: Avatar 5 at 98% capacity! Screen 3 undersold - push promotions! Popcorn sales up 23%! Nacho cheese running low! 🎬"
-            },
-            step10: {
-                title: "Data Science - The Hit Predictor",
-                desc: "Data Science predicts which movies will be hits! 🔍 Analyzes trailers, social buzz, cast popularity, and historical patterns!",
-                example: "Predicted: New thriller will have 89% opening weekend fill rate. Book extra late-night shows! Order 40% more nachos! 🎯"
+                desc: "Redshift stores decades of movie data perfectly organized! 📦 20 years of ticket sales, but finding 'all horror movies that sold out on Friday nights' takes 1 second! It's the ultimate film database!",
+                example: "'Which movies had the best popcorn sales?' Searching 15 years of data... Found top 10 in 0.5 seconds! Horror movies + nachos = gold! 🍿"
             }
         },
         result: {
             title: "The Box Office Magic! ✨",
-            desc: "From scattered ticket stubs to predicting the next billion-dollar franchise! Theatre managers know exactly which movies to book!",
+            desc: "From scattered ticket stubs to predicting the next billion-dollar franchise! Theatre managers now know exactly which movies to book, when, and how much popcorn to order! 🍿",
             before: "Should we book this indie film?",
             beforeResult: "*Gut feeling and crossed fingers* 🤞",
             after: "Should we book this indie film?",
@@ -827,63 +787,43 @@ const storyThemes = {
         icon: "✈️",
         badge: "AVIATION",
         title: "Meet DataBot 🤖 - Your Flight Operations Expert!",
-        subtitle: "Soar with DataBot as he optimizes flight routes and passenger experiences using all 10 tools!",
+        subtitle: "Soar with DataBot as he optimizes flight routes and passenger experiences!",
         speech: "Welcome aboard Flight DATA-101! Let me show you how we keep millions of passengers happy!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Busy Airport Terminal",
-                desc: "Imagine managing 1,000 flights daily! ✈️ Passengers checking in, bags being loaded, pilots filing reports. Data flying everywhere faster than the planes!",
+                desc: "Imagine managing 1,000 flights daily! ✈️ Passengers checking in, bags being loaded, pilots filing reports, fuel being pumped. Data flying everywhere faster than the planes! Gate assignments here, passenger manifests there!",
                 example: "Flight 747 to Paris: 234 passengers, 847 bags, 3 vegetarian meals, 1 emotional support peacock. All in different systems! 🦚"
             },
             step2: {
                 title: "DBeaver - The Control Tower View",
-                desc: "DBeaver gives you the control tower perspective! 📡 See every flight, every delay, every connection at risk. Crisis averted!",
+                desc: "DBeaver gives you the control tower perspective! 📡 See every flight, every delay, every connection at risk. 'Show me all passengers connecting through Chicago with less than 30 minutes!' Crisis averted!",
                 example: "Found 47 passengers who'll miss connections due to weather delay. Automatically rebooked before they even knew! 🌧️"
             },
             step3: {
                 title: "Python - The Route Optimizer",
-                desc: "Python calculates the most efficient flight paths! 🗺️ Fuel prices, weather patterns, air traffic - finds the perfect route!",
+                desc: "Python calculates the most efficient flight paths! 🗺️ Fuel prices, weather patterns, air traffic - it processes everything to find the perfect route. Saves millions in fuel costs!",
                 example: "Optimized Pacific routes based on jet streams. Saved 15 minutes per flight = $50M in fuel annually! ⛽"
             },
             step4: {
                 title: "AWS DMS - The Airline Merger Expert",
-                desc: "When two airlines merge, DMS combines their systems! 🤝 Millions of loyalty members unified without a single flight cancellation!",
+                desc: "When two airlines merge, DMS combines their systems! 🤝 Millions of loyalty members, fleet data, crew schedules - all unified without a single flight cancellation!",
                 example: "Merged two airlines' databases overnight. 50 million frequent flyer accounts combined flawlessly! ✨"
             },
             step5: {
                 title: "Terraform - The Airport Infrastructure Manager",
-                desc: "Need cloud infrastructure for flight operations? Terraform builds it instantly! 🏗️ Auto-scaling for holiday rush!",
+                desc: "Need cloud infrastructure for flight operations? Terraform builds it instantly! 🏗️ 'I need 5 data warehouses, 20 servers for real-time tracking, and auto-scaling for holiday rush!' Click. Done. No delays!",
                 example: "Building infrastructure for holiday season... Scaling to handle 2 million passengers/day... Ready in 12 minutes! ✈️"
             },
             step6: {
                 title: "Redshift - The Flight Data Warehouse",
-                desc: "Redshift stores billions of flight records! 📦 30 years of data, finding 'all delayed flights due to weather' takes 2 seconds!",
-                example: "'Which routes have the most delays?' Found top 50 routes in 1.2 seconds! Chicago O'Hare + winter = delays! ❄️"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Flight Controller",
-                desc: "Airflow monitors flights 24/7! ⏰ 'Update flight status! Check weather! Recalculate ETAs! Alert for delays!' Every minute, every flight!",
-                example: "1:00 AM - Update all flight statuses ✓, 1:15 AM - Weather check ✓, 1:30 AM - Crew scheduling ✓, Alert: Flight 234 needs gate change! ✈️"
-            },
-            step8: {
-                title: "DBT - The Aviation Translator",
-                desc: "DBT transforms 'flt: 747, pax: 234, eta: 1430' into 'Flight 747 to Paris arrives 2:30 PM with 234 happy passengers!' Business-ready! 🎭",
-                example: "On-Time Performance Model ready! Route JFK-LAX = 94% on-time. Best crew: Captain Smith's team! ✈️"
-            },
-            step9: {
-                title: "Metabase - The Operations Dashboard",
-                desc: "Metabase shows real-time flight operations! 📊 Which flights are delayed? Gate availability? Crew status? All on one screen!",
-                example: "Live dashboard: 847 flights on-time! Flight 234 delayed 20 min - passengers notified! Gate B7 available! Crew rest compliant! 🛫"
-            },
-            step10: {
-                title: "Data Science - The Delay Predictor",
-                desc: "Data Science predicts delays 6 hours ahead! 🔍 Analyzes weather, air traffic, historical patterns, and aircraft maintenance!",
-                example: "Predicted: Flight 892 will be delayed 45 min due to Chicago weather. Auto-rebook connecting passengers NOW! 🌧️"
+                desc: "Redshift stores billions of flight records perfectly organized! 📦 30 years of flight data, but finding 'all delayed flights due to weather in December' takes 2 seconds! It's the control tower's best friend!",
+                example: "'Which routes have the most delays?' Searching 10 years of data... Found top 50 routes in 1.2 seconds! Chicago O'Hare + winter = delays! ❄️"
             }
         },
         result: {
             title: "The Aviation Magic! ✨",
-            desc: "From flight delays to on-time arrivals! Operations center predicts delays 6 hours ahead, automatically rebooks passengers!",
+            desc: "From flight delays to on-time arrivals! Operations center now predicts delays 6 hours ahead, automatically rebooks passengers, and optimizes crew schedules. Passengers actually arrive happy! 😊",
             before: "Why is my flight delayed?",
             beforeResult: "*Shrug* 'Weather somewhere maybe?' ☁️",
             after: "Will my flight be delayed?",
@@ -895,63 +835,43 @@ const storyThemes = {
         icon: "🛢️",
         badge: "ENERGY",
         title: "Meet DataBot 🤖 - Your Energy Sector Analyst!",
-        subtitle: "Drill into data with DataBot as he monitors oil rigs using all 10 essential tools!",
+        subtitle: "Drill into data with DataBot as he monitors oil rigs and optimizes production!",
         speech: "Welcome to the oil fields! Let me show you how we turn sensor data into energy efficiency!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Sensor Ocean",
-                desc: "Picture an oil rig with 10,000 sensors! 🌡️ Temperature, pressure, flow rates - data streaming every millisecond! One rig generates more data than a small country!",
+                desc: "Picture an oil rig with 10,000 sensors! 🌡️ Temperature, pressure, flow rates, vibrations - data streaming every millisecond! One rig generates more data than a small country! It's a tsunami of numbers!",
                 example: "Sensor #4521 shows pressure at 4,521 PSI. Sensor #4522 shows temperature at 347°F. That's 864 million readings per day! 📊"
             },
             step2: {
                 title: "DBeaver - The Engineer's Dashboard",
-                desc: "DBeaver helps engineers query sensor data safely! 🔧 'Show me all pressure anomalies in the last hour.' Spot problems before disasters!",
-                example: "Query revealed Pump #7 running 12% hotter than normal. Scheduled maintenance. Saved $2M! 💵"
+                desc: "DBeaver helps engineers query sensor data safely! 🔧 'Show me all pressure anomalies in the last hour.' Spot problems before they become disasters!",
+                example: "Query revealed Pump #7 running 12% hotter than normal. Scheduled maintenance before failure. Saved $2M! 💵"
             },
             step3: {
                 title: "Python - The Predictive Maintenance Brain",
-                desc: "Python predicts equipment failures BEFORE they happen! 🔮 Analyzing vibration patterns: 'This pump will fail in 72 hours!'",
+                desc: "Python predicts equipment failures BEFORE they happen! 🔮 By analyzing vibration patterns, it says 'This pump will fail in 72 hours.' Replace it now, avoid $10M in lost production!",
                 example: "Predicted turbine bearing failure 5 days early. Scheduled repair during planned downtime. Zero production loss! 🎯"
             },
             step4: {
                 title: "AWS DMS - The Legacy System Bridge",
-                desc: "Oil rigs run systems from the 1990s! 📟 DMS connects ancient systems to modern cloud analytics!",
-                example: "Connected 30-year-old SCADA system to AWS. Engineers can monitor rigs from their phones! 📱"
+                desc: "Oil rigs run systems from the 1990s! 📟 DMS connects these ancient systems to modern cloud analytics. Like teaching your grandpa's computer to talk to Alexa!",
+                example: "Connected 30-year-old SCADA system to AWS. Now engineers can monitor rigs from their phones! 📱"
             },
             step5: {
                 title: "Terraform - The Rig Infrastructure Builder",
-                desc: "Need cloud infrastructure for sensor analytics? Terraform builds it in minutes! 🏗️ No rig downtime!",
-                example: "Building infrastructure for 50 oil rigs... Scaling for 1 billion sensor readings/day... Ready in 10 minutes! 🛢️"
+                desc: "Need cloud infrastructure for sensor analytics? Terraform builds it in minutes! 🏗️ 'I need 3 data warehouses, 15 servers for real-time monitoring, and auto-scaling for peak production!' Click. Done. No rig downtime!",
+                example: "Building infrastructure for 50 oil rigs... Scaling to handle 1 billion sensor readings/day... Ready in 10 minutes! 🛢️"
             },
             step6: {
                 title: "Redshift - The Sensor Data Archive",
-                desc: "Redshift stores decades of sensor data! 📦 20 years of pressure and temperature data, finding anomalies takes 1 second!",
-                example: "'Which pumps had the most failures?' Found top 20 pumps in 0.8 seconds! Maintenance scheduled! 🔧"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Rig Monitor",
-                desc: "Airflow monitors every rig 24/7! ⏰ 'Check all sensors! Update safety metrics! Alert if pressure exceeds threshold!' Never sleeps!",
-                example: "Every 5 min - Sensor check ✓, Every hour - Safety report ✓, Alert: Rig #7 pressure spike detected! Investigate NOW! 🚨"
-            },
-            step8: {
-                title: "DBT - The Energy Translator",
-                desc: "DBT transforms 'sensor: 4521, val: 847.2' into 'Well #12 producing 847 barrels/day, 15% above target!' Business-ready metrics! 🎭",
-                example: "Production Efficiency Model ready! Rig #23 = 94% efficiency, Best performer this quarter! Bonus for crew! 🏆"
-            },
-            step9: {
-                title: "Metabase - The Rig Operations Dashboard",
-                desc: "Metabase shows real-time rig performance! 📊 Production rates, safety metrics, equipment health - all visible to engineers worldwide!",
-                example: "Live dashboard: Rig #7 at 98% efficiency! Well #12 ahead of target! Alert: Pump #3 vibration increasing - schedule check! 🛢️"
-            },
-            step10: {
-                title: "Data Science - The Equipment Failure Predictor",
-                desc: "Data Science predicts failures weeks ahead! 🔍 Analyzes vibration, temperature, pressure patterns across all equipment!",
-                example: "Predicted: Compressor #4 will need maintenance in 14 days based on vibration trend. Schedule during planned shutdown! ⚠️"
+                desc: "Redshift stores decades of sensor data perfectly organized! 📦 20 years of pressure, temperature, and flow data, but finding 'all anomalies in Pump #7 last month' takes 1 second! It's the engineer's crystal ball!",
+                example: "'Which pumps had the most failures?' Searching 15 years of data... Found top 20 pumps in 0.8 seconds! Predictive maintenance scheduled! 🔧"
             }
         },
         result: {
             title: "The Energy Magic! ✨",
-            desc: "From reactive repairs to predictive maintenance! Engineers see problems coming weeks ahead. Production up 15%, accidents down 40%!",
+            desc: "From reactive repairs to predictive maintenance! Engineers now see problems coming weeks ahead. Production up 15%, accidents down 40%, and equipment lasts 30% longer! 🛢️",
             before: "Why did that pump explode?",
             beforeResult: "*Investigation* 'It was old, I guess?' 🤷",
             after: "Is anything about to fail?",
@@ -963,63 +883,43 @@ const storyThemes = {
         icon: "📦",
         badge: "SUPPLY",
         title: "Meet DataBot 🤖 - Your Supply Chain Guru!",
-        subtitle: "Watch DataBot optimize procurement and save millions using all 10 tools!",
+        subtitle: "Watch DataBot optimize procurement and save millions in purchasing!",
         speech: "Welcome to the supply chain! Let me show you how we turn purchase orders into profit!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Vendor Jungle",
-                desc: "Managing 5,000 vendors is like herding cats! 🐱 Purchase orders, invoices, delivery schedules - all in different formats! Some email Excel, others fax!",
-                example: "Order #78451: 10,000 widgets from Vendor A. But Vendor B is 15% cheaper... and Vendor C has better quality! 😵"
+                desc: "Managing 5,000 vendors is like herding cats! 🐱 Purchase orders, invoices, delivery schedules, quality reports - all in different formats! Some vendors email Excel, others fax (yes, fax!), some use carrier pigeons!",
+                example: "Order #78451: 10,000 widgets from Vendor A. But wait, Vendor B is 15% cheaper... and Vendor C has better quality! 😵"
             },
             step2: {
                 title: "DBeaver - The Vendor Analyzer",
-                desc: "DBeaver helps you compare vendors instantly! 📋 'Show me all vendors who delivered late last quarter.' Negotiations become easier!",
-                example: "Found Vendor X has 98% on-time delivery vs Vendor Y's 67%. Switched and saved 3 weeks in delays! ⏰"
+                desc: "DBeaver helps you compare vendors instantly! 📋 'Show me all vendors who delivered late last quarter.' Suddenly negotiations become much easier!",
+                example: "Found that Vendor X has 98% on-time delivery vs Vendor Y's 67%. Switched and saved 3 weeks in delays! ⏰"
             },
             step3: {
                 title: "Python - The Price Predictor",
-                desc: "Python analyzes market trends and predicts prices! 📈 'Steel prices will rise 20% next month.' Buy now, save millions!",
+                desc: "Python analyzes market trends and predicts prices! 📈 'Steel prices will rise 20% next month due to shipping constraints.' Buy now and save millions!",
                 example: "Predicted copper shortage 2 months early. Pre-ordered at current prices. Saved $4.2M when prices spiked! 💰"
             },
             step4: {
                 title: "AWS DMS - The ERP Unifier",
-                desc: "Every acquisition means another ERP system! 🏢 DMS merges Oracle, SAP, custom systems into one platform!",
-                example: "Unified 7 ERP systems after acquisitions. Found 3 contracts with same vendor at different prices! 🤯"
+                desc: "Every acquisition means another ERP system! 🏢 DMS merges Oracle, SAP, and custom systems into one unified procurement platform. One vendor database to rule them all!",
+                example: "Unified 7 different ERP systems after acquisitions. Found we had 3 contracts with same vendor at different prices! 🤯"
             },
             step5: {
                 title: "Terraform - The Procurement Infrastructure Builder",
-                desc: "Need cloud infrastructure for vendor analytics? Terraform builds it instantly! 🏗️ No procurement delays!",
-                example: "Building infrastructure for global procurement... Scaling for 100,000 POs/day... Ready in 7 minutes! 📦"
+                desc: "Need cloud infrastructure for vendor analytics? Terraform builds it instantly! 🏗️ 'I need 2 data warehouses, 8 servers for price tracking, and auto-scaling for purchase order processing!' Click. Done. No procurement delays!",
+                example: "Building infrastructure for global procurement... Scaling to handle 100,000 purchase orders/day... Ready in 7 minutes! 📦"
             },
             step6: {
                 title: "Redshift - The Vendor Data Warehouse",
-                desc: "Redshift stores years of vendor data! 📦 10 years of procurement data, finding late deliveries takes 1 second!",
-                example: "'Which vendors have best on-time delivery?' Found top 100 vendors in 0.6 seconds! 💰"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Buyer",
-                desc: "Airflow monitors inventory 24/7! ⏰ 'Check stock levels! Update vendor scores! Send reorder alerts!' Never misses a reorder point!",
-                example: "Every hour - Stock check ✓, Daily - Vendor scorecard update ✓, Alert: Widget inventory below threshold - reorder from Vendor A! 📦"
-            },
-            step8: {
-                title: "DBT - The Procurement Translator",
-                desc: "DBT transforms 'po: 78451, qty: 10000' into 'Widget order from Vendor A, $45,000, arriving in 5 days, 98% quality score!' 🎭",
-                example: "Vendor Scorecard ready! Vendor A = 98% on-time, 99% quality. Vendor B = 67% on-time - renegotiate or replace! 📋"
-            },
-            step9: {
-                title: "Metabase - The Supply Chain Dashboard",
-                desc: "Metabase shows real-time procurement status! 📊 Open POs, inventory levels, vendor performance - all on one screen!",
-                example: "Live dashboard: 847 open POs! Vendor A shipment arriving tomorrow! Alert: Steel inventory critical - expedite order! 📦"
-            },
-            step10: {
-                title: "Data Science - The Demand Forecaster",
-                desc: "Data Science predicts what you'll need and when! 🔍 Analyzes seasonal trends, market conditions, historical usage!",
-                example: "Predicted: Widget demand will spike 40% in Q4. Pre-order now at locked prices! Saved $2.1M vs spot buying! 📈"
+                desc: "Redshift stores years of vendor and purchase data perfectly organized! 📦 10 years of procurement data, but finding 'all vendors who delivered late in Q4' takes 1 second! It's the procurement team's best tool!",
+                example: "'Which vendors have the best on-time delivery?' Searching 5 years of data... Found top 100 vendors in 0.6 seconds! Negotiations just got easier! 💰"
             }
         },
         result: {
             title: "The Procurement Magic! ✨",
-            desc: "From chaotic purchasing to strategic sourcing! Vendor scorecards, price predictions, automatic reordering. Costs down 18%!",
+            desc: "From chaotic purchasing to strategic sourcing! Procurement team now has vendor scorecards, price predictions, and automatic reordering. Costs down 18%, supplier quality up! 📦",
             before: "Why do we keep running out of parts?",
             beforeResult: "*Spreadsheet chaos* 'Reorder point was wrong?' 📊",
             after: "When should we reorder?",
@@ -1031,63 +931,43 @@ const storyThemes = {
         icon: "🏥",
         badge: "HEALTH",
         title: "Meet DataBot 🤖 - Your Healthcare Analytics Partner!",
-        subtitle: "Heal with DataBot as he improves patient outcomes using all 10 tools!",
+        subtitle: "Heal with DataBot as he improves patient outcomes through data!",
         speech: "Welcome to healthcare data! Let me show you how we save lives with analytics!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Medical Records Maze",
-                desc: "Hospitals generate MASSIVE data! 🩺 Lab results, vital signs, prescriptions, imaging - scattered across dozens of systems!",
-                example: "Patient John: Blood test in Lab System A, X-ray in Imaging B, prescription in Pharmacy C. Time to solve the puzzle! 🧩"
+                desc: "Hospitals generate MASSIVE amounts of data! 🩺 Lab results, vital signs, prescriptions, imaging, doctor notes - scattered across dozens of systems! Finding a patient's complete history is like a treasure hunt!",
+                example: "Patient John: Blood test in Lab System A, X-ray in Imaging System B, prescription in Pharmacy System C. Time to solve the puzzle! 🧩"
             },
             step2: {
                 title: "DBeaver - The Medical Detective",
-                desc: "DBeaver helps doctors query patient history safely! 🔍 'Show me all diabetic patients on Medication X who had reactions.'",
+                desc: "DBeaver helps doctors query patient history safely! 🔍 'Show me all diabetic patients on Medication X who had adverse reactions.' Critical for research and patient safety!",
                 example: "Found pattern: 5% of patients on Drug X + Drug Y have interactions. Updated protocols. Lives saved! 💊"
             },
             step3: {
                 title: "Python - The Diagnostic Assistant",
-                desc: "Python analyzes symptoms and suggests diagnoses! 🤖 Catches things humans might miss. 'Based on these symptoms, consider...'",
+                desc: "Python analyzes symptoms and suggests diagnoses! 🤖 Not to replace doctors, but to catch things humans might miss. 'Based on these 47 symptoms and test results, consider checking for...'",
                 example: "Flagged rare condition that matches patient symptoms. Doctor confirmed. Early detection = full recovery! ❤️"
             },
             step4: {
                 title: "AWS DMS - The HIPAA-Compliant Migrator",
-                desc: "Moving healthcare data requires EXTREME security! 🔒 DMS migrates patient records with full compliance!",
-                example: "Migrated 10 million patient records to cloud. Zero breaches. Full HIPAA compliance. Auditors impressed! ✅"
+                desc: "Moving healthcare data requires EXTREME security! 🔒 DMS migrates patient records while maintaining full compliance. Every bit encrypted, every access logged!",
+                example: "Migrated 10 million patient records to cloud. Zero data breaches. Full HIPAA compliance. Auditors impressed! ✅"
             },
             step5: {
                 title: "Terraform - The Hospital Infrastructure Builder",
-                desc: "Need secure cloud infrastructure? Terraform builds it with HIPAA compliance! 🏗️ Fully encrypted and compliant!",
-                example: "Building HIPAA-compliant infrastructure... Scaling for 5 million patient records... Ready in 15 minutes! 🏥"
+                desc: "Need secure cloud infrastructure for medical data? Terraform builds it with HIPAA compliance! 🏗️ 'I need 4 encrypted data warehouses, 12 secure servers, and auto-scaling for patient records!' Click. Done. Fully compliant!",
+                example: "Building HIPAA-compliant infrastructure... Scaling to handle 5 million patient records... Ready in 15 minutes! 🏥"
             },
             step6: {
                 title: "Redshift - The Medical Records Warehouse",
-                desc: "Redshift stores decades of patient data securely! 📦 25 years of records, finding specific patients takes 2 seconds!",
-                example: "'Which patients had adverse reactions to Drug Y?' Found 847 cases in 1.1 seconds! Protocol updated! 💊"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Nurse Station",
-                desc: "Airflow monitors patient data 24/7! ⏰ 'Check vital signs! Update medication schedules! Alert for anomalies!' Never misses a beat!",
-                example: "Every 15 min - Vital signs check ✓, Hourly - Medication reminder ✓, Alert: Patient 4521 heart rate elevated! Notify doctor! ❤️"
-            },
-            step8: {
-                title: "DBT - The Medical Translator",
-                desc: "DBT transforms 'lab: 847, val: 6.2' into 'Patient John's A1C is 6.2% - diabetes well controlled, continue current treatment!' 🎭",
-                example: "Patient Health Score ready! John = 94/100, diabetes controlled, due for annual eye exam, flu shot recommended! 📋"
-            },
-            step9: {
-                title: "Metabase - The Clinical Dashboard",
-                desc: "Metabase shows real-time patient status! 📊 Ward occupancy, critical patients, medication schedules - all visible to staff!",
-                example: "Live dashboard: Ward A at 85% capacity! Patient 4521 vitals stable! 3 discharges today! Alert: Medication refill needed! 🏥"
-            },
-            step10: {
-                title: "Data Science - The Risk Predictor",
-                desc: "Data Science predicts patient risks! 🔍 Analyzes symptoms, history, vitals to flag potential complications before they happen!",
-                example: "Predicted: Patient 4521 has 78% risk of readmission within 30 days. Schedule follow-up appointment NOW! ⚠️"
+                desc: "Redshift stores decades of patient data perfectly organized and secure! 📦 25 years of medical records, but finding 'all diabetic patients on Medication X' takes 2 seconds! It's HIPAA-compliant and lightning-fast!",
+                example: "'Which patients had adverse reactions to Drug Y?' Searching 10 years of data... Found 847 cases in 1.1 seconds! Protocol updated! 💊"
             }
         },
         result: {
             title: "The Healthcare Magic! ✨",
-            desc: "From fragmented records to unified patient care! Doctors see complete history instantly, AI flags potential issues!",
+            desc: "From fragmented records to unified patient care! Doctors now see complete patient history instantly, AI flags potential issues, and research happens 10x faster. Better care, saved lives! 🏥",
             before: "What medications is this patient on?",
             beforeResult: "*Calling 5 pharmacies* 'Let me check...' 📞",
             after: "What medications is this patient on?",
@@ -1099,17 +979,17 @@ const storyThemes = {
         icon: "🚗",
         badge: "AUTO",
         title: "Meet DataBot 🤖 - Your Manufacturing Intelligence!",
-        subtitle: "Rev up with DataBot as he optimizes car production lines using all 10 essential tools!",
+        subtitle: "Rev up with DataBot as he optimizes car production lines!",
         speech: "Welcome to the factory floor! Let me show you how we build perfect cars with data!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Assembly Line Symphony",
-                desc: "A car has 30,000 parts! 🔩 Each part has origin, quality checks, and installation time. Multiply by 1,000 cars per day. That's 30 MILLION data points daily!",
+                desc: "A car has 30,000 parts! 🔩 Each part has origin, quality checks, and installation time. Multiply by 1,000 cars per day. That's 30 MILLION data points daily! Tracking one defective bolt is like finding Waldo!",
                 example: "Bolt #47829-C installed in Car #78451 at Station 23 by Robot Arm #7 at 14:23:47. Now imagine tracking ALL bolts! 🤯"
             },
             step2: {
                 title: "DBeaver - The Quality Inspector",
-                desc: "DBeaver helps find defect patterns! 🔍 'Show me all paint defects from the last week, grouped by shift and spray booth.' Root cause becomes obvious!",
+                desc: "DBeaver helps find defect patterns! 🔍 'Show me all paint defects from the last week, grouped by shift and spray booth.' Suddenly the root cause becomes obvious!",
                 example: "Discovered all orange-peel defects came from Booth #3 during humid weather. Fixed ventilation. Defects: ZERO! ✨"
             },
             step3: {
@@ -1124,38 +1004,18 @@ const storyThemes = {
             },
             step5: {
                 title: "Terraform - The Factory Infrastructure Builder",
-                desc: "Need cloud infrastructure for production analytics? Terraform builds it instantly! 🏗️ No factory downtime, no IT tickets!",
+                desc: "Need cloud infrastructure for production analytics? Terraform builds it instantly! 🏗️ 'I need 6 data warehouses, 25 servers for quality tracking, and auto-scaling for production lines!' Click. Done. No factory downtime!",
                 example: "Building infrastructure for 15 production lines... Scaling to handle 1 million parts/day... Ready in 9 minutes! 🚗"
             },
             step6: {
                 title: "Redshift - The Manufacturing Data Warehouse",
-                desc: "Redshift stores years of production data perfectly organized! 📦 10 years of quality data, finding specific defects takes 1 second!",
-                example: "'Which stations have the most defects?' Searching 5 years of data... Found top 20 stations in 0.7 seconds! 🔧"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Factory Supervisor",
-                desc: "Airflow monitors production 24/7! ⏰ Every hour: 'Check robot calibration! Update quality metrics! Alert if defect rate spikes!' Never misses a shift!",
-                example: "3:00 AM - Collect station data ✓, 3:15 AM - Run quality checks ✓, 3:30 AM - Update dashboards ✓, Alert: Station 7 needs calibration! 🔧"
-            },
-            step8: {
-                title: "DBT - The Manufacturing Translator",
-                desc: "DBT transforms 'sensor_id: 8472, val: 847.2' into 'Engine Block #4521 torque within spec, installed by Robot Arm #3' - Business-ready! 🎭",
-                example: "Quality Score Model ready! Car #78451 = 98.7% quality score. Passed all 847 checkpoints! Ready for shipping! ✅"
-            },
-            step9: {
-                title: "Metabase - The Factory Dashboard",
-                desc: "Metabase turns production data into visual insights! 📊 Real-time displays showing line efficiency, defect rates, and throughput on the factory floor!",
-                example: "Live dashboard: Line A at 97% efficiency! Station 12 ahead of schedule! Quality: 99.2%! Alert: Paint booth humidity rising! 🏭"
-            },
-            step10: {
-                title: "Data Science - The Defect Predictor",
-                desc: "Data Science predicts quality issues BEFORE they happen! 🔍 Analyzes vibration patterns, temperature trends, and historical defects!",
-                example: "Predicted: Robot Arm #7 will need recalibration in 48 hours based on torque variance pattern. Schedule maintenance NOW! ⚠️"
+                desc: "Redshift stores years of production data perfectly organized! 📦 10 years of quality data, but finding 'all paint defects from Station 7 last week' takes 1 second! It's the quality team's best friend!",
+                example: "'Which stations have the most defects?' Searching 5 years of data... Found top 20 stations in 0.7 seconds! Root cause identified! 🔧"
             }
         },
         result: {
             title: "The Manufacturing Magic! ✨",
-            desc: "From reactive quality control to predictive perfection! Factory managers now see defects forming before they happen, optimize production in real-time!",
+            desc: "From reactive quality control to predictive perfection! Factory managers now see defects forming before they happen, optimize production in real-time, and ensure every car is perfect! 🚗",
             before: "Why did we have recalls last quarter?",
             beforeResult: "*Root cause analysis for months* 🔍",
             after: "Will we have quality issues?",
@@ -1167,63 +1027,43 @@ const storyThemes = {
         icon: "🏦",
         badge: "FINANCE",
         title: "Meet DataBot 🤖 - Your Financial Data Guardian!",
-        subtitle: "Watch DataBot secure billions in transactions using all 10 essential tools!",
-        speech: "Welcome to the world of Finance! Let me show you how we protect money and catch bad actors!",
+        subtitle: "Watch DataBot secure billions in transactions and catch fraud in milliseconds!",
+        speech: "Welcome to the world of Finance! Let me show you how we protect money and catch bad actors with data magic!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Vault of Transactions",
-                desc: "Banks process MILLIONS of transactions every second! 💰 ATM withdrawals, wire transfers, card swipes - all happening globally!",
-                example: "Customer John swipes card in New York at 2:15 PM, then London at 2:17 PM. 3,500 miles in 2 minutes! 🚨 FRAUD ALERT!"
+                desc: "Banks process MILLIONS of transactions every second! 💰 ATM withdrawals, wire transfers, card swipes, loan payments - all happening simultaneously across the globe. Each transaction has sender, receiver, amount, time, location, and risk score!",
+                example: "Customer John swipes card in New York at 2:15 PM, then another swipe in London at 2:17 PM. That's 3,500 miles in 2 minutes! 🚨 FRAUD ALERT!"
             },
             step2: {
                 title: "DBeaver - The Financial Detective",
-                desc: "DBeaver lets analysts investigate suspicious patterns! 🔎 'Show me all transactions over $10K in the last hour.'",
-                example: "Found 47 new accounts receiving exactly $9,999 transfers (under reporting limit). Structuring scheme exposed! 👮"
+                desc: "DBeaver lets risk analysts investigate suspicious patterns! 🔎 'Show me all transactions over $10,000 in the last hour, grouped by account age.' Suddenly, money laundering patterns become visible!",
+                example: "Found 47 new accounts all receiving exactly $9,999 transfers (just under reporting limit). Classic structuring scheme exposed! 👮"
             },
             step3: {
                 title: "Python - The Fraud Hunter",
-                desc: "Python builds AI models that learn 'normal' behavior! 🧠 Scores every transaction in real-time. Catches fraud instantly!",
-                example: "ML model flagged card #4521 - spending changed 847% from baseline. Card was cloned at gas station! 🎯"
+                desc: "Python builds AI models that learn what 'normal' looks like! 🧠 It scores every transaction in real-time. Unusual spending? Different location? Weird timing? Python catches it before the transaction completes!",
+                example: "ML model flagged card #4521 - spending pattern changed 847% from baseline. Turned out the card was cloned in a gas station skimmer! 🎯"
             },
             step4: {
                 title: "AWS DMS - The Global Compliance Engine",
-                desc: "Banks operate in 100+ countries! 🌍 DMS syncs customer data while maintaining GDPR, SOX, PCI compliance!",
-                example: "Merged customer data from 23 countries. Detected duplicate accounts used for round-tripping. Saved $12M! 📋"
+                desc: "Banks operate in 100+ countries with different regulations! 🌍 DMS syncs customer data across regions while maintaining GDPR, SOX, and PCI compliance. One source of truth for auditors!",
+                example: "Merged customer data from 23 countries. Detected duplicate accounts used for round-tripping. Saved $12M in potential fines! 📋"
             },
             step5: {
                 title: "Terraform - The Banking Infrastructure Builder",
-                desc: "Need secure cloud infrastructure? Terraform builds it with full compliance! 🏗️ PCI-DSS compliant instantly!",
-                example: "Building PCI-compliant infrastructure... Scaling for 10 million transactions/day... Ready in 20 minutes! 🏦"
+                desc: "Need secure cloud infrastructure for financial data? Terraform builds it with full compliance! 🏗️ 'I need 8 encrypted data warehouses, 30 secure servers, and auto-scaling for transaction processing!' Click. Done. PCI-DSS compliant!",
+                example: "Building PCI-compliant infrastructure... Scaling to handle 10 million transactions/day... Ready in 20 minutes! 🏦"
             },
             step6: {
                 title: "Redshift - The Financial Data Warehouse",
-                desc: "Redshift stores decades of transactions securely! 📦 20 years of data, finding suspicious accounts takes 1 second!",
-                example: "'Which accounts show suspicious patterns?' Found 47 flagged accounts in 0.9 seconds! Fraud prevented! 🚨"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Fraud Watch",
-                desc: "Airflow monitors transactions 24/7! ⏰ 'Score every transaction! Update risk models! Alert for anomalies!' Never sleeps!",
-                example: "Every second - Transaction scoring ✓, Hourly - Risk model update ✓, Alert: Account #4521 unusual activity! Block card NOW! 🚨"
-            },
-            step8: {
-                title: "DBT - The Banking Translator",
-                desc: "DBT transforms 'txn: 847291, amt: 9999' into 'John transferred $9,999 to new account, 3rd similar transaction this week - flag!' 🎭",
-                example: "Customer Risk Score ready! Account #4521 = High Risk, 3 suspicious transfers, recommend account review! 📋"
-            },
-            step9: {
-                title: "Metabase - The Fraud Operations Dashboard",
-                desc: "Metabase shows real-time fraud detection! 📊 Flagged transactions, blocked cards, investigation queue - all on one screen!",
-                example: "Live dashboard: 47 transactions flagged today! 12 cards blocked! $2.3M fraud prevented! Alert: New pattern detected! 🏦"
-            },
-            step10: {
-                title: "Data Science - The Fraud Predictor",
-                desc: "Data Science predicts fraud before it happens! 🔍 Analyzes behavior patterns, location, spending to catch criminals!",
-                example: "Predicted: Account #4521 is 94% likely to be used for money laundering based on transaction pattern. Freeze account! 🚨"
+                desc: "Redshift stores decades of transaction data perfectly organized and secure! 📦 20 years of banking data, but finding 'all transactions over $10K in the last hour' takes 1 second! It's the fraud team's superpower!",
+                example: "'Which accounts show suspicious patterns?' Searching 5 years of data... Found 47 flagged accounts in 0.9 seconds! Fraud prevented! 🚨"
             }
         },
         result: {
             title: "The Financial Fortress! 🏰",
-            desc: "From reactive fraud detection to real-time protection! Banks stop fraudsters mid-transaction, prevent money laundering!",
+            desc: "From reactive fraud detection to real-time protection! Banks now stop fraudsters mid-transaction, prevent money laundering, and keep customer money safe - all while processing billions in legitimate transactions! 💎",
             before: "Why did we lose $2M to fraud last month?",
             beforeResult: "*Reviewing paper reports* → 'Investigating...' 📄",
             after: "Is this transaction safe?",
@@ -1235,67 +1075,47 @@ const storyThemes = {
         icon: "🛍️",
         badge: "SHOP",
         title: "Meet DataBot 🤖 - Your E-Commerce Growth Engine!",
-        subtitle: "Watch DataBot turn clicks into customers using all 10 essential tools!",
-        speech: "Welcome to Online Shopping paradise! Let me show you how we turn browsers into buyers!",
+        subtitle: "Watch DataBot turn clicks into customers and abandoned carts into sales!",
+        speech: "Welcome to Online Shopping paradise! Let me show you how we turn browsers into buyers with data wizardry!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Digital Shopping Mall",
-                desc: "Every click, scroll, hover creates data! 🖱️ A busy site tracks 50 MILLION events per day. Product views, cart abandonment, search queries!",
-                example: "User #78234 viewed blue sneakers 7 times, added to cart twice, removed once, checked competitor prices. Buy or bounce? 🤔"
+                desc: "Every click, scroll, hover, and purchase creates data! 🖱️ A busy e-commerce site tracks 50 MILLION events per day. Product views, wishlist adds, cart abandonment, search queries - it's like watching millions of shoppers through security cameras!",
+                example: "User #78234 viewed blue sneakers 7 times, added to cart twice, removed once, checked competitor prices, came back with a coupon code. Buy or bounce? 🤔"
             },
             step2: {
                 title: "DBeaver - The Customer Journey Mapper",
-                desc: "DBeaver reveals the shopping journey! 🗺️ 'Show me all users who viewed Product X but bought Product Y instead.'",
-                example: "Found 2,341 users abandoned cart at shipping page. Competitor offers free shipping. Solution: Free shipping over $50! 📦"
+                desc: "DBeaver reveals the shopping journey! 🗺️ 'Show me all users who viewed Product X but bought Product Y instead.' Discover why customers choose competitors and fix it!",
+                example: "Found 2,341 users abandoned cart at shipping page. Shipping cost $12.99. Competitor offers free shipping. Solution: Free shipping over $50! 📦"
             },
             step3: {
                 title: "Python - The Recommendation Wizard",
-                desc: "Python builds the 'Customers also bought' magic! 🪄 Real-time personalization. Every user sees a store built just for them!",
-                example: "'Based on your browsing: Here are 5 items you'll LOVE!' Click-through rate jumped 340%. Order value up $23! 🎯"
+                desc: "Python builds the 'Customers also bought' magic! 🪄 Collaborative filtering, content-based recommendations, and real-time personalization. Every user sees a store built just for them!",
+                example: "'Based on your browsing: Here are 5 items you'll LOVE!' Click-through rate jumped 340%. Average order value up $23! 🎯"
             },
             step4: {
                 title: "AWS DMS - The Inventory Synchronizer",
-                desc: "Products on Amazon, eBay, Shopify, your website! 📱 DMS keeps inventory synced in real-time. No overselling!",
-                example: "Last 50 units of viral TikTok product! Sold across 4 platforms in 3 minutes. Zero oversells. Happy customers! 🎉"
+                desc: "Products listed on Amazon, eBay, Shopify, and your own website! 📱 DMS keeps inventory synced in real-time. Sold on Amazon? Instantly updated everywhere. No overselling nightmares!",
+                example: "Last 50 units of viral TikTok product! Sold across 4 platforms in 3 minutes. Zero oversells. Happy customers everywhere! 🎉"
             },
             step5: {
                 title: "Terraform - The E-Commerce Infrastructure Builder",
-                desc: "Need cloud infrastructure for shopping? Terraform builds it! 🏗️ Auto-scaling for Black Friday. No crashes!",
-                example: "Building infrastructure for holiday shopping... Scaling for 50 million page views/day... Ready in 11 minutes! 🛍️"
+                desc: "Need cloud infrastructure for online shopping? Terraform builds it instantly! 🏗️ 'I need 5 data warehouses, 20 servers for real-time inventory, and auto-scaling for Black Friday!' Click. Done. No website crashes!",
+                example: "Building infrastructure for holiday shopping... Scaling to handle 50 million page views/day... Ready in 11 minutes! 🛍️"
             },
             step6: {
                 title: "Redshift - The Shopping Data Warehouse",
-                desc: "Redshift stores years of e-commerce data! 📦 5 years of behavior, finding cart abandonment takes 1 second!",
-                example: "'Which products have highest conversion?' Found top 100 products in 0.8 seconds! Marketing optimized! 📈"
-            },
-            step7: {
-                title: "Airflow - The Never-Sleeping Sales Assistant",
-                desc: "Airflow monitors shopping behavior 24/7! ⏰ 'Update inventory! Send cart reminders! Refresh recommendations!' Never sleeps!",
-                example: "Every hour - Inventory sync ✓, Daily - Recommendation refresh ✓, Alert: User #78234 cart abandoned 2 hours ago - send reminder! 🛒"
-            },
-            step8: {
-                title: "DBT - The Commerce Translator",
-                desc: "DBT transforms 'user: 78234, cart: abandoned' into 'John left $127 blue sneakers in cart, 3rd visit today, high intent buyer!' 🎭",
-                example: "Customer Lifetime Value ready! User #78234 = $2,847 over 2 years. VIP customer! Offer exclusive early access! 👑"
-            },
-            step9: {
-                title: "Metabase - The Sales Dashboard",
-                desc: "Metabase shows real-time sales performance! 📊 Revenue, conversion rates, inventory status - all on one screen!",
-                example: "Live dashboard: $847K today! Blue sneakers trending! Cart abandonment down 23%! Alert: Size 10 running low! 🛍️"
-            },
-            step10: {
-                title: "Data Science - The Purchase Predictor",
-                desc: "Data Science predicts who will buy! 🔍 Analyzes browsing patterns, time spent, return visits to identify hot leads!",
-                example: "Predicted: User #78234 has 89% chance of purchasing within 24 hours. Send 10% discount NOW! → PURCHASED! 💰"
+                desc: "Redshift stores years of e-commerce data perfectly organized! 📦 5 years of customer behavior, but finding 'all users who abandoned cart at checkout' takes 1 second! It's the marketing team's goldmine!",
+                example: "'Which products have the highest conversion rate?' Searching 3 years of data... Found top 100 products in 0.8 seconds! Marketing campaigns optimized! 📈"
             }
         },
         result: {
             title: "The Conversion Kingdom! 👑",
-            desc: "From guessing what customers want to knowing before they do! Rescue abandoned carts, personalize every experience!",
+            desc: "From guessing what customers want to knowing before they do! E-commerce teams now rescue abandoned carts, personalize every experience, and turn one-time buyers into loyal fans! 🛒",
             before: "Why is our conversion rate only 2%?",
             beforeResult: "*Looking at basic analytics* → 'Maybe better photos?' 📸",
             after: "How do we increase sales?",
-            afterResult: "*AI Insight* → 'User #78234 hesitating! Send 10% off NOW!' → PURCHASED! 💰"
+            afterResult: "*AI Insight* → 'User #78234 hesitating! Send 10% off push notification NOW!' → PURCHASED! 💰"
         }
     },
     datascience: {
@@ -1303,63 +1123,43 @@ const storyThemes = {
         icon: "📊",
         badge: "AI",
         title: "Meet DataBot 🤖 - Your Data Science Mentor!",
-        subtitle: "Learn with DataBot as he transforms raw data into powerful predictions using all 10 tools!",
+        subtitle: "Learn with DataBot as he transforms raw data into powerful predictions and insights!",
         speech: "Welcome to the world of Data Science! Let me show you how we turn numbers into superpowers!",
         steps: {
             step1: {
                 title: "PostgreSQL - The Data Treasure Chest",
-                desc: "Data Science starts with data! 📦 Customer behavior, sales trends, sensor readings - millions of records waiting to tell a story!",
-                example: "10 million customer transactions, 500,000 product reviews, 2 million website clicks. All waiting to reveal hidden patterns! 🔍"
+                desc: "Data Science starts with data! 📦 Customer behavior, sales trends, sensor readings, social media posts - millions of records waiting to tell a story! But raw data is messy, incomplete, and scattered. Like a library with books in random languages!",
+                example: "10 million customer transactions, 500,000 product reviews, 2 million website clicks. All separate, all waiting to reveal hidden patterns! 🔍"
             },
             step2: {
-                title: "DBeaver - The Data Explorer",
-                desc: "DBeaver lets you explore and query your data! 🔎 'Show me all customers who purchased twice last month.' Understand your data first!",
-                example: "Explored customer database! Found 23% of customers make repeat purchases within 30 days. Target them for loyalty program! 📋"
+                title: "Python - The Pattern Detective",
+                desc: "Python is the superpower of Data Science! 🐍 It reads millions of rows, finds correlations humans miss, and says 'Aha! Customers who buy Product A on Tuesdays also buy Product B on Fridays!' It's like having a detective who never sleeps!",
+                example: "Analyzed 5 years of sales data! Discovered that ice cream sales spike 340% when temperature exceeds 85°F. Stocked up before heatwave. Profit up 50%! 🍦"
             },
             step3: {
-                title: "Python - The Pattern Detective",
-                desc: "Python is the superpower of Data Science! 🐍 Reads millions of rows, finds correlations, discovers hidden patterns humans miss!",
-                example: "Analyzed 5 years of sales data! Ice cream sales spike 340% when temperature exceeds 85°F. Stocked up before heatwave! 🍦"
+                title: "Statistics - The Truth Finder",
+                desc: "Statistics separates signal from noise! 📈 Is this pattern real or just random luck? Mean, median, standard deviation, correlation - these tools tell you what's actually happening vs what you think is happening!",
+                example: "Found correlation: Study hours vs Test scores = 0.85! Strong relationship! But wait... correlation doesn't mean causation. Maybe smart students just study more? 🤔"
             },
             step4: {
-                title: "AWS DMS - The Data Pipeline Builder",
-                desc: "DMS moves data from various sources to your ML environment! 📦 Combine CRM, sales, and web data for complete analysis!",
-                example: "Combined data from 5 systems! Now have 360° view of customer: purchases + browsing + support tickets + social! 🔗"
+                title: "Machine Learning - The Prediction Engine",
+                desc: "Machine Learning learns from the past to predict the future! 🤖 Train it on historical data, and it learns patterns. Then ask: 'Will this customer churn?' 'What's the stock price tomorrow?' 'Which movie will they like?' It gets smarter with more data!",
+                example: "Trained ML model on 10 million movie ratings. Now predicts what you'll watch with 94% accuracy! Netflix-level recommendations! 🎬"
             },
             step5: {
-                title: "Terraform - The ML Infrastructure Builder",
-                desc: "Need GPUs for model training? Terraform builds ML infrastructure instantly! 🏗️ No waiting for IT provisioning!",
-                example: "Building ML infrastructure... Spinning up 8 GPU servers for training... Ready in 13 minutes! 📊"
+                title: "Terraform - The Data Science Infrastructure Builder",
+                desc: "Need cloud infrastructure for ML models? Terraform builds it instantly! 🏗️ 'I need 4 data warehouses, 15 GPU servers for training, and auto-scaling for predictions!' Click. Done. No waiting for IT!",
+                example: "Building ML infrastructure... Scaling to handle 1 million predictions/hour... Ready in 13 minutes! 📊"
             },
             step6: {
-                title: "Redshift - The Analytics Warehouse",
-                desc: "Redshift stores massive datasets for analysis! 📦 10 years of data, finding patterns takes 2 seconds!",
-                example: "'What's the correlation between marketing spend and sales?' Searching 5 years of data... Found 0.78 correlation! 📈"
-            },
-            step7: {
-                title: "Airflow - The ML Pipeline Orchestrator",
-                desc: "Airflow automates your ML workflow! ⏰ 'Train model daily! Update predictions! Alert if accuracy drops!' Full automation!",
-                example: "Daily - Retrain model ✓, Hourly - Generate predictions ✓, Alert: Model accuracy dropped 5% - investigate data drift! 🤖"
-            },
-            step8: {
-                title: "DBT - The Feature Store",
-                desc: "DBT creates clean features for your ML models! 🎭 Transforms raw data into 'customer_lifetime_value', 'churn_probability', 'purchase_likelihood'!",
-                example: "Feature Store ready! 847 features available: recency, frequency, monetary value, engagement score, sentiment! 📊"
-            },
-            step9: {
-                title: "Metabase - The Insights Dashboard",
-                desc: "Metabase visualizes your ML predictions! 📊 Model performance, prediction distributions, business impact - all visible!",
-                example: "Live dashboard: Churn model at 92% accuracy! 847 customers flagged at-risk! $2.3M revenue protected! 📈"
-            },
-            step10: {
-                title: "Machine Learning - The Prediction Engine",
-                desc: "Machine Learning learns from history to predict the future! 🤖 Customer churn, demand forecasting, recommendation engines!",
-                example: "ML model predicts: Customer #4521 has 87% churn probability. Offer 20% discount retention campaign NOW! 🎯"
+                title: "Redshift - The Data Science Warehouse",
+                desc: "Redshift stores massive datasets perfectly organized for analysis! 📦 10 years of data, but finding 'all customers who bought Product A and B together' takes 2 seconds! It's the data scientist's playground!",
+                example: "'What's the correlation between study hours and test scores?' Searching 5 years of data... Found 0.85 correlation in 1.0 seconds! Strong relationship confirmed! 📈"
             }
         },
         result: {
             title: "The Data Science Revolution! 🚀",
-            desc: "From guessing to knowing! Predict customer behavior, optimize decisions, solve problems before they happen!",
+            desc: "From guessing to knowing! Data scientists now predict customer behavior, optimize business decisions, and solve problems before they happen. Turn data into dollars, insights into impact! 💡",
             before: "Will customers like this new product?",
             beforeResult: "*Market research for months* → 'Maybe? 60% think so?' 🤷",
             after: "Will customers like this new product?",
@@ -1401,37 +1201,31 @@ function selectStoryTheme(themeName) {
     // Update DataBot speech
     updateDatabotSpeech(theme.speech);
     
-    // Update journey steps (all 10 steps)
+    // Update journey steps (all 6 steps)
     const steps = theme.steps;
     const stepLabels = {
         1: 'Real Scenario:',
-        2: 'DBeaver reveals:',
-        3: 'Python discovers:',
-        4: 'DMS in action:',
+        2: themeName === 'datascience' ? 'Python discovers:' : 'DBeaver reveals:',
+        3: themeName === 'datascience' ? 'Statistics finds:' : 'Python discovers:',
+        4: themeName === 'datascience' ? 'ML predicts:' : 'DMS in action:',
         5: 'Terraform builds:',
-        6: 'Redshift stores:',
-        7: 'Airflow schedules:',
-        8: 'DBT creates:',
-        9: 'Metabase shows:',
-        10: 'Data Science predicts:'
+        6: 'Redshift answers:'
     };
     
-    // Update all 10 steps dynamically
-    for (let stepNum = 1; stepNum <= 10; stepNum++) {
-        const stepKey = `step${stepNum}`;
+    // Update all steps dynamically
+    Object.keys(steps).forEach((key, index) => {
+        const stepNum = index + 1;
         const titleEl = document.getElementById(`step${stepNum}-title`);
         const descEl = document.getElementById(`step${stepNum}-desc`);
         const exampleEl = document.getElementById(`step${stepNum}-example`);
         
-        if (steps[stepKey]) {
-            if (titleEl) titleEl.textContent = steps[stepKey].title;
-            if (descEl) descEl.textContent = steps[stepKey].desc;
-            if (exampleEl) {
-                const label = stepLabels[stepNum] || 'Example:';
-                exampleEl.innerHTML = `<strong>${label}</strong> "${steps[stepKey].example}"`;
-            }
+        if (titleEl && steps[key]) titleEl.textContent = steps[key].title;
+        if (descEl && steps[key]) descEl.textContent = steps[key].desc;
+        if (exampleEl && steps[key]) {
+            const label = stepLabels[stepNum] || 'Example:';
+            exampleEl.innerHTML = `<strong>${label}</strong> "${steps[key].example}"`;
         }
-    }
+    });
     
     // Update result card
     const result = theme.result;

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Machine Learning | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+            line-height: 1.8;
+        }
+        
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav a:hover { color: white; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(168, 85, 247, 0.3) 100%);
+            border-radius: 25px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p { font-size: 1.3em; color: #cbd5e1; max-width: 700px; margin: 0 auto; }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section h2 {
+            color: #a78bfa;
+            font-size: 2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section h3 {
+            color: #818cf8;
+            font-size: 1.5em;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(129, 140, 248, 0.3);
+        }
+        
+        .section p { font-size: 1.1em; color: #cbd5e1; margin-bottom: 15px; }
+        
+        .analogy-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .analogy-box h4 { color: #fbbf24; font-size: 1.2em; margin-bottom: 10px; }
+        .analogy-box p { color: #fef3c7; margin-bottom: 0; }
+        
+        .example-box {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #22c55e;
+        }
+        
+        .example-box h4 { color: #4ade80; font-size: 1.2em; margin-bottom: 10px; }
+        .example-box p, .example-box li { color: #bbf7d0; }
+        
+        .key-point {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .key-point h4 { color: #60a5fa; margin-bottom: 10px; }
+        .key-point p { color: #bfdbfe; margin-bottom: 0; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .data-table th {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+        
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+        }
+        
+        .data-table tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
+        
+        .visual-box {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+        
+        .visual-box h4 { color: #f472b6; margin-bottom: 20px; }
+        
+        .ml-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .ml-type-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .ml-type-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(167, 139, 250, 0.5);
+        }
+        
+        .ml-type-card .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .ml-type-card h4 { color: #a78bfa; margin-bottom: 10px; font-size: 1.3em; }
+        .ml-type-card p { color: #94a3b8; font-size: 0.95em; }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn.prev { background: rgba(255, 255, 255, 0.1); color: #94a3b8; }
+        .nav-btn.next { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        .back-to-top:hover { transform: translateY(-3px); }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 2em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+            .nav-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="hypothesis-testing.html"><i class="fas fa-arrow-left"></i><span>Previous: Hypothesis Testing</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <h1>🤖 Introduction to Machine Learning</h1>
+            <p>Teach computers to learn from data! Understand the magic behind Netflix recommendations, self-driving cars, and AI assistants.</p>
+        </div>
+
+        <!-- What is Machine Learning -->
+        <div class="section">
+            <h2><i class="fas fa-brain"></i> What is Machine Learning?</h2>
+            
+            <p>Machine Learning is teaching computers to <strong>learn patterns from data</strong> instead of explicitly programming every rule.</p>
+
+            <div class="analogy-box">
+                <h4>👶 The Child Learning Analogy</h4>
+                <p><strong>Traditional Programming:</strong> Tell a child "If it has 4 legs, fur, barks = dog. If it has 4 legs, fur, meows = cat."</p>
+                <p style="margin-top: 10px;"><strong>Machine Learning:</strong> Show the child 1000 pictures of dogs and cats. The child figures out the patterns themselves!</p>
+                <p style="margin-top: 10px;">ML does the same - you give it data, it discovers the rules automatically.</p>
+            </div>
+
+            <div class="visual-box">
+                <h4>🔄 Traditional Programming vs Machine Learning</h4>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
+                    <div style="text-align: center;">
+                        <p style="color: #f472b6; font-weight: 700;">Traditional Programming</p>
+                        <p style="font-size: 2em; margin: 10px 0;">📝 + 📊 → 💻 → 📤</p>
+                        <p style="font-size: 0.9em; color: #f9a8d4;">Rules + Data → Program → Output</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #a78bfa; font-weight: 700;">Machine Learning</p>
+                        <p style="font-size: 2em; margin: 10px 0;">📊 + 📤 → 💻 → 📝</p>
+                        <p style="font-size: 0.9em; color: #c4b5fd;">Data + Output → ML → Rules (Model)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Types of Machine Learning -->
+        <div class="section">
+            <h2><i class="fas fa-sitemap"></i> Types of Machine Learning</h2>
+            
+            <div class="ml-types">
+                <div class="ml-type-card">
+                    <div class="icon">🎓</div>
+                    <h4>Supervised Learning</h4>
+                    <p><strong>"Learning with a Teacher"</strong></p>
+                    <p style="margin-top: 10px;">You provide both inputs AND correct answers. The model learns the relationship.</p>
+                    <p style="margin-top: 10px; color: #4ade80;"><strong>Examples:</strong> Spam detection, house price prediction, medical diagnosis</p>
+                </div>
+                
+                <div class="ml-type-card">
+                    <div class="icon">🔍</div>
+                    <h4>Unsupervised Learning</h4>
+                    <p><strong>"Learning without a Teacher"</strong></p>
+                    <p style="margin-top: 10px;">You provide only inputs. The model discovers hidden patterns on its own.</p>
+                    <p style="margin-top: 10px; color: #4ade80;"><strong>Examples:</strong> Customer segmentation, anomaly detection, topic modeling</p>
+                </div>
+                
+                <div class="ml-type-card">
+                    <div class="icon">🎮</div>
+                    <h4>Reinforcement Learning</h4>
+                    <p><strong>"Learning by Trial & Error"</strong></p>
+                    <p style="margin-top: 10px;">Agent learns by interacting with environment, getting rewards/penalties.</p>
+                    <p style="margin-top: 10px; color: #4ade80;"><strong>Examples:</strong> Game AI, self-driving cars, robotics</p>
+                </div>
+            </div>
+
+            <h3>Supervised Learning: The Most Common Type</h3>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Problem Type</th>
+                    <th>Output</th>
+                    <th>Algorithms</th>
+                    <th>Examples</th>
+                </tr>
+                <tr>
+                    <td><strong>Regression</strong></td>
+                    <td>Continuous number</td>
+                    <td>Linear Regression, Random Forest</td>
+                    <td>House price, Sales forecast, Temperature</td>
+                </tr>
+                <tr>
+                    <td><strong>Classification</strong></td>
+                    <td>Category/Label</td>
+                    <td>Logistic Regression, Decision Trees, SVM</td>
+                    <td>Spam/Not spam, Disease diagnosis, Sentiment</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>🏠 Regression vs Classification</h4>
+                <p><strong>Regression:</strong> "What price will this house sell for?" → $450,000</p>
+                <p><strong>Classification:</strong> "Will this house sell within 30 days?" → Yes/No</p>
+            </div>
+        </div>
+
+        <!-- The ML Workflow -->
+        <div class="section">
+            <h2><i class="fas fa-project-diagram"></i> The Machine Learning Workflow</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin: 30px 0;">
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3em;">1</div>
+                    <div>
+                        <h4 style="color: #a78bfa;">Define the Problem</h4>
+                        <p style="color: #94a3b8; margin: 0;">What are you trying to predict? Is it regression or classification?</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3em;">2</div>
+                    <div>
+                        <h4 style="color: #a78bfa;">Collect & Prepare Data</h4>
+                        <p style="color: #94a3b8; margin: 0;">Clean data, handle missing values, remove outliers, feature engineering</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3em;">3</div>
+                    <div>
+                        <h4 style="color: #a78bfa;">Split Data</h4>
+                        <p style="color: #94a3b8; margin: 0;">Training set (learn patterns) + Test set (evaluate performance)</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3em;">4</div>
+                    <div>
+                        <h4 style="color: #a78bfa;">Choose & Train Model</h4>
+                        <p style="color: #94a3b8; margin: 0;">Select algorithm, fit on training data</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3em;">5</div>
+                    <div>
+                        <h4 style="color: #a78bfa;">Evaluate Model</h4>
+                        <p style="color: #94a3b8; margin: 0;">Test on unseen data, check metrics (accuracy, R², etc.)</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3em;">6</div>
+                    <div>
+                        <h4 style="color: #a78bfa;">Iterate & Improve</h4>
+                        <p style="color: #94a3b8; margin: 0;">Tune hyperparameters, try different features, different algorithms</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #22c55e, #10b981); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3em;">7</div>
+                    <div>
+                        <h4 style="color: #4ade80;">Deploy & Monitor</h4>
+                        <p style="color: #94a3b8; margin: 0;">Put model in production, monitor performance over time</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Terminology -->
+        <div class="section">
+            <h2><i class="fas fa-book"></i> Key ML Terminology</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Term</th>
+                    <th>Simple Explanation</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>Feature</strong></td>
+                    <td>Input variable used for prediction</td>
+                    <td>House: Area, Bedrooms, Location</td>
+                </tr>
+                <tr>
+                    <td><strong>Target/Label</strong></td>
+                    <td>What you're trying to predict</td>
+                    <td>House Price, Spam/Not Spam</td>
+                </tr>
+                <tr>
+                    <td><strong>Training</strong></td>
+                    <td>Process of learning patterns from data</td>
+                    <td>model.fit(X_train, y_train)</td>
+                </tr>
+                <tr>
+                    <td><strong>Prediction</strong></td>
+                    <td>Using trained model on new data</td>
+                    <td>model.predict(X_new)</td>
+                </tr>
+                <tr>
+                    <td><strong>Overfitting</strong></td>
+                    <td>Model memorizes training data, fails on new data</td>
+                    <td>100% train accuracy, 60% test accuracy</td>
+                </tr>
+                <tr>
+                    <td><strong>Underfitting</strong></td>
+                    <td>Model too simple, can't capture patterns</td>
+                    <td>Low accuracy on both train and test</td>
+                </tr>
+                <tr>
+                    <td><strong>Hyperparameter</strong></td>
+                    <td>Settings you choose before training</td>
+                    <td>Number of trees, learning rate, depth</td>
+                </tr>
+            </table>
+
+            <div class="analogy-box">
+                <h4>📚 Overfitting vs Underfitting: The Exam Analogy</h4>
+                <p><strong>Overfitting:</strong> A student memorizes every answer from practice tests but can't solve new problems. They've memorized, not learned!</p>
+                <p style="margin-top: 10px;"><strong>Underfitting:</strong> A student barely studied - they fail both practice tests AND the real exam.</p>
+                <p style="margin-top: 10px;"><strong>Good Fit:</strong> A student understands the concepts and can apply them to new problems.</p>
+            </div>
+        </div>
+
+        <!-- Real World Applications -->
+        <div class="section">
+            <h2><i class="fas fa-globe"></i> Real-World ML Applications</h2>
+            
+            <div class="ml-types">
+                <div class="ml-type-card">
+                    <div class="icon">📧</div>
+                    <h4>Spam Detection</h4>
+                    <p>Gmail filters 100M+ spam emails daily using ML classification</p>
+                </div>
+                
+                <div class="ml-type-card">
+                    <div class="icon">🎬</div>
+                    <h4>Recommendations</h4>
+                    <p>Netflix, Spotify, Amazon suggest content you'll love</p>
+                </div>
+                
+                <div class="ml-type-card">
+                    <div class="icon">🏥</div>
+                    <h4>Medical Diagnosis</h4>
+                    <p>Detect cancer, predict disease risk from scans and data</p>
+                </div>
+                
+                <div class="ml-type-card">
+                    <div class="icon">💳</div>
+                    <h4>Fraud Detection</h4>
+                    <p>Banks detect suspicious transactions in milliseconds</p>
+                </div>
+                
+                <div class="ml-type-card">
+                    <div class="icon">🚗</div>
+                    <h4>Self-Driving Cars</h4>
+                    <p>Tesla, Waymo use ML to perceive and navigate roads</p>
+                </div>
+                
+                <div class="ml-type-card">
+                    <div class="icon">💬</div>
+                    <h4>Virtual Assistants</h4>
+                    <p>Siri, Alexa understand your voice using NLP</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            
+            <div class="key-point">
+                <h4>🎯 Key Takeaways</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #bfdbfe;">
+                    <li><strong>Machine Learning</strong> = Computers learning patterns from data</li>
+                    <li><strong>Supervised Learning</strong> = Learning with labeled answers (most common)</li>
+                    <li><strong>Regression</strong> = Predict numbers | <strong>Classification</strong> = Predict categories</li>
+                    <li><strong>Training/Test Split</strong> = Essential to evaluate real-world performance</li>
+                    <li><strong>Overfitting</strong> = Memorization | <strong>Underfitting</strong> = Too simple</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="hypothesis-testing.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Hypothesis Testing</a>
+            <a href="linear-regression.html" class="nav-btn next">Next: Linear Regression <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

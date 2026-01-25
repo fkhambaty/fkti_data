@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clustering | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #6366f1; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .nav a:hover { color: #4338ca; }
+        
+        .header {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+        }
+        .header h1 { font-size: 2.8em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #6366f1;
+        }
+        .section h2 { color: #6366f1; font-size: 2em; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .section h3 { color: #4f46e5; font-size: 1.5em; margin: 30px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #e0e7ff; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 15px; }
+        
+        .analogy-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        .analogy-box h4 { color: #92400e; font-size: 1.2em; margin-bottom: 10px; }
+        .analogy-box p { color: #78350f; }
+        
+        .example-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .example-box h4 { color: #065f46; font-size: 1.2em; margin-bottom: 10px; }
+        .example-box p, .example-box li { color: #064e3b; }
+        
+        .key-point {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #6366f1;
+        }
+        .key-point h4 { color: #4338ca; margin-bottom: 10px; }
+        .key-point p { color: #3730a3; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.6; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .data-table td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+        .data-table tr:nth-child(even) { background: #f0f5ff; }
+        
+        .cluster-visual {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .cluster-visual h4 { color: #166534; margin-bottom: 20px; }
+        .cluster-dots {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .cluster-group {
+            padding: 20px 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.7);
+        }
+        
+        .algo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .algo-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .algo-card h4 { color: #6366f1; margin-bottom: 10px; font-size: 1.3em; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white; border: none; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 2em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="boosting.html"><i class="fas fa-arrow-left"></i><span>Previous: Boosting</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <h1>🎯 Clustering</h1>
+            <p>Group similar items together without labels! Discover hidden patterns in your data with unsupervised learning.</p>
+        </div>
+
+        <!-- Part 1: What is Clustering -->
+        <div class="section">
+            <h2><i class="fas fa-object-group"></i> Part 1: What is Clustering?</h2>
+            
+            <p>Clustering is <strong>unsupervised learning</strong> - you don't have labels telling you which group each item belongs to. The algorithm discovers groups on its own!</p>
+
+            <div class="analogy-box">
+                <h4>🍎🍊🍇 The Fruit Sorting Analogy</h4>
+                <p>Imagine you have a basket of fruits and a child who has never seen fruits before.</p>
+                <p style="margin-top: 10px;"><strong>Classification (Supervised):</strong> You tell the child "this is an apple, this is an orange" → Child learns to identify new fruits</p>
+                <p style="margin-top: 10px;"><strong>Clustering (Unsupervised):</strong> You say "sort these into groups" → Child naturally groups by color, size, or shape WITHOUT knowing the names!</p>
+            </div>
+
+            <div class="cluster-visual">
+                <h4>Clustering Discovers Natural Groups</h4>
+                <div class="cluster-dots">
+                    <div class="cluster-group" style="border: 3px dashed #ef4444;">
+                        <span style="font-size: 2em;">🔴🔴🔴</span>
+                        <p style="color: #dc2626; font-weight: 600; margin-top: 10px;">Cluster A</p>
+                    </div>
+                    <div class="cluster-group" style="border: 3px dashed #3b82f6;">
+                        <span style="font-size: 2em;">🔵🔵🔵</span>
+                        <p style="color: #2563eb; font-weight: 600; margin-top: 10px;">Cluster B</p>
+                    </div>
+                    <div class="cluster-group" style="border: 3px dashed #22c55e;">
+                        <span style="font-size: 2em;">🟢🟢🟢</span>
+                        <p style="color: #16a34a; font-weight: 600; margin-top: 10px;">Cluster C</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Real-World Applications</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Industry</th>
+                    <th>Clustering Use Case</th>
+                </tr>
+                <tr>
+                    <td>Marketing</td>
+                    <td>Customer segmentation (high-value, occasional, bargain hunters)</td>
+                </tr>
+                <tr>
+                    <td>Retail</td>
+                    <td>Product categorization, store grouping</td>
+                </tr>
+                <tr>
+                    <td>Healthcare</td>
+                    <td>Patient grouping by symptoms, disease subtypes</td>
+                </tr>
+                <tr>
+                    <td>Social Media</td>
+                    <td>Community detection, similar user grouping</td>
+                </tr>
+                <tr>
+                    <td>Image Processing</td>
+                    <td>Color quantization, image segmentation</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 2: K-Means Clustering -->
+        <div class="section">
+            <h2><i class="fas fa-crosshairs"></i> Part 2: K-Means Clustering</h2>
+            
+            <p>K-Means is the most popular clustering algorithm. It divides data into K clusters by finding K "centers" (centroids).</p>
+
+            <div class="analogy-box">
+                <h4>📍 The Pizza Delivery Analogy</h4>
+                <p>You need to place K pizza stores to serve a city. Where do you put them?</p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Start by randomly placing K stores</li>
+                    <li>Each customer goes to the nearest store</li>
+                    <li>Move each store to the center of its customer area</li>
+                    <li>Repeat until stores stop moving!</li>
+                </ol>
+                <p style="margin-top: 10px;"><strong>K-Means does exactly this!</strong> "Stores" = Centroids, "Customers" = Data points</p>
+            </div>
+
+            <h3>K-Means Algorithm Steps</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0;">
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">1</div>
+                    <div>
+                        <h5 style="color: #4f46e5;">Choose K (number of clusters)</h5>
+                        <p style="color: #475569; margin: 0;">Decide how many groups you want</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">2</div>
+                    <div>
+                        <h5 style="color: #4f46e5;">Initialize K random centroids</h5>
+                        <p style="color: #475569; margin: 0;">Place K random points as starting cluster centers</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">3</div>
+                    <div>
+                        <h5 style="color: #4f46e5;">Assign each point to nearest centroid</h5>
+                        <p style="color: #475569; margin: 0;">Each data point joins the cluster of its closest centroid</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">4</div>
+                    <div>
+                        <h5 style="color: #4f46e5;">Update centroids</h5>
+                        <p style="color: #475569; margin: 0;">Move each centroid to the average position of its cluster members</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">5</div>
+                    <div>
+                        <h5 style="color: #166534;">Repeat until convergence</h5>
+                        <p style="color: #475569; margin: 0;">Keep assigning and updating until centroids stop moving</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># K-Means Clustering in Python</span>
+<span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Step 1: Scale the data (important for K-Means!)</span>
+scaler = <span class="function">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># Step 2: Fit K-Means</span>
+kmeans = <span class="function">KMeans</span>(n_clusters=<span class="number">3</span>, random_state=<span class="number">42</span>, n_init=<span class="number">10</span>)
+kmeans.<span class="function">fit</span>(X_scaled)
+
+<span class="comment"># Step 3: Get cluster labels</span>
+clusters = kmeans.labels_
+<span class="function">print</span>(<span class="string">f"Cluster assignments: {clusters}"</span>)
+
+<span class="comment"># Step 4: Get cluster centers</span>
+centers = kmeans.cluster_centers_
+<span class="function">print</span>(<span class="string">f"Cluster centers:\n{centers}"</span>)
+
+<span class="comment"># Step 5: Visualize (for 2D data)</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">6</span>))
+plt.<span class="function">scatter</span>(X_scaled[:, <span class="number">0</span>], X_scaled[:, <span class="number">1</span>], c=clusters, cmap=<span class="string">'viridis'</span>)
+plt.<span class="function">scatter</span>(centers[:, <span class="number">0</span>], centers[:, <span class="number">1</span>], c=<span class="string">'red'</span>, marker=<span class="string">'X'</span>, s=<span class="number">200</span>, label=<span class="string">'Centroids'</span>)
+plt.<span class="function">legend</span>()
+plt.<span class="function">title</span>(<span class="string">'K-Means Clustering'</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+        </div>
+
+        <!-- Part 3: Choosing K -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Part 3: Choosing the Right K</h2>
+            
+            <p>The biggest challenge in K-Means: <strong>How many clusters should you use?</strong></p>
+
+            <h3>Method 1: Elbow Method</h3>
+            <p>Plot the "inertia" (within-cluster sum of squares) for different K values. Look for the "elbow" - where adding more clusters gives diminishing returns.</p>
+
+            <div class="code-block">
+<pre><span class="comment"># Elbow Method</span>
+inertias = []
+K_range = <span class="function">range</span>(<span class="number">1</span>, <span class="number">11</span>)
+
+<span class="keyword">for</span> k <span class="keyword">in</span> K_range:
+    kmeans = <span class="function">KMeans</span>(n_clusters=k, random_state=<span class="number">42</span>, n_init=<span class="number">10</span>)
+    kmeans.<span class="function">fit</span>(X_scaled)
+    inertias.<span class="function">append</span>(kmeans.inertia_)
+
+<span class="comment"># Plot</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">6</span>))
+plt.<span class="function">plot</span>(K_range, inertias, <span class="string">'bo-'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Number of Clusters (K)'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Inertia'</span>)
+plt.<span class="function">title</span>(<span class="string">'Elbow Method - Finding Optimal K'</span>)
+plt.<span class="function">show</span>()
+
+<span class="comment"># Look for the "elbow" - where the curve bends</span></pre>
+            </div>
+
+            <h3>Method 2: Silhouette Score</h3>
+            <p>Measures how similar points are to their own cluster vs other clusters. Higher = better!</p>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> silhouette_score
+
+silhouette_scores = []
+
+<span class="keyword">for</span> k <span class="keyword">in</span> <span class="function">range</span>(<span class="number">2</span>, <span class="number">11</span>):  <span class="comment"># Start from 2 (need at least 2 clusters)</span>
+    kmeans = <span class="function">KMeans</span>(n_clusters=k, random_state=<span class="number">42</span>, n_init=<span class="number">10</span>)
+    labels = kmeans.<span class="function">fit_predict</span>(X_scaled)
+    score = <span class="function">silhouette_score</span>(X_scaled, labels)
+    silhouette_scores.<span class="function">append</span>(score)
+    <span class="function">print</span>(<span class="string">f"K={k}: Silhouette Score = {score:.3f}"</span>)
+
+<span class="comment"># Plot</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">6</span>))
+plt.<span class="function">plot</span>(<span class="function">range</span>(<span class="number">2</span>, <span class="number">11</span>), silhouette_scores, <span class="string">'go-'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Number of Clusters (K)'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Silhouette Score'</span>)
+plt.<span class="function">title</span>(<span class="string">'Silhouette Method - Finding Optimal K'</span>)
+plt.<span class="function">show</span>()
+
+<span class="comment"># Choose K with highest silhouette score</span></pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Silhouette Score Interpretation</h4>
+                <ul style="margin-left: 20px; color: #3730a3;">
+                    <li><strong>+1:</strong> Perfect! Points are very well matched to their cluster</li>
+                    <li><strong>0:</strong> Points are on the boundary between clusters</li>
+                    <li><strong>-1:</strong> Points might be in the wrong cluster</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 4: Other Clustering Algorithms -->
+        <div class="section">
+            <h2><i class="fas fa-layer-group"></i> Part 4: Other Clustering Algorithms</h2>
+
+            <div class="algo-card">
+                <h4>📊 Hierarchical Clustering</h4>
+                <p style="color: #475569;"><strong>Idea:</strong> Build a tree (dendrogram) showing how clusters merge step by step.</p>
+                <p style="color: #475569; margin-top: 10px;"><strong>Pro:</strong> Don't need to specify K upfront | <strong>Con:</strong> Slow for large datasets</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> scipy.cluster.hierarchy <span class="keyword">import</span> dendrogram, linkage
+<span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> AgglomerativeClustering
+
+<span class="comment"># Create dendrogram to visualize hierarchy</span>
+linkage_matrix = <span class="function">linkage</span>(X_scaled, method=<span class="string">'ward'</span>)
+
+plt.<span class="function">figure</span>(figsize=(<span class="number">12</span>, <span class="number">6</span>))
+<span class="function">dendrogram</span>(linkage_matrix)
+plt.<span class="function">title</span>(<span class="string">'Hierarchical Clustering Dendrogram'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Sample Index'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Distance'</span>)
+plt.<span class="function">show</span>()
+
+<span class="comment"># Cut at desired number of clusters</span>
+hierarchical = <span class="function">AgglomerativeClustering</span>(n_clusters=<span class="number">3</span>)
+clusters = hierarchical.<span class="function">fit_predict</span>(X_scaled)</pre>
+            </div>
+
+            <div class="algo-card">
+                <h4>🎯 DBSCAN (Density-Based Clustering)</h4>
+                <p style="color: #475569;"><strong>Idea:</strong> Find dense regions separated by sparse regions. Points in sparse areas = outliers!</p>
+                <p style="color: #475569; margin-top: 10px;"><strong>Pro:</strong> Finds arbitrary shapes, detects outliers | <strong>Con:</strong> Needs to tune eps and min_samples</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> DBSCAN
+
+<span class="comment"># DBSCAN</span>
+dbscan = <span class="function">DBSCAN</span>(
+    eps=<span class="number">0.5</span>,           <span class="comment"># Maximum distance between points in same cluster</span>
+    min_samples=<span class="number">5</span>     <span class="comment"># Minimum points to form a dense region</span>
+)
+clusters = dbscan.<span class="function">fit_predict</span>(X_scaled)
+
+<span class="comment"># -1 means outlier!</span>
+n_clusters = len(<span class="function">set</span>(clusters)) - (<span class="number">1</span> <span class="keyword">if</span> -<span class="number">1</span> <span class="keyword">in</span> clusters <span class="keyword">else</span> <span class="number">0</span>)
+n_outliers = <span class="function">list</span>(clusters).<span class="function">count</span>(-<span class="number">1</span>)
+
+<span class="function">print</span>(<span class="string">f"Clusters found: {n_clusters}"</span>)
+<span class="function">print</span>(<span class="string">f"Outliers: {n_outliers}"</span>)
+
+<span class="comment"># Visualize</span>
+plt.<span class="function">scatter</span>(X_scaled[:, <span class="number">0</span>], X_scaled[:, <span class="number">1</span>], c=clusters, cmap=<span class="string">'viridis'</span>)
+plt.<span class="function">title</span>(<span class="string">'DBSCAN Clustering (outliers in purple)'</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <h3>Algorithm Comparison</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Cluster Shape</th>
+                    <th>Handles Outliers</th>
+                    <th>Need K?</th>
+                    <th>Best For</th>
+                </tr>
+                <tr>
+                    <td><strong>K-Means</strong></td>
+                    <td>Spherical</td>
+                    <td>No</td>
+                    <td>Yes</td>
+                    <td>Well-separated, similar-size clusters</td>
+                </tr>
+                <tr>
+                    <td><strong>Hierarchical</strong></td>
+                    <td>Any</td>
+                    <td>No</td>
+                    <td>Optional</td>
+                    <td>Exploring cluster hierarchy</td>
+                </tr>
+                <tr>
+                    <td><strong>DBSCAN</strong></td>
+                    <td>Any</td>
+                    <td>Yes!</td>
+                    <td>No</td>
+                    <td>Irregular shapes, outlier detection</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 5: Customer Segmentation Example -->
+        <div class="section">
+            <h2><i class="fas fa-users"></i> Part 5: Real Example - Customer Segmentation</h2>
+
+            <div class="code-block">
+<pre><span class="comment"># Customer Segmentation Example</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Sample customer data</span>
+customers = pd.<span class="function">DataFrame</span>({
+    <span class="string">'CustomerID'</span>: <span class="function">range</span>(<span class="number">1</span>, <span class="number">101</span>),
+    <span class="string">'Annual_Income'</span>: np.random.<span class="function">randint</span>(<span class="number">20000</span>, <span class="number">150000</span>, <span class="number">100</span>),
+    <span class="string">'Spending_Score'</span>: np.random.<span class="function">randint</span>(<span class="number">1</span>, <span class="number">100</span>, <span class="number">100</span>),
+    <span class="string">'Purchase_Frequency'</span>: np.random.<span class="function">randint</span>(<span class="number">1</span>, <span class="number">50</span>, <span class="number">100</span>)
+})
+
+<span class="comment"># Prepare features</span>
+X = customers[[<span class="string">'Annual_Income'</span>, <span class="string">'Spending_Score'</span>, <span class="string">'Purchase_Frequency'</span>]]
+
+<span class="comment"># Scale features</span>
+scaler = <span class="function">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># Find optimal K</span>
+<span class="keyword">for</span> k <span class="keyword">in</span> <span class="function">range</span>(<span class="number">2</span>, <span class="number">7</span>):
+    kmeans = <span class="function">KMeans</span>(n_clusters=k, random_state=<span class="number">42</span>, n_init=<span class="number">10</span>)
+    labels = kmeans.<span class="function">fit_predict</span>(X_scaled)
+    score = <span class="function">silhouette_score</span>(X_scaled, labels)
+    <span class="function">print</span>(<span class="string">f"K={k}: Silhouette = {score:.3f}"</span>)
+
+<span class="comment"># Apply final clustering</span>
+kmeans = <span class="function">KMeans</span>(n_clusters=<span class="number">4</span>, random_state=<span class="number">42</span>, n_init=<span class="number">10</span>)
+customers[<span class="string">'Segment'</span>] = kmeans.<span class="function">fit_predict</span>(X_scaled)
+
+<span class="comment"># Analyze segments</span>
+segment_analysis = customers.<span class="function">groupby</span>(<span class="string">'Segment'</span>).<span class="function">agg</span>({
+    <span class="string">'Annual_Income'</span>: <span class="string">'mean'</span>,
+    <span class="string">'Spending_Score'</span>: <span class="string">'mean'</span>,
+    <span class="string">'Purchase_Frequency'</span>: <span class="string">'mean'</span>,
+    <span class="string">'CustomerID'</span>: <span class="string">'count'</span>
+}).<span class="function">rename</span>(columns={<span class="string">'CustomerID'</span>: <span class="string">'Count'</span>})
+
+<span class="function">print</span>(<span class="string">"\n📊 Customer Segments:"</span>)
+<span class="function">print</span>(segment_analysis.<span class="function">round</span>(<span class="number">0</span>))</pre>
+            </div>
+
+            <div class="example-box">
+                <h4>📊 Interpreting the Segments</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Segment 0 (High Income, High Spending):</strong> VIP customers - target for premium products</li>
+                    <li><strong>Segment 1 (Low Income, High Spending):</strong> At risk - may need financial products</li>
+                    <li><strong>Segment 2 (High Income, Low Spending):</strong> Potential - target with engagement campaigns</li>
+                    <li><strong>Segment 3 (Low Income, Low Spending):</strong> Budget conscious - target with discounts</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>Key Points</th>
+                </tr>
+                <tr>
+                    <td><strong>Clustering</strong></td>
+                    <td>Unsupervised learning - finds natural groups without labels</td>
+                </tr>
+                <tr>
+                    <td><strong>K-Means</strong></td>
+                    <td>Fast, simple; finds K spherical clusters using centroids</td>
+                </tr>
+                <tr>
+                    <td><strong>Choosing K</strong></td>
+                    <td>Elbow method (inertia) or Silhouette score</td>
+                </tr>
+                <tr>
+                    <td><strong>DBSCAN</strong></td>
+                    <td>Density-based; finds any shape, detects outliers</td>
+                </tr>
+                <tr>
+                    <td><strong>Scaling</strong></td>
+                    <td>ALWAYS scale your data before clustering!</td>
+                </tr>
+            </table>
+
+            <div class="key-point">
+                <h4>🎯 Pro Tips</h4>
+                <ul style="margin-left: 20px; color: #3730a3;">
+                    <li><strong>Always scale features</strong> - clustering is distance-based!</li>
+                    <li><strong>Try multiple K values</strong> - use both elbow and silhouette</li>
+                    <li><strong>Visualize results</strong> - even if just 2D PCA plot</li>
+                    <li><strong>Interpret clusters</strong> - give them meaningful business names</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="boosting.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Boosting</a>
+            <a href="deep-learning.html" class="nav-btn next">Next: Deep Learning <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Trees & Random Forest | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #059669; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #047857; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #a7f3d0;
+        }
+        
+        .section h2 { color: #059669; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #d1fae5; }
+        .section h3 { color: #047857; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #10b981; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+            text-align: center;
+        }
+        .visual-example h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        
+        .tree-visual {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #10b981;
+            font-family: 'Fira Code', monospace;
+        }
+        .tree-visual h4 { color: #047857; margin-bottom: 20px; font-family: 'Nunito', sans-serif; }
+        .tree-visual pre { color: #064e3b; font-size: 0.9em; line-height: 1.6; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .compare-card {
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .compare-card.single { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 3px solid #3b82f6; }
+        .compare-card.forest { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 3px solid #22c55e; }
+        .compare-card h4 { font-size: 1.3em; margin-bottom: 15px; }
+        .compare-card.single h4 { color: #1e40af; }
+        .compare-card.forest h4 { color: #166534; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #ecfdf5; }
+        
+        .forest-example {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+        }
+        .forest-example h4 { color: #7c3aed; margin-bottom: 15px; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+            .comparison-box { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="linear-regression.html"><i class="fas fa-arrow-left"></i><span>Previous: Linear Regression</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>🌳 Decision Trees & Random Forests</h1>
+            <p>Learn how machines make decisions like humans do - by asking yes/no questions!</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS A DECISION TREE -->
+        <div class="section">
+            <h2><i class="fas fa-tree"></i> Chapter 1: What is a Decision Tree?</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Remember playing "20 Questions"? 🎮</p>
+                <p>"Is it an animal?" → YES</p>
+                <p>"Does it have 4 legs?" → YES</p>
+                <p>"Does it bark?" → YES</p>
+                <p>"It's a DOG!" 🐕</p>
+                <p><strong>A Decision Tree works exactly like this!</strong> It asks simple questions to make predictions.</p>
+            </div>
+
+            <div class="tree-visual">
+                <h4>🌳 Example: Should I Play Tennis Today?</h4>
+<pre>
+                          🌤️ What's the weather?
+                         /        |           \
+                   Sunny      Overcast        Rainy
+                   /               |              \
+        💨 Is it windy?      ✅ YES, PLAY!    💨 Is it windy?
+             /     \                              /     \
+         Yes       No                          Yes       No
+          |         |                           |         |
+    ❌ NO PLAY  ✅ YES PLAY              ❌ NO PLAY  ✅ YES PLAY
+</pre>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🎯 Key Insight</h4>
+                <p>Each question <strong>splits</strong> the data into smaller groups.</p>
+                <p>The goal? Make each group as "pure" as possible (all Yes or all No).</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: HOW IT WORKS -->
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> Chapter 2: How Decision Trees Work</h2>
+            
+            <h3>The Tree Anatomy</h3>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Part</th>
+                    <th>What It Is</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><strong>🏠 Root Node</strong></td>
+                    <td>The first question (top of tree)</td>
+                    <td>"What's the weather?"</td>
+                </tr>
+                <tr>
+                    <td><strong>🔀 Internal Node</strong></td>
+                    <td>Questions in the middle</td>
+                    <td>"Is it windy?"</td>
+                </tr>
+                <tr>
+                    <td><strong>🏹 Branch</strong></td>
+                    <td>The answer paths</td>
+                    <td>"Yes" or "No"</td>
+                </tr>
+                <tr>
+                    <td><strong>🍃 Leaf Node</strong></td>
+                    <td>Final prediction (bottom)</td>
+                    <td>"Play Tennis" or "Don't Play"</td>
+                </tr>
+            </table>
+
+            <h3>How Does It Pick Questions?</h3>
+            
+            <div class="eli5-box">
+                <h4>🤔 The Algorithm Thinks:</h4>
+                <p>"Which question separates my data <strong>best</strong>?"</p>
+                <p>Imagine a box of 50 red balls and 50 blue balls:</p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Bad split:</strong> After asking, I have 40 red + 35 blue in one group (still mixed!)</li>
+                    <li><strong>Good split:</strong> After asking, I have 48 red + 2 blue in one group (almost pure!)</li>
+                </ul>
+                <p>The algorithm uses math (Gini Impurity or Entropy) to measure "purity."</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>📊 Gini Impurity Explained Simply</h4>
+                <p><strong>Gini = 0</strong> → Perfectly pure (all same class) ✅</p>
+                <p><strong>Gini = 0.5</strong> → Completely mixed (50-50 split) ❌</p>
+                <p>The algorithm picks the question that <strong>reduces Gini the most!</strong></p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 3: PYTHON CODE -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Chapter 3: Decision Trees in Python</h2>
+            
+            <h3>Building Your First Tree</h3>
+            
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="comment"># Load the famous Iris dataset (flowers!)</span>
+iris = <span class="function">load_iris</span>()
+X = iris.data       <span class="comment"># Features (petal length, width, etc.)</span>
+y = iris.target     <span class="comment"># Labels (Setosa, Versicolor, Virginica)</span>
+
+<span class="comment"># Split data: 80% train, 20% test</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>
+)
+
+<span class="comment"># Create and train the Decision Tree</span>
+tree = <span class="function">DecisionTreeClassifier</span>(max_depth=<span class="number">3</span>, random_state=<span class="number">42</span>)
+tree.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Check accuracy</span>
+accuracy = tree.<span class="function">score</span>(X_test, y_test)
+<span class="function">print</span>(<span class="string">f"Accuracy: {accuracy:.2%}"</span>)
+<span class="output"># Output: Accuracy: 100.00%</span></pre>
+            </div>
+
+            <h3>Visualizing the Tree</h3>
+            
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> plot_tree
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Create a beautiful tree visualization</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">20</span>, <span class="number">10</span>))
+<span class="function">plot_tree</span>(tree, 
+          feature_names=iris.feature_names,
+          class_names=iris.target_names,
+          filled=<span class="keyword">True</span>,
+          rounded=<span class="keyword">True</span>,
+          fontsize=<span class="number">10</span>)
+plt.<span class="function">title</span>(<span class="string">"Decision Tree for Iris Classification"</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="tree-visual">
+                <h4>🌸 What the Tree Learned (Simplified)</h4>
+<pre>
+                    🌺 Is petal_length ≤ 2.45?
+                         /           \
+                      YES             NO
+                       |               |
+                  🟡 SETOSA    Is petal_width ≤ 1.75?
+                  (50/0/0)          /           \
+                                 YES             NO
+                                  |               |
+                           🔵 VERSICOLOR    🟣 VIRGINICA
+                            (0/49/1)         (0/1/45)
+</pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 4: THE PROBLEM WITH ONE TREE -->
+        <div class="section">
+            <h2><i class="fas fa-exclamation-triangle"></i> Chapter 4: The Problem with One Tree</h2>
+            
+            <div class="eli5-box">
+                <h4>🤔 Single Tree = Single Opinion</h4>
+                <p>Imagine asking <strong>one person</strong> for restaurant advice.</p>
+                <p>They might be biased! Maybe they hate spicy food, or only know cheap places.</p>
+                <p>What if you asked <strong>100 people</strong> and went with the majority vote? 🗳️</p>
+                <p><strong>That's the idea behind Random Forests!</strong></p>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Problem</th>
+                    <th>What Happens</th>
+                </tr>
+                <tr>
+                    <td><strong>Overfitting</strong></td>
+                    <td>Tree memorizes training data, fails on new data</td>
+                </tr>
+                <tr>
+                    <td><strong>High Variance</strong></td>
+                    <td>Small change in data = completely different tree</td>
+                </tr>
+                <tr>
+                    <td><strong>Instability</strong></td>
+                    <td>Remove one data point, entire tree changes</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 5: RANDOM FOREST -->
+        <div class="section">
+            <h2><i class="fas fa-trees"></i> Chapter 5: Random Forest - Many Trees!</h2>
+            
+            <div class="eli5-box">
+                <h4>🌲🌲🌲 What is a Random Forest?</h4>
+                <p>It's exactly what it sounds like - a <strong>forest of decision trees!</strong></p>
+                <p>Instead of 1 tree, we build 100+ trees. Each tree votes, majority wins! 🗳️</p>
+            </div>
+
+            <div class="comparison-box">
+                <div class="compare-card single">
+                    <h4>🌳 Single Decision Tree</h4>
+                    <div style="font-size: 3em;">🌳</div>
+                    <p style="margin-top: 15px;"><strong>One tree, one decision</strong></p>
+                    <p>High risk of overfitting</p>
+                    <p>Can be unstable</p>
+                </div>
+                <div class="compare-card forest">
+                    <h4>🌲🌲🌲 Random Forest</h4>
+                    <div style="font-size: 3em;">🌲🌲🌲🌲🌲</div>
+                    <p style="margin-top: 15px;"><strong>100+ trees voting together</strong></p>
+                    <p>Much more robust</p>
+                    <p>Wisdom of the crowd!</p>
+                </div>
+            </div>
+
+            <h3>The "Random" Part</h3>
+            
+            <div class="eli5-box">
+                <h4>🎲 Why Random?</h4>
+                <p>Each tree is built differently:</p>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Random Data:</strong> Each tree sees a random sample of the data (with replacement)</li>
+                    <li><strong>Random Features:</strong> At each split, only consider a random subset of features</li>
+                </ol>
+                <p>This creates <strong>diverse</strong> trees that make different mistakes!</p>
+                <p>When they vote together, mistakes cancel out! 🎯</p>
+            </div>
+
+            <h3>Random Forest in Python</h3>
+            
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier
+
+<span class="comment"># Create a Random Forest with 100 trees</span>
+forest = <span class="function">RandomForestClassifier</span>(
+    n_estimators=<span class="number">100</span>,        <span class="comment"># 100 trees in the forest</span>
+    max_depth=<span class="number">5</span>,             <span class="comment"># Max depth of each tree</span>
+    random_state=<span class="number">42</span>
+)
+
+<span class="comment"># Train the forest</span>
+forest.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Check accuracy</span>
+accuracy = forest.<span class="function">score</span>(X_test, y_test)
+<span class="function">print</span>(<span class="string">f"Random Forest Accuracy: {accuracy:.2%}"</span>)
+<span class="output"># Output: Random Forest Accuracy: 100.00%</span></pre>
+            </div>
+
+            <h3>Feature Importance</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># See which features matter most!</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+importance = pd.<span class="function">DataFrame</span>({
+    <span class="string">'Feature'</span>: iris.feature_names,
+    <span class="string">'Importance'</span>: forest.feature_importances_
+}).<span class="function">sort_values</span>(<span class="string">'Importance'</span>, ascending=<span class="keyword">False</span>)
+
+<span class="function">print</span>(importance)
+
+<span class="output">#          Feature  Importance</span>
+<span class="output"># 2   petal length       0.44  ← Most important!</span>
+<span class="output"># 3    petal width       0.42</span>
+<span class="output"># 0   sepal length       0.10</span>
+<span class="output"># 1    sepal width       0.04  ← Least important</span></pre>
+            </div>
+
+            <div class="forest-example">
+                <h4>💡 What This Tells Us</h4>
+                <p><strong>Petal length</strong> and <strong>petal width</strong> are the most useful features for classifying iris flowers!</p>
+                <p>This is a FREE bonus from Random Forests - you learn which features matter most! 🎁</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: WHEN TO USE -->
+        <div class="section">
+            <h2><i class="fas fa-lightbulb"></i> Chapter 6: When to Use What?</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Situation</th>
+                    <th>Use This</th>
+                    <th>Why?</th>
+                </tr>
+                <tr>
+                    <td>Need to explain decisions</td>
+                    <td>🌳 Decision Tree</td>
+                    <td>Easy to visualize and explain to stakeholders</td>
+                </tr>
+                <tr>
+                    <td>Need high accuracy</td>
+                    <td>🌲🌲🌲 Random Forest</td>
+                    <td>More robust, less overfitting</td>
+                </tr>
+                <tr>
+                    <td>Want to know important features</td>
+                    <td>🌲🌲🌲 Random Forest</td>
+                    <td>Provides feature importance scores</td>
+                </tr>
+                <tr>
+                    <td>Small dataset</td>
+                    <td>🌳 Decision Tree</td>
+                    <td>Simpler, less likely to overfit</td>
+                </tr>
+                <tr>
+                    <td>Large dataset</td>
+                    <td>🌲🌲🌲 Random Forest</td>
+                    <td>Can capture complex patterns</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 7: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>Simple Explanation</th>
+                </tr>
+                <tr>
+                    <td><strong>Decision Tree</strong></td>
+                    <td>Asks yes/no questions to make predictions (like 20 Questions)</td>
+                </tr>
+                <tr>
+                    <td><strong>Root Node</strong></td>
+                    <td>First question at the top</td>
+                </tr>
+                <tr>
+                    <td><strong>Leaf Node</strong></td>
+                    <td>Final prediction at the bottom</td>
+                </tr>
+                <tr>
+                    <td><strong>Gini Impurity</strong></td>
+                    <td>Measures how "mixed" a group is (0 = pure, 0.5 = mixed)</td>
+                </tr>
+                <tr>
+                    <td><strong>Random Forest</strong></td>
+                    <td>Many trees voting together (wisdom of the crowd)</td>
+                </tr>
+                <tr>
+                    <td><strong>Feature Importance</strong></td>
+                    <td>Which features matter most for predictions</td>
+                </tr>
+            </table>
+
+            <div class="visual-example">
+                <h4>🎉 You've Mastered Tree-Based Models!</h4>
+                <p>Decision Trees and Random Forests are among the most powerful and widely-used algorithms in data science!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="linear-regression.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Linear Regression</a>
+            <a href="index.html" class="nav-btn next">Back to Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

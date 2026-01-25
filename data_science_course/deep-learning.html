@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning & Neural Networks | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #f48fb1 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav a { color: #c2185b; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #ad1457; }
+        
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 50%, #880e4f 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(233, 30, 99, 0.3);
+        }
+        
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .beginner-badge {
+            background: #ffc107;
+            color: #1e293b;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #f8bbd9;
+        }
+        
+        .section h2 { color: #c2185b; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fce4ec; }
+        .section h3 { color: #ad1457; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #e91e63; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        
+        .eli5-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #ff9800;
+        }
+        .eli5-box h4 { color: #e65100; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #bf360c; font-size: 1.15em; margin-bottom: 10px; }
+        
+        .visual-example {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3f51b5;
+            text-align: center;
+        }
+        .visual-example h4 { color: #283593; font-size: 1.2em; margin-bottom: 20px; }
+        
+        .neuron-visual {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #2196f3;
+            font-family: 'Fira Code', monospace;
+        }
+        .neuron-visual h4 { color: #1565c0; margin-bottom: 20px; font-family: 'Nunito', sans-serif; }
+        .neuron-visual pre { color: #0d47a1; font-size: 0.9em; line-height: 1.6; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #fce4ec; }
+        
+        .layer-card {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 3px solid #9c27b0;
+        }
+        .layer-card h4 { color: #7b1fa2; margin-bottom: 15px; }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #f44336;
+        }
+        .warning-box h4 { color: #c62828; margin-bottom: 10px; }
+        .warning-box p { color: #b71c1c; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="decision-trees.html"><i class="fas fa-arrow-left"></i><span>Previous: Decision Trees</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">🧠 BRAIN-INSPIRED AI</span>
+            <h1>🧠 Deep Learning & Neural Networks</h1>
+            <p>Learn how computers mimic the human brain to recognize images, understand speech, and make predictions!</p>
+        </div>
+
+        <!-- CHAPTER 1: WHAT IS DEEP LEARNING -->
+        <div class="section">
+            <h2><i class="fas fa-brain"></i> Chapter 1: What is Deep Learning?</h2>
+            
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Your brain has <strong>100 billion neurons</strong> connected together. 🧠</p>
+                <p>When you see a cat, neurons fire in patterns: "Fur? Check. Whiskers? Check. Pointy ears? Check. IT'S A CAT!" 🐱</p>
+                <p><strong>Neural Networks</strong> copy this idea! They're computer "brains" with artificial neurons that learn patterns.</p>
+            </div>
+
+            <div class="visual-example">
+                <h4>🎯 Deep Learning vs Machine Learning</h4>
+                <table class="data-table" style="max-width: 600px; margin: 0 auto;">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Machine Learning</th>
+                        <th>Deep Learning</th>
+                    </tr>
+                    <tr>
+                        <td>Learns from</td>
+                        <td>Features YOU define</td>
+                        <td>Raw data (learns features itself!)</td>
+                    </tr>
+                    <tr>
+                        <td>Data needed</td>
+                        <td>Less data OK</td>
+                        <td>Needs LOTS of data</td>
+                    </tr>
+                    <tr>
+                        <td>Best for</td>
+                        <td>Structured data (tables)</td>
+                        <td>Images, text, audio</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- CHAPTER 2: THE NEURON -->
+        <div class="section">
+            <h2><i class="fas fa-circle-nodes"></i> Chapter 2: The Artificial Neuron</h2>
+            
+            <div class="eli5-box">
+                <h4>🤔 What Does a Neuron Do?</h4>
+                <p>A neuron is like a tiny <strong>decision maker</strong>:</p>
+                <ol style="margin-left: 20px;">
+                    <li>It receives <strong>inputs</strong> (like signals from eyes)</li>
+                    <li>It gives each input a <strong>weight</strong> (importance)</li>
+                    <li>It adds them up</li>
+                    <li>If the sum is big enough, it <strong>fires</strong> (activates)!</li>
+                </ol>
+            </div>
+
+            <div class="neuron-visual">
+                <h4>🔌 How a Single Neuron Works</h4>
+<pre>
+         INPUTS              WEIGHTS               SUM + ACTIVATION
+         ------              -------               ----------------
+    
+    x₁ ──────────────→   ×  w₁ (0.7)  ─┐
+                                        │
+    x₂ ──────────────→   ×  w₂ (0.3)  ─┼──→  Σ (sum)  ──→  f(sum)  ──→  OUTPUT
+                                        │      
+    x₃ ──────────────→   ×  w₃ (-0.2) ─┘      
+                                              ↑
+                                           + bias
+    
+    Example:
+    Inputs: [1, 2, 3]
+    Weights: [0.7, 0.3, -0.2]
+    Bias: 0.1
+    
+    Sum = (1×0.7) + (2×0.3) + (3×-0.2) + 0.1
+        = 0.7 + 0.6 - 0.6 + 0.1 = 0.8
+    
+    If sum > 0: Neuron fires! ✅
+</pre>
+            </div>
+
+            <h3>Activation Functions</h3>
+            
+            <div class="eli5-box">
+                <h4>🎚️ What is an Activation Function?</h4>
+                <p>It decides whether the neuron should "fire" or not.</p>
+                <p>Think of it as a <strong>volume knob</strong> - it controls the output!</p>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Function</th>
+                    <th>What It Does</th>
+                    <th>When to Use</th>
+                </tr>
+                <tr>
+                    <td><strong>ReLU</strong></td>
+                    <td>If input < 0, output 0. Otherwise, pass through.</td>
+                    <td>Most common! Use in hidden layers.</td>
+                </tr>
+                <tr>
+                    <td><strong>Sigmoid</strong></td>
+                    <td>Squishes output between 0 and 1</td>
+                    <td>Binary classification (yes/no)</td>
+                </tr>
+                <tr>
+                    <td><strong>Softmax</strong></td>
+                    <td>Outputs probabilities that sum to 1</td>
+                    <td>Multi-class (cat/dog/bird)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 3: NEURAL NETWORK ARCHITECTURE -->
+        <div class="section">
+            <h2><i class="fas fa-sitemap"></i> Chapter 3: Neural Network Architecture</h2>
+            
+            <div class="neuron-visual">
+                <h4>🏗️ The Structure of a Neural Network</h4>
+<pre>
+    INPUT LAYER          HIDDEN LAYERS           OUTPUT LAYER
+    -----------          -------------           ------------
+    
+        ○ ──────────────→  ○  ○ ──────────────→  ○
+       /                   ╲  ╱                   ╲
+      ○ ────────────────→  ○  ○ ────────────────→  ○
+       ╲                   ╱  ╲                   ╱
+        ○ ──────────────→  ○  ○ ──────────────→  ○
+    
+    (Features)        (Learn patterns)       (Prediction)
+    
+    Image Example:
+    - Input: 784 pixels (28×28 image)
+    - Hidden: 128 neurons, then 64 neurons
+    - Output: 10 neurons (digits 0-9)
+</pre>
+            </div>
+
+            <div class="layer-card">
+                <h4>📥 Input Layer</h4>
+                <p>This is where your data enters the network.</p>
+                <p><strong>Example:</strong> For a 28×28 pixel image, you have 784 input neurons (one per pixel).</p>
+            </div>
+
+            <div class="layer-card">
+                <h4>🔮 Hidden Layers (The "Deep" Part!)</h4>
+                <p>These are the magic layers that learn patterns!</p>
+                <ul style="margin-left: 20px;">
+                    <li>First hidden layer might learn "edges" in images</li>
+                    <li>Second layer might learn "shapes"</li>
+                    <li>Third layer might learn "faces"</li>
+                </ul>
+                <p><strong>More layers = "Deeper" network = Can learn more complex patterns!</strong></p>
+            </div>
+
+            <div class="layer-card">
+                <h4>📤 Output Layer</h4>
+                <p>This gives you the final prediction!</p>
+                <p><strong>Example:</strong> For digit recognition, 10 neurons output probabilities for 0-9.</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER 4: HOW LEARNING WORKS -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Chapter 4: How Does It Learn?</h2>
+            
+            <div class="eli5-box">
+                <h4>🎯 The Learning Process</h4>
+                <ol style="margin-left: 20px;">
+                    <li><strong>Forward Pass:</strong> Data goes through network → makes prediction</li>
+                    <li><strong>Calculate Error:</strong> Compare prediction to actual answer (loss)</li>
+                    <li><strong>Backward Pass:</strong> Figure out which weights caused the error</li>
+                    <li><strong>Update Weights:</strong> Adjust weights to reduce error</li>
+                    <li><strong>Repeat:</strong> Do this thousands of times!</li>
+                </ol>
+            </div>
+
+            <div class="neuron-visual">
+                <h4>📉 Training Loop Visualization</h4>
+<pre>
+    EPOCH 1:  Prediction: 2,  Actual: 7  →  Error: HIGH 😢
+    EPOCH 100: Prediction: 7,  Actual: 7  →  Error: LOW 😊
+    
+    
+    Error (Loss) Over Time:
+    
+    ^
+    │    ╲
+    │     ╲
+    │      ╲___
+    │          ╲____
+    │               ╲________
+    └──────────────────────────→ Epochs
+    
+    The goal: Get that error as LOW as possible!
+</pre>
+            </div>
+
+            <h3>Important Concepts</h3>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Term</th>
+                    <th>Simple Explanation</th>
+                </tr>
+                <tr>
+                    <td><strong>Epoch</strong></td>
+                    <td>One complete pass through ALL training data</td>
+                </tr>
+                <tr>
+                    <td><strong>Batch Size</strong></td>
+                    <td>How many samples to process before updating weights</td>
+                </tr>
+                <tr>
+                    <td><strong>Learning Rate</strong></td>
+                    <td>How big the weight updates are (too high = overshoots, too low = slow)</td>
+                </tr>
+                <tr>
+                    <td><strong>Loss Function</strong></td>
+                    <td>Measures how wrong the predictions are</td>
+                </tr>
+                <tr>
+                    <td><strong>Backpropagation</strong></td>
+                    <td>The math that figures out how to adjust each weight</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 5: PYTHON CODE -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Chapter 5: Building Your First Neural Network</h2>
+            
+            <h3>Step 1: Import Libraries</h3>
+            
+            <div class="code-block">
+<pre><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf
+<span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> layers, models
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_moons
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+<span class="comment"># Set seeds for reproducibility</span>
+np.random.<span class="function">seed</span>(<span class="number">42</span>)
+tf.random.<span class="function">set_seed</span>(<span class="number">42</span>)</pre>
+            </div>
+
+            <h3>Step 2: Create Some Data</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Create a "moon" shaped dataset (hard for simple models!)</span>
+X, y = <span class="function">make_moons</span>(n_samples=<span class="number">2000</span>, noise=<span class="number">0.25</span>, random_state=<span class="number">42</span>)
+
+<span class="comment"># Split into train and test</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>
+)
+
+<span class="comment"># Scale the data (very important for neural networks!)</span>
+scaler = <span class="function">StandardScaler</span>()
+X_train = scaler.<span class="function">fit_transform</span>(X_train)
+X_test = scaler.<span class="function">transform</span>(X_test)
+
+<span class="function">print</span>(<span class="string">f"Training samples: {len(X_train)}"</span>)
+<span class="function">print</span>(<span class="string">f"Test samples: {len(X_test)}"</span>)
+<span class="output"># Training samples: 1600</span>
+<span class="output"># Test samples: 400</span></pre>
+            </div>
+
+            <h3>Step 3: Build the Neural Network</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Create a Sequential model (layers stacked one after another)</span>
+model = models.<span class="function">Sequential</span>([
+    <span class="comment"># Input layer + First hidden layer</span>
+    layers.<span class="function">Dense</span>(<span class="number">64</span>, activation=<span class="string">'relu'</span>, input_shape=(<span class="number">2</span>,)),  <span class="comment"># 2 input features</span>
+    layers.<span class="function">Dropout</span>(<span class="number">0.2</span>),  <span class="comment"># Prevents overfitting</span>
+    
+    <span class="comment"># Second hidden layer</span>
+    layers.<span class="function">Dense</span>(<span class="number">32</span>, activation=<span class="string">'relu'</span>),
+    layers.<span class="function">Dropout</span>(<span class="number">0.2</span>),
+    
+    <span class="comment"># Output layer (1 neuron for binary classification)</span>
+    layers.<span class="function">Dense</span>(<span class="number">1</span>, activation=<span class="string">'sigmoid'</span>)  <span class="comment"># Outputs 0-1 probability</span>
+])
+
+<span class="comment"># Show the model architecture</span>
+model.<span class="function">summary</span>()
+
+<span class="output"># Model: "sequential"</span>
+<span class="output"># _________________________________________________________________</span>
+<span class="output"># Layer (type)                Output Shape              Param #</span>
+<span class="output"># =================================================================</span>
+<span class="output"># dense (Dense)               (None, 64)                192</span>
+<span class="output"># dropout (Dropout)           (None, 64)                0</span>
+<span class="output"># dense_1 (Dense)             (None, 32)                2080</span>
+<span class="output"># dropout_1 (Dropout)         (None, 32)                0</span>
+<span class="output"># dense_2 (Dense)             (None, 1)                 33</span>
+<span class="output"># =================================================================</span>
+<span class="output"># Total params: 2,305</span></pre>
+            </div>
+
+            <h3>Step 4: Compile and Train</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Compile: Tell the model how to learn</span>
+model.<span class="function">compile</span>(
+    optimizer=<span class="string">'adam'</span>,              <span class="comment"># The learning algorithm</span>
+    loss=<span class="string">'binary_crossentropy'</span>,    <span class="comment"># Error measurement</span>
+    metrics=[<span class="string">'accuracy'</span>]            <span class="comment"># What to track</span>
+)
+
+<span class="comment"># Train: Let the network learn!</span>
+history = model.<span class="function">fit</span>(
+    X_train, y_train,
+    epochs=<span class="number">50</span>,                     <span class="comment"># 50 passes through data</span>
+    batch_size=<span class="number">32</span>,                 <span class="comment"># 32 samples at a time</span>
+    validation_split=<span class="number">0.2</span>,          <span class="comment"># Use 20% for validation</span>
+    verbose=<span class="number">1</span>
+)
+
+<span class="output"># Epoch 1/50 - accuracy: 0.55 - val_accuracy: 0.60</span>
+<span class="output"># Epoch 25/50 - accuracy: 0.89 - val_accuracy: 0.88</span>
+<span class="output"># Epoch 50/50 - accuracy: 0.93 - val_accuracy: 0.91</span></pre>
+            </div>
+
+            <h3>Step 5: Evaluate</h3>
+            
+            <div class="code-block">
+<pre><span class="comment"># Test on unseen data</span>
+test_loss, test_accuracy = model.<span class="function">evaluate</span>(X_test, y_test)
+<span class="function">print</span>(<span class="string">f"\n✅ Test Accuracy: {test_accuracy:.2%}"</span>)
+
+<span class="output"># ✅ Test Accuracy: 91.25%</span>
+
+<span class="comment"># Make predictions</span>
+predictions = model.<span class="function">predict</span>(X_test[:<span class="number">5</span>])
+<span class="function">print</span>(<span class="string">"Predictions:"</span>, predictions.flatten())
+<span class="function">print</span>(<span class="string">"Actual:"</span>, y_test[:<span class="number">5</span>])
+
+<span class="output"># Predictions: [0.92 0.08 0.87 0.03 0.95]</span>
+<span class="output"># Actual: [1 0 1 0 1]</span></pre>
+            </div>
+        </div>
+
+        <!-- CHAPTER 6: PREVENTING OVERFITTING -->
+        <div class="section">
+            <h2><i class="fas fa-shield-alt"></i> Chapter 6: Preventing Overfitting</h2>
+            
+            <div class="warning-box">
+                <h4>⚠️ What is Overfitting?</h4>
+                <p>When your model memorizes the training data instead of learning patterns!</p>
+                <p>Like a student who memorizes test answers but can't solve new problems.</p>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Technique</th>
+                    <th>What It Does</th>
+                    <th>How to Use</th>
+                </tr>
+                <tr>
+                    <td><strong>Dropout</strong></td>
+                    <td>Randomly "turns off" neurons during training</td>
+                    <td><code>layers.Dropout(0.2)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Early Stopping</strong></td>
+                    <td>Stops training when validation loss stops improving</td>
+                    <td><code>callbacks.EarlyStopping(patience=5)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>L2 Regularization</strong></td>
+                    <td>Penalizes large weights</td>
+                    <td><code>kernel_regularizer='l2'</code></td>
+                </tr>
+                <tr>
+                    <td><strong>More Data</strong></td>
+                    <td>More examples = harder to memorize</td>
+                    <td>Data augmentation, collect more</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CHAPTER 7: SUMMARY -->
+        <div class="section">
+            <h2><i class="fas fa-book"></i> Summary</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Concept</th>
+                    <th>Simple Explanation</th>
+                </tr>
+                <tr>
+                    <td><strong>Neural Network</strong></td>
+                    <td>Computer "brain" made of connected neurons that learns patterns</td>
+                </tr>
+                <tr>
+                    <td><strong>Neuron</strong></td>
+                    <td>Takes inputs, multiplies by weights, outputs if sum is big enough</td>
+                </tr>
+                <tr>
+                    <td><strong>Layer</strong></td>
+                    <td>Group of neurons that process data together</td>
+                </tr>
+                <tr>
+                    <td><strong>Deep Learning</strong></td>
+                    <td>Neural networks with many hidden layers</td>
+                </tr>
+                <tr>
+                    <td><strong>Training</strong></td>
+                    <td>Adjusting weights repeatedly to minimize prediction errors</td>
+                </tr>
+                <tr>
+                    <td><strong>Epoch</strong></td>
+                    <td>One complete pass through all training data</td>
+                </tr>
+                <tr>
+                    <td><strong>Overfitting</strong></td>
+                    <td>Model memorizes training data, fails on new data</td>
+                </tr>
+            </table>
+
+            <div class="visual-example">
+                <h4>🎉 Congratulations!</h4>
+                <p>You've learned the foundations of Deep Learning!</p>
+                <p>Next steps: Try CNNs for images, RNNs for sequences!</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="decision-trees.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Decision Trees</a>
+            <a href="index.html" class="nav-btn next">Back to Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

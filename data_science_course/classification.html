@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Algorithms | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #db2777; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .nav a:hover { color: #be185d; }
+        
+        .header {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.3);
+        }
+        .header h1 { font-size: 2.8em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #ec4899;
+        }
+        .section h2 { color: #db2777; font-size: 2em; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .section h3 { color: #be185d; font-size: 1.5em; margin: 30px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #fce7f3; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 15px; }
+        
+        .analogy-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 10px; }
+        .analogy-box p { color: #1e3a8a; }
+        
+        .example-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .example-box h4 { color: #065f46; font-size: 1.2em; margin-bottom: 10px; }
+        .example-box p, .example-box li { color: #064e3b; }
+        
+        .key-point {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #ec4899;
+        }
+        .key-point h4 { color: #be185d; margin-bottom: 10px; }
+        .key-point p { color: #9d174d; }
+        
+        .code-block {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.6; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .data-table td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+        .data-table tr:nth-child(even) { background: #fdf2f8; }
+        
+        .algo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #f9a8d4;
+            transition: all 0.3s;
+        }
+        .algo-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(236, 72, 153, 0.2); }
+        .algo-card h4 { color: #db2777; margin-bottom: 10px; font-size: 1.3em; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: white; border: none; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 2em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="nlp.html"><i class="fas fa-arrow-left"></i><span>Previous: NLP</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <h1>🎯 Classification Algorithms</h1>
+            <p>Master the key classification algorithms: Logistic Regression, Naive Bayes, SVM, and KNN. Learn when to use each one!</p>
+        </div>
+
+        <!-- Part 1: Logistic Regression -->
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> Part 1: Logistic Regression</h2>
+            
+            <p>Despite its name, Logistic Regression is a <strong>classification</strong> algorithm, not regression! It predicts the probability of belonging to a class.</p>
+
+            <div class="analogy-box">
+                <h4>📈 The S-Curve Magic</h4>
+                <p>Logistic Regression uses the "sigmoid" function to squeeze any number into a probability between 0 and 1.</p>
+                <p style="margin-top: 10px;">Think of it as a volume knob that only goes from 0% to 100% - it can't go beyond!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score, classification_report
+
+<span class="comment"># Split data</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, y, test_size=<span class="number">0.2</span>)
+
+<span class="comment"># Create and train model</span>
+log_reg = <span class="function">LogisticRegression</span>(random_state=<span class="number">42</span>)
+log_reg.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Predict</span>
+y_pred = log_reg.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Get probabilities</span>
+y_proba = log_reg.<span class="function">predict_proba</span>(X_test)
+<span class="function">print</span>(<span class="string">"Probability of class 0 and 1:"</span>, y_proba[<span class="number">0</span>])
+
+<span class="comment"># Evaluate</span>
+<span class="function">print</span>(<span class="string">"Accuracy:"</span>, <span class="function">accuracy_score</span>(y_test, y_pred))
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred))</pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 When to Use Logistic Regression</h4>
+                <ul style="margin-left: 20px; color: #9d174d;">
+                    <li>Binary classification (Yes/No, Spam/Not Spam)</li>
+                    <li>You need probability outputs</li>
+                    <li>You want interpretable coefficients</li>
+                    <li>Features have linear relationship with log-odds</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 2: Naive Bayes -->
+        <div class="section">
+            <h2><i class="fas fa-percentage"></i> Part 2: Naive Bayes</h2>
+            
+            <p>Naive Bayes uses probability and Bayes' theorem to classify. It's "naive" because it assumes features are independent (which they usually aren't!).</p>
+
+            <div class="analogy-box">
+                <h4>🎲 The Doctor's Diagnosis</h4>
+                <p>A doctor sees symptoms: fever, cough, fatigue. Based on past patients:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>P(Flu | Fever) = 80%</li>
+                    <li>P(Flu | Cough) = 70%</li>
+                    <li>P(Flu | Fatigue) = 60%</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Naive Bayes combines these probabilities to make a diagnosis!</strong></p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> GaussianNB, MultinomialNB
+
+<span class="comment"># Gaussian Naive Bayes (for continuous features)</span>
+gnb = <span class="function">GaussianNB</span>()
+gnb.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">"Gaussian NB Accuracy:"</span>, gnb.<span class="function">score</span>(X_test, y_test))
+
+<span class="comment"># Multinomial Naive Bayes (for count data, like text)</span>
+<span class="comment"># Great for text classification!</span>
+<span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer
+
+texts = [<span class="string">"I love this movie"</span>, <span class="string">"Terrible film"</span>, <span class="string">"Great acting"</span>, <span class="string">"Awful plot"</span>]
+labels = [<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>]
+
+vectorizer = <span class="function">CountVectorizer</span>()
+X_text = vectorizer.<span class="function">fit_transform</span>(texts)
+
+mnb = <span class="function">MultinomialNB</span>()
+mnb.<span class="function">fit</span>(X_text, labels)
+
+<span class="comment"># Predict new text</span>
+new_text = vectorizer.<span class="function">transform</span>([<span class="string">"I enjoyed this"</span>])
+<span class="function">print</span>(<span class="string">"Prediction:"</span>, mnb.<span class="function">predict</span>(new_text))  <span class="comment"># Likely: [1] (positive)</span></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>✅ Naive Bayes Pros & Cons</h4>
+                <p><strong>Pros:</strong> Fast, works well with small data, great for text classification</p>
+                <p><strong>Cons:</strong> "Naive" independence assumption rarely holds, may produce poor probability estimates</p>
+            </div>
+        </div>
+
+        <!-- Part 3: Support Vector Machines -->
+        <div class="section">
+            <h2><i class="fas fa-arrows-alt"></i> Part 3: Support Vector Machines (SVM)</h2>
+            
+            <p>SVM finds the <strong>optimal boundary</strong> (hyperplane) that separates classes with maximum margin.</p>
+
+            <div class="analogy-box">
+                <h4>🏗️ Building a Fence</h4>
+                <p>Imagine separating cats from dogs with a fence. SVM builds the fence:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>As far as possible from both groups</li>
+                    <li>The "support vectors" are the animals closest to the fence</li>
+                    <li>If classes can't be separated linearly, SVM can transform the space (kernel trick)!</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+<span class="comment"># SVM requires scaling!</span>
+scaler = <span class="function">StandardScaler</span>()
+X_train_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="function">transform</span>(X_test)
+
+<span class="comment"># Linear SVM</span>
+svm_linear = <span class="function">SVC</span>(kernel=<span class="string">'linear'</span>, C=<span class="number">1.0</span>)
+svm_linear.<span class="function">fit</span>(X_train_scaled, y_train)
+<span class="function">print</span>(<span class="string">"Linear SVM:"</span>, svm_linear.<span class="function">score</span>(X_test_scaled, y_test))
+
+<span class="comment"># RBF Kernel SVM (for non-linear data)</span>
+svm_rbf = <span class="function">SVC</span>(kernel=<span class="string">'rbf'</span>, C=<span class="number">1.0</span>, gamma=<span class="string">'scale'</span>)
+svm_rbf.<span class="function">fit</span>(X_train_scaled, y_train)
+<span class="function">print</span>(<span class="string">"RBF SVM:"</span>, svm_rbf.<span class="function">score</span>(X_test_scaled, y_test))
+
+<span class="comment"># Get probabilities (slower)</span>
+svm_proba = <span class="function">SVC</span>(kernel=<span class="string">'rbf'</span>, probability=<span class="keyword">True</span>)
+svm_proba.<span class="function">fit</span>(X_train_scaled, y_train)
+probabilities = svm_proba.<span class="function">predict_proba</span>(X_test_scaled)</pre>
+            </div>
+
+            <h3>SVM Kernels</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Kernel</th>
+                    <th>Use Case</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>linear</strong></td>
+                    <td>Linearly separable data</td>
+                    <td>Straight line/plane boundary</td>
+                </tr>
+                <tr>
+                    <td><strong>rbf</strong> (default)</td>
+                    <td>Most common, non-linear</td>
+                    <td>Creates curved boundaries</td>
+                </tr>
+                <tr>
+                    <td><strong>poly</strong></td>
+                    <td>Polynomial relationships</td>
+                    <td>Higher-degree curves</td>
+                </tr>
+            </table>
+
+            <div class="key-point">
+                <h4>⚠️ SVM Tips</h4>
+                <ul style="margin-left: 20px; color: #9d174d;">
+                    <li><strong>Always scale your data!</strong> SVM is very sensitive to feature scales</li>
+                    <li><strong>C parameter:</strong> Higher C = Less regularization = May overfit</li>
+                    <li><strong>gamma:</strong> Higher gamma = More complex boundaries = May overfit</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 4: K-Nearest Neighbors -->
+        <div class="section">
+            <h2><i class="fas fa-users"></i> Part 4: K-Nearest Neighbors (KNN)</h2>
+            
+            <p>KNN is the simplest algorithm: To classify a new point, look at its K nearest neighbors and vote!</p>
+
+            <div class="analogy-box">
+                <h4>🏘️ The Neighborhood Analogy</h4>
+                <p>"Tell me who your friends are, and I'll tell you who you are."</p>
+                <p style="margin-top: 10px;">If most of your 5 nearest neighbors like pizza, you probably like pizza too!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier
+
+<span class="comment"># KNN also needs scaling</span>
+scaler = <span class="function">StandardScaler</span>()
+X_train_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="function">transform</span>(X_test)
+
+<span class="comment"># Create KNN with K=5</span>
+knn = <span class="function">KNeighborsClassifier</span>(n_neighbors=<span class="number">5</span>)
+knn.<span class="function">fit</span>(X_train_scaled, y_train)
+
+<span class="function">print</span>(<span class="string">"KNN Accuracy:"</span>, knn.<span class="function">score</span>(X_test_scaled, y_test))
+
+<span class="comment"># Finding optimal K</span>
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score
+
+k_range = <span class="function">range</span>(<span class="number">1</span>, <span class="number">20</span>)
+scores = []
+
+<span class="keyword">for</span> k <span class="keyword">in</span> k_range:
+    knn = <span class="function">KNeighborsClassifier</span>(n_neighbors=k)
+    cv_scores = <span class="function">cross_val_score</span>(knn, X_train_scaled, y_train, cv=<span class="number">5</span>)
+    scores.<span class="function">append</span>(cv_scores.<span class="function">mean</span>())
+
+<span class="comment"># Plot to find best K</span>
+plt.<span class="function">plot</span>(k_range, scores)
+plt.<span class="function">xlabel</span>(<span class="string">'K'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'CV Accuracy'</span>)
+plt.<span class="function">title</span>(<span class="string">'Finding Optimal K'</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="example-box">
+                <h4>🎯 Choosing K</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>K too small (K=1):</strong> Overfitting - too sensitive to noise</li>
+                    <li><strong>K too large:</strong> Underfitting - loses local patterns</li>
+                    <li><strong>Odd K:</strong> Avoids ties in binary classification</li>
+                    <li><strong>Typical range:</strong> 3-10, use cross-validation to find best</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 5: Algorithm Comparison -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 5: Which Algorithm to Choose?</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Best For</th>
+                    <th>Pros</th>
+                    <th>Cons</th>
+                </tr>
+                <tr>
+                    <td><strong>Logistic Regression</strong></td>
+                    <td>Binary classification, need probabilities</td>
+                    <td>Fast, interpretable, probabilistic</td>
+                    <td>Assumes linear relationship</td>
+                </tr>
+                <tr>
+                    <td><strong>Naive Bayes</strong></td>
+                    <td>Text classification, small data</td>
+                    <td>Very fast, works with small data</td>
+                    <td>Independence assumption</td>
+                </tr>
+                <tr>
+                    <td><strong>SVM</strong></td>
+                    <td>High-dimensional data, clear margins</td>
+                    <td>Works well in high dimensions</td>
+                    <td>Slow on large data, needs scaling</td>
+                </tr>
+                <tr>
+                    <td><strong>KNN</strong></td>
+                    <td>Simple problems, no assumptions</td>
+                    <td>No training, intuitive</td>
+                    <td>Slow prediction, curse of dimensionality</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="comment"># Quick comparison of all algorithms</span>
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression
+<span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> GaussianNB
+<span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC
+<span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score
+
+models = {
+    <span class="string">'Logistic Regression'</span>: <span class="function">LogisticRegression</span>(),
+    <span class="string">'Naive Bayes'</span>: <span class="function">GaussianNB</span>(),
+    <span class="string">'SVM'</span>: <span class="function">SVC</span>(),
+    <span class="string">'KNN'</span>: <span class="function">KNeighborsClassifier</span>()
+}
+
+<span class="function">print</span>(<span class="string">"Model Comparison (5-fold CV):\n"</span>)
+<span class="keyword">for</span> name, model <span class="keyword">in</span> models.<span class="function">items</span>():
+    scores = <span class="function">cross_val_score</span>(model, X_scaled, y, cv=<span class="number">5</span>)
+    <span class="function">print</span>(<span class="string">f"{name:20s}: {scores.mean():.3f} ± {scores.std():.3f}"</span>)</pre>
+            </div>
+        </div>
+
+        <!-- Part 6: Evaluation Metrics -->
+        <div class="section">
+            <h2><i class="fas fa-chart-bar"></i> Part 6: Classification Evaluation Metrics</h2>
+            
+            <table class="data-table">
+                <tr>
+                    <th>Metric</th>
+                    <th>Formula</th>
+                    <th>When to Use</th>
+                </tr>
+                <tr>
+                    <td><strong>Accuracy</strong></td>
+                    <td>(TP + TN) / Total</td>
+                    <td>Balanced classes</td>
+                </tr>
+                <tr>
+                    <td><strong>Precision</strong></td>
+                    <td>TP / (TP + FP)</td>
+                    <td>Cost of false positives is high</td>
+                </tr>
+                <tr>
+                    <td><strong>Recall</strong></td>
+                    <td>TP / (TP + FN)</td>
+                    <td>Cost of false negatives is high</td>
+                </tr>
+                <tr>
+                    <td><strong>F1 Score</strong></td>
+                    <td>2 × (Prec × Rec) / (Prec + Rec)</td>
+                    <td>Balance of precision and recall</td>
+                </tr>
+                <tr>
+                    <td><strong>AUC-ROC</strong></td>
+                    <td>Area under ROC curve</td>
+                    <td>Comparing models, imbalanced data</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> (
+    accuracy_score, precision_score, recall_score, 
+    f1_score, roc_auc_score, confusion_matrix, classification_report
+)
+
+<span class="comment"># All metrics at once</span>
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred))
+
+<span class="comment"># Individual metrics</span>
+<span class="function">print</span>(<span class="string">"Accuracy:"</span>, <span class="function">accuracy_score</span>(y_test, y_pred))
+<span class="function">print</span>(<span class="string">"Precision:"</span>, <span class="function">precision_score</span>(y_test, y_pred))
+<span class="function">print</span>(<span class="string">"Recall:"</span>, <span class="function">recall_score</span>(y_test, y_pred))
+<span class="function">print</span>(<span class="string">"F1:"</span>, <span class="function">f1_score</span>(y_test, y_pred))
+
+<span class="comment"># Confusion Matrix</span>
+cm = <span class="function">confusion_matrix</span>(y_test, y_pred)
+<span class="function">print</span>(<span class="string">"Confusion Matrix:\n"</span>, cm)
+<span class="comment"># [[TN, FP],
+#  [FN, TP]]</span></pre>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            
+            <div class="key-point">
+                <h4>🎯 Quick Decision Guide</h4>
+                <ul style="margin-left: 20px; color: #9d174d;">
+                    <li><strong>Text classification?</strong> → Naive Bayes or Logistic Regression</li>
+                    <li><strong>Need probabilities?</strong> → Logistic Regression</li>
+                    <li><strong>High-dimensional data?</strong> → SVM</li>
+                    <li><strong>Small dataset, simple problem?</strong> → KNN</li>
+                    <li><strong>Best overall for tabular data?</strong> → Try XGBoost/Random Forest first!</li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>⚡ Pro Tips</h4>
+                <ul style="margin-left: 20px; color: #9d174d;">
+                    <li>Always scale data for SVM and KNN</li>
+                    <li>Use cross-validation to compare models</li>
+                    <li>Don't rely only on accuracy - check precision, recall, F1</li>
+                    <li>For imbalanced data, use F1 score or AUC-ROC</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="nlp.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: NLP</a>
+            <a href="ab-testing.html" class="nav-btn next">Next: A/B Testing <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>
