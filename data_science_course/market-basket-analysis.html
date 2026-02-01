@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Basket Analysis | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #059669; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #047857; }
+        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, #059669 0%, #047857 100%); border-radius: 25px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(5, 150, 105, 0.3); }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .beginner-badge { background: #22c55e; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section { background: white; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #a7f3d0; }
+        .section h2 { color: #059669; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #d1fae5; }
+        .section h3 { color: #047857; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #10b981; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px dashed #f59e0b; }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        .code-block { background: #1e293b; border-radius: 20px; padding: 30px; margin: 25px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .download-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 20px; padding: 25px; margin: 25px 0; border: 3px solid #3b82f6; }
+        .download-box a { color: #1d4ed8; font-weight: 700; text-decoration: none; border-bottom: 2px solid #1d4ed8; }
+        .download-box a:hover { color: #1e40af; }
+        .step-box { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #a855f7; }
+        .step-box h4 { color: #7c3aed; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 25px 0; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .data-table th { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdf4; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) { body { padding: 10px; font-size: 16px; } .header { padding: 30px 20px; } .section { padding: 25px 20px; } .nav-buttons { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-arrow-left"></i><span>Back to Course Hub</span></a>
+            <a href="ab-testing.html"><i class="fas fa-flask"></i><span>A/B Testing</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">🛒 RETAIL & E-COMMERCE</span>
+            <h1>🛒 Market Basket Analysis</h1>
+            <p>Find which products customers buy together – like "bread + butter" – using association rules and the Apriori algorithm!</p>
+        </div>
+
+        <!-- What is Market Basket Analysis -->
+        <div class="section">
+            <h2><i class="fas fa-shopping-cart"></i> What is Market Basket Analysis?</h2>
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p><strong>Market Basket Analysis</strong> is used by retailers to understand customer purchasing patterns. It looks at what people buy together – like "people who buy milk often buy bread too" – so stores can place products nearby, run bundles, or recommend "others also bought."</p>
+                <p>In one sentence: <strong>Market Basket Analysis = Finding which products customers buy together.</strong></p>
+            </div>
+            <p>It involves analyzing large datasets (e.g. purchase history) to identify products that are likely to be purchased together and to uncover known or unknown associations between items.</p>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="section">
+            <h2><i class="fas fa-calculator"></i> Key Metrics (Support, Confidence, Lift)</h2>
+            <table class="data-table">
+                <tr><th>Metric</th><th>Meaning (Layman)</th></tr>
+                <tr><td><strong>Support</strong></td><td>How often a set of items appears together in all transactions (e.g. "bread + butter" in 30% of baskets).</td></tr>
+                <tr><td><strong>Confidence</strong></td><td>When someone buys A, how often do they also buy B? (e.g. "If bread → butter" 65%).</td></tr>
+                <tr><td><strong>Lift</strong></td><td>How much more likely B is bought when A is bought vs. random. Lift &gt; 1 = positive association; &lt; 1 = negative; = 1 = no association.</td></tr>
+            </table>
+        </div>
+
+        <!-- Dataset -->
+        <div class="section">
+            <h2><i class="fas fa-database"></i> Dataset for This Lesson</h2>
+            <p>We use a grocery-style transaction dataset: each row is one transaction (one basket), and columns are item names. Empty/NaN means "not in that basket."</p>
+            <div class="download-box">
+                <strong>📥 Download the dataset:</strong>
+                <a href="datasets/market_baskets_data.csv" download>market_baskets_data.csv</a>
+                <br><br>Save it in the same folder as your Python script or notebook so <code>pd.read_csv("market_baskets_data.csv")</code> works.
+            </div>
+        </div>
+
+        <!-- Apriori in simple terms -->
+        <div class="section">
+            <h2><i class="fas fa-search"></i> Apriori Algorithm (Super Simple)</h2>
+            <p><strong>Apriori</strong> is a classic algorithm to find "frequent itemsets" (sets of items that appear together often enough) and then turn them into rules (e.g. "if milk then bread"). We set a minimum support: only itemsets above that threshold are kept.</p>
+        </div>
+
+        <!-- Code: Load and prepare data -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Step 1: Load Data and Convert to List of Lists</h2>
+            <p>The Apriori library (<code>apyori</code>) expects transactions as a <strong>list of lists</strong>: each inner list is one basket (list of item names). We load the CSV and convert each row into a list of non-null items.</p>
+            <div class="code-block">
+<pre><span class="comment"># Install: pip install apyori pandas</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Load the dataset (keep the CSV in the same folder as your script)</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"market_baskets_data.csv"</span>)
+
+<span class="comment"># Convert each row to a list of items (drop NaN)</span>
+<span class="comment"># Each row = one transaction (one shopping basket)</span>
+baskets = []
+<span class="keyword">for</span> index, row <span class="keyword">in</span> data.<span class="function">iterrows</span>():
+    items = [<span class="keyword">str</span>(x).<span class="function">strip</span>() <span class="keyword">for</span> x <span class="keyword">in</span> row <span class="keyword">if</span> pd.<span class="function">notna</span>(x) <span class="keyword">and</span> <span class="keyword">str</span>(x).<span class="function">strip</span>() != <span class="string">''</span>]
+    baskets.<span class="function">append</span>(items)
+
+<span class="comment"># baskets is now a list of lists, e.g. [['shrimp','almonds',...], ['burgers','meatballs',...], ...]</span>
+<span class="function">print</span>(<span class="string">"Number of transactions:"</span>, <span class="function">len</span>(baskets))
+<span class="function">print</span>(<span class="string">"First 3 baskets:"</span>, baskets[:<span class="number">3</span>])</pre>
+            </div>
+        </div>
+
+        <!-- Code: Run Apriori -->
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> Step 2: Run Apriori and Get Association Rules</h2>
+            <p>We pass the list of baskets to <code>apriori</code> with <code>min_support</code>, <code>min_confidence</code>, and <code>min_lift</code>. The function returns relation records we can loop over.</p>
+            <div class="code-block">
+<pre><span class="keyword">from</span> apyori <span class="keyword">import</span> apriori
+
+<span class="comment"># Run Apriori: find frequent itemsets and rules</span>
+<span class="comment"># min_support: keep itemsets that appear in at least 1% of transactions</span>
+<span class="comment"># min_confidence: rule confidence at least 25%</span>
+<span class="comment"># min_lift: at least 2 (stronger than random)</span>
+rules = <span class="function">apriori</span>(baskets, min_support=<span class="number">0.01</span>, min_confidence=<span class="number">0.25</span>, min_lift=<span class="number">2</span>)
+rules_list = <span class="function">list</span>(rules)
+
+<span class="function">print</span>(<span class="string">"Number of rules found:"</span>, <span class="function">len</span>(rules_list))</pre>
+            </div>
+        </div>
+
+        <!-- Code: Inspect rules -->
+        <div class="section">
+            <h2><i class="fas fa-list"></i> Step 3: Inspect the Rules</h2>
+            <p>Each element in <code>rules_list</code> is a <strong>RelationRecord</strong>: it has <code>items</code> (the itemset), <code>support</code>, and <code>ordered_statistics</code> (which give confidence and lift for each rule like "item A → item B").</p>
+            <div class="code-block">
+<pre><span class="keyword">for</span> rule <span class="keyword">in</span> rules_list[:<span class="number">10</span>]:
+    items = [x <span class="keyword">for</span> x <span class="keyword">in</span> rule.items]
+    support = rule.support
+    <span class="keyword">for</span> ord_stat <span class="keyword">in</span> rule.ordered_statistics:
+        items_base = [x <span class="keyword">for</span> x <span class="keyword">in</span> ord_stat.items_base]
+        items_add = [x <span class="keyword">for</span> x <span class="keyword">in</span> ord_stat.items_add]
+        conf = ord_stat.confidence
+        lift = ord_stat.lift
+        <span class="function">print</span>(<span class="string">f"Rule: {items_base} -&gt; {items_add} | support={support:.3f}, confidence={conf:.3f}, lift={lift:.3f}"</span>)</pre>
+            </div>
+        </div>
+
+        <!-- Alternative: mlxtend -->
+        <div class="section">
+            <h2><i class="fas fa-exchange-alt"></i> Alternative: Using mlxtend (apriori + association_rules)</h2>
+            <p>Another popular library is <code>mlxtend</code>. It needs data in <strong>one-hot encoded</strong> form (one column per item, 1/0). We can get that from the same CSV using a transaction encoder, then call <code>apriori</code> and <code>association_rules</code> to get a nice table.</p>
+            <div class="code-block">
+<pre><span class="comment"># Install: pip install mlxtend</span>
+<span class="keyword">from</span> mlxtend.frequent_patterns <span class="keyword">import</span> apriori, association_rules
+<span class="keyword">from</span> mlxtend.preprocessing <span class="keyword">import</span> TransactionEncoder
+
+<span class="comment"># baskets = list of lists (same as above)</span>
+te = <span class="function">TransactionEncoder</span>()
+te_ary = te.<span class="function">fit</span>(baskets).<span class="function">transform</span>(baskets)
+df_encoded = pd.<span class="function">DataFrame</span>(te_ary, columns=te.columns_)
+
+<span class="comment"># Frequent itemsets</span>
+frequent = <span class="function">apriori</span>(df_encoded, min_support=<span class="number">0.01</span>, use_colnames=<span class="keyword">True</span>)
+<span class="comment"># Association rules from those itemsets</span>
+rules_df = <span class="function">association_rules</span>(frequent, metric=<span class="string">"confidence"</span>, min_threshold=<span class="number">0.25</span>)
+<span class="function">print</span>(rules_df.<span class="function">head</span>(<span class="number">10</span>))</pre>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><i class="fas fa-check-circle"></i> Summary</h2>
+            <ul style="margin-left: 25px; margin-bottom: 20px;">
+                <li>Market Basket Analysis finds which products are bought together.</li>
+                <li>Support = how often; Confidence = when A then B; Lift = strength vs random.</li>
+                <li>Use <strong>apyori</strong> (list of lists) or <strong>mlxtend</strong> (one-hot + apriori + association_rules).</li>
+                <li>Download <a href="datasets/market_baskets_data.csv" download>market_baskets_data.csv</a> and run the code step by step!</li>
+            </ul>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="ab-testing.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: A/B Testing</a>
+            <a href="index.html" class="nav-btn next">Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

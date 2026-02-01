@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP: Data Cleansing & Applications | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #d97706; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #b45309; }
+        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 25px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(245, 158, 11, 0.3); }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .beginner-badge { background: #22c55e; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section { background: white; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #fde68a; }
+        .section h2 { color: #d97706; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fef3c7; }
+        .section h3 { color: #b45309; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #f59e0b; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px dashed #0ea5e9; }
+        .eli5-box h4 { color: #0369a1; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #0c4a6e; font-size: 1.15em; margin-bottom: 10px; }
+        .code-block { background: #1e293b; border-radius: 20px; padding: 30px; margin: 25px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) { body { padding: 10px; font-size: 16px; } .header { padding: 30px 20px; } .section { padding: 25px 20px; } .nav-buttons { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="nlp-basics.html"><i class="fas fa-arrow-left"></i><span>Previous: NLP Basics</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">💬 TEXT PIPELINE</span>
+            <h1>NLP: Data Cleansing & Applications</h1>
+            <p>Clean raw text and use it for tokenization, POS tagging, NER, and simple applications like sentiment or classification.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-broom"></i> Why Data Cleansing?</h2>
+            <div class="eli5-box">
+                <h4>👶 In Simple Terms</h4>
+                <p>Raw text has capitals, punctuation, numbers, and words like "the" and "is" that often don’t help prediction. <strong>Cleansing</strong> = lowercasing, removing punctuation/numbers, stripping spaces, and optionally removing stopwords and reducing words to stems/lemmas so the model sees a cleaner, more uniform representation.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-download"></i> NLTK Setup</h2>
+            <p>We use NLTK for tokenizing, stopwords, and lemmatization. Download the required data once.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> nltk
+nltk.<span class="function">download</span>(<span class="string">'punkt'</span>)       <span class="comment"># for tokenizing</span>
+nltk.<span class="function">download</span>(<span class="string">'stopwords'</span>)  <span class="comment"># list of common words to drop</span>
+nltk.<span class="function">download</span>(<span class="string">'wordnet'</span>)     <span class="comment"># for lemmatization</span>
+nltk.<span class="function">download</span>(<span class="string">'averaged_perceptron_tagger'</span>)  <span class="comment"># for POS tagging</span></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Basic Preprocessing: Tokenize, POS, NER</h2>
+            <p>Tokenize a sentence into words, tag each word with its part of speech (POS), and optionally run Named Entity Recognition (NER).</p>
+            <div class="code-block">
+<pre><span class="keyword">from</span> nltk <span class="keyword">import</span> word_tokenize, pos_tag, ne_chunk
+
+sentence = <span class="string">'Elon Musk founded SpaceX in California in 2002.'</span>
+<span class="function">print</span>(sentence)
+
+tokens = <span class="function">word_tokenize</span>(sentence)
+<span class="function">print</span>(<span class="string">"Tokens:"</span>, tokens)
+
+pos = <span class="function">pos_tag</span>(tokens)
+<span class="function">print</span>(<span class="string">"POS tags:"</span>, pos)
+
+<span class="comment"># NER: find people, places, organizations</span>
+tree = <span class="function">ne_chunk</span>(pos)
+<span class="function">print</span>(<span class="string">"NER tree:"</span>, tree)</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-soap"></i> Data Cleansing Pipeline</h2>
+            <p>Lowercase, remove non-letters (or keep only letters), strip spaces, remove stopwords, then stem or lemmatize.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> re
+<span class="keyword">from</span> nltk.corpus <span class="keyword">import</span> stopwords
+<span class="keyword">from</span> nltk.stem <span class="keyword">import</span> PorterStemmer
+<span class="keyword">from</span> nltk.stem.wordnet <span class="keyword">import</span> WordNetLemmatizer
+
+<span class="keyword">def</span> <span class="function">clean_text</span>(text):
+    text = text.<span class="function">lower</span>()
+    text = re.<span class="function">sub</span>(<span class="string">r'[^a-z\s]'</span>, <span class="string">' '</span>, text)   <span class="comment"># keep only letters and spaces</span>
+    text = <span class="string">' '</span>.<span class="function">join</span>(text.<span class="function">split</span>())           <span class="comment"># normalize spaces</span>
+    <span class="keyword">return</span> text
+
+<span class="keyword">def</span> <span class="function">remove_stopwords</span>(tokens):
+    stop = <span class="function">set</span>(<span class="function">stopwords.words</span>(<span class="string">'english'</span>))
+    <span class="keyword">return</span> [t <span class="keyword">for</span> t <span class="keyword">in</span> tokens <span class="keyword">if</span> t <span class="keyword">not</span> <span class="keyword">in</span> stop]
+
+<span class="comment"># Stemming (chopping endings)</span>
+stemmer = <span class="function">PorterStemmer</span>()
+<span class="function">print</span>(<span class="function">stemmer.stem</span>(<span class="string">"running"</span>))   <span class="comment"># run</span>
+
+<span class="comment"># Lemmatization (proper dictionary form)</span>
+lemmatizer = <span class="function">WordNetLemmatizer</span>()
+<span class="function">print</span>(<span class="function">lemmatizer.lemmatize</span>(<span class="string">"better"</span>, pos=<span class="string">'a'</span>))  <span class="comment"># good</span></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-rocket"></i> Applications</h2>
+            <p>Once text is cleansed and tokenized, you can:</p>
+            <ul style="margin-left: 25px;">
+                <li><strong>TF-IDF + classifier:</strong> Use <code>TfidfVectorizer</code> on cleaned text, then train a model (e.g. Logistic Regression) for sentiment or topic classification.</li>
+                <li><strong>Word embeddings:</strong> Use pre-trained embeddings (e.g. Word2Vec, or transformer models) for richer representations.</li>
+                <li><strong>Sentiment analysis:</strong> Label sentences as positive/negative and train on TF-IDF or embeddings.</li>
+            </ul>
+            <p>These build on the NLP Basics lesson (tokenization, TF-IDF, stopwords, stem/lemma). Combine the cleansing pipeline above with <code>TfidfVectorizer</code> and <code>LogisticRegression</code> (or Naive Bayes) from the Classification module for a full text classification workflow.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="nlp-basics.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: NLP Basics</a>
+            <a href="index.html" class="nav-btn next">Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

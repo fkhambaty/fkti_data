@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNNs & Time Series | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #f48fb1 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #c2185b; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #ad1457; }
+        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); border-radius: 25px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(233, 30, 99, 0.3); }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .beginner-badge { background: #ffc107; color: #1e293b; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section { background: white; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #f8bbd9; }
+        .section h2 { color: #c2185b; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fce4ec; }
+        .section h3 { color: #ad1457; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #e91e63; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px dashed #ff9800; }
+        .eli5-box h4 { color: #e65100; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #bf360c; font-size: 1.15em; margin-bottom: 10px; }
+        .code-block { background: #1e293b; border-radius: 20px; padding: 30px; margin: 25px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) { body { padding: 10px; font-size: 16px; } .header { padding: 30px 20px; } .section { padding: 25px 20px; } .nav-buttons { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="deep-learning.html"><i class="fas fa-arrow-left"></i><span>Previous: Neural Networks</span></a>
+            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">🧠 IMAGES & SEQUENCES</span>
+            <h1>CNNs & Time Series</h1>
+            <p>Convolutional Neural Networks for images (e.g. MNIST) and a short intro to time series with deep learning.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-image"></i> What Is a CNN?</h2>
+            <div class="eli5-box">
+                <h4>👶 In Simple Terms</h4>
+                <p>A <strong>Convolutional Neural Network (CNN)</strong> is built for grid-like data (images, or 1D sequences). It uses <strong>convolution layers</strong> that slide small filters over the input to detect edges, textures, and patterns. Then <strong>pooling</strong> reduces size; after several such blocks, the result is flattened and passed to dense layers for classification. So: convolution → pooling → … → flatten → dense → output.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-keyboard"></i> MNIST: Handwritten Digits</h2>
+            <p>MNIST is a classic dataset: 28×28 grayscale images of digits 0–9. We build a small CNN in Keras to classify them.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf
+<span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> layers, models
+
+<span class="comment"># Load MNIST</span>
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.<span class="function">mnist.load_data</span>()
+x_train = x_train.<span class="function">reshape</span>(-<span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>).<span class="function">astype</span>(<span class="string">'float32'</span>) / <span class="number">255.0</span>
+x_test = x_test.<span class="function">reshape</span>(-<span class="number">1</span>, <span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>).<span class="function">astype</span>(<span class="string">'float32'</span>) / <span class="number">255.0</span>
+
+<span class="comment"># Simple CNN: Conv -> Pool -> Conv -> Pool -> Flatten -> Dense -> Output</span>
+model = models.<span class="function">Sequential</span>([
+    layers.<span class="function">Conv2D</span>(<span class="number">32</span>, (<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">'relu'</span>, input_shape=(<span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)),
+    layers.<span class="function">MaxPooling2D</span>((<span class="number">2</span>, <span class="number">2</span>)),
+    layers.<span class="function">Conv2D</span>(<span class="number">64</span>, (<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">'relu'</span>),
+    layers.<span class="function">MaxPooling2D</span>((<span class="number">2</span>, <span class="number">2</span>)),
+    layers.<span class="function">Flatten</span>(),
+    layers.<span class="function">Dense</span>(<span class="number">64</span>, activation=<span class="string">'relu'</span>),
+    layers.<span class="function">Dense</span>(<span class="number">10</span>, activation=<span class="string">'softmax'</span>)
+])
+model.<span class="function">compile</span>(optimizer=<span class="string">'adam'</span>, loss=<span class="string">'sparse_categorical_crossentropy'</span>, metrics=[<span class="string">'accuracy'</span>])
+model.<span class="function">fit</span>(x_train, y_train, epochs=<span class="number">5</span>, validation_data=(x_test, y_test))</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-clock"></i> Time Series with Deep Learning</h2>
+            <p>Time series = data ordered in time (e.g. daily sales, temperature). We can use:</p>
+            <ul style="margin-left: 25px;">
+                <li><strong>1D CNNs:</strong> Sliding filters over the time axis to capture local patterns.</li>
+                <li><strong>RNNs / LSTM:</strong> Recurrent units that remember past values; good for long sequences.</li>
+                <li><strong>Transformers:</strong> Attention over time steps (used in many modern models).</li>
+            </ul>
+            <p>Typical steps: load sequence data, create windows (e.g. last 30 days → next day), normalize, build a model (e.g. LSTM or 1D CNN), train and predict. Libraries like TensorFlow/Keras and PyTorch support RNN/LSTM and 1D Conv layers for time series.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="deep-learning.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Neural Networks</a>
+            <a href="nlp-basics.html" class="nav-btn next">Next: NLP Basics <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

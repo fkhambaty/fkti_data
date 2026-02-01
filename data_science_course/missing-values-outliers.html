@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missing Values & Outliers | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 50%, #c4b5fd 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #7c3aed; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #6d28d9; }
+        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); border-radius: 25px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3); }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .beginner-badge { background: #22c55e; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section { background: white; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #ddd6fe; }
+        .section h2 { color: #7c3aed; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #ede9fe; }
+        .section h3 { color: #6d28d9; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #8b5cf6; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px dashed #f59e0b; }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        .code-block { background: #1e293b; border-radius: 20px; padding: 30px; margin: 25px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .step-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #3b82f6; }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 25px 0; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .data-table th { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f5f3ff; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) { body { padding: 10px; font-size: 16px; } .header { padding: 30px 20px; } .section { padding: 25px 20px; } .nav-buttons { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-arrow-left"></i><span>Back to Course Hub</span></a>
+            <a href="statistics-foundations.html"><i class="fas fa-chart-bar"></i><span>Statistics</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">📊 DATA CLEANING</span>
+            <h1>Missing Values & Outliers</h1>
+            <p>Learn how to find and handle missing data and extreme values so your models don’t get fooled!</p>
+        </div>
+
+        <!-- Part 1: Missing Values -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Part 1: Missing Values</h2>
+            <div class="eli5-box">
+                <h4>👶 What Are Missing Values?</h4>
+                <p>Missing values are empty cells in your data: no number, no text. Like a form where someone skipped “Age” or “Income.” Many algorithms can’t use rows with missing values, so we either <strong>remove</strong> those rows or <strong>fill</strong> them (e.g. with the average).</p>
+            </div>
+            <h3>Why Do We Care?</h3>
+            <p>If we ignore missing data, we might drop too many rows or bias our results. If we fill them carelessly, we might inject wrong information. So we always <strong>inspect first</strong> (how many? which columns?) then choose a strategy.</p>
+            <h3>Common Strategies</h3>
+            <table class="data-table">
+                <tr><th>Strategy</th><th>When to Use</th></tr>
+                <tr><td><strong>Drop rows</strong> (<code>dropna()</code>)</td><td>Only a few missing; dropping doesn’t lose much data.</td></tr>
+                <tr><td><strong>Fill with mean/median</strong> (<code>fillna(mean)</code>)</td><td>Numeric column; mean or median is a reasonable guess.</td></tr>
+                <tr><td><strong>Fill with mode</strong></td><td>Categorical column; use the most frequent category.</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Missing Values in Python</h2>
+            <p>Use pandas to detect and handle missing values. You can use any CSV; we provide one below so you can follow along.</p>
+            <p><strong>📥 Download a dataset to try:</strong> <a href="datasets/hotel_reservations.csv" download="hotel_reservations.csv">hotel_reservations.csv</a> — save it in the same folder as your script. In the code we use a generic name <code>your_data.csv</code>; replace with <code>hotel_reservations.csv</code> and use a numeric column (e.g. <code>avg_price_per_room</code>) instead of <code>Price</code> if needed.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="comment"># Load your data (e.g. hotel_reservations.csv from the link above)</span>
+df = pd.<span class="function">read_csv</span>(<span class="string">"hotel_reservations.csv"</span>)
+
+<span class="comment"># How many missing values per column?</span>
+<span class="function">print</span>(df.<span class="function">isna</span>().<span class="function">sum</span>())
+
+<span class="comment"># Option 1: Drop rows with any missing value</span>
+df_dropped = df.<span class="function">dropna</span>()
+
+<span class="comment"># Option 2: Fill a numeric column with its mean (e.g. avg_price_per_room)</span>
+col = <span class="string">"avg_price_per_room"</span>  <span class="comment"># or any numeric column in your CSV</span>
+<span class="keyword">if</span> col <span class="keyword">in</span> df.columns:
+    df[col] = df[col].<span class="function">fillna</span>(df[col].<span class="function">mean</span>())
+
+<span class="comment"># Option 3: Fill with median (better if column has outliers)</span>
+<span class="keyword">if</span> col <span class="keyword">in</span> df.columns:
+    df[col] = df[col].<span class="function">fillna</span>(df[col].<span class="function">median</span>())</pre>
+            </div>
+            <div class="eli5-box" style="margin-top: 1rem;">
+                <h4>📖 Line-by-line (layman)</h4>
+                <p><code>pd.read_csv("...")</code> — load the CSV into a table (DataFrame).</p>
+                <p><code>df.isna().sum()</code> — for each column, count how many cells are missing (NaN).</p>
+                <p><code>df.dropna()</code> — remove any row that has at least one missing value.</p>
+                <p><code>df[col].fillna(df[col].mean())</code> — replace missing values in that column with the column’s average. Use <code>median()</code> instead of <code>mean()</code> when the column has outliers so one extreme value doesn’t distort the fill.</p>
+            </div>
+        </div>
+
+        <!-- Part 2: Outliers -->
+        <div class="section">
+            <h2><i class="fas fa-exclamation-triangle"></i> Part 2: Outliers</h2>
+            <div class="eli5-box">
+                <h4>👶 What Are Outliers?</h4>
+                <p>Outliers are values that sit far from the rest. Example: most customers spend ₹250–₹500 per month, but a few spend ₹10,000+. Those few are outliers. They can skew the mean and confuse models, so we <strong>detect</strong> them (e.g. boxplot, IQR) then <strong>remove</strong> or <strong>cap</strong> them.</p>
+            </div>
+            <h3>Case: Customer Monthly Spend</h3>
+            <p>Imagine you’re analyzing customer transaction data. Most spend is in a narrow range; a few very high values can pull the average up and distort your model. We’ll detect those with visuals and the IQR method.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-chart-box"></i> Step 1: Load Data and Inspect</h2>
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+
+<span class="comment"># Sample: 95 normal spends (250 to 262+3*94) + 5 extreme (10000, 12000, 15000, 18000, 20000)</span>
+data = pd.<span class="function">DataFrame</span>({
+    <span class="string">'CustomerID'</span>: <span class="function">range</span>(<span class="number">1</span>, <span class="number">101</span>),
+    <span class="string">'MonthlySpend'</span>: [<span class="number">250</span> + i*<span class="number">3</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">95</span>)] + [<span class="number">10000</span>, <span class="number">12000</span>, <span class="number">15000</span>, <span class="number">18000</span>, <span class="number">20000</span>]
+})
+
+<span class="function">print</span>(data.<span class="function">head</span>())
+<span class="function">print</span>(data.<span class="function">describe</span>())</pre>
+            </div>
+            <p>Most customers are in the ₹250–₹530 range; the last five are huge. That’s a red flag.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-chart-bar"></i> Step 2: Visual Detection – Boxplot and Histogram</h2>
+            <p><strong>Boxplot:</strong> Anything beyond the “whiskers” is typically an outlier. <strong>Histogram:</strong> A long tail or a few bars far from the rest suggest outliers.</p>
+            <div class="code-block">
+<pre>plt.<span class="function">figure</span>(figsize=(<span class="number">8</span>, <span class="number">4</span>))
+sns.<span class="function">boxplot</span>(x=data[<span class="string">'MonthlySpend'</span>])
+plt.<span class="function">title</span>(<span class="string">"Boxplot of Monthly Spend"</span>)
+plt.<span class="function">show</span>()
+
+plt.<span class="function">figure</span>(figsize=(<span class="number">8</span>, <span class="number">4</span>))
+sns.<span class="function">histplot</span>(data[<span class="string">'MonthlySpend'</span>], bins=<span class="number">20</span>, kde=<span class="keyword">True</span>)
+plt.<span class="function">title</span>(<span class="string">"Histogram of Monthly Spend"</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-calculator"></i> Step 3: IQR Method (Statistical)</h2>
+            <p><strong>IQR</strong> = Q3 − Q1 (interquartile range). We often mark as outlier anything below <strong>Q1 − 1.5×IQR</strong> or above <strong>Q3 + 1.5×IQR</strong>.</p>
+            <div class="code-block">
+<pre>Q1 = data[<span class="string">'MonthlySpend'</span>].<span class="function">quantile</span>(<span class="number">0.25</span>)
+Q3 = data[<span class="string">'MonthlySpend'</span>].<span class="function">quantile</span>(<span class="number">0.75</span>)
+IQR = Q3 - Q1
+
+lower_bound = Q1 - <span class="number">1.5</span> * IQR
+upper_bound = Q3 + <span class="number">1.5</span> * IQR
+
+outliers = data[(data[<span class="string">'MonthlySpend'</span>] < lower_bound) | (data[<span class="string">'MonthlySpend'</span>] > upper_bound)]
+<span class="function">print</span>(outliers)</pre>
+            </div>
+            <div class="eli5-box" style="margin-top: 1rem;">
+                <h4>📖 Line-by-line (layman)</h4>
+                <p><code>quantile(0.25)</code> / <code>quantile(0.75)</code> — the value below which 25% (or 75%) of the data lies (Q1 and Q3).</p>
+                <p><code>IQR = Q3 - Q1</code> — the spread of the middle 50% of the data.</p>
+                <p><code>lower_bound = Q1 - 1.5*IQR</code> and <code>upper_bound = Q3 + 1.5*IQR</code> — the “fence”; values outside this range are usually treated as outliers.</p>
+                <p><code>data[(... &lt; lower_bound) | (... &gt; upper_bound)]</code> — keep only rows where MonthlySpend is below the lower fence or above the upper fence; those rows are the outliers.</p>
+            </div>
+            <p>This returns the rows with extreme values (e.g. the five with ₹10,000+).</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-wrench"></i> Step 4: Treating Outliers</h2>
+            <p><strong>Option A – Remove:</strong> Keep only rows inside the bounds. <strong>Option B – Cap:</strong> Set values below lower_bound to lower_bound and above upper_bound to upper_bound (winsorize).</p>
+            <div class="code-block">
+<pre><span class="comment"># Option A: Remove outliers</span>
+cleaned_data = data[(data[<span class="string">'MonthlySpend'</span>] >= lower_bound) & (data[<span class="string">'MonthlySpend'</span>] <= upper_bound)]
+
+<span class="comment"># Option B: Cap (winsorize) – replace extreme values with the bound</span>
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+data_capped = data.<span class="function">copy</span>()
+data_capped[<span class="string">'MonthlySpend'</span>] = np.<span class="function">clip</span>(data_capped[<span class="string">'MonthlySpend'</span>], lower_bound, upper_bound)</pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-check-circle"></i> Summary</h2>
+            <ul style="margin-left: 25px;">
+                <li><strong>Missing values:</strong> Use <code>isna().sum()</code> to inspect; then <code>dropna()</code> or <code>fillna(mean/median/mode)</code>.</li>
+                <li><strong>Outliers:</strong> Use boxplot/histogram and IQR (Q1, Q3, lower_bound, upper_bound) to detect; then remove or cap.</li>
+            </ul>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="statistics-foundations.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Statistics</a>
+            <a href="hypothesis-testing.html" class="nav-btn next">Next: Hypothesis Testing <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>

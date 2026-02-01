@@ -386,6 +386,7 @@ plt.show()</code></pre></div>
       <div class="analogy-card">
         <h4>🎯 Real Dataset: Loan Approval</h4>
         <p>We'll use a loan approval dataset - imagine you're a bank analyst deciding who gets loans! The data includes income, CIBIL score (credit score in India), loan amount, and whether the loan was approved.</p>
+        <p style="margin-top: 12px;"><strong>📥 Download the dataset:</strong> <a href="datasets/loan_approval_dataset.csv" download="loan_approval_dataset.csv">loan_approval_dataset.csv</a> — save it in the same folder as your notebook so <code>pd.read_csv("loan_approval_dataset.csv")</code> works.</p>
       </div>
 
       <h3>Loading the Data</h3>
@@ -396,6 +397,12 @@ df = pd.read_csv("loan_approval_dataset.csv")
 
 # View first few rows
 df.head()</code></pre></div>
+      <div class="tip-box" style="margin-top: 1rem;">
+        <strong>📖 Line-by-line (layman):</strong><br>
+        • <code>import pandas as pd</code> — Load the "pandas" toolbox and call it "pd" so we can read tables (like Excel) in Python.<br>
+        • <code>df = pd.read_csv("loan_approval_dataset.csv")</code> — Read the CSV file from disk into a table variable named <code>df</code> (short for DataFrame).<br>
+        • <code>df.head()</code> — Show the first 5 rows of the table so we can peek at the data.
+      </div>
 
       <div class="code-block"><pre><code># Check the columns
 df.columns</code></pre></div>
@@ -423,6 +430,12 @@ plt.title("Line Plots in One Figure")
 plt.legend()
 plt.tight_layout()
 plt.show()</code></pre></div>
+      <div class="tip-box" style="margin-top: 1rem;">
+        <strong>📖 Line-by-line (layman):</strong><br>
+        • <code>plt.figure(figsize=(8, 4))</code> — Create a blank canvas 8 units wide and 4 tall.<br>
+        • <code>sns.lineplot(x=..., y=..., label=...)</code> — Draw a line: x = row index, y = values from that column; <code>label</code> is the name in the legend.<br>
+        • <code>plt.title(...)</code> — Put a title on the chart. <code>plt.legend()</code> — Show which line is which. <code>plt.tight_layout()</code> — Avoid overlapping labels. <code>plt.show()</code> — Display the chart.
+      </div>
 
       <div class="tip-box">
         <strong>💡 Pro Tip:</strong> <code>plt.tight_layout()</code> automatically adjusts spacing so labels don't overlap. Always use it!
@@ -451,29 +464,35 @@ plt.show()</code></pre></div>
 
       <h3>Simple Bar Chart - Loan Status Count</h3>
       <div class="code-block"><pre><code># Count how many approved vs rejected
-counts = df[" loan_status"].value_counts()
+counts = df["loan_status"].value_counts()
 print(counts)</code></pre></div>
-      <div class="output-block"><div class="output-header">Output</div><pre> Approved    2656
- Rejected    1610
-Name:  loan_status, dtype: int64</pre></div>
+      <div class="tip-box" style="margin-top: 0.75rem;">
+        <strong>📖 Line-by-line:</strong> <code>df["loan_status"]</code> — the column of approved/rejected. <code>.value_counts()</code> — count how many of each (e.g. 2656 Approved, 1610 Rejected). <code>counts</code> is a small table we use for the bar heights.
+      </div>
+      <div class="output-block"><div class="output-header">Output</div><pre>Approved    2656
+Rejected    1610
+Name: loan_status, dtype: int64</pre></div>
 
       <div class="code-block"><pre><code># Method 1: Using matplotlib directly
 plt.bar(counts.index, counts.values)
 plt.title("Loan Status Count")
 plt.show()</code></pre></div>
+      <div class="tip-box" style="margin-top: 0.75rem;">
+        <strong>📖 Line-by-line:</strong> <code>plt.bar(counts.index, counts.values)</code> — x = category names (Approved, Rejected), y = heights (2656, 1610). <code>plt.title(...)</code> — chart title. <code>plt.show()</code> — display the chart.
+      </div>
 
       <div class="code-block"><pre><code># Method 2: Using pandas plot (even easier!)
-df[" loan_status"].value_counts().plot(kind="bar")
+df["loan_status"].value_counts().plot(kind="bar")
 plt.show()</code></pre></div>
 
       <h3>Grouped Bar Chart - Self-Employed vs Loan Status</h3>
       <div class="code-block"><pre><code># Create a cross-tabulation (like a pivot table)
-group_data = pd.crosstab(df[' self_employed'], df[' loan_status'])
+group_data = pd.crosstab(df['self_employed'], df['loan_status'])
 print(group_data)</code></pre></div>
-      <div class="output-block"><div class="output-header">Output</div><pre> loan_status   Approved   Rejected
- self_employed                     
- No               1950       1180
- Yes               706        430</pre></div>
+      <div class="output-block"><div class="output-header">Output</div><pre>loan_status   Approved   Rejected
+self_employed                     
+No               1950       1180
+Yes               706        430</pre></div>
 
       <div class="code-block"><pre><code># Create grouped bar chart
 ax = group_data.plot(kind="bar", figsize=(12, 8))
@@ -488,6 +507,9 @@ for container in ax.containers:
                  fontsize=10, color='black', padding=7)
 
 plt.show()</code></pre></div>
+      <div class="tip-box" style="margin-top: 0.75rem;">
+        <strong>📖 Line-by-line:</strong> <code>group_data.plot(kind="bar", ...)</code> — turn the crosstab into grouped bars (No/Yes on x, Approved/Rejected as bar groups). <code>ax</code> is the chart object. <code>plt.xlabel/ylabel/title</code> — label axes and title. <code>for container in ax.containers</code> — each set of bars (e.g. Approved); <code>ax.bar_label(container, ...)</code> — put the number on top of each bar.
+      </div>
 
       <div class="visual-example">
         <p>📊 <strong>Grouped Bar Chart Result</strong></p>
