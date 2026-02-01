@@ -273,6 +273,45 @@ $100K |  ✷
                 <p><strong>b (intercept)</strong> = "The starting price even for 0 sq ft"</p>
                 <p>(In reality, a 0 sq ft house doesn't exist, but mathematically we need this!)</p>
             </div>
+
+            <h2 style="margin-top: 40px; color: #7c3aed;"><i class="fas fa-calculator"></i> Chapter 1.5: The Cost Function (How We Find the Best Line)</h2>
+            <p>We have the formula <strong>y = mx + b</strong>, but how do we choose the <em>best</em> m and b? We use a <strong>cost function</strong>.</p>
+            
+            <div class="eli5-box">
+                <h4>👶 What is a Cost Function?</h4>
+                <p>A <strong>cost function</strong> (also called <strong>loss function</strong>) measures how wrong our predictions are. It’s a single number: the smaller it is, the better our line fits the data. Linear regression finds the m and b that <strong>minimize</strong> this cost.</p>
+            </div>
+
+            <div class="formula-box">
+                <h4>📐 Mean Squared Error (MSE) – The Usual Cost for Linear Regression</h4>
+                <p>For linear regression we usually use <strong>Mean Squared Error (MSE)</strong>:</p>
+                <div class="formula" style="margin: 20px 0;">J(m, b) = (1/m) × Σ (predicted − actual)²</div>
+                <p style="color: #6b21a8; margin-top: 10px;">In words:</p>
+                <ul style="text-align: left; max-width: 500px; margin: 10px auto; color: #6b21a8;">
+                    <li><strong>predicted</strong> = what our line says (ŷ = mx + b)</li>
+                    <li><strong>actual</strong> = real value from the data (y)</li>
+                    <li><strong>(predicted − actual)</strong> = one point’s error</li>
+                    <li><strong>Σ</strong> = sum over all data points</li>
+                    <li><strong>m</strong> (here) = number of data points (so we get an <em>average</em>)</li>
+                </ul>
+                <p style="margin-top: 15px;">So: <strong>MSE = average of (squared errors)</strong>. We want to make this as small as possible.</p>
+            </div>
+
+            <div class="analogy-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b;">
+                <h4>🎯 Why Square the Errors?</h4>
+                <p>We square so that:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Positive and negative errors don’t cancel out (over vs under prediction both count).</li>
+                    <li>Big errors are punished more than small ones (one huge mistake hurts the cost a lot).</li>
+                </ul>
+                <p style="margin-top: 10px;">Dividing by <strong>m</strong> (number of points) gives an <em>average</em> error, so the cost doesn’t depend on how many data points we have.</p>
+            </div>
+
+            <div class="step-box">
+                <h4>💡 How Does the Model Use the Cost Function?</h4>
+                <p>Algorithms like <strong>Gradient Descent</strong> (see the <a href="bias-variance.html" style="color: #1e40af;">Bias, Variance & Gradient Descent</a> lesson) start with some m and b, then repeatedly adjust them in the direction that <strong>reduces the cost (MSE)</strong>. When the cost stops going down, we have (approximately) the best line.</p>
+                <p style="margin-top: 10px;">So: <strong>Cost Function = what we minimize</strong> to get the best linear regression line.</p>
+            </div>
         </div>
 
         <!-- CHAPTER 2: PREPARING DATA -->
@@ -291,6 +330,7 @@ $100K |  ✷
                           align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);">
                     <i class="fas fa-download"></i> Download Housing.csv (29 KB)
                 </a>
+                <p style="margin-top: 12px;"><a href="linear-regression-code-walkthrough.html" style="color: #166534; font-weight: 700;">📖 Full code walkthrough (every line explained)</a></p>
             </div>
             
             <div class="important-box">
@@ -319,6 +359,12 @@ data = pd.<span class="function">read_csv</span>(<span class="string">"Housing.c
 <span class="output"># 2  12250000  9960       3         2        2      yes</span>
 <span class="output"># 3  12215000  7500       4         2        2      yes</span>
 <span class="output"># 4  11410000  7420       4         1        2      yes</span></pre>
+            </div>
+            <div class="eli5-box" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-left: 4px solid #10b981;">
+                <h4>What each line does (in simple words)</h4>
+                <p><strong>pd.read_csv("Housing.csv")</strong> — Reads the CSV file and stores it in <code>data</code>.</p>
+                <p><strong>print(data.head())</strong> — Shows the first 5 rows so you can see the columns (price, area, bedrooms, etc.).</p>
+                <p style="margin-top: 10px;"><a href="linear-regression-code-walkthrough.html">Full line-by-line walkthrough →</a></p>
             </div>
 
             <div class="eli5-box">
@@ -943,7 +989,7 @@ plt.<span class="function">show</span>()</pre>
 
         <div class="nav-buttons">
             <a href="statistics-foundations.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Statistics</a>
-            <a href="index.html" class="nav-btn next">Back to Course Hub <i class="fas fa-arrow-right"></i></a>
+            <a href="bias-variance.html" class="nav-btn next">Next: Bias, Variance & Gradient Descent <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
 

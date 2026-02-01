@@ -499,6 +499,22 @@ test_score = <span class="function">r2_score</span>(y_test, complex_model.<span 
             
             <p>Regularization adds a penalty for complex models, forcing them to be simpler and generalize better.</p>
 
+            <div class="example-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 4px solid #3b82f6;">
+                <h4>📥 Dataset for Regularization (Ridge/Lasso with real data)</h4>
+                <p><strong>auto_mpg.csv</strong> — Miles per gallon and car features (cylinders, displacement, horsepower, weight, etc.). Used in regularization practice to predict mpg with Ridge/Lasso.</p>
+                <p style="margin-top: 8px;"><a href="datasets/auto_mpg.csv" download="auto_mpg.csv" style="color: #1d4ed8; font-weight: 700;">Download auto_mpg.csv</a> — Save in the same folder as your script; use <code>pd.read_csv("auto_mpg.csv")</code>.</p>
+                <p style="margin-top: 12px;"><a href="regularization-code-walkthrough.html" style="color: #1d4ed8; font-weight: 700;">📖 Full code walkthrough (every line explained)</a></p>
+            </div>
+
+            <h3>Impact of Lambda (α)</h3>
+            <p>In Ridge and Lasso, <strong>alpha</strong> (often written λ in theory) controls how strong the penalty is:</p>
+            <ul style="margin-left: 25px; margin-bottom: 15px;">
+                <li><strong>Alpha = 0</strong> → No regularization (plain linear regression).</li>
+                <li><strong>Small alpha</strong> → Weak penalty → weights can stay large → more flexible, risk of overfitting.</li>
+                <li><strong>Large alpha</strong> → Strong penalty → weights shrink a lot → simpler model, risk of underfitting.</li>
+            </ul>
+            <p>So: <strong>tuning alpha is key</strong>. Use cross-validation to pick the best value (e.g. <code>RidgeCV</code> or <code>LassoCV</code> in sklearn).</p>
+
             <div class="analogy-box">
                 <h4>📝 The Essay Analogy</h4>
                 <p>Imagine writing an essay with a word limit. You can't use unnecessary words - you must be concise!</p>
@@ -553,6 +569,15 @@ lasso_model.<span class="function">fit</span>(X_train, y_train)
 <span class="keyword">for</span> feature, coef <span class="keyword">in</span> <span class="function">zip</span>(feature_names, lasso_model.coef_):
     <span class="keyword">if</span> coef != <span class="number">0</span>:
         <span class="function">print</span>(<span class="string">f"  {feature}: {coef:.2f}"</span>)</pre>
+            </div>
+            <div class="example-box">
+                <h4>What each part does (in simple words)</h4>
+                <p><strong>Ridge(alpha=1.0)</strong> — Creates a Ridge model; alpha is how strong the penalty is.</p>
+                <p><strong>ridge_model.fit(X_train, y_train)</strong> — Trains the model on your training data.</p>
+                <p><strong>ridge_model.score(X_test, y_test)</strong> — Tells you how well it predicts (R²).</p>
+                <p><strong>Lasso(alpha=1.0)</strong> — Same idea but Lasso can set some weights to zero (drops features).</p>
+                <p><strong>The for loop</strong> — Prints only the features Lasso kept (non-zero coefficients).</p>
+                <p style="margin-top: 10px;"><a href="regularization-code-walkthrough.html">Full line-by-line walkthrough with dataset →</a></p>
             </div>
 
             <div class="key-point">
@@ -652,7 +677,7 @@ cv_scores = <span class="function">cross_val_score</span>(model, X, y, cv=<span 
 
         <div class="nav-buttons">
             <a href="linear-regression.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Linear Regression</a>
-            <a href="decision-trees.html" class="nav-btn next">Next: Decision Trees <i class="fas fa-arrow-right"></i></a>
+            <a href="logistic-regression.html" class="nav-btn next">Next: Logistic Regression <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
 

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regularization Code – Line by Line | Data Science Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #f8fafc 0%, #fce7f3 50%, #fdf4ff 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.8; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; border: 1px solid #e2e8f0; }
+        .nav a { color: #ec4899; text-decoration: none; font-weight: 600; }
+        .nav a:hover { color: #be185d; }
+        .header { text-align: center; padding: 35px 25px; background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); border-radius: 20px; margin-bottom: 30px; color: white; }
+        .header h1 { font-size: 1.8em; margin-bottom: 10px; }
+        .header p { font-size: 1.05em; opacity: 0.95; }
+        .section { background: white; border-radius: 16px; padding: 28px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-left: 5px solid #ec4899; }
+        .section h2 { color: #ec4899; font-size: 1.35em; margin-bottom: 14px; }
+        .section p { color: #334155; margin-bottom: 12px; font-size: 1.02em; }
+        .download-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 18px 22px; margin: 16px 0; border-left: 4px solid #3b82f6; }
+        .download-box a { color: #1d4ed8; font-weight: 700; text-decoration: none; }
+        .download-box a:hover { text-decoration: underline; }
+        .code-block { background: #1e293b; border-radius: 12px; padding: 20px; margin: 16px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9em; color: #e2e8f0; line-height: 1.55; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .line-explain { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 18px 22px; margin: 12px 0; border-left: 4px solid #10b981; }
+        .line-explain h4 { color: #065f46; font-size: 1.05em; margin-bottom: 10px; }
+        .line-explain ul { margin: 0; padding-left: 22px; color: #064e3b; }
+        .line-explain li { margin-bottom: 6px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-home"></i> Course Hub</a>
+            <a href="bias-variance.html"><i class="fas fa-arrow-left"></i> Bias, Variance & Gradient Descent</a>
+        </nav>
+        <div class="header">
+            <h1>Regularization Code – Line by Line</h1>
+            <p>Every line of the regularization (Ridge/Lasso) code explained in simple words. Use the same dataset as in the lesson.</p>
+        </div>
+
+        <div class="download-box">
+            <strong>Download the dataset first:</strong> <a href="datasets/auto_mpg.csv" download="auto_mpg.csv"><i class="fas fa-download"></i> auto_mpg.csv</a> — Save it in the same folder as your script so <code>pd.read_csv("auto_mpg.csv")</code> works.
+        </div>
+
+        <!-- Step 1: Imports -->
+        <div class="section">
+            <h2>Step 1: Imports</h2>
+            <p>We load the libraries we need.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression, Ridge, Lasso
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> warnings
+warnings.filterwarnings(<span class="string">"ignore"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>import pandas as pd</strong> — Lets us use DataFrames and read CSV files.</li>
+                    <li><strong>import seaborn as sns</strong> — For nicer plots (optional).</li>
+                    <li><strong>from sklearn.linear_model import ...</strong> — Brings in LinearRegression, Ridge, and Lasso so we can fit models.</li>
+                    <li><strong>import matplotlib.pyplot as plt</strong> — For drawing graphs.</li>
+                    <li><strong>import warnings</strong> — So we can turn off warning messages.</li>
+                    <li><strong>warnings.filterwarnings("ignore")</strong> — Hides warnings so the output is easier to read.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 2: Load data -->
+        <div class="section">
+            <h2>Step 2: Load the data</h2>
+            <p>Read the CSV file into a DataFrame.</p>
+            <div class="code-block">
+<pre>data = pd.<span class="function">read_csv</span>(<span class="string">"auto_mpg.csv"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this line does</h4>
+                <ul>
+                    <li><strong>data = pd.read_csv("auto_mpg.csv")</strong> — Reads the file <code>auto_mpg.csv</code> from the current folder and stores it in a variable called <code>data</code>. Each row is a car; columns are mpg, cylinders, displacement, horsepower, weight, acceleration, model year, origin, car name.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 3: Explore -->
+        <div class="section">
+            <h2>Step 3: Quick look at the data</h2>
+            <p>See the first rows and column types.</p>
+            <div class="code-block">
+<pre>data.<span class="function">head</span>(<span class="number">15</span>)   <span class="comment"># First 15 rows</span>
+data.<span class="function">info</span>()    <span class="comment"># Column names, types, and non-null counts</span></pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>data.head(15)</strong> — Shows the first 15 rows so you can see sample values.</li>
+                    <li><strong>data.info()</strong> — Prints how many rows, column names, data types (int, float, object), and how many non-null values each column has.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 4: Clean horsepower -->
+        <div class="section">
+            <h2>Step 4: Clean the horsepower column</h2>
+            <p>In this dataset, missing values in horsepower are stored as <code>?</code>. We replace them with the average and convert to numbers.</p>
+            <div class="code-block">
+<pre>data[<span class="string">'horsepower'</span>] = data[<span class="string">'horsepower'</span>].<span class="function">str</span>.<span class="function">replace</span>(<span class="string">'?'</span>, <span class="string">'NaN'</span>).<span class="function">astype</span>(float)
+data[<span class="string">'horsepower'</span>].<span class="function">fillna</span>(data[<span class="string">'horsepower'</span>].<span class="function">mean</span>(), inplace=<span class="keyword">True</span>)
+data[<span class="string">'horsepower'</span>] = data[<span class="string">'horsepower'</span>].<span class="function">astype</span>(int)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>Line 1</strong> — Replaces every <code>?</code> in the horsepower column with NaN (missing), then converts the column to float so we can do math.</li>
+                    <li><strong>Line 2</strong> — Fills every NaN in horsepower with the mean (average) of the column. <code>inplace=True</code> means we change the column in place.</li>
+                    <li><strong>Line 3</strong> — Converts horsepower to integers (e.g. 104) so it's ready for the model.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 5: Prepare X and y, split -->
+        <div class="section">
+            <h2>Step 5: Prepare features and target, then split</h2>
+            <p>We predict <strong>mpg</strong> (miles per gallon) from the other columns. We drop the car name (not useful for prediction), then split into train and test.</p>
+            <div class="code-block">
+<pre>data.<span class="function">drop</span>(columns=[<span class="string">'car name'</span>], axis=<span class="number">1</span>, inplace=<span class="keyword">True</span>)
+
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+train, test = <span class="function">train_test_split</span>(data, test_size=<span class="number">0.20</span>, random_state=<span class="number">0</span>)
+y_train = train.<span class="function">pop</span>(<span class="string">'mpg'</span>)
+y_test = test.<span class="function">pop</span>(<span class="string">'mpg'</span>)
+X_train = train
+X_test = test</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>data.drop(columns=['car name'], ...)</strong> — Removes the "car name" column; we don't use it to predict mpg.</li>
+                    <li><strong>train_test_split(data, test_size=0.20, random_state=0)</strong> — Splits data into 80% train and 20% test. <code>random_state=0</code> makes the split the same every time.</li>
+                    <li><strong>y_train = train.pop('mpg')</strong> — Takes the mpg column out of the training set and saves it as the target we want to predict.</li>
+                    <li><strong>y_test = test.pop('mpg')</strong> — Same for the test set.</li>
+                    <li><strong>X_train = train</strong> — What's left in train (all columns except mpg) are the features for training.</li>
+                    <li><strong>X_test = test</strong> — Same for test.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 6: Ridge -->
+        <div class="section">
+            <h2>Step 6: Ridge regression (L2)</h2>
+            <p>Ridge shrinks all weights. <code>alpha</code> is the strength of the penalty (lambda).</p>
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Ridge
+ridge = <span class="function">Ridge</span>(alpha=<span class="number">10.0</span>)
+ridge.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"Ridge R² on test: {ridge.score(X_test, y_test):.3f}"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>Ridge(alpha=10.0)</strong> — Creates a Ridge model. <code>alpha=10.0</code> means a strong penalty; try 0.1 or 1.0 for weaker regularization.</li>
+                    <li><strong>ridge.fit(X_train, y_train)</strong> — Trains the model using training features and target.</li>
+                    <li><strong>ridge.score(X_test, y_test)</strong> — Returns R² on the test set (how well the model predicts).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 7: Lasso -->
+        <div class="section">
+            <h2>Step 7: Lasso regression (L1)</h2>
+            <p>Lasso can set some weights to exactly zero, so it also does feature selection.</p>
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Lasso
+lasso = <span class="function">Lasso</span>(alpha=<span class="number">0.1</span>)
+lasso.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"Lasso R² on test: {lasso.score(X_test, y_test):.3f}"</span>)
+<span class="comment"># See which features Lasso kept (non-zero coefficients)</span>
+<span class="keyword">for</span> name, coef <span class="keyword">in</span> <span class="function">zip</span>(X_train.columns, lasso.coef_):
+    <span class="keyword">if</span> coef != <span class="number">0</span>:
+        <span class="function">print</span>(<span class="string">f"  {name}: {coef:.3f}"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>Lasso(alpha=0.1)</strong> — Creates a Lasso model. Small alpha = weaker penalty; large alpha = more coefficients become zero.</li>
+                    <li><strong>lasso.fit(X_train, y_train)</strong> — Trains the model.</li>
+                    <li><strong>lasso.score(X_test, y_test)</strong> — R² on test set.</li>
+                    <li><strong>for name, coef in zip(...)</strong> — Loops over each feature name and its coefficient.</li>
+                    <li><strong>if coef != 0</strong> — Lasso sets unused features to 0; we only print the ones it kept.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Impact of alpha -->
+        <div class="section">
+            <h2>Impact of alpha (lambda)</h2>
+            <p>Try different alpha values and see how R² and the number of non-zero coefficients change. Higher alpha → stronger regularization → simpler model.</p>
+            <div class="code-block">
+<pre><span class="comment"># Try different alphas</span>
+<span class="keyword">for</span> alpha <span class="keyword">in</span> [<span class="number">0.01</span>, <span class="number">0.1</span>, <span class="number">1.0</span>, <span class="number">10.0</span>]:
+    m = <span class="function">Lasso</span>(alpha=alpha)
+    m.<span class="function">fit</span>(X_train, y_train)
+    nz = <span class="function">sum</span>(<span class="number">1</span> <span class="keyword">for</span> c <span class="keyword">in</span> m.coef_ <span class="keyword">if</span> c != <span class="number">0</span>)
+    <span class="function">print</span>(<span class="string">f"alpha={alpha}: R²={m.score(X_test, y_test):.3f}, non-zero coefs={nz}"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>for alpha in [0.01, 0.1, 1.0, 10.0]</strong> — We try four different regularization strengths.</li>
+                    <li><strong>m = Lasso(alpha=alpha)</strong> — Create a Lasso model with this alpha.</li>
+                    <li><strong>m.fit(X_train, y_train)</strong> — Train it.</li>
+                    <li><strong>nz = sum(1 for c in m.coef_ if c != 0)</strong> — Count how many coefficients are non-zero (how many features Lasso kept).</li>
+                    <li><strong>print(...)</strong> — Print alpha, R², and number of non-zero coefficients so you can see how alpha changes the model.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav" style="margin-top: 30px;">
+            <a href="bias-variance.html"><i class="fas fa-arrow-left"></i> Back to Bias, Variance & Gradient Descent</a>
+            <a href="index.html"><i class="fas fa-home"></i> Course Hub</a>
+        </div>
+    </div>
+</body>
+</html>

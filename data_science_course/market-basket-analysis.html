@@ -91,9 +91,10 @@
             <h2><i class="fas fa-database"></i> Dataset for This Lesson</h2>
             <p>We use a grocery-style transaction dataset: each row is one transaction (one basket), and columns are item names. Empty/NaN means "not in that basket."</p>
             <div class="download-box">
-                <strong>📥 Download the dataset:</strong>
-                <a href="datasets/market_baskets_data.csv" download>market_baskets_data.csv</a>
-                <br><br>Save it in the same folder as your Python script or notebook so <code>pd.read_csv("market_baskets_data.csv")</code> works.
+                <strong>📥 Download the datasets:</strong>
+                <a href="datasets/market_baskets_data.csv" download>market_baskets_data.csv</a>,
+                <a href="datasets/Apriori_Algorithm.xlsx" download>Apriori Algorithm.xlsx</a>
+                <br><br>Save the CSV in the same folder as your Python script or notebook so <code>pd.read_csv("market_baskets_data.csv")</code> works.
             </div>
         </div>
 
@@ -125,6 +126,15 @@ baskets = []
 <span class="comment"># baskets is now a list of lists, e.g. [['shrimp','almonds',...], ['burgers','meatballs',...], ...]</span>
 <span class="function">print</span>(<span class="string">"Number of transactions:"</span>, <span class="function">len</span>(baskets))
 <span class="function">print</span>(<span class="string">"First 3 baskets:"</span>, baskets[:<span class="number">3</span>])</pre>
+            </div>
+            <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 18px 22px; margin: 16px 0; border-left: 4px solid #10b981;">
+                <h4 style="color: #065f46; margin-bottom: 8px;">What each line does (in simple words)</h4>
+                <p><strong>pd.read_csv("market_baskets_data.csv")</strong> — Loads the CSV; each row is one basket (transaction), columns are item names.</p>
+                <p><strong>baskets = []</strong> — Empty list we will fill with one list per transaction.</p>
+                <p><strong>for index, row in data.iterrows():</strong> — Loops over each row of the DataFrame.</p>
+                <p><strong>items = [str(x).strip() for x in row if ...]</strong> — Takes non-empty, non-NaN values in that row and puts them in a list (one basket).</p>
+                <p><strong>baskets.append(items)</strong> — Adds that basket to the list of all baskets.</p>
+                <p><strong>len(baskets)</strong> — Number of transactions; <strong>baskets[:3]</strong> — First 3 baskets.</p>
             </div>
         </div>
 
@@ -192,7 +202,7 @@ rules_df = <span class="function">association_rules</span>(frequent, metric=<spa
                 <li>Market Basket Analysis finds which products are bought together.</li>
                 <li>Support = how often; Confidence = when A then B; Lift = strength vs random.</li>
                 <li>Use <strong>apyori</strong> (list of lists) or <strong>mlxtend</strong> (one-hot + apriori + association_rules).</li>
-                <li>Download <a href="datasets/market_baskets_data.csv" download>market_baskets_data.csv</a> and run the code step by step!</li>
+                <li>Download <a href="datasets/market_baskets_data.csv" download>market_baskets_data.csv</a> and <a href="datasets/Apriori_Algorithm.xlsx" download>Apriori Algorithm.xlsx</a> and run the code step by step!</li>
             </ul>
         </div>
 

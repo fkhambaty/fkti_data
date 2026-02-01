@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistic Regression Code – Line by Line | Data Science Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #f8fafc 0%, #fce7f3 50%, #fdf4ff 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.8; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; border: 1px solid #e2e8f0; }
+        .nav a { color: #db2777; text-decoration: none; font-weight: 600; }
+        .nav a:hover { color: #be185d; }
+        .header { text-align: center; padding: 35px 25px; background: linear-gradient(135deg, #db2777 0%, #7c3aed 100%); border-radius: 20px; margin-bottom: 30px; color: white; }
+        .header h1 { font-size: 1.8em; margin-bottom: 10px; }
+        .header p { font-size: 1.05em; opacity: 0.95; }
+        .section { background: white; border-radius: 16px; padding: 28px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-left: 5px solid #db2777; }
+        .section h2 { color: #db2777; font-size: 1.35em; margin-bottom: 14px; }
+        .section p { color: #334155; margin-bottom: 12px; font-size: 1.02em; }
+        .download-box { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 12px; padding: 18px 22px; margin: 16px 0; border-left: 4px solid #db2777; }
+        .download-box a { color: #9d174d; font-weight: 700; text-decoration: none; }
+        .download-box a:hover { text-decoration: underline; }
+        .code-block { background: #1e293b; border-radius: 12px; padding: 20px; margin: 16px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9em; color: #e2e8f0; line-height: 1.55; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .line-explain { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 18px 22px; margin: 12px 0; border-left: 4px solid #10b981; }
+        .line-explain h4 { color: #065f46; font-size: 1.05em; margin-bottom: 10px; }
+        .line-explain ul { margin: 0; padding-left: 22px; color: #064e3b; }
+        .line-explain li { margin-bottom: 6px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-home"></i> Course Hub</a>
+            <a href="logistic-regression.html"><i class="fas fa-arrow-left"></i> Logistic Regression</a>
+        </nav>
+        <div class="header">
+            <h1>Logistic Regression Code – Line by Line</h1>
+            <p>Every line of the logistic regression code explained in simple words. We predict 10-year heart disease risk (yes/no).</p>
+        </div>
+
+        <div class="download-box">
+            <strong>Download the dataset first:</strong> <a href="datasets/heart_disease_dataset.csv" download="heart_disease_dataset.csv"><i class="fas fa-download"></i> heart_disease_dataset.csv</a> (or save as <code>dataset.csv</code>). Save in the same folder as your script so <code>pd.read_csv("heart_disease_dataset.csv")</code> works.
+        </div>
+
+        <!-- Step 1: Imports -->
+        <div class="section">
+            <h2>Step 1: Imports</h2>
+            <p>Load the libraries we need.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix, accuracy_score, classification_report</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>import pandas as pd</strong> — For DataFrames and reading CSV.</li>
+                    <li><strong>StandardScaler</strong> — Scales features so they have similar range (helps the model train better).</li>
+                    <li><strong>train_test_split</strong> — Splits data into train and test sets.</li>
+                    <li><strong>LogisticRegression</strong> — The model we use for yes/no (binary) classification.</li>
+                    <li><strong>confusion_matrix, accuracy_score, classification_report</strong> — Tools to see how well the model predicts (correct vs wrong, accuracy, precision, recall).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 2: Load data -->
+        <div class="section">
+            <h2>Step 2: Load the data</h2>
+            <p>Read the heart disease CSV. Target column is <strong>TenYearCHD</strong> (1 = risk, 0 = no risk).</p>
+            <div class="code-block">
+<pre>data = pd.<span class="function">read_csv</span>(<span class="string">"heart_disease_dataset.csv"</span>)
+data.<span class="function">head</span>()</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>pd.read_csv("heart_disease_dataset.csv")</strong> — Reads the file into a DataFrame. Columns: male, age, currentSmoker, cigsPerDay, totChol, sysBP, diaBP, BMI, glucose, TenYearCHD, etc.</li>
+                    <li><strong>data.head()</strong> — Shows the first 5 rows so you can see the data.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 3: Prepare X and y -->
+        <div class="section">
+            <h2>Step 3: Prepare features (X) and target (y)</h2>
+            <p>We predict <strong>TenYearCHD</strong>. So y is that column; X is everything else we use as input.</p>
+            <div class="code-block">
+<pre>X = data.<span class="function">drop</span>(<span class="string">'TenYearCHD'</span>, axis=<span class="number">1</span>)
+y = data[<span class="string">'TenYearCHD'</span>]</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>X = data.drop('TenYearCHD', axis=1)</strong> — All columns except TenYearCHD; these are the features (inputs).</li>
+                    <li><strong>y = data['TenYearCHD']</strong> — The target we want to predict (0 or 1).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 4: Split -->
+        <div class="section">
+            <h2>Step 4: Split into train and test</h2>
+            <p>Use part of the data to train the model and part to test it.</p>
+            <div class="code-block">
+<pre>X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this line does</h4>
+                <ul>
+                    <li><strong>train_test_split(X, y, test_size=0.2, random_state=42)</strong> — Splits X and y so 80% is for training (X_train, y_train) and 20% for testing (X_test, y_test). <code>random_state=42</code> keeps the split the same every time.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 5: Scale (optional but common) -->
+        <div class="section">
+            <h2>Step 5: Scale the features (optional but recommended)</h2>
+            <p>Scaling puts all features on a similar scale so the model trains better.</p>
+            <div class="code-block">
+<pre>scaler = <span class="function">StandardScaler</span>()
+X_train = scaler.<span class="function">fit_transform</span>(X_train)
+X_test = scaler.<span class="function">transform</span>(X_test)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>StandardScaler()</strong> — Creates a scaler that will subtract the mean and divide by standard deviation.</li>
+                    <li><strong>scaler.fit_transform(X_train)</strong> — Fits the scaler on training data and transforms it (so each column has mean 0 and std 1).</li>
+                    <li><strong>scaler.transform(X_test)</strong> — Transforms test data using the same scaling (we don't fit on test data!).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 6: Fit model -->
+        <div class="section">
+            <h2>Step 6: Build and train the model</h2>
+            <p>We use LogisticRegression to learn the relationship between features and yes/no outcome.</p>
+            <div class="code-block">
+<pre>model = <span class="function">LogisticRegression</span>()
+model.<span class="function">fit</span>(X_train, y_train)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>LogisticRegression()</strong> — Creates an empty logistic regression model.</li>
+                    <li><strong>model.fit(X_train, y_train)</strong> — Trains the model on the training data. It learns weights so it can predict 0 or 1 from the features.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 7: Predict and evaluate -->
+        <div class="section">
+            <h2>Step 7: Predict and check accuracy</h2>
+            <p>Predict on the test set and see how many we got right.</p>
+            <div class="code-block">
+<pre>y_pred = model.<span class="function">predict</span>(X_test)
+<span class="function">print</span>(<span class="string">f"Accuracy: {accuracy_score(y_test, y_pred):.3f}"</span>)
+<span class="function">print</span>(<span class="string">"Confusion Matrix:"</span>)
+<span class="function">print</span>(<span class="function">confusion_matrix</span>(y_test, y_pred))
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred))</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>model.predict(X_test)</strong> — Predicts 0 or 1 for each row in the test set.</li>
+                    <li><strong>accuracy_score(y_test, y_pred)</strong> — Fraction of predictions that are correct (e.g. 0.85 = 85% correct).</li>
+                    <li><strong>confusion_matrix(y_test, y_pred)</strong> — Shows: true negatives, false positives, false negatives, true positives. Helps you see where the model makes mistakes.</li>
+                    <li><strong>classification_report(y_test, y_pred)</strong> — Prints precision, recall, F1-score for each class (0 and 1).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav" style="margin-top: 30px;">
+            <a href="logistic-regression.html"><i class="fas fa-arrow-left"></i> Back to Logistic Regression</a>
+            <a href="index.html"><i class="fas fa-home"></i> Course Hub</a>
+        </div>
+    </div>
+</body>
+</html>

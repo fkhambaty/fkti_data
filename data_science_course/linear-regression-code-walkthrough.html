@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression Code – Line by Line | Data Science Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #f0fdf4 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.8; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; border: 1px solid #e2e8f0; }
+        .nav a { color: #0ea5e9; text-decoration: none; font-weight: 600; }
+        .nav a:hover { color: #0284c7; }
+        .header { text-align: center; padding: 35px 25px; background: linear-gradient(135deg, #0ea5e9 0%, #22c55e 100%); border-radius: 20px; margin-bottom: 30px; color: white; }
+        .header h1 { font-size: 1.8em; margin-bottom: 10px; }
+        .header p { font-size: 1.05em; opacity: 0.95; }
+        .section { background: white; border-radius: 16px; padding: 28px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-left: 5px solid #0ea5e9; }
+        .section h2 { color: #0ea5e9; font-size: 1.35em; margin-bottom: 14px; }
+        .section p { color: #334155; margin-bottom: 12px; font-size: 1.02em; }
+        .download-box { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-radius: 12px; padding: 18px 22px; margin: 16px 0; border-left: 4px solid #22c55e; }
+        .download-box a { color: #166534; font-weight: 700; text-decoration: none; }
+        .download-box a:hover { text-decoration: underline; }
+        .code-block { background: #1e293b; border-radius: 12px; padding: 20px; margin: 16px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9em; color: #e2e8f0; line-height: 1.55; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .line-explain { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 18px 22px; margin: 12px 0; border-left: 4px solid #10b981; }
+        .line-explain h4 { color: #065f46; font-size: 1.05em; margin-bottom: 10px; }
+        .line-explain ul { margin: 0; padding-left: 22px; color: #064e3b; }
+        .line-explain li { margin-bottom: 6px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-home"></i> Course Hub</a>
+            <a href="linear-regression.html"><i class="fas fa-arrow-left"></i> Linear Regression</a>
+        </nav>
+        <div class="header">
+            <h1>Linear Regression Code – Line by Line</h1>
+            <p>Every line of the linear regression code explained in simple words. We predict house price from area, bedrooms, etc.</p>
+        </div>
+
+        <div class="download-box">
+            <strong>Download the dataset first:</strong> <a href="datasets/housing_dataset.csv" download="Housing.csv"><i class="fas fa-download"></i> Housing.csv</a> — Save it in the same folder as your script so <code>pd.read_csv("Housing.csv")</code> works.
+        </div>
+
+        <!-- Step 1: Imports -->
+        <div class="section">
+            <h2>Step 1: Imports</h2>
+            <p>Load the libraries we need.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> warnings
+warnings.filterwarnings(<span class="string">'ignore'</span>)
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>warnings.filterwarnings('ignore')</strong> — Hides warning messages so output is easier to read.</li>
+                    <li><strong>import numpy as np</strong> — For numbers and arrays.</li>
+                    <li><strong>import pandas as pd</strong> — For DataFrames and reading CSV.</li>
+                    <li><strong>import matplotlib.pyplot as plt</strong> — For plots.</li>
+                    <li><strong>import seaborn as sns</strong> — For nicer plots (optional).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 2: Load data -->
+        <div class="section">
+            <h2>Step 2: Load the data</h2>
+            <p>Read the Housing CSV into a DataFrame.</p>
+            <div class="code-block">
+<pre>data = pd.<span class="function">read_csv</span>(<span class="string">"Housing.csv"</span>)
+data.<span class="function">head</span>(<span class="number">10</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>data = pd.read_csv("Housing.csv")</strong> — Reads the file and stores it in <code>data</code>. Columns: price, area, bedrooms, bathrooms, stories, mainroad, guestroom, basement, etc.</li>
+                    <li><strong>data.head(10)</strong> — Shows the first 10 rows so you can see sample values.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 3: Explore -->
+        <div class="section">
+            <h2>Step 3: Quick look at the data</h2>
+            <p>Check column types and counts.</p>
+            <div class="code-block">
+<pre>data.<span class="function">info</span>()</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this line does</h4>
+                <ul>
+                    <li><strong>data.info()</strong> — Prints how many rows, column names, data types (int, float, object), and how many non-null values. Helps you spot missing values.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 4: Train/test split -->
+        <div class="section">
+            <h2>Step 4: Split into train and test</h2>
+            <p>We use 80% of the data to train the model and 20% to test it.</p>
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+df_train, df_test = <span class="function">train_test_split</span>(data, train_size=<span class="number">0.8</span>, test_size=<span class="number">0.2</span>, random_state=<span class="number">100</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>train_test_split(data, train_size=0.8, test_size=0.2, random_state=100)</strong> — Splits the data: 80% goes to <code>df_train</code>, 20% to <code>df_test</code>. <code>random_state=100</code> makes the split the same every time you run.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 5: Prepare X and y -->
+        <div class="section">
+            <h2>Step 5: Prepare features (X) and target (y)</h2>
+            <p>We want to predict <strong>price</strong>. So price is y; the other columns (area, bedrooms, etc.) are X.</p>
+            <div class="code-block">
+<pre>y_train = df_train[<span class="string">'price'</span>]
+X_train = df_train.<span class="function">drop</span>(<span class="string">'price'</span>, axis=<span class="number">1</span>)
+y_test = df_test[<span class="string">'price'</span>]
+X_test = df_test.<span class="function">drop</span>(<span class="string">'price'</span>, axis=<span class="number">1</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>y_train = df_train['price']</strong> — The target we want to predict on the training set.</li>
+                    <li><strong>X_train = df_train.drop('price', axis=1)</strong> — All columns except price; these are the features for training.</li>
+                    <li><strong>y_test, X_test</strong> — Same for the test set (what we use to check how well the model predicts).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 6: Fit model -->
+        <div class="section">
+            <h2>Step 6: Build and train the model</h2>
+            <p>We use sklearn's LinearRegression to fit a line (or plane) to the data.</p>
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+lr_model = <span class="function">LinearRegression</span>()
+lr_model.<span class="function">fit</span>(X_train, y_train)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>LinearRegression()</strong> — Creates an empty linear regression model (no training yet).</li>
+                    <li><strong>lr_model.fit(X_train, y_train)</strong> — Trains the model: it finds the best weights so that the line (or plane) fits the training data. After this, the model can predict price from the features.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 7: Predict and score -->
+        <div class="section">
+            <h2>Step 7: Predict and check accuracy</h2>
+            <p>Use the test set to see how well the model predicts.</p>
+            <div class="code-block">
+<pre>predictions = lr_model.<span class="function">predict</span>(X_test)
+<span class="function">print</span>(<span class="string">f"R² score on test: {lr_model.score(X_test, y_test):.3f}"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>lr_model.predict(X_test)</strong> — Uses the trained model to predict price for each row in X_test.</li>
+                    <li><strong>lr_model.score(X_test, y_test)</strong> — Returns R²: how much of the variation in price is explained by the model. Closer to 1 is better.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav" style="margin-top: 30px;">
+            <a href="linear-regression.html"><i class="fas fa-arrow-left"></i> Back to Linear Regression</a>
+            <a href="index.html"><i class="fas fa-home"></i> Course Hub</a>
+        </div>
+    </div>
+</body>
+</html>
