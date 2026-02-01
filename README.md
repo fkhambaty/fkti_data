@@ -2,6 +2,9 @@
 
 **Fakhruddin Khambaty Training Institute - Unified Learning Platform**
 
+- **Live site:** [https://fkhambaty.github.io/fkti_data/](https://fkhambaty.github.io/fkti_data/) *(enable GitHub Pages in repo Settings → Pages)*
+- **Repository:** [https://github.com/fkhambaty/fkti_data](https://github.com/fkhambaty/fkti_data)
+
 ## Overview
 
 The FKTI Learning Hub is a comprehensive, university-level learning platform that provides interactive courses in Data Science and Data Engineering. This unified platform serves as the central entry point for multiple specialized courses, featuring modern web technologies and pedagogical excellence.

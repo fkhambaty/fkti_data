@@ -4,6 +4,18 @@ The "Get Free Android App" link must point to a real APK file. Use **one** of th
 
 ---
 
+## After building the APK in Android Studio (do this every time you rebuild)
+
+From the **repo root** (parent of `Website/` and `Android_App/`), run:
+
+```bash
+./copy_apk_to_website.sh
+```
+
+This copies `Android_App/app/build/outputs/apk/debug/app-debug.apk` to `Website/apk/FK-Learning-Hub.apk` so the website download link works. Then commit and push (or upload to Releases) as in Option 1 or 2 below.
+
+---
+
 ## Option 1: Host APK in This Repository (Simplest)
 
 **Steps:**
@@ -14,7 +26,8 @@ The "Get Free Android App" link must point to a real APK file. Use **one** of th
    - Wait for "APK(s) generated successfully". Click **locate** in the notification (or find it under `Android_App/app/build/outputs/apk/debug/app-debug.apk`).
 
 2. **Copy APK into the website**
-   - Copy `app-debug.apk` (or your release APK) into:
+   - Run from repo root: `./copy_apk_to_website.sh`  
+   - Or manually copy `app-debug.apk` to:
      ```
      Website/apk/FK-Learning-Hub.apk
      ```
