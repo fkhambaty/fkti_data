@@ -37,8 +37,11 @@
             <button class="nav-btn" onclick="showSection('operators')">⚙️ Operators</button>
             <button class="nav-btn" onclick="showSection('scheduling')">⏰ Scheduling</button>
             <button class="nav-btn" onclick="showSection('sensors')">📡 Sensors</button>
+            <button class="nav-btn" onclick="showSection('xcom')">📤 XCom</button>
+            <button class="nav-btn" onclick="showSection('variables')">🔐 Variables</button>
             <button class="nav-btn" onclick="showSection('examples')">💡 Examples</button>
             <button class="nav-btn" onclick="showSection('exercises')">🎯 Exercises</button>
+            <button class="nav-btn" onclick="showSection('best-practices')">✅ Best Practices</button>
             <button class="nav-btn" onclick="window.location.href='certification-hub.html'">📜 Certification</button>
             </div>
             <div class="nav-section">
@@ -1574,6 +1577,24 @@ extract >> transform >> load >> quality_check >> success_notify
 
             <div class="next-section">
                 <button class="section-quiz-btn" onclick="startSectionQuiz('sensors')">📝 Take Sensors Quiz</button>
+                <button class="next-btn" onclick="showSection('xcom')">Next: XCom →</button>
+            </div>
+        </section>
+
+        <!-- XCom Section -->
+        <section id="xcom" class="content-section">
+            <h2>📤 XCom – Passing Data Between Tasks</h2>
+            <p>XCom (Cross-Communication) lets tasks exchange small amounts of data. Use <code>xcom_push</code> and <code>xcom_pull</code> (or the TaskFlow API return values) to pass data. Best for small metadata; for large data use external storage (e.g. S3, database).</p>
+            <div class="next-section">
+                <button class="next-btn" onclick="showSection('variables')">Next: Variables & Connections →</button>
+            </div>
+        </section>
+
+        <!-- Variables & Connections Section -->
+        <section id="variables" class="content-section">
+            <h2>🔐 Variables & Connections</h2>
+            <p>Airflow <strong>Variables</strong> store key-value config (e.g. API keys, env names). <strong>Connections</strong> store credentials for databases, APIs, and cloud services. Use the UI or environment variables and a secrets backend for production.</p>
+            <div class="next-section">
                 <button class="next-btn" onclick="showSection('examples')">Next: Real-World Examples →</button>
             </div>
         </section>
@@ -1991,6 +2012,12 @@ ltv_calculation >> notification</code></pre>
                 <p style="margin-top: 1rem;">Take the final exam to earn your Airflow Expert certificate!</p>
                 <button class="final-quiz-btn" onclick="startFinalQuiz()">🏆 Take Final Certification Exam</button>
             </div>
+        </section>
+
+        <!-- Best Practices Section -->
+        <section id="best-practices" class="content-section">
+            <h2>✅ Best Practices</h2>
+            <p>Design DAGs to be <strong>idempotent</strong> (running twice gives the same result). Use retries and retry_delay for transient failures. Monitor with Airflow UI and set up alerts. In production: use Celery/Kubernetes Executor, secure connections, and follow least-privilege.</p>
         </section>
 
     </main>

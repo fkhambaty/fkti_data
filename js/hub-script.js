@@ -159,17 +159,17 @@ function enterCourse(courseType) {
     // Show loading animation
     showLoadingAnimation();
     
-    // Course routing
+    // Course routing (hub-first: use hub.html where available)
     const courseUrls = {
         'python': 'python_course/index.html',
-        'datascience': 'data-science.html',
-        'airflow': 'airflow_course/index.html',
-        'terraform': 'terraform_course/index.html',
-        'redshift': 'redshift_course/index.html',
-        'mssql': 'mssql_course/index.html',
-        'dbt': 'dbt_course/index.html',
-        'metabase': 'metabase_course/index.html',
-        'postgres': 'postgres_course/index.html',
+        'datascience': 'data_science_course/index.html',
+        'airflow': 'airflow_course/hub.html',
+        'terraform': 'terraform_course/hub.html',
+        'redshift': 'redshift_course/hub.html',
+        'mssql': 'mssql_course/hub.html',
+        'dbt': 'dbt_course/hub.html',
+        'metabase': 'metabase_course/hub.html',
+        'postgres': 'postgres_course/hub.html',
         'dms': 'dms_course/index.html'
     };
     
