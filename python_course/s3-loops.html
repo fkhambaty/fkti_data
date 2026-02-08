@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_3 <strong>Loops and Conditions</strong> has the same ideas: if/elif/else, for, while, break, continue. Run the notebook cells to practice.</p>
+    </div>
+
     <!-- ANALOGY -->
     <section class="analogy-card">
       <div class="analogy-header">
@@ -1027,6 +1032,34 @@ Processing 4</pre>
       </div>
     </section>
 
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Loops & Conditions)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Using = instead of == in conditions</strong> — <code>if x = 5</code> assigns and is wrong; use <code>if x == 5</code> to compare.</li>
+        <li><strong>Infinite while loop</strong> — Make sure the condition can become False; update the variable you're checking (e.g. increment a counter).</li>
+        <li><strong>Forgetting the colon after if/for/while</strong> — Python requires a colon and then an indented block; no curly braces.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+      <h4 style="color: #1e40af;">💭 Short reflection</h4>
+      <p style="color: #1e3a8a;">In one sentence: when would you choose a <code>while</code> loop instead of a <code>for</code> loop?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li><strong>if / elif / else</strong>; comparison and logical operators.</li>
+        <li><strong>for</strong>: <code>for x in sequence</code>, <code>range()</code>; <strong>while</strong>: repeat until condition false.</li>
+        <li><strong>break</strong> (exit loop), <strong>continue</strong> (skip to next iteration).</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>else on loops; enumerate(); nested loops.</li>
+      </ul>
+    </div>
+
     <!-- SUMMARY -->
     <section class="content-section">
       <h2>📋 Session Summary</h2>
@@ -1086,7 +1119,441 @@ Processing 4</pre>
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: 3_loops_and_conditions_(1) (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+---last session
+1.data types--numerical data types
+2.Type casting
+
+# --- Code cell 5 ---
+11//3
+
+# --- Code cell 6 ---
+11%3
+
+# --- Code cell 7 ---
+4**3
+
+# --- Code cell 8 ---
+# '**'	: Exponentiation/power	→ 2 ** 3	= 8
+
+# --- Code cell 9 ---
+56/3
+
+# --- Code cell 10 ---
+56//3
+
+# --- Code cell 11 ---
+d=344%33
+d
+
+# --- Code cell 12 ---
+3**4
+
+# --- Code cell 13 ---
+# Boolean data types are just True or False
+
+# --- Code cell 15 ---
+a==5
+
+# --- Code cell 16 ---
+#=  ------is assiging a value
+#== ------to equal a value
+
+# --- Code cell 17 ---
+t=4
+
+# --- Code cell 18 ---
+3!=t
+
+# --- Code cell 19 ---
+t&gt;=4
+
+# --- Code cell 21 ---
+a=12
+a=a+6    #a+=6
+a
+
+# --- Code cell 22 ---
+t=23
+t*=2   # t=t*2
+t
+
+# --- Code cell 23 ---
+r=56
+r-=30  #r=r-30
+r
+
+# --- Code cell 25 ---
+(55&gt;31) &amp; (100&gt;14)  # and
+
+# --- Code cell 26 ---
+(55&gt;31) | (10&gt;14)   # or
+
+# --- Code cell 27 ---
+not (5&gt;50)
+
+# --- Code cell 28 ---
+x=True
+y=False
+print(not y)     # not
+
+# --- Code cell 29 ---
+(5 &gt; 10)
+
+# --- Code cell 31 ---
+# Example 1: Using 'is'
+x = [1, 2, 3]
+y = [3,4,5]
+z = y
+
+print(x is y)  # True — y refers to the same object as x
+print(y is z)  # False — z has the same content, but is a different object
+
+# Example 2: Using 'is not'
+#print(x is not z)  # True
+
+# --- Code cell 32 ---
+id(x)
+
+# --- Code cell 33 ---
+id(y)
+
+# --- Code cell 34 ---
+id(z)
+
+# --- Code cell 36 ---
+d=[3,4,5,6]
+3  not in d
+
+# --- Code cell 37 ---
+d.index(6)
+
+# --- Code cell 41 ---
+if condition:
+  Block of code          # space called as indendation
+
+# --- Code cell 42 ---
+x = 1
+if x &gt; 5:
+  print("x is greater than 5")
+
+# --- Code cell 44 ---
+x = 3
+if x &gt; 5:
+  print("x is greater than 5")
+else:
+  print("x is not greater than 5")
+
+# --- Code cell 46 ---
+x =3
+
+if x &gt; 5:
+  print("x is greater than 5")
+elif x == 5:
+    print("x is equal to 5")
+else:
+    print("x is less than 5")
+
+# --- Code cell 47 ---
+x = 283
+y = 410
+
+if x &gt; y: # False
+  print("b is greater than a")
+
+else:
+    print("anything")
+
+# --- Code cell 48 ---
+x = 2835
+y = 283
+if x == y: # True
+    x = x + 1
+    print(x)
+
+else:
+    print("anything")
+
+# --- Code cell 50 ---
+#indentation
+
+x = 283
+y = 410
+
+if x &gt; y:#False
+    print("b is greater than a")
+
+# --- Code cell 51 ---
+x = 601
+y = 610
+
+if x &gt; y:
+  print("x is greater than y")
+elif x == y:
+  print("x is equal to y")
+else:
+  print("y is greater than x")
+
+# --- Code cell 53 ---
+x = 136
+y = 228
+z = 532
+
+if z &gt; y &amp; y &gt; x:
+  print("Both conditions are True. x is smallest number")
+else:
+  print("anything")
+
+# --- Code cell 54 ---
+x = 136
+y = 228
+z = 132
+
+if ( z &gt; y and y &gt; x ) | z&gt;x:  # You can add brackets for deciding order of execution
+  print("Both conditions are True. x is smallest number")
+  x = x + 1
+  print(x)
+
+# --- Code cell 56 ---
+x = 136
+y = 228
+z = 532
+
+if z &gt; y and y &gt; x and z&gt;x:  # Multiple conditions
+  print("All conditions are True. x is smallest number")
+
+# --- Code cell 57 ---
+x = 136
+y = 228
+z = 532
+
+if z &lt; y or y &lt; x:# False
+  print("Atleast one condition is True")
+
+# --- Code cell 58 ---
+x = 136
+y = 228
+z = 532
+
+if (z &gt; y or y &lt; x) and z&gt;=x:
+  print("Both condition are True")
+
+# --- Code cell 59 ---
+x = 136
+y = 228
+z = 532
+
+if z &gt; y or y &lt; x and z&gt;=x:  # order of conditions is important - left to right execution
+  print("Both condition are True")
+
+# --- Code cell 60 ---
+x = 136
+y = 228
+z = 532
+
+if z &gt; y and y &lt; x or z&lt;=x:  # order of conditions is important - left to right execution
+  print("Both condition are True")
+
+# --- Code cell 61 ---
+x = 1366
+y = 228
+
+if not x &gt; y: # x&lt;y
+  print("x is NOT greater than y")
+
+# --- Code cell 64 ---
+x = 136
+y = 228
+
+if not x &gt; y: #any condition
+
+# --- Code cell 65 ---
+x = 136
+y = 228
+
+if not x &gt; y: #any condition
+   pass       # PASS wont work in capitals
+
+# --- Code cell 68 ---
+for variable in iterable:
+  block of code
+
+# --- Code cell 69 ---
+name="aravind"
+for i in range(10):
+  print(name)
+
+# --- Code cell 70 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100,111]
+
+for x in student_marks:
+    print(x)
+
+# --- Code cell 71 ---
+college_name = "New College Name!"
+
+for aravind in college_name:
+  print(aravind)
+
+# --- Code cell 72 ---
+college_name = "New College Name"
+college_name[3]
+
+# --- Code cell 75 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+
+for z in student_marks:
+    print(z)
+    if(z==99):
+        print('loop broke at z=', z)
+        break
+
+# --- Code cell 77 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+
+for z in student_marks:
+
+    if(z&gt;90):
+        print("hello")
+        continue
+
+
+    print(z)
+
+# --- Code cell 78 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+
+for z in student_marks:
+
+    if(z&gt;90):
+        pass
+
+
+    print(z)
+
+# --- Code cell 79 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+
+for z in student_marks:
+
+    if(z&lt;120):
+        break
+
+    print(z)
+
+# --- Code cell 82 ---
+list(range(0,12,1))
+
+# --- Code cell 83 ---
+for k in range(10):
+    print(k)
+
+# --- Code cell 84 ---
+## range(start_number, end_number, increment_size)
+for k in range(0,21,2):
+    print(k)
+
+# --- Code cell 85 ---
+
+#nested loops
+
+# --- Code cell 86 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+number = [1,2,3,4,5]
+
+for i in student_marks:
+  for j in number:
+    print(i, j)
+
+# --- Code cell 87 ---
+data = [1, 2, 3, 4, 2.5]
+# write a code such that it prints values less than 3
+
+# --- Code cell 88 ---
+for i in data:
+    if (i&lt;3):
+        print(i)
+
+# --- Code cell 89 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+len(student_marks)
+
+# --- Code cell 90 ---
+range(8)
+
+# --- Code cell 91 ---
+
+
+for i in range(len(student_marks)):
+    print(i)
+    print(student_marks[i])
+
+# --- Code cell 92 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+number = [1,2,3,4,5]
+
+for i in range(len(student_marks)):
+  for j in range(len(number)):
+    print(student_marks[i], number[j])
+
+# --- Code cell 93 ---
+len(student_marks)
+
+# --- Code cell 94 ---
+for x in student_marks:
+
+# --- Code cell 95 ---
+
+for x in student_marks:
+    pass
+
+# --- Code cell 97 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+
+# --- Code cell 98 ---
+student_marks[0]
+
+# --- Code cell 99 ---
+len(student_marks)
+
+# --- Code cell 100 ---
+
+
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+
+i = 1
+while i &lt; len(student_marks):
+  print(student_marks[i])
+  i = i+1
+
+# --- Code cell 101 ---
+count =6 # initalize a variable
+
+while count &lt;= 10: #conditional check
+    print(count)
+    count += 1  # increase count by 1 each time
+
+# --- Code cell 102 ---
+len(student_marks)
+
+# --- Code cell 103 ---
+student_marks = [85, 88, 67, 65, 88, 99, 49, 100]
+
+i = 0
+while i &lt; 4:
+  print(student_marks[i])
+  print("value of i", i)
+  i = i+1
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s2-datatypes.html" class="nav-prev">
         <span class="nav-arrow">←</span>

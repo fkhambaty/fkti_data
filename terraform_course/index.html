@@ -72,6 +72,19 @@
                 </ul>
             </div>
 
+            <div class="welcome-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #3b82f6;">
+                <h3 style="color: #1e40af;">👶 In one sentence</h3>
+                <p style="color: #1e3a8a; margin: 0;"><strong>Terraform</strong> is a tool that lets you describe servers, databases, and other cloud resources in code—then create and update them in a repeatable way so every environment matches.</p>
+            </div>
+            <div class="welcome-card" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border: 2px solid #ef4444;">
+                <h3 style="color: #b91c1c;">🚫 Common Mistakes in Terraform</h3>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Not using remote state</strong> — Store state in S3 (or similar) with locking so the team shares one state and avoids overwrites.</li>
+                    <li><strong>Hardcoding values</strong> — Use variables and tfvars (or env vars) for region, env name, and secrets; don't commit prod IDs.</li>
+                    <li><strong>Ignoring plan before apply</strong> — Always run <code>terraform plan</code> and review; apply can destroy or change resources unexpectedly.</li>
+                </ul>
+            </div>
+
             <div class="welcome-card">
                 <h3>Why Terraform?</h3>
                 <p>Terraform revolutionized how we manage infrastructure. It's the Swiss Army knife of cloud provisioning, used by:</p>
@@ -1465,6 +1478,27 @@ resource "aws_instance" "web" {
                         <li>✅ Documentation is complete and up-to-date</li>
                     </ul>
                 </div>
+            </div>
+        </section>
+
+        <section class="content-section" style="margin-top: 2rem;">
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+                <h4 style="color: #047857;">💭 Short reflection</h4>
+                <p style="color: #064e3b;">In one sentence: why should you run <code>terraform plan</code> before <code>terraform apply</code> in a team environment?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>HCL</strong>: resource, variable, output; provider block; state (local or remote).</li>
+                    <li><code>terraform init</code>, <code>plan</code>, <code>apply</code>, <code>destroy</code>; never commit .tfstate with secrets.</li>
+                    <li>Modules for reuse; use variables for env-specific values.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Workspaces; backend (S3 + DynamoDB); import; policy as code.</li>
+                </ul>
             </div>
         </section>
         

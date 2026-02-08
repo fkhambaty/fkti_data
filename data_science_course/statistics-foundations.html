@@ -189,7 +189,15 @@
         
         .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
         .back-to-top.show { opacity: 1; visibility: visible; }
-        
+        .core-box { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0; }
+        .core-box h4 { color: #166534; margin-bottom: 12px; }
+        .core-box ul { margin-left: 20px; }
+        .noncore-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0; }
+        .noncore-box h4 { color: #92400e; margin-bottom: 12px; }
+        .noncore-box ul { margin-left: 20px; }
+        .reflection-prompt { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #7c3aed; }
+        .reflection-prompt h4 { color: #5b21b6; margin-bottom: 10px; }
+        .reflection-prompt p { color: #4c1d95; margin: 0; }
         @media (max-width: 768px) {
             body { padding: 10px; font-size: 16px; }
             .header { padding: 30px 20px; }
@@ -221,6 +229,9 @@
                 <p><strong>Statistics</strong> is like being a detective with numbers! 🔍</p>
                 <p>You have clues (data), and statistics helps you figure out what they mean!</p>
             </div>
+
+            <h3>📌 In One Sentence</h3>
+            <p><strong>Statistics</strong> is the set of tools we use to summarize data (descriptive) and to make conclusions or predictions from samples (inferential)—including when to trust that a pattern isn't just luck (hypothesis tests, p-values).</p>
 
             <div class="real-life">
                 <h4>🍕 Real Life Example</h4>
@@ -262,16 +273,24 @@
             </div>
 
             <div class="visual-example">
-                <h4>🔔 The Bell Curve Shape</h4>
-                <pre style="font-size: 1.2em; color: #166534; font-family: monospace;">
-         ████
-        ██████
-       ████████
-      ██████████
-     ████████████
-    ██████████████
-   ████████████████
-━━━━━━━━━━━━━━━━━━━━━━
+                <h4>🔔 The Bell Curve Shape – With Clear X and Y Axes</h4>
+                <p style="margin-bottom: 10px;">Graph below: <strong>X-axis</strong> = value (e.g. height, test score); <strong>Y-axis</strong> = how often that value appears (frequency). The peak is at the mean.</p>
+                <div style="background: #f8fafc; border: 2px solid #ddd6fe; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: center;">
+                    <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
+                        <defs><marker id="stat-arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker></defs>
+                        <line x1="50" y1="200" x2="380" y2="200" stroke="#475569" stroke-width="2" marker-end="url(#stat-arr)"/>
+                        <text x="320" y="222" fill="#334155" font-size="12">X: Value (e.g. height, score)</text>
+                        <line x1="50" y1="200" x2="50" y2="30" stroke="#475569" stroke-width="2" marker-end="url(#stat-arr)"/>
+                        <text x="8" y="45" fill="#334155" font-size="12">Y: Frequency</text>
+                        <!-- Bell curve (quadratic approx) -->
+                        <path d="M 50 200 Q 120 200 180 120 Q 225 55 270 55 Q 315 55 360 120 Q 380 180 380 200 L 50 200 Z" fill="#8b5cf6" opacity="0.35" stroke="#7c3aed" stroke-width="2"/>
+                        <path d="M 50 200 Q 120 200 180 120 Q 225 55 270 55 Q 315 55 360 120 Q 380 180 380 200" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+                        <line x1="270" y1="55" x2="270" y2="200" stroke="#ef4444" stroke-width="1" stroke-dasharray="4"/>
+                        <text x="272" y="215" fill="#b91c1c" font-size="11">Mean</text>
+                    </svg>
+                    <p style="font-weight: 600; color: #475569; margin-top: 10px;">X = value, Y = frequency. Red dashed line = mean (center).</p>
+                </div>
+                <pre style="font-size: 1em; color: #166534; font-family: monospace;">
 Few   MOST ARE HERE   Few
 Short    (Average)    Tall
                 </pre>
@@ -351,6 +370,10 @@ within_3_std = np.<span class="function">sum</span>((test_scores >= mean - <span
 <span class="output"># Within 1 std: 68.2% (expected: 68%)</span>
 <span class="output"># Within 2 std: 95.4% (expected: 95%)</span>
 <span class="output"># Within 3 std: 99.7% (expected: 99.7%)</span></pre>
+            </div>
+            <div class="important-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; padding: 18px; margin: 16px 0; border-left: 4px solid #3b82f6;">
+                <h4 style="color: #1e40af;">📘 Same idea in the course notebook</h4>
+                <p style="color: #1e3a8a; margin: 0;">The course source uses <code>np.random.seed(10)</code> and <code>original_data = np.random.normal(size=10000)</code> (mean 0, variance 1 by default). Then <code>len(original_data)</code> gives 10000. To <strong>plot</strong> the shape, the notebook uses <code>sns.distplot(original_data, hist=False, kde=True)</code> for a smooth curve and <code>sns.distplot(original_data, hist=True, kde=False)</code> for a histogram—both show the bell shape. Loading Excel: <code>data = pd.read_excel("titanic3.xlsx")</code> (download titanic3.xlsx from the <a href="datasets.html">datasets page</a>). The course also includes <strong>Statistics.pdf</strong> for a slide-style summary.</p>
             </div>
         </div>
 
@@ -683,6 +706,242 @@ t_stat, p_value = stats.<span class="function">ttest_ind</span>(lead_time_cancel
                 <p style="margin-top: 15px;"><strong>Conclusion:</strong> People who book too early are more likely to cancel!</p>
                 <p style="font-size: 0.9em; color: #64748b;">(Maybe their plans change over time)</p>
             </div>
+
+            
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: statistics.ipynb</h2>
+                <p>Every line of code (verbatim).</p>
+                <div class="code-block" style="max-height: 500px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+import warnings
+warnings.filterwarnings("ignore")
+
+# import modules
+import numpy as np
+import pandas as pd
+
+# plotting modules
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# --- Code cell 2 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+h1 { color: Purple !important; }
+h2 { color: green !important; }
+h3 { color: blue !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 6 ---
+np.random.seed(10)
+original_data = np.random.normal(size = 10000)  # by default mean is zero and variance is 1
+
+# --- Code cell 7 ---
+len(original_data)
+
+# --- Code cell 8 ---
+# creating axes to draw plots
+fig, ax = plt.subplots(1, 2,figsize = (30,10))
+ 
+sns.distplot(original_data, hist = False, kde = True,
+            kde_kws = {'shade': True, 'linewidth': 2},
+            color ="green", ax = ax[0])
+
+sns.distplot(original_data, hist = True, kde = False,
+            kde_kws = {'shade': True, 'linewidth': 2},
+             color ="green", ax = ax[1])
+ 
+# rescaling the subplots
+fig.set_figheight(5)
+fig.set_figwidth(10)
+
+# --- Code cell 13 ---
+#conda install xlrd  / pip install xlrd  ( in anconda comand prompt)
+data = pd.read_excel("titanic3.xlsx")
+
+# --- Code cell 14 ---
+data.head(10)
+
+# --- Code cell 15 ---
+print(data.isnull().sum()) # add example of percentage
+
+# --- Code cell 16 ---
+print(data.isnull().sum()*100/len(data))
+
+# --- Code cell 17 ---
+#Drop columns with IDs and large number of missing values
+data.drop(["name", "ticket", "cabin","boat","body","home.dest"],axis=1,inplace=True)
+
+# --- Code cell 18 ---
+data.describe()
+
+# --- Code cell 19 ---
+data.describe(include='all')
+
+# --- Code cell 20 ---
+data['embarked'].value_counts()
+
+# --- Code cell 21 ---
+data['embarked'].fillna('S',inplace=True)
+
+# --- Code cell 22 ---
+data['embarked'].value_counts()
+
+# --- Code cell 23 ---
+import statistics
+age_variance = statistics.variance(data['age'].dropna())
+print("Variance of Age: ", age_variance)
+
+# --- Code cell 24 ---
+std_dev_age = statistics.sqrt(age_variance)
+print("Standard deviation of Age: ", std_dev_age)
+
+# --- Code cell 25 ---
+
+sns.distplot(data['age'], hist = True, kde = False,color ="green")
+
+# --- Code cell 27 ---
+print("mean age before imputation: ", data['age'].mean())
+#print("\n")
+data['age'].fillna(data['age'].median(),inplace=True)
+print("mean age after imputation: ", data['age'].mean())
+print(data.isnull().sum())
+
+# --- Code cell 28 ---
+sns.distplot(data['age'], hist = True, kde = False,color ="green")
+
+# --- Code cell 29 ---
+#Another options:
+    
+    #Drop columns with missing data  60%
+    #Fit regresison model to predict missing age data
+    # Always check accuracy of main task after imputation 
+    # Take business logic into consideration for data imputation
+
+# --- Code cell 35 ---
+data = pd.read_csv("Housing.csv")
+
+# --- Code cell 36 ---
+data = data[['price','area']]
+data.describe()
+
+# --- Code cell 37 ---
+sns.boxplot(data['area']).set(xlabel= 'area')
+
+# --- Code cell 38 ---
+# outlier treatment for area
+# data['area']  / data.area
+Q1 = data.area.quantile(0.25)
+Q3 = data.area.quantile(0.75)
+IQR = Q3 - Q1
+
+print("Q1 value: ", Q1)
+print("Q3 value: ", Q3)
+print("IQR value: ", Q3 - Q1)
+
+# --- Code cell 39 ---
+print("Lower threshold of outlier value: ", Q1 - 1.5*IQR)
+print("Upper threshold of outlier value: ", Q3 + 1.5*IQR)
+
+# --- Code cell 40 ---
+#3650
+
+# --- Code cell 41 ---
+data = data[(data.area &gt;= Q1 - 1.5*IQR) &amp; (data.area &lt;= Q3 + 1.5*IQR)]
+data.describe()
+
+# --- Code cell 44 ---
+data.describe()
+
+# --- Code cell 46 ---
+# 0 to 1 scaling
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+data_scaled = pd.DataFrame(scaler.fit_transform(data))
+data_scaled.columns = ['price','area']
+data_scaled.head(10)
+
+# --- Code cell 47 ---
+data_scaled.describe()
+
+# --- Code cell 50 ---
+data.describe()
+
+# --- Code cell 52 ---
+# z score scaling
+#  0 mean and variance /standard deviation 1 
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+data_scaled = pd.DataFrame(scaler.fit_transform(data))
+data_scaled.columns = ['price','area']
+data_scaled.head(10)
+
+# --- Code cell 53 ---
+# if you note - mean will is zero and standard deviation is 1. 
+# Min and max vlaue is based on the data after applying transformation 
+data_scaled.describe()
+
+# --- Code cell 56 ---
+data.head(10)
+
+# --- Code cell 57 ---
+sns.scatterplot(data=data, x="area", y="price").set(xlabel= "area",ylabel="price")
+
+# --- Code cell 58 ---
+#Correlation of output with numerical variables
+
+# plotting correlation heatmap
+dataplot = sns.heatmap(data[['price', 'area']].corr(), cmap="YlGnBu", annot=True)
+  
+# displaying heatmap
+plt.show()
+</pre>
+                </div>
+            </div>
+
+<div class="reflection-prompt">
+                <h4>💭 Short reflection</h4>
+                <p>In one sentence: why is it wrong to say “correlation means causation”? Give a real-life example where two things are correlated but one doesn’t cause the other.</p>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Statistics</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Confusing correlation with causation</strong> — Two things moving together doesn't mean one causes the other (e.g. ice cream sales and drownings both go up in summer).</li>
+                    <li><strong>Thinking p &lt; 0.05 means "proven"</strong> — It only means "unlikely to be pure chance"; we never prove the alternative, we only reject the null.</li>
+                    <li><strong>Using the wrong test</strong> — Categories vs categories → Chi-Square; numeric mean between two groups → T-Test. Don't use a T-Test for categorical data.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Core & Non-Core Points (Mastery Checklist) -->
+        <div class="section">
+            <h2><i class="fas fa-star"></i> Core & Non-Core Points – Mastery Checklist</h2>
+            <p>Master every core point for exams and real work. Non-core points deepen your statistical thinking.</p>
+            <div class="core-box">
+                <h4>✅ CORE (Must know)</h4>
+                <ul>
+                    <li><strong>Descriptive stats</strong>: mean, median, mode; variance and standard deviation (spread).</li>
+                    <li><strong>Normal distribution</strong>: bell curve; 68–95–99.7 rule (within 1, 2, 3 std of mean).</li>
+                    <li><strong>Correlation</strong>: -1 to +1; positive (X↑ Y↑), negative (X↑ Y↓), zero (no linear relation). Correlation ≠ causation.</li>
+                    <li><strong>Chi-Square test</strong>: are two categorical variables related? Compare observed vs expected counts; p &lt; 0.05 → significant.</li>
+                    <li><strong>T-Test</strong>: is the mean of a numeric variable different between two groups? p &lt; 0.05 → groups differ significantly.</li>
+                    <li><strong>p-value</strong>: probability of seeing the result by chance; p &lt; 0.05 → reject “no effect” (significant).</li>
+                </ul>
+            </div>
+            <div class="noncore-box">
+                <h4>📚 NON-CORE (Good to know)</h4>
+                <ul>
+                    <li>Degrees of freedom in Chi-Square and T-Test.</li>
+                    <li>Type I error (false positive) vs Type II error (false negative).</li>
+                    <li>When to use paired vs unpaired T-Test.</li>
+                    <li>Other tests: ANOVA (3+ groups), Mann-Whitney (non-normal).</li>
+                </ul>
+            </div>
         </div>
 
         <!-- CHAPTER 6: SUMMARY -->
@@ -726,11 +985,34 @@ t_stat, p_value = stats.<span class="function">ttest_ind</span>(lead_time_cancel
                 <h4>🎯 The Magic p-value Rule</h4>
                 <p>For ALL these tests, remember:</p>
                 <ul style="margin-left: 20px;">
-                    <li><strong>p < 0.05</strong> → "Yes, there's a real effect!" ✅</li>
+                    <li><strong>p &lt; 0.05</strong> → "Yes, there's a real effect!" ✅</li>
                     <li><strong>p ≥ 0.05</strong> → "No significant effect found" ❌</li>
                 </ul>
                 <p>Think of p-value as asking: <em>"What's the chance this happened by pure luck?"</em></p>
                 <p>If less than 5% chance → It's probably NOT luck!</p>
+            </div>
+            <div style="background: #f5f3ff; border: 2px solid #8b5cf6; border-radius: 16px; padding: 24px; margin: 25px 0; text-align: center;">
+                <h4 style="color: #5b21b6; margin-bottom: 12px;">🎬 Animated: p-value scale (0 → 1)</h4>
+                <p style="margin-bottom: 10px; font-size: 0.95em;">Green zone = significant (p &lt; 0.05). Red zone = not significant. The line shows “where you are” on the scale.</p>
+                <svg viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%;">
+                    <defs>
+                        <linearGradient id="pvGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#22c55e"/>
+                            <stop offset="15%" style="stop-color:#22c55e"/>
+                            <stop offset="15%" style="stop-color:#ef4444"/>
+                            <stop offset="100%" style="stop-color:#ef4444"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="20" y="30" width="280" height="24" rx="4" fill="url(#pvGrad)" opacity="0.9"/>
+                    <line x1="62" y1="28" x2="62" y2="56" stroke="#1e293b" stroke-width="2">
+                        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                    </line>
+                    <text x="62" y="72" fill="#334155" font-size="11">0.05</text>
+                    <text x="20" y="72" fill="#334155" font-size="11">0</text>
+                    <text x="270" y="72" fill="#334155" font-size="11">1</text>
+                    <text x="90" y="22" fill="#166534" font-size="10">Significant</text>
+                    <text x="200" y="22" fill="#b91c1c" font-size="10">Not significant</text>
+                </svg>
             </div>
         </div>
 

@@ -106,6 +106,22 @@ data.<span class="function">head</span>(<span class="number">10</span>)</pre>
             </div>
         </div>
 
+        <!-- Step 3b: describe() -->
+        <div class="section">
+            <h2>Step 3b: Summary numbers (describe)</h2>
+            <p>See the min, max, average, and spread of every numeric column in one table.</p>
+            <div class="code-block">
+<pre>data.<span class="function">describe</span>()</pre>
+            </div>
+            <div class="line-explain">
+                <h4>👶 In simple terms</h4>
+                <ul>
+                    <li><strong>data.describe()</strong> — Shows a small “report card” for each number column: count, mean, standard deviation (spread), min, 25%, 50%, 75%, max. Like asking: “What’s the smallest price? The biggest? The average?” for every numeric column at once.</li>
+                    <li>Use it to spot weird values (e.g. area = 0 or price in millions when others are in thousands) before building the model.</li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Step 4: Train/test split -->
         <div class="section">
             <h2>Step 4: Split into train and test</h2>
@@ -174,6 +190,266 @@ lr_model.<span class="function">fit</span>(X_train, y_train)</pre>
                     <li><strong>lr_model.predict(X_test)</strong> — Uses the trained model to predict price for each row in X_test.</li>
                     <li><strong>lr_model.score(X_test, y_test)</strong> — Returns R²: how much of the variation in price is explained by the model. Closer to 1 is better.</li>
                 </ul>
+            </div>
+        </div>
+
+        <div class="section" style="border-left-color: #f59e0b;">
+            <h2>📚 Same topic in the full course notebook</h2>
+            <p>The course source also walks through: <strong>outlier treatment</strong> (removing extreme price/area so one house doesn’t drag the line), <strong>converting yes/no to 1/0</strong>, <strong>dummy variables</strong> for furnishing status, <strong>MinMaxScaler</strong> so all features are on a similar scale, and <strong>residual analysis</strong> (plotting errors to check if the model is fair). Those steps are covered in the main <a href="linear-regression.html">Linear Regression</a> lesson; here we kept the minimal code path so you can run and understand every line quickly. See <strong>Linear Regression.pdf</strong> in the course source for slides.</p>
+        <div class="section" style="margin-top: 2rem;">
+            <h2>Complete code from course notebook: linear_regression.ipynb</h2>
+            <p>Every line of code from the course notebook (verbatim).</p>
+            <div class="code-block" style="max-height: 600px; overflow: auto;">
+                <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+
+h1 { color: blue !important; }
+h2 { color: green !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 2 ---
+# Supress Warnings
+
+import warnings
+warnings.filterwarnings('ignore')
+
+# Import the numpy and pandas package
+
+import numpy as np
+import pandas as pd
+
+# Data Visualisation
+
+import matplotlib.pyplot as plt 
+import seaborn as sns
+
+# --- Code cell 4 ---
+data = pd.read_csv("Housing.csv")
+data.head(10)
+
+# --- Code cell 5 ---
+data.info()
+
+# --- Code cell 6 ---
+data.describe()
+
+# --- Code cell 8 ---
+
+fig, axs = plt.subplots(2,3, figsize = (10,5))
+plt1 = sns.boxplot(data['price'], ax = axs[0,0]).set(xlabel= 'price')
+plt2 = sns.boxplot(data['area'], ax = axs[0,1]).set(xlabel='area')
+plt3 = sns.boxplot(data['bedrooms'], ax = axs[0,2]).set(xlabel='bedrooms')
+plt1 = sns.boxplot(data['bathrooms'], ax = axs[1,0]).set(xlabel='bathrooms')
+plt2 = sns.boxplot(data['stories'], ax = axs[1,1]).set(xlabel='stories')
+plt3 = sns.boxplot(data['parking'], ax = axs[1,2]).set(xlabel='parking')
+
+plt.tight_layout()
+
+# --- Code cell 9 ---
+# outlier treatment for price
+
+Q1 = data.price.quantile(0.25) # data['price'].quantile(0.25)
+Q3 = data.price.quantile(0.75)
+IQR = Q3 - Q1
+data = data[(data.price &gt;= Q1 - 1.5*IQR) &amp; (data.price &lt;= Q3 + 1.5*IQR)]
+print(Q3,Q1)
+
+# --- Code cell 10 ---
+len(data)
+
+# --- Code cell 11 ---
+# outlier treatment for area
+
+Q1 = data.area.quantile(0.25)
+Q3 = data.area.quantile(0.75)
+
+IQR = Q3 - Q1
+data = data[(data.area &gt;= Q1 - 1.5*IQR) &amp; (data.area &lt;= Q3 + 1.5*IQR)]
+
+# --- Code cell 12 ---
+len(data)
+
+# --- Code cell 13 ---
+data.columns
+
+# --- Code cell 14 ---
+#Correlation of output with numerical variables
+
+# plotting correlation heatmap
+dataplot = sns.heatmap(data[['price', 'area', 'bedrooms', 'bathrooms', 'stories','parking']].corr(), cmap="YlGnBu", annot=True)
+  
+# displaying heatmap
+plt.show()
+
+# --- Code cell 15 ---
+#Visualizing categorical variables
+
+plt.figure(figsize=(20, 12))
+plt.subplot(2,3,1)
+sns.boxplot(x = 'mainroad', y = 'price', data = data)
+plt.subplot(2,3,2)
+sns.boxplot(x = 'guestroom', y = 'price', data = data)
+plt.subplot(2,3,3)
+sns.boxplot(x = 'basement', y = 'price', data = data)
+plt.subplot(2,3,4)
+sns.boxplot(x = 'hotwaterheating', y = 'price', data = data)
+plt.subplot(2,3,5)
+sns.boxplot(x = 'airconditioning', y = 'price', data = data)
+plt.subplot(2,3,6)
+sns.boxplot(x = 'furnishingstatus', y = 'price', data = data)
+plt.show()
+
+# --- Code cell 16 ---
+plt.figure(figsize = (10, 5))
+sns.boxplot(x = 'mainroad', y = 'price', hue = 'airconditioning', data = data)
+plt.show()
+
+# --- Code cell 18 ---
+# List of variables to map
+
+cat_features =  ['mainroad', 'guestroom', 'basement', 'hotwaterheating', 'airconditioning', 'prefarea']
+
+# Defining the map function
+def create_features(x):
+    return x.map({'yes': 1, "no": 0})
+
+# Applying the function to the housing list
+data[cat_features] = data[cat_features].apply(create_features)
+
+# --- Code cell 19 ---
+data.head(10)
+
+# --- Code cell 20 ---
+#Create dummy features for categorical variables
+
+data_cat = pd.get_dummies(data['furnishingstatus'],drop_first=True)
+
+# --- Code cell 21 ---
+data_cat.head(100)
+
+# --- Code cell 22 ---
+
+data = pd.concat([data, data_cat], axis = 1)
+data.drop(['furnishingstatus'], axis = 1, inplace = True)
+data.head(10)
+
+# --- Code cell 24 ---
+from sklearn.model_selection import train_test_split
+
+#np.random.seed(0) # not must to do
+df_train, df_test = train_test_split(data, train_size = 0.8, test_size = 0.2, random_state = 100)
+
+# --- Code cell 25 ---
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+
+# --- Code cell 26 ---
+# Apply scaler() to all the columns except the 'yes-no' and 'dummy' variables
+num_vars = ['area', 'bedrooms', 'bathrooms', 'stories', 'parking']
+
+df_train[num_vars] = scaler.fit_transform(df_train[num_vars])
+
+# --- Code cell 27 ---
+df_train.describe()
+
+# --- Code cell 28 ---
+df_test[num_vars] = scaler.transform(df_test[num_vars])
+
+# --- Code cell 29 ---
+df_test.describe()
+
+# --- Code cell 30 ---
+y_train = df_train.pop('price') # df_train['price'] #labels in training data
+x_train = df_train # features in training data
+
+# --- Code cell 31 ---
+y_test = df_test.pop('price') # df_test['price'] #lables in test data
+x_test = df_test # features in test data
+
+# --- Code cell 34 ---
+from sklearn.linear_model import LinearRegression
+
+lr_model = LinearRegression()
+lr_model.fit(x_train, y_train) # training
+
+# --- Code cell 35 ---
+help(LinearRegression)
+
+# --- Code cell 36 ---
+#Let's see the summary of our linear model
+print(lr_model.coef_)
+
+# --- Code cell 37 ---
+# this is for our understanding - not needed for LR model
+import numpy as np
+importance = np.array(lr_model.coef_)
+importance = importance / sum(importance)
+print(importance )
+
+# --- Code cell 38 ---
+for z in range(len(list(x_train.columns))):
+    print("The Importance coefficient for {} is {}".format(x_train.columns[z], importance[z]))
+
+# --- Code cell 39 ---
+print(lr_model.intercept_)
+
+# --- Code cell 40 ---
+x_train.columns
+
+# --- Code cell 43 ---
+#residual analysis
+#Residual analysis is typically performed on the training data rather than the test data. 
+#The purpose of residual analysis is to assess the performance and
+#assumptions of your regression model during the training phase.
+
+# --- Code cell 45 ---
+y_train_pred = lr_model.predict(x_train)
+residuals = (y_train_pred - y_train)
+
+# --- Code cell 46 ---
+# Plot the histogram of the error terms
+fig = plt.figure()
+sns.distplot(residuals, bins = 20)
+fig.suptitle('Error Terms', fontsize = 20)                  # Plot heading 
+plt.xlabel('Errors', fontsize = 18)                         # X-label
+
+# --- Code cell 47 ---
+plt.scatter(y_train,residuals)
+plt.show()
+# Model is giving negative error in high house price range and postive error in low house price range
+# Its estimating a bit higher prices for houses with lower prices and lower pricess for houses with higher prices
+# We might need more data or the relatioship between input and ouput is not necessarily linear in all regions
+
+# In the region where model is doing fine ( residual around 0) - we do have lot of data points
+
+# --- Code cell 50 ---
+# Making predictions
+y_test_pred = lr_model.predict(x_test)
+
+# --- Code cell 51 ---
+from sklearn.metrics import r2_score,mean_absolute_error,mean_absolute_percentage_error
+r2_score(y_test, y_test_pred)
+
+# --- Code cell 52 ---
+mean_absolute_percentage_error(y_test, y_test_pred)
+
+# --- Code cell 53 ---
+# Less than ~20% average percentage error is not a bad result on such a small dataset
+# Results would improve if we get more data to train the model
+# Some additional fetaures like distance from best school, shoppig and entertainment options etc would also help
+
+# --- Code cell 54 ---
+# Plotting y_test and y_pred to understand the spread.
+fig = plt.figure()
+plt.scatter(y_test,y_test_pred)
+fig.suptitle('y_test vs y_test_pred', fontsize=20)              # Plot heading 
+plt.xlabel('y_test', fontsize=18)                          # X-label
+plt.ylabel('y_test_pred', fontsize=16)                          # Y-label
+</pre>
             </div>
         </div>
 

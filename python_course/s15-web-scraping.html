@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session 15: Web Scraping with Python | 🐍 Python Mastery</title>
+  <link rel="stylesheet" href="light-theme.css">
+  <style>
+    .scrape-hero {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 2px solid #10b981;
+    }
+    .scrape-hero h2 { color: #047857; margin-bottom: 0.5rem; }
+    .lib-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .lib-card {
+      background: white;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .lib-card.requests { border-color: #3b82f6; }
+    .lib-card.bs4 { border-color: #10b981; }
+    .code-block { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px; overflow-x: auto; margin: 1rem 0; font-family: monospace; font-size: 0.9rem; }
+    .static-dynamic { background: #f8fafc; border: 2px solid #94a3b8; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; }
+    @media (max-width: 600px) { .lib-pair { grid-template-columns: 1fr; } }
+  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <nav class="course-nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-hub" title="FKTI Hub"><i class="fas fa-home"></i><span>FKTI Hub</span></a>
+      <a href="index.html" class="nav-hub" style="margin-left: 8px;"><span>←</span> Python</a>
+      <div class="session-pills">
+        <a href="s1-intro.html" class="pill">1</a>
+        <a href="s2-datatypes.html" class="pill">2</a>
+        <a href="s3-loops.html" class="pill">3</a>
+        <a href="s4-lists.html" class="pill">4</a>
+        <a href="s5-datastructures.html" class="pill">5</a>
+        <a href="s6-functions1.html" class="pill">6</a>
+        <a href="s7-functions2.html" class="pill">7</a>
+        <a href="s8-oop.html" class="pill">8</a>
+        <a href="s9-numpy.html" class="pill">9</a>
+        <a href="s10-pandas1.html" class="pill">10</a>
+        <a href="s11-pandas2.html" class="pill">11</a>
+        <a href="s12-api-sql.html" class="pill">12</a>
+        <a href="s13-dataviz.html" class="pill">13</a>
+        <a href="s14-enhanced-viz.html" class="pill">14</a>
+        <a href="s15-web-scraping.html" class="pill active">15</a>
+      </div>
+      <a href="student-assignments.html" class="nav-assign"><span>📝</span> Assignments</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="session-header">
+      <span class="achievement-badge">🌟 Session 15</span>
+      <div class="session-number">Session 15</div>
+      <h1>Web Scraping Using Python</h1>
+      <p class="session-subtitle">Extract data from websites automatically with <code>requests</code> and BeautifulSoup.</p>
+    </header>
+
+    <div class="scrape-hero">
+      <h2>🕷️ What is Web Scraping?</h2>
+      <p>Web scraping is <strong>automatically getting data from websites</strong> using code. Instead of copying and pasting by hand, we write a script that visits a page, reads its HTML, and pulls out the bits we want (headlines, prices, reviews, etc.). Data scientists use it when an API is not available.</p>
+      <p><strong>Why it's useful:</strong> Gather data for analysis; monitor prices or news; automate repetitive web tasks.</p>
+    </div>
+
+    <section class="content-section">
+      <h2>📚 Libraries You Need</h2>
+      <ul>
+        <li><strong>requests</strong> — Downloads the raw HTML of a webpage (like opening the page in a browser and saving the source).</li>
+        <li><strong>beautifulsoup4</strong> — Parses that HTML so we can search for tags, classes, and IDs and extract text or links.</li>
+      </ul>
+      <p>Install once: <code>pip install requests beautifulsoup4</code></p>
+      <div class="lib-pair">
+        <div class="lib-card requests">
+          <h4>requests</h4>
+          <p>Fetches the page. You get back a <code>Response</code> object; <code>.content</code> gives the HTML bytes.</p>
+        </div>
+        <div class="lib-card bs4">
+          <h4>BeautifulSoup</h4>
+          <p>Turns messy HTML into a structure you can search: find by tag name, class, or id and get text or attributes.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>🔍 Static vs Dynamic Sites</h2>
+      <div class="static-dynamic">
+        <p><strong>Static:</strong> All content is in the HTML when the page loads (e.g. Wikipedia, many docs sites). You can scrape with <code>requests</code> + BeautifulSoup.</p>
+        <p><strong>Dynamic:</strong> Content is loaded or updated with JavaScript after the page loads (e.g. many news feeds, social media). BeautifulSoup alone cannot see that content; you need something like Selenium or Playwright, or an API.</p>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>📝 Basic HTML (Simple Idea)</h2>
+      <p>Web pages are built with <strong>HTML tags</strong>. For scraping you only need a rough idea:</p>
+      <ul>
+        <li><code>&lt;h1&gt;</code> … <code>&lt;h6&gt;</code> — Headings</li>
+        <li><code>&lt;p&gt;</code> — Paragraphs</li>
+        <li><code>&lt;a href="..."&gt;</code> — Links</li>
+        <li><code>&lt;div&gt;</code> / <code>&lt;span&gt;</code> — Containers for grouping</li>
+        <li><code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;td&gt;</code> — Tables</li>
+      </ul>
+      <p>BeautifulSoup lets you find these by name, or by <code>class="..."</code> / <code>id="..."</code>.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>✏️ Minimal Code (Same idea as the course notebook)</h2>
+      <p>In the course source notebook (<strong>Web_Scraping_Using_Python</strong>), you'll see:</p>
+      <div class="code-block">import requests<br>from bs4 import BeautifulSoup<br><br>url = "https://books.toscrape.com/catalogue/category/books_1/index.html"<br>response = requests.get(url)   # Download the page<br># response.status_code 200 means OK<br>html = response.content<br>soup = BeautifulSoup(html, "html.parser")   # Parse HTML<br># Then use soup.find("tag") or soup.find_all("tag") to get elements</div>
+      <p><strong>In simple terms:</strong> <code>requests.get(url)</code> brings the page; <code>BeautifulSoup(html, "html.parser")</code> turns it into a searchable tree; then you use <code>.find()</code> or <code>.find_all()</code> to get the parts you need and <code>.text</code> or <code>["href"]</code> to get text or links.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>✅ Takeaway</h2>
+      <ul>
+        <li>Web scraping = programmatically extracting data from websites.</li>
+        <li>Use <code>requests</code> to fetch HTML and BeautifulSoup to parse and extract.</li>
+        <li>Works best on static pages; for JavaScript-heavy sites you may need Selenium/Playwright or an API.</li>
+      </ul>
+    </section>
+
+    
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Web_Scraping_Using_Python (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 3 ---
+# Install required libraries (if not already installed)
+!pip install requests
+!pip install beautifulsoup4
+
+# --- Code cell 10 ---
+import requests
+from bs4 import BeautifulSoup
+
+# --- Code cell 11 ---
+url="https://books.toscrape.com/catalogue/category/books_1/index.html"
+response=requests.get(url)
+
+# --- Code cell 12 ---
+response
+
+# --- Code cell 13 ---
+response=response.content
+soup=BeautifulSoup(response,"html.parser")
+soup
+
+# --- Code cell 14 ---
+ol=soup.find("ol")
+articles=ol.find_all("article",class_="product_pod")
+
+# --- Code cell 15 ---
+articles
+
+# --- Code cell 16 ---
+for article in articles:
+  image=article.find("img")
+  title=image.attrs["alt"]
+  print(title)
+
+# --- Code cell 17 ---
+star=article.find("p")
+print(star)
+
+# --- Code cell 18 ---
+star=article.find("p")
+star=star["class"][1]
+print(star)
+
+# --- Code cell 19 ---
+for article in articles:
+  image=article.find("img")
+  title=image.attrs["alt"]
+  star=article.find("p")
+  star=star["class"][1]
+  print(title)
+  print(star)
+
+# --- Code cell 20 ---
+price=article.find("p",class_="price_color")
+print(price)
+
+# --- Code cell 21 ---
+for article in articles:
+  image=article.find("img")
+  title=image.attrs["alt"]
+  star=article.find("p")
+  star=star["class"][1]
+  price=article.find("p",class_="price_color")
+  print(price)
+
+# --- Code cell 22 ---
+for article in articles:
+  image=article.find("img")
+  title=image.attrs["alt"]
+  star=article.find("p")
+  star=star["class"][1]
+  price=article.find("p",class_="price_color").text
+  print(price)
+
+# --- Code cell 23 ---
+price=article.find("p",class_="price_color").text
+print(price[1:])
+
+# --- Code cell 24 ---
+for article in articles:
+  image=article.find("img")
+  title=image.attrs["alt"]
+  star=article.find("p")
+  star=star["class"][1]
+  price=article.find("p",class_="price_color").text
+  price=float(price[1:])
+  print(price)
+
+# --- Code cell 25 ---
+books=[]
+for article in articles:
+  image=article.find("img")
+  title=image.attrs["alt"]
+  star=article.find("p")
+  star=star["class"][1]
+  price=article.find("p",class_="price_color").text
+  price=float(price[1:])
+  books.append([title,star,price])
+print(books)
+
+# --- Code cell 26 ---
+books=[]
+for i in range(1,51):
+  url=f"https://books.toscrape.com/catalogue/page-{i}.html"
+  response=requests.get(url)
+  response=response.content
+  soup=BeautifulSoup(response,"html.parser")
+  ol=soup.find("ol")
+  articles=ol.find_all("article",class_="product_pod")
+  for article in articles:
+    image=article.find("img")
+    title=image.attrs["alt"]
+    star=article.find("p")
+    star=star["class"][1]
+    price=article.find("p",class_="price_color").text
+    price=float(price[1:])
+    books.append([title,star,price])
+print(books)
+
+# --- Code cell 27 ---
+import pandas as pd
+df=pd.DataFrame(books,columns=["Title","Star","Rating"])
+df
+
+# --- Code cell 28 ---
+# web scrapping via extension
+
+# --- Code cell 29 ---
+# https://www.youtube.com/watch?v=aClnnoQK9G0&amp;pp=ygUdd2ViIHNjcmFwaW5nIGV4dGVuc2lvbiBjaHJvbWU%3D
+</pre>
+      </div>
+    </section>
+
+    
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Web_Scraping_Using_Python_new.ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 3 ---
+# Install required libraries (if not already installed)
+!pip install requests
+!pip install beautifulsoup4
+
+# --- Code cell 4 ---
+import sys
+print(sys.executable)
+!{sys.executable} -m pip install beautifulsoup4
+
+# --- Code cell 5 ---
+# Import libraries
+import requests
+from bs4 import BeautifulSoup
+
+# --- Code cell 8 ---
+url = 'https://timesofindia.indiatimes.com/'
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# Print all h1 tags
+headings = soup.find_all('h3')
+for h in headings:
+    print(h.text)
+
+# --- Code cell 9 ---
+soup
+
+# --- Code cell 10 ---
+data = []
+
+links = soup.find_all('a')
+
+for link in links:
+    href = link.get('href')
+    text = link.text.strip()
+
+    if text and href:   # filter empty values
+        data.append([text, href])
+
+# --- Code cell 11 ---
+import pandas as pd
+
+df = pd.DataFrame(data, columns=["Title", "Link"])
+df.sample(16)
+
+# --- Code cell 13 ---
+links = soup.find_all('a')
+for link in links:
+    href = link.get('href')
+    text = link.text.strip()
+    print(f"{text} → {href}")
+
+# --- Code cell 16 ---
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+# --- Code cell 17 ---
+url = "https://www.worldometers.info/world-population/population-by-country/"
+headers = {"User-Agent": "Mozilla/5.0"}
+
+response = requests.get(url, headers=headers)
+soup = BeautifulSoup(response.text, "html.parser")
+
+# --- Code cell 18 ---
+tables = soup.find_all("table")
+len(tables)
+
+# --- Code cell 19 ---
+tables[0]
+
+# --- Code cell 20 ---
+table = soup.find("table", id="example2")
+
+# --- Code cell 21 ---
+table = soup.find_all("table")[0]
+
+# --- Code cell 22 ---
+headers = []
+
+first_row = table.find_all("tr")[0]
+
+for th in first_row.find_all("th"):
+    headers.append(th.text.strip())
+
+headers
+
+# --- Code cell 23 ---
+rows = []
+
+for tr in table.find_all("tr")[1:]:
+    tds = tr.find_all("td")
+    if tds:
+        rows.append([td.text.strip() for td in tds])
+
+# --- Code cell 24 ---
+import pandas as pd
+
+df = pd.DataFrame(rows, columns=headers)
+df.sample(10)
+
+# --- Code cell 25 ---
+df.shape
+
+# --- Code cell 28 ---
+url = "https://www.imdb.com/chart/top/"
+headers = {
+    "User-Agent": "Mozilla/5.0"
+}
+
+response = requests.get(url, headers=headers)
+print(response.status_code)
+
+# --- Code cell 29 ---
+soup = BeautifulSoup(response.text, "html.parser")
+
+# --- Code cell 30 ---
+movies = soup.find_all("li", class_="ipc-metadata-list-summary-item")
+len(movies)
+
+# --- Code cell 31 ---
+data = []
+
+for movie in movies:
+    # Title
+    title = movie.find("h3").get_text(strip=True)
+
+    # Year (robust)
+    year = None
+    for span in movie.find_all("span"):
+        txt = span.get_text(strip=True)
+        if txt.isdigit() and len(txt) == 4:
+            year = txt
+            break
+
+    # Rating (robust)
+    rating = None
+    rating_tag = movie.find("span", attrs={"aria-label": True})
+    if rating_tag:
+        rating = rating_tag["aria-label"].split()[0]
+
+    data.append([title, year, rating])
+
+# --- Code cell 32 ---
+import pandas as pd
+
+df = pd.DataFrame(data, columns=["Title", "Year", "Rating"])
+df
+</pre>
+      </div>
+    </section>
+
+    <nav class="session-nav-footer"<nav class="session-nav-footer" style="margin-top: 2rem; display: flex; justify-content: space-between;">
+      <a href="s14-enhanced-viz.html" class="nav-prev"><i class="fas fa-arrow-left"></i> Session 14: Enhanced Viz</a>
+      <a href="index.html" class="nav-next">Course index <i class="fas fa-arrow-right"></i></a>
+    </nav>
+  </main>
+</body>
+</html>

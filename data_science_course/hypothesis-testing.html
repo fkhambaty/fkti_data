@@ -525,6 +525,9 @@
             
             <p>Hypothesis testing is like being a detective. You have a claim to investigate, evidence to analyze, and a verdict to deliver!</p>
 
+            <h3>👶 In One Sentence (Like You're 5)</h3>
+            <p><strong>Hypothesis testing</strong> answers: "Could this pattern in the data just be luck?" We run a test and get a number called the <strong>p-value</strong>. If the p-value is very small (usually below 0.05), we say the pattern is probably real; if not, we say we don't have enough evidence. So we never "prove" anything—we only decide whether the evidence is strong enough.</p>
+
             <div class="analogy-box">
                 <h4>🕵️ The Detective Analogy</h4>
                 <p><strong>Crime Scene:</strong> A business question ("Does the new website increase sales?")</p>
@@ -1022,6 +1025,216 @@ selected_features = []
             <div class="key-point">
                 <h4>💡 Important Note</h4>
                 <p>A feature with p > 0.05 might still be useful when <strong>combined</strong> with other features! Use hypothesis tests as a starting point, not the final word. Cross-validation with actual ML models gives the true answer.</p>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">📘 From the course notebook (Hypothesis Testing)</h4>
+                <p style="color: #1e3a8a; margin-bottom: 10px;">The course source covers t-tests, chi-square, ANOVA with examples. Key ideas: <code>scipy.stats.ttest_ind</code> (two groups), <code>chi2_contingency</code> (categorical vs categorical), <code>f_oneway</code> (3+ groups). Use real data (e.g. from the <a href="datasets.html">datasets page</a>) to run tests and interpret p-values. See <strong>Hypothesis testing.pdf</strong> in the course source for slides.</p>
+            </div>
+
+            
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: hypothesis_testing.ipynb</h2>
+                <p>Every line of code (verbatim).</p>
+                <div class="code-block" style="max-height: 500px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+h1 { color: Purple !important; }
+h2 { color: green !important; }
+h3 { color: blue !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 2 ---
+import pandas as pd
+
+# --- Code cell 3 ---
+data = pd.read_csv("Hotel Reservations.csv")
+
+# --- Code cell 4 ---
+data.head(10)
+
+# --- Code cell 5 ---
+data.columns
+
+# --- Code cell 6 ---
+data.info()
+
+# --- Code cell 7 ---
+data = data[['no_of_weekend_nights' ,'no_of_children','type_of_meal_plan','room_type_reserved','lead_time','avg_price_per_room','booking_status']]
+
+# --- Code cell 8 ---
+data['booking_status'].value_counts()
+
+# --- Code cell 9 ---
+data['no_of_children'].value_counts()
+
+# --- Code cell 10 ---
+data['type_of_meal_plan'].value_counts()
+
+# --- Code cell 11 ---
+data['room_type_reserved'].value_counts()
+
+# --- Code cell 12 ---
+data.columns
+
+# --- Code cell 13 ---
+categorical_columns = ['no_of_weekend_nights' ,'no_of_children', 'type_of_meal_plan', 'room_type_reserved']
+
+# --- Code cell 17 ---
+from scipy.stats import chi2_contingency
+
+# --- Code cell 18 ---
+
+  
+# defining the table
+for column in categorical_columns:
+        temp = pd.DataFrame(data[column].value_counts()).reset_index()
+        temp.columns = [column,'frequency']
+        categories = list(temp[temp['frequency']&gt;20][column])
+        data_new = data[data[column].isin(categories)]
+        print(data_new[column].value_counts())
+        
+        table = pd.crosstab(data_new[column], data_new['booking_status'])
+        print(table)
+        stat, p, dof, expected = chi2_contingency(table)
+        print("Chi-square test for feature: ", column)
+        print("p-value : ", p)
+        print("")
+        print("")
+
+# --- Code cell 19 ---
+column = 'no_of_weekend_nights'
+temp = pd.DataFrame(data[column].value_counts()).reset_index()
+print(temp)
+
+# --- Code cell 20 ---
+temp.columns = [column,'frequency']
+temp.head(10)
+
+# --- Code cell 21 ---
+#Step 1 - remove rows with 20 or less examples
+categories = list(temp[temp['frequency']&gt;20][column])
+print(categories)
+
+# --- Code cell 22 ---
+data_new = data[data[column].isin(categories)]
+print(data_new[column].value_counts())
+
+# --- Code cell 23 ---
+#Step 2 - create a contigency table using crosstab
+table = pd.crosstab(data_new[column], data_new['booking_status'])
+print(table)
+
+#Step 3 - Perform chi square test using chi2_contingency function
+stat, p, dof, expected = chi2_contingency(table)
+print("Chi-square test for feature: ", column)
+print("p-value : ", p)
+print("")
+print("")
+
+# --- Code cell 24 ---
+# if p value &lt; 0.05 - alternate hypothesis- atleast 95% cofidence
+
+# --- Code cell 27 ---
+numerical_columns = ['lead_time','avg_price_per_room']
+
+# --- Code cell 28 ---
+data_cancelled = data[data['booking_status'] == 'Canceled']
+data_cancelled[numerical_columns].describe()
+
+# --- Code cell 29 ---
+data_not_cancelled = data[data['booking_status'] == 'Not_Canceled']
+data_not_cancelled[numerical_columns].describe()
+
+# --- Code cell 30 ---
+from scipy import stats
+  
+# defining the table
+for column in numerical_columns:
+        samples_set1 = data_cancelled[column]
+        samples_set2 = data_not_cancelled[column]
+        stat, p = stats.ttest_ind(samples_set1, samples_set2)
+    
+        print("ttest for feature: ", column)
+        print("p-value : ", p)
+        print("")
+        print("")
+
+# --- Code cell 31 ---
+#lead_time - 0.4 -o/p
+
+# --- Code cell 32 ---
+#lead_time , price , type plan ,
+
+# --- Code cell 34 ---
+from scipy import stats
+
+# --- Code cell 35 ---
+column = 'lead_time'
+
+# --- Code cell 36 ---
+# Step 1 - create two populations for the numerical feature
+samples_set1 = data_cancelled[column] # population1 -for cancelled bookings
+samples_set2 = data_not_cancelled[column] # population2 -for not cancelled bookings
+
+# --- Code cell 37 ---
+samples_set1
+
+# --- Code cell 38 ---
+# Step 2 - pass the populations to ttest function
+stat, p = stats.ttest_ind(samples_set1, samples_set2)
+
+print("ttest for feature: ", column)
+print("p-value : ", p)
+print("")
+print("")
+
+# --- Code cell 39 ---
+# p value &lt;0.05 - lead time is useful feature for prediction
+
+# --- Code cell 40 ---
+# chi-square test
+#checking relation beween two categorical columns 
+# categorical column like gender and hotel booking status
+
+# welch t-test
+#checking relation beween a numerical column and a categorical column
+# checking relation between lead time and hotel booking status
+
+# --- Code cell 41 ---
+# feature A - p &gt;0.05 -&gt; this feature might not be useful just on its own
+# but it can still be useful when combined with other features
+</pre>
+                </div>
+            </div>
+
+<div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">💭 Short reflection</h4>
+                <p style="color: #1e3a8a;">In one sentence: what does it mean when we say “we reject the null hypothesis at α = 0.05”? Why not say “we proved the alternative”?</p>
+            </div>
+
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Null (H₀) vs alternative (H₁)</strong>; p-value = P(observed or more extreme | H₀ true).</li>
+                    <li><strong>p &lt; 0.05</strong> → reject H₀ (significant); p ≥ 0.05 → fail to reject (not “accept H₀”).</li>
+                    <li><strong>Chi-Square</strong>: categorical vs categorical; contingency table; <code>chi2_contingency</code>.</li>
+                    <li><strong>T-Test</strong>: compare means of two groups; <code>ttest_ind</code>.</li>
+                    <li><strong>ANOVA</strong>: compare means across 3+ groups; <code>f_oneway</code>.</li>
+                    <li>Feature selection: combine tests with domain knowledge and ML validation.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Type I (false positive) vs Type II (false negative) error.</li>
+                    <li>Paired t-test for before/after or matched groups.</li>
+                    <li>Post-hoc tests after ANOVA (e.g. Tukey).</li>
+                </ul>
             </div>
         </div>
 

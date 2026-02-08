@@ -271,6 +271,9 @@ bagging_model.<span class="function">fit</span>(X_train, y_train)
             
             <p>Boosting builds models <strong>sequentially</strong>, where each new model focuses on correcting the errors of previous models.</p>
 
+            <h3>👶 In One Sentence</h3>
+            <p><strong>Boosting</strong> = train one weak model, then train the next one to fix the mistakes of the first, and keep adding models that correct the remaining errors; the final prediction is a weighted combination of all of them. Unlike bagging (e.g. Random Forest), models are built one after another, not in parallel.</p>
+
             <div class="analogy-box">
                 <h4>📚 The Student Learning Analogy</h4>
                 <p>Imagine a student taking practice tests:</p>
@@ -520,6 +523,39 @@ study.<span class="function">optimize</span>(objective, n_trials=<span class="nu
                     <li>Then tune learning_rate (lower) and increase n_estimators</li>
                     <li>Finally tune subsample and colsample_bytree</li>
                 </ol>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Boosting</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Too many trees without early stopping</strong> — Can overfit; use early_stopping_rounds (or cross-validation) to stop when validation score stops improving.</li>
+                    <li><strong>Learning rate too high with many trees</strong> — Often better to use a smaller learning rate and more trees; tune together.</li>
+                    <li><strong>Forgetting to scale</strong> — Tree-based boosters (XGBoost, LightGBM) don't require scaling, but if you mix with linear models or use other features, scale first.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+                <h4 style="color: #92400e;">💭 Short reflection</h4>
+                <p style="color: #78350f;">In one sentence: how is boosting different from bagging (e.g. Random Forest) in the way models are trained and combined?</p>
+            </div>
+
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Boosting</strong>: train trees sequentially; each tree corrects errors of the previous one; weighted vote or sum.</li>
+                    <li><strong>Bagging</strong>: train in parallel on bootstrap samples; vote/average (e.g. Random Forest).</li>
+                    <li><strong>XGBoost / LightGBM</strong>: gradient boosting with regularization; key params: n_estimators, max_depth, learning_rate.</li>
+                    <li><strong>Learning rate</strong>: lower = more trees needed, often better generalization.</li>
+                    <li>Use early stopping to find optimal number of trees; cross-validate.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Gradient boosting: fit each tree to residuals (or negative gradient).</li>
+                    <li>CatBoost, histogram-based splitting in LightGBM.</li>
+                    <li>Hyperparameter tuning order: n_estimators with early_stopping, then max_depth, learning_rate, subsample.</li>
+                </ul>
             </div>
         </div>
 

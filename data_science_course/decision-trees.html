@@ -205,6 +205,12 @@
                 <p><strong>A Decision Tree works exactly like this!</strong> It asks simple questions to make predictions.</p>
             </div>
 
+            <h3>📌 In One Sentence</h3>
+            <p>A <strong>decision tree</strong> is a flowchart of yes/no questions: you start at the top, answer each question, follow the branch, and when you reach a leaf you get the prediction (e.g. "play tennis" or "don't play"). The algorithm learns which questions to ask and in what order from the training data.</p>
+
+            <h3>❓ Why Do We Need Random Forest When One Tree Works?</h3>
+            <p>A single tree can <strong>overfit</strong>: it memorizes the training data and gets confused on new data. A <strong>Random Forest</strong> builds many trees (each on a random subset of data and features) and combines their votes. That usually gives a more stable and accurate model—like asking many people instead of one.</p>
+
             <div class="tree-visual">
                 <h4>🌳 Example: Should I Play Tennis Today?</h4>
 <pre>
@@ -545,6 +551,42 @@ importance = pd.<span class="function">DataFrame</span>({
             <div class="visual-example">
                 <h4>🎉 You've Mastered Tree-Based Models!</h4>
                 <p>Decision Trees and Random Forests are among the most powerful and widely-used algorithms in data science!</p>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes with Decision Trees & Random Forest</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Letting one tree grow too deep</strong> — Deep trees overfit; use max_depth or min_samples_leaf to limit size.</li>
+                    <li><strong>Not tuning the number of trees</strong> — More trees usually help up to a point; too many just slow things down.</li>
+                    <li><strong>Ignoring feature scaling</strong> — Trees don't need scaling, but if you mix with other algorithms later, scale then.</li>
+                    <li><strong>Treating feature importance as causation</strong> — Importance only says "this feature was useful for splitting"; it doesn't prove cause and effect.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #059669;">
+                <h4 style="color: #047857;">💭 Short reflection</h4>
+                <p style="color: #064e3b;">In one sentence: why does a Random Forest usually generalize better than a single deep decision tree on the same data?</p>
+            </div>
+
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Decision tree</strong>: splits on features (yes/no questions); root → internal nodes → leaf (prediction).</li>
+                    <li><strong>Gini impurity / entropy</strong>: measure how mixed a node is; tree chooses splits that minimize impurity.</li>
+                    <li><strong>Overfitting</strong>: deep trees overfit; use max_depth, min_samples_leaf, or pruning.</li>
+                    <li><strong>Random Forest</strong>: ensemble of trees on bootstrap samples + random feature subsets; vote for classification, average for regression.</li>
+                    <li><strong>Feature importance</strong>: from split improvement (e.g. Gini decrease) across the forest.</li>
+                    <li>When to use: interpretability → single tree; accuracy → Random Forest.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Information gain and entropy formula.</li>
+                    <li>Pruning (post-prune vs pre-prune).</li>
+                    <li>Bagging vs Random Forest (RF adds random feature subset per split).</li>
+                    <li>Out-of-bag (OOB) error estimate.</li>
+                </ul>
             </div>
         </div>
 

@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_8 <strong>OOPs in Python</strong> covers classes, __init__, self, inheritance—same as this lesson. Use the OOPs notebook to code along.</p>
+    </div>
+
     <!-- ANALOGY -->
     <section class="analogy-card">
       <div class="analogy-header">
@@ -658,7 +663,276 @@ Circle 2: Circle(radius=10)
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (OOP)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Forgetting self</strong> — Instance methods must have <code>self</code> as the first parameter; and call attributes as <code>self.attr</code>.</li>
+        <li><strong>Forgetting to call __init__</strong> — When you define <code>__init__</code>, make sure you're not overwriting it by mistake; create objects with <code>ClassName()</code> so __init__ runs.</li>
+        <li><strong>Using class attributes when you mean instance</strong> — If every object should have its own value, set it in <code>__init__</code> as <code>self.x = ...</code>, not on the class.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ec4899;">
+      <h4 style="color: #9d174d;">💭 Short reflection</h4>
+      <p style="color: #831843;">In one sentence: why do we use <code>self</code> as the first parameter in every instance method?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li><strong>Class</strong>: blueprint; <code>__init__(self)</code> constructor; instance attributes.</li>
+        <li>Methods take <code>self</code>; create object with <code>ClassName()</code>.</li>
+        <li>Encapsulation: keep data and behavior together; <code>__str__</code> / <code>__repr__</code> for display.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Inheritance, super(); private by convention (_name).</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: OOPs.ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 2 ---
+# python language----intrepreted,high-level language and object oriented programming language
+
+# --- Code cell 3 ---
+# oops---- object oriented programming language
+# oops---  classes and objects
+
+# --- Code cell 4 ---
+# classes and objects are bascially used in other programming like java,c++----organized and reusable code
+
+# --- Code cell 5 ---
+# class--is a blue print for creating objects
+# it has a set of attributes(variables) and methods(functions)  that are instances(created objects) of a classes
+
+# --- Code cell 6 ---
+# object----is an instance of a class
+# when you create an object,you use the class as a templete
+# attributes(variables) and methods(functions)  that are instances(created objects) of a classes
+
+# --- Code cell 7 ---
+#syntax
+
+class class_name:
+  attributes=34
+  def function_name(self):
+    print("my name is aravind")
+
+# --- Code cell 8 ---
+object=class_name() # instance of a class
+object.attributes
+object.function_name()
+
+# --- Code cell 9 ---
+# basic program
+# define a class
+#feature="mammel"
+class dog:
+  # attributes
+  species="carlies"
+
+  # methods
+  def bark(self):
+    return "wolf"
+
+# --- Code cell 10 ---
+dog1=dog() # instance of a class
+
+# --- Code cell 11 ---
+dog1.species
+
+# --- Code cell 12 ---
+dog1.bark()
+
+# --- Code cell 13 ---
+def bark():
+    return "wolf"
+
+bark()
+
+# --- Code cell 14 ---
+# basic program
+# define a class
+#feature="mammel"
+class dog:
+  # attributes
+  species="carlies"
+
+  # methods
+  def bark(aravind,ryujj,fhhj):
+    return "wolf"
+
+# --- Code cell 15 ---
+yellow=dog()
+
+# --- Code cell 16 ---
+yellow.species
+
+# --- Code cell 17 ---
+yellow.bark()
+
+# --- Code cell 18 ---
+class dog1:
+  species="carlies"
+  def bark(self):
+    return "wolf"
+
+# --- Code cell 19 ---
+dog2=dog1()
+
+# --- Code cell 20 ---
+
+dog2.bark()
+
+# --- Code cell 21 ---
+# self----refrence to the current instance of a class and also used to acess variables in a class
+
+# --- Code cell 22 ---
+#__init__----constructor to intialize a attributes --
+#    is a special method in oops
+
+# --- Code cell 23 ---
+class student:
+  def __init__(priya,name,age):
+    # initalizing the attributes
+    priya.name=name
+    priya.age=age
+
+  # methods
+  def introduce(priya):
+    return f"my name is{priya.name} and i am {priya.age} years old"
+
+# --- Code cell 24 ---
+student1=student("rahul",33)
+
+# --- Code cell 25 ---
+student1.name
+
+# --- Code cell 26 ---
+student1.age
+
+# --- Code cell 27 ---
+student1.introduce()
+
+# --- Code cell 28 ---
+student2=student("aravind",33)
+
+# --- Code cell 29 ---
+student2.introduce1()
+
+# --- Code cell 30 ---
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def __repr__(self):
+            return f"I'm {self.name}, and I'm {self.age} years old."
+
+# --- Code cell 31 ---
+person1=Person("tarun",33)
+print(person1)
+
+# --- Code cell 32 ---
+person2=Person("rahul",36)
+person2
+
+# --- Code cell 33 ---
+class person:
+  def __init__(goor,name,age=30):
+    goor.name=name
+    goor.age=age
+  def introduce(goor):
+    return f"Hi I'm {goor.name}and my {goor.age}"
+
+door=person("aravind")
+door.introduce()
+
+# --- Code cell 35 ---
+class Book:
+    def __init__(self, title, author, copies):
+        self.title = title
+        self.author = author
+        self.copies = copies
+
+    def display_details(self):
+        print(f"Title: {self.title}, Author: {self.author}, Available Copies: {self.copies}")
+
+    def borrow(self):
+        if self.copies &gt; 0:
+            self.copies -= 1
+            print(f"You borrowed '{self.title}'. Remaining copies: {self.copies}")
+        else:
+            print(f"Sorry, '{self.title}' is not available right now.")
+
+    def return_book(self):
+        self.copies += 1
+        print(f"You returned '{self.title}'. Available copies: {self.copies}")
+
+
+class Library:
+    def __init__(self):
+        self.books = []
+
+    # add new book
+    def add_book(self, book):
+        self.books.append(book)
+        print(f"Book '{book.title}' added to the library.")
+
+    # search for a book
+    def search_book(self, title):
+        for book in self.books:
+            if book.title.lower() == title.lower():
+                print("Book found:")
+                book.display_details()
+                return book
+        print("Book not found in the library.")
+        return None
+
+    # display all books
+    def display_all_books(self):
+        print("\n--- Library Books ---")
+        if not self.books:
+            print("No books available.")
+        else:
+            for book in self.books:
+                book.display_details()
+
+# --- Code cell 36 ---
+# ---------------- Real-time usage ----------------
+library = Library()
+
+# Adding books to library
+book1 = Book("The Alchemist", "Paulo Coelho", 3)
+book2 = Book("Python Programming", "Guido van Rossum", 2)
+book3 = Book("Clean Code", "Robert C. Martin", 4)
+
+library.add_book(book1)
+library.add_book(book2)
+library.add_book(book3)
+
+# --- Code cell 37 ---
+# Display all books
+library.display_all_books()
+
+# --- Code cell 38 ---
+library.search_book("The Alchemist")
+
+# --- Code cell 39 ---
+# Search and borrow
+found_book = library.search_book("The Alchemist")
+if found_book:
+    found_book.return_book()
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s7-functions2.html" class="nav-prev">
         <span class="nav-arrow">←</span>

@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_10 <strong>Pandas Part I</strong> notebook has Series, DataFrame, read_csv, indexing, merge—same ideas. Run the notebook alongside.</p>
+    </div>
+
     <!-- ANALOGY -->
     <section class="analogy-card">
       <div class="analogy-header">
@@ -656,7 +661,301 @@ Concatenated:
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Pandas 1)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Chained indexing</strong> — <code>df['a'][0] = 1</code> may not change the DataFrame; use <code>df.loc[0, 'a'] = 1</code> to avoid a copy and ensure the change sticks.</li>
+        <li><strong>loc vs iloc</strong> — <code>loc</code> uses labels (index/column names); <code>iloc</code> uses integer positions; mixing them causes KeyError or wrong rows.</li>
+        <li><strong>Assuming default index</strong> — After filtering, index can have gaps; use <code>.reset_index(drop=True)</code> if you need 0,1,2,... for slicing by position.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+      <h4 style="color: #047857;">💭 Short reflection</h4>
+      <p style="color: #064e3b;">In one sentence: when would you use <code>loc</code> vs <code>iloc</code> to select rows from a DataFrame?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>DataFrame: <code>pd.read_csv()</code>, <code>df.head()</code>, <code>df.info()</code>, <code>df.describe()</code>, <code>df.shape</code>.</li>
+        <li>Selection: <code>df['col']</code>, <code>df.loc[]</code> (labels), <code>df.iloc[]</code> (integer position).</li>
+        <li>Combine: <code>pd.merge()</code> (joins), <code>pd.concat()</code> (stack).</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>MultiIndex; groupby basics; dtypes and conversion.</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Pandas_partt_I (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# Numpy---array--1D and 2D..
+# numpy functions---transpose,random,reshape
+# list comprehesnion---write precise
+# oops--args,kwargs..real time example(lib management system)
+
+# --- Code cell 2 ---
+# Numpy--sci calculations
+# pandas--Data analysis
+# matplotlib--data viz
+# seaborn-- Top of matplotlib
+
+# --- Code cell 3 ---
+# pandas---is a fast ,powerful and flexible lib and ease to use and open sourse lib  for data analysis
+# pandas---read the data ,edit the data and manuplate the data
+# top of python programming lang
+
+# --- Code cell 4 ---
+! pip install pandas
+
+# --- Code cell 5 ---
+import pandas as pd
+
+# --- Code cell 6 ---
+# PANDAS---PANel DAtaframeS
+# third party lib--no correction with python
+# 1D---series
+# 2D--DataFrames
+# 3D--PAnel data
+
+# --- Code cell 7 ---
+# Data is practically divided into  two types
+# @1.Structured Data--------spread sheet ,csv,database(sql),xls,xls worksheet,tabular data
+# @2.Unstructured Data------music,video,images and corpus datas/document datas
+
+# --- Code cell 8 ---
+# how many ways you can create a dataframe?    ### common interview
+
+# --- Code cell 9 ---
+# series--A Series is a one-dimensional array-like object containing a
+# sequence of values (of similar types to NumPy types) and
+# an associated array of data labels, called its index.
+
+# --- Code cell 10 ---
+# creating a series through a list
+data=[3,4,5,6,7]
+series1=pd.Series(data)
+print(series1)
+
+# --- Code cell 11 ---
+type(series1)
+
+# --- Code cell 12 ---
+# creating a series through dict
+dat={"a":1,"b":2,"c":3}
+series2=pd.Series(dat)
+print(series2)
+
+# --- Code cell 13 ---
+# Creating a Series with a custom index
+values = [100, 200, 300,500]
+index1 = ['x', 'y', 'z',"g"]
+series = pd.Series(values, index=index1)
+print(series)
+
+# --- Code cell 14 ---
+# Creating a Series from a scalar value
+scalar = 5
+series = pd.Series(scalar, index=['a','b',"d"])
+
+print(series)
+
+# --- Code cell 15 ---
+# Creating a Series with mixed data types
+data = [1, 'apple', 3.5, True,"aravind"]
+series = pd.Series(data)
+print(series[3])
+
+# --- Code cell 16 ---
+# Creating a Series with DateTime index
+data = [100, 200, 300,600]
+dates = pd.date_range('2025-10-18',periods=len(data))
+
+series = pd.Series(data, index=dates)
+
+series
+
+# --- Code cell 17 ---
+# dataframes--2D--rows and columns
+
+# --- Code cell 18 ---
+# creating a dict into DF
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35],
+    'City': ['New York', 'Los Angeles', 'Chicago']
+}
+
+df=pd.DataFrame(data)
+df
+
+# --- Code cell 19 ---
+# Create a DataFrame from a list of lists
+data =[
+    ['Alice', 25, 'New York'],
+    ['Bob', 30, 'Los Angeles'],
+    ['Charlie', 35, 'Chicago'],
+    ["name",22,"newyork"],
+    ['Charlie', 35]
+]
+columns1 = ['Name', 'Age', 'City']
+df=pd.DataFrame(data,columns=columns1)
+df
+
+# --- Code cell 20 ---
+# creating  a DF from np
+import numpy as np
+data=np.array([
+    [1,"aravind",30],
+    [2,"rohan",65],
+    [3,"ravi",34]
+])
+
+df=pd.DataFrame(data,columns=columns1)
+df
+
+# --- Code cell 21 ---
+type(df)
+
+# --- Code cell 22 ---
+# Create Series
+s1 = pd.Series([1, 2, 3], name='ID')
+s2 = pd.Series(['Alice', 'Bob', 'Charlie'], name='Name')
+s3 = pd.Series([25, 30, 35], name='Age')
+# Combine Series into a DataFrame
+df = pd.concat([s1, s2, s3], axis=1)
+
+df
+
+# --- Code cell 23 ---
+from numpy import random
+data=np.random.randint(310,550,size=(3,3))
+data
+
+# --- Code cell 24 ---
+from numpy import random
+data=np.random.randint(310,550,size=(3,3))
+flow=["ID","name","age"]
+df=pd.DataFrame(data,columns=flow)
+df
+
+# --- Code cell 25 ---
+from numpy import random
+data=np.random.uniform(310,550,size=(3,3))
+flow=["ID","name","age"]
+df=pd.DataFrame(data,columns=flow)
+df
+
+# --- Code cell 26 ---
+dates=pd.date_range("2024-02-01",periods=6)
+data={"jan":[10,20,30,11,13,14],"feb":[10,20,30,12,55,66]}
+df=pd.DataFrame(data,index=dates)
+df
+
+# --- Code cell 27 ---
+#  Creating a DataFrame with MultiIndex/Panel Dataframes
+# Define a MultiIndex
+index = pd.MultiIndex.from_tuples([
+    ('A', 'first'),
+    ('B', 'second'),
+    ('A', 'first'),
+    ('B', 'second'),
+    ('C', 'Third')
+], names=['Category', 'Subcategory'])
+# Create DataFrame with MultiIndex
+data = {
+    'jan': [1, 2, 3, 4,5],'feb': [1, 2, 3, 4,5]
+}
+df = pd.DataFrame(data, index=index)
+
+df
+
+# --- Code cell 29 ---
+df1 = pd.DataFrame({'name': ['rohit',  'akshay', 'aayush','yogesh'],
+                    'weight': [67, 82, 53, 75]})
+
+# --- Code cell 30 ---
+df1
+
+# --- Code cell 31 ---
+df2 = pd.DataFrame({'name': ['aayush','yogesh', 'rohit',  'akshay'],
+                    'height': [168, 186, 167, 178]})
+df2
+
+# --- Code cell 32 ---
+#merge - join two tables
+
+df1 = pd.DataFrame({'name': ['rohit',  'akshay', 'aayush','yogesh'],
+                    'weight': [67, 82, 53, 75]})
+print(df1.head())
+print("\n")
+df2 = pd.DataFrame({'name': ['aayush','yogesh', 'rohit',  'akshay'],
+                    'height': [168, 186, 167, 178]})
+print(df2.head())
+
+# --- Code cell 34 ---
+df1 = df1.merge(df2, on='name', how ='inner') # try this again by adding more values in df 1 and how outer
+df1.head()
+
+# --- Code cell 35 ---
+df1 = pd.DataFrame({'name': ['rohit',  'akshay', 'aayush','yogesh'],
+                    'weight': [67, 82, 53, 75]})
+print(df1.head())
+
+# --- Code cell 36 ---
+
+df2 = pd.DataFrame({'user_name': ['aayush','yogesh', 'rohit',  'akshay'],
+                    'height': [168, 186, 167, 178]})
+print(df2.head())
+
+# --- Code cell 37 ---
+df1 = df2.merge(df1, left_on='user_name', right_on='name')
+# by default its an inner join, how='inner'
+df1.head()
+
+# --- Code cell 38 ---
+#concat
+# join two dataframes along particular axis
+
+
+df1 = pd.DataFrame({'name': ['rohit',  'akshay', 'aayush','yogesh'],
+                    'weight': [67, 82, 53, 75]})
+print(df1.head())
+print("\n")
+df2 = pd.DataFrame({'name': ['aayush','yogesh', 'rohit',  'akshay'],
+                    'height': [168, 186, 167, 178]})
+print(df2.head())
+
+# --- Code cell 39 ---
+#ignore_index=True creates new index range, default is False
+# axis = 0 is default value, it joins two dataframes vertically
+pd.concat([df1, df2 ], axis=0,ignore_index=True)
+
+# --- Code cell 40 ---
+
+df1 = pd.DataFrame({'name': ['rohit',  'akshay', 'aayush','yogesh'],
+                    'weight': [67, 82, 53, 75]})
+print(df1.head())
+print("\n")
+df2 = pd.DataFrame({'user_name': ['rohit',  'akshay', 'aayush','yogesh'],
+                    'height': [168, 186, 167, 178]})
+print(df2.head())
+columns1=["name","height","weight1","weight2"]
+pd.concat([df1, df2 ], axis=1,ignore_index=True)
+
+# --- Code cell 41 ---
+# loading an extrenal data from kaggle and working with some real use cases
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s9-numpy.html" class="nav-prev">
         <span class="nav-arrow">←</span>

@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_12 <strong>Read data from API and SQL</strong> has requests, JSON, and SQL examples—same ideas. Run the notebook to try APIs and SQLite.</p>
+    </div>
+
     <!-- WHAT IS AN API -->
     <section class="content-section">
       <h2>🌐 What is an API?</h2>
@@ -565,7 +570,195 @@ Created scores table from DataFrame!</pre>
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (APIs & SQL)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Hardcoding API keys or passwords</strong> — Use environment variables (<code>os.environ.get("API_KEY")</code>); never commit secrets to git.</li>
+        <li><strong>SQL injection</strong> — Don't build queries with f-strings like <code>f"SELECT * FROM users WHERE id = {user_id}"</code>; use parameterized queries (e.g. <code>cursor.execute("... WHERE id = ?", (user_id,))</code>).</li>
+        <li><strong>Not checking response status</strong> — Check <code>response.status_code</code> or handle exceptions; 4xx/5xx mean the request failed.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+      <h4 style="color: #1e40af;">💭 Short reflection</h4>
+      <p style="color: #1e3a8a;">In one sentence: why should you never put API keys or database passwords directly in your source code?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li><strong>APIs</strong>: requests or SDK; auth (e.g. API key in env); parse JSON response.</li>
+        <li><strong>SQL</strong>: connect (e.g. sqlite3, psycopg2); execute queries; fetch results; parameterize to avoid injection.</li>
+        <li>Use environment variables for secrets; never commit keys.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>REST vs GraphQL; pandas read_sql; connection pooling.</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: 9_Read_data_from_api_and_SQL_(1) (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# agenda
+# read the data from api and convert that data into a dataframe
+# creating a database and reading the data from sql and convert that data into a data frame
+
+# --- Code cell 2 ---
+import requests
+import json
+
+# --- Code cell 3 ---
+import pandas as pd
+
+# --- Code cell 4 ---
+from pandas import json_normalize
+
+# --- Code cell 5 ---
+response = requests.get("https://api.mfapi.in/mf/114564", allow_redirects = True)
+print(response.headers.get('content-type'))
+
+content = response.content
+
+# --- Code cell 6 ---
+type(response)
+
+# --- Code cell 7 ---
+print(content)
+
+# --- Code cell 8 ---
+data = json.loads(content) ## parse a JSON string and convert it into a Python Dictionary.
+
+# --- Code cell 9 ---
+data
+
+# --- Code cell 10 ---
+type(data)
+
+# --- Code cell 12 ---
+data = json_normalize(data)# convert dictionary to dataframe
+
+# --- Code cell 13 ---
+data
+
+# --- Code cell 14 ---
+type(data)
+
+# --- Code cell 15 ---
+import pandas as pd
+
+dataframe = pd.DataFrame.from_dict(data['data'][0])
+#dataframe1 = pd.DataFrame.from_dict(data['data'][1])
+
+# --- Code cell 16 ---
+json_data=response.json()
+meta=json_data["meta"]
+meta
+
+# --- Code cell 17 ---
+dataframe
+
+# --- Code cell 18 ---
+dataframe
+
+# --- Code cell 19 ---
+dataframe.iloc[12:25,:1]
+
+# --- Code cell 20 ---
+status = data['status']
+print(status)
+
+# --- Code cell 22 ---
+# this is a comment
+
+# --- Code cell 23 ---
+""" this is a
+triple quotation
+statment"""
+
+# --- Code cell 24 ---
+#SQLite is a C library that provides a lightweight
+#disk-based database that doesn’t require a separate server process
+# and allows accessing the database using SQL
+
+# --- Code cell 25 ---
+import sqlite3
+
+# --- Code cell 26 ---
+----Doc string/Multi line comment
+
+# what ever you have written in """ is called as sql query upon importing sqlite3
+
+# --- Code cell 27 ---
+import pandas as pd
+
+# --- Code cell 28 ---
+conn = sqlite3.connect('machine_learning_database_new.db')
+
+# --- Code cell 29 ---
+
+c = conn.cursor() # this method used to read the sql query against the database
+
+# c.execute() This method executes a SQL query against the database.
+
+# --- Code cell 30 ---
+c.execute('''
+          CREATE TABLE IF NOT EXISTS products
+          ([product_id] INTEGER,[product_price] INTEGER, [product_name] TEXT)
+          ''')
+conn.commit()
+
+# --- Code cell 31 ---
+c.execute('''
+          INSERT INTO products (product_id, product_price, product_name)
+
+                VALUES
+                (1,43000,'Computer'),
+                (2,15000,'Printer'),
+                (3,7000,'Tablet'),
+                (4,12000,'Mobile'),
+                (5,5000,'Chair')
+          ''')
+conn.commit()
+
+# --- Code cell 32 ---
+c.execute('''
+          SELECT * FROM products
+          ''')
+
+#c.fetchall()The method fetches all (or all remaining) rows of a query result set
+df = pd.DataFrame(c.fetchall(), columns=['product_name', 'product_price','price']) # update naming convention
+
+# --- Code cell 33 ---
+df
+
+# --- Code cell 35 ---
+#pyodbc is widely used in companies
+
+#import pyodbc
+
+#connection_string = ("Driver={ODBC Driver 17 for SQL Server};"
+#           "Server=USXXX00345,67800;"
+#            "Database=DB02;"
+#            "Trusted_Connection=yes;") # Based on server configurations user name and password maybe required
+
+#connection = pyodbc.connect(connection_string)
+
+# --- Code cell 36 ---
+
+#data = pd.read_sql_query("SELECT TOP(100) * FROM associates", connection)
+
+# --- Code cell 37 ---
+#help(pd.read_sql_query)
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s11-pandas2.html" class="nav-prev">
         <span class="nav-arrow">←</span>

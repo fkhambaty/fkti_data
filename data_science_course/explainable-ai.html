@@ -96,6 +96,35 @@ model.<span class="function">fit</span>(X, y)
             <p>Tools like <strong>ExplainerDashboard</strong> (Python) or Plotly Dash can wrap your model and SHAP/LIME to build an interactive dashboard: change inputs, see prediction and feature contributions. Great for presenting to stakeholders.</p>
         </div>
 
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Explainable AI</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Trusting feature importance without context</strong> — High importance can mean correlation, not causation; always sanity-check with domain knowledge.</li>
+                    <li><strong>Using LIME/SHAP on the wrong data</strong> — Explain on the same preprocessed inputs the model saw; mismatched scaling or encoding gives wrong explanations.</li>
+                    <li><strong>Explaining once for all users</strong> — Local explanations (per sample) matter for "why this loan was denied"; global importance is for "what drives the model overall."</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+                <h4 style="color: #92400e;">💭 Short reflection</h4>
+                <p style="color: #78350f;">In one sentence: why would a doctor or regulator prefer a model that is explainable (e.g. feature importance, SHAP) over a pure black box?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Explainable AI (XAI)</strong>: understand why a model made a prediction.</li>
+                    <li><strong>Global</strong>: feature importance (e.g. tree-based importances) across the dataset.</li>
+                    <li><strong>Local</strong>: SHAP (Shapley values per feature per sample), LIME (local linear approximation).</li>
+                    <li>Use for trust, debugging, and compliance.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>ExplainerDashboard, counterfactual explanations.</li>
+                </ul>
+            </div>
+
         <div class="nav-buttons">
             <a href="index.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Back to Course Hub</a>
             <a href="gen-ai-intro.html" class="nav-btn next">Next: Gen AI Intro <i class="fas fa-arrow-right"></i></a>

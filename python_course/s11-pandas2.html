@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_11 <strong>Pandas Part II</strong> covers loc, iloc, filtering, describe(), groupby—same as here. Use the notebook to practice.</p>
+    </div>
+
     <!-- FILTERING -->
     <section class="content-section">
       <h2>🔍 Filtering Data</h2>
@@ -556,7 +561,390 @@ Name: Level, dtype: float64</pre>
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Pandas 2)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Dropping too much with dropna()</strong> — Dropping any row with a NaN can remove most data; use <code>thresh</code> or <code>subset</code> or <code>fillna()</code> when appropriate.</li>
+        <li><strong>SettingWithCopyWarning</strong> — When you slice then assign, pandas may warn; use <code>.loc[]</code> for the assignment or <code>.copy()</code> to make intent clear.</li>
+        <li><strong>Groupby without aggregation</strong> — <code>groupby()</code> returns a groupby object; you need <code>.sum()</code>, <code>.mean()</code>, etc. to get a result.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+      <h4 style="color: #047857;">💭 Short reflection</h4>
+      <p style="color: #064e3b;">In one sentence: why should you decide whether to use <code>fillna()</code> or <code>dropna()</code> based on the problem and amount of missing data?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Filtering, <code>sort_values()</code>, <code>nlargest()</code>; <code>apply()</code> on columns.</li>
+        <li>Missing data: <code>isnull()</code>, <code>fillna()</code>, <code>dropna()</code>; choose by context.</li>
+        <li><code>value_counts()</code>, <code>unique()</code>; groupby and aggregation.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Pivot tables; merge strategies; chained indexing pitfalls.</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Copy_of_pandas_Part_II (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 2 ---
+from google.colab import drive
+drive.mount('/content/drive')
+
+# --- Code cell 3 ---
+import pandas as pd
+import numpy as np
+
+#Creating empty pandas series
+
+data = pd.Series()
+print(data)
+
+# simple array
+array = np.array([1,5,7,9,12,45,32])
+data = pd.Series(array)
+print(data)
+
+# --- Code cell 4 ---
+data[3] # access by index
+
+# --- Code cell 6 ---
+data.index
+
+# --- Code cell 7 ---
+array = np.array([1,5,7,9,12,45,32])
+columns1=["value"]
+df = pd.DataFrame(array,columns=columns1)
+df
+
+# --- Code cell 8 ---
+df.index
+
+# --- Code cell 9 ---
+df.columns
+
+# --- Code cell 11 ---
+df.columns
+
+# --- Code cell 12 ---
+#Dictionary to dataframe
+
+import pandas as pd
+
+# Define a dictionary containing employee data
+data = {'Name':['Rohit', 'Yogesh', 'Aayush'],
+        'Age':[27, 24, 22],
+        'Address':['Delhi', 'Kanpur', 'Pune'],
+        'Qualification':['Msc', 'MA', 'MCA']}
+
+# Convert the dictionary into DataFrame
+df = pd.DataFrame(data)
+df.head()
+
+# --- Code cell 13 ---
+# EDA(Exploratory Data Analyis)---pre processing steps for ML models
+
+# --- Code cell 15 ---
+import pandas as pd
+data = pd.read_csv("/content/Housing (1).csv")  # specify complete path of file if at other location
+data
+
+# --- Code cell 16 ---
+# how many rows and columns are there
+data.shape
+
+# --- Code cell 17 ---
+data.head(15) #display the top rows  by default 5 rows
+
+# --- Code cell 18 ---
+data.tail(10)  #display the bottom rows  by default 5 rows
+
+# --- Code cell 19 ---
+data.sample(4)
+
+# --- Code cell 20 ---
+len(data)
+
+# --- Code cell 21 ---
+# dataframe information
+data.info()
+
+# --- Code cell 22 ---
+data.describe()  # give you a descrptive stas
+
+# --- Code cell 23 ---
+data.describe(include="all")  # give you a descrptive stas
+
+# --- Code cell 26 ---
+# .loc - name based filtering
+# df.loc[start_row_num:stop_row_num:step_row_num, start_col_name:stop_col_name:step_col_num]
+
+# --- Code cell 27 ---
+data.tail(10)
+
+# --- Code cell 28 ---
+# 35-45rows,area	bedrooms	bathrooms	stories
+
+# --- Code cell 29 ---
+data.columns
+
+# --- Code cell 30 ---
+data.loc[45:35:-1,'area': 'airconditioning']
+
+# --- Code cell 31 ---
+data.loc[65:30:-1,"prefarea":"basement":-2]
+
+# --- Code cell 32 ---
+data.loc[50:75:1,["stories","area"]]
+
+# --- Code cell 33 ---
+data.loc[0]
+
+# --- Code cell 34 ---
+data.loc[1:4]
+
+# --- Code cell 35 ---
+data.loc[100:123,["bathrooms","stories","mainroad"]]
+
+# --- Code cell 36 ---
+data.loc[50:76,"guestroom"]
+
+# --- Code cell 38 ---
+# retrieving row by loc method
+data.loc[5]
+
+# --- Code cell 39 ---
+data.loc[4,['area',"price"]]
+
+# --- Code cell 41 ---
+# Syntax - df.iloc[start_row_Number:stop_row_number, start_col_number:stop_col_number]
+
+# --- Code cell 42 ---
+data.head()
+
+# --- Code cell 43 ---
+data.loc[45:35:-1,'area': 'airconditioning']
+
+# --- Code cell 44 ---
+data.columns
+
+# --- Code cell 45 ---
+list(enumerate(data.columns))
+
+# --- Code cell 46 ---
+df3=data.iloc[45:35:-1,1:10]
+
+# --- Code cell 47 ---
+df3.to_csv("client.csv")
+
+# --- Code cell 48 ---
+data.head(30)
+
+# --- Code cell 49 ---
+df=pd.read_csv("/content/Housing.csv")
+df
+
+# --- Code cell 50 ---
+columns=["area","bedrooms","bathrooms","price"]
+
+# --- Code cell 51 ---
+df.columns=columns
+
+# --- Code cell 52 ---
+data.iloc[21:30:1,11:7:-1]
+
+# --- Code cell 53 ---
+data.iloc[66:78,1:4]
+
+# --- Code cell 54 ---
+data.iloc[5]
+
+# --- Code cell 55 ---
+data.loc[222]
+
+# --- Code cell 56 ---
+data["area"][340]
+
+# --- Code cell 57 ---
+#select multiple columns
+data[['price', 'area','bedrooms']]
+
+# --- Code cell 58 ---
+data['price'][10]
+
+# --- Code cell 59 ---
+data['price']
+
+# --- Code cell 60 ---
+data.head()
+
+# --- Code cell 61 ---
+data["furnishingstatus"].unique()
+
+# --- Code cell 62 ---
+data["furnishingstatus"].nunique()  # count of unique elem
+
+# --- Code cell 63 ---
+data["furnishingstatus"].value_counts()
+
+# --- Code cell 64 ---
+data.furnishingstatus.value_counts()
+
+# --- Code cell 65 ---
+data.furnishingstatus.value_counts(normalize=True).mul(100).round(3)
+
+# --- Code cell 66 ---
+len(data)
+
+# --- Code cell 67 ---
+#Filter data frame based on column value
+
+data_furnished = data[data['furnishingstatus'] == 'furnished']
+#data_furnished.to_csv("furnished_rec.csv")
+
+# --- Code cell 68 ---
+data_furnished
+
+# --- Code cell 69 ---
+# Filter dataframe on multiple columns - and condition
+data_furnished = data[(data['furnishingstatus'] == 'furnished') &amp; (data['parking'] ==1)]
+data_furnished.shape
+
+# --- Code cell 70 ---
+# Filter dataframe on multiple columns - or condition
+data_furnished = data[(data['furnishingstatus'] == 'furnished') | (data['mainroad'] == 'yes')]
+data_furnished.head(10)
+
+# --- Code cell 72 ---
+
+data['furnishingstatus'].value_counts()
+
+# --- Code cell 73 ---
+data['parking'].value_counts()
+
+# --- Code cell 75 ---
+# correlation analyis
+# price vs other feature
+data.corr(numeric_only=True)
+
+# --- Code cell 76 ---
+
+data['furnishingstatus'].unique()
+
+# --- Code cell 77 ---
+# check length of dataframe
+len(data)
+
+# --- Code cell 78 ---
+# bottom 10 by area
+data.nlargest(100, "area")[["price","area","bedrooms","bathrooms","stories","parking"]]
+
+# --- Code cell 79 ---
+data.sort_values(by="area", ascending=True)[["price","area","bedrooms","bathrooms","stories","parking"]].head(10)
+
+# --- Code cell 80 ---
+data.nsmallest(10, "area")[["price","area","bedrooms","bathrooms","stories","parking"]]
+
+# --- Code cell 82 ---
+# GroupBy -used to group out multiple columns in a datset with an agg functions
+# Syntax - df.groupby(Col_to_be_groupped).agg({"column_name": "Function_to_be__performed"})
+# agg function take a dictionary
+# dict - key:value pair, where key is the column,
+# value is the function to be done on column
+
+# --- Code cell 83 ---
+# avg price by no of bedrooms
+
+# --- Code cell 84 ---
+data.groupby("bedrooms")["price"].mean()
+
+# --- Code cell 85 ---
+# price distribution by stories
+data.groupby("stories")["price"].agg(["count","mean","min","max"])
+
+# --- Code cell 86 ---
+data.groupby('bedrooms').agg({"price":"mean","area":"mean"})
+
+# --- Code cell 87 ---
+data.groupby(by = 'bedrooms').agg({"price":"mean"})
+
+# --- Code cell 88 ---
+data
+
+# --- Code cell 89 ---
+data.groupby('bedrooms').agg({"price":"mean","area":"median"})
+
+# --- Code cell 90 ---
+data.groupby(by = 'bedrooms')['price'].mean()
+
+# --- Code cell 91 ---
+data.groupby(by = ['bedrooms'])[['price','area']].mean()
+
+# --- Code cell 92 ---
+# top 10 most expensive properties
+data.nlargest(10, "price")
+
+# --- Code cell 93 ---
+# cheapest properties
+data.nsmallest(10, "price")
+
+# --- Code cell 94 ---
+# price vs a/c and Basement
+data.groupby(["airconditioning","basement"])["price"].mean()
+
+# --- Code cell 95 ---
+# price spread by furnished status
+data.groupby("furnishingstatus")["price"].agg(["mean","min","max"])
+
+# --- Code cell 97 ---
+data.groupby(by = ['bedrooms', 'bathrooms'])['price'].mean()
+
+# --- Code cell 98 ---
+data.groupby(by = ['bedrooms', 'bathrooms'])['price'].median()
+
+# --- Code cell 99 ---
+data.groupby(by = ['bedrooms', 'bathrooms'])['price'].min()
+
+# --- Code cell 102 ---
+# Default sorting is ascending
+data = data.sort_values(by = 'price')
+data.head(10)
+
+# --- Code cell 103 ---
+# Sorting 'price' column in ascending order and 'area' column in descending order
+sorted_df = data.sort_values(by=['price', 'area'], ascending=[True, False])
+#sorted_df = data.sort_values(by=['price', 'area'])
+sorted_df.head(10)
+
+# --- Code cell 104 ---
+print(data['guestroom'].value_counts())
+
+# --- Code cell 105 ---
+data["price"].map(lambda x: f"{x:,.0f}") #conversion of e power to a number
+
+# --- Code cell 106 ---
+data['guestroom'].value_counts()
+
+# --- Code cell 107 ---
+data['guestroom']
+
+# --- Code cell 108 ---
+#lambda function
+
+data['guestroom'] = data['guestroom'].apply(lambda x:0 if x=='no' else 1)
+print(data['guestroom'].value_counts())
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s10-pandas1.html" class="nav-prev">
         <span class="nav-arrow">←</span>

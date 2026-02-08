@@ -72,6 +72,19 @@
                 </ul>
             </div>
 
+            <div class="welcome-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #3b82f6;">
+                <h3 style="color: #1e40af;">👶 In one sentence</h3>
+                <p style="color: #1e3a8a; margin: 0;"><strong>DBT (Data Build Tool)</strong> lets you write SQL that turns raw data into clean, tested tables and models—and it runs in your warehouse and tracks lineage so you know where every column came from.</p>
+            </div>
+            <div class="welcome-card" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border: 2px solid #ef4444;">
+                <h3 style="color: #b91c1c;">🚫 Common Mistakes in DBT</h3>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Selecting * in production models</strong> — Explicitly list columns so schema changes in sources don't silently break downstream.</li>
+                    <li><strong>Not testing</strong> — Add uniqueness and not-null tests on key columns; catch bad data before it reaches dashboards.</li>
+                    <li><strong>Hardcoding environment values</strong> — Use <code>target.name</code> or variables for dev vs prod; avoid editing SQL per environment.</li>
+                </ul>
+            </div>
+
             <div class="welcome-card">
                 <h3>Why DBT (Data Build Tool)?</h3>
                 <p>DBT revolutionized analytics engineering by bringing software engineering practices to data transformation. It's the backbone of modern data teams at:</p>
@@ -1608,6 +1621,28 @@ where status != 'cancelled'</code></pre>
                         <li>🚗 **Taxi Rides** - Transportation analytics</li>
                     </ul>
                 </div>
+            </div>
+        </section>
+
+        <section class="content-section" style="margin-top: 2rem;">
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+                <h4 style="color: #047857;">💭 Short reflection</h4>
+                <p style="color: #064e3b;">In one sentence: why is it better to build analytics with incremental and snapshot models instead of full refresh only?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>dbt</strong>: transform data in the warehouse with SQL + Jinja; models, tests, docs.</li>
+                    <li><strong>Models</strong>: staging, intermediate, marts; ref() and source(); incremental for large tables.</li>
+                    <li><strong>Tests</strong>: unique, not_null, relationships; custom tests.</li>
+                    <li>Snapshots for SCD Type 2; seeds for static CSV; run and test in CI.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Macros, packages, hooks; exposure; dbt Cloud.</li>
+                </ul>
             </div>
         </section>
         

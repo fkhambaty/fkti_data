@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_7 <strong>Functions Part II</strong> has *args, **kwargs, lambda, map, filter—same ideas. Run the notebook cells.</p>
+    </div>
+
     <!-- *ARGS SECTION -->
     <section class="content-section">
       <h2>📦 *args - Variable Positional Arguments</h2>
@@ -717,7 +722,515 @@ Sentence: Python is awesome!</pre>
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (map, filter, comprehensions)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>map() returns an iterator in Python 3</strong> — You need <code>list(map(...))</code> to see a list; otherwise you consume it once and it's empty.</li>
+        <li><strong>Filter condition logic</strong> — <code>filter(f, x)</code> keeps items where <code>f(item)</code> is True; double-check what your function returns.</li>
+        <li><strong>Comprehension with side effects</strong> — Use comprehensions for building a new list/set/dict; for side effects (e.g. printing) a normal loop is clearer.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+      <h4 style="color: #1e40af;">💭 Short reflection</h4>
+      <p style="color: #1e3a8a;">In one sentence: when would you use <code>map()</code> or a list comprehension instead of a manual for-loop?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>List comprehensions: <code>[x*2 for x in list]</code>; filter with <code>if</code>.</li>
+        <li><code>map(func, iterable)</code>, <code>filter(func, iterable)</code>; <code>reduce()</code> to combine.</li>
+        <li>Functions as first-class objects; pass functions as arguments.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Lambda; functools; generator expressions.</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Functions_in_python (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# Functions in python
+
+# --- Code cell 2 ---
+# what is function?
+A function is a block of code that performs a specific task.
+it is reusable and helps to organize the code efficiently
+1@ code reusability--write once and use multiple times
+2@ modularity--Divide the code into smaller and manageable parts
+3@ Reduces Redundancy--aviod writing the same code repatibilty
+4@ Improved Readability--makes programs easier to understand
+
+# --- Code cell 3 ---
+Types of functions
+1@ Built-in functions
+2@ User-defined functions
+3@ lambda(annoymous) functions
+
+# --- Code cell 4 ---
+#for any word when you add a parenthis is a function
+
+# --- Code cell 5 ---
+print("to print")
+
+# --- Code cell 6 ---
+# Built-in-functions
+print()
+max()
+min()
+sum()
+len()
+
+# --- Code cell 7 ---
+flow=input("enter a name")
+print(flow)
+
+# --- Code cell 8 ---
+import builtins
+print(dir(builtins))
+
+# --- Code cell 9 ---
+list1=[23,34,56,78,89]
+avg=sum(list1)/len(list1)
+avg
+
+# --- Code cell 10 ---
+import statistics
+list1=[23,34,56,78,89]
+s=statistics.mean(list1)
+s
+
+# --- Code cell 11 ---
+max(list1)
+
+# --- Code cell 12 ---
+min(list1)
+
+# --- Code cell 13 ---
+#user-defined function is created by the user to perform a specific task.
+
+# --- Code cell 14 ---
+# syntax
+def hello():  # defining a function
+  # function block of code
+hello()   # calling function
+
+# --- Code cell 15 ---
+# simple function without parameters
+def greet():
+  print("hello welcome to fuctions in python")
+
+# --- Code cell 16 ---
+greet()
+
+# --- Code cell 17 ---
+greet1()
+
+# --- Code cell 18 ---
+# syntax
+def hello(parameters):  # defining a function
+  # function block of code
+hello(arguments)   # calling function
+
+# --- Code cell 19 ---
+greet("vishal")
+
+# --- Code cell 20 ---
+greet("aravind")
+
+# --- Code cell 21 ---
+Function arguments in python
+1@ positional arguments
+2@ default arguments/keyword arguments
+3@ arbitary Keyword arguments
+4@ arbitary non keyword arguments
+
+# --- Code cell 22 ---
+# positional argument
+def greet(name):
+  print(f"hello {name}")
+
+# --- Code cell 23 ---
+greet(3567)
+
+# --- Code cell 24 ---
+greet("azar")
+
+# --- Code cell 25 ---
+greet("rahul","aravind")
+
+# --- Code cell 26 ---
+# positional argument
+def intro(name,age):
+  print(f"hello my name is {name} , and  my age is {age}")
+
+# --- Code cell 27 ---
+intro(65,"banu",67)
+
+# --- Code cell 28 ---
+intro("banu")
+
+# --- Code cell 29 ---
+# default arguments/keyword arguments
+
+def greet(name="rahul"):
+  print(f"hello,{name}!")
+
+# --- Code cell 30 ---
+greet() # no argument are passed
+
+# --- Code cell 31 ---
+greet("alice") # positional argument is passed
+
+# --- Code cell 32 ---
+# positional arguments
+def student(marks,name,age=21):
+  print(f"name:{name} with age:{age} and marks:{marks}")
+
+# --- Code cell 33 ---
+student(33,"tarun",55)
+
+# --- Code cell 34 ---
+student("rahul",23) # Positional arguments
+
+# --- Code cell 35 ---
+student(90,"rahul",34) # wrong order of arguments
+
+# --- Code cell 36 ---
+student(marks=90,name="taarun",age=23) # keyword arguments without order
+
+# --- Code cell 37 ---
+student(44,name="aravind") # positional and keyword arguments
+
+# --- Code cell 38 ---
+student(name="aravind",44) # positional and keyword arguments
+
+# --- Code cell 39 ---
+student(marks=90,"rahul",23) # positional and keyword arguments
+
+# --- Code cell 40 ---
+# positional arguments
+def student(marks,name,age=21):
+  print(f"name:{name} with age:{age} and marks:{marks}")
+
+# --- Code cell 41 ---
+student(name="rahul",marks=90) # positional and keyword arguments
+
+# --- Code cell 42 ---
+a=9
+print(a)
+
+# --- Code cell 43 ---
+# keyword arguments
+def employee(name,salary,department="IT"):
+  print(f"name:{name} with salary:{salary} and department:{department}")
+
+# --- Code cell 44 ---
+employee("rahul",23000,"HR")
+
+# --- Code cell 45 ---
+#In Python, return is used inside a function to send a value back to the caller and end the function immediately.
+
+# --- Code cell 46 ---
+def add(a,b):
+  return a+b
+
+result=add(3,4)  # store the returned value
+print(result)
+
+# --- Code cell 47 ---
+# function with return
+def jack(a,b):
+   add=a+b
+   sub=a-b
+   return(sub)
+   return(add)
+jack(5,4)
+
+# --- Code cell 48 ---
+# function with return
+def jack(a,b):
+   add=a+b
+   sub=a-b
+   return (sub,add)
+result=jack(5,4)
+print(result)
+
+# --- Code cell 49 ---
+# function with return
+def jack(a,b):
+   add=a+b
+   sub=a-b
+   return(sub)    # you cannot use a loop inside the function with mul return values
+   return(add)
+jack(5,4)
+
+# --- Code cell 50 ---
+def introduce(name="Sandip", age=0, marks=0):
+  print(f"My name is {name}! and I am {age} years old. My marks are {marks}.")
+introduce(marks = 100, age=30)
+
+# --- Code cell 51 ---
+def jack(a,b):
+  sub = a - b
+  sum = a + b
+  return(sub, sum)
+jack(3,3)
+
+# --- Code cell 53 ---
+# simple calculator
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+def divide(a, b):
+    if b == 0:
+        return "Error: Cannot divide by zero!"
+    return a / b
+
+# Real-time execution
+print("---- Calculator ----")
+a = float(input("Enter first number: "))
+b = float(input("Enter second number: "))
+
+choice = input("Choose operation (+, -, *, /): ")
+
+if choice == '+':
+    print("Result:", add(a, b))
+elif choice == '-':
+    print("Result:", subtract(a, b))
+elif choice == '*':
+    print("Result:", multiply(a, b))
+elif choice == '/':
+    print("Result:", divide(a, b))
+else:
+    print("Invalid choice!")
+
+# --- Code cell 55 ---
+balance = 1000 # global function
+
+def deposit(amount):
+    global balance
+    balance += amount
+    return balance
+
+def withdraw(amount):
+    global balance
+    if amount &gt; balance:
+        return "Insufficient balance!"
+    balance -= amount
+    return balance
+
+print("---- ATM ----")
+while True:
+    print("\n1. Deposit\n2. Withdraw\n3. Check Balance\n4. Exit")
+    choice = input("Enter choice: ")
+
+    if choice == '1':
+        amt = float(input("Enter amount to deposit: "))
+        print("New Balance:", deposit(amt))
+
+    elif choice == '2':
+        amt = float(input("Enter amount to withdraw: "))
+        print("New Balance:", withdraw(amt))
+
+    elif choice == '3':
+        print("Balance:", balance)
+
+    elif choice == '4':
+        print("Thank you! Visit again.")
+        break
+    else:
+        print("Invalid choice!")
+
+# --- Code cell 56 ---
+# arbitary arguments
+1@ *args(non-keyword arbitary arguments)
+2@ **kwargs(keyword arbitary arguments)
+are called as arbitary arguments/special arguments that allows functions
+to accept a variable number of arguments.
+
+# --- Code cell 57 ---
+# *args---accepts any number of positional arguments
+# it allows to pass multiple arguments into a function
+# These arguments are packed into a tuple inside the function
+
+# --- Code cell 58 ---
+# using *args
+def add_numbers(*david):
+  return sum(david)   # args is a tuple
+
+# --- Code cell 59 ---
+add_numbers(2,3,4,5,6,5,4,3)
+
+# --- Code cell 60 ---
+result=[3,4,5,6,7,8,9]
+total = add_numbers(*result)
+print(total)
+
+# --- Code cell 61 ---
+#iterating over *args
+def print_names(*names):
+  for name in names:
+    print(f"Hello,{name}!")
+
+# --- Code cell 62 ---
+print_names("rahul","Tarun","sachin","Dinesh","ritesh")
+
+# --- Code cell 63 ---
+# Mixing regular arguments with *args
+
+def greet(Title,name="aravind Reddy",*names):
+  for name in names:
+    print(f"{Title}{name}")
+
+# --- Code cell 64 ---
+greet("Dr.","Rahul","Tarun","sachin","Dinesh")
+
+# --- Code cell 65 ---
+dicti={"name":"rahul","age":23,"marks":90}
+
+# --- Code cell 66 ---
+dicti.values()
+
+# --- Code cell 67 ---
+#**kwargs---allows passing multiple keyword arguments to a function.
+# These arguments are stored in a dictionary inside the function
+
+# --- Code cell 69 ---
+# using **kwargs
+def print_details(**kwargs):
+  for key,value in kwargs.items():
+    print(f"{key}:&gt;&gt;&gt;&gt;&gt;{value}")
+
+# --- Code cell 70 ---
+print_details(name="rahul",age=23,marks=90,grade="A",loaction="bangalore",class1="first",batch="nov")
+
+# --- Code cell 71 ---
+# mixing regular arguments with **kwargs
+def display_students(name="alice",**details):
+  print(f"student:{name}")
+  for key,value in details.items():
+    print(f"{key}:{value}")
+
+# --- Code cell 72 ---
+display_students(age=23,grade="A",city="bangalore")
+
+# --- Code cell 74 ---
+def place_order(item, quantity=1, *toppings, **customer):
+    # Base prices
+    menu = {
+        "pizza": 200,
+        "burger": 120,
+        "pasta": 180
+    }
+
+    # Topping prices
+    topping_prices = {
+        "cheese": 30,
+        "olives": 20,
+        "mushrooms": 25
+    }
+
+    item = item.lower()
+
+    if item not in menu:
+        print("Item not available!")
+        return
+
+    print("\n--- ORDER SUMMARY ---")
+    print(f"Item: {item.title()}")
+    print(f"Quantity: {quantity}")
+
+    # Step 1: Base price
+    base_price = menu[item]
+    print(f"Base Price (each): ₹{base_price}")
+
+    # Step 2: Topping cost calculation (clear breakdown)
+    topping_cost = 0
+    if toppings:
+        print("\nToppings Added:")
+        for t in toppings:
+            cost = topping_prices.get(t.lower(), 0)
+            print(f"  {t} : ₹{cost}")
+            topping_cost += cost
+    else:
+        print("\nNo toppings added.")
+
+    print(f"\nTotal Topping Cost (per item): ₹{topping_cost}")
+
+    # Step 3: Final calculation
+    print("\n--- BILL CALCULATION ---")
+    print(f"Base Price     : ₹{base_price}")
+    print(f"Toppings       : ₹{topping_cost}")
+    per_item_total = base_price + topping_cost
+    print(f"Total per item : ₹{per_item_total}")
+
+    final_bill = per_item_total * quantity
+    print(f"Quantity ({quantity}) × ₹{per_item_total} = ₹{final_bill}")
+
+    # Customer info (**kwargs)
+    if customer:
+        print("\n--- CUSTOMER DETAILS ---")
+        for key, value in customer.items():
+            print(f"{key.capitalize()}: {value}")
+
+    print("\nFinal Amount to Pay: ₹", final_bill)
+    print("--------------------------\n")
+
+# --- Code cell 75 ---
+#Basic Order
+place_order("Pizza")
+
+# --- Code cell 76 ---
+#With toppings
+place_order("Burger", 2, "Cheese", "Olives")
+
+# --- Code cell 77 ---
+# Full order with customer info
+place_order(
+    "Pasta", 1, "olives","Mushrooms",
+    name="Alice",
+    address="123 Main Street",
+    phone="9876543210"
+)
+
+# --- Code cell 78 ---
+# lambda function---anonymous function(one-line function)
+#syntax---lambda arguments:expression
+# only one expression is allowed
+
+# --- Code cell 79 ---
+add_all=lambda x,y,z,d:x-y+z+d
+add_all(3,5,4,4)
+
+# --- Code cell 80 ---
+square=lambda x:x**2
+square(23)
+
+# --- Code cell 81 ---
+square(23,45,88)
+
+# --- Code cell 82 ---
+numbers=[3,4,6,6,7]
+square_map=tuple(map(lambda x:x**2,numbers))
+print(square_map)
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s6-functions1.html" class="nav-prev">
         <span class="nav-arrow">←</span>

@@ -270,6 +270,13 @@
                 <p style="margin-top: 10px;">ML does the same - you give it data, it discovers the rules automatically.</p>
             </div>
 
+            <h3>🤔 What Does "Learning" Actually Mean? (No Jargon)</h3>
+            <p>When we say the computer "learns," we mean: it <strong>adjusts numbers inside a formula</strong> again and again until the formula gives the right answers for the examples we showed it. Those numbers are called <strong>parameters</strong> or <strong>weights</strong>. So "training" = "finding the best numbers."</p>
+            <p style="margin-top: 12px;">Think of it like tuning a radio: you twist the dial (adjust the numbers) until the station comes in clearly (the predictions match what we want). Nobody programs the exact position of the dial; the algorithm finds it from examples.</p>
+
+            <h3>📦 What Is a "Model" in Plain English?</h3>
+            <p>A <strong>model</strong> is just the learned formula plus the numbers (weights) that were found during training. Once training is done, you <strong>save the model</strong> and use it later: you give it new input (e.g. a new house's size and location), and it gives you a prediction (e.g. price) without needing to see the old data again. So: <em>model = the thing that makes predictions after learning.</em></p>
+
             <div class="visual-box">
                 <h4>🔄 Traditional Programming vs Machine Learning</h4>
                 <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
@@ -345,6 +352,17 @@
                 <p><strong>Regression:</strong> "What price will this house sell for?" → $450,000</p>
                 <p><strong>Classification:</strong> "Will this house sell within 30 days?" → Yes/No</p>
             </div>
+
+            <h3>❓ How Do I Know If My Problem Is Regression or Classification?</h3>
+            <p>Ask: <strong>"What kind of answer do I want?"</strong></p>
+            <ul style="margin-left: 25px; margin-top: 10px; color: #cbd5e1;">
+                <li>A <strong>number</strong> (price, temperature, sales amount, count) → <strong>Regression</strong>.</li>
+                <li>A <strong>category or label</strong> (yes/no, spam/not spam, red/blue/green, disease A/B/C) → <strong>Classification</strong>.</li>
+            </ul>
+            <p style="margin-top: 12px;">If you're unsure, imagine the output: if it's something you could put on a number line (even if it's a decimal), it's usually regression. If it's a fixed set of options or a yes/no, it's classification.</p>
+
+            <h3>🔍 What If I Have No Labels? (Unsupervised in Plain English)</h3>
+            <p>Sometimes you don't have "correct answers" for each row—for example, you have customer data but no "segment" written on each customer. In that case you use <strong>unsupervised learning</strong>: the algorithm groups similar rows together (clustering) or finds hidden structure (e.g. topics in documents) without you telling it what the groups are. So: no labels → think clustering, dimensionality reduction, or anomaly detection.</p>
         </div>
 
         <!-- The ML Workflow -->
@@ -357,6 +375,7 @@
                     <div>
                         <h4 style="color: #a78bfa;">Define the Problem</h4>
                         <p style="color: #94a3b8; margin: 0;">What are you trying to predict? Is it regression or classification?</p>
+                        <p style="color: #64748b; margin: 8px 0 0 0; font-size: 0.95em;"><strong>Why:</strong> So you pick the right type of algorithm and the right metric. <strong>If you skip:</strong> You might use a regression model for a yes/no problem (or the other way around) and get nonsense.</p>
                     </div>
                 </div>
                 
@@ -365,6 +384,7 @@
                     <div>
                         <h4 style="color: #a78bfa;">Collect & Prepare Data</h4>
                         <p style="color: #94a3b8; margin: 0;">Clean data, handle missing values, remove outliers, feature engineering</p>
+                        <p style="color: #64748b; margin: 8px 0 0 0; font-size: 0.95em;"><strong>Why:</strong> Garbage in = garbage out. The model can only learn from what you give it. <strong>If you skip:</strong> Missing values or wrong scales can break the algorithm or give useless predictions.</p>
                     </div>
                 </div>
                 
@@ -373,6 +393,7 @@
                     <div>
                         <h4 style="color: #a78bfa;">Split Data</h4>
                         <p style="color: #94a3b8; margin: 0;">Training set (learn patterns) + Test set (evaluate performance)</p>
+                        <p style="color: #64748b; margin: 8px 0 0 0; font-size: 0.95em;"><strong>Why:</strong> We need data the model has <em>never</em> seen to check if it really "gets it" or just memorized. <strong>If you skip:</strong> You might think the model is great when it's only memorizing the training set (overfitting).</p>
                     </div>
                 </div>
                 
@@ -381,6 +402,7 @@
                     <div>
                         <h4 style="color: #a78bfa;">Choose & Train Model</h4>
                         <p style="color: #94a3b8; margin: 0;">Select algorithm, fit on training data</p>
+                        <p style="color: #64748b; margin: 8px 0 0 0; font-size: 0.95em;"><strong>Why:</strong> "Fit" means run the learning process so the model's weights are set. <strong>If you skip:</strong> You have no model—just an empty formula with random numbers.</p>
                     </div>
                 </div>
                 
@@ -389,6 +411,7 @@
                     <div>
                         <h4 style="color: #a78bfa;">Evaluate Model</h4>
                         <p style="color: #94a3b8; margin: 0;">Test on unseen data, check metrics (accuracy, R², etc.)</p>
+                        <p style="color: #64748b; margin: 8px 0 0 0; font-size: 0.95em;"><strong>Why:</strong> The test set tells you how the model will behave on real new data. <strong>If you skip:</strong> You deploy a model that might fail in the real world and you wouldn't know.</p>
                     </div>
                 </div>
                 
@@ -397,6 +420,7 @@
                     <div>
                         <h4 style="color: #a78bfa;">Iterate & Improve</h4>
                         <p style="color: #94a3b8; margin: 0;">Tune hyperparameters, try different features, different algorithms</p>
+                        <p style="color: #64748b; margin: 8px 0 0 0; font-size: 0.95em;"><strong>Why:</strong> First try is rarely the best. Small changes (more data, different settings) can improve a lot. <strong>If you skip:</strong> You might leave a lot of performance on the table.</p>
                     </div>
                 </div>
                 
@@ -405,6 +429,7 @@
                     <div>
                         <h4 style="color: #4ade80;">Deploy & Monitor</h4>
                         <p style="color: #94a3b8; margin: 0;">Put model in production, monitor performance over time</p>
+                        <p style="color: #64748b; margin: 8px 0 0 0; font-size: 0.95em;"><strong>Why:</strong> Real users and real data can change; the model can become worse over time (data drift). <strong>If you skip:</strong> The model might silently become wrong and nobody notices.</p>
                     </div>
                 </div>
             </div>
@@ -463,6 +488,22 @@
                 <p style="margin-top: 10px;"><strong>Underfitting:</strong> A student barely studied - they fail both practice tests AND the real exam.</p>
                 <p style="margin-top: 10px;"><strong>Good Fit:</strong> A student understands the concepts and can apply them to new problems.</p>
             </div>
+
+            <h3>🎯 Feature vs Target: How to Tell Them Apart</h3>
+            <p>The <strong>target</strong> (or label) is the thing you want to predict—the answer. Everything else you use to predict it is a <strong>feature</strong>. Example: predicting house price → price = target; size, bedrooms, location = features. Rule of thumb: if you wouldn't have it at prediction time, it shouldn't be a feature (e.g. "sold or not" can't be a feature when predicting "will it sell?").</p>
+
+            <h3>⚠️ What Overfitting Looks Like in Real Life</h3>
+            <p>You'll see <strong>training accuracy or R² very high</strong> (e.g. 98%) but <strong>test accuracy or R² much lower</strong> (e.g. 70%). That gap is a red flag: the model memorized the training set instead of learning a pattern that generalizes. Fixes: more data, simpler model, or regularization (we cover this in later lessons).</p>
+
+            <div class="key-point" style="border-left-color: #ef4444;">
+                <h4>🚫 Common Mistakes Beginners Make</h4>
+                <ul style="margin-left: 20px; color: #fecaca;">
+                    <li><strong>Evaluating on the same data you trained on</strong> — Always hold out a test set.</li>
+                    <li><strong>Using the future to predict the past</strong> — Don't use information that wouldn't exist at prediction time (data leakage).</li>
+                    <li><strong>Ignoring the problem type</strong> — Using regression for yes/no problems (or the reverse) gives wrong metrics and wrong models.</li>
+                    <li><strong>Skipping data cleaning</strong> — Missing values and wrong scales break many algorithms or give nonsense.</li>
+                </ul>
+            </div>
         </div>
 
         <!-- Real World Applications -->
@@ -507,6 +548,27 @@
                 </div>
             </div>
         </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ec4899;">
+                <h4 style="color: #9d174d;">💭 Short reflection</h4>
+                <p style="color: #831843;">In one sentence: why do we split data into training and test sets instead of training and evaluating on the same data?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>ML</strong>: learn patterns from data instead of hand-coded rules.</li>
+                    <li><strong>Supervised</strong>: labeled data → regression (numbers) or classification (categories).</li>
+                    <li><strong>Unsupervised</strong>: no labels → clustering, dimensionality reduction.</li>
+                    <li><strong>Reinforcement</strong>: agent gets rewards/penalties from environment.</li>
+                    <li>Train/test split; overfitting vs underfitting.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Bias–variance tradeoff, cross-validation.</li>
+                </ul>
+            </div>
 
         <!-- Summary -->
         <div class="section">

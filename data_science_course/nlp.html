@@ -183,6 +183,9 @@
             
             <p>NLP (Natural Language Processing) is a field of AI that helps computers understand, interpret, and generate human language.</p>
 
+            <h3>📌 In One Sentence</h3>
+            <p><strong>NLP</strong> = turning text into numbers (e.g. word counts, TF-IDF, or dense vectors) so a computer can classify, search, or generate language. We preprocess (lowercase, tokenize, remove stopwords), then vectorize, then train a model—so every step is "text → numbers → prediction or output."</p>
+
             <div class="analogy-box">
                 <h4>🤖 The Translation Problem</h4>
                 <p>Computers speak in 0s and 1s. Humans speak in words with context, sarcasm, and nuance.</p>
@@ -524,6 +527,36 @@ similar = model.wv.<span class="function">most_similar</span>(<span class="strin
                 </ul>
             </div>
         </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in NLP</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Different preprocessing at train vs test</strong> — Use the same tokenizer, stopwords, and vectorizer (fit on train, transform on test).</li>
+                    <li><strong>Relying only on Bag of Words for sentiment</strong> — Use TF-IDF or embeddings to capture more meaning when order matters.</li>
+                    <li><strong>Not handling empty text</strong> — After removing stopwords some documents can be empty; handle them or the vectorizer may fail.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+                <h4 style="color: #92400e;">💭 Short reflection</h4>
+                <p style="color: #78350f;">In one sentence: why does Bag of Words ignore word order and why might that be a problem for meaning (e.g. “not good” vs “good”)?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Preprocessing</strong>: lowercase, tokenize, remove stopwords, lemmatize/stem.</li>
+                    <li><strong>Bag of Words</strong>: count matrix; simple, ignores order.</li>
+                    <li><strong>TF-IDF</strong>: weight by importance; penalizes very common terms.</li>
+                    <li><strong>Word embeddings</strong>: dense vectors (e.g. Word2Vec, GloVe, FastText); capture similarity.</li>
+                    <li>Pipeline: preprocess → vectorize → train classifier (e.g. Naive Bayes, SVM).</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>NER, sentiment analysis, transformers (BERT) for context.</li>
+                </ul>
+            </div>
 
         <!-- Summary -->
         <div class="section">

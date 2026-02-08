@@ -134,6 +134,34 @@ lemmatizer = <span class="function">WordNetLemmatizer</span>()
             <p>These build on the NLP Basics lesson (tokenization, TF-IDF, stopwords, stem/lemma). Combine the cleansing pipeline above with <code>TfidfVectorizer</code> and <code>LogisticRegression</code> (or Naive Bayes) from the Classification module for a full text classification workflow.</p>
         </div>
 
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in NLP Cleansing</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Different pipeline at inference</strong> — Apply the same lowercase, regex, stopwords, and stem/lemma in the same order when predicting on new text.</li>
+                    <li><strong>Over-stripping</strong> — Removing all non-letters can break numbers and important symbols; define what to keep (e.g. keep digits for "Python3").</li>
+                    <li><strong>Lemmatizing without POS</strong> — WordNetLemmatizer often needs the part of speech (e.g. "running" → verb "run"); otherwise you may get wrong lemmas.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+                <h4 style="color: #92400e;">💭 Short reflection</h4>
+                <p style="color: #78350f;">In one sentence: why is it important to remove stopwords and normalize text before building a TF-IDF matrix for classification?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Cleansing</strong>: tokenize, lowercase, remove stopwords, stem or lemmatize.</li>
+                    <li><strong>Pipeline</strong>: clean text → TfidfVectorizer → train classifier (e.g. Logistic Regression, Naive Bayes).</li>
+                    <li>Apply same preprocessing at inference as in training.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Word embeddings, sentiment models, custom tokenizers.</li>
+                </ul>
+            </div>
+
         <div class="nav-buttons">
             <a href="nlp-basics.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: NLP Basics</a>
             <a href="index.html" class="nav-btn next">Course Hub <i class="fas fa-arrow-right"></i></a>

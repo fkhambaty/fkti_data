@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_6 <strong>Functions Part I</strong> covers def, return, parameters, and scope—same as here. Practice in the notebook.</p>
+    </div>
+
     <!-- ANALOGY -->
     <section class="analogy-card">
       <div class="analogy-header">
@@ -772,7 +777,207 @@ Hello!</pre>
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Functions)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Forgetting return</strong> — If you don't <code>return</code> a value, the function returns None; check that you return what you need.</li>
+        <li><strong>Mutable default arguments</strong> — <code>def f(x=[])</code> reuses the same list; use <code>def f(x=None): x = x or []</code>.</li>
+        <li><strong>Wrong indentation</strong> — Code inside the function must be indented under <code>def</code>; one level of indentation wrong and it's not in the function.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+      <h4 style="color: #1e40af;">💭 Short reflection</h4>
+      <p style="color: #1e3a8a;">In one sentence: why is it better to put repeated code inside a function instead of copying it in multiple places?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li><code>def name(params):</code>; return value; call with <code>name(args)</code>.</li>
+        <li>Positional vs keyword arguments; default parameter values.</li>
+        <li>Scope: local vs global; avoid modifying globals inside functions when possible.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>*args, **kwargs; docstrings; lambda for small one-liners.</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Functions_Part_I.ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# what is function?
+A function is a block of code that performs a specific task.
+it is reusable and helps to organize the code efficiently
+1@ code reusability--write once and use multiple times
+2@ modularity--Divide the code into smaller and manageable parts
+3@ Reduces Redundancy--aviod writing the same code repatibilty
+4@ Improved Readability--makes programs easier to understand
+
+# --- Code cell 2 ---
+Types of functions
+1@ Built-in functions
+2@ User-defined functions
+3@ lambda(annoymous) functions
+
+# --- Code cell 3 ---
+#for any word when you add a parenthis is a function
+
+# --- Code cell 4 ---
+print("to print")
+
+# --- Code cell 5 ---
+# Built-in-functions
+print()
+max()
+min()
+sum()
+len()
+
+# --- Code cell 6 ---
+flow=input("enter a name")
+print(flow)
+
+# --- Code cell 7 ---
+import builtins
+print(dir(builtins))
+
+# --- Code cell 8 ---
+list1=[23,34,56,78,89]
+avg=sum(list1)/len(list1)
+avg
+
+# --- Code cell 9 ---
+import statistics
+list1=[23,34,56,78,89]
+s=statistics.mean(list1)
+s
+
+# --- Code cell 10 ---
+max(list1)
+
+# --- Code cell 11 ---
+min(list1)
+
+# --- Code cell 12 ---
+#user-defined function is created by the user to perform a specific task.
+
+# --- Code cell 13 ---
+# syntax
+def hello():  # defining a function
+  # function block of code
+hello()   # calling function
+
+# --- Code cell 14 ---
+# simple function without parameters
+def greet():
+  print("hello welcome to fuctions in python")
+
+# --- Code cell 15 ---
+greet()
+
+# --- Code cell 16 ---
+greet1()
+
+# --- Code cell 17 ---
+# syntax
+def hello(parameters):  # defining a function
+  # function block of code
+hello(arguments)   # calling function
+
+# --- Code cell 18 ---
+greet("vishal")
+
+# --- Code cell 19 ---
+greet("aravind")
+
+# --- Code cell 20 ---
+Function arguments in python
+1@ positional arguments
+2@ default arguments/keyword arguments
+3@ arbitary Keyword arguments
+4@ arbitary non keyword arguments
+
+# --- Code cell 21 ---
+# positional argument
+def greet(name):
+  print(f"hello {name}")
+
+# --- Code cell 22 ---
+greet(3567)
+
+# --- Code cell 23 ---
+greet("azar")
+
+# --- Code cell 24 ---
+greet("rahul","aravind")
+
+# --- Code cell 25 ---
+# positional argument
+def intro(name,age):
+  print(f"hello my name is {name} , and  my age is {age}")
+
+# --- Code cell 26 ---
+intro(65,"banu",67)
+
+# --- Code cell 27 ---
+intro("banu")
+
+# --- Code cell 28 ---
+# default arguments/keyword arguments
+
+def greet(name="rahul"):
+  print(f"hello,{name}!")
+
+# --- Code cell 29 ---
+greet() # no argument are passed
+
+# --- Code cell 30 ---
+greet("alice") # positional argument is passed
+
+# --- Code cell 31 ---
+# positional arguments
+def student(marks,name,age=21):
+  print(f"name:{name} with age:{age} and marks:{marks}")
+
+# --- Code cell 32 ---
+student(33,"tarun",55)
+
+# --- Code cell 33 ---
+student("rahul",23) # Positional arguments
+
+# --- Code cell 34 ---
+student(90,"rahul",34) # wrong order of arguments
+
+# --- Code cell 35 ---
+student(marks=90,name="taarun",age=23) # keyword arguments without order
+
+# --- Code cell 36 ---
+student(44,name="aravind") # positional and keyword arguments
+
+# --- Code cell 37 ---
+student(name="aravind",44) # positional and keyword arguments
+
+# --- Code cell 38 ---
+student(marks=90,"rahul",23) # positional and keyword arguments
+
+# --- Code cell 39 ---
+# positional arguments
+def student(marks,name,age=21):
+  print(f"name:{name} with age:{age} and marks:{marks}")
+
+# --- Code cell 40 ---
+student(name="rahul",marks=90) # positional and keyword arguments
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s5-datastructures.html" class="nav-prev">
         <span class="nav-arrow">←</span>

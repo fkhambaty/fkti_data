@@ -219,6 +219,9 @@
                 <p><strong>That's A/B Testing!</strong></p>
             </div>
 
+            <h3>📌 In One Sentence</h3>
+            <p><strong>A/B testing</strong> means randomly showing one version (A = control) to some users and another version (B = variant) to others, then comparing a metric (e.g. conversion rate) and using a statistical test (e.g. t-test) to decide if the difference is real or just luck. If p &lt; 0.05, we say the result is significant and we can choose the winner.</p>
+
             <div class="visual-example">
                 <h4>🔬 A/B Testing in Action</h4>
 <pre style="font-size: 1.1em; color: #166534; font-family: monospace; text-align: left;">
@@ -532,6 +535,98 @@ alpha = <span class="number">0.05</span>  <span class="comment"># Significance t
                 </tr>
             </table>
         </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in A/B Testing</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Peeking and stopping early</strong> — Checking results every day and stopping when you see "significant" inflates false positives. Fix the sample size and end date before you start.</li>
+                    <li><strong>Non-random assignment</strong> — If one group gets more weekend users or new users, the comparison is biased. Use proper randomization (e.g. by user ID).</li>
+                    <li><strong>Ignoring seasonality</strong> — Run for at least one full week (or a full business cycle) so weekday vs weekend and other patterns don't skew the result.</li>
+                </ul>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">📘 From the course notebook (A/B Testing and Market Basket)</h4>
+                <p style="color: #1e3a8a; margin-bottom: 10px;">The course source uses <strong>ab_testing_data.csv</strong> (or similar): control vs variant groups, conversion metric. Key steps: split by group, compute conversion rates, run a t-test or z-test for significance. Download <a href="datasets/ab_testing_data.csv" download>ab_testing_data.csv</a> from the <a href="datasets.html">datasets page</a>. See <strong>AB testing and Market Basket Analysis.pdf</strong> in the course source for slides.</p>
+            </div>
+
+            
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: ab_test.ipynb</h2>
+                <p>Every line of code (verbatim).</p>
+                <div class="code-block" style="max-height: 500px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+
+h2 { color: blue !important; }
+h3 { color: green !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 4 ---
+import pandas as pd
+from scipy import stats
+
+# --- Code cell 5 ---
+data = pd.read_csv("AB_testing_data.csv")
+
+# --- Code cell 6 ---
+len(data)
+
+# --- Code cell 7 ---
+data.head(10)
+
+# --- Code cell 8 ---
+data.info()
+
+# --- Code cell 9 ---
+data.describe()
+
+# --- Code cell 11 ---
+samples_set1 = data['Conversion fraction A']
+samples_set2 = data['Conversion fraction B']
+stat, p = stats.ttest_ind(samples_set1, samples_set2,equal_var = True)
+
+print("AB test results: ")
+print("p-value : ", p)
+print("")
+print("")
+
+# --- Code cell 12 ---
+1-0.00034704350989135126
+
+# --- Code cell 13 ---
+1-0.05
+
+# --- Code cell 14 ---
+# p value &lt; 0.05 so two versions of website have different means for conversion rate - more than 95% confidence
+</pre>
+                </div>
+            </div>
+
+<div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">💭 Short reflection</h4>
+                <p style="color: #1e3a8a;">In one sentence: why is it important to run an A/B test for at least one full week (or more) before deciding a winner?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>A/B test</strong>: compare control (A) vs variant (B) with random assignment.</li>
+                    <li><strong>Metric</strong>: e.g. conversion rate; need enough sample size and runtime.</li>
+                    <li><strong>Statistical significance</strong>: use t-test (or z-test); p &lt; 0.05 → reject “no difference”.</li>
+                    <li>Random split 50/50; avoid peeking and early stopping; run for full cycle (e.g. weekly).</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Sample size calculation (power, MDE).</li>
+                    <li>Multiple comparisons correction if testing many variants.</li>
+                </ul>
+            </div>
 
         <!-- CHAPTER 6: SUMMARY -->
         <div class="section">

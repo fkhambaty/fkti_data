@@ -604,6 +604,35 @@ lemmas = [lemmatizer.<span class="function">lemmatize</span>(word) <span class="
             </div>
         </div>
 
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in NLP Basics</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Stemming when meaning matters</strong> — Stemming can produce non-words (e.g. "happili"); use lemmatization when you need real words for sentiment or search.</li>
+                    <li><strong>Removing stopwords blindly</strong> — In "not good" the "not" is a stopword but changes meaning; for sentiment, consider keeping negations or using n-grams.</li>
+                    <li><strong>Fitting TfidfVectorizer on test data</strong> — Fit only on train, then transform train and test; otherwise you leak test vocabulary into the model.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+                <h4 style="color: #92400e;">💭 Short reflection</h4>
+                <p style="color: #78350f;">In one sentence: when would you choose lemmatization over stemming for a sentiment or search application?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Tokenization</strong>: split text into words/tokens.</li>
+                    <li><strong>Lowercasing, stopwords</strong>: normalize and remove noise.</li>
+                    <li><strong>Stemming vs lemmatization</strong>: stem chops endings; lemma uses dictionary (better for meaning).</li>
+                    <li><strong>TF-IDF</strong>: weight terms by importance; pipeline: tokenize → clean → vectorize.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>POS tagging, NER; n-grams; word embeddings.</li>
+                </ul>
+            </div>
+
         <!-- CHAPTER 7: SUMMARY -->
         <div class="section">
             <h2><i class="fas fa-graduation-cap"></i> Chapter 7: Summary - NLP Pipeline</h2>

@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_2 <strong>Data Types</strong> notebooks cover int, float, string, bool, type(), and casting—same as this lesson. Open the notebook and run the cells next to this page.</p>
+    </div>
+
     <!-- ANALOGY SECTION -->
     <section class="analogy-card">
       <div class="analogy-header">
@@ -924,7 +929,479 @@ print(pi_int)    # 3 (decimal part is truncated!)</code></pre>
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Data Types)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Adding string and number without converting</strong> — <code>"5" + 3</code> errors; use <code>int("5") + 3</code> or <code>"5" + str(3)</code>.</li>
+        <li><strong>Confusing = and ==</strong> — One equals assigns; two compare. Use <code>if x == 5</code> not <code>if x = 5</code>.</li>
+        <li><strong>float("3.14") is fine, int("3.14") errors</strong> — int() needs a whole-number string; convert to float first then int if needed.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+      <h4 style="color: #1e40af;">💭 Short reflection</h4>
+      <p style="color: #1e3a8a;">In one sentence: why does Python need different types (int, float, str, bool) instead of treating everything as text?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li><strong>int</strong>, <strong>float</strong>, <strong>str</strong>, <strong>bool</strong>; <code>type()</code> to check.</li>
+        <li>Type conversion: <code>int()</code>, <code>float()</code>, <code>str()</code>; avoid mixing types in math without converting.</li>
+        <li>Strings: indexing, slicing, escape characters, f-strings.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>None, complex; string methods (.split(), .join(), .strip()).</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: 2_Data_Types (1) (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 2 ---
+5 types
+1@ numerical---int,float,complex
+2@ sequential---string,list,tuple
+3@ set-set
+4@ map-dict
+5@ bollean
+6@ Nonetype
+
+# --- Code cell 3 ---
+string_ = 'Python 3'
+print(string_)
+print (type(string_))
+
+# --- Code cell 6 ---
+age = 30
+print('Age:',age)
+print (type(age))
+
+# --- Code cell 8 ---
+Height = -153.5
+type(Height)
+
+# --- Code cell 9 ---
+# complex---real+imag
+#a+bj---i(sqrt(-1)
+
+# --- Code cell 10 ---
+d=5+6j
+type(d)
+
+# --- Code cell 12 ---
+345&gt;230
+
+# --- Code cell 13 ---
+345&gt;2300
+
+# --- Code cell 15 ---
+# this is my 2nd session
+
+# --- Code cell 16 ---
+#doc_string/multi line comment=
+""" this
+    is
+    a
+    multi line comment"""
+
+# --- Code cell 17 ---
+name='12344'
+
+# --- Code cell 18 ---
+type(name)
+
+# --- Code cell 21 ---
+"Data".upper()
+
+# --- Code cell 23 ---
+"DATA".lower()
+
+# --- Code cell 25 ---
+"data science is a emerging field".title()
+
+# --- Code cell 27 ---
+"data science".capitalize()
+
+# --- Code cell 29 ---
+"DaTA".swapcase()
+
+# --- Code cell 31 ---
+"  data science   ".strip()
+
+# --- Code cell 33 ---
+"  data science".lstrip()
+
+# --- Code cell 35 ---
+"data science   ".rstrip()
+
+# --- Code cell 37 ---
+text = " I am learning's Python! "
+print(text.replace("learn", "teach"))
+
+# --- Code cell 39 ---
+text = "I like cricket, I play cricket, India will,win 2023 world cup."
+print(text.split(","))
+
+# --- Code cell 40 ---
+#splitting string based on seperator
+text = "I like cricket! I play! cricket; India! will win! 2023 world cup."
+print(text.split("!"))
+
+# --- Code cell 41 ---
+user="FanTAstic ShoW It IS"
+print(user.swapcase())
+
+# --- Code cell 43 ---
+text = "cricket"
+text.isalpha()
+
+# --- Code cell 44 ---
+text = "cricket_2"
+text.isalpha()
+
+# --- Code cell 46 ---
+text = "1123456q"
+text.isdigit()
+
+# --- Code cell 47 ---
+text = "T20"
+text.isdigit()
+
+# --- Code cell 49 ---
+text = "T2034qq@"
+text.isalnum()
+
+# --- Code cell 51 ---
+text = "I like cricket, I play cricket, India wIll win 2023 world cup."
+text.count('c')
+
+# --- Code cell 52 ---
+text = "Predicting Fruit Type from Size &amp; Color"
+
+# Remove spaces, then count characters
+char_count = len(text.replace(" ", ""))
+
+print(f"Total characters (no spaces): {char_count}")
+
+# --- Code cell 53 ---
+customer = "John Doe"
+item = "Laptop"
+price = 799.99678567
+
+# Format and display receipt
+receipt = print(f"Customer: {customer}\nItem: {item}\nPrice: ${price:.2f}")
+
+# --- Code cell 54 ---
+full_name = "Alice Johnson"
+username = full_name.lower().replace(" ", "_")
+print(username)
+
+# --- Code cell 56 ---
+start_year = 2023
+text = "Inttrvu.ai was launched in {}"
+print(text.format(start_year))
+
+# --- Code cell 57 ---
+#Number in {} indicates index of parameter passed to format
+start_year = 2023
+start_month = 7
+text = "Inttrvu.ai was launched in {1}th month of year {0}"
+print(text.format(start_year, start_month))
+
+# --- Code cell 60 ---
+text = "T20"
+len(text)
+
+# --- Code cell 61 ---
+text = "I like cricket, I play cricket, India will win 2023 world cup."
+len(text)
+
+# --- Code cell 62 ---
+# indexing---retreiving a single element of a data
+text = "I like cricket, I play cricket, India will win 2023 world cup."
+
+# --- Code cell 63 ---
+list1=[2,3,4,5,6,77,7,8]
+#       0 1 2 3 4 5.......+ve
+#            .... -2  -1  -ve
+
+# --- Code cell 64 ---
+list1[-1]
+
+# --- Code cell 65 ---
+len(list1)
+
+# --- Code cell 66 ---
+#list1[-3:-6:-1]
+#list1[3:6:-1]
+list1[-3:-6:1]
+
+# --- Code cell 67 ---
+list1[::-1]
+
+# --- Code cell 68 ---
+list1[-3]
+
+# --- Code cell 69 ---
+text[5]
+
+# --- Code cell 71 ---
+"Python"[0:3]
+
+# --- Code cell 72 ---
+"Python"[3:]
+
+# --- Code cell 74 ---
+"Python"[-1]
+
+# --- Code cell 75 ---
+"Python"[-3:]
+
+# --- Code cell 77 ---
+"Python"[1::2] #Starts at index 1, skips every 2nd character
+
+# --- Code cell 78 ---
+"DataScience"[1:10:2] #Starts at index 1, Stops at index 10 (exclusive),skips every 2nd character
+
+# --- Code cell 81 ---
+a , b , c = "Red", "Blue", "Green"
+print(a)
+print(b)
+print(c)
+
+# --- Code cell 82 ---
+a = b = c = "Red"
+print(a)
+print(b)
+print(c)
+
+# --- Code cell 83 ---
+a , b , c = "Red", "Blue", "Green"
+print(a, b, c)
+
+# --- Code cell 84 ---
+a  = "data"
+b  = "frame"
+print(a + b)
+print(a +" "+ b)
+print(a +' '+ b)
+</pre>
+      </div>
+    </section>
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Data_Types_part1 (1) (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# data types----define the kind of data a variable can hold
+
+# --- Code cell 2 ---
+# in other languages like c,c++ and java you must declare the type of varaiable but in python
+# python will automatically understand whether the given value is an int,float or list...
+
+# --- Code cell 3 ---
+c="hello"
+
+# --- Code cell 4 ---
+type(c)
+
+# --- Code cell 5 ---
+# 6 types
+1@ Numerical data types---INT,FLOAT and complex
+2@ Sequential data types---string,list and tuple
+3@ set data type--set
+4@ mapping data type---Dictionary
+5@ Boolean data type---Boolean
+6@ None type
+
+# --- Code cell 6 ---
+Numerical data type
+
+# --- Code cell 7 ---
+# integer--INT
+# represents whole numbers where it can handle +ve,-Ve and zero
+
+# --- Code cell 8 ---
+weight=56
+
+# --- Code cell 9 ---
+weight
+
+# --- Code cell 10 ---
+# check the data type----built-in-function--type()
+
+# --- Code cell 11 ---
+print("weight:",weight)
+print(type(weight))
+
+# --- Code cell 12 ---
+# print()---built-in-function---used to display the output
+
+# --- Code cell 13 ---
+type(weight)
+
+# --- Code cell 14 ---
+height=-345
+type(height)
+
+# --- Code cell 15 ---
+age=45
+score=99
+print(age)
+print(score)
+
+# --- Code cell 16 ---
+# float---represents real numbers with decimal points
+
+# --- Code cell 17 ---
+height=-179.99
+
+# --- Code cell 18 ---
+type(height)
+
+# --- Code cell 19 ---
+yellow=-333.33
+print(type(yellow))
+
+# --- Code cell 20 ---
+zer=0
+
+# --- Code cell 21 ---
+type(zer)
+
+# --- Code cell 22 ---
+a+ib
+
+# --- Code cell 23 ---
+# complex---represents real and imaginary part
+# complex_number=real_part+imiginary_part*j
+# a+bj
+
+# --- Code cell 24 ---
+# j is used to denote the imaginary unit(as in maths i ,but in python it is j) sqrt(-1)
+
+# --- Code cell 26 ---
+c=4+7j  #---literal notation
+type(c)
+
+# --- Code cell 27 ---
+# complex constructor
+c2=complex(4,5)
+print(c2)
+
+# --- Code cell 28 ---
+int()
+float()
+complex()
+
+# --- Code cell 29 ---
+real=int(input("enter a real part: "))
+
+# --- Code cell 30 ---
+# complex number defining by user
+real=int(input("enter a real part: "))
+imag=float(input("enter a imag part: "))
+c3=complex(real,imag)
+print("complex_number:",c3)
+
+# --- Code cell 31 ---
+x=None
+print(type(x))
+
+# --- Code cell 32 ---
+# high level language---memory accesing and intergrated data type
+
+# --- Code cell 33 ---
+# Type casting---means converting one data type into another
+# example---converting int to float ,float to complex
+
+# --- Code cell 34 ---
+1@ implicit type casting
+2@ Explicit type casting
+
+# --- Code cell 36 ---
+basic_salary=6500
+bonus=349.87
+result=basic_salary+bonus
+
+# --- Code cell 37 ---
+result
+
+# --- Code cell 38 ---
+print(type(result))
+
+# --- Code cell 39 ---
+maths=56
+science=34
+score=maths/science
+
+# --- Code cell 40 ---
+
+print(score)
+print(type(score))
+
+# --- Code cell 42 ---
+salary=4566.656
+type(salary)
+
+# --- Code cell 43 ---
+salary=int(salary)
+salary
+
+# --- Code cell 44 ---
+type(salary)
+
+# --- Code cell 45 ---
+salary=float(salary)
+salary
+
+# --- Code cell 46 ---
+type(salary)
+
+# --- Code cell 47 ---
+y=complex(salary)
+
+# --- Code cell 48 ---
+type(y)
+
+# --- Code cell 49 ---
+y
+
+# --- Code cell 50 ---
+z=float(y)
+
+# --- Code cell 51 ---
+f=int(y)
+
+# --- Code cell 52 ---
+---any type of int and float can convert into any type
+---but complex data type cannot convert into int and float
+
+# --- Code cell 53 ---
+tee=678.899
+d=complex(tee)
+d
+
+# --- Code cell 54 ---
+f=float(d)
+f
+
+# --- Code cell 55 ---
+s=6765
+y=6+7j
+g=s+y
+g
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s1-intro.html" class="nav-prev">
         <span class="nav-arrow">←</span>

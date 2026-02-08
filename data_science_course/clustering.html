@@ -165,6 +165,133 @@
             font-size: 20px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
         }
         .back-to-top.show { opacity: 1; visibility: visible; }
+
+        /* Graph / chart with clear axes */
+        .graph-figure {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .graph-figure figcaption {
+            font-weight: 600;
+            color: #475569;
+            margin-top: 12px;
+            font-size: 1em;
+        }
+        .axis-chart {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Interactive quiz */
+        .interactive-quiz {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin: 25px 0;
+            border: 2px solid #6366f1;
+        }
+        .interactive-quiz h4 { color: #4338ca; margin-bottom: 15px; }
+        .quiz-option {
+            display: block;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #c7d2fe;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #6366f1; background: #eef2ff; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 15px; padding: 12px; border-radius: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.correct-msg { background: #dcfce7; color: #166534; }
+        .quiz-feedback.wrong-msg { background: #fee2e2; color: #b91c1c; }
+
+        /* Animated concept box */
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        .animate-dots .cluster-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+        /* K-Means animation: points "snap" to centroid */
+        .kmeans-animation-wrap {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 2px solid #6366f1;
+            text-align: center;
+        }
+        .kmeans-animation-wrap h4 { color: #4338ca; margin-bottom: 15px; }
+        .kmeans-stage {
+            display: inline-block;
+            width: 140px;
+            margin: 10px;
+            vertical-align: top;
+        }
+        .kmeans-stage .stage-label {
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        .kmeans-arena {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 8px;
+            position: relative;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            border: 2px solid #a5b4fc;
+        }
+        .kmeans-arena .centroid {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #ef4444;
+            border: 2px solid #b91c1c;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            margin: -8px 0 0 -8px;
+            animation: centroid-pulse 1.5s ease-in-out infinite;
+        }
+        .kmeans-arena .point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #6366f1;
+            border-radius: 50%;
+            animation: point-float 2s ease-in-out infinite;
+        }
+        .kmeans-arena .point.p1 { top: 15%; left: 20%; animation-delay: 0s; }
+        .kmeans-arena .point.p2 { top: 25%; right: 25%; left: auto; animation-delay: 0.2s; }
+        .kmeans-arena .point.p3 { bottom: 20%; left: 25%; animation-delay: 0.4s; }
+        .kmeans-arena .point.p4 { bottom: 15%; right: 20%; animation-delay: 0.6s; }
+        @keyframes centroid-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+            50% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+        }
+        @keyframes point-float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(2px, -3px); }
+            75% { transform: translate(-2px, 2px); }
+        }
+        .core-box { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0; }
+        .core-box h4 { color: #166534; margin-bottom: 12px; }
+        .core-box ul, .noncore-box ul { margin-left: 20px; }
+        .noncore-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0; }
+        .noncore-box h4 { color: #92400e; margin-bottom: 12px; }
+        .reflection-prompt { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #6366f1; }
+        .reflection-prompt h4 { color: #4338ca; margin-bottom: 10px; }
+        .reflection-prompt p { color: #3730a3; margin: 0; }
         
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -193,6 +320,9 @@
             
             <p>Clustering is <strong>unsupervised learning</strong> - you don't have labels telling you which group each item belongs to. The algorithm discovers groups on its own!</p>
 
+            <h3>👶 In One Sentence (Like You're 5)</h3>
+            <p><strong>Clustering</strong> means: "Put things that are similar close together, and things that are different far apart—without anyone telling you what the groups are." You only have a list of items (e.g. customers, products); the algorithm finds natural groups by similarity.</p>
+
             <div class="analogy-box">
                 <h4>🍎🍊🍇 The Fruit Sorting Analogy</h4>
                 <p>Imagine you have a basket of fruits and a child who has never seen fruits before.</p>
@@ -202,6 +332,35 @@
 
             <div class="cluster-visual">
                 <h4>Clustering Discovers Natural Groups</h4>
+                <div class="graph-figure" style="background: rgba(255,255,255,0.8); margin: 20px auto;">
+                    <p style="margin-bottom: 8px; font-weight: 600; color: #334155;">Example: 2D data (X and Y are two features). Same lesson in graph form – clear X and Y axes.</p>
+                    <svg class="axis-chart" viewBox="0 0 380 260" xmlns="http://www.w3.org/2000/svg">
+                        <defs><marker id="arr0" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#475569"/></marker></defs>
+                        <line x1="50" y1="210" x2="360" y2="210" stroke="#475569" stroke-width="2" marker-end="url(#arr0)"/>
+                        <text x="330" y="235" fill="#334155" font-size="13">X (e.g. Feature 1)</text>
+                        <line x1="50" y1="210" x2="50" y2="30" stroke="#475569" stroke-width="2" marker-end="url(#arr0)"/>
+                        <text x="8" y="45" fill="#334155" font-size="13">Y (e.g. Feature 2)</text>
+                        <!-- Cluster A (red) -->
+                        <circle cx="100" cy="160" r="6" fill="#ef4444"/>
+                        <circle cx="115" cy="150" r="6" fill="#ef4444"/>
+                        <circle cx="90" cy="170" r="6" fill="#ef4444"/>
+                        <circle cx="105" cy="155" r="6" fill="#ef4444"/>
+                        <!-- Cluster B (blue) -->
+                        <circle cx="220" cy="80" r="6" fill="#3b82f6"/>
+                        <circle cx="235" cy="70" r="6" fill="#3b82f6"/>
+                        <circle cx="210" cy="90" r="6" fill="#3b82f6"/>
+                        <circle cx="225" cy="85" r="6" fill="#3b82f6"/>
+                        <!-- Cluster C (green) -->
+                        <circle cx="300" cy="170" r="6" fill="#22c55e"/>
+                        <circle cx="315" cy="160" r="6" fill="#22c55e"/>
+                        <circle cx="290" cy="180" r="6" fill="#22c55e"/>
+                        <circle cx="305" cy="175" r="6" fill="#22c55e"/>
+                        <text x="95" y="195" fill="#dc2626" font-size="11" font-weight="600">Cluster A</text>
+                        <text x="205" y="115" fill="#2563eb" font-size="11" font-weight="600">Cluster B</text>
+                        <text x="285" y="200" fill="#16a34a" font-size="11" font-weight="600">Cluster C</text>
+                    </svg>
+                    <figcaption>Figure: Scatter plot. X-axis = one feature, Y-axis = another. Colors = 3 clusters found by the algorithm.</figcaption>
+                </div>
                 <div class="cluster-dots">
                     <div class="cluster-group" style="border: 3px dashed #ef4444;">
                         <span style="font-size: 2em;">🔴🔴🔴</span>
@@ -263,6 +422,36 @@
                     <li>Repeat until stores stop moving!</li>
                 </ol>
                 <p style="margin-top: 10px;"><strong>K-Means does exactly this!</strong> "Stores" = Centroids, "Customers" = Data points</p>
+            </div>
+
+            <div class="graph-figure" style="background: #f0f4ff;">
+                <h4 style="color: #4338ca; margin-bottom: 10px;">🎬 Animated: One K-Means iteration (Assign → Update)</h4>
+                <p style="margin-bottom: 10px; font-size: 0.95em;">Left: points (blue) and centroid (red). Right: after assigning points to centroid and moving centroid to their mean. Watch the red circle move.</p>
+                <svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%;">
+                    <g id="before">
+                        <circle cx="95" cy="80" r="12" fill="#ef4444" stroke="#b91c1c" stroke-width="2">
+                            <animate attributeName="opacity" values="1;0.6;1" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="60" cy="50" r="8" fill="#6366f1"><animate attributeName="cy" values="50;75;50" dur="2.5s" repeatCount="indefinite"/></circle>
+                        <circle cx="130" cy="60" r="8" fill="#6366f1"><animate attributeName="cy" values="60;78;60" dur="2.5s" repeatCount="indefinite"/></circle>
+                        <circle cx="80" cy="100" r="8" fill="#6366f1"><animate attributeName="cy" values="100;82;100" dur="2.5s" repeatCount="indefinite"/></circle>
+                        <text x="95" y="130" fill="#475569" font-size="12">Before update</text>
+                    </g>
+                    <g id="after">
+                        <circle cx="285" cy="78" r="12" fill="#22c55e" stroke="#166534" stroke-width="2">
+                            <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="260" cy="75" r="8" fill="#6366f1"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/></circle>
+                        <circle cx="310" cy="72" r="8" fill="#6366f1"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/></circle>
+                        <circle cx="280" cy="88" r="8" fill="#6366f1"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/></circle>
+                        <text x="265" y="130" fill="#475569" font-size="12">After update (centroid moved)</text>
+                    </g>
+                    <path d="M 180 80 L 230 80" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5">
+                        <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="195" y="75" fill="#64748b" font-size="11">→</text>
+                </svg>
+                <figcaption>Animation: centroid (red/green) and points. After “update”, centroid moves to the mean of its points.</figcaption>
             </div>
 
             <h3>K-Means Algorithm Steps</h3>
@@ -334,6 +523,115 @@ plt.<span class="function">legend</span>()
 plt.<span class="function">title</span>(<span class="string">'K-Means Clustering'</span>)
 plt.<span class="function">show</span>()</pre>
             </div>
+
+            <h3>📐 Intra-Cluster Distance (Within-Cluster Sum of Squares – WCSS)</h3>
+            <p><strong>What is it?</strong> For each cluster, we measure how far every point is from its centroid. Intra-cluster distance means “distance <em>inside</em> the cluster.” K-Means tries to make this as small as possible: points in the same group should be close together.</p>
+            <div class="analogy-box">
+                <h4>🏠 Layman Example: Students in Classrooms</h4>
+                <p>Imagine you have 30 students and 3 classrooms (K=3). <strong>Intra-cluster distance</strong> = how spread out the students are <em>within</em> each room. Good clustering = students in the same room are similar (e.g. same grade); they sit close together. Bad clustering = mixed grades in one room, so some sit far from the “center” of that room. K-Means keeps moving the “center” (centroid) and reassigning students until the total “spread” inside each room is minimized.</p>
+            </div>
+            <p><strong>Formula (idea):</strong> For each cluster, sum the squared distance of every point to its centroid. Add that up for all K clusters. That total is called <strong>Inertia</strong> or <strong>WCSS</strong>. Lower inertia = tighter, better-separated clusters.</p>
+            <div class="graph-figure">
+                <p style="margin-bottom: 12px; font-weight: 600; color: #334155;">Concept: Points and their centroid in one cluster (intra-cluster distances)</p>
+                <svg class="axis-chart" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+                    <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker></defs>
+                    <!-- X axis -->
+                    <line x1="40" y1="230" x2="380" y2="230" stroke="#475569" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <text x="370" y="255" fill="#334155" font-size="14" font-family="sans-serif">X (Feature 1)</text>
+                    <!-- Y axis -->
+                    <line x1="40" y1="230" x2="40" y2="30" stroke="#475569" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <text x="5" y="40" fill="#334155" font-size="14" font-family="sans-serif">Y (Feature 2)</text>
+                    <!-- Grid -->
+                    <line x1="40" y1="180" x2="380" y2="180" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="40" y1="130" x2="380" y2="130" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="40" y1="80" x2="380" y2="80" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="120" y1="30" x2="120" y2="230" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="200" y1="30" x2="200" y2="230" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="280" y1="30" x2="280" y2="230" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    <!-- Cluster points (same cluster) -->
+                    <circle cx="140" cy="160" r="8" fill="#6366f1" opacity="0.9"/>
+                    <circle cx="165" cy="145" r="8" fill="#6366f1" opacity="0.9"/>
+                    <circle cx="155" cy="175" r="8" fill="#6366f1" opacity="0.9"/>
+                    <circle cx="180" cy="165" r="8" fill="#6366f1" opacity="0.9"/>
+                    <circle cx="160" cy="155" r="8" fill="#6366f1" opacity="0.9"/>
+                    <!-- Centroid -->
+                    <circle cx="160" cy="160" r="12" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
+                    <text x="158" y="165" fill="white" font-size="10" font-weight="bold" text-anchor="middle">C</text>
+                    <!-- Distance lines (intra-cluster) -->
+                    <line x1="160" y1="160" x2="140" y2="160" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3"/>
+                    <line x1="160" y1="160" x2="180" y2="165" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3"/>
+                    <text x="200" y="50" fill="#64748b" font-size="12">C = centroid; dashed = intra-cluster distances</text>
+                </svg>
+                <figcaption>Figure: One cluster. Red = centroid (C). Purple = data points. Orange dashed = distances counted in WCSS.</figcaption>
+            </div>
+
+            <h3>📐 Inter-Cluster Distance (Between Clusters)</h3>
+            <p><strong>What is it?</strong> While intra-cluster distance measures how tight each group is, <strong>inter-cluster distance</strong> measures how far apart different clusters are from each other. A good clustering has <strong>small intra</strong> (points close to their centroid) and <strong>large inter</strong> (centroids far from each other).</p>
+            <div class="analogy-box">
+                <h4>🏠 Layman Example: Classrooms Again</h4>
+                <p><strong>Intra</strong> = students inside one room are close together. <strong>Inter</strong> = Room A and Room B are in different corridors. We want rooms that are clearly separated (high inter) and students in each room sitting near each other (low intra).</p>
+            </div>
+            <p>In K-Means we minimize WCSS (intra). We don’t directly maximize inter-cluster distance, but when clusters are well separated, both happen: tight groups and far-apart centroids.</p>
+
+            <h3>🔄 Convergence and Random Initialization</h3>
+            <p><strong>Convergence</strong> means the algorithm stops when centroids barely move between steps. We repeat “assign points → update centroids” until the change in centroid positions is below a threshold (or max iterations).</p>
+            <p><strong>Random initialization</strong> can give different results each run. <strong>K-Means++</strong> is a smarter way to choose initial centroids: pick the first at random, then choose the next ones with probability proportional to how far they are from already chosen centroids. This usually leads to better and more stable clusters.</p>
+
+            <h3>📏 Distance Metrics (Euclidean vs Manhattan)</h3>
+            <p>K-Means uses <strong>Euclidean distance</strong> by default (straight-line “as the crow flies”). For high-dimensional or grid-like data, <strong>Manhattan distance</strong> (sum of absolute differences along axes) is sometimes used; in scikit-learn you can use <code>KMeans(metric='manhattan')</code> with the K-Medians idea. For most tabular data, Euclidean is standard.</p>
+
+            <div class="kmeans-animation-wrap">
+                <h4>🎬 K-Means in Action (Animated)</h4>
+                <p style="margin-bottom: 15px; color: #475569;">Watch: red = centroid (pulses); blue = data points (slight float). In real K-Means, points “snap” to the nearest centroid, then the centroid moves to the center of its points. Repeat until stable.</p>
+                <div class="kmeans-stage">
+                    <div class="stage-label">Step 1: Assign</div>
+                    <div class="kmeans-arena">
+                        <div class="centroid"></div>
+                        <div class="point p1"></div>
+                        <div class="point p2"></div>
+                        <div class="point p3"></div>
+                        <div class="point p4"></div>
+                    </div>
+                    <p style="font-size: 0.85em; color: #64748b;">Points → nearest centroid</p>
+                </div>
+                <div class="kmeans-stage">
+                    <div class="stage-label">Step 2: Update</div>
+                    <div class="kmeans-arena">
+                        <div class="centroid"></div>
+                        <div class="point p1"></div>
+                        <div class="point p2"></div>
+                        <div class="point p3"></div>
+                        <div class="point p4"></div>
+                    </div>
+                    <p style="font-size: 0.85em; color: #64748b;">Centroid → mean of points</p>
+                </div>
+                <div class="kmeans-stage">
+                    <div class="stage-label">Repeat until done</div>
+                    <div class="kmeans-arena">
+                        <div class="centroid"></div>
+                        <div class="point p1"></div>
+                        <div class="point p2"></div>
+                        <div class="point p3"></div>
+                        <div class="point p4"></div>
+                    </div>
+                    <p style="font-size: 0.85em; color: #64748b;">Convergence</p>
+                </div>
+            </div>
+
+            <h3>⚠️ Dealing with Outliers in K-Means</h3>
+            <p>K-Means is <strong>sensitive to outliers</strong>. One point far away can pull a centroid toward it and distort the whole cluster. Here’s how to deal with it:</p>
+            <ul style="margin-left: 24px; margin-bottom: 15px;">
+                <li><strong>Detect outliers first:</strong> Use boxplots, IQR, or Z-scores (see the Missing Values &amp; Outliers lesson).</li>
+                <li><strong>Remove them:</strong> Drop extreme points before running K-Means if they are errors or irrelevant.</li>
+                <li><strong>Cap/winsorize:</strong> Replace extreme values with a max/min threshold so they don’t dominate.</li>
+                <li><strong>Use robust scaling:</strong> Scale with RobustScaler (median and IQR) instead of StandardScaler so one extreme value doesn’t stretch the scale.</li>
+                <li><strong>Try K-Medians:</strong> Use the median instead of the mean when updating centroids; medians are less pulled by outliers.</li>
+                <li><strong>Use DBSCAN:</strong> If you have many outliers or odd shapes, DBSCAN labels them as “noise” instead of forcing them into a cluster.</li>
+            </ul>
+            <div class="key-point">
+                <h4>💡 Takeaway</h4>
+                <p>Always check for outliers before K-Means. Either clean them, robust-scale, or switch to an algorithm that handles outliers (e.g. DBSCAN).</p>
+            </div>
         </div>
 
         <!-- Part 3: Choosing K -->
@@ -343,7 +641,35 @@ plt.<span class="function">show</span>()</pre>
             <p>The biggest challenge in K-Means: <strong>How many clusters should you use?</strong></p>
 
             <h3>Method 1: Elbow Method</h3>
-            <p>Plot the "inertia" (within-cluster sum of squares) for different K values. Look for the "elbow" - where adding more clusters gives diminishing returns.</p>
+            <p>Plot the "inertia" (within-cluster sum of squares = WCSS) for different K values. Look for the <strong>elbow</strong> – where the curve bends and adding more clusters gives diminishing returns.</p>
+            <div class="graph-figure">
+                <p style="margin-bottom: 8px; font-weight: 600; color: #334155;">Elbow method: X-axis = Number of clusters (K), Y-axis = Inertia (WCSS)</p>
+                <svg class="axis-chart" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs><marker id="arr2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#475569"/></marker></defs>
+                    <!-- axes -->
+                    <line x1="50" y1="250" x2="400" y2="250" stroke="#475569" stroke-width="2" marker-end="url(#arr2)"/>
+                    <text x="380" y="275" fill="#334155" font-size="13" font-family="sans-serif">Number of clusters (K)</text>
+                    <line x1="50" y1="250" x2="50" y2="40" stroke="#475569" stroke-width="2" marker-end="url(#arr2)"/>
+                    <text x="12" y="55" fill="#334155" font-size="13" font-family="sans-serif">Inertia (WCSS)</text>
+                    <!-- Y ticks -->
+                    <line x1="45" y1="250" x2="50" y2="250" stroke="#475569"/><text x="30" y="255" fill="#475569" font-size="11">0</text>
+                    <line x1="45" y1="180" x2="50" y2="180" stroke="#475569"/><text x="25" y="184" fill="#475569" font-size="11">200</text>
+                    <line x1="45" y1="110" x2="50" y2="110" stroke="#475569"/><text x="25" y="114" fill="#475569" font-size="11">400</text>
+                    <line x1="45" y1="40" x2="50" y2="40" stroke="#475569"/><text x="25" y="44" fill="#475569" font-size="11">600</text>
+                    <!-- X ticks -->
+                    <line x1="50" y1="250" x2="50" y2="255" stroke="#475569"/><text x="45" y="270" fill="#475569" font-size="11">1</text>
+                    <line x1="120" y1="250" x2="120" y2="255" stroke="#475569"/><text x="108" y="270" fill="#475569" font-size="11">3</text>
+                    <line x1="190" y1="250" x2="190" y2="255" stroke="#475569"/><text x="178" y="270" fill="#475569" font-size="11">5</text>
+                    <line x1="260" y1="250" x2="260" y2="255" stroke="#475569"/><text x="248" y="270" fill="#475569" font-size="11">7</text>
+                    <line x1="330" y1="250" x2="330" y2="255" stroke="#475569"/><text x="318" y="270" fill="#475569" font-size="11">9</text>
+                    <line x1="400" y1="250" x2="400" y2="255" stroke="#475569"/><text x="388" y="270" fill="#475569" font-size="11">10</text>
+                    <!-- Elbow curve (simplified) -->
+                    <polyline points="50,55 120,95 190,155 260,195 330,220 400,230" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="190" cy="155" r="10" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
+                    <text x="190" y="140" fill="#b91c1c" font-size="12" font-weight="bold" text-anchor="middle">Elbow (K≈5)</text>
+                </svg>
+                <figcaption>Figure: As K increases, inertia drops. The “elbow” (red dot) suggests a good K – here around 5.</figcaption>
+            </div>
 
             <div class="code-block">
 <pre><span class="comment"># Elbow Method</span>
@@ -493,6 +819,64 @@ plt.<span class="function">show</span>()</pre>
             </table>
         </div>
 
+        <!-- Interactive: Test yourself -->
+        <div class="section">
+            <h2><i class="fas fa-hand-pointer"></i> Test Yourself</h2>
+            <p>Check your understanding. Click an answer – you’ll get instant feedback.</p>
+            <div class="interactive-quiz">
+                <h4>1. What does “intra-cluster distance” mean?</h4>
+                <label class="quiz-option" data-quiz="q1" data-correct="false">
+                    <input type="radio" name="q1"> The distance between different cluster centroids
+                </label>
+                <label class="quiz-option" data-quiz="q1" data-correct="true">
+                    <input type="radio" name="q1"> The distance of points inside a cluster to their own centroid
+                </label>
+                <label class="quiz-option" data-quiz="q1" data-correct="false">
+                    <input type="radio" name="q1"> The number of points in each cluster
+                </label>
+                <p id="fb-q1" class="quiz-feedback"></p>
+            </div>
+            <div class="interactive-quiz">
+                <h4>2. K-Means is sensitive to outliers. What can you do?</h4>
+                <label class="quiz-option" data-quiz="q2" data-correct="true">
+                    <input type="radio" name="q2"> Remove or cap outliers, or use RobustScaler / DBSCAN
+                </label>
+                <label class="quiz-option" data-quiz="q2" data-correct="false">
+                    <input type="radio" name="q2"> Ignore them – K-Means handles them automatically
+                </label>
+                <label class="quiz-option" data-quiz="q2" data-correct="false">
+                    <input type="radio" name="q2"> Use more clusters (higher K) to absorb outliers
+                </label>
+                <p id="fb-q2" class="quiz-feedback"></p>
+            </div>
+            <div class="interactive-quiz">
+                <h4>3. In the Elbow method, what is on the Y-axis?</h4>
+                <label class="quiz-option" data-quiz="q3" data-correct="false">
+                    <input type="radio" name="q3"> Number of clusters (K)
+                </label>
+                <label class="quiz-option" data-quiz="q3" data-correct="true">
+                    <input type="radio" name="q3"> Inertia (WCSS – within-cluster sum of squares)
+                </label>
+                <label class="quiz-option" data-quiz="q3" data-correct="false">
+                    <input type="radio" name="q3"> Silhouette score
+                </label>
+                <p id="fb-q3" class="quiz-feedback"></p>
+            </div>
+            <div class="interactive-quiz">
+                <h4>4. Good clustering has _____ intra-cluster distance and _____ inter-cluster distance.</h4>
+                <label class="quiz-option" data-quiz="q4" data-correct="true">
+                    <input type="radio" name="q4"> Low (tight groups); high (well separated)
+                </label>
+                <label class="quiz-option" data-quiz="q4" data-correct="false">
+                    <input type="radio" name="q4"> High; low
+                </label>
+                <label class="quiz-option" data-quiz="q4" data-correct="false">
+                    <input type="radio" name="q4"> Low; low
+                </label>
+                <p id="fb-q4" class="quiz-feedback"></p>
+            </div>
+        </div>
+
         <!-- Part 5: Customer Segmentation Example -->
         <div class="section">
             <h2><i class="fas fa-users"></i> Part 5: Real Example - Customer Segmentation</h2>
@@ -547,6 +931,373 @@ segment_analysis = customers.<span class="function">groupby</span>(<span class="
                     <li><strong>Segment 1 (Low Income, High Spending):</strong> At risk - may need financial products</li>
                     <li><strong>Segment 2 (High Income, Low Spending):</strong> Potential - target with engagement campaigns</li>
                     <li><strong>Segment 3 (Low Income, Low Spending):</strong> Budget conscious - target with discounts</li>
+                </ul>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Clustering</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Not scaling features</strong> — If one feature is 0–100 and another is 0–1, distance is dominated by the first. Always scale (e.g. StandardScaler) before K-Means.</li>
+                    <li><strong>Assuming K is obvious</strong> — There is no "correct" K; use elbow plot, silhouette score, and business sense together.</li>
+                    <li><strong>Using K-Means when clusters aren't round</strong> — K-Means assumes roughly spherical clusters; for odd shapes or lots of noise, consider DBSCAN or hierarchical.</li>
+                    <li><strong>Forgetting that clusters are unlabeled</strong> — The algorithm gives you group 0, 1, 2… you have to interpret what each group means.</li>
+                </ul>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">📘 From the course notebook (Clustering)</h4>
+                <p style="color: #1e3a8a; margin-bottom: 10px;">The course source uses <strong>Hotel Reservations.csv</strong>: <code>data = pd.read_csv("Hotel Reservations.csv")</code>. Use it to cluster customer bookings (e.g. select numeric columns like lead_time, avg_price_per_room, no_of_weekend_nights). Scale with <code>StandardScaler</code>, then <code>KMeans(n_clusters=k).fit(X)</code>; try elbow plot or silhouette to pick k. Download <a href="datasets/hotel_reservations.csv" download="Hotel Reservations.csv">Hotel Reservations.csv</a> from the <a href="datasets.html">datasets page</a>. See <strong>Clustering.pdf</strong> in the course source for slides.</p>
+            </div>
+
+            <div class="section" style="margin-top: 2rem;">
+                <h2><i class="fas fa-code"></i> Complete code from course notebook: kmeans_clustering.ipynb</h2>
+                <p>Every line of code from the course notebook is below (verbatim). Comments may be explained elsewhere; the code is unchanged.</p>
+                <div class="code-block" style="max-height: 600px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+
+h1 { color: blue !important; }
+h2 { color: green !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 2 ---
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# --- Code cell 3 ---
+data =  pd.read_csv("Hotel Reservations.csv")
+
+# --- Code cell 4 ---
+# We have a data of hotel reservations
+# Use it for clustering customer bookings to identify patterns
+
+# --- Code cell 7 ---
+data.head(100)
+
+# --- Code cell 8 ---
+data.info()
+
+# --- Code cell 9 ---
+data.describe(include ='all')
+
+# --- Code cell 10 ---
+print(data['type_of_meal_plan'].value_counts())
+
+# --- Code cell 11 ---
+print(data['room_type_reserved'].value_counts())
+
+# --- Code cell 12 ---
+print(data['market_segment_type'].value_counts())
+
+# --- Code cell 13 ---
+print(data['booking_status'].value_counts())
+
+# --- Code cell 14 ---
+print(data['required_car_parking_space'].value_counts())
+
+# --- Code cell 15 ---
+print(data['repeated_guest'].value_counts())
+
+# --- Code cell 16 ---
+print(data['no_of_previous_bookings_not_canceled'].value_counts().head(10))
+# As there are only ~3% repeat customers using previous booking data is not significant
+
+# --- Code cell 17 ---
+print(data['no_of_adults'].value_counts())
+
+# --- Code cell 18 ---
+print(data['no_of_children'].value_counts())
+#Number of children 9 and 10 looks like outlier
+
+# --- Code cell 19 ---
+#oulier removal
+data = data[data['no_of_children']&lt;=3]
+data.reset_index(inplace=True)
+
+# --- Code cell 20 ---
+print(data.columns)
+
+# --- Code cell 21 ---
+numerical_features = ['no_of_adults', 'no_of_children', 'no_of_weekend_nights',
+       'no_of_week_nights', 'required_car_parking_space', 'lead_time','repeated_guest',
+       'avg_price_per_room', 'no_of_special_requests']
+
+# --- Code cell 22 ---
+categorical_features  = ['type_of_meal_plan','room_type_reserved','market_segment_type']
+
+# --- Code cell 23 ---
+data_features = data[numerical_features + categorical_features + ['booking_status']  ]
+data_features.head(10)
+
+# --- Code cell 24 ---
+data.repeated_guest.value_counts()
+
+# --- Code cell 27 ---
+x_train  = data_features[numerical_features + categorical_features]
+
+# There is nothing to predict in clustering
+# We are just storing booking status flag in another variable to 
+# check later if the clusters have some pattern w.r.t booking cancellation
+y_label = data_features[['booking_status']]
+
+# --- Code cell 28 ---
+x_train = pd.get_dummies(x_train, columns =categorical_features, drop_first= False)
+print(x_train.columns)
+
+# --- Code cell 29 ---
+x_train.head(10)
+
+# --- Code cell 32 ---
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+x_train[numerical_features] = scaler.fit_transform(x_train[numerical_features])
+x_train.describe()
+x_train_copy = x_train.copy()
+
+# --- Code cell 33 ---
+x_train
+
+# --- Code cell 34 ---
+x_train_copy.to_csv("x_train.csv",index= False)
+
+# --- Code cell 36 ---
+from sklearn.cluster import KMeans
+
+
+kmeans = KMeans(n_clusters=10, random_state=0, n_init="auto").fit(x_train)
+x_train['cluster_labels'] = kmeans.labels_
+x_train['booking_status'] = y_label['booking_status']
+
+# --- Code cell 37 ---
+from sklearn.metrics import silhouette_score
+silhouette_score(x_train_copy, kmeans.labels_)
+
+# --- Code cell 38 ---
+x_train['cluster_labels'].value_counts()
+
+# --- Code cell 41 ---
+x_train['booking_status'].value_counts()
+
+# --- Code cell 42 ---
+print("cancellation rate in data:", 100*11884/(11884 + 24388))
+
+# --- Code cell 43 ---
+cluster_number = []
+cancellation_rate = []
+
+for z in range(len(list(x_train['cluster_labels'].unique()))):
+               cluster_number.append(z)
+               temp = x_train[x_train['cluster_labels']==z]
+               temp_cancelled = temp[temp['booking_status']=='Canceled']
+               temp_not_cancelled = temp[temp['booking_status']=='Not_Canceled']
+               cancel = (len(temp_cancelled)/len(temp))*100
+               cancellation_rate.append(cancel)
+
+# --- Code cell 44 ---
+temp = pd.DataFrame({'cluster':cluster_number, 'cancellation': cancellation_rate})
+sns.barplot(x = 'cluster',y = 'cancellation', data = temp)
+
+# --- Code cell 46 ---
+data['cluster'] = kmeans.labels_
+data.to_csv('clustering_results.csv')
+
+# --- Code cell 48 ---
+# Check average value of numerical features across clusters
+
+# --- Code cell 49 ---
+
+plt.figure(figsize=(20, 12))
+
+plt.subplot(3,3,1)
+temp = pd.DataFrame(data.groupby('cluster')['no_of_adults'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'no_of_adults', data = temp)
+
+plt.subplot(3,3,2)
+temp = pd.DataFrame(data.groupby('cluster')['no_of_children'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'no_of_children', data = temp)
+
+plt.subplot(3,3,3)
+temp = pd.DataFrame(data.groupby('cluster')['no_of_weekend_nights'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'no_of_weekend_nights',data = temp)
+
+plt.subplot(3,3,4)
+temp = pd.DataFrame(data.groupby('cluster')['no_of_week_nights'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'no_of_week_nights', data = temp)
+
+plt.subplot(3,3,5)
+temp = pd.DataFrame(data.groupby('cluster')['required_car_parking_space'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'required_car_parking_space', data = temp)
+
+plt.subplot(3,3,6)
+temp = pd.DataFrame(data.groupby('cluster')['lead_time'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'lead_time',data = temp)
+
+plt.subplot(3,3,7)
+temp = pd.DataFrame(data.groupby('cluster')['avg_price_per_room'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'avg_price_per_room', data = temp)
+
+plt.subplot(3,3,8)
+temp = pd.DataFrame(data.groupby('cluster')['no_of_special_requests'].mean()).reset_index()
+sns.barplot(x = 'cluster',y = 'no_of_special_requests', data = temp)
+
+plt.show()
+
+# --- Code cell 51 ---
+# Check frequency of categorical features across clusters
+
+# --- Code cell 52 ---
+
+plt.figure(figsize=(20, 12))
+
+plt.subplot(2,2,1)
+sns.countplot(x='cluster', hue='type_of_meal_plan', data=data)
+
+plt.subplot(2,2,2)
+sns.countplot(x='cluster', hue='room_type_reserved', data=data)
+
+plt.subplot(2,2,3)
+sns.countplot(x='cluster', hue='market_segment_type', data=data)
+
+plt.subplot(2,2,4)
+sns.countplot(x='cluster', hue='repeated_guest', data=data)
+
+plt.show()
+
+# --- Code cell 55 ---
+from sklearn.cluster import KMeans
+wcss = [] 
+
+for i in range(2, 30): 
+    kmeans = KMeans(n_clusters = i, init = 'k-means++', n_init= 'auto', random_state = 42)
+    kmeans.fit(x_train_copy) 
+    wcss.append(kmeans.inertia_)
+
+# --- Code cell 57 ---
+import matplotlib.pyplot as plt
+K = range(2, 30)
+plt.plot(K, wcss, 'bx-')
+plt.xlabel('Values of K')
+plt.ylabel('Within cluster Sum of Squared distances')
+plt.title('The Elbow Method')
+plt.show()</pre>
+                </div>
+            </div>
+
+            <div class="section" style="margin-top: 2rem;">
+                <h2><i class="fas fa-code"></i> Complete code from course notebook: agglomerative_clustering.ipynb</h2>
+                <p>Every line of code from the course notebook (verbatim).</p>
+                <div class="code-block" style="max-height: 400px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+import pandas as pd
+
+# --- Code cell 2 ---
+# read original data and feature matrix
+
+# --- Code cell 3 ---
+x_train = pd.read_csv("x_train.csv")
+data =  pd.read_csv("Hotel Reservations.csv")
+
+# --- Code cell 4 ---
+# reduce the number of rows in data if you face memory issues
+# This is just to see end to end execution - not a recommended step
+
+x_train = x_train[0:10000]
+data = data[0:10000]
+
+# --- Code cell 5 ---
+x_train_copy = x_train.copy()
+
+# --- Code cell 7 ---
+# Try agglomerative clustering with cosine distance metric and distance threshold as input
+# You can also specify n_clusters and set distance_threshold to None
+# You can try different distance metrics and linkage criterias
+
+# --- Code cell 8 ---
+from sklearn.cluster import AgglomerativeClustering
+
+
+clustering = AgglomerativeClustering( n_clusters = None,
+                                      linkage = 'complete',
+                                      distance_threshold = 0.5, # if n_clusters is number then this should be None
+                                      metric = 'cosine')
+
+clustering.fit(x_train)
+x_train['cluster_labels'] = clustering.labels_
+x_train['booking_status'] = data['booking_status']
+print(x_train['cluster_labels'].value_counts())
+
+# --- Code cell 10 ---
+# get cancellation rate in each cluster
+
+# --- Code cell 11 ---
+cluster_number = []
+cancellation_rate = []
+
+for z in range(len(list(x_train['cluster_labels'].unique()))):
+               cluster_number.append(z)
+               temp = x_train[x_train['cluster_labels']==z]
+               temp_cancelled = temp[temp['booking_status']=='Canceled']
+               temp_not_cancelled = temp[temp['booking_status']=='Not_Canceled']
+               cancel = (len(temp_cancelled)/len(temp))*100
+               cancellation_rate.append(cancel)
+
+# --- Code cell 13 ---
+import seaborn as sns
+temp = pd.DataFrame({'cluster':cluster_number, 'cancellation': cancellation_rate})
+sns.barplot(x = 'cluster',y = 'cancellation', data = temp)
+
+# --- Code cell 15 ---
+# get silehoutee score
+
+# --- Code cell 16 ---
+from sklearn.metrics import silhouette_score
+silhouette_score(x_train_copy, clustering.labels_)</pre>
+                </div>
+            </div>
+
+            <div class="reflection-prompt">
+                <h4>💭 Short reflection</h4>
+                <p>In one sentence: why would you choose DBSCAN over K-Means when your dataset has many outliers or oddly shaped clusters? (Think: density, noise, and not having to pick K.)</p>
+            </div>
+        </div>
+
+        <!-- Core & Non-Core Points (Mastery Checklist) -->
+        <div class="section">
+            <h2><i class="fas fa-star"></i> Core & Non-Core Points – Mastery Checklist</h2>
+            <p>To become a <strong>master</strong> of clustering, you must know every core point. Non-core points make you stand out in interviews and real projects.</p>
+            
+            <div class="core-box">
+                <h4>✅ CORE (Must know – exam & job essentials)</h4>
+                <ul>
+                    <li>Clustering is <strong>unsupervised</strong> – no labels; algorithm finds groups.</li>
+                    <li><strong>K-Means</strong>: choose K, initialize K centroids, assign each point to nearest centroid, update centroid to mean of its points, repeat until convergence.</li>
+                    <li><strong>Intra-cluster distance (WCSS/Inertia)</strong>: sum of squared distances of points to their centroid; minimize it.</li>
+                    <li><strong>Inter-cluster distance</strong>: distance between clusters; good clustering = low intra, high inter.</li>
+                    <li><strong>Choosing K</strong>: Elbow method (plot inertia vs K; pick the elbow) and Silhouette score (higher = better).</li>
+                    <li><strong>Always scale</strong> features before K-Means (distance-based).</li>
+                    <li>K-Means is <strong>sensitive to outliers</strong>; handle with removal, capping, RobustScaler, or DBSCAN.</li>
+                    <li><strong>DBSCAN</strong>: density-based; finds arbitrary shapes and labels outliers as -1; no need to set K.</li>
+                    <li><strong>Hierarchical clustering</strong>: dendrogram; can cut at desired K; good for small/medium data.</li>
+                    <li>Compare algorithms: K-Means (spherical, needs K), Hierarchical (any shape, optional K), DBSCAN (any shape, outliers, no K).</li>
+                </ul>
+            </div>
+            <div class="noncore-box">
+                <h4>📚 NON-CORE (Good to know – depth & interviews)</h4>
+                <ul>
+                    <li><strong>Convergence</strong>: stop when centroid movement is below threshold or max iterations reached.</li>
+                    <li><strong>K-Means++</strong>: smarter initialization; reduces bad local minima and improves stability.</li>
+                    <li><strong>Distance metrics</strong>: Euclidean (default), Manhattan for grid-like or high-dimensional data.</li>
+                    <li><strong>Silhouette interpretation</strong>: +1 (ideal), 0 (boundary), -1 (wrong cluster).</li>
+                    <li><strong>Multiple runs</strong>: run K-Means with different random seeds and pick the best inertia or silhouette.</li>
+                    <li><strong>Dendrogram</strong>: read height as “distance when clusters merge”; cut where gap is large.</li>
+                    <li><strong>DBSCAN parameters</strong>: <code>eps</code> (max distance for neighbors), <code>min_samples</code> (min points to form core).</li>
+                    <li><strong>GMM (Gaussian Mixture)</strong>: soft clustering (probabilities); can capture ellipsoidal clusters.</li>
+                    <li>Use clustering for <strong>exploration</strong> (discover segments) and <strong>preprocessing</strong> (e.g. cluster then model per cluster).</li>
                 </ul>
             </div>
         </div>
@@ -607,6 +1358,26 @@ segment_analysis = customers.<span class="function">groupby</span>(<span class="
             else backToTopButton.classList.remove('show');
         });
         backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Interactive quiz: on option click, show correct/wrong and feedback
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var quizId = this.getAttribute('data-quiz');
+                var correct = this.getAttribute('data-correct') === 'true';
+                var container = this.closest('.interactive-quiz');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('correct', 'wrong');
+                    if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+                    else if (o !== opt && opt.getAttribute('data-correct') !== 'true') { }
+                });
+                this.classList.add(correct ? 'correct' : 'wrong');
+                var fb = document.getElementById('fb-' + quizId);
+                if (fb) {
+                    fb.textContent = correct ? '✓ Correct! Well done.' : '✗ Not quite. Review the section and try again.';
+                    fb.className = 'quiz-feedback show ' + (correct ? 'correct-msg' : 'wrong-msg');
+                }
+            });
+        });
     </script>
 </body>
 </html>

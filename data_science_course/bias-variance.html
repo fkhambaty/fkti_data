@@ -230,6 +230,9 @@
             
             <p>Every ML model makes errors. These errors come from two sources: <strong>Bias</strong> and <strong>Variance</strong>. Understanding this tradeoff is KEY to building good models!</p>
 
+            <h3>👶 In One Sentence</h3>
+            <p><strong>Bias</strong> = the model is systematically wrong (e.g. too simple, so it keeps missing the truth). <strong>Variance</strong> = the model is unstable (e.g. too sensitive to the exact training set, so it behaves differently on new data). We try to balance both so total error is as small as possible.</p>
+
             <div class="formula-box">
                 <h4>📐 Total Error Formula</h4>
                 <div class="formula">Total Error = Bias² + Variance + Irreducible Noise</div>
@@ -671,6 +674,270 @@ cv_scores = <span class="function">cross_val_score</span>(model, X, y, cv=<span 
                     <li>Use cross-validation, not just a single train-test split</li>
                     <li>Start simple, add complexity only if needed</li>
                     <li>Regularization is your friend against overfitting</li>
+                </ul>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes: Bias, Variance & Gradient Descent</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Only looking at training score</strong> — You need train and test (or cross-validation) to tell bias from variance; low train + low test = bias; high train + low test = variance.</li>
+                    <li><strong>Learning rate too high</strong> — Loss bounces or diverges; too low and training is slow. Start with a small value and tune.</li>
+                    <li><strong>Using only L1 or only L2</strong> — L1 can zero out features (sparsity); L2 shrinks weights. Choose (or use ElasticNet) based on whether you want feature selection.</li>
+                </ul>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">📘 From the course notebook (Regularization)</h4>
+                <p style="color: #1e3a8a; margin-bottom: 10px;">The course source uses <strong>auto-mpg.csv</strong>: <code>data = pd.read_csv("auto-mpg.csv")</code>; <code>LinearRegression</code>, <code>Ridge(alpha=...)</code>, <code>Lasso(alpha=...)</code>. Ridge = L2 penalty; Lasso = L1 (can shrink coefficients to zero). Download <a href="datasets/auto_mpg.csv" download>auto_mpg.csv</a> from the <a href="datasets.html">datasets page</a>. See <strong>Regularization.pdf</strong> in the course source for slides.</p>
+            </div>
+
+            
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: regularization.ipynb</h2>
+                <p>Every line of code (verbatim).</p>
+                <div class="code-block" style="max-height: 500px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+
+h1 { color: blue !important; }
+h2 { color: green !important; }
+h3 { color: purple !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 2 ---
+import pandas as pd
+import seaborn as sns
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
+
+# --- Code cell 5 ---
+data = pd.read_csv("auto-mpg.csv")
+
+# --- Code cell 6 ---
+#Features in data set
+
+#cylinders: contains the number of cylinders present in the car
+
+#displacement: contains the Displacement of the car
+
+#horsepower: contains the Horsepower of the car
+
+#weight: contains the weight of the car
+
+#acceleration: contains the Acceleration of the car
+
+#model_year: contains the model year of the car
+
+#origin: contains the origin country which car belong to
+
+#car_name: contains the name of the car(Brand-Model-Variant)
+
+
+#predict Miles per Gallon
+#mpg: contains the fuel consumption value(in Miles per Gallon) for car
+
+# --- Code cell 7 ---
+data.head(15)
+
+# --- Code cell 8 ---
+data.info()
+
+# --- Code cell 11 ---
+data['horsepower'] = data['horsepower'].str.replace('?','NaN').astype(float)
+data['horsepower'].fillna(data['horsepower'].mean(),inplace=True)
+data['horsepower'] = data['horsepower'].astype(int)
+
+# --- Code cell 12 ---
+data.info()
+
+# --- Code cell 13 ---
+data.describe(include='all').round(2)
+
+# --- Code cell 15 ---
+data.columns
+
+# --- Code cell 17 ---
+#Correlation of output with numerical variables
+numerical_columns = ['mpg', 'cylinders', 'displacement', 'horsepower', 'weight','acceleration']
+# plotting correlation heatmap
+dataplot = sns.heatmap(data[numerical_columns].corr(), cmap="YlGnBu", annot=True)
+  
+# displaying heatmap
+plt.show()
+
+# --- Code cell 19 ---
+data = pd.get_dummies(data,columns=['origin','model year'])  # create features
+data.drop(columns=['car name'],axis=1,inplace=True) # drop unwanted data
+data.head(10)
+
+# --- Code cell 20 ---
+from sklearn.model_selection import train_test_split
+x_train, x_test = train_test_split(data, test_size=0.20, random_state=0)
+y_train = x_train.pop('mpg')
+y_test = x_test.pop('mpg')
+
+# --- Code cell 21 ---
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+num_vars = ['cylinders', 'displacement', 'horsepower', 'weight','acceleration']
+x_train[num_vars] = scaler.fit_transform(x_train[num_vars])
+x_test[num_vars] = scaler.transform(x_test[num_vars])
+
+# --- Code cell 22 ---
+print(x_train.head(10))
+
+# --- Code cell 26 ---
+
+# Try with different values of regularization parameter alpha
+lasso = Lasso(alpha=0.1) #alpha` must be a non-negative float i.e. in `[0, inf)
+lasso.fit(x_train,y_train)
+for z in range(len(list(x_train.columns))):
+    print("Lasso: The coefficient for {} is {}".format(x_train.columns[z], lasso.coef_[z]))
+
+# --- Code cell 27 ---
+from sklearn.metrics import r2_score
+y_test_pred = lasso.predict(x_test)
+r2_score(y_test, y_test_pred)
+
+# --- Code cell 30 ---
+# L2 Regularization
+
+ridge = Ridge(alpha=10.0) #alpha` must be a non-negative float i.e. in `[0, inf)
+ridge.fit(x_train,y_train)
+for z in range(len(list(x_train.columns))):
+    print("Ridge: The coefficient for {} is {}".format(x_train.columns[z], ridge.coef_[z]))
+
+# --- Code cell 31 ---
+y_test_pred = ridge.predict(x_test)
+r2_score(y_test, y_test_pred)
+</pre>
+                </div>
+            </div>
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: Impact_of_Lambda.ipynb</h2>
+                <p>Every line of code (verbatim).</p>
+                <div class="code-block" style="max-height: 500px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import Ridge, LinearRegression
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+
+# --- Code cell 2 ---
+# 1. Generate a synthetic dataset with a non-linear relationship
+np.random.seed(42)
+X = np.sort(np.random.rand(100, 1) * 2 - 1, axis=0) # Generate 100 points between -1 and 1
+y = np.sin(2 * np.pi * X).ravel() + np.random.normal(0, 0.2, 100) # True function sin(2*pi*x) with noise
+
+# --- Code cell 3 ---
+# 2. Split the data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# --- Code cell 4 ---
+# 3. Use polynomial features to create a high-dimensional space
+degree = 15
+poly = PolynomialFeatures(degree)
+X_train_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
+
+# --- Code cell 5 ---
+# 4. Train a simple Linear Regression model (no regularization) as a baseline
+lr = LinearRegression()
+lr.fit(X_train_poly, y_train)
+
+# --- Code cell 6 ---
+# 5. Train Ridge Regression models with different lambda (alpha) values
+lambdas = [0.001, 0.1, 10]
+models = []
+for l in lambdas:
+    ridge = Ridge(alpha=l)
+    ridge.fit(X_train_poly, y_train)
+    models.append(ridge)
+
+# --- Code cell 7 ---
+# 6. Plotting the results
+plt.figure(figsize=(12, 8))
+plt.scatter(X_train, y_train, s=20, c='b', label='Training data')
+plt.scatter(X_test, y_test, s=20, c='r', label='Test data')
+
+# Create a smooth line for plotting the fits
+x_line = np.linspace(-1, 1, 100).reshape(-1, 1)
+x_line_poly = poly.transform(x_line)
+
+# Plot Linear Regression fit
+y_line_lr = lr.predict(x_line_poly)
+plt.plot(x_line, y_line_lr, c='k', linestyle='--', label='Linear Regression (No Regularization)')
+
+# Plot Ridge Regression fits
+line_styles = ['-', ':', '-.']
+for i, l in enumerate(lambdas):
+    y_line_ridge = models[i].predict(x_line_poly)
+    plt.plot(x_line, y_line_ridge, linestyle=line_styles[i], label=f'Ridge ($\\lambda$={l})')
+
+plt.title('Impact of $\\lambda$ on Model Fit')
+plt.xlabel('$X$')
+plt.ylabel('$y$')
+plt.legend()
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.show()
+
+# --- Code cell 8 ---
+# 7. Print coefficients and R-squared scores
+print("--------------------------------------------------")
+print("Model Coefficients and Performance")
+print("--------------------------------------------------")
+
+# Linear Regression
+print("\nLinear Regression (No Regularization):")
+print(f"  Coefficients: {np.round(lr.coef_, 2)}")
+print(f"  R-squared (Train): {r2_score(y_train, lr.predict(X_train_poly)):.4f}")
+print(f"  R-squared (Test): {r2_score(y_test, lr.predict(X_test_poly)):.4f}")
+
+# Ridge Regression
+for i, l in enumerate(lambdas):
+    y_train_pred = models[i].predict(X_train_poly)
+    y_test_pred = models[i].predict(X_test_poly)
+    print(f"\nRidge ($\\lambda$={l}):")
+    print(f"  Coefficients: {np.round(models[i].coef_, 2)}")
+    print(f"  R-squared (Train): {r2_score(y_train, y_train_pred):.4f}")
+    print(f"  R-squared (Test): {r2_score(y_test, y_test_pred):.4f}")
+</pre>
+                </div>
+            </div>
+
+<div class="reflection-prompt" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ec4899;">
+                <h4 style="color: #be185d;">💭 Short reflection</h4>
+                <p style="color: #831843;">In one sentence: why does a very high learning rate in gradient descent lead to unstable training (loss jumping around) instead of converging?</p>
+            </div>
+
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Bias</strong>: error from wrong assumptions (underfitting); high bias = model too simple.</li>
+                    <li><strong>Variance</strong>: error from sensitivity to training data (overfitting); high variance = model too complex.</li>
+                    <li><strong>Bias–Variance tradeoff</strong>: Total Error = Bias² + Variance + Irreducible noise; we balance both.</li>
+                    <li><strong>Gradient descent</strong>: iteratively update weights by moving in the direction that reduces loss; new_weight = old_weight − learning_rate × gradient.</li>
+                    <li><strong>Learning rate</strong>: step size; too high = unstable; too low = slow convergence.</li>
+                    <li><strong>Regularization</strong>: L1 (Lasso) and L2 (Ridge) penalize large weights to reduce overfitting.</li>
+                    <li>Use train vs test (or cross-validation) to spot overfitting and underfitting.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Stochastic vs batch gradient descent; mini-batch.</li>
+                    <li>Momentum and adaptive learning rates (Adam, AdaGrad).</li>
+                    <li>Early stopping as a form of regularization.</li>
+                    <li>Why we square bias in the decomposition.</li>
                 </ul>
             </div>
         </div>

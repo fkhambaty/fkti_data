@@ -99,6 +99,34 @@ model.<span class="function">fit</span>(x_train, y_train, epochs=<span class="nu
             <p>Typical steps: load sequence data, create windows (e.g. last 30 days → next day), normalize, build a model (e.g. LSTM or 1D CNN), train and predict. Libraries like TensorFlow/Keras and PyTorch support RNN/LSTM and 1D Conv layers for time series.</p>
         </div>
 
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes: CNNs & Time Series</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Not normalizing image or sequence data</strong> — Scale inputs (e.g. 0–1 for images, z-score for time series) or training can be slow or unstable.</li>
+                    <li><strong>Data leakage in time series</strong> — Never use future data to predict the past; split by time (train on past, test on future) and build windows only from past values.</li>
+                    <li><strong>Using 2D conv layers for 1D sequences</strong> — Use Conv1D for time series; Conv2D is for images (height × width).</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+                <h4 style="color: #047857;">💭 Short reflection</h4>
+                <p style="color: #064e3b;">In one sentence: why do we use Conv2D and pooling for images but LSTM or 1D CNN for time series?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>CNN for images</strong>: Conv2D (spatial filters), MaxPooling, Flatten, Dense; good for local patterns.</li>
+                    <li><strong>Time series</strong>: 1D CNN (sliding over time) or RNN/LSTM (memory over sequence).</li>
+                    <li>Create windows: past N steps → next value; normalize; train and predict.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Transformers for sequences; attention; data augmentation for images.</li>
+                </ul>
+            </div>
+
         <div class="nav-buttons">
             <a href="deep-learning.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Neural Networks</a>
             <a href="nlp-basics.html" class="nav-btn next">Next: NLP Basics <i class="fas fa-arrow-right"></i></a>

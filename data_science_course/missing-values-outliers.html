@@ -196,6 +196,38 @@ data_capped[<span class="string">'MonthlySpend'</span>] = np.<span class="functi
             </div>
         </div>
 
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes: Missing Values & Outliers</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Filling without checking</strong> — Always look at how many values are missing and in which columns; filling 50% of a column with the mean can distort the distribution.</li>
+                    <li><strong>Fitting imputation on test data</strong> — Compute mean/median (or train an imputer) on training data only, then apply the same values/transformer to test.</li>
+                    <li><strong>Removing outliers blindly</strong> — Sometimes outliers are real (e.g. a few very high spenders); consider capping or keeping them if they matter for the business.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+                <h4 style="color: #92400e;">💭 Short reflection</h4>
+                <p style="color: #78350f;">In one sentence: when might you prefer to cap (winsorize) outliers instead of removing them? Give a business example.</p>
+            </div>
+
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Missing values</strong>: detect with <code>isna().sum()</code>; handle with drop, fillna(mean/median/mode), or imputation (e.g. KNN).</li>
+                    <li><strong>Outliers</strong>: detect with boxplot, histogram, IQR (Q1, Q3, bounds = Q1−1.5×IQR, Q3+1.5×IQR), or Z-score.</li>
+                    <li><strong>Treating outliers</strong>: remove, cap (winsorize), or transform; consider impact on sample size and business.</li>
+                    <li>Always visualize (boxplot/histogram) before and after.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>MAR, MCAR, MNAR (missingness mechanisms).</li>
+                    <li>Advanced imputation: MICE, iterative imputer.</li>
+                    <li>RobustScaler for outlier-resistant scaling.</li>
+                </ul>
+            </div>
+
         <div class="section">
             <h2><i class="fas fa-check-circle"></i> Summary</h2>
             <ul style="margin-left: 25px;">

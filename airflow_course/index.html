@@ -78,6 +78,19 @@
                     <li>✅ <strong>System Integration:</strong> Design fault-tolerant, scalable data pipelines integrating multiple data sources and destinations</li>
                 </ul>
             </div>
+
+            <div class="theory-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #3b82f6; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #1e40af;">👶 In one sentence</h4>
+                <p style="color: #1e3a8a; margin: 0;"><strong>Apache Airflow</strong> is a platform that runs your data tasks (like "run this SQL" or "call this API") in the right order, at the right time, and retries them if they fail.</p>
+            </div>
+            <div class="theory-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border: 2px solid #ef4444; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Airflow</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Putting heavy logic inside the DAG file</strong> — Keep DAG definitions light; put real work in tasks/operators so the scheduler stays fast.</li>
+                    <li><strong>Using dynamic start dates wrong</strong> — Use a fixed start date in the past; use <code>catchup=False</code> if you don't want backfills.</li>
+                    <li><strong>Not making tasks idempotent</strong> — A task may run more than once on retry; design so running it twice gives the same result.</li>
+                </ul>
+            </div>
             
             <div class="academic-context">
                 <h3>📚 Theoretical Foundation</h3>
@@ -2018,6 +2031,26 @@ ltv_calculation >> notification</code></pre>
         <section id="best-practices" class="content-section">
             <h2>✅ Best Practices</h2>
             <p>Design DAGs to be <strong>idempotent</strong> (running twice gives the same result). Use retries and retry_delay for transient failures. Monitor with Airflow UI and set up alerts. In production: use Celery/Kubernetes Executor, secure connections, and follow least-privilege.</p>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">💭 Short reflection</h4>
+                <p style="color: #1e3a8a;">In one sentence: why is it important for a DAG to be idempotent when running in production?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>DAG</strong>: Directed Acyclic Graph; tasks and dependencies; no cycles.</li>
+                    <li><strong>Operators</strong>: BashOperator, PythonOperator, etc.; Sensors for waiting on external state.</li>
+                    <li><strong>XCom</strong>: pass small data between tasks; Variables for config.</li>
+                    <li>Scheduling: cron or interval; idempotency; retries and monitoring.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Celery/Kubernetes Executor; TaskGroups; dynamic DAG generation; Connections.</li>
+                </ul>
+            </div>
         </section>
 
     </main>

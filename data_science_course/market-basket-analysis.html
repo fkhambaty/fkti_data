@@ -195,6 +195,164 @@ rules_df = <span class="function">association_rules</span>(frequent, metric=<spa
             </div>
         </div>
 
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Market Basket Analysis</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Using only confidence</strong> — High confidence can be misleading if B is very common; use lift to see if the association is stronger than random.</li>
+                    <li><strong>Setting min_support too low</strong> — You get too many rules and slow runtimes; set it high enough that itemsets are meaningful (e.g. 0.01–0.05 for large datasets).</li>
+                    <li><strong>Treating rules as causation</strong> — "If A then B" is an association, not "A causes B"; use for recommendations, not for claiming cause and effect.</li>
+                </ul>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">📘 From the course notebook (Market Basket Analysis)</h4>
+                <p style="color: #1e3a8a; margin-bottom: 10px;">The course source uses <strong>market_baskets_data.csv</strong>: each row = transaction, columns = items (or one-hot). Use <code>mlxtend.frequent_patterns.apriori</code> and <code>association_rules</code> with min_support, min_threshold; interpret support, confidence, lift. Download <a href="datasets/market_baskets_data.csv" download>market_baskets_data.csv</a> from the <a href="datasets.html">datasets page</a>. See <strong>AB testing and Market Basket Analysis.pdf</strong> in the course source for slides.</p>
+            </div>
+
+            
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: market_basket_analysis.ipynb</h2>
+                <p>Every line of code (verbatim).</p>
+                <div class="code-block" style="max-height: 500px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+
+h2 { color: blue !important; }
+h3 { color: green !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 4 ---
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings("ignore")
+
+# --- Code cell 5 ---
+data = pd.read_csv("market_baskets_data.csv")
+
+# --- Code cell 6 ---
+data.head(10)
+
+# --- Code cell 7 ---
+data.info()
+
+# --- Code cell 8 ---
+#[a,b,c]
+#[e,f]
+#[a,e,f,k,l ....j]
+
+# --- Code cell 9 ---
+len(data.columns)
+
+# --- Code cell 12 ---
+# Lets get the data in the form of lists of lists for the apriori algorithm
+baskets = [[str(data.values[i, j]) for j in range(0, 20) if str(data.values[i, j])!='nan'] for i in range(0, len(data))]
+
+# --- Code cell 13 ---
+#overall_data - should be list
+# within list - a list each for every basket
+
+# --- Code cell 14 ---
+print(baskets)
+
+# --- Code cell 15 ---
+type(baskets)
+
+# --- Code cell 16 ---
+len(baskets)
+
+# --- Code cell 17 ---
+baskets[0]
+
+# --- Code cell 18 ---
+baskets[1]
+
+# --- Code cell 19 ---
+from apyori import apriori # pip install apyori ( Go to Anaconda Prompt)
+help(apriori)
+
+# --- Code cell 20 ---
+rules = apriori(baskets, min_support=0.01, min_confidence=0.25, min_lift=2)
+result = list(rules)
+
+# --- Code cell 21 ---
+# Frozen set is just an immutable version of a Python set object.
+# While elements of a set can be modified at any time, elements of the frozen set remain the same after creation. 
+# Due to this, frozen sets can be used as keys in Dictionary or as elements of another set.
+result[0]
+
+# --- Code cell 22 ---
+print("Number of rules found with given thresholds :", len(result))
+
+# --- Code cell 23 ---
+
+items_rules = result[0]
+items_rules
+
+# --- Code cell 24 ---
+#RelationRecord is data format in which apriori algorithm returns results
+type(items_rules)
+
+# --- Code cell 25 ---
+items_rules[0]
+
+# --- Code cell 26 ---
+items_rules[1]
+
+# --- Code cell 27 ---
+items_rules[2][0][2]
+
+# --- Code cell 28 ---
+items_rules[2][0][3]
+
+# --- Code cell 29 ---
+results_data = pd.DataFrame(0.0,columns = ['association rule','support','confidence','lift'],
+                            index=range(0,20))
+
+# --- Code cell 30 ---
+results_data
+
+# --- Code cell 31 ---
+for z in range(len(result)):
+
+    items_rules = result[z]
+    results_data['association rule'][z] = list(items_rules[0])
+    results_data['support'][z] = items_rules[1]
+    results_data['confidence'][z] = items_rules[2][0][2]
+    results_data['lift'][z] = items_rules[2][0][3]
+
+# --- Code cell 32 ---
+results_data
+</pre>
+                </div>
+            </div>
+
+<div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+                <h4 style="color: #047857;">💭 Short reflection</h4>
+                <p style="color: #064e3b;">In one sentence: why is “lift” a better measure than “confidence” when deciding which product to recommend next to a customer?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Market basket analysis</strong>: find items bought together (frequent itemsets, association rules).</li>
+                    <li><strong>Support</strong>: how often itemset appears; <strong>confidence</strong>: P(B|A); <strong>lift</strong>: strength vs random.</li>
+                    <li><strong>Apriori</strong>: mine frequent itemsets with min_support; then derive rules (confidence/lift).</li>
+                    <li>Data format: transactions as list of items or one-hot matrix; use mlxtend/apyori.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>FP-Growth as alternative; multiple metrics (conviction, leverage).</li>
+                </ul>
+            </div>
+
         <!-- Summary -->
         <div class="section">
             <h2><i class="fas fa-check-circle"></i> Summary</h2>

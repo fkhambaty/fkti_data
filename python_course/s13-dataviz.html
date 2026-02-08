@@ -140,6 +140,11 @@
       </div>
     </div>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_13 <strong>Data Viz Part I</strong> notebook has Matplotlib and basic charts—same ideas. Run the notebook to plot along.</p>
+    </div>
+
     <!-- Chart Types Gallery -->
     <section class="content-section">
       <h2>📊 Types of Charts We'll Cover</h2>
@@ -672,6 +677,34 @@ sns.barplot(x='group', y='score', data=df, hue='group', palette='viridis', legen
       </div>
     </section>
 
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Data Viz)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Wrong chart for the question</strong> — Use line for trends over time, bar for comparing categories; pie only for few parts of a whole.</li>
+        <li><strong>Missing labels or title</strong> — Always add <code>xlabel</code>, <code>ylabel</code>, and a title so the reader knows what they're looking at.</li>
+        <li><strong>Plotting raw data without aggregation</strong> — For many points, aggregate (e.g. mean by group) or use a plot that handles density (e.g. hexbin, kde).</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+      <h4 style="color: #92400e;">💭 Short reflection</h4>
+      <p style="color: #78350f;">In one sentence: when would you choose a line chart over a bar chart to show data over time?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li><strong>Matplotlib</strong>: <code>plt.figure()</code>, <code>plt.plot()</code>, <code>plt.xlabel()</code>, <code>plt.show()</code>; subplots.</li>
+        <li><strong>Seaborn</strong>: <code>sns.lineplot()</code>, <code>sns.barplot()</code>, <code>sns.heatmap()</code>; tidy data.</li>
+        <li>Choose chart type by goal: trend (line), compare (bar), correlation (heatmap).</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Styling, legends, saving figures; seaborn themes.</li>
+      </ul>
+    </div>
+
     <!-- Summary -->
     <div class="summary-section">
       <h2>🎉 Session 13 Summary</h2>
@@ -715,7 +748,193 @@ sns.barplot(x='group', y='score', data=df, hue='group', palette='viridis', legen
       </ul>
     </div>
 
-    <nav class="page-navigation">
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Data_Viz_part_I_(2).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# pandas---data analysis
+# groupby and filtering loc and iloc
+# reading the data via API
+# reading the data vis SQLite
+
+# --- Code cell 2 ---
+# data viz---for any data analysis required time to understand
+# for data viz takes a minimal time to understand
+
+# --- Code cell 3 ---
+import numpy as np
+import matplotlib.pyplot as plt
+
+data=np.random.randint(15,95,(12,12))
+data
+
+# --- Code cell 4 ---
+import seaborn as sns
+sns.heatmap(data,annot=True,cmap="viridis")
+plt.show()
+
+# --- Code cell 5 ---
+# Data visualization
+1@ matplotlib----mathematical ploting lib---used for data viz---each perform every operation we need guide this commands for this matplotlib
+2@ seaborn---top of matplotlib---which is automized viz
+
+# --- Code cell 6 ---
+! pip install matplotlib
+
+# --- Code cell 7 ---
+import matplotlib.pyplot as plt
+
+# --- Code cell 8 ---
+# line graph,sub plots,bar graph,pie chart and grouped chart,donut chart
+# box plot,histogram,violin plot,kde,scatter graph,pair,dist plot,heat map
+
+# --- Code cell 10 ---
+import numpy as np
+x=np.arange(0,10,1)
+y=2*x+3
+plt.plot(x,y)
+plt.show()
+
+# --- Code cell 11 ---
+# customized line chart
+import numpy as np
+x=np.arange(0,10,1)
+y=2*x+3
+z=3*x+2
+fig=plt.figure(figsize=(9,8))
+plt.plot(x,y,linestyle='-.',marker="^",markersize=14,color="m",alpha=0.9)
+plt.plot(x,z,linestyle='-',marker="8",markersize=10,color="r",alpha=0.3)
+# annotating each point with coordinates
+for i in range(len(x)):
+  plt.annotate(f"({x[i]},{y[i]})", # text to display
+               (x[i],y[i]),       # points to annotate
+               textcoords="offset points",  # offset text slighlty above the marker
+               xytext=(0,10),
+               ha="center")
+
+plt.xlabel("price")
+plt.ylabel("area")
+plt.title("line chart")
+plt.grid(True)
+plt.legend(["xy","xz"],loc="best")
+plt.savefig("line_chart.jpg")
+plt.show()
+
+# --- Code cell 12 ---
+import pandas as pd
+df=pd.read_csv("/content/loan_approval_dataset.csv")
+
+# --- Code cell 13 ---
+df
+
+# --- Code cell 14 ---
+import kagglehub
+path = kagglehub.dataset_download("architsharma01/loan-approval-prediction-dataset")
+
+# --- Code cell 15 ---
+import os
+print(os.listdir(path))
+
+# --- Code cell 16 ---
+df=pd.read_csv(os.path.join(path,"loan_approval_dataset.csv"))
+
+# --- Code cell 17 ---
+df
+
+# --- Code cell 18 ---
+import pandas as pd
+df=pd.read_csv("/content/loan_approval_dataset.csv")
+df.head()
+
+# --- Code cell 19 ---
+df.columns
+
+# --- Code cell 20 ---
+#multiple line plots in one single figure
+
+# --- Code cell 21 ---
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(8,4))
+
+# Line plot 1
+sns.lineplot(x=df.index, y=df['income_annum'], label="Income")
+
+# Line plot 2
+sns.lineplot(x=df.index, y=df['loan_amount'], label="Loan Amount")
+
+# Line plot 3
+sns.lineplot(x=df.index, y=df['cibil_score'], label="CIBIL Score")
+
+plt.title("Line Plots in One Figure")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# --- Code cell 24 ---
+counts=df[" loan_status"].value_counts()
+counts
+
+# --- Code cell 25 ---
+plt.bar(counts.index, counts.values)
+plt.title("Loan Status Count")
+plt.show()
+
+# --- Code cell 26 ---
+df[" loan_status"].value_counts().plot(kind="bar")
+
+# --- Code cell 27 ---
+group_data=pd.crosstab(df[' self_employed'],df[' loan_status'])
+group_data
+
+# --- Code cell 28 ---
+ax=group_data.plot(kind="bar",figsize=(12,8))
+plt.xlabel("self employed")
+plt.ylabel("no of applicants")
+plt.title("loan status by self employed")
+# Add data labels on each bar
+for container in ax.containers:
+    ax.bar_label(container, label_type='edge', fontsize=10, color='black', padding=7)
+plt.show()
+
+# --- Code cell 30 ---
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set(style="whitegrid")
+
+plt.figure(figsize=(10, 8))
+
+# 1. Income
+plt.subplot(2, 2, 1)
+sns.histplot(df['income_annum'], kde=True)
+plt.title("Income Distribution")
+
+# 2. CIBIL Score
+plt.subplot(2, 2, 2)
+sns.histplot(df['cibil_score'], kde=True)
+plt.title("CIBIL Score Distribution")
+
+# 3. Loan Amount
+plt.subplot(2, 2, 3)
+sns.histplot(df['loan_amount'], kde=True)
+plt.title("Loan Amount Distribution")
+
+# 4. Loan Term
+plt.subplot(2, 2, 4)
+sns.histplot(df['loan_term'], kde=True)
+plt.title("Loan Term Distribution")
+
+plt.tight_layout()
+plt.show()
+</pre>
+      </div>
+    </section>
+
+        <nav class="page-navigation">
       <a href="s12-api-sql.html" class="nav-prev">
         <span class="nav-arrow">←</span>
         <span class="nav-text">

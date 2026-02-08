@@ -189,7 +189,28 @@
         
         .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
         .back-to-top.show { opacity: 1; visibility: visible; }
-        
+        .graph-figure { background: #f8fafc; border: 2px solid #fbcfe8; border-radius: 16px; padding: 24px; margin: 25px 0; text-align: center; }
+        .graph-figure figcaption { font-weight: 600; color: #475569; margin-top: 12px; font-size: 1em; }
+        .axis-chart { max-width: 100%; height: auto; }
+        .interactive-quiz { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 20px; padding: 28px; margin: 25px 0; border: 2px solid #db2777; }
+        .interactive-quiz h4 { color: #be185d; margin-bottom: 15px; }
+        .quiz-option { display: block; padding: 14px 20px; margin: 10px 0; background: white; border: 2px solid #f9a8d4; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .quiz-option:hover { border-color: #db2777; background: #fdf2f8; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 15px; padding: 12px; border-radius: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.correct-msg { background: #dcfce7; color: #166534; }
+        .quiz-feedback.wrong-msg { background: #fee2e2; color: #b91c1c; }
+        .core-box { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0; }
+        .core-box h4 { color: #166534; margin-bottom: 12px; }
+        .noncore-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0; }
+        .noncore-box h4 { color: #92400e; margin-bottom: 12px; }
+        .reflection-prompt { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #db2777; }
+        .reflection-prompt h4 { color: #be185d; margin-bottom: 10px; }
+        .reflection-prompt p { color: #831843; margin: 0; }
+        @keyframes residual-shrink { 0% { opacity: 0.9; stroke-dasharray: 20 5; } 50% { opacity: 0.4; stroke-dasharray: 5 20; } 100% { opacity: 0.9; stroke-dasharray: 20 5; } }
+        .anim-residual { animation: residual-shrink 2.5s ease-in-out infinite; }
         @media (max-width: 768px) {
             body { padding: 10px; font-size: 16px; }
             .header { padding: 30px 20px; }
@@ -222,6 +243,12 @@
                 <p>The line helps you PREDICT new values you haven't seen before!</p>
             </div>
 
+            <h3>📌 What Is a "Line of Best Fit" in Plain English?</h3>
+            <p>It's the one straight line that gets <strong>closest to all the dots</strong> at once. "Closest" means: if you add up how far each dot is from the line (the errors), that total is as small as possible. So the computer tries many lines and picks the one that makes the total error smallest. That's your line of best fit.</p>
+
+            <h3>❓ Why Do We Care About "Minimizing Errors"?</h3>
+            <p>Because the line is only useful if it <strong>predicts well</strong>. If the line is far from the dots, our predictions will be wrong. So we <strong>define "best" as: the line that makes the prediction errors as small as possible</strong>. The cost function (MSE) is just the way we measure that total error so the algorithm can improve it step by step.</p>
+
             <div class="real-life">
                 <h4>🏠 Real Life Example: House Prices</h4>
                 <p>You have data about houses:</p>
@@ -236,20 +263,36 @@
 
             <div class="visual-example">
                 <h4>📊 What Linear Regression Does</h4>
-<pre style="font-size: 1em; color: #166534; font-family: monospace; text-align: left; max-width: 400px; margin: 0 auto;">
-Price
-$200K |             ✷
-      |           ●
-$150K |       ✷
-      |     ●        ← Best fit line!
-$100K |  ✷
-      |
-     ─┼────────────────
-       1000  1500  2000
-           Area (sq ft)
-
-✷ = Actual house prices
-● = Predicted prices on the line
+                <p style="margin-bottom: 12px;">Below: a graph with a clear <strong>X-axis</strong> (Area in sq ft) and <strong>Y-axis</strong> (Price). Dots = real data; the line = our prediction.</p>
+                <div class="graph-figure" style="background: rgba(255,255,255,0.9);">
+                    <svg class="axis-chart" viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg">
+                        <defs><marker id="lr-arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker></defs>
+                        <line x1="50" y1="230" x2="400" y2="230" stroke="#475569" stroke-width="2" marker-end="url(#lr-arr)"/>
+                        <text x="340" y="255" fill="#334155" font-size="13">X: Area (sq ft)</text>
+                        <line x1="50" y1="230" x2="50" y2="40" stroke="#475569" stroke-width="2" marker-end="url(#lr-arr)"/>
+                        <text x="8" y="55" fill="#334155" font-size="13">Y: Price ($)</text>
+                        <!-- Best fit line y = mx + b (approx: from 80,50 to 380,180) -->
+                        <line x1="80" y1="200" x2="380" y2="60" stroke="#db2777" stroke-width="2.5" stroke-dasharray="0"/>
+                        <text x="240" y="35" fill="#be185d" font-size="11" font-weight="bold">Best fit line (prediction)</text>
+                        <!-- Data points (area -> x, price -> y) -->
+                        <circle cx="100" cy="185" r="6" fill="#0ea5e9"/>
+                        <circle cx="180" cy="155" r="6" fill="#0ea5e9"/>
+                        <circle cx="260" cy="115" r="6" fill="#0ea5e9"/>
+                        <circle cx="340" cy="75" r="6" fill="#0ea5e9"/>
+                        <circle cx="140" cy="170" r="6" fill="#0ea5e9"/>
+                        <circle cx="220" cy="135" r="6" fill="#0ea5e9"/>
+                        <circle cx="300" cy="95" r="6" fill="#0ea5e9"/>
+                        <text x="52" y="235" fill="#64748b" font-size="10">0</text>
+                        <text x="98" y="235" fill="#64748b" font-size="10">1k</text>
+                        <text x="178" y="235" fill="#64748b" font-size="10">2k</text>
+                        <text x="258" y="235" fill="#64748b" font-size="10">3k</text>
+                        <text x="338" y="235" fill="#64748b" font-size="10">4k</text>
+                    </svg>
+                    <figcaption>X-axis = Area (sq ft), Y-axis = Price. Blue dots = actual houses; pink line = regression line we learn.</figcaption>
+                </div>
+<pre style="font-size: 0.95em; color: #166534; font-family: monospace; text-align: left; max-width: 400px; margin: 15px auto 0;">
+✷ = Actual house prices (blue dots above)
+Line = Predicted price for any area
 </pre>
             </div>
 
@@ -641,6 +684,10 @@ X_train, X_test, y_train, y_test = <span class="function">train_test_split</span
                 <p>But that's not fair! Scaling puts them on the SAME scale (like 0 to 1).</p>
             </div>
 
+            <h3>🤔 Why Does the Algorithm "Need" Scaling?</h3>
+            <p>Many algorithms (including the one that finds the best line) adjust weights for each feature. If one feature has numbers in the thousands (e.g. area) and another has numbers 1–5 (e.g. bedrooms), the big numbers can dominate and the algorithm has a harder time finding a good balance. Scaling puts every feature in a similar range (e.g. 0–1) so no single feature unfairly dominates just because of its units.</p>
+            <p style="margin-top: 10px;"><strong>What happens if you don't scale?</strong> Sometimes the model still works, but training can be slower or less stable; for other algorithms (e.g. those that use distance or regularization) skipping scaling can give worse or wrong results. So: when in doubt, scale.</p>
+
             <div class="code-block">
 <pre><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler
 
@@ -857,6 +904,25 @@ mape = <span class="function">mean_absolute_percentage_error</span>(y_test, y_pr
                 <p>It's how much we were WRONG by. Also called "error."</p>
             </div>
 
+            <div class="graph-figure" style="background: #fdf2f8;">
+                <h4 style="color: #be185d;">🎬 Animated: Residuals (vertical distance from line)</h4>
+                <p style="margin-bottom: 10px;">Blue dots = actual data. Pink line = prediction. Dashed vertical lines = residuals (errors). They “pulse” so you see how far each point is from the line.</p>
+                <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%;">
+                    <line x1="40" y1="30" x2="40" y2="170" stroke="#64748b" stroke-width="2"/>
+                    <line x1="40" y1="170" x2="340" y2="170" stroke="#64748b" stroke-width="2"/>
+                    <line x1="80" y1="140" x2="320" y2="50" stroke="#db2777" stroke-width="2"/>
+                    <circle cx="120" cy="115" r="8" fill="#0ea5e9"/>
+                    <line x1="120" y1="115" x2="120" y2="95" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="4" class="anim-residual"/>
+                    <circle cx="200" cy="95" r="8" fill="#0ea5e9"/>
+                    <line x1="200" y1="95" x2="200" y2="88" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="4" class="anim-residual"/>
+                    <circle cx="260" cy="68" r="8" fill="#0ea5e9"/>
+                    <line x1="260" y1="68" x2="260" y2="78" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="4" class="anim-residual"/>
+                    <text x="165" y="192" fill="#475569" font-size="11">X</text>
+                    <text x="25" y="100" fill="#475569" font-size="11">Y</text>
+                </svg>
+                <figcaption>Dashed lines = residuals. Good fit = small dashed lines (small errors).</figcaption>
+            </div>
+
             <div class="code-block">
 <pre><span class="comment"># Calculate residuals on TRAINING data</span>
 y_train_pred = model.<span class="function">predict</span>(X_train)
@@ -889,6 +955,75 @@ plt.<span class="function">show</span>()</pre>
                     <li><strong>Scatter plot:</strong> Should have NO pattern - just random scatter around 0</li>
                 </ul>
                 <p>If you see patterns, your model is missing something important!</p>
+            </div>
+        </div>
+
+        <!-- Interactive: Test yourself -->
+        <div class="section">
+            <h2><i class="fas fa-hand-pointer"></i> Test Yourself</h2>
+            <p>Check your understanding. Click an answer for instant feedback.</p>
+            <div class="interactive-quiz">
+                <h4>1. In the formula y = mx + b, what does m represent?</h4>
+                <label class="quiz-option" data-quiz="lr1" data-correct="false"><input type="radio" name="lr1"> The predicted value (output)</label>
+                <label class="quiz-option" data-quiz="lr1" data-correct="true"><input type="radio" name="lr1"> The slope (how much y changes when x increases by 1)</label>
+                <label class="quiz-option" data-quiz="lr1" data-correct="false"><input type="radio" name="lr1"> The intercept (value when x = 0)</label>
+                <p id="fb-lr1" class="quiz-feedback"></p>
+            </div>
+            <div class="interactive-quiz">
+                <h4>2. Why do we split data into train and test?</h4>
+                <label class="quiz-option" data-quiz="lr2" data-correct="false"><input type="radio" name="lr2"> To make training faster</label>
+                <label class="quiz-option" data-quiz="lr2" data-correct="true"><input type="radio" name="lr2"> To check that the model works on unseen data (avoid overfitting)</label>
+                <label class="quiz-option" data-quiz="lr2" data-correct="false"><input type="radio" name="lr2"> To remove outliers</label>
+                <p id="fb-lr2" class="quiz-feedback"></p>
+            </div>
+            <div class="interactive-quiz">
+                <h4>3. What is a residual?</h4>
+                <label class="quiz-option" data-quiz="lr3" data-correct="true"><input type="radio" name="lr3"> Actual value minus predicted value (the error)</label>
+                <label class="quiz-option" data-quiz="lr3" data-correct="false"><input type="radio" name="lr3"> The slope of the regression line</label>
+                <label class="quiz-option" data-quiz="lr3" data-correct="false"><input type="radio" name="lr3"> The R² score</label>
+                <p id="fb-lr3" class="quiz-feedback"></p>
+            </div>
+
+            <div class="important-box">
+                <h4>🚫 Common Mistakes in Linear Regression</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Fitting the scaler on test data</strong> — Always fit on train only, then transform test with the same scaler. Otherwise you're leaking test information.</li>
+                    <li><strong>Using R² on the training set only</strong> — Always report R² (or MSE) on the test set to see real-world performance.</li>
+                    <li><strong>Assuming a straight line is always right</strong> — If the relationship is curved, linear regression can do poorly; check residual plots.</li>
+                    <li><strong>Forgetting to handle missing values</strong> — Many implementations fail or give nonsense if there are NaNs; clean first.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt">
+                <h4>💭 Short reflection</h4>
+                <p>In one sentence: why do we use train-test split instead of training on all the data and then reporting accuracy on the same data?</p>
+            </div>
+        </div>
+
+        <!-- Core & Non-Core Points (Mastery Checklist) -->
+        <div class="section">
+            <h2><i class="fas fa-star"></i> Core & Non-Core Points – Mastery Checklist</h2>
+            <p>To master linear regression you must know every core point. Non-core points deepen understanding and help in interviews.</p>
+            <div class="core-box">
+                <h4>✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>y = mx + b</strong>: m = slope, b = intercept; predict y from x.</li>
+                    <li><strong>Cost function (MSE)</strong>: average of (predicted − actual)²; we minimize it to find the best line.</li>
+                    <li><strong>Train-test split</strong>: e.g. 80–20; never evaluate on training data only (overfitting).</li>
+                    <li><strong>Preprocessing</strong>: handle outliers (IQR), scale features (MinMax/Standard), encode categoricals (one-hot).</li>
+                    <li><strong>Residual</strong> = actual − predicted; check residuals for patterns (should be random around 0).</li>
+                    <li><strong>R²</strong>: fraction of variance explained; 0–1, higher better. <strong>MAPE</strong>: average % error.</li>
+                    <li>Multiple linear regression: y = b₀ + b₁x₁ + b₂x₂ + … ; same idea, more features.</li>
+                </ul>
+            </div>
+            <div class="noncore-box">
+                <h4>📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Gradient descent</strong>: how we minimize MSE in practice (see Bias-Variance lesson).</li>
+                    <li><strong>Assumptions</strong>: linear relationship, homoscedastic errors, no strong multicollinearity.</li>
+                    <li><strong>Correlation vs causation</strong>: high R² doesn’t mean x causes y.</li>
+                    <li>Feature selection and regularization (Ridge/Lasso) for many features.</li>
+                </ul>
             </div>
         </div>
 
@@ -1001,6 +1136,23 @@ plt.<span class="function">show</span>()</pre>
             else backToTopButton.classList.remove('show');
         });
         backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        document.querySelectorAll('.quiz-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var quizId = this.getAttribute('data-quiz');
+                var correct = this.getAttribute('data-correct') === 'true';
+                var container = this.closest('.interactive-quiz');
+                container.querySelectorAll('.quiz-option').forEach(function(o) {
+                    o.classList.remove('correct', 'wrong');
+                    if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+                });
+                this.classList.add(correct ? 'correct' : 'wrong');
+                var fb = document.getElementById('fb-' + quizId);
+                if (fb) {
+                    fb.textContent = correct ? '✓ Correct! Well done.' : '✗ Not quite. Review the section and try again.';
+                    fb.className = 'quiz-feedback show ' + (correct ? 'correct-msg' : 'wrong-msg');
+                }
+            });
+        });
     </script>
 </body>
 </html>

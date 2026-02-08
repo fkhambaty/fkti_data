@@ -537,6 +537,41 @@ cm = <span class="function">confusion_matrix</span>(y_test, y_pred)
                     <li>For imbalanced data, use F1 score or AUC-ROC</li>
                 </ul>
             </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Classification</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Using accuracy alone when one class is rare</strong> — A model that always predicts the majority class can have high accuracy; use F1, precision, recall, or AUC-ROC.</li>
+                    <li><strong>Not scaling for KNN or SVM</strong> — Both use distances; features on different scales will dominate; always scale (e.g. StandardScaler) before fitting.</li>
+                    <li><strong>Ignoring the business cost of errors</strong> — Missing a disease (low recall) vs false alarm (low precision) have different costs; choose the metric that matches the problem.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #db2777;">
+                <h4 style="color: #be185d;">💭 Short reflection</h4>
+                <p style="color: #831843;">In one sentence: when would you care more about recall than precision? Give a real-world example (e.g. medical test, spam filter).</p>
+            </div>
+
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Classification</strong>: predict a category (binary or multiclass).</li>
+                    <li><strong>Logistic Regression</strong>: outputs probability; decision boundary; use for interpretability and probabilities.</li>
+                    <li><strong>KNN</strong>: assign class by majority of k nearest neighbors; scale features; sensitive to k.</li>
+                    <li><strong>SVM</strong>: finds max-margin hyperplane; kernel for non-linear boundaries; scale features.</li>
+                    <li><strong>Metrics</strong>: accuracy, precision, recall, F1; confusion matrix (TN, FP, FN, TP).</li>
+                    <li>Imbalanced data: accuracy misleading; use F1, precision-recall curve, or AUC-ROC.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>ROC curve and AUC interpretation.</li>
+                    <li>Multiclass: one-vs-one vs one-vs-rest.</li>
+                    <li>Probability calibration (e.g. Platt scaling).</li>
+                    <li>When to prefer which algorithm (text vs tabular, size of data).</li>
+                </ul>
+            </div>
         </div>
 
         <div class="nav-buttons">

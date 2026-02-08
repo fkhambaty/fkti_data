@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_9 has <strong>NumPy</strong>, <strong>List Comprehension</strong>, and <strong>Lambda</strong> notebooks—same topics. Run them to practice arrays and comprehensions.</p>
+    </div>
+
     <!-- LIST COMPREHENSIONS -->
     <section class="content-section">
       <h2>📝 List Comprehensions</h2>
@@ -578,7 +583,369 @@ Transposed:
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (NumPy)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Shape mismatch in operations</strong> — Element-wise math needs same shape or broadcastable; check <code>arr.shape</code> before adding/multiplying arrays.</li>
+        <li><strong>Modifying a view thinking it's a copy</strong> — Slicing returns a view; changes affect the original; use <code>.copy()</code> if you need an independent array.</li>
+        <li><strong>Using lists where arrays are expected</strong> — Many functions expect NumPy arrays; convert with <code>np.array(my_list)</code> for correct behavior.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+      <h4 style="color: #047857;">💭 Short reflection</h4>
+      <p style="color: #064e3b;">In one sentence: why is NumPy faster than using Python lists for numerical operations on large arrays?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li><code>np.array()</code>, <code>np.zeros()</code>, <code>np.ones()</code>, <code>np.arange()</code>, <code>np.linspace()</code>.</li>
+        <li>Shape, <code>reshape()</code>; indexing and slicing; element-wise and aggregate operations.</li>
+        <li>Broadcasting: operations across dimensions without explicit loops.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Linear algebra (dot, matmul); random; stacking/splitting.</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: numpy1.ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 2 ---
+modules/packages/libraries---3rd party lib--they have no connection base python
+
+# --- Code cell 4 ---
+! pip install numpy
+
+# --- Code cell 5 ---
+import numpy as np # importing numpy package using alias np for easy reference
+#import numpy as num # this is fine as well but not widely used
+
+# --- Code cell 7 ---
+list1=[1,2,3,4]
+
+# --- Code cell 8 ---
+array = np.array(list1) # create numpy array
+print(type(array))
+print(array)
+
+# --- Code cell 9 ---
+array.ndim
+
+# --- Code cell 11 ---
+
+gross = np.array([[1, 2, 3, 4], [5, 6, 7, 8]])
+
+print(gross)
+
+# --- Code cell 12 ---
+print(gross.shape)
+
+# --- Code cell 13 ---
+gross.ndim
+
+# --- Code cell 14 ---
+gross.size
+
+# --- Code cell 15 ---
+# np array is useful for matrix operations
+array = np.array([[1, 2, 3, 4], [5, 6, 7, 8],[50, 60, 70, 80]])
+
+print(array.shape)
+
+# --- Code cell 16 ---
+print(array)
+
+# --- Code cell 17 ---
+# syntax for indexing-2D
+array[row_ind,col_ind]
+
+# --- Code cell 18 ---
+print(array[2][2])
+
+# --- Code cell 19 ---
+print(array[1,1])
+
+# --- Code cell 21 ---
+array.shape
+
+# --- Code cell 22 ---
+array
+
+# --- Code cell 23 ---
+new_array = array.reshape(4, 3)
+print(new_array)
+
+# --- Code cell 24 ---
+#Flattening array: Converting multidimensional array to 1 D
+new_array = array.reshape(-1)
+print(new_array)
+
+# --- Code cell 25 ---
+#Flattening array: Converting multidimensional array to 1 D
+new_array = array.flatten()
+print(new_array)
+
+# --- Code cell 26 ---
+#Sort array
+array = np.array([23,43,5,8,90,100]) # ascending order
+print(np.sort(array))
+
+# --- Code cell 27 ---
+print(np.sort(array)[::-1])    # descending
+
+# --- Code cell 28 ---
+otp---random otps
+
+# --- Code cell 30 ---
+#4 digit otp---using random
+
+# --- Code cell 31 ---
+# Generate random number
+from numpy import random
+number = random.randint(100000,999999)
+print(number)
+
+# --- Code cell 32 ---
+# Generate random number
+from numpy import random
+number = random.randint(low=1000,high=9999,size=(12,12))
+print(number)
+
+# --- Code cell 33 ---
+# Generate random number
+from numpy import random
+np.random.seed(9)
+number = random.uniform(1000,9999,size=[2,2]) # random float values
+print(number)
+
+# --- Code cell 34 ---
+list1=[1,2,3,4]
+array=np.array(list1)
+print(type(array))
+print(array)
+print(array.shape)
+print(array.ndim)
+print(np.random.randint(100,999))
+
+# --- Code cell 36 ---
+# Dot product using numpy array
+
+import numpy as np
+
+# Vectors as 1D numpy arrays
+a = np.array([[1, 2, 3],[4,2,6]])
+b = np.array([[4, 5, 6],[5,1,9]])
+
+# 4*1 + 5*2 + 3*6
+print("dot product output:", np.dot(a, b.T))
+
+# --- Code cell 38 ---
+#Tranpose
+array = np.array([[1, 2, 3, 4], [5, 6, 7, 8],[50, 60, 70, 80]])
+print(array)
+print(array.shape)
+
+# --- Code cell 39 ---
+new_array = array.transpose()
+print(new_array)
+print(new_array.shape)
+
+# --- Code cell 40 ---
+new_array = array.T
+print(new_array)
+print(new_array.shape)
+</pre>
+      </div>
+    </section>
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: List_Comprehension (1).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# list comprehensions
+# lambda func
+# numpy
+
+# --- Code cell 2 ---
+what is list comprehension?
+# it is a concise way to create lists in python.
+# it provides a shorter,more readable and efficient way to generate lists compared to using loops
+
+# --- Code cell 3 ---
+# traditional list creation using loops
+numbers=[]
+for i in range(1,6):
+  numbers.append(i)
+print(numbers)
+
+# --- Code cell 4 ---
+# syntax for list comprehension
+# [expression for item in iterable if condition(optional)]
+
+# expression---operation performed on each element---x*2
+# item---each element in the iterable--x
+# iterable---The data structure being iterated---range(1,6)
+# condition---opitional filter to include only specific elements
+
+# --- Code cell 5 ---
+# list comprehension(same output in one line)
+numbers=[i**2 for i in range(1,6) if i%2==0]
+print(numbers)
+
+# --- Code cell 6 ---
+# create a list from range
+
+numbers=[i for i in range(1,11)]
+print(numbers)
+
+# --- Code cell 7 ---
+# create a list of squares
+squares=[x**2 for x in range(1,13)]
+print(squares)
+
+# --- Code cell 8 ---
+# filter even numbers
+even_num=[(x*2,x**4)for x in range(1,11) if x%2==0]
+print(even_num)
+
+# --- Code cell 9 ---
+# filtering words based on length
+words=["apple","banana","cherry","date","machine","learning"]
+short_words=[word for word in words if len(word)&lt;=5]
+print(short_words)
+
+# --- Code cell 10 ---
+#using if else in list comprehension
+# replace even numbers with "even"and odd numbers with ""odd""
+labels=[ "even" if x%2==0 else "odd" for x in range(1,11)  ]
+print(labels)
+
+# --- Code cell 11 ---
+scores=[82,80,26,75,60,55,44,67]
+result=["pass" if score&gt;=50 else "fail" for score in scores]
+print(result)
+
+# --- Code cell 12 ---
+# converting dictionary into list
+students={"alice":34,"grace":45}
+names=[name for name in students]
+print(names)
+
+# --- Code cell 13 ---
+users=["alice@outlook.com","bob@gmail.com","charlie@yahoo.com","david@outlook.com"]
+outlook_users=[user for user in users if "@outlook.com" in user]
+print(outlook_users)
+</pre>
+      </div>
+    </section>
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Python_Lambda_Functions.ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 8 ---
+square=lambda x:x**2
+result=square(5)
+result
+
+# --- Code cell 9 ---
+square=lambda x,y:x**2
+result=square(5)
+result
+
+# --- Code cell 10 ---
+square=lambda x,y:x**2
+result=square(5,6)
+result
+
+# --- Code cell 11 ---
+square=lambda x,y:x+y
+result=square(5,6)
+result
+
+# --- Code cell 12 ---
+# syntax for map
+# map(function,iterable1,iterable2.....)
+
+# --- Code cell 13 ---
+numbers=(2,4,6,8)
+double_num=list(map(lambda x:x*2,numbers))
+print(double_num)
+
+# --- Code cell 14 ---
+add=lambda a,b:a+b
+add(5,3)
+
+# --- Code cell 16 ---
+# Program to show the use of lambda functions
+double = lambda x : x ** 2
+print(double(5))
+
+# --- Code cell 19 ---
+def double(x):
+   return x * 2
+
+# --- Code cell 20 ---
+double(10)
+
+# --- Code cell 23 ---
+# Program to filter out only the even items from a list
+my_list = [1, 5, 4, 6, 8, 11, 3, 12]
+
+new_list = tuple(filter(lambda x : (x%2 == 0), my_list))
+
+print(new_list)
+
+# --- Code cell 25 ---
+# Program to double each item in a list using map()
+my_list1 = [1, 5, 4, 6, 8, 11, 3, 12]
+
+new_list1 = list(map(lambda x : (x * 2), my_list1))
+
+new_list1
+
+# --- Code cell 26 ---
+a = [1, 2, 3]
+b = [10, 20, 30]
+result = list(map(lambda x, y: x + y, a, b))
+print(result)
+
+# --- Code cell 27 ---
+zip---that combines (or zips) multiple iterables (like lists, tuples, strings, etc.) element by element into tuples.
+
+Think of it as “pairing up” items that share the same position.
+
+# --- Code cell 28 ---
+names = ['Alice', 'Bob', 'Charlie']
+scores = [85, 90, 88,99]
+
+combined = dict(zip(names, scores))
+print(combined)
+
+# --- Code cell 29 ---
+keys = ['name', 'age', 'name']  # 'name' appears twice
+values = ['Alice', 25, 'Bob']
+
+result = dict(zip(keys, values))
+print(result)
+
+# --- Code cell 30 ---
+keys = ['name', 'age', 'city']
+values = ['Alice', 25, 'New York']
+result = dict(zip(keys, values))
+print(result)
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s8-oop.html" class="nav-prev">
         <span class="nav-arrow">←</span>

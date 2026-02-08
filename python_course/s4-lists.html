@@ -76,6 +76,11 @@
       </div>
     </section>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_4 <strong>Data Structures Part I</strong> covers lists, indexing, slicing, and methods—same as this lesson. Try the notebook next.</p>
+    </div>
+
     <!-- ANALOGY -->
     <section class="analogy-card">
       <div class="analogy-header">
@@ -919,7 +924,970 @@ With custom start (1):
       </div>
     </section>
 
-    <!-- NAVIGATION -->
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Lists)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Expecting append() to return the list</strong> — <code>append()</code> returns None and changes the list in place; don't write <code>my_list = my_list.append(x)</code>.</li>
+        <li><strong>Index out of range</strong> — Valid indices are 0 to len(list)-1; check length or use a loop that doesn't go past the end.</li>
+        <li><strong>Modifying a list while looping over it</strong> — Removing or inserting items can skip elements or cause errors; loop over a copy or build a new list.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+      <h4 style="color: #1e40af;">💭 Short reflection</h4>
+      <p style="color: #1e3a8a;">In one sentence: why does <code>list.append(x)</code> change the list in place instead of returning a new list?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Lists: ordered, mutable, <code>[]</code>; indexing and slicing; negative indices.</li>
+        <li><code>append()</code>, <code>extend()</code>, <code>insert()</code>, <code>remove()</code>, <code>pop()</code>; <code>len()</code>, <code>in</code>.</li>
+        <li>Lists can hold mixed types; nesting lists.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>list.copy() vs assignment; list comprehensions.</li>
+      </ul>
+    </div>
+
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: 4_Python_Data_Structures_(1)_(1) (2).ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+# data types---numerical data types-int,float and complex and string and string methods
+# Control stat(loops)and conditional stat(if,else and elif)
+
+# --- Code cell 2 ---
+# sequentail data types---list and list methods
+
+# --- Code cell 4 ---
+# seq--string,list and tuple
+
+Exploratory Data Analysis--pandas and matplotlib and seaborn
+
+# --- Code cell 6 ---
+list1=[]
+type(list1)
+
+# --- Code cell 7 ---
+king=[123,"gold",7+7j,456.677,"silver",2345,9765.99,123]
+
+# --- Code cell 8 ---
+king[4]
+
+# --- Code cell 9 ---
+king[4]="platinum"
+
+# --- Code cell 10 ---
+king
+
+# --- Code cell 11 ---
+len(king)
+print(type(king))
+
+# --- Code cell 12 ---
+# list can store data of various types
+data = ["rahul",256+6j,47.667,5456,1.0, 2.8,"name",256+6j]
+print(data)
+print(type(data))
+
+# --- Code cell 14 ---
+data =     ["rahul",256+6j,47.667,5456,1.0, 2.8,"name",256+6j]
+#+ve index--    0      1      2      3.........
+#-ve index                              .... -3   -2     -1
+
+# --- Code cell 15 ---
+data[-5]
+
+# --- Code cell 16 ---
+data[1]
+
+# --- Code cell 17 ---
+data
+
+# --- Code cell 19 ---
+data[1:4]
+
+# --- Code cell 20 ---
+data[3:6:1]
+
+# --- Code cell 21 ---
+data
+
+# --- Code cell 22 ---
+data[-2:-5:1]
+
+# --- Code cell 23 ---
+data[-2:-5:-1]
+#data[-2:-5:1]
+#data[-2:-5:]
+
+# --- Code cell 24 ---
+data
+
+# --- Code cell 25 ---
+data[1::2]
+
+# --- Code cell 26 ---
+start=start======-2
+step1=start+step==-2+(-1)=-3
+step2=step1+step=-3+(-1)=-4
+step3=step2+step=-4+(-1)=-5
+step4=step3+step=1+(1)=2
+
+# --- Code cell 27 ---
+data[4:7]
+
+# --- Code cell 28 ---
+data[1:4:1]
+
+# --- Code cell 29 ---
+data[:5]
+
+# --- Code cell 30 ---
+king
+
+# --- Code cell 31 ---
+king[2]
+
+# --- Code cell 32 ---
+king[4]
+
+# --- Code cell 33 ---
+king[-4]
+
+# --- Code cell 34 ---
+king[-6]
+
+# --- Code cell 35 ---
+king2d = [
+    [123, "gold", 7+7j],
+    [456.677, "silver", 2345],
+    [9765.99, 123]
+]
+
+# --- Code cell 36 ---
+king2d[1][1]
+
+# --- Code cell 37 ---
+data
+
+# --- Code cell 38 ---
+data[-6:-9:-1]
+
+# --- Code cell 39 ---
+data[::2]
+
+# --- Code cell 40 ---
+data[0:3:1]
+
+# --- Code cell 41 ---
+data[:3:]
+
+# --- Code cell 42 ---
+data[2:6:1]
+
+# --- Code cell 43 ---
+data[-2,-3]
+
+# --- Code cell 44 ---
+data[0:len(data):2]
+
+# --- Code cell 45 ---
+data[0:8:2]
+
+# --- Code cell 46 ---
+data
+
+# --- Code cell 47 ---
+data[-5:-9:-1]
+
+# --- Code cell 48 ---
+data[-2:-5:-1]
+
+# --- Code cell 49 ---
+start=start:-5
+step1=start+step=-5+(-1)=-6
+step2=step1+step=-6+(-1)=-7
+step3=step2+step=-7+(-1)=-8
+step4=step3+step=-8+(-1)=-9
+
+# --- Code cell 50 ---
+a = [1,2,3]
+
+# --- Code cell 51 ---
+b = a
+
+# --- Code cell 52 ---
+c = a[:]
+
+# --- Code cell 53 ---
+id(c)
+
+# --- Code cell 54 ---
+id(b)
+
+# --- Code cell 55 ---
+id(a)
+
+# --- Code cell 56 ---
+data[-5]
+
+# --- Code cell 57 ---
+data.index(5480)
+
+# --- Code cell 58 ---
+len(data)
+
+# --- Code cell 59 ---
+data[:2:1]
+
+# --- Code cell 60 ---
+data[2:5:1]
+
+# --- Code cell 61 ---
+data_list = ["data", "science", "machine", "learning"]
+for j in data_list:
+  print(j)
+
+# --- Code cell 62 ---
+data_list = ["data", "science", "machine", "learning"]
+
+if "science1" in data_list:
+  print("Found, 'science' in the data list")
+else:
+  print("not availavle")
+
+# --- Code cell 65 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.insert(2, "maths")
+print(data_list)
+
+# --- Code cell 66 ---
+data_list[2]="social"  # substuting/changing
+
+# --- Code cell 67 ---
+data_list
+
+# --- Code cell 68 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.insert(2, "maths")
+
+# --- Code cell 69 ---
+list_var = [1,2,3, "some data"]
+list_var.insert(5,"one more")
+print(list_var)
+
+# --- Code cell 73 ---
+lst = [1,2,3]
+lst.insert(2, 99)
+lst
+
+# --- Code cell 75 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.append("maths")
+print(data_list)
+
+# --- Code cell 76 ---
+
+# adding multiple elements  using extend
+nums = [1, 2]
+nums.extend([3, 4,"new"])
+print(nums)
+
+# --- Code cell 77 ---
+#adding two lists using +--concadination
+
+data_list = ["data", "science", "machine", "learning","great",455]
+science = ['lr',"hello"]
+
+data_list1 = data_list + science
+print(data_list1)
+
+# --- Code cell 79 ---
+
+data_list = ["data", "science", "machine", "learning","machine"]
+data_list.remove("machine")
+print(data_list)
+
+# --- Code cell 81 ---
+fruits=["apple","banana","grapes"]
+fruits.index("banana")
+
+# --- Code cell 82 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.index("machine")
+
+# --- Code cell 84 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.pop(1)
+data_list
+
+# --- Code cell 85 ---
+# removing multiple elements
+letters = ['a', 'b', 'c', 'd', 'e']
+for item in ["b","d"]:
+  letters.remove(item)
+print(letters)
+
+# --- Code cell 86 ---
+list1=[5,1,4,2]
+sorted(list1)
+list1
+
+# --- Code cell 87 ---
+#removing multiple elements using indexing
+letters = ['a', 'b', 'c', 'd', 'b']
+indexes_to_remove = [4,3,2,1]
+for i in sorted(indexes_to_remove, reverse=True):
+    letters.pop(i)
+print(letters)
+
+# --- Code cell 88 ---
+#removing multiple elements using indexing without sorted
+
+a= ['a', 'b', 'c', 'd', 'b']
+for i in a[:]:
+  if i == 'b' :
+    a.remove(i)
+print(a)
+
+# --- Code cell 89 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.pop(2)
+data_list
+
+# --- Code cell 90 ---
+list2=[]
+list2.pop()
+
+# --- Code cell 91 ---
+
+data_list = ["data", "science", "machine", "learning"]
+data_list.pop(2)
+print(data_list)
+
+data_list.pop()
+print(data_list)
+
+# --- Code cell 92 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.append("maths")
+data_list.pop(2)
+print(data_list)
+
+# --- Code cell 93 ---
+fruits = ["apple", "banana", "cherry", "grape"]
+fruits.pop(3)
+
+# --- Code cell 94 ---
+fruits = ["apple", "banana", "cherry"]
+del fruits  # Deletes the entire list
+# print(fruits)  # ❌ This will cause an error (list no longer exists)
+fruits
+
+# --- Code cell 95 ---
+fruits = ["apple", "banana", "cherry", "grape"]
+del fruits
+print(fruits)
+
+# --- Code cell 97 ---
+
+data_list = ["data", "science", "machine", "learning"]
+del(data_list[0])
+print(data_list)
+
+# --- Code cell 98 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list[0] = "learning"
+data_list[3] = "data"
+print(data_list)
+
+# --- Code cell 99 ---
+del (data_list) # Delete complete list
+#print(data_list)
+
+# --- Code cell 101 ---
+data_list = ["data", "science", "machine", "learning"]
+data_list.clear() # clear the elements from list
+print(data_list)
+
+# --- Code cell 103 ---
+#sort list
+data = [100, 62, 84, 75, 105.0, 72.8]
+data.sort() # by defult its ascending order
+print(data)
+
+# --- Code cell 104 ---
+data.sort(reverse = True) # to get descending order
+print(data)
+
+# --- Code cell 106 ---
+nums=[2,5,7,1]
+nums.sort()
+nums
+
+# --- Code cell 107 ---
+nums=[2,5,7,1]
+sorted(nums)
+
+# --- Code cell 109 ---
+#### #copies content from one list to another
+import copy
+data_list = ["data", "science", "machine", "learning"]
+science_list = copy.deepcopy(data_list )
+#print(science_list)
+
+data_list.pop()
+print(science_list)
+print(data_list)
+print(id(data_list))
+print(id(science_list))
+
+# --- Code cell 111 ---
+import copy
+
+# Original nested list
+flights = [["AI102", "EK505"], ["QR720", "SQ321"]]
+
+# Shallow copy
+shallow_copy = copy.copy(flights)
+
+# Modify inner list
+shallow_copy[0][1] = "LH760"
+
+print("Original:", flights)
+print("Shallow Copy:", shallow_copy)
+print(id(flights[0][1]))
+print(id(shallow_copy[0][1]))
+
+# --- Code cell 112 ---
+#count and index methods on list
+data_list = ["science","data", "science", "machine", "learning","science"]
+print("count of word: ", data_list.count("science"))
+
+# --- Code cell 113 ---
+
+print("word found at index: ", data_list.index("science"))
+
+# --- Code cell 115 ---
+# -----------------------------------
+# Step 1: Start of shift – no flights in queue
+# -----------------------------------
+landing_queue = []                     # list creation
+
+# --- Code cell 116 ---
+# -----------------------------------
+# Step 2: Flights enter the landing queue
+# -----------------------------------
+landing_queue.append("AI202")          # append
+landing_queue.append("BA450")
+landing_queue.append("EK713")
+
+# --- Code cell 117 ---
+print("Initial Queue:", landing_queue)
+
+# --- Code cell 118 ---
+# -----------------------------------
+# Step 3: Emergency flight enters (highest priority)
+# -----------------------------------
+landing_queue.insert(0, "EM999")       # insert at beginning
+print("After Emergency Flight:", landing_queue)
+
+# --- Code cell 119 ---
+# -----------------------------------
+# Step 4: Flight information update
+# Example: BA450 becomes BA450D (diverted routing)
+# -----------------------------------
+index = landing_queue.index("BA450")   # search
+landing_queue[index] = "BA450D"        # modify
+print("After Update:", landing_queue)
+
+# --- Code cell 120 ---
+# -----------------------------------
+# Step 5: Flight decides to divert to another airport
+# -----------------------------------
+landing_queue.remove("EK713")          # remove
+print("After Diversion:", landing_queue)
+
+# --- Code cell 121 ---
+nested = [[1, 2], [1, 2], [3, 4]]
+nested.count([1, 2])
+
+# --- Code cell 122 ---
+nested.count(1)
+
+# --- Code cell 123 ---
+# -----------------------------------
+# Step 6: ATC clears the next flight to land
+# -----------------------------------
+next_landing = landing_queue.pop(0)    # pop (first item)
+print("Cleared to Land:", next_landing)
+print("Remaining Queue:", landing_queue)
+
+# --- Code cell 124 ---
+#VIP aircraft from government arrives and must take off first
+landing_queue.insert(0, "VIP001")
+
+# --- Code cell 125 ---
+# -----------------------------------
+# Step 5: Flight decides to divert to another airport
+# -----------------------------------
+landing_queue.remove("VIP001")          # remove
+print("After Diversion:", landing_queue)
+
+# --- Code cell 126 ---
+# -----------------------------------
+# Step 7: Multiple new inbound flights detected
+# -----------------------------------
+landing_queue.extend(["QR550", "LH330"])   # extend
+print("After New Flights:", landing_queue)
+
+# --- Code cell 127 ---
+# -----------------------------------
+# Step 8: View last flight in queue
+# -----------------------------------
+print("Last in Queue:", landing_queue[-1])
+
+# --- Code cell 128 ---
+# -----------------------------------
+# Step 9: Sort by flight number for administrative review
+# -----------------------------------
+landing_queue.sort()
+print("Sorted Queue:", landing_queue)
+
+# --- Code cell 129 ---
+# -----------------------------------
+# Step 10: Reverse list for runway reallocation plan
+# -----------------------------------
+landing_queue.reverse()
+print("Reversed Queue:", landing_queue)
+
+# --- Code cell 130 ---
+# -----------------------------------
+# Step 11: Count duplicate flights (rare but possible)
+# -----------------------------------
+landing_queue.append("QR550")          # cargo entry
+print("QR550 Count:", landing_queue.count("QR550"))
+
+# --- Code cell 131 ---
+# -----------------------------------
+# Step 12: Make a copy before resetting the system
+# -----------------------------------
+backup_queue = landing_queue.copy()
+print("Backup Queue:", backup_queue)
+
+# --- Code cell 132 ---
+# -----------------------------------
+# Step 13: Clear queue at the end of shift
+# -----------------------------------
+landing_queue.clear()
+print("End of Shift Queue:", landing_queue)
+
+# --- Code cell 133 ---
+help(list)
+
+# --- Code cell 135 ---
+ren=()
+type(ren)
+
+# --- Code cell 136 ---
+data_tuple = ("data", "science", "machine", "learning")
+print(data_tuple)
+print(type(data_tuple))
+
+# --- Code cell 137 ---
+data_tuple[1]="maths"
+
+# --- Code cell 138 ---
+data_tuple[::-1]
+
+# --- Code cell 139 ---
+data_tuple[0:3]
+
+# --- Code cell 141 ---
+data_tuple[0] = 'engineer' # this wont work
+
+# --- Code cell 142 ---
+data_tuple = list(data_tuple)
+
+# --- Code cell 143 ---
+data_tuple
+
+# --- Code cell 144 ---
+  #  workaround to update tuple
+data_tuple[0] = 'engineer'
+data_tuple
+
+# --- Code cell 145 ---
+data_tuple = tuple(data_tuple)
+print(data_tuple)
+print(type(data_tuple))
+
+# --- Code cell 146 ---
+data_tuple.remove("machine")
+
+# --- Code cell 147 ---
+#adding item to tuple
+data_tuple = ("data", "science", "machine", "learning")
+addition = ("maths")
+data_tuple += addition # data_tuple = data_tuple + addition
+type(addition)
+# if single is given it takes as a str
+
+# --- Code cell 148 ---
+#adding item to tuple
+data_tuple = ("data", "science", "machine", "learning")
+addition = ("maths",)
+data_tuple1 = data_tuple + addition
+
+# --- Code cell 149 ---
+#adding item to tuple
+data_tuple = ("data", "science", "machine", "learning")
+addition = ["maths",]
+data_tuple1 = data_tuple + addition
+
+# --- Code cell 150 ---
+#adding item to tuple
+data_tuple = ("data", "science", "machine", "learning")
+addition = ("maths",)
+data_tuple += addition # data_tuple = data_tuple + addition
+data_tuple
+
+# --- Code cell 151 ---
+#items cannot be removed from tuple
+#conversion to list is workaround
+data_tuple = ("data", "science", "machine", "learning")
+data_tuple = list(data_tuple)
+data_tuple.remove("science")
+data_tuple = tuple(data_tuple)
+data_tuple
+
+# --- Code cell 152 ---
+data_tuple
+
+# --- Code cell 153 ---
+#for loop on tuple
+for x in data_tuple:
+  print(x)
+
+# --- Code cell 154 ---
+days_of_week = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+print(days_of_week[0])  # Output: Monday
+
+# --- Code cell 156 ---
+follow={2}  # an empty curly braces called dict,if a valued filled then called as set.
+type(follow)
+
+# --- Code cell 157 ---
+list11=[3,5,3,7,8,2,9,2,88,11,11]
+
+# --- Code cell 158 ---
+set(list11)
+
+# --- Code cell 159 ---
+list(set(list11))
+
+# --- Code cell 160 ---
+data_set = {"data", "science", "machine", "learning"}
+print(data_set)
+print(type(data_set))
+
+# --- Code cell 161 ---
+a = {"data", "science", "machine", "learning","science"}
+
+# --- Code cell 162 ---
+a
+
+# --- Code cell 163 ---
+a[0]
+
+# --- Code cell 164 ---
+list1=[4,3,4,5,6,6,7,6]
+set1=set(list1)
+set1
+
+# --- Code cell 165 ---
+#sets do not hold duplicate values
+
+data_set = {"data", "science", "machine", "learning", "science"}
+print(data_set)
+
+# --- Code cell 166 ---
+print(data_set[1]) # sets are unordered, cannot be accessed by index
+
+# --- Code cell 167 ---
+#iterating over set
+data_set = {"data", "science", "machine", "learning","data"}
+
+for value in data_set:
+  print(value)
+
+# --- Code cell 168 ---
+data_set = {"data", "science", "machine", "learning"}
+if "science" in data_set:
+  print("yes")
+else:
+  print("no")
+
+# --- Code cell 170 ---
+
+data_set = {"data", "science", "machine", "learning"}
+
+data_set.add("maths")
+
+data_set
+
+# --- Code cell 171 ---
+evens = set(range(0, 21, 2))
+print(evens)
+
+# --- Code cell 173 ---
+data_set = {"data", "science", "machine", "learning",None}
+data_set.pop()
+data_set
+
+# --- Code cell 174 ---
+# Add two sets
+data_set = {"data", "science", "machine", "learning"}
+machine_set = {"lr", "svm", "kmeans"}
+
+data_set.update(machine_set)
+data_set
+
+# --- Code cell 176 ---
+
+data_set = {"data", "science", "machine", "learning"}
+
+data_set.remove("machine1")
+
+print(data_set)
+
+# --- Code cell 178 ---
+data_set
+
+# --- Code cell 179 ---
+
+data_set.pop()
+
+print(data_set)
+
+# --- Code cell 180 ---
+unique_visitors = set()
+unique_visitors.add("192.168.1.1")
+unique_visitors.add("192.168.1.2")
+unique_visitors.add("192.168.1.1")  # Duplicate ignored
+
+print(unique_visitors)  # Output: {'192.168.1.1', '192.168.1.2'}
+
+# --- Code cell 182 ---
+# union()
+
+# Combine elements from sets (no duplicates).
+a = {1, 2}
+b = {2, 3}
+print(a.union(b))
+
+# --- Code cell 183 ---
+# intersection()
+
+# Common elements.
+a = {1, 2, 3}
+b = {2, 3, 4}
+print(a.intersection(b))
+
+# --- Code cell 184 ---
+# difference()
+
+# Elements in set A but not in B.
+a = {1, 2, 3}
+b = {2, 4}
+print(a.difference(b))
+
+# --- Code cell 186 ---
+dictionary = {
+              "company": "Inttrvu",
+              "website": "Inttrvu.ai",
+              "year": 2023,
+              "type": "Edtech",
+              "city": "Pune"
+            }
+
+print(dictionary)
+
+# --- Code cell 187 ---
+dictionary[0]
+
+# --- Code cell 188 ---
+print(list(dictionary)[0])
+
+# --- Code cell 189 ---
+dictionary["company"]
+
+# --- Code cell 190 ---
+list(dictionary)
+
+# --- Code cell 191 ---
+dictionary.keys()  #get all keys
+
+# --- Code cell 192 ---
+dictionary.values() #get all values
+
+# --- Code cell 193 ---
+dictionary.items() # to get all the comb
+
+# --- Code cell 194 ---
+print(dictionary.get("company")) # get value of specific key
+
+# --- Code cell 195 ---
+dictionary
+
+# --- Code cell 196 ---
+dictionary["city"]= "bangalore"  # change value of dictionary key
+dictionary
+
+# --- Code cell 197 ---
+#Add new item to dictionary
+dictionary["course"]= "data_science"
+dictionary
+
+# --- Code cell 198 ---
+dictionary.update({"city": "Pune","year":2025}) # change value of dictionary key
+dictionary
+
+# --- Code cell 199 ---
+dictionary.update({"location": "Mumbai"}) # if this key is not present then it would be added , if found value if overwritten
+dictionary
+
+# --- Code cell 200 ---
+dictionary.update({"country": "India"}) # if this key is not present then it would be added , if found value if overwritten
+dictionary
+
+# --- Code cell 201 ---
+# Duplicate keys are not allowed
+
+dictionary = {
+              "company": "Inttrvu",
+              "website": "Inttrvu.ai",
+              "year": 2023,
+              "type": "Edtech",
+              "city": "Pune",
+              "city": "Mumbai"
+            }
+
+print(dictionary)
+
+# --- Code cell 202 ---
+# Delete specific key value pair
+
+dictionary.pop("city")
+print(dictionary)
+
+# --- Code cell 203 ---
+dictionary.items()
+
+# --- Code cell 204 ---
+# Looping through keys and values of dictionary
+
+for k, v in dictionary.items():
+  print(k, v)
+
+# --- Code cell 205 ---
+for k in dictionary.keys(): # Looping through only keys
+  print(k)
+
+# --- Code cell 206 ---
+for v in dictionary.values(): # Looping through only values
+  print(v)
+
+# --- Code cell 208 ---
+# -------------------------------------------------------
+# Restaurant table availability (SET)
+# -------------------------------------------------------
+available_tables = {1, 2, 3, 4, 5}   # Table numbers
+
+# --- Code cell 209 ---
+# -------------------------------------------------------
+# Booked table details (DICTIONARY)
+# table_number : customer_name
+# -------------------------------------------------------
+bookings = {}
+
+print("Initial Available Tables:", available_tables)
+
+# --- Code cell 210 ---
+# -------------------------------------------------------
+# 1. Customer books a table
+# -------------------------------------------------------
+customer = "Arjun"
+book_table = 3
+
+if book_table in available_tables:
+    bookings[book_table] = customer          # add to dictionary
+    available_tables.discard(book_table)     # remove from available
+    print(f"\nTable {book_table} booked for {customer}")
+else:
+    print(f"\nTable {book_table} is not available.")
+
+# --- Code cell 211 ---
+# -------------------------------------------------------
+# 2. Another customer books a table
+# -------------------------------------------------------
+customer2 = "Priya"
+book_table2 = 1
+
+if book_table2 in available_tables:
+    bookings[book_table2] = customer2
+    available_tables.discard(book_table2)
+    print(f"Table {book_table2} booked for {customer2}")
+else:
+    print(f"Table {book_table2} is not available.")
+
+print("\nAvailable Tables:", available_tables)
+print("Current Bookings:", bookings)
+
+# --- Code cell 212 ---
+# -------------------------------------------------------
+# 3. Customer cancels a booking
+# -------------------------------------------------------
+cancel_table = 3
+
+if cancel_table in bookings:
+    cancelled_customer = bookings[cancel_table]
+    del bookings[cancel_table]               # remove customer from dictionary
+    available_tables.add(cancel_table)       # add table back to availability
+    print(f"\nBooking cancelled for {cancelled_customer} at table {cancel_table}")
+else:
+    print("\nNo booking found at that table.")
+
+print("\nAvailable Tables after cancellation:", available_tables)
+print("Bookings after cancellation:", bookings)
+
+# --- Code cell 213 ---
+# -------------------------------------------------------
+# 4. Checking fully booked or not
+# -------------------------------------------------------
+if len(available_tables) == 0:
+    print("\nRestaurant is fully booked.")
+else:
+    print("\nTables still available:", available_tables)
+
+# --- Code cell 214 ---
+# -------------------------------------------------------
+# 5. Print all customers seated
+# -------------------------------------------------------
+print("\n customers currently seated:")
+for table, customer in bookings.items():
+    print(f"Table {table}: {customer}")
+</pre>
+      </div>
+    </section>
+
+        <!-- NAVIGATION -->
     <nav class="page-navigation">
       <a href="s3-loops.html" class="nav-prev">
         <span class="nav-arrow">←</span>

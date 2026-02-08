@@ -531,6 +531,11 @@
             </div>
         </div>
 
+        <div class="eli5-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6;">
+            <h4 style="color: #1e40af;">📘 Course source</h4>
+            <p style="color: #1e3a8a; margin: 0;">The course includes <strong>Maths for Data Science.pdf</strong> for a slide-style overview and a <strong>Practice Questions on Maths</strong> notebook for extra exercises.</p>
+        </div>
+
         <!-- SECTION 2: MEAN (AVERAGE) -->
         <div class="section">
             <h2><i class="fas fa-calculator"></i> Chapter 2: The MEAN (Average)</h2>
@@ -863,6 +868,12 @@ mode_result = stats.<span class="function">mode</span>(shoe_sizes)
                 <p class="formula-explain">This means scores typically differ from the average by about 9 points!</p>
             </div>
 
+            <h3>🤔 Why Square Root? (Plain English)</h3>
+            <p>Variance uses <strong>squared</strong> differences (so positives and negatives don't cancel). That gives a number in "squared units" (e.g. points²), which is hard to interpret. Taking the <strong>square root</strong> puts the spread back in the same units as your data (e.g. points). So we use standard deviation when we want to say things like "scores typically vary by about 9 points from the average."</p>
+
+            <h3>📌 When to Use Mean vs Median: Quick Guide</h3>
+            <p><strong>Use the mean</strong> when your data doesn't have extreme outliers and you want the "typical" value in the sense of "total split equally." <strong>Use the median</strong> when you have outliers (e.g. income, house prices) or skewed data—the median is the "middle" and isn't pulled by a few extreme values. For reporting "average" in real life, if in doubt, show both!</p>
+
             <div class="code-block">
 <pre><span class="keyword">import</span> numpy <span class="keyword">as</span> np
 
@@ -1102,6 +1113,35 @@ heights_zscore = scaler.<span class="function">fit_transform</span>(heights)
 <span class="comment"># Notice: 170 (the average) becomes 0!</span></pre>
             </div>
         </div>
+
+            <div class="important-box">
+                <h4>🚫 Common Mistakes in Descriptive Math</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Using only the mean when you have outliers</strong> — One extreme value can drag the mean; use the median for a more typical "center."</li>
+                    <li><strong>Confusing variance with standard deviation</strong> — Variance is in squared units; SD is in the same units as your data (we use SD to interpret "spread").</li>
+                    <li><strong>Forgetting to scale before comparing features</strong> — If one column is in thousands and another in 0–10, normalize (e.g. z-score or min-max) so comparisons are fair.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #6366f1;">
+                <h4 style="color: #3730a3;">💭 Short reflection</h4>
+                <p style="color: #312e81;">In one sentence: why is standard deviation more interpretable than variance when describing “how spread out” data is?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Mean, median, mode</strong>: center of data; median robust to outliers.</li>
+                    <li><strong>Variance & standard deviation</strong>: spread; SD in same units as data.</li>
+                    <li><strong>Percentiles/quartiles</strong>: where a value sits in the distribution.</li>
+                    <li><strong>Normalization</strong>: scale features (e.g. min-max, z-score) for fair comparison and ML.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Skewness, kurtosis; correlation vs causation.</li>
+                </ul>
+            </div>
 
         <!-- SECTION 9: SUMMARY -->
         <div class="section">

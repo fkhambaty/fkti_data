@@ -812,6 +812,548 @@ results = pd.<span class="function">DataFrame</span>({
                 <p>"This patient has a <strong>55% probability</strong> of heart disease in 10 years."</p>
                 <p>Doctors can then decide: High-risk patients need immediate intervention!</p>
             </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Logistic Regression</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Relying only on accuracy when classes are imbalanced</strong> — A model that always predicts "no" can have high accuracy; use F1, precision, recall, or AUC-ROC.</li>
+                    <li><strong>Using 0.5 as the only threshold</strong> — For imbalanced or cost-sensitive problems, a different threshold (e.g. 0.3) may be better; tune using the metric that matters.</li>
+                    <li><strong>Forgetting to scale features</strong> — Like linear regression, scaling helps the optimizer; use the same scaler fit on training data for test.</li>
+                </ul>
+            </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6;">
+                <h4 style="color: #1e40af;">📘 From the course notebook (Logistic Regression)</h4>
+                <p style="color: #1e3a8a; margin-bottom: 10px;">The course source uses <strong>dataset.csv</strong> (heart disease risk; target <code>TenYearCHD</code>). Key code: <code>data = pd.read_csv("dataset.csv")</code>; <code>StandardScaler</code> or <code>MinMaxScaler</code>; <code>train_test_split</code>; <code>LogisticRegression().fit(X_train, y_train)</code>; <code>confusion_matrix</code>, <code>accuracy_score</code>, <code>roc_curve</code>, <code>classification_report</code>. Download <a href="datasets/dataset.csv" download>dataset.csv</a> from the <a href="datasets.html">datasets page</a>. See <strong>Logistic Regression.pdf</strong> in the course source for slides.</p>
+            </div>
+
+            
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: logistic_regression.ipynb</h2>
+                <p>Every line of code from the course notebook (verbatim).</p>
+                <div class="code-block" style="max-height: 600px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+
+h1 { color: blue !important; }
+h2 { color: green !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 2 ---
+import pandas as pd
+#import ydata_profiling as yp
+# data preprocessing
+from sklearn.preprocessing import StandardScaler
+# data splitting
+from sklearn.model_selection import train_test_split
+from collections import Counter
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix,accuracy_score,roc_curve,classification_report
+import seaborn as sns
+%matplotlib inline
+import matplotlib.pyplot as plt
+import numpy as np
+
+# --- Code cell 3 ---
+data = pd.read_csv("dataset.csv")
+
+# --- Code cell 5 ---
+# Sex: male or female
+# Age: Age of the patient
+# Current Smoker: whether or not the patient is a current smoker 
+# Cigs Per Day: the number of cigarettes that the person smoked on average in one day
+# BP Meds: whether or not the patient was on blood pressure medication 
+# Prevalent Stroke: whether or not the patient had previously had a stroke 
+# Prevalent Hyp: whether or not the patient was hypertensive 
+# Diabetes: whether or not the patient had diabetes
+# Tot Chol: total cholesterol level 
+# Sys BP: systolic blood pressure 
+# Dia BP: diastolic blood pressure 
+# BMI: Body Mass Index 
+# Heart Rate: heart rate 
+# Glucose: glucose level 
+
+#Predict variable (desired target)
+# 10 year risk of coronary heart disease CHD (binary: “1”, means “Yes”, “0” means “No”)
+
+# --- Code cell 6 ---
+data.head(10)
+
+# --- Code cell 8 ---
+data.info()
+
+# --- Code cell 9 ---
+print(data.isnull().sum())
+
+# --- Code cell 10 ---
+for col in data.columns:
+    print(col)
+    print(data[col].unique())
+    print('\n')
+
+# --- Code cell 12 ---
+#categorical_columns = ['education','BPMeds']
+numerical_columns = ['cigsPerDay', 'totChol', 'BMI','heartRate', 'glucose']
+
+
+for column in list(numerical_columns):
+   data[column].fillna(data[column].median(),inplace = True)
+
+# --- Code cell 13 ---
+print(data.isnull().sum())
+
+# --- Code cell 16 ---
+data.head(10)
+
+# --- Code cell 17 ---
+# What if we had patinet number column?
+# Would that be useful as feature
+# Drop such columns from data
+
+# --- Code cell 18 ---
+data.columns
+
+# --- Code cell 19 ---
+#Visualizing numerical variables
+
+plt.figure(figsize=(20, 12))
+plt.subplot(3,3,1)
+sns.boxplot(x = 'TenYearCHD', y = 'age', data = data)
+plt.subplot(3,3,2)
+sns.boxplot(x = 'TenYearCHD', y = 'totChol', data = data)
+plt.subplot(3,3,3)
+sns.boxplot(x = 'TenYearCHD', y = 'sysBP', data = data)
+plt.subplot(3,3,4)
+sns.boxplot(x = 'TenYearCHD', y = 'diaBP', data = data)
+plt.subplot(3,3,5)
+sns.boxplot(x = 'TenYearCHD', y = 'BMI', data = data)
+plt.subplot(3,3,6)
+sns.boxplot(x = 'TenYearCHD', y = 'heartRate', data = data)
+plt.subplot(3,3,7)
+sns.boxplot(x = 'TenYearCHD', y = 'glucose', data = data)
+plt.subplot(3,3,8)
+sns.boxplot(x = 'TenYearCHD', y = 'education', data = data)
+plt.subplot(3,3,9)
+sns.boxplot(x = 'TenYearCHD', y = 'cigsPerDay', data = data)
+plt.show()
+
+# --- Code cell 20 ---
+
+plt.figure(figsize=(20, 12))
+plt.subplot(2,3,1)
+sns.countplot(x ='male', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,2)
+sns.countplot(x ='currentSmoker', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,3)
+sns.countplot(x ='BPMeds', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,4)
+sns.countplot(x ='prevalentStroke', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,5)
+sns.countplot(x ='prevalentHyp', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,6)
+sns.countplot(x ='diabetes', hue = 'TenYearCHD', data = data)
+plt.show()
+
+# --- Code cell 21 ---
+len(data.columns)
+
+# --- Code cell 22 ---
+#Correlation of output with numerical variables
+numerical_columns = ['age', 'cigsPerDay', 'totChol', 'BMI','heartRate', 'glucose', 'sysBP','diaBP']
+
+# plotting correlation heatmap
+dataplot = sns.heatmap(data[numerical_columns].corr(), cmap="YlGnBu", annot=True)
+
+# --- Code cell 23 ---
+# Highly correlated features
+
+#sysBP: Systolic Blood Pressure - The pressure exerted when the heartbeats
+#diaBP: Diastolic Blood Pressure - The pressure exerted on the walls of the arteries when the heart muscles relax 
+#in between two beats
+
+#Both systolic and diastolic blood pressure are important indicators of cardiovascular health, 
+#and both can be associated with an increased risk of heart disease. 
+
+# However, the relationship between blood pressure and heart disease is complex, 
+#and both systolic and diastolic pressure readings are often considered together 
+# to provide a more comprehensive assessment.
+
+# --- Code cell 26 ---
+data.head(10)
+
+# --- Code cell 30 ---
+def train_test_split_and_scale(data):
+    y = data["TenYearCHD"]
+    x = data.drop('TenYearCHD',axis=1)
+    features = list(x.columns)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random_state = 0)
+    scaler = MinMaxScaler()
+    x_train = scaler.fit_transform(x_train) # scaling is done only on features
+    x_test = scaler.transform(x_test)
+    return x_train, x_test, y_train, y_test,features
+
+# --- Code cell 31 ---
+x_train, x_test, y_train, y_test,features = train_test_split_and_scale(data)
+
+# --- Code cell 32 ---
+Counter(y_train)
+
+# --- Code cell 33 ---
+def fit_and_evaluate_model(x_train, x_test, y_train, y_test,class_weight=None):
+    lr = LogisticRegression(class_weight=class_weight)
+    model = lr.fit(x_train, y_train) # model training
+    lr_predict = lr.predict(x_test) # create predicted o/p 0/1
+    lr_conf_matrix = confusion_matrix(y_test, lr_predict)
+    lr_acc_score = accuracy_score(y_test, lr_predict)
+    print("confussion matrix")
+    print(lr_conf_matrix)
+    print("\n")
+    print("Accuracy of Logistic Regression:",lr_acc_score*100,'\n')
+    print(classification_report(y_test,lr_predict))
+    return model
+
+# --- Code cell 34 ---
+model = fit_and_evaluate_model(x_train, x_test, y_train, y_test)
+print("odds ratio", np.exp(model.coef_))
+
+# --- Code cell 36 ---
+Counter(y_train)
+
+# --- Code cell 37 ---
+Counter(y_test)
+
+# --- Code cell 41 ---
+# define class weights
+weight = {0:1, 1:4}
+model = fit_and_evaluate_model(x_train, x_test, y_train, y_test,class_weight=weight)
+
+# --- Code cell 42 ---
+results = pd.DataFrame(model.predict_proba(x_test))
+results.columns = ['class_0_proba','class_1_proba']
+results['predicted_class'] = model.predict(x_test)
+results.head(10)
+
+# --- Code cell 43 ---
+#save and reuse the model
+
+# --- Code cell 45 ---
+import joblib  # 'pip install joblib' if you get "Package Not found Error"
+joblib.dump(model , 'model_classifier.pkl')
+
+# --- Code cell 46 ---
+print(model_read.intercept_)
+
+# --- Code cell 47 ---
+model_read = joblib.load('model_classifier.pkl')
+model_read.predict(x_test)
+
+# --- Code cell 49 ---
+# Feature importance
+# Odds ratio well higher than 1: Increase in fetaure value increases probability of event(heart risk) hapenning
+
+# Odds ratio well below 1: Increase in fetaure value decreases probability of event(heart risk) hapenning
+
+# A feature with an odds ratio near zero typically suggests that the associated predictor has 
+#a strong negative impact on the odds of the event occurring.
+
+# Odds ratio near 1 indicates that feature may not be a strong predictor
+
+# --- Code cell 50 ---
+odds_ratio = np.exp(model.coef_)[0]
+
+for z in range(len(features)):
+     print("Odds ratio for feature {} is {}".format(features[z], odds_ratio[z]))
+
+# --- Code cell 52 ---
+print(model.coef_)
+
+# --- Code cell 53 ---
+print(np.exp(model.coef_))
+</pre>
+                </div>
+            </div>
+
+
+            <div class="section" style="margin-top: 2rem;">
+                <h2>Complete code from course notebook: logistic_regression.ipynb</h2>
+                <p>Every line of code from the course notebook (verbatim).</p>
+                <div class="code-block" style="max-height: 600px; overflow: auto;">
+                    <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+from IPython.core.display import HTML
+
+HTML("""
+&lt;style&gt;
+
+h1 { color: blue !important; }
+h2 { color: green !important; }
+&lt;/style&gt;
+""")
+
+# --- Code cell 2 ---
+import pandas as pd
+#import ydata_profiling as yp
+# data preprocessing
+from sklearn.preprocessing import StandardScaler
+# data splitting
+from sklearn.model_selection import train_test_split
+from collections import Counter
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix,accuracy_score,roc_curve,classification_report
+import seaborn as sns
+%matplotlib inline
+import matplotlib.pyplot as plt
+import numpy as np
+
+# --- Code cell 3 ---
+data = pd.read_csv("dataset.csv")
+
+# --- Code cell 5 ---
+# Sex: male or female
+# Age: Age of the patient
+# Current Smoker: whether or not the patient is a current smoker 
+# Cigs Per Day: the number of cigarettes that the person smoked on average in one day
+# BP Meds: whether or not the patient was on blood pressure medication 
+# Prevalent Stroke: whether or not the patient had previously had a stroke 
+# Prevalent Hyp: whether or not the patient was hypertensive 
+# Diabetes: whether or not the patient had diabetes
+# Tot Chol: total cholesterol level 
+# Sys BP: systolic blood pressure 
+# Dia BP: diastolic blood pressure 
+# BMI: Body Mass Index 
+# Heart Rate: heart rate 
+# Glucose: glucose level 
+
+#Predict variable (desired target)
+# 10 year risk of coronary heart disease CHD (binary: “1”, means “Yes”, “0” means “No”)
+
+# --- Code cell 6 ---
+data.head(10)
+
+# --- Code cell 8 ---
+data.info()
+
+# --- Code cell 9 ---
+print(data.isnull().sum())
+
+# --- Code cell 10 ---
+for col in data.columns:
+    print(col)
+    print(data[col].unique())
+    print('\n')
+
+# --- Code cell 12 ---
+#categorical_columns = ['education','BPMeds']
+numerical_columns = ['cigsPerDay', 'totChol', 'BMI','heartRate', 'glucose']
+
+
+for column in list(numerical_columns):
+   data[column].fillna(data[column].median(),inplace = True)
+
+# --- Code cell 13 ---
+print(data.isnull().sum())
+
+# --- Code cell 16 ---
+data.head(10)
+
+# --- Code cell 17 ---
+# What if we had patinet number column?
+# Would that be useful as feature
+# Drop such columns from data
+
+# --- Code cell 18 ---
+data.columns
+
+# --- Code cell 19 ---
+#Visualizing numerical variables
+
+plt.figure(figsize=(20, 12))
+plt.subplot(3,3,1)
+sns.boxplot(x = 'TenYearCHD', y = 'age', data = data)
+plt.subplot(3,3,2)
+sns.boxplot(x = 'TenYearCHD', y = 'totChol', data = data)
+plt.subplot(3,3,3)
+sns.boxplot(x = 'TenYearCHD', y = 'sysBP', data = data)
+plt.subplot(3,3,4)
+sns.boxplot(x = 'TenYearCHD', y = 'diaBP', data = data)
+plt.subplot(3,3,5)
+sns.boxplot(x = 'TenYearCHD', y = 'BMI', data = data)
+plt.subplot(3,3,6)
+sns.boxplot(x = 'TenYearCHD', y = 'heartRate', data = data)
+plt.subplot(3,3,7)
+sns.boxplot(x = 'TenYearCHD', y = 'glucose', data = data)
+plt.subplot(3,3,8)
+sns.boxplot(x = 'TenYearCHD', y = 'education', data = data)
+plt.subplot(3,3,9)
+sns.boxplot(x = 'TenYearCHD', y = 'cigsPerDay', data = data)
+plt.show()
+
+# --- Code cell 20 ---
+
+plt.figure(figsize=(20, 12))
+plt.subplot(2,3,1)
+sns.countplot(x ='male', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,2)
+sns.countplot(x ='currentSmoker', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,3)
+sns.countplot(x ='BPMeds', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,4)
+sns.countplot(x ='prevalentStroke', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,5)
+sns.countplot(x ='prevalentHyp', hue = 'TenYearCHD', data = data)
+plt.subplot(2,3,6)
+sns.countplot(x ='diabetes', hue = 'TenYearCHD', data = data)
+plt.show()
+
+# --- Code cell 21 ---
+len(data.columns)
+
+# --- Code cell 22 ---
+#Correlation of output with numerical variables
+numerical_columns = ['age', 'cigsPerDay', 'totChol', 'BMI','heartRate', 'glucose', 'sysBP','diaBP']
+
+# plotting correlation heatmap
+dataplot = sns.heatmap(data[numerical_columns].corr(), cmap="YlGnBu", annot=True)
+
+# --- Code cell 23 ---
+# Highly correlated features
+
+#sysBP: Systolic Blood Pressure - The pressure exerted when the heartbeats
+#diaBP: Diastolic Blood Pressure - The pressure exerted on the walls of the arteries when the heart muscles relax 
+#in between two beats
+
+#Both systolic and diastolic blood pressure are important indicators of cardiovascular health, 
+#and both can be associated with an increased risk of heart disease. 
+
+# However, the relationship between blood pressure and heart disease is complex, 
+#and both systolic and diastolic pressure readings are often considered together 
+# to provide a more comprehensive assessment.
+
+# --- Code cell 26 ---
+data.head(10)
+
+# --- Code cell 30 ---
+def train_test_split_and_scale(data):
+    y = data["TenYearCHD"]
+    x = data.drop('TenYearCHD',axis=1)
+    features = list(x.columns)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random_state = 0)
+    scaler = MinMaxScaler()
+    x_train = scaler.fit_transform(x_train) # scaling is done only on features
+    x_test = scaler.transform(x_test)
+    return x_train, x_test, y_train, y_test,features
+
+# --- Code cell 31 ---
+x_train, x_test, y_train, y_test,features = train_test_split_and_scale(data)
+
+# --- Code cell 32 ---
+Counter(y_train)
+
+# --- Code cell 33 ---
+def fit_and_evaluate_model(x_train, x_test, y_train, y_test,class_weight=None):
+    lr = LogisticRegression(class_weight=class_weight)
+    model = lr.fit(x_train, y_train) # model training
+    lr_predict = lr.predict(x_test) # create predicted o/p 0/1
+    lr_conf_matrix = confusion_matrix(y_test, lr_predict)
+    lr_acc_score = accuracy_score(y_test, lr_predict)
+    print("confussion matrix")
+    print(lr_conf_matrix)
+    print("\n")
+    print("Accuracy of Logistic Regression:",lr_acc_score*100,'\n')
+    print(classification_report(y_test,lr_predict))
+    return model
+
+# --- Code cell 34 ---
+model = fit_and_evaluate_model(x_train, x_test, y_train, y_test)
+print("odds ratio", np.exp(model.coef_))
+
+# --- Code cell 36 ---
+Counter(y_train)
+
+# --- Code cell 37 ---
+Counter(y_test)
+
+# --- Code cell 41 ---
+# define class weights
+weight = {0:1, 1:4}
+model = fit_and_evaluate_model(x_train, x_test, y_train, y_test,class_weight=weight)
+
+# --- Code cell 42 ---
+results = pd.DataFrame(model.predict_proba(x_test))
+results.columns = ['class_0_proba','class_1_proba']
+results['predicted_class'] = model.predict(x_test)
+results.head(10)
+
+# --- Code cell 43 ---
+#save and reuse the model
+
+# --- Code cell 45 ---
+import joblib  # 'pip install joblib' if you get "Package Not found Error"
+joblib.dump(model , 'model_classifier.pkl')
+
+# --- Code cell 46 ---
+print(model_read.intercept_)
+
+# --- Code cell 47 ---
+model_read = joblib.load('model_classifier.pkl')
+model_read.predict(x_test)
+
+# --- Code cell 49 ---
+# Feature importance
+# Odds ratio well higher than 1: Increase in fetaure value increases probability of event(heart risk) hapenning
+
+# Odds ratio well below 1: Increase in fetaure value decreases probability of event(heart risk) hapenning
+
+# A feature with an odds ratio near zero typically suggests that the associated predictor has 
+#a strong negative impact on the odds of the event occurring.
+
+# Odds ratio near 1 indicates that feature may not be a strong predictor
+
+# --- Code cell 50 ---
+odds_ratio = np.exp(model.coef_)[0]
+
+for z in range(len(features)):
+     print("Odds ratio for feature {} is {}".format(features[z], odds_ratio[z]))
+
+# --- Code cell 52 ---
+print(model.coef_)
+
+# --- Code cell 53 ---
+print(np.exp(model.coef_))
+</pre>
+                </div>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #db2777;">
+                <h4 style="color: #be185d;">💭 Short reflection</h4><div class="reflection-prompt" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #db2777;">
+                <h4 style="color: #be185d;">💭 Short reflection</h4>
+                <p style="color: #831843;">In one sentence: why can’t we use linear regression for binary classification (0/1) instead of logistic regression?</p>
+            </div>
+
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Logistic regression</strong>: predicts probability P(Y=1) via sigmoid(z); z = linear combination of features.</li>
+                    <li><strong>Sigmoid</strong>: 1/(1+e^(-z)); squashes output to (0,1).</li>
+                    <li><strong>Decision boundary</strong>: typically 0.5; tune threshold for precision/recall tradeoff.</li>
+                    <li><strong>Confusion matrix</strong>: TN, FP, FN, TP; precision = TP/(TP+FP), recall = TP/(TP+FN), F1 = harmonic mean.</li>
+                    <li><strong>Imbalanced data</strong>: use class_weight, F1, or AUC-ROC; don’t rely on accuracy alone.</li>
+                    <li>Interpret coefficients as log-odds; odds ratio = e^coefficient.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>Log-loss (cross-entropy) as the cost function.</li>
+                    <li>Multiclass: softmax and one-vs-rest.</li>
+                    <li>Regularization (L1/L2) in logistic regression.</li>
+                </ul>
+            </div>
         </div>
 
         <!-- CHAPTER 9: SUMMARY -->

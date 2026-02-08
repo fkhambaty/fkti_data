@@ -86,6 +86,35 @@ response = client.chat.completions.<span class="function">create</span>(
             <p>A chatbot keeps a list of messages (user + assistant) and sends them to the API each time the user types. The model replies in context. You can build a web UI (e.g. Flask + HTML or Streamlit) that takes user input, calls the API, and displays the reply. See the course materials (Gen AI folder) for full <code>gen_ai_chatbot.py</code> and templates.</p>
         </div>
 
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Gen AI</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Hardcoding API keys</strong> — Never put keys in code or commit them; use environment variables or a secrets manager.</li>
+                    <li><strong>Trusting output without checking</strong> — Gen AI can hallucinate; verify facts and code before using in production.</li>
+                    <li><strong>Sending huge context every time</strong> — Stay within token limits; summarize or trim old messages in long chats.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #6366f1;">
+                <h4 style="color: #3730a3;">💭 Short reflection</h4>
+                <p style="color: #312e81;">In one sentence: why should you never hardcode an API key in your code, and what is a safer alternative?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Gen AI</strong>: models that generate text (or image/audio) from prompts.</li>
+                    <li><strong>API</strong>: call provider (OpenAI, Google, etc.) with API key from env vars, not in code.</li>
+                    <li><strong>Chat</strong>: send list of messages (user/assistant); model uses context to reply.</li>
+                    <li>Prompt engineering: clear instructions improve output.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>RAG, fine-tuning, token limits, streaming responses.</li>
+                </ul>
+            </div>
+
         <div class="nav-buttons">
             <a href="explainable-ai.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Explainable AI</a>
             <a href="index.html" class="nav-btn next">Course Hub <i class="fas fa-arrow-right"></i></a>

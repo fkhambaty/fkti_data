@@ -272,6 +272,11 @@
       </div>
     </div>
 
+    <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
+      <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
+      <p style="color: #1e3a8a; margin: 0;">Session_14 <strong>Seaborn / Enhanced visualizations</strong> notebook has the same chart types (pie, bar, box, KDE, violin, scatter). Use it to build plots step by step.</p>
+    </div>
+
     <!-- Dataset Section -->
     <section class="content-section">
       <h2>📂 Step 1: Setting Up Our Dataset</h2>
@@ -1109,6 +1114,34 @@ plt.show()</code></pre></div>
       </div>
     </section>
 
+    <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Enhanced Viz)</h4>
+      <ul style="margin-left: 20px; color: #7f1d1d;">
+        <li><strong>Too many slices in a pie chart</strong> — Pie charts get messy with many categories; use a bar chart or group small slices into "Other".</li>
+        <li><strong>Ignoring outliers in box plots</strong> — Box plots show median and quartiles; points outside the whiskers are outliers—don't remove them without reason.</li>
+        <li><strong>Overlapping elements</strong> — Use <code>alpha</code> for transparency or jitter so points don't hide each other in scatter/count plots.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
+      <h4 style="color: #92400e;">💭 Short reflection</h4>
+      <p style="color: #78350f;">In one sentence: when would you use a box plot instead of a histogram to show the distribution of a variable?</p>
+    </div>
+    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Pie (proportions), count plot (categories), bar (averages), box (spread/outliers), KDE (smooth distribution).</li>
+        <li>Violin (distribution + box); scatter (two variables); histogram (frequency).</li>
+        <li>Match chart to question: parts of whole → pie; compare groups → bar/box.</li>
+      </ul>
+    </div>
+    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+      <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+      <ul style="margin-left: 20px;">
+        <li>Custom colors, labels, annotations; faceting; saving publication-ready figures.</li>
+      </ul>
+    </div>
+
     <!-- ==================== SUMMARY ==================== -->
     <section class="content-section">
       <h2>🎉 Summary: Your Visualization Toolkit</h2>
@@ -1200,7 +1233,128 @@ plt.hist(df[' income_annum'], bins=20)
       </ul>
     </div>
 
-    <!-- Navigation -->
+
+    <section class="content-section" style="margin-top: 2rem;">
+      <h2>Complete code from course notebook: Copy_of_enhanced_visualizations.ipynb</h2>
+      <p>Every line of code from the course notebook (verbatim).</p>
+      <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load dataset
+df = pd.read_csv('/content/loan_approval_dataset (1).csv')
+sns.set(style='whitegrid')
+df.head()
+
+# --- Code cell 2 ---
+df.columns
+
+# --- Code cell 3 ---
+df.info()
+
+# --- Code cell 4 ---
+loan_status_counts = df[' loan_status'].value_counts()
+loan_status_counts
+
+# --- Code cell 6 ---
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+
+# Loan status value counts
+loan_status_counts = df[' loan_status'].value_counts()
+loan_status_counts
+
+# --- Code cell 7 ---
+# Pie chart
+plt.figure(figsize=(6,6))
+plt.pie(loan_status_counts,labels=loan_status_counts.index,
+       autopct="%1.2f%%",shadow=True,explode=(0,0.1))
+plt.title("Loan Status Distribution")
+plt.show()
+
+# --- Code cell 9 ---
+df[" education"].value_counts()
+
+# --- Code cell 11 ---
+# 1. Countplot - " education"
+sns.countplot(x=" education", data=df, palette='magma');
+plt.title('education Status Distribution');
+plt.show()
+
+# --- Code cell 12 ---
+Average Loan Amount by Education
+
+# --- Code cell 14 ---
+# 2. Barplot - Average Loan Amount by Education
+sns.barplot(x=' education', y=' loan_amount', data=df, palette='Blues'); plt.title('Average Loan Amount by Education'); plt.show()
+
+# --- Code cell 16 ---
+# 3. Boxplot - Loan Amount vs Loan Status
+sns.boxplot(x=' loan_status', y=' cibil_score', data=df, palette='Set3'); plt.title('Loan Amount by Loan Status'); plt.show()
+
+# --- Code cell 17 ---
+df.columns
+
+# --- Code cell 19 ---
+sns.kdeplot(df[' cibil_score'])
+
+# --- Code cell 21 ---
+# 4. Violinplot - CIBIL Score by Loan Status
+sns.violinplot(x=' loan_status', y=' cibil_score', data=df, palette='muted'); plt.title('CIBIL Score by Loan Status'); plt.show()
+
+# --- Code cell 23 ---
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Scatter plot - Income vs Loan Amount
+plt.figure(figsize=(8,6))
+sns.scatterplot(
+    x=' income_annum',
+    y=' loan_amount',
+    hue=" loan_status",
+    data=df,
+    palette='coolwarm'
+)
+plt.title("Income vs Loan Amount by Loan Status")
+plt.xlabel("Annual Income")
+plt.ylabel("Loan Amount")
+plt.show()
+
+# --- Code cell 24 ---
+import pandas as pd
+
+# Load dataset
+df = pd.read_csv("loan_approval_dataset.csv")
+
+# Select only the columns used in scatter plot
+scatter_values = df[[' income_annum', ' loan_amount', ' loan_status']]
+
+print(scatter_values)  # Show first 5 values
+print(f"\nTotal points: {len(scatter_values)}")
+
+# --- Code cell 25 ---
+scatter_values
+
+# --- Code cell 27 ---
+# Histogram
+plt.figure(figsize=(6,4))
+plt.hist(df[' income_annum'], bins=5)
+plt.xlabel("Annual Income")
+plt.ylabel("Frequency")
+plt.title("Income Distribution")
+plt.tight_layout()
+plt.show()
+</pre>
+      </div>
+    </section>
+
+        <!-- Navigation -->
     <nav class="page-navigation">
       <a href="s13-dataviz.html" class="nav-prev">
         <span class="nav-arrow">←</span>

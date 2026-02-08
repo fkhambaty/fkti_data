@@ -235,6 +235,9 @@
                 </ol>
             </div>
 
+            <h3>📌 In One Sentence</h3>
+            <p>A <strong>neural network</strong> is a stack of layers of "neurons": each neuron multiplies its inputs by learned weights, adds a bias, and passes the result through an activation function (e.g. ReLU). The network is trained by adjusting these weights using the training data (forward pass → loss → backpropagation → gradient descent) so that the output layer's predictions get closer to the true labels.</p>
+
             <div class="neuron-visual">
                 <h4>🔌 How a Single Neuron Works</h4>
 <pre>
@@ -563,6 +566,37 @@ predictions = model.<span class="function">predict</span>(X_test[:<span class="n
                 </tr>
             </table>
         </div>
+
+            <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
+                <h4 style="color: #b91c1c;">🚫 Common Mistakes in Deep Learning</h4>
+                <ul style="margin-left: 20px; color: #7f1d1d;">
+                    <li><strong>Not scaling inputs</strong> — Neural networks train better when features are on a similar scale (e.g. 0–1 or standardized); use the same scaler on test data as on train.</li>
+                    <li><strong>Too many epochs without validation</strong> — The model can overfit; use a validation set and early stopping to stop when validation loss stops improving.</li>
+                    <li><strong>Ignoring overfitting</strong> — If train accuracy is much higher than test, add dropout, reduce model size, or get more data; don't assume "deeper is always better."</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #10b981;">
+                <h4 style="color: #047857;">💭 Short reflection</h4>
+                <p style="color: #064e3b;">In one sentence: why does a neural network with many layers need more data and careful regularization than a shallow one?</p>
+            </div>
+            <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #166534;">✅ CORE (Must know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Neuron</strong>: inputs × weights + bias → activation (e.g. ReLU, sigmoid).</li>
+                    <li><strong>Layers</strong>: input → hidden → output; deep = many hidden layers.</li>
+                    <li><strong>Training</strong>: forward pass, loss, backpropagation, gradient descent to update weights.</li>
+                    <li><strong>Epoch</strong>: one full pass over training data.</li>
+                    <li><strong>Overfitting</strong>: dropout, early stopping, more data, regularization.</li>
+                </ul>
+            </div>
+            <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
+                <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
+                <ul style="margin-left: 20px;">
+                    <li>CNN for images, RNN/LSTM for sequences.</li>
+                    <li>Batch normalization, learning rate schedules.</li>
+                </ul>
+            </div>
 
         <!-- CHAPTER 7: SUMMARY -->
         <div class="section">
