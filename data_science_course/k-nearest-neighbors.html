@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>k-Nearest Neighbors (kNN) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 50%, #99f6e4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .nav a { color: #0d9488; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0f766e; }
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(13, 148, 136, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .beginner-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #99f6e4;
+        }
+        .section h2 { color: #0d9488; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #ccfbf1; }
+        .section h3 { color: #0f766e; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #14b8a6; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        .analogy-box {
+            background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border-left: 5px solid #0d9488;
+        }
+        .analogy-box h4 { color: #0f766e; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p, .analogy-box li { color: #134e4a; }
+        .key-point {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #14b8a6;
+        }
+        .key-point h4 { color: #0f766e; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #134e4a; }
+        .warning-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .warning-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .warning-box p { color: #991b1b; }
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .step-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            background: #f0fdfa;
+            padding: 22px 25px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid #99f6e4;
+        }
+        .step-num {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .step-card h5 { color: #0f766e; font-size: 1.15em; margin-bottom: 6px; }
+        .step-card p { color: #475569; margin: 0; font-size: 1em; }
+        .knn-visual {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #10b981;
+            text-align: center;
+        }
+        .knn-visual h4 { color: #047857; margin-bottom: 15px; }
+        .knn-visual .dots { font-size: 1.8em; letter-spacing: 8px; margin: 15px 0; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="logistic-regression.html"><i class="fas fa-arrow-left"></i><span>Previous: Logistic Regression</span></a>
+            <a href="index.html"><i class="fas fa-th-large"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>👥 k-Nearest Neighbors (kNN)</h1>
+            <p>Classify by asking: "Who are my nearest neighbors?" No fancy math—just look around and vote!</p>
+        </div>
+
+        <!-- Part 1: What is kNN? -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Part 1: What is k-Nearest Neighbors?</h2>
+            <p>k-Nearest Neighbors (kNN) is a <strong>classification</strong> (and sometimes regression) algorithm. To predict the class of a new point, it looks at the <strong>K closest training points</strong> and lets them <strong>vote</strong>. Majority wins!</p>
+
+            <h3>👶 In One Sentence (Like You're 5)</h3>
+            <p><strong>kNN</strong> means: "When someone new moves into the neighborhood, we don't ask them who they are—we look at their K closest neighbors. If 4 out of 5 neighbors have a dog, we guess they probably have a dog too."</p>
+
+            <div class="eli5-box">
+                <h4>👶 Explain Like I'm 5</h4>
+                <p>Imagine you're at a party and you don't know if the music is "cool" or "uncool." You look at the 5 people standing closest to you. If 4 of them are dancing and 1 is on their phone, you guess the music is probably cool! 🎵</p>
+                <p><strong>kNN does exactly this:</strong> for any new data point, it finds the K nearest points it already knows, checks their labels, and picks the label that appears most often.</p>
+            </div>
+
+            <div class="analogy-box">
+                <h4>🏘️ The Neighborhood Analogy</h4>
+                <p><strong>"Tell me who your friends are, and I'll tell you who you are."</strong></p>
+                <p style="margin-top: 12px;">If most of your 5 nearest neighbors like pizza, you probably like pizza too. If most of them are "Spam" in an email dataset, the new email is probably Spam. kNN doesn't learn a formula—it just <strong>remembers</strong> all the training data and uses it at prediction time.</p>
+            </div>
+
+            <h3>Where kNN Is Used</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Use Case</th>
+                    <th>How kNN Helps</th>
+                </tr>
+                <tr>
+                    <td>Recommendation</td>
+                    <td>"Users who liked this also liked…" — find K nearest users and suggest what they bought</td>
+                </tr>
+                <tr>
+                    <td>Image recognition</td>
+                    <td>Compare a new image to K most similar stored images; assign the most common label</td>
+                </tr>
+                <tr>
+                    <td>Credit / fraud</td>
+                    <td>Is this transaction similar to past frauds? Look at K nearest past transactions</td>
+                </tr>
+                <tr>
+                    <td>Medical</td>
+                    <td>Patient with these symptoms — find K similar past patients and see their outcomes</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 2: How kNN Works Step by Step -->
+        <div class="section">
+            <h2><i class="fas fa-list-ol"></i> Part 2: How kNN Works (Step by Step)</h2>
+            <p>kNN is <strong>lazy</strong>: it doesn't "train" in the usual sense. At prediction time it does all the work.</p>
+
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <div>
+                    <h5>Store all training data</h5>
+                    <p>Keep every (features, label) pair in memory. There is no "model" except this dataset.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <div>
+                    <h5>When a new point arrives, compute distances</h5>
+                    <p>Measure the distance from the new point to <strong>every</strong> training point (e.g. Euclidean distance).</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <div>
+                    <h5>Pick the K smallest distances</h5>
+                    <p>Those K points are the "K nearest neighbors."</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <div>
+                    <h5>Vote</h5>
+                    <p>Count how many of those K neighbors have each label. The label with the most votes wins. (For regression, you'd take the <strong>average</strong> of their target values.)</p>
+                </div>
+            </div>
+
+            <div class="knn-visual">
+                <h4>📊 Idea in 2D</h4>
+                <p>Imagine 2 features (e.g. height, weight). Red dots = "Like pizza." Blue dots = "Don't like pizza." The <strong>?</strong> is the new person.</p>
+                <p class="dots">🔴 🔴 🔵 🔴 🔵  →  ?  ←  🔴 🔴 🔴 🔵 🔴</p>
+                <p>If K=5, we take the 5 closest dots to <strong>?</strong>. Suppose 3 are red and 2 are blue. kNN predicts: <strong>Like pizza (red)</strong>.</p>
+            </div>
+        </div>
+
+        <!-- Part 3: Distance Metrics -->
+        <div class="section">
+            <h2><i class="fas fa-ruler"></i> Part 3: Distance Metrics</h2>
+            <p>"Nearest" means we need a way to measure <strong>distance</strong> between two points. The choice of distance changes who the "neighbors" are.</p>
+
+            <h3>Euclidean Distance (Default)</h3>
+            <p>Straight-line distance. For two points \((x_1, y_1)\) and \((x_2, y_2)\) in 2D:</p>
+            <p style="background: #f1f5f9; padding: 15px 20px; border-radius: 12px; font-family: 'Fira Code', monospace;">distance = √[(x₂ − x₁)² + (y₂ − y₁)²]</p>
+            <p>With more features, you add more squared differences under the square root. This is the default in <code>sklearn</code> and works well when features are on similar scales.</p>
+
+            <h3>Manhattan Distance</h3>
+            <p>Sum of absolute differences along each axis—like walking on a grid (city blocks):</p>
+            <p style="background: #f1f5f9; padding: 15px 20px; border-radius: 12px; font-family: 'Fira Code', monospace;">distance = |x₂ − x₁| + |y₂ − y₁| + …</p>
+            <p>Useful when movement is along axes (e.g. streets) or when outliers should matter less than in Euclidean.</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Metric</th>
+                    <th>When to Use</th>
+                </tr>
+                <tr>
+                    <td><strong>euclidean</strong> (default)</td>
+                    <td>Most cases, especially after scaling</td>
+                </tr>
+                <tr>
+                    <td><strong>manhattan</strong></td>
+                    <td>High-dimensional or grid-like structure; less sensitive to large differences in one feature</td>
+                </tr>
+                <tr>
+                    <td><strong>minkowski</strong></td>
+                    <td>General form; you can tune the power (p=2 → Euclidean, p=1 → Manhattan)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Part 4: Choosing K -->
+        <div class="section">
+            <h2><i class="fas fa-sliders-h"></i> Part 4: Choosing K</h2>
+            <p>K is the only main hyperparameter: how many neighbors get to vote?</p>
+
+            <div class="key-point">
+                <h4>💡 Rules of Thumb</h4>
+                <ul>
+                    <li><strong>K too small (e.g. K=1):</strong> Very sensitive to noise. One weird neighbor can flip the prediction → <strong>overfitting</strong>.</li>
+                    <li><strong>K too large:</strong> You include far-away points that aren't really "neighbors." The decision boundary gets smooth and you lose local structure → <strong>underfitting</strong>.</li>
+                    <li><strong>Odd K (3, 5, 7…):</strong> For binary classification, odd K avoids ties. For multi-class, ties can still happen; sklearn breaks them by default.</li>
+                    <li><strong>Typical range:</strong> Try K from 3 to about 20 and use <strong>cross-validation</strong> to pick the best.</li>
+                </ul>
+            </div>
+
+            <div class="analogy-box">
+                <h4>🎯 Finding the Right K</h4>
+                <p>Plot accuracy (or your metric) vs K. Often you'll see accuracy improve as K increases from 1, then flatten or drop. The "sweet spot" is usually in that flat or peak region. Use <code>GridSearchCV</code> or a simple loop with <code>cross_val_score</code> to find it.</p>
+            </div>
+        </div>
+
+        <!-- Part 5: Why Scaling Matters -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 5: Why Scaling Matters</h2>
+            <p>kNN uses <strong>distance</strong>. If one feature is in thousands (e.g. income) and another is 0–10 (e.g. satisfaction score), the big numbers will dominate and the small feature will barely matter.</p>
+
+            <div class="warning-box">
+                <h4>⚠️ Always Scale for kNN</h4>
+                <p>Use <code>StandardScaler</code> or <code>MinMaxScaler</code> so every feature is on a similar scale (e.g. mean 0, std 1, or 0–1). Otherwise "nearest" is decided almost only by the feature with the largest range.</p>
+            </div>
+
+            <div class="eli5-box">
+                <h4>👶 Analogy</h4>
+                <p>Comparing "height in cm" (e.g. 170) and "number of siblings" (e.g. 2). Without scaling, a difference of 10 in height would swamp a difference of 2 in siblings. After scaling, both contribute fairly to distance.</p>
+            </div>
+        </div>
+
+        <!-- Part 6: kNN in Python -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Part 6: kNN in Python</h2>
+            <p>Using scikit-learn: load data, split, scale, fit, predict, and (optionally) find the best K.</p>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split, cross_val_score
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+<span class="comment"># 1. Split data</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)
+
+<span class="comment"># 2. Scale (important for kNN!)</span>
+scaler = <span class="function">StandardScaler</span>()
+X_train_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="function">transform</span>(X_test)
+
+<span class="comment"># 3. Create and fit kNN with K=5</span>
+knn = <span class="function">KNeighborsClassifier</span>(n_neighbors=<span class="number">5</span>)
+knn.<span class="function">fit</span>(X_train_scaled, y_train)
+
+<span class="comment"># 4. Predict and score</span>
+y_pred = knn.<span class="function">predict</span>(X_test_scaled)
+<span class="function">print</span>(<span class="string">"Accuracy:"</span>, knn.<span class="function">score</span>(X_test_scaled, y_test))</pre>
+            </div>
+
+            <h3>Finding the Best K with Cross-Validation</h3>
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+scores = []
+k_range = <span class="function">range</span>(<span class="number">1</span>, <span class="number">25</span>)
+
+<span class="keyword">for</span> k <span class="keyword">in</span> k_range:
+    knn = <span class="function">KNeighborsClassifier</span>(n_neighbors=k)
+    cv_scores = <span class="function">cross_val_score</span>(knn, X_train_scaled, y_train, cv=<span class="number">5</span>)
+    scores.<span class="function">append</span>(cv_scores.<span class="function">mean</span>())
+
+<span class="comment"># Plot: often best K is in the middle</span>
+plt.<span class="function">plot</span>(k_range, scores)
+plt.<span class="function">xlabel</span>(<span class="string">'K'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'CV Accuracy'</span>)
+plt.<span class="function">title</span>(<span class="string">'Finding Optimal K'</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <p><strong>Optional:</strong> Use <code>weights='distance'</code> so closer neighbors count more than farther ones. Default is <code>uniform</code> (each of the K neighbors has one vote).</p>
+        </div>
+
+        <!-- Part 7: When to Use kNN / Pros & Cons -->
+        <div class="section">
+            <h2><i class="fas fa-check-circle"></i> Part 7: When to Use kNN — Pros & Cons</h2>
+            <table class="data-table">
+                <tr>
+                    <th>Pros</th>
+                    <th>Cons</th>
+                </tr>
+                <tr>
+                    <td>Simple: no "training" step, easy to explain</td>
+                    <td>Slow at <strong>prediction</strong> when dataset is huge (must compute distance to every point)</td>
+                </tr>
+                <tr>
+                    <td>No assumptions about the shape of the data</td>
+                    <td><strong>Curse of dimensionality:</strong> in many dimensions, "nearest" neighbors can be far; accuracy drops</td>
+                </tr>
+                <tr>
+                    <td>Works for classification and regression</td>
+                    <td>Needs scaling; sensitive to irrelevant features</td>
+                </tr>
+                <tr>
+                    <td>Good baseline; often works well for small–medium data</td>
+                    <td>You must store the whole training set (memory)</td>
+                </tr>
+            </table>
+
+            <div class="key-point">
+                <h4>💡 When kNN Shines</h4>
+                <ul>
+                    <li>Small to medium datasets (thousands to tens of thousands of points)</li>
+                    <li>Not too many features (or after dimensionality reduction)</li>
+                    <li>When you want a simple, interpretable baseline ("we predict based on similar past cases")</li>
+                    <li>When decision boundaries are irregular (non-linear) and you don't need a compact model</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 8: Summary -->
+        <div class="section">
+            <h2><i class="fas fa-bookmark"></i> Part 8: Summary</h2>
+            <ul style="margin-left: 22px; line-height: 2.2;">
+                <li><strong>kNN</strong> = for a new point, find the K nearest training points and let them vote; majority class (or average for regression) wins.</li>
+                <li>No real "training"—just store the data; all work happens at <strong>prediction time</strong>.</li>
+                <li>Use a <strong>distance metric</strong> (usually Euclidean); optionally <strong>weights='distance'</strong> so closer neighbors matter more.</li>
+                <li><strong>Always scale</strong> features so no single feature dominates distance.</li>
+                <li>Choose <strong>K</strong> with cross-validation; avoid K=1 (noisy) and very large K (too smooth).</li>
+                <li>Good for small–medium data and as a baseline; watch out for speed and curse of dimensionality on large or high-dimensional data.</li>
+            </ul>
+            <p style="margin-top: 20px;">Next, see <a href="classification.html" style="color: #0d9488; font-weight: 700;">Classification Algorithms</a> to compare kNN with Logistic Regression, Naive Bayes, and SVM, or jump to <a href="decision-trees.html" style="color: #0d9488; font-weight: 700;">Decision Trees & Random Forests</a>.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="logistic-regression.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Logistic Regression</a>
+            <a href="decision-trees.html" class="nav-btn next">Next: Decision Trees & Random Forests <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>
