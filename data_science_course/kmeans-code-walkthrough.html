@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means Clustering Code – Line by Line | Data Science Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #fdf4ff 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.8; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; border: 1px solid #e2e8f0; }
+        .nav a { color: #7c3aed; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .nav a:hover { color: #6d28d9; }
+        .header { text-align: center; padding: 40px 25px; background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%); border-radius: 20px; margin-bottom: 30px; color: white; }
+        .header h1 { font-size: 2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .section { background: white; border-radius: 16px; padding: 28px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-left: 5px solid #7c3aed; }
+        .section h2 { color: #7c3aed; font-size: 1.4em; margin-bottom: 14px; }
+        .section h3 { color: #1e40af; font-size: 1.15em; margin: 18px 0 10px; }
+        .section p { color: #334155; margin-bottom: 12px; font-size: 1.02em; }
+        .download-box { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-radius: 12px; padding: 18px 22px; margin: 16px 0 24px; border-left: 4px solid #22c55e; }
+        .download-box a { color: #166534; font-weight: 700; text-decoration: none; }
+        .download-box a:hover { text-decoration: underline; }
+        .code-block { background: #1e293b; border-radius: 12px; padding: 20px; margin: 16px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9em; color: #e2e8f0; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .variable { color: #fbbf24; }
+        .line-explain { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; padding: 18px 22px; margin: 12px 0; border-left: 4px solid #3b82f6; }
+        .line-explain h4 { color: #1e40af; font-size: 1.05em; margin-bottom: 10px; }
+        .line-explain ul { margin: 0; padding-left: 22px; color: #1e3a8a; }
+        .line-explain li { margin-bottom: 6px; }
+        .eli5 { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 18px 22px; margin: 12px 0; border-left: 4px solid #f59e0b; }
+        .eli5 h4 { color: #92400e; font-size: 1.05em; margin-bottom: 8px; }
+        .eli5 p { color: #78350f; margin: 0; }
+        .warning { background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 12px; padding: 16px 22px; margin: 12px 0; border-left: 4px solid #ef4444; }
+        .warning p { color: #991b1b; margin: 0; }
+        .output-box { background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-family: 'Fira Code', monospace; font-size: 0.85em; color: #334155; white-space: pre-wrap; }
+        .output-label { font-weight: 700; color: #059669; margin-bottom: 6px; font-family: 'Nunito', sans-serif; font-size: 0.9em; }
+        .step-badge { display: inline-block; background: linear-gradient(135deg, #7c3aed, #db2777); color: white; padding: 4px 14px; border-radius: 20px; font-size: 0.8em; font-weight: 700; margin-bottom: 12px; }
+        .analogy { background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border: 2px dashed #d946ef; border-radius: 12px; padding: 18px 22px; margin: 12px 0; }
+        .analogy h4 { color: #a21caf; margin-bottom: 8px; }
+        .analogy p { color: #701a75; margin: 0; }
+        .summary-card { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 18px 22px; margin: 16px 0; border-left: 4px solid #10b981; }
+        .summary-card h4 { color: #065f46; margin-bottom: 8px; }
+        .summary-card p, .summary-card li { color: #064e3b; }
+        .toc { background: white; border-radius: 16px; padding: 24px 28px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 2px solid #e9d5ff; }
+        .toc h3 { color: #7c3aed; margin-bottom: 12px; }
+        .toc ol { padding-left: 22px; }
+        .toc li { margin-bottom: 6px; }
+        .toc a { color: #6d28d9; text-decoration: none; font-weight: 600; }
+        .toc a:hover { text-decoration: underline; }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; background: #7c3aed; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(124,58,237,0.4); font-size: 1.2em; text-decoration: none; z-index: 100; }
+        .back-to-top:hover { background: #6d28d9; transform: translateY(-2px); }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .section { padding: 20px 16px; }
+            body { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="clustering.html"><i class="fas fa-arrow-left"></i> Clustering Theory</a>
+        </nav>
+
+        <div class="header">
+            <h1>K-Means Clustering Code Walkthrough</h1>
+            <p>Every single line of the K-Means notebook explained like you are 5 years old. We cluster hotel bookings to find hidden patterns.</p>
+        </div>
+
+        <div class="download-box">
+            <strong><i class="fas fa-download"></i> Download the dataset first:</strong> <a href="datasets/hotel_reservations.csv" download="Hotel Reservations.csv">Hotel Reservations.csv</a> — Save it in the same folder as your script so <code>pd.read_csv("Hotel Reservations.csv")</code> works.
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h3><i class="fas fa-list"></i> What We'll Cover</h3>
+            <ol>
+                <li><a href="#step1">Step 1 – Import Libraries</a> (the toolbox)</li>
+                <li><a href="#step2">Step 2 – Load & Explore the Data</a> (look before you leap)</li>
+                <li><a href="#step3">Step 3 – Clean the Data</a> (remove garbage)</li>
+                <li><a href="#step4">Step 4 – Pick Features</a> (choose what matters)</li>
+                <li><a href="#step5">Step 5 – One-Hot Encode Categories</a> (turn words into numbers)</li>
+                <li><a href="#step6">Step 6 – Scale the Data</a> (make everything fair)</li>
+                <li><a href="#step7">Step 7 – Run K-Means</a> (the magic grouping)</li>
+                <li><a href="#step8">Step 8 – Evaluate with Silhouette Score</a> (how good are our groups?)</li>
+                <li><a href="#step9">Step 9 – Analyze Cluster Patterns</a> (what did we find?)</li>
+                <li><a href="#step10">Step 10 – Visualize Clusters</a> (charts!)</li>
+                <li><a href="#step11">Step 11 – The Elbow Method</a> (pick the right K)</li>
+            </ol>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 1: IMPORTS -->
+        <!-- ============================================ -->
+        <div class="section" id="step1">
+            <span class="step-badge">STEP 1</span>
+            <h2>Import Libraries</h2>
+            <p>Before we write any data science code, we need to load the <strong>tools</strong> (libraries). Think of it like opening a toolbox before fixing something.</p>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> IPython.core.display <span class="keyword">import</span> HTML
+
+HTML(<span class="string">"""
+&lt;style&gt;
+h1 { color: blue !important; }
+h2 { color: green !important; }
+&lt;/style&gt;
+"""</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>from IPython.core.display import HTML</code> — This loads a special tool that lets you inject HTML/CSS into a Jupyter notebook. It's purely cosmetic.</li>
+                    <li><code>HTML("""...""")</code> — This injects CSS styles to make <code>&lt;h1&gt;</code> headings blue and <code>&lt;h2&gt;</code> headings green <strong>inside the notebook</strong>. It has zero effect on the data science. It just makes the notebook look prettier.</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>Why is this here?</h4>
+                <p>The instructor likes pretty colors in the notebook. You can <strong>skip this cell entirely</strong> — it doesn't touch your data or your clustering. It's like painting your toolbox before opening it.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>import pandas as pd</code> — <strong>pandas</strong> is the #1 library for working with tables (rows & columns) in Python. <code>as pd</code> means "I'll call it <code>pd</code> for short instead of typing <code>pandas</code> every time."</li>
+                    <li><code>import seaborn as sns</code> — <strong>seaborn</strong> makes beautiful charts with one line of code. It sits on top of matplotlib. <code>sns</code> is its nickname (named after the character Samuel Norman Seaborn).</li>
+                    <li><code>import matplotlib.pyplot as plt</code> — <strong>matplotlib</strong> is the original charting library. <code>pyplot</code> is the part we use most. <code>plt</code> is its nickname.</li>
+                </ul>
+            </div>
+
+            <div class="analogy">
+                <h4>Analogy</h4>
+                <p><strong>pandas</strong> = your Excel spreadsheet tool. <strong>seaborn</strong> = your fancy graph designer. <strong>matplotlib</strong> = the engine that actually draws the graphs on screen.</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 2: LOAD & EXPLORE -->
+        <!-- ============================================ -->
+        <div class="section" id="step2">
+            <span class="step-badge">STEP 2</span>
+            <h2>Load & Explore the Data</h2>
+            <p>We read the hotel reservations CSV file and look at what's inside.</p>
+
+            <div class="code-block">
+<pre><span class="variable">data</span> = pd.<span class="function">read_csv</span>(<span class="string">"Hotel Reservations.csv"</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li><code>pd.read_csv("Hotel Reservations.csv")</code> — Opens the CSV file (a spreadsheet saved as text, where commas separate each column) and reads every row and column into Python.</li>
+                    <li><code>data = ...</code> — We store the entire table in a variable called <code>data</code>. Now <code>data</code> is a <strong>DataFrame</strong> — pandas' word for "a table with rows and columns."</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <p><strong>Common error:</strong> If you get <code>FileNotFoundError</code>, it means the CSV file is not in the same folder as your notebook. Move it there, or use the full path like <code>pd.read_csv("/Users/you/Downloads/Hotel Reservations.csv")</code>.</p>
+            </div>
+
+            <h3>Looking at the Data</h3>
+
+            <div class="code-block">
+<pre><span class="variable">data</span>.<span class="function">head</span>(<span class="number">100</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li><code>.head(100)</code> — Shows the <strong>first 100 rows</strong> of the table. If you write <code>.head()</code> with no number, it shows the first 5 rows. This is your first glance at the data — like flipping open a book to the first page.</li>
+                    <li>You'll see columns like: <code>Booking_ID</code>, <code>no_of_adults</code>, <code>no_of_children</code>, <code>lead_time</code>, <code>avg_price_per_room</code>, <code>booking_status</code>, etc.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">data</span>.<span class="function">info</span>()</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Prints a summary of the table: how many rows (36,275), how many columns (19), each column's name, how many non-null values, and the data type (<code>int64</code> = whole number, <code>float64</code> = decimal, <code>object</code> = text).</li>
+                    <li><strong>Why?</strong> To check for missing values (if Non-Null Count < 36275, data is missing) and to see which columns are numbers vs. text.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">data</span>.<span class="function">describe</span>(include=<span class="string">'all'</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Shows statistics for <strong>every</strong> column: count, mean, std (standard deviation), min, 25%, 50% (median), 75%, max for numbers; count, unique, top, freq for text columns.</li>
+                    <li><code>include='all'</code> — Without this, it only shows number columns. With <code>'all'</code>, it includes text columns too.</li>
+                    <li><strong>Why?</strong> To spot weirdness: Is the max value of <code>no_of_children</code> = 10? That might be an outlier (mistake).</li>
+                </ul>
+            </div>
+
+            <h3>Checking Each Column's Values</h3>
+
+            <div class="code-block">
+<pre><span class="function">print</span>(<span class="variable">data</span>[<span class="string">'type_of_meal_plan'</span>].<span class="function">value_counts</span>())
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'room_type_reserved'</span>].<span class="function">value_counts</span>())
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'market_segment_type'</span>].<span class="function">value_counts</span>())
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'booking_status'</span>].<span class="function">value_counts</span>())
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'required_car_parking_space'</span>].<span class="function">value_counts</span>())
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'repeated_guest'</span>].<span class="function">value_counts</span>())
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'no_of_previous_bookings_not_canceled'</span>].<span class="function">value_counts</span>().<span class="function">head</span>(<span class="number">10</span>))
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'no_of_adults'</span>].<span class="function">value_counts</span>())
+<span class="function">print</span>(<span class="variable">data</span>[<span class="string">'no_of_children'</span>].<span class="function">value_counts</span>())</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What <code>.value_counts()</code> does:</h4>
+                <ul>
+                    <li>For any column, it counts <strong>how many times each unique value appears</strong> and sorts from most common to least common.</li>
+                    <li>Example: <code>data['booking_status'].value_counts()</code> might show: <code>Not_Canceled: 24,390</code> and <code>Canceled: 11,885</code>.</li>
+                    <li><strong>Why run this for every column?</strong> To understand what values exist, spot outliers, and decide which columns are useful for clustering.</li>
+                    <li>Key finding: <code>no_of_children</code> has values 9 and 10 — that looks like a data entry error (outlier). Only ~3% are repeat customers, so previous booking history won't help much.</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>Analogy</h4>
+                <p>Imagine you have a giant bag of Skittles. <code>value_counts()</code> is like sorting them by color and counting: "42 red, 38 green, 35 yellow..." — You instantly see which color is most common and if there's a weird one you've never seen before.</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 3: CLEAN DATA -->
+        <!-- ============================================ -->
+        <div class="section" id="step3">
+            <span class="step-badge">STEP 3</span>
+            <h2>Clean the Data (Remove Outliers)</h2>
+            <p>We spotted that <code>no_of_children</code> has values 9 and 10 — likely data entry errors. No hotel booking realistically has 9–10 children. Let's remove them.</p>
+
+            <div class="code-block">
+<pre><span class="variable">data</span> = <span class="variable">data</span>[<span class="variable">data</span>[<span class="string">'no_of_children'</span>] &lt;= <span class="number">3</span>]
+<span class="variable">data</span>.<span class="function">reset_index</span>(inplace=<span class="keyword">True</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>data[data['no_of_children'] &lt;= 3]</code> — This is a <strong>filter</strong>. It says "keep only rows where the number of children is 3 or less." All rows with 9 or 10 children get thrown away.</li>
+                    <li><strong>How it works inside:</strong> <code>data['no_of_children'] &lt;= 3</code> creates a list of True/False for every row. Then <code>data[...]</code> keeps only the True rows.</li>
+                    <li><code>data = ...</code> — We overwrite the old <code>data</code> with the cleaned version.</li>
+                    <li><code>.reset_index(inplace=True)</code> — After removing rows, the row numbers (index) have gaps (e.g., 0, 1, 2, 5, 8...). This re-numbers them cleanly as 0, 1, 2, 3, 4... <code>inplace=True</code> means "change the existing DataFrame, don't create a new copy."</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>Why remove outliers?</h4>
+                <p>If one person says they booked a hotel for 10 children, that number is SO different from everyone else that K-Means will create a cluster JUST for that one weirdo. That's not useful. Removing outliers keeps the algorithm focused on real patterns.</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 4: PICK FEATURES -->
+        <!-- ============================================ -->
+        <div class="section" id="step4">
+            <span class="step-badge">STEP 4</span>
+            <h2>Pick the Features (Columns We'll Use)</h2>
+            <p>Not every column is useful. We pick the ones that describe the <strong>behavior</strong> of a booking.</p>
+
+            <div class="code-block">
+<pre><span class="variable">numerical_features</span> = [<span class="string">'no_of_adults'</span>, <span class="string">'no_of_children'</span>, <span class="string">'no_of_weekend_nights'</span>,
+       <span class="string">'no_of_week_nights'</span>, <span class="string">'required_car_parking_space'</span>, <span class="string">'lead_time'</span>,
+       <span class="string">'repeated_guest'</span>, <span class="string">'avg_price_per_room'</span>, <span class="string">'no_of_special_requests'</span>]</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Creates a Python list called <code>numerical_features</code> containing the <strong>names</strong> of 9 columns that are numbers.</li>
+                    <li><strong>Why these?</strong> They describe how the guest booked: how many people, how many nights, how early they booked (<code>lead_time</code>), the price, and how demanding they are (<code>special_requests</code>).</li>
+                    <li><strong>Why not <code>Booking_ID</code>?</strong> It's just a label ("INN00001") — it has no meaning. Including it would confuse the algorithm.</li>
+                    <li><strong>Why not <code>arrival_year</code>, <code>arrival_month</code>, <code>arrival_date</code>?</strong> The instructor chose to exclude calendar info and focus on booking behavior. You could include them — it's a design choice.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">categorical_features</span> = [<span class="string">'type_of_meal_plan'</span>, <span class="string">'room_type_reserved'</span>, <span class="string">'market_segment_type'</span>]</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Creates a list of 3 columns that contain <strong>text (categories)</strong>, not numbers.</li>
+                    <li><code>type_of_meal_plan</code> — e.g., "Meal Plan 1", "Not Selected"</li>
+                    <li><code>room_type_reserved</code> — e.g., "Room_Type 1", "Room_Type 6"</li>
+                    <li><code>market_segment_type</code> — e.g., "Online", "Offline"</li>
+                    <li><strong>Problem:</strong> K-Means only understands numbers. We'll need to convert these text values into numbers later (Step 5).</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">data_features</span> = <span class="variable">data</span>[<span class="variable">numerical_features</span> + <span class="variable">categorical_features</span> + [<span class="string">'booking_status'</span>]]
+<span class="variable">data_features</span>.<span class="function">head</span>(<span class="number">10</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>numerical_features + categorical_features + ['booking_status']</code> — In Python, adding lists glues them together. So this creates one big list of all 13 column names.</li>
+                    <li><code>data[...]</code> — Selects only those 13 columns from the full 19-column table. We store this smaller table in <code>data_features</code>.</li>
+                    <li><strong>Why include <code>booking_status</code>?</strong> We won't feed it to K-Means (clustering is unsupervised — no labels!). But we'll keep it nearby so we can check later: "Do certain clusters have higher cancellation rates?"</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">x_train</span> = <span class="variable">data_features</span>[<span class="variable">numerical_features</span> + <span class="variable">categorical_features</span>]
+
+<span class="comment"># There is nothing to predict in clustering</span>
+<span class="comment"># We are just storing booking status flag in another variable to</span>
+<span class="comment"># check later if the clusters have some pattern w.r.t booking cancellation</span>
+<span class="variable">y_label</span> = <span class="variable">data_features</span>[[<span class="string">'booking_status'</span>]]</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>x_train = ...</code> — This is the data we will <strong>actually feed</strong> to K-Means. It has 12 columns (9 numerical + 3 categorical). No <code>booking_status</code>.</li>
+                    <li><code>y_label = data_features[['booking_status']]</code> — We save <code>booking_status</code> separately. Double brackets <code>[[...]]</code> means "give me a DataFrame (table), not a Series (single column)." This is purely for analysis later.</li>
+                    <li><strong>Key concept:</strong> In clustering, there is <strong>NO y (target/label)</strong>. Unlike regression or classification where you predict something, clustering just groups similar things together. <code>y_label</code> here is only a convenience for post-hoc analysis.</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>Analogy</h4>
+                <p>Imagine sorting laundry without reading the labels. You group clothes by color, size, and fabric — that's clustering. The "brand" tag (booking_status) is hidden in your pocket; you'll peek at it later to see if your groups accidentally separated Nike from Adidas.</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 5: ONE-HOT ENCODING -->
+        <!-- ============================================ -->
+        <div class="section" id="step5">
+            <span class="step-badge">STEP 5</span>
+            <h2>One-Hot Encode Categorical Features</h2>
+            <p>K-Means only understands numbers, but <code>type_of_meal_plan</code> has values like "Meal Plan 1", "Not Selected"... We need to convert these to numbers.</p>
+
+            <div class="code-block">
+<pre><span class="variable">x_train</span> = pd.<span class="function">get_dummies</span>(<span class="variable">x_train</span>, columns=<span class="variable">categorical_features</span>, drop_first=<span class="keyword">False</span>)
+<span class="function">print</span>(<span class="variable">x_train</span>.columns)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>pd.get_dummies()</code> — This is <strong>one-hot encoding</strong>. For each category value, it creates a new column that is either 0 or 1.</li>
+                    <li><code>columns=categorical_features</code> — Only convert these 3 columns. Leave the numerical ones alone.</li>
+                    <li><code>drop_first=False</code> — Keep all dummy columns (don't drop the first category). For clustering, we usually keep all; for regression, we'd drop one to avoid multicollinearity.</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>What does one-hot encoding look like?</h4>
+                <p>Before: <code>type_of_meal_plan = "Meal Plan 1"</code></p>
+                <p>After: <code>type_of_meal_plan_Meal Plan 1 = 1</code>, <code>type_of_meal_plan_Meal Plan 2 = 0</code>, <code>type_of_meal_plan_Not Selected = 0</code></p>
+                <p>Each category gets its own column. If that row IS that category, it's 1. Otherwise 0. Now everything is a number!</p>
+            </div>
+
+            <div class="analogy">
+                <h4>Analogy</h4>
+                <p>Instead of writing "favorite color = blue", you write: "is_red = 0, is_blue = 1, is_green = 0". Computers love this format.</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 6: SCALING -->
+        <!-- ============================================ -->
+        <div class="section" id="step6">
+            <span class="step-badge">STEP 6</span>
+            <h2>Scale the Data (MinMaxScaler)</h2>
+            <p>This is <strong>critical</strong> for K-Means. Here's why:</p>
+
+            <div class="warning">
+                <p><strong>Problem:</strong> <code>lead_time</code> ranges from 0 to 443 days. <code>no_of_children</code> ranges from 0 to 3. If we don't scale, K-Means will think <code>lead_time</code> is 100x more important just because its numbers are bigger. That's unfair!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler
+
+<span class="variable">scaler</span> = <span class="function">MinMaxScaler</span>()
+<span class="variable">x_train</span>[<span class="variable">numerical_features</span>] = <span class="variable">scaler</span>.<span class="function">fit_transform</span>(<span class="variable">x_train</span>[<span class="variable">numerical_features</span>])
+<span class="variable">x_train</span>.<span class="function">describe</span>()
+<span class="variable">x_train_copy</span> = <span class="variable">x_train</span>.<span class="function">copy</span>()</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>from sklearn.preprocessing import MinMaxScaler</code> — Import the MinMaxScaler tool from scikit-learn (the go-to machine learning library).</li>
+                    <li><code>scaler = MinMaxScaler()</code> — Create a scaler object. It's like loading a calculator that knows how to rescale numbers.</li>
+                    <li><code>scaler.fit_transform(x_train[numerical_features])</code> — Two things happen here:
+                        <ul>
+                            <li><strong>fit</strong>: The scaler looks at each column and finds the min and max values.</li>
+                            <li><strong>transform</strong>: It rescales every value using the formula: <code>new_value = (old_value - min) / (max - min)</code>. After this, every value is between 0 and 1.</li>
+                        </ul>
+                    </li>
+                    <li><code>x_train[numerical_features] = ...</code> — Overwrite the original numbers with the scaled versions.</li>
+                    <li><code>x_train.describe()</code> — Print stats to confirm: min should be 0, max should be 1 for every numerical column.</li>
+                    <li><code>x_train_copy = x_train.copy()</code> — Save a copy of the scaled data <strong>before</strong> we add cluster labels. We'll need the "clean" version later for the elbow method and silhouette score.</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>Analogy</h4>
+                <p>Imagine comparing heights (in cm) and weights (in kg). A person who is 180 cm and 80 kg looks "farther" from 160 cm / 70 kg mostly because of the height difference (20 vs 10). MinMaxScaler puts both on a 0-to-1 scale, so they're equally important. Now height 0.67 vs 0.33 and weight 0.8 vs 0.6 — fair comparison!</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">x_train_copy</span>.<span class="function">to_csv</span>(<span class="string">"x_train.csv"</span>, index=<span class="keyword">False</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Saves the scaled feature data to a CSV file. <code>index=False</code> means don't include the row numbers as a column. This is optional — the instructor saved it for reference or reuse.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 7: RUN KMEANS -->
+        <!-- ============================================ -->
+        <div class="section" id="step7">
+            <span class="step-badge">STEP 7</span>
+            <h2>Run K-Means Clustering</h2>
+            <p>This is the <strong>main event</strong>. We tell the computer: "Please split these 36,000+ bookings into 10 groups."</p>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans
+
+<span class="variable">kmeans</span> = <span class="function">KMeans</span>(n_clusters=<span class="number">10</span>, random_state=<span class="number">0</span>, n_init=<span class="string">"auto"</span>).<span class="function">fit</span>(<span class="variable">x_train</span>)
+<span class="variable">x_train</span>[<span class="string">'cluster_labels'</span>] = <span class="variable">kmeans</span>.labels_
+<span class="variable">x_train</span>[<span class="string">'booking_status'</span>] = <span class="variable">y_label</span>[<span class="string">'booking_status'</span>]</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>from sklearn.cluster import KMeans</code> — Import the K-Means algorithm from scikit-learn.</li>
+                    <li><code>KMeans(n_clusters=10, ...)</code> — Create a K-Means model that will make <strong>10 clusters</strong> (groups numbered 0–9).</li>
+                    <li><code>random_state=0</code> — K-Means starts with random center points. Setting <code>random_state=0</code> makes it use the <strong>same</strong> random starting point every time, so you get <strong>reproducible</strong> results. Run it today or tomorrow — same answer.</li>
+                    <li><code>n_init="auto"</code> — K-Means will automatically decide how many times to run with different starting points and pick the best result. (Older scikit-learn versions defaulted to 10 runs.)</li>
+                    <li><code>.fit(x_train)</code> — <strong>This is where the magic happens.</strong> The algorithm:
+                        <ol style="margin-top: 8px;">
+                            <li>Randomly places 10 center points in the data space.</li>
+                            <li>Assigns each booking to the nearest center (using Euclidean distance).</li>
+                            <li>Recalculates each center as the average of all bookings assigned to it.</li>
+                            <li>Repeats steps 2–3 until the centers stop moving (convergence).</li>
+                        </ol>
+                    </li>
+                    <li><code>kmeans.labels_</code> — After fitting, this attribute contains a number (0–9) for each row, telling which cluster that booking belongs to.</li>
+                    <li><code>x_train['cluster_labels'] = kmeans.labels_</code> — Adds a new column to our table showing each booking's cluster.</li>
+                    <li><code>x_train['booking_status'] = y_label['booking_status']</code> — Adds back the booking status column so we can analyze cancellation patterns per cluster.</li>
+                </ul>
+            </div>
+
+            <div class="analogy">
+                <h4>Analogy</h4>
+                <p>Imagine you throw 36,000 balls on a football field. You place 10 flags randomly. Each ball rolls to its nearest flag. Then you move each flag to the center of its ball pile. Balls re-roll to the nearest flag. Repeat until flags stop moving. Now you have 10 neat piles. Each pile is a "cluster."</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 8: SILHOUETTE SCORE -->
+        <!-- ============================================ -->
+        <div class="section" id="step8">
+            <span class="step-badge">STEP 8</span>
+            <h2>Evaluate with Silhouette Score</h2>
+            <p>How do we know if our 10 clusters are any good?</p>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> silhouette_score
+
+<span class="function">silhouette_score</span>(<span class="variable">x_train_copy</span>, <span class="variable">kmeans</span>.labels_)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>from sklearn.metrics import silhouette_score</code> — Import the scoring function.</li>
+                    <li><code>silhouette_score(x_train_copy, kmeans.labels_)</code> — Computes a score from <strong>-1 to +1</strong>:
+                        <ul>
+                            <li><strong>+1</strong> = perfect clusters (each point is far from other clusters, close to its own)</li>
+                            <li><strong>0</strong> = overlapping clusters (points are on the boundary)</li>
+                            <li><strong>-1</strong> = terrible (points are in the wrong clusters)</li>
+                        </ul>
+                    </li>
+                    <li>We pass <code>x_train_copy</code> (the clean data without cluster labels) and <code>kmeans.labels_</code> (the cluster assignments).</li>
+                    <li><strong>A score of 0.15–0.3</strong> is common for real-world data. Don't expect 0.9 — real data is messy.</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>Analogy</h4>
+                <p>Silhouette score asks each student in class: "Are you sitting closer to your friends (same cluster) or closer to the other group?" If everyone says "I'm way closer to my friends," score is high. If people are confused about which group they belong to, score is low.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">x_train</span>[<span class="string">'cluster_labels'</span>].<span class="function">value_counts</span>()</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Counts how many bookings ended up in each cluster. You want clusters to be <strong>reasonably sized</strong>. If one cluster has 30,000 bookings and another has 5, that's suspicious — the algorithm barely split anything.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 9: ANALYZE PATTERNS -->
+        <!-- ============================================ -->
+        <div class="section" id="step9">
+            <span class="step-badge">STEP 9</span>
+            <h2>Analyze Cluster Patterns (Cancellation Rates)</h2>
+            <p>Now the fun part: <strong>what did the clusters find?</strong> Let's check if some clusters have higher cancellation rates.</p>
+
+            <div class="code-block">
+<pre><span class="variable">x_train</span>[<span class="string">'booking_status'</span>].<span class="function">value_counts</span>()</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Shows the overall count: how many bookings were canceled vs not canceled across ALL data. This is the baseline.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="function">print</span>(<span class="string">"cancellation rate in data:"</span>, <span class="number">100</span> * <span class="number">11884</span> / (<span class="number">11884</span> + <span class="number">24388</span>))</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Calculates the <strong>overall cancellation rate</strong>: 11,884 canceled out of 36,272 total = about <strong>32.8%</strong>.</li>
+                    <li>This is our "baseline" — if a cluster has a much higher or lower cancellation rate, that's interesting!</li>
+                </ul>
+            </div>
+
+            <h3>Calculate Cancellation Rate Per Cluster</h3>
+
+            <div class="code-block">
+<pre><span class="variable">cluster_number</span> = []
+<span class="variable">cancellation_rate</span> = []
+
+<span class="keyword">for</span> z <span class="keyword">in</span> <span class="function">range</span>(<span class="function">len</span>(<span class="function">list</span>(<span class="variable">x_train</span>[<span class="string">'cluster_labels'</span>].<span class="function">unique</span>()))):
+    <span class="variable">cluster_number</span>.<span class="function">append</span>(z)
+    <span class="variable">temp</span> = <span class="variable">x_train</span>[<span class="variable">x_train</span>[<span class="string">'cluster_labels'</span>] == z]
+    <span class="variable">temp_cancelled</span> = <span class="variable">temp</span>[<span class="variable">temp</span>[<span class="string">'booking_status'</span>] == <span class="string">'Canceled'</span>]
+    <span class="variable">temp_not_cancelled</span> = <span class="variable">temp</span>[<span class="variable">temp</span>[<span class="string">'booking_status'</span>] == <span class="string">'Not_Canceled'</span>]
+    <span class="variable">cancel</span> = (<span class="function">len</span>(<span class="variable">temp_cancelled</span>) / <span class="function">len</span>(<span class="variable">temp</span>)) * <span class="number">100</span>
+    <span class="variable">cancellation_rate</span>.<span class="function">append</span>(<span class="variable">cancel</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>cluster_number = []</code> — Create an empty list. We'll fill it with cluster numbers (0, 1, 2, ... 9).</li>
+                    <li><code>cancellation_rate = []</code> — Another empty list for each cluster's cancellation percentage.</li>
+                    <li><code>for z in range(len(list(x_train['cluster_labels'].unique()))):</code> — This is a loop that says "for each unique cluster label, do the following." Let's break it:
+                        <ul>
+                            <li><code>.unique()</code> → gets unique values: [0, 1, 2, ..., 9]</li>
+                            <li><code>list(...)</code> → converts to a Python list</li>
+                            <li><code>len(...)</code> → counts them: 10</li>
+                            <li><code>range(10)</code> → loop from 0 to 9</li>
+                        </ul>
+                    </li>
+                    <li><code>cluster_number.append(z)</code> — Add the current cluster number (0, 1, 2...) to the list.</li>
+                    <li><code>temp = x_train[x_train['cluster_labels'] == z]</code> — Filter the data to only rows belonging to cluster <code>z</code>.</li>
+                    <li><code>temp_cancelled = temp[temp['booking_status'] == 'Canceled']</code> — From that cluster, keep only canceled bookings.</li>
+                    <li><code>cancel = (len(temp_cancelled) / len(temp)) * 100</code> — Calculate: (number of cancellations / total bookings in cluster) × 100 = cancellation percentage.</li>
+                    <li><code>cancellation_rate.append(cancel)</code> — Save the percentage.</li>
+                </ul>
+            </div>
+
+            <h3>Plot the Cancellation Rates</h3>
+
+            <div class="code-block">
+<pre><span class="variable">temp</span> = pd.<span class="function">DataFrame</span>({<span class="string">'cluster'</span>: <span class="variable">cluster_number</span>, <span class="string">'cancellation'</span>: <span class="variable">cancellation_rate</span>})
+sns.<span class="function">barplot</span>(x=<span class="string">'cluster'</span>, y=<span class="string">'cancellation'</span>, data=<span class="variable">temp</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>pd.DataFrame({...})</code> — Create a new table with 2 columns: <code>cluster</code> (0–9) and <code>cancellation</code> (the percentage).</li>
+                    <li><code>sns.barplot(x='cluster', y='cancellation', data=temp)</code> — Draw a bar chart. Each bar is one cluster, and its height is the cancellation rate. You can instantly see which clusters cancel more!</li>
+                    <li><strong>Insight:</strong> If clusters 3 and 7 have 60% cancellation vs the baseline 33%, those groups of guests are high-risk. A hotel could offer them discounts or reminders.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="variable">data</span>[<span class="string">'cluster'</span>] = <span class="variable">kmeans</span>.labels_
+<span class="variable">data</span>.<span class="function">to_csv</span>(<span class="string">'clustering_results.csv'</span>)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>What this does:</h4>
+                <ul>
+                    <li>Adds the cluster label (0–9) back to the <strong>original</strong> unscaled data.</li>
+                    <li>Saves everything to a CSV file so you can open it in Excel and explore the clusters yourself.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 10: VISUALIZE CLUSTERS -->
+        <!-- ============================================ -->
+        <div class="section" id="step10">
+            <span class="step-badge">STEP 10</span>
+            <h2>Visualize Cluster Characteristics</h2>
+            <p>Now we look at what makes each cluster different. We compare both numerical and categorical features across clusters.</p>
+
+            <h3>Numerical Features per Cluster</h3>
+
+            <div class="code-block">
+<pre>plt.<span class="function">figure</span>(figsize=(<span class="number">20</span>, <span class="number">12</span>))
+
+plt.<span class="function">subplot</span>(<span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>)
+<span class="variable">temp</span> = pd.<span class="function">DataFrame</span>(<span class="variable">data</span>.<span class="function">groupby</span>(<span class="string">'cluster'</span>)[<span class="string">'no_of_adults'</span>].<span class="function">mean</span>()).<span class="function">reset_index</span>()
+sns.<span class="function">barplot</span>(x=<span class="string">'cluster'</span>, y=<span class="string">'no_of_adults'</span>, data=<span class="variable">temp</span>)
+
+plt.<span class="function">subplot</span>(<span class="number">3</span>, <span class="number">3</span>, <span class="number">2</span>)
+<span class="variable">temp</span> = pd.<span class="function">DataFrame</span>(<span class="variable">data</span>.<span class="function">groupby</span>(<span class="string">'cluster'</span>)[<span class="string">'no_of_children'</span>].<span class="function">mean</span>()).<span class="function">reset_index</span>()
+sns.<span class="function">barplot</span>(x=<span class="string">'cluster'</span>, y=<span class="string">'no_of_children'</span>, data=<span class="variable">temp</span>)
+
+<span class="comment"># ... same pattern for: no_of_weekend_nights, no_of_week_nights,</span>
+<span class="comment"># required_car_parking_space, lead_time, avg_price_per_room,</span>
+<span class="comment"># no_of_special_requests</span>
+
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line (same pattern repeated 8 times):</h4>
+                <ul>
+                    <li><code>plt.figure(figsize=(20, 12))</code> — Create a big canvas (20 inches wide, 12 tall) to hold multiple charts.</li>
+                    <li><code>plt.subplot(3, 3, 1)</code> — Divide the canvas into a 3×3 grid of charts. <code>1</code> means "put this chart in position 1 (top-left)."</li>
+                    <li><code>data.groupby('cluster')['no_of_adults'].mean()</code> — Group all rows by cluster, then calculate the <strong>average</strong> number of adults in each cluster.</li>
+                    <li><code>.reset_index()</code> — Turn the grouped result back into a regular table (with <code>cluster</code> as a column, not an index).</li>
+                    <li><code>sns.barplot(...)</code> — Draw a bar chart comparing the average across clusters.</li>
+                    <li><code>plt.show()</code> — Display all 8 charts at once.</li>
+                    <li><strong>What you learn:</strong> "Cluster 5 has families (high children count), Cluster 2 books far in advance (high lead_time), Cluster 8 pays the most (high avg_price_per_room)."</li>
+                </ul>
+            </div>
+
+            <h3>Categorical Features per Cluster</h3>
+
+            <div class="code-block">
+<pre>plt.<span class="function">figure</span>(figsize=(<span class="number">20</span>, <span class="number">12</span>))
+
+plt.<span class="function">subplot</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>)
+sns.<span class="function">countplot</span>(x=<span class="string">'cluster'</span>, hue=<span class="string">'type_of_meal_plan'</span>, data=<span class="variable">data</span>)
+
+plt.<span class="function">subplot</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>)
+sns.<span class="function">countplot</span>(x=<span class="string">'cluster'</span>, hue=<span class="string">'room_type_reserved'</span>, data=<span class="variable">data</span>)
+
+plt.<span class="function">subplot</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>)
+sns.<span class="function">countplot</span>(x=<span class="string">'cluster'</span>, hue=<span class="string">'market_segment_type'</span>, data=<span class="variable">data</span>)
+
+plt.<span class="function">subplot</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">4</span>)
+sns.<span class="function">countplot</span>(x=<span class="string">'cluster'</span>, hue=<span class="string">'repeated_guest'</span>, data=<span class="variable">data</span>)
+
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>sns.countplot(x='cluster', hue='type_of_meal_plan', data=data)</code> — A <strong>count plot</strong> with clusters on the x-axis and colored bars for each meal plan type. Unlike <code>barplot</code> (which shows averages), <code>countplot</code> shows raw <strong>counts</strong> — how many bookings in each cluster chose each meal plan.</li>
+                    <li><code>hue=...</code> — "Color the bars by this category." Each meal plan gets a different color within each cluster.</li>
+                    <li><strong>What you learn:</strong> "Cluster 0 is all Meal Plan 1 people, Cluster 4 is dominated by Online bookings, Cluster 9 books Room Type 4..."</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- STEP 11: ELBOW METHOD -->
+        <!-- ============================================ -->
+        <div class="section" id="step11">
+            <span class="step-badge">STEP 11</span>
+            <h2>The Elbow Method (Choose the Right K)</h2>
+            <p>We used K=10 earlier, but how do we know 10 is the right number? The <strong>Elbow Method</strong> helps us decide.</p>
+
+            <div class="warning">
+                <p><strong>Important:</strong> In practice, you should run the Elbow Method <strong>BEFORE</strong> finalizing your clusters, not after. The notebook does it at the end for educational purposes.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans
+
+<span class="variable">wcss</span> = []
+
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">2</span>, <span class="number">30</span>):
+    <span class="variable">kmeans</span> = <span class="function">KMeans</span>(n_clusters=i, init=<span class="string">'k-means++'</span>, n_init=<span class="string">'auto'</span>, random_state=<span class="number">42</span>)
+    <span class="variable">kmeans</span>.<span class="function">fit</span>(<span class="variable">x_train_copy</span>)
+    <span class="variable">wcss</span>.<span class="function">append</span>(<span class="variable">kmeans</span>.inertia_)</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>wcss = []</code> — Create an empty list to store the "Within-Cluster Sum of Squares" for each value of K. <strong>WCSS</strong> measures how spread out the points are within their clusters — lower = tighter clusters.</li>
+                    <li><code>for i in range(2, 30):</code> — Try K = 2, 3, 4, 5, ... all the way to 29. That's 28 different experiments!</li>
+                    <li><code>KMeans(n_clusters=i, init='k-means++', ...)</code> — Create a K-Means model with <code>i</code> clusters. <code>'k-means++'</code> is a smarter way to pick initial center points (avoids putting two centers right next to each other).</li>
+                    <li><code>kmeans.fit(x_train_copy)</code> — Run K-Means on the clean scaled data. We use <code>x_train_copy</code> because <code>x_train</code> now has extra columns (cluster_labels, booking_status).</li>
+                    <li><code>kmeans.inertia_</code> — After fitting, this is the WCSS value. It's the sum of (distance from each point to its cluster center)² for all points.</li>
+                    <li><code>wcss.append(...)</code> — Save the WCSS for this K value.</li>
+                </ul>
+            </div>
+
+            <h3>Plot the Elbow Curve</h3>
+
+            <div class="code-block">
+<pre><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+K = <span class="function">range</span>(<span class="number">2</span>, <span class="number">30</span>)
+plt.<span class="function">plot</span>(K, <span class="variable">wcss</span>, <span class="string">'bx-'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Values of K'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Within cluster Sum of Squared distances'</span>)
+plt.<span class="function">title</span>(<span class="string">'The Elbow Method'</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="line-explain">
+                <h4>Line-by-line:</h4>
+                <ul>
+                    <li><code>K = range(2, 30)</code> — The x-axis values: 2, 3, 4, ..., 29.</li>
+                    <li><code>plt.plot(K, wcss, 'bx-')</code> — Plot K (x-axis) vs WCSS (y-axis). <code>'bx-'</code> means: <code>b</code> = blue, <code>x</code> = X markers, <code>-</code> = connect with lines.</li>
+                    <li><code>plt.xlabel(...)</code>, <code>plt.ylabel(...)</code>, <code>plt.title(...)</code> — Label the axes and title.</li>
+                    <li><code>plt.show()</code> — Display the chart.</li>
+                </ul>
+            </div>
+
+            <div class="eli5">
+                <h4>How to read the Elbow Chart</h4>
+                <p>The chart looks like a bent arm. WCSS always goes down as K increases (more clusters = smaller groups = less spread). But at some point, adding more clusters barely helps — that's the <strong>"elbow"</strong> where the curve bends sharply.</p>
+                <p><strong>Look for the elbow:</strong> If the curve bends around K=5 or K=8, that's your sweet spot. Before the elbow: too few clusters (big, messy groups). After the elbow: too many clusters (splitting hairs for no reason).</p>
+            </div>
+
+            <div class="analogy">
+                <h4>Analogy</h4>
+                <p>Imagine organizing a classroom into study groups. With 2 groups, kids are very different from each other within each group (high WCSS). With 30 groups of 1 person each, WCSS = 0 (everyone is perfectly grouped — with themselves!). The sweet spot is somewhere in between — say 5 groups where kids are similar enough within each group but you haven't over-fragmented.</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- SUMMARY -->
+        <!-- ============================================ -->
+        <div class="section" style="border-left-color: #10b981;">
+            <span class="step-badge" style="background: linear-gradient(135deg, #10b981, #059669);">SUMMARY</span>
+            <h2>The Full Pipeline in Plain English</h2>
+
+            <div class="summary-card">
+                <h4>What We Did (7 Steps)</h4>
+                <ol style="padding-left: 22px; line-height: 2.2;">
+                    <li><strong>Loaded</strong> hotel booking data (36,275 rows, 19 columns).</li>
+                    <li><strong>Explored</strong> it with <code>head()</code>, <code>info()</code>, <code>describe()</code>, and <code>value_counts()</code>.</li>
+                    <li><strong>Cleaned</strong> it by removing outlier rows (children > 3).</li>
+                    <li><strong>Selected features</strong> (9 numerical + 3 categorical). Kept <code>booking_status</code> aside for later analysis.</li>
+                    <li><strong>One-hot encoded</strong> the 3 text columns so K-Means can understand them.</li>
+                    <li><strong>Scaled</strong> numerical columns to 0–1 so no single column dominates.</li>
+                    <li><strong>Ran K-Means</strong> with K=10, checked the silhouette score, then analyzed which clusters have high/low cancellation rates.</li>
+                </ol>
+            </div>
+
+            <div class="summary-card">
+                <h4>Key Takeaways</h4>
+                <ul style="padding-left: 22px; line-height: 2;">
+                    <li><strong>Clustering is unsupervised</strong> — no labels, no "right answer." The algorithm finds natural groups.</li>
+                    <li><strong>Always scale</strong> before K-Means — otherwise big-number columns bully small-number columns.</li>
+                    <li><strong>Use the Elbow Method</strong> to pick K — don't just guess.</li>
+                    <li><strong>Silhouette Score</strong> tells you how well-separated clusters are (higher = better).</li>
+                    <li><strong>The real value</strong> is in the analysis AFTER clustering — what makes each cluster unique? Can you act on it?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 30px; margin-bottom: 40px;">
+            <a href="clustering.html" style="background: #7c3aed; color: white; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;"><i class="fas fa-arrow-left"></i> Clustering Theory</a>
+            <a href="index.html" style="background: #7c3aed; color: white; padding: 14px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;">Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
+
+    <script>
+        // Back to top button
+        const btn = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+        });
+        btn.style.display = 'none';
+    </script>
+</body>
+</html>

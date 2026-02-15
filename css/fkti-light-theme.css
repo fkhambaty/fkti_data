@@ -495,6 +495,58 @@ code {
 
 pre code { padding: 0 !important; }
 
+/* ═══ Code & terminal blocks: always high-contrast readable (site-wide) ═══ */
+.code-block,
+.terminal-mock {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 16px 20px !important;
+  border-radius: 12px !important;
+  font-family: 'Fira Code', 'SF Mono', Menlo, monospace !important;
+  font-size: 0.95em !important;
+  font-weight: 500 !important;
+  border: 1px solid #334155 !important;
+}
+.code-block pre,
+.code-block code,
+.terminal-mock pre,
+.terminal-mock code,
+.code-block *,
+.terminal-mock * {
+  background: transparent !important;
+  color: #f8fafc !important;
+  margin: 0 !important;
+  border: none !important;
+}
+.terminal-mock .prompt { color: #22c55e !important; font-weight: 600 !important; }
+.terminal-mock .output { color: #e2e8f0 !important; }
+
+/* Copy button on code blocks (top right) */
+.code-block, .terminal-mock, .fkti-pre-wrap { position: relative !important; }
+.fkti-copy-btn {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background: rgba(255,255,255,0.15) !important;
+  color: #f8fafc !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  z-index: 5 !important;
+  transition: background 0.2s, color 0.2s !important;
+}
+.fkti-copy-btn:hover { background: rgba(255,255,255,0.3) !important; color: #fff !important; }
+.fkti-copy-btn.fkti-copy-done { background: #22c55e !important; color: #fff !important; }
+.fkti-pre-wrap { background: #0f172a !important; padding: 16px 20px !important; border-radius: 12px !important; margin: 16px 0 !important; }
+.fkti-pre-wrap pre { background: transparent !important; margin: 0 !important; color: #f8fafc !important; }
+
 .hljs-comment { color: var(--gray-500) !important; }
 .hljs-keyword { color: #a626a4 !important; }
 .hljs-string { color: #50a14f !important; }

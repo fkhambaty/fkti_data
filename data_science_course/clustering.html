@@ -305,8 +305,9 @@
 <body>
     <div class="container">
         <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i><span>Home</span></a>
             <a href="boosting.html"><i class="fas fa-arrow-left"></i><span>Previous: Boosting</span></a>
-            <a href="index.html"><i class="fas fa-home"></i><span>Course Hub</span></a>
+            <a href="index.html"><i class="fas fa-th-large"></i><span>Course Hub</span></a>
         </nav>
 
         <div class="header">
@@ -728,95 +729,391 @@ plt.<span class="function">show</span>()
             </div>
         </div>
 
-        <!-- Part 4: Other Clustering Algorithms -->
+        <!-- Part 4: Hierarchical Clustering (Deep Dive) -->
         <div class="section">
-            <h2><i class="fas fa-layer-group"></i> Part 4: Other Clustering Algorithms</h2>
+            <h2><i class="fas fa-sitemap"></i> Part 4: Hierarchical Clustering</h2>
 
-            <div class="algo-card">
-                <h4>📊 Hierarchical Clustering</h4>
-                <p style="color: #475569;"><strong>Idea:</strong> Build a tree (dendrogram) showing how clusters merge step by step.</p>
-                <p style="color: #475569; margin-top: 10px;"><strong>Pro:</strong> Don't need to specify K upfront | <strong>Con:</strong> Slow for large datasets</p>
+            <h3>👶 The Problem in Plain English</h3>
+            <p>With K-Means, you have to pick the number of groups (K) <em>before</em> running the algorithm. But what if you don't know how many groups there are? What if you want to <strong>see all possible groupings</strong> — from "every item is its own group" down to "everything is one big group" — and then <em>pick</em> the best level?</p>
+            <p>That's what <strong>Hierarchical Clustering</strong> does. It builds a <strong>tree of merges</strong> (called a <em>dendrogram</em>) that shows you exactly how items combined, step by step. You look at the tree and decide where to "cut" it.</p>
+
+            <div class="analogy-box">
+                <h4>🏫 The School Analogy</h4>
+                <p>Imagine a school with 30 students. At first, each student is their own "group of 1."</p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>The two most similar students (say, best friends Alice and Bob) merge into a group of 2.</li>
+                    <li>Next, the two closest things merge — maybe Carol joins Alice+Bob, or two other students merge.</li>
+                    <li>This keeps going: small groups merge into bigger groups.</li>
+                    <li>Eventually, everyone is in one giant group.</li>
+                </ol>
+                <p style="margin-top: 10px;">The <strong>dendrogram</strong> is like a family tree that records every merge. You can "cut" the tree at any height to get 2, 3, 4, or any number of groups.</p>
             </div>
 
-            <div class="code-block">
-<pre><span class="keyword">from</span> scipy.cluster.hierarchy <span class="keyword">import</span> dendrogram, linkage
-<span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> AgglomerativeClustering
+            <h3>How It Works — Step by Step</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0;">
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">1</div>
+                    <div><h5 style="color: #4f46e5;">Start: every point is its own cluster</h5><p style="color: #475569; margin: 0;">If you have 100 data points, you start with 100 clusters (each containing 1 point).</p></div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">2</div>
+                    <div><h5 style="color: #4f46e5;">Find the two closest clusters</h5><p style="color: #475569; margin: 0;">Measure distance between every pair. The closest pair merges into one cluster. Now you have 99 clusters.</p></div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">3</div>
+                    <div><h5 style="color: #4f46e5;">Repeat</h5><p style="color: #475569; margin: 0;">Keep merging the two closest clusters. 99 → 98 → 97 → … → 1. Every merge is recorded.</p></div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">4</div>
+                    <div><h5 style="color: #166534;">Read the dendrogram and cut</h5><p style="color: #475569; margin: 0;">The tree shows all merges. You "cut" at a height that gives you the number of clusters you want. A big vertical gap in the dendrogram = a natural place to cut.</p></div>
+                </div>
+            </div>
 
-<span class="comment"># Create dendrogram to visualize hierarchy</span>
+            <h3>What Is a Dendrogram?</h3>
+            <p>A dendrogram is a tree diagram. The <strong>X-axis</strong> has the data points (or their indices). The <strong>Y-axis</strong> is the distance at which clusters merge. The higher two branches connect, the more different those clusters are.</p>
+
+            <div class="graph-figure">
+                <h4 style="color: #4338ca; margin-bottom: 10px;">Dendrogram — How to Read It</h4>
+                <svg class="axis-chart" viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg">
+                    <defs><marker id="arrDend" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#475569"/></marker></defs>
+                    <!-- Y axis -->
+                    <line x1="50" y1="230" x2="50" y2="20" stroke="#475569" stroke-width="2" marker-end="url(#arrDend)"/>
+                    <text x="8" y="35" fill="#334155" font-size="12" font-weight="600">Distance</text>
+                    <!-- X axis -->
+                    <line x1="50" y1="230" x2="400" y2="230" stroke="#475569" stroke-width="2"/>
+                    <text x="180" y="255" fill="#334155" font-size="12">Data Points</text>
+                    <!-- Y ticks -->
+                    <text x="35" y="230" fill="#64748b" font-size="10" text-anchor="end">0</text>
+                    <text x="35" y="180" fill="#64748b" font-size="10" text-anchor="end">2</text>
+                    <text x="35" y="130" fill="#64748b" font-size="10" text-anchor="end">4</text>
+                    <text x="35" y="80" fill="#64748b" font-size="10" text-anchor="end">6</text>
+                    <!-- Points on X axis -->
+                    <text x="100" y="245" fill="#6366f1" font-size="11" font-weight="600" text-anchor="middle">A</text>
+                    <text x="150" y="245" fill="#6366f1" font-size="11" font-weight="600" text-anchor="middle">B</text>
+                    <text x="220" y="245" fill="#22c55e" font-size="11" font-weight="600" text-anchor="middle">C</text>
+                    <text x="280" y="245" fill="#22c55e" font-size="11" font-weight="600" text-anchor="middle">D</text>
+                    <text x="350" y="245" fill="#ef4444" font-size="11" font-weight="600" text-anchor="middle">E</text>
+                    <!-- Merge A+B at distance 1 -->
+                    <line x1="100" y1="230" x2="100" y2="205" stroke="#6366f1" stroke-width="2"/>
+                    <line x1="150" y1="230" x2="150" y2="205" stroke="#6366f1" stroke-width="2"/>
+                    <line x1="100" y1="205" x2="150" y2="205" stroke="#6366f1" stroke-width="2"/>
+                    <!-- Merge C+D at distance 1.5 -->
+                    <line x1="220" y1="230" x2="220" y2="193" stroke="#22c55e" stroke-width="2"/>
+                    <line x1="280" y1="230" x2="280" y2="193" stroke="#22c55e" stroke-width="2"/>
+                    <line x1="220" y1="193" x2="280" y2="193" stroke="#22c55e" stroke-width="2"/>
+                    <!-- Merge AB + CD at distance 4 -->
+                    <line x1="125" y1="205" x2="125" y2="130" stroke="#8b5cf6" stroke-width="2"/>
+                    <line x1="250" y1="193" x2="250" y2="130" stroke="#8b5cf6" stroke-width="2"/>
+                    <line x1="125" y1="130" x2="250" y2="130" stroke="#8b5cf6" stroke-width="2"/>
+                    <!-- Merge ABCD + E at distance 7 -->
+                    <line x1="187" y1="130" x2="187" y2="60" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="350" y1="230" x2="350" y2="60" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="187" y1="60" x2="350" y2="60" stroke="#ef4444" stroke-width="2"/>
+                    <!-- Cut line -->
+                    <line x1="45" y1="155" x2="400" y2="155" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4"/>
+                    <text x="370" y="150" fill="#f59e0b" font-size="11" font-weight="700">✂️ Cut here → 3 clusters</text>
+                </svg>
+                <figcaption>Dendrogram: A &amp; B merge first (closest). C &amp; D merge next. Then AB joins CD. Finally E joins all. Cut the dashed line to get 3 clusters: {A,B}, {C,D}, {E}.</figcaption>
+            </div>
+
+            <div class="example-box">
+                <h4>🛒 Real-World Example: Customer Segmentation</h4>
+                <p><strong>Problem:</strong> An online store has 500 customers. You want to group them by spending behavior, but you don't know how many segments exist. Should it be 2? 3? 5?</p>
+                <p style="margin-top: 10px;"><strong>Solution:</strong> Run hierarchical clustering. Look at the dendrogram. You see a big gap between 3 and 4 clusters — so you cut at 3. The 3 groups turn out to be: "Big Spenders," "Occasional Buyers," and "Window Shoppers." Now marketing can tailor campaigns for each group!</p>
+            </div>
+
+            <h3>Linkage Methods — How to Measure "Distance Between Clusters"</h3>
+            <p>When two clusters have multiple points, how do you measure the distance between them? There are several strategies:</p>
+            <table class="data-table">
+                <tr><th>Method</th><th>How It Measures Distance</th><th>When to Use</th></tr>
+                <tr><td><strong>Ward</strong> (most common)</td><td>Minimizes the total variance within clusters when merging</td><td>Default choice; produces compact, evenly sized clusters</td></tr>
+                <tr><td><strong>Single</strong></td><td>Distance between the two <em>closest</em> points of each cluster</td><td>Can find chain-like, elongated clusters</td></tr>
+                <tr><td><strong>Complete</strong></td><td>Distance between the two <em>farthest</em> points of each cluster</td><td>Produces compact clusters; sensitive to outliers</td></tr>
+                <tr><td><strong>Average</strong></td><td>Average distance between all pairs of points</td><td>Compromise between single and complete</td></tr>
+            </table>
+
+            <h3>Python Code — Full Example</h3>
+            <div class="code-block">
+<pre><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">from</span> scipy.cluster.hierarchy <span class="keyword">import</span> dendrogram, linkage, fcluster
+<span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> AgglomerativeClustering
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+<span class="comment"># --- Step 1: Prepare data (e.g. customer data) ---</span>
+<span class="comment"># Columns: Annual Spending ($), Visit Frequency (per month)</span>
+X = np.array([[120, 15], [130, 14], [22, 3], [28, 4],
+              [300, 25], [280, 22], [25, 2], [135, 16]])
+
+scaler = <span class="function">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># --- Step 2: Build the dendrogram ---</span>
 linkage_matrix = <span class="function">linkage</span>(X_scaled, method=<span class="string">'ward'</span>)
 
-plt.<span class="function">figure</span>(figsize=(<span class="number">12</span>, <span class="number">6</span>))
-<span class="function">dendrogram</span>(linkage_matrix)
-plt.<span class="function">title</span>(<span class="string">'Hierarchical Clustering Dendrogram'</span>)
-plt.<span class="function">xlabel</span>(<span class="string">'Sample Index'</span>)
-plt.<span class="function">ylabel</span>(<span class="string">'Distance'</span>)
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">5</span>))
+<span class="function">dendrogram</span>(linkage_matrix, labels=[<span class="string">'C1'</span>,<span class="string">'C2'</span>,<span class="string">'C3'</span>,<span class="string">'C4'</span>,<span class="string">'C5'</span>,<span class="string">'C6'</span>,<span class="string">'C7'</span>,<span class="string">'C8'</span>])
+plt.<span class="function">title</span>(<span class="string">'Customer Dendrogram'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Customer'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Distance (Ward)'</span>)
+plt.<span class="function">axhline</span>(y=<span class="number">4</span>, color=<span class="string">'red'</span>, linestyle=<span class="string">'--'</span>, label=<span class="string">'Cut at 3 clusters'</span>)
+plt.<span class="function">legend</span>()
 plt.<span class="function">show</span>()
 
-<span class="comment"># Cut at desired number of clusters</span>
-hierarchical = <span class="function">AgglomerativeClustering</span>(n_clusters=<span class="number">3</span>)
-clusters = hierarchical.<span class="function">fit_predict</span>(X_scaled)</pre>
+<span class="comment"># --- Step 3: Cut the dendrogram to get cluster labels ---</span>
+labels_from_dendro = <span class="function">fcluster</span>(linkage_matrix, t=<span class="number">3</span>, criterion=<span class="string">'maxclust'</span>)
+<span class="function">print</span>(<span class="string">"Cluster labels:"</span>, labels_from_dendro)
+
+<span class="comment"># --- OR: Use sklearn (same result, easier for pipelines) ---</span>
+model = <span class="function">AgglomerativeClustering</span>(n_clusters=<span class="number">3</span>, linkage=<span class="string">'ward'</span>)
+labels_sklearn = model.<span class="function">fit_predict</span>(X_scaled)
+<span class="function">print</span>(<span class="string">"Sklearn labels:"</span>, labels_sklearn)</pre>
             </div>
 
-            <div class="algo-card">
-                <h4>🎯 DBSCAN (Density-Based Clustering)</h4>
-                <p style="color: #475569;"><strong>Idea:</strong> Find dense regions separated by sparse regions. Points in sparse areas = outliers!</p>
-                <p style="color: #475569; margin-top: 10px;"><strong>Pro:</strong> Finds arbitrary shapes, detects outliers | <strong>Con:</strong> Needs to tune eps and min_samples</p>
+            <div class="key-point">
+                <h4>🤔 When to Use Hierarchical Clustering Instead of K-Means</h4>
+                <ul style="margin-left: 20px; color: #3730a3;">
+                    <li>You <strong>don't know K</strong> and want to explore different numbers of clusters visually.</li>
+                    <li>You want to see the <strong>hierarchy</strong> — which items are most similar, which merge early vs late.</li>
+                    <li>Your dataset is <strong>small to medium</strong> (under ~10,000 points). For large data, K-Means is faster.</li>
+                    <li>You need <strong>non-spherical clusters</strong> (single/complete linkage can find chains or bands).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 5: DBSCAN (Deep Dive) -->
+        <div class="section">
+            <h2><i class="fas fa-dot-circle"></i> Part 5: DBSCAN — Density-Based Clustering</h2>
+
+            <h3>👶 The Problem in Plain English</h3>
+            <p>K-Means finds <strong>round blobs</strong>. But what if your data has <strong>weird shapes</strong>? Like a crescent moon and a circle, or clusters with <strong>outliers</strong> (noise points that don't belong anywhere)? K-Means will force every point into a cluster, even the outliers. DBSCAN solves both problems: it finds clusters of <em>any shape</em> and says "this point is noise" for outliers.</p>
+
+            <div class="analogy-box">
+                <h4>🏙️ The City Neighborhoods Analogy</h4>
+                <p>Imagine looking at a city from above at night. You see <strong>dense clusters of lights</strong> — those are neighborhoods. Between them, there are <strong>dark, empty areas</strong>. And a few <strong>lone houses</strong> in the middle of nowhere.</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Dense areas (many lights close together)</strong> = Clusters</li>
+                    <li><strong>Dark gaps</strong> = Cluster boundaries</li>
+                    <li><strong>Lone houses far from everything</strong> = Outliers / Noise</li>
+                </ul>
+                <p style="margin-top: 10px;">DBSCAN does exactly this: it finds dense regions of points and calls sparse points "noise."</p>
             </div>
 
+            <h3>Two Parameters You Need to Know</h3>
+            <table class="data-table">
+                <tr><th>Parameter</th><th>What It Means</th><th>Analogy</th></tr>
+                <tr><td><strong>eps</strong> (epsilon)</td><td>The radius of the neighborhood around each point. "How close do two points need to be to be considered neighbors?"</td><td>If you shine a flashlight with radius <code>eps</code> from any point, which other points are lit up?</td></tr>
+                <tr><td><strong>min_samples</strong></td><td>The minimum number of points within <code>eps</code> distance to form a dense region (a "core point").</td><td>A neighborhood needs at least <code>min_samples</code> houses within flashlight range to count as a real neighborhood.</td></tr>
+            </table>
+
+            <h3>Three Types of Points</h3>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin: 20px 0;">
+                <div style="flex: 1; min-width: 200px; background: #dcfce7; border-radius: 15px; padding: 20px; border: 2px solid #22c55e; text-align: center;">
+                    <div style="font-size: 2em;">🟢</div>
+                    <h5 style="color: #166534;">Core Point</h5>
+                    <p style="color: #064e3b; font-size: 0.95em;">Has at least <code>min_samples</code> neighbors within <code>eps</code>. It is in the heart of a cluster.</p>
+                </div>
+                <div style="flex: 1; min-width: 200px; background: #fef3c7; border-radius: 15px; padding: 20px; border: 2px solid #f59e0b; text-align: center;">
+                    <div style="font-size: 2em;">🟡</div>
+                    <h5 style="color: #92400e;">Border Point</h5>
+                    <p style="color: #78350f; font-size: 0.95em;">Within <code>eps</code> of a core point, but doesn't have enough neighbors to be a core itself. It's on the edge.</p>
+                </div>
+                <div style="flex: 1; min-width: 200px; background: #fee2e2; border-radius: 15px; padding: 20px; border: 2px solid #ef4444; text-align: center;">
+                    <div style="font-size: 2em;">🔴</div>
+                    <h5 style="color: #b91c1c;">Noise Point</h5>
+                    <p style="color: #991b1b; font-size: 0.95em;">Not within <code>eps</code> of any core point. It's an outlier — doesn't belong to any cluster. Labeled <code>-1</code>.</p>
+                </div>
+            </div>
+
+            <h3>How DBSCAN Works — Step by Step</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0;">
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">1</div>
+                    <div><h5 style="color: #4f46e5;">Pick any unvisited point</h5><p style="color: #475569; margin: 0;">Start with a random point.</p></div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">2</div>
+                    <div><h5 style="color: #4f46e5;">Check its neighborhood</h5><p style="color: #475569; margin: 0;">Count how many points are within <code>eps</code> distance. If count &ge; <code>min_samples</code> → it's a <strong>core point</strong>. Start a new cluster!</p></div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">3</div>
+                    <div><h5 style="color: #4f46e5;">Expand the cluster</h5><p style="color: #475569; margin: 0;">Add all neighbors to this cluster. Check <em>their</em> neighbors too — if they are also core points, keep expanding. The cluster grows like a chain through dense regions.</p></div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">4</div>
+                    <div><h5 style="color: #4f46e5;">Move to the next unvisited point</h5><p style="color: #475569; margin: 0;">If it's a core point → start another cluster. If not enough neighbors → mark it as <strong>noise (-1)</strong>.</p></div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 15px;">
+                    <div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; flex-shrink: 0;">5</div>
+                    <div><h5 style="color: #166534;">Done when all points are visited</h5><p style="color: #475569; margin: 0;">Every point is either in a cluster or labeled noise.</p></div>
+                </div>
+            </div>
+
+            <div class="graph-figure">
+                <h4 style="color: #4338ca; margin-bottom: 10px;">DBSCAN Visualization — Core, Border, and Noise Points</h4>
+                <svg class="axis-chart" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+                    <defs><marker id="arrDB" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#475569"/></marker></defs>
+                    <line x1="40" y1="220" x2="380" y2="220" stroke="#475569" stroke-width="2" marker-end="url(#arrDB)"/>
+                    <line x1="40" y1="220" x2="40" y2="20" stroke="#475569" stroke-width="2" marker-end="url(#arrDB)"/>
+                    <!-- Cluster 1 (dense) -->
+                    <circle cx="110" cy="150" r="40" fill="none" stroke="#6366f1" stroke-width="1" stroke-dasharray="4"/>
+                    <circle cx="100" cy="140" r="7" fill="#22c55e" stroke="#166534" stroke-width="2"/><title>Core</title>
+                    <circle cx="115" cy="155" r="7" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+                    <circle cx="95" cy="160" r="7" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+                    <circle cx="120" cy="140" r="7" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+                    <circle cx="130" cy="165" r="5" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/><title>Border</title>
+                    <!-- Cluster 2 (dense) -->
+                    <circle cx="280" cy="80" r="38" fill="none" stroke="#6366f1" stroke-width="1" stroke-dasharray="4"/>
+                    <circle cx="270" cy="75" r="7" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+                    <circle cx="290" cy="85" r="7" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+                    <circle cx="280" cy="70" r="7" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+                    <circle cx="295" cy="68" r="5" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/>
+                    <!-- Noise -->
+                    <circle cx="200" cy="190" r="6" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/><title>Noise</title>
+                    <circle cx="340" cy="180" r="6" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
+                    <!-- Legend -->
+                    <circle cx="60" cy="30" r="6" fill="#22c55e" stroke="#166534" stroke-width="2"/><text x="72" y="35" fill="#334155" font-size="11">Core point</text>
+                    <circle cx="170" cy="30" r="5" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/><text x="180" y="35" fill="#334155" font-size="11">Border point</text>
+                    <circle cx="280" cy="30" r="6" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/><text x="292" y="35" fill="#334155" font-size="11">Noise (-1)</text>
+                </svg>
+                <figcaption>Green = core points (enough neighbors). Yellow = border (near a core). Red = noise/outliers (too far from everything).</figcaption>
+            </div>
+
+            <div class="example-box">
+                <h4>🗺️ Real-World Example: Finding Fraud Clusters</h4>
+                <p><strong>Problem:</strong> A bank has 1 million transactions. Most are normal, but some are fraudulent. Fraud transactions form small, dense clusters (e.g. same ATM, same time window), while isolated odd transactions are just noise.</p>
+                <p style="margin-top: 10px;"><strong>Why DBSCAN?</strong> K-Means would force every transaction into a cluster — even the isolated weird ones. DBSCAN says "these 15 transactions form a suspicious cluster, and <em>these 3 lonely transactions are just noise</em>." The bank investigates only the real clusters.</p>
+            </div>
+
+            <h3>Python Code — Full Example</h3>
             <div class="code-block">
-<pre><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> DBSCAN
+<pre><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> DBSCAN
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_moons
 
-<span class="comment"># DBSCAN</span>
-dbscan = <span class="function">DBSCAN</span>(
-    eps=<span class="number">0.5</span>,           <span class="comment"># Maximum distance between points in same cluster</span>
-    min_samples=<span class="number">5</span>     <span class="comment"># Minimum points to form a dense region</span>
-)
-clusters = dbscan.<span class="function">fit_predict</span>(X_scaled)
+<span class="comment"># --- Step 1: Generate data with two crescent-moon shapes ---</span>
+X, _ = <span class="function">make_moons</span>(n_samples=<span class="number">300</span>, noise=<span class="number">0.08</span>, random_state=<span class="number">42</span>)
 
-<span class="comment"># -1 means outlier!</span>
-n_clusters = len(<span class="function">set</span>(clusters)) - (<span class="number">1</span> <span class="keyword">if</span> -<span class="number">1</span> <span class="keyword">in</span> clusters <span class="keyword">else</span> <span class="number">0</span>)
-n_outliers = <span class="function">list</span>(clusters).<span class="function">count</span>(-<span class="number">1</span>)
+<span class="comment"># Add some outliers</span>
+outliers = np.array([[<span class="number">-1.5</span>, <span class="number">0.8</span>], [<span class="number">2.5</span>, <span class="number">-0.5</span>], [<span class="number">0.5</span>, <span class="number">1.5</span>]])
+X = np.<span class="function">vstack</span>([X, outliers])
 
+<span class="comment"># --- Step 2: Scale the data ---</span>
+scaler = <span class="function">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># --- Step 3: Run DBSCAN ---</span>
+dbscan = <span class="function">DBSCAN</span>(eps=<span class="number">0.3</span>, min_samples=<span class="number">5</span>)
+labels = dbscan.<span class="function">fit_predict</span>(X_scaled)
+
+<span class="comment"># --- Step 4: Analyze results ---</span>
+n_clusters = len(<span class="function">set</span>(labels)) - (<span class="number">1</span> <span class="keyword">if</span> -<span class="number">1</span> <span class="keyword">in</span> labels <span class="keyword">else</span> <span class="number">0</span>)
+n_noise = <span class="function">list</span>(labels).<span class="function">count</span>(-<span class="number">1</span>)
 <span class="function">print</span>(<span class="string">f"Clusters found: {n_clusters}"</span>)
-<span class="function">print</span>(<span class="string">f"Outliers: {n_outliers}"</span>)
+<span class="function">print</span>(<span class="string">f"Noise points: {n_noise}"</span>)
 
-<span class="comment"># Visualize</span>
-plt.<span class="function">scatter</span>(X_scaled[:, <span class="number">0</span>], X_scaled[:, <span class="number">1</span>], c=clusters, cmap=<span class="string">'viridis'</span>)
-plt.<span class="function">title</span>(<span class="string">'DBSCAN Clustering (outliers in purple)'</span>)
+<span class="comment"># --- Step 5: Visualize ---</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">6</span>))
+<span class="comment"># Cluster points</span>
+plt.<span class="function">scatter</span>(X_scaled[labels != -<span class="number">1</span>, <span class="number">0</span>], X_scaled[labels != -<span class="number">1</span>, <span class="number">1</span>],
+           c=labels[labels != -<span class="number">1</span>], cmap=<span class="string">'viridis'</span>, s=<span class="number">40</span>, label=<span class="string">'Clusters'</span>)
+<span class="comment"># Noise points (red X)</span>
+plt.<span class="function">scatter</span>(X_scaled[labels == -<span class="number">1</span>, <span class="number">0</span>], X_scaled[labels == -<span class="number">1</span>, <span class="number">1</span>],
+           c=<span class="string">'red'</span>, marker=<span class="string">'x'</span>, s=<span class="number">100</span>, linewidths=<span class="number">2</span>, label=<span class="string">'Noise'</span>)
+plt.<span class="function">title</span>(<span class="string">'DBSCAN: Two Moon Shapes + Outliers Detected'</span>)
+plt.<span class="function">legend</span>()
 plt.<span class="function">show</span>()</pre>
             </div>
 
-            <h3>Algorithm Comparison</h3>
+            <h3>How to Choose eps and min_samples</h3>
+            <p>This is the hardest part. Here are practical tips:</p>
+            <ul style="margin-left: 22px; line-height: 1.9;">
+                <li><strong>min_samples:</strong> A good default is <code>2 * number_of_features</code>. For 2D data → 4 or 5.</li>
+                <li><strong>eps:</strong> Use the <strong>k-distance graph</strong>: for each point, compute the distance to its k-th nearest neighbor (k = min_samples). Sort these distances and plot them. Look for an "elbow" — that's your eps.</li>
+            </ul>
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> NearestNeighbors
+
+<span class="comment"># k-distance graph to find eps</span>
+k = <span class="number">5</span>  <span class="comment"># same as min_samples</span>
+nn = <span class="function">NearestNeighbors</span>(n_neighbors=k)
+nn.<span class="function">fit</span>(X_scaled)
+distances, _ = nn.<span class="function">kneighbors</span>(X_scaled)
+
+<span class="comment"># Sort the k-th nearest neighbor distances</span>
+k_distances = np.<span class="function">sort</span>(distances[:, k-<span class="number">1</span>])
+
+plt.<span class="function">figure</span>(figsize=(<span class="number">8</span>, <span class="number">4</span>))
+plt.<span class="function">plot</span>(k_distances)
+plt.<span class="function">xlabel</span>(<span class="string">'Points (sorted by distance)'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">f'{k}-th nearest neighbor distance'</span>)
+plt.<span class="function">title</span>(<span class="string">'k-Distance Graph (find the elbow for eps)'</span>)
+plt.<span class="function">axhline</span>(y=<span class="number">0.3</span>, color=<span class="string">'red'</span>, linestyle=<span class="string">'--'</span>, label=<span class="string">'eps = 0.3'</span>)
+plt.<span class="function">legend</span>()
+plt.<span class="function">show</span>()</pre>
+            </div>
+
+            <div class="key-point">
+                <h4>🤔 When to Use DBSCAN Instead of K-Means</h4>
+                <ul style="margin-left: 20px; color: #3730a3;">
+                    <li>Your clusters are <strong>non-spherical</strong> (crescent moons, rings, irregular blobs).</li>
+                    <li>You have <strong>outliers/noise</strong> that shouldn't be forced into a cluster.</li>
+                    <li>You <strong>don't know K</strong> and don't want to guess.</li>
+                    <li>Cluster sizes are <strong>very different</strong> (one big cluster, one tiny one).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 6: Algorithm Comparison -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 6: Which Algorithm Should I Use?</h2>
+            <p>Here's a decision guide. Think about your data and pick the right tool:</p>
+
             <table class="data-table">
                 <tr>
                     <th>Algorithm</th>
                     <th>Cluster Shape</th>
                     <th>Handles Outliers</th>
                     <th>Need K?</th>
+                    <th>Speed</th>
                     <th>Best For</th>
                 </tr>
                 <tr>
                     <td><strong>K-Means</strong></td>
-                    <td>Spherical</td>
-                    <td>No</td>
+                    <td>Spherical / round blobs</td>
+                    <td>No (forces all points into clusters)</td>
                     <td>Yes</td>
-                    <td>Well-separated, similar-size clusters</td>
+                    <td>Very fast</td>
+                    <td>Large data, well-separated round clusters</td>
                 </tr>
                 <tr>
                     <td><strong>Hierarchical</strong></td>
-                    <td>Any</td>
+                    <td>Any (depends on linkage)</td>
                     <td>No</td>
-                    <td>Optional</td>
-                    <td>Exploring cluster hierarchy</td>
+                    <td>Optional (cut dendrogram)</td>
+                    <td>Slow for large data</td>
+                    <td>Small-medium data, exploring hierarchy</td>
                 </tr>
                 <tr>
                     <td><strong>DBSCAN</strong></td>
-                    <td>Any</td>
-                    <td>Yes!</td>
+                    <td>Any shape!</td>
+                    <td>Yes! (labels them -1)</td>
                     <td>No</td>
+                    <td>Medium</td>
                     <td>Irregular shapes, outlier detection</td>
                 </tr>
             </table>
+
+            <div class="analogy-box">
+                <h4>🎯 Quick Decision Tree</h4>
+                <p><strong>Do you know how many clusters?</strong> → Yes → <strong>K-Means</strong> (fast and simple).</p>
+                <p><strong>Do you have outliers?</strong> → Yes → <strong>DBSCAN</strong> (labels noise).</p>
+                <p><strong>Want to explore cluster hierarchy?</strong> → Yes → <strong>Hierarchical</strong> (dendrogram).</p>
+                <p><strong>Data is huge (millions of rows)?</strong> → <strong>K-Means</strong> (fastest).</p>
+                <p><strong>Clusters are weird shapes?</strong> → <strong>DBSCAN</strong>.</p>
+            </div>
         </div>
 
         <!-- Interactive: Test yourself -->
@@ -1344,6 +1641,12 @@ silhouette_score(x_train_copy, clustering.labels_)</pre>
             </div>
         </div>
 
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 16px; padding: 24px; margin: 30px 0; border: 2px solid #bfdbfe; text-align: center;">
+            <h3 style="color: #1e40af; margin-bottom: 10px;"><i class="fas fa-code"></i> Want to see the code?</h3>
+            <p style="color: #1e3a8a; margin-bottom: 16px;">Every single line of the K-Means notebook explained like you are 5 years old.</p>
+            <a href="kmeans-code-walkthrough.html" style="display: inline-block; background: linear-gradient(135deg, #7c3aed, #db2777); color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.05em;"><i class="fas fa-arrow-right"></i> K-Means Code Walkthrough</a>
+        </div>
+
         <div class="nav-buttons">
             <a href="boosting.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: Boosting</a>
             <a href="deep-learning.html" class="nav-btn next">Next: Deep Learning <i class="fas fa-arrow-right"></i></a>
@@ -1379,5 +1682,6 @@ silhouette_score(x_train_copy, clustering.labels_)</pre>
             });
         });
     </script>
+    <script src="../js/code-copy.js"></script>
 </body>
 </html>
