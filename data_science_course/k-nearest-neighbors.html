@@ -354,9 +354,53 @@
             </div>
         </div>
 
-        <!-- Part 5: Why Scaling Matters -->
+        <!-- Part 5: Weighted kNN -->
         <div class="section">
-            <h2><i class="fas fa-balance-scale"></i> Part 5: Why Scaling Matters</h2>
+            <h2><i class="fas fa-weight-hanging"></i> Part 5: Weighted kNN</h2>
+            <p>So far we assumed every one of the K neighbors gets <strong>one vote</strong>. In <strong>weighted kNN</strong>, closer neighbors get <strong>more influence</strong> than farther ones. A neighbor right next to the new point should matter more than one that barely made it into the "top K."</p>
+
+            <h3>👶 In One Sentence</h3>
+            <p><strong>Weighted kNN</strong> means: "Not all neighbors are equal. The closer a neighbor is, the more we trust their vote." We assign a <strong>weight</strong> to each neighbor (usually based on distance) and use those weights when voting or averaging.</p>
+
+            <div class="eli5-box">
+                <h4>👶 Example (Like You're 5)</h4>
+                <p>You're asking 5 people whether to get pizza or pasta. Two live next door (very close), three live down the street (farther). In <strong>uniform</strong> kNN, all 5 get one vote. In <strong>weighted</strong> kNN, the two next-door neighbors' votes count more—so if both say "pizza," their opinion can outweigh the three who said "pasta."</p>
+            </div>
+
+            <h3>How the Weights Work</h3>
+            <p>The most common choice is <strong>inverse distance</strong>: weight = 1 / distance. So:</p>
+            <ul style="margin-left: 22px; margin-bottom: 15px;">
+                <li>Neighbor at distance 1 → weight = 1</li>
+                <li>Neighbor at distance 2 → weight = 0.5</li>
+                <li>Neighbor at distance 4 → weight = 0.25</li>
+            </ul>
+            <p>Closer neighbors get a larger weight and therefore more say in the vote. For classification we <strong>sum the weights</strong> per class (instead of counting votes) and pick the class with the highest total weight. For regression we take the <strong>weighted average</strong> of the neighbors' target values.</p>
+
+            <div class="analogy-box">
+                <h4>📐 Inverse Distance Formula</h4>
+                <p>If neighbor <em>i</em> is at distance <em>d<sub>i</sub></em>, its weight is <strong>w<sub>i</sub> = 1 / d<sub>i</sub></strong>. To avoid division by zero when a neighbor is at distance 0 (same point), sklearn and others often use a small epsilon or treat that point as having the largest weight.</p>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 When to Use Weighted kNN</h4>
+                <ul>
+                    <li><strong>Use <code>weights='distance'</code></strong> when your K neighbors can be at very different distances—e.g. one is very close and four are farther. Letting the close one(s) dominate often improves predictions.</li>
+                    <li><strong>Use <code>weights='uniform'</code></strong> (default) when you want simplicity or when all K neighbors tend to be at similar distances. Uniform is also more stable if distances are noisy.</li>
+                    <li>You can try both and compare with cross-validation; on many datasets <code>weights='distance'</code> gives a small accuracy boost.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># Weighted kNN: closer neighbors count more</span>
+knn_weighted = <span class="function">KNeighborsClassifier</span>(n_neighbors=<span class="number">5</span>, weights=<span class="string">'distance'</span>)
+knn_weighted.<span class="function">fit</span>(X_train_scaled, y_train)
+y_pred = knn_weighted.<span class="function">predict</span>(X_test_scaled)</pre>
+            </div>
+        </div>
+
+        <!-- Part 6: Why Scaling Matters -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 6: Why Scaling Matters</h2>
             <p>kNN uses <strong>distance</strong>. If one feature is in thousands (e.g. income) and another is 0–10 (e.g. satisfaction score), the big numbers will dominate and the small feature will barely matter.</p>
 
             <div class="warning-box">
@@ -370,9 +414,9 @@
             </div>
         </div>
 
-        <!-- Part 6: kNN in Python -->
+        <!-- Part 7: kNN in Python -->
         <div class="section">
-            <h2><i class="fas fa-code"></i> Part 6: kNN in Python</h2>
+            <h2><i class="fas fa-code"></i> Part 7: kNN in Python</h2>
             <p>Using scikit-learn: load data, split, scale, fit, predict, and (optionally) find the best K.</p>
 
             <div class="code-block">
@@ -418,7 +462,7 @@ plt.<span class="function">title</span>(<span class="string">'Finding Optimal K'
 plt.<span class="function">show</span>()</pre>
             </div>
 
-            <p><strong>Optional:</strong> Use <code>weights='distance'</code> so closer neighbors count more than farther ones. Default is <code>uniform</code> (each of the K neighbors has one vote).</p>
+            <p><strong>Weighted kNN:</strong> Use <code>weights='distance'</code> so closer neighbors count more (see <strong>Part 5: Weighted kNN</strong>). Default is <code>weights='uniform'</code> (one vote per neighbor).</p>
 
             <h3>Using Hamming Distance (Binary / Categorical Data)</h3>
             <p>When your features are binary (0/1) or one-hot encoded, use <code>metric='hamming'</code> so "nearest" means "fewest disagreeing positions":</p>
@@ -430,9 +474,9 @@ y_pred = knn_hamming.<span class="function">predict</span>(X_binary_test)</pre>
             </div>
         </div>
 
-        <!-- Part 7: When to Use kNN / Pros & Cons -->
+        <!-- Part 8: When to Use kNN / Pros & Cons -->
         <div class="section">
-            <h2><i class="fas fa-check-circle"></i> Part 7: When to Use kNN — Pros & Cons</h2>
+            <h2><i class="fas fa-check-circle"></i> Part 8: When to Use kNN — Pros & Cons</h2>
             <table class="data-table">
                 <tr>
                     <th>Pros</th>
@@ -467,13 +511,14 @@ y_pred = knn_hamming.<span class="function">predict</span>(X_binary_test)</pre>
             </div>
         </div>
 
-        <!-- Part 8: Summary -->
+        <!-- Part 9: Summary -->
         <div class="section">
-            <h2><i class="fas fa-bookmark"></i> Part 8: Summary</h2>
+            <h2><i class="fas fa-bookmark"></i> Part 9: Summary</h2>
             <ul style="margin-left: 22px; line-height: 2.2;">
                 <li><strong>kNN</strong> = for a new point, find the K nearest training points and let them vote; majority class (or average for regression) wins.</li>
                 <li>No real "training"—just store the data; all work happens at <strong>prediction time</strong>.</li>
-                <li>Use a <strong>distance metric</strong> (Euclidean, Manhattan, or <strong>Hamming</strong> for binary/categorical data); optionally <strong>weights='distance'</strong> so closer neighbors matter more.</li>
+                <li>Use a <strong>distance metric</strong> (Euclidean, Manhattan, or <strong>Hamming</strong> for binary/categorical data).</li>
+                <li><strong>Weighted kNN</strong>: use <code>weights='distance'</code> so closer neighbors have more influence (inverse distance); default is <code>uniform</code> (one vote each).</li>
                 <li><strong>Always scale</strong> features so no single feature dominates distance.</li>
                 <li>Choose <strong>K</strong> with cross-validation; avoid K=1 (noisy) and very large K (too smooth).</li>
                 <li>Good for small–medium data and as a baseline; watch out for speed and curse of dimensionality on large or high-dimensional data.</li>
