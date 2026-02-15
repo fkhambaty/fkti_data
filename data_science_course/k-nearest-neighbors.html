@@ -291,6 +291,24 @@
             <p style="background: #f1f5f9; padding: 15px 20px; border-radius: 12px; font-family: 'Fira Code', monospace;">distance = |x₂ − x₁| + |y₂ − y₁| + …</p>
             <p>Useful when movement is along axes (e.g. streets) or when outliers should matter less than in Euclidean.</p>
 
+            <h3>Hamming Distance</h3>
+            <p>Hamming distance counts <strong>how many positions are different</strong> between two vectors of the same length. Each position is compared: if they match, add 0; if they differ, add 1. It's the number of "flips" needed to turn one into the other.</p>
+            <p style="background: #f1f5f9; padding: 15px 20px; border-radius: 12px; font-family: 'Fira Code', monospace;">distance = (number of positions where value₁ ≠ value₂)</p>
+            <p>Often we use the <strong>normalized</strong> Hamming distance: (number of differing positions) / (total number of positions), so the result is between 0 (identical) and 1 (all different).</p>
+
+            <div class="eli5-box">
+                <h4>👶 Example (Like You're 5)</h4>
+                <p>Two binary strings: <strong>A = 1 0 1 1 0</strong> and <strong>B = 1 1 1 0 0</strong>.</p>
+                <p>Compare position by position: same, <strong>different</strong>, same, <strong>different</strong>, same. So 2 positions differ → <strong>Hamming distance = 2</strong>. Normalized: 2/5 = 0.4.</p>
+                <p>Use Hamming when your features are <strong>binary (0/1)</strong> or <strong>categorical encoded as 0/1</strong> (e.g. one-hot). Then "distance" means "how many features disagree?"</p>
+            </div>
+
+            <div class="analogy-box">
+                <h4>🔤 When to Use Hamming</h4>
+                <p><strong>Binary or categorical data:</strong> Survey answers (Yes=1, No=0), DNA bases, binary flags (has_fraud, is_premium), or one-hot encoded categories. Euclidean doesn't make sense for "different category" the same way—Hamming counts "how many attributes disagree."</p>
+                <p style="margin-top: 10px;"><strong>In sklearn:</strong> Use <code>metric='hamming'</code> when your feature matrix is binary or multi-label (0/1 per position). The classifier will use Hamming distance to find nearest neighbors.</p>
+            </div>
+
             <table class="data-table">
                 <tr>
                     <th>Metric</th>
@@ -303,6 +321,10 @@
                 <tr>
                     <td><strong>manhattan</strong></td>
                     <td>High-dimensional or grid-like structure; less sensitive to large differences in one feature</td>
+                </tr>
+                <tr>
+                    <td><strong>hamming</strong></td>
+                    <td>Binary (0/1) or categorical data; counts how many positions differ</td>
                 </tr>
                 <tr>
                     <td><strong>minkowski</strong></td>
@@ -397,6 +419,15 @@ plt.<span class="function">show</span>()</pre>
             </div>
 
             <p><strong>Optional:</strong> Use <code>weights='distance'</code> so closer neighbors count more than farther ones. Default is <code>uniform</code> (each of the K neighbors has one vote).</p>
+
+            <h3>Using Hamming Distance (Binary / Categorical Data)</h3>
+            <p>When your features are binary (0/1) or one-hot encoded, use <code>metric='hamming'</code> so "nearest" means "fewest disagreeing positions":</p>
+            <div class="code-block">
+<pre><span class="comment"># For binary or one-hot encoded features</span>
+knn_hamming = <span class="function">KNeighborsClassifier</span>(n_neighbors=<span class="number">5</span>, metric=<span class="string">'hamming'</span>)
+knn_hamming.<span class="function">fit</span>(X_binary_train, y_train)
+y_pred = knn_hamming.<span class="function">predict</span>(X_binary_test)</pre>
+            </div>
         </div>
 
         <!-- Part 7: When to Use kNN / Pros & Cons -->
@@ -442,7 +473,7 @@ plt.<span class="function">show</span>()</pre>
             <ul style="margin-left: 22px; line-height: 2.2;">
                 <li><strong>kNN</strong> = for a new point, find the K nearest training points and let them vote; majority class (or average for regression) wins.</li>
                 <li>No real "training"—just store the data; all work happens at <strong>prediction time</strong>.</li>
-                <li>Use a <strong>distance metric</strong> (usually Euclidean); optionally <strong>weights='distance'</strong> so closer neighbors matter more.</li>
+                <li>Use a <strong>distance metric</strong> (Euclidean, Manhattan, or <strong>Hamming</strong> for binary/categorical data); optionally <strong>weights='distance'</strong> so closer neighbors matter more.</li>
                 <li><strong>Always scale</strong> features so no single feature dominates distance.</li>
                 <li>Choose <strong>K</strong> with cross-validation; avoid K=1 (noisy) and very large K (too smooth).</li>
                 <li>Good for small–medium data and as a baseline; watch out for speed and curse of dimensionality on large or high-dimensional data.</li>
