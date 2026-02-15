@@ -398,9 +398,71 @@ y_pred = knn_weighted.<span class="function">predict</span>(X_test_scaled)</pre>
             </div>
         </div>
 
-        <!-- Part 6: Why Scaling Matters -->
+        <!-- Part 6: Anomaly Detection with kNN -->
         <div class="section">
-            <h2><i class="fas fa-balance-scale"></i> Part 6: Why Scaling Matters</h2>
+            <h2><i class="fas fa-exclamation-triangle"></i> Part 6: Anomaly Detection with kNN</h2>
+            <p><strong>Anomaly detection</strong> means finding points that don't "belong"—they're unusual compared to the rest. Fraudulent transactions, faulty sensors, rare diseases, or defective products are examples. kNN is a natural fit: <strong>points that are far from their neighbors are potential anomalies.</strong></p>
+
+            <h3>👶 In One Sentence</h3>
+            <p><strong>kNN for anomaly detection</strong> means: "If a point has no close neighbors, it's suspicious. Normal points sit near others; anomalies sit alone." We use the <strong>distance to the Kth nearest neighbor</strong> (or the average distance to K neighbors) as an <strong>anomaly score</strong>: the larger the distance, the more likely the point is an anomaly.</p>
+
+            <div class="eli5-box">
+                <h4>👶 Example (Like You're 5)</h4>
+                <p>Imagine a playground. Most kids are in clusters—near friends. One kid is standing far from everyone. That kid is an <strong>anomaly</strong>. We don't need labels (who's "normal" or "weird"); we just notice: "This point's nearest neighbors are very far away." In kNN terms: for that kid, the <strong>distance to the 5th nearest kid</strong> is huge compared to other kids. So we flag them as different.</p>
+            </div>
+
+            <h3>How It Works</h3>
+            <ol style="margin-left: 22px; line-height: 2;">
+                <li>For each point, find its <strong>K nearest neighbors</strong> and get their distances.</li>
+                <li>Use the <strong>distance to the Kth neighbor</strong> (or the <strong>mean distance</strong> to all K neighbors) as that point's <strong>anomaly score</strong>.</li>
+                <li>Points with a <strong>high</strong> score are far from others → flag them as anomalies. You can set a <strong>threshold</strong> (e.g. "score &gt; 10") or use a <strong>percentile</strong> (e.g. top 5% of scores are anomalies).</li>
+            </ol>
+
+            <div class="analogy-box">
+                <h4>📐 Why Distance to Kth Neighbor?</h4>
+                <p>Using the Kth neighbor (not the 1st) makes the score more stable: one random nearby point doesn't hide an otherwise isolated point. So we ask: "How far do I have to go to find K friends?" If you have to go very far, you're an outlier.</p>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 When to Use kNN for Anomaly Detection</h4>
+                <ul>
+                    <li><strong>Unsupervised:</strong> You don't have labels like "normal" vs "fraud." You just have data and want to find rare or unusual points.</li>
+                    <li><strong>Fraud, intrusion, quality:</strong> Transactions, network traffic, sensor readings, manufacturing—anything where "different" means "worth checking."</li>
+                    <li><strong>Scaling matters:</strong> Same as for classification—scale features so distance is meaningful.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> NearestNeighbors
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Scale the data</span>
+scaler = <span class="function">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># Fit KNN: we only need distances, not labels</span>
+K = <span class="number">5</span>
+nn = <span class="function">NearestNeighbors</span>(n_neighbors=K)
+nn.<span class="function">fit</span>(X_scaled)
+
+<span class="comment"># Distance to Kth neighbor for each point (anomaly score)</span>
+distances, indices = nn.<span class="function">kneighbors</span>(X_scaled)
+<span class="comment"># distances[:, -1] = distance to the Kth (last) neighbor</span>
+anomaly_score = distances[:, -<span class="number">1</span>]
+
+<span class="comment"># Flag top 5% as anomalies (e.g. threshold = 95th percentile)</span>
+threshold = np.<span class="function">percentile</span>(anomaly_score, <span class="number">95</span>)
+is_anomaly = anomaly_score &gt; threshold
+<span class="function">print</span>(<span class="string">f"Number of anomalies: {is_anomaly.sum()}"</span>)</pre>
+            </div>
+
+            <p><strong>Alternative:</strong> scikit-learn's <code>LocalOutlierFactor</code> (LOF) is a kNN-based anomaly detector that compares each point's local density to its neighbors'. Use <code>from sklearn.neighbors import LocalOutlierFactor</code> and <code>fit_predict(X)</code> for a -1 (anomaly) / 1 (normal) label per point.</p>
+        </div>
+
+        <!-- Part 7: Why Scaling Matters -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 7: Why Scaling Matters</h2>
             <p>kNN uses <strong>distance</strong>. If one feature is in thousands (e.g. income) and another is 0–10 (e.g. satisfaction score), the big numbers will dominate and the small feature will barely matter.</p>
 
             <div class="warning-box">
@@ -414,9 +476,9 @@ y_pred = knn_weighted.<span class="function">predict</span>(X_test_scaled)</pre>
             </div>
         </div>
 
-        <!-- Part 7: kNN in Python -->
+        <!-- Part 8: kNN in Python -->
         <div class="section">
-            <h2><i class="fas fa-code"></i> Part 7: kNN in Python</h2>
+            <h2><i class="fas fa-code"></i> Part 8: kNN in Python</h2>
             <p>Using scikit-learn: load data, split, scale, fit, predict, and (optionally) find the best K.</p>
 
             <div class="code-block">
@@ -474,9 +536,9 @@ y_pred = knn_hamming.<span class="function">predict</span>(X_binary_test)</pre>
             </div>
         </div>
 
-        <!-- Part 8: When to Use kNN / Pros & Cons -->
+        <!-- Part 9: When to Use kNN / Pros & Cons -->
         <div class="section">
-            <h2><i class="fas fa-check-circle"></i> Part 8: When to Use kNN — Pros & Cons</h2>
+            <h2><i class="fas fa-check-circle"></i> Part 9: When to Use kNN — Pros & Cons</h2>
             <table class="data-table">
                 <tr>
                     <th>Pros</th>
@@ -511,14 +573,15 @@ y_pred = knn_hamming.<span class="function">predict</span>(X_binary_test)</pre>
             </div>
         </div>
 
-        <!-- Part 9: Summary -->
+        <!-- Part 10: Summary -->
         <div class="section">
-            <h2><i class="fas fa-bookmark"></i> Part 9: Summary</h2>
+            <h2><i class="fas fa-bookmark"></i> Part 10: Summary</h2>
             <ul style="margin-left: 22px; line-height: 2.2;">
                 <li><strong>kNN</strong> = for a new point, find the K nearest training points and let them vote; majority class (or average for regression) wins.</li>
                 <li>No real "training"—just store the data; all work happens at <strong>prediction time</strong>.</li>
                 <li>Use a <strong>distance metric</strong> (Euclidean, Manhattan, or <strong>Hamming</strong> for binary/categorical data).</li>
                 <li><strong>Weighted kNN</strong>: use <code>weights='distance'</code> so closer neighbors have more influence (inverse distance); default is <code>uniform</code> (one vote each).</li>
+                <li><strong>Anomaly detection</strong>: points far from their K nearest neighbors get a high anomaly score; use <code>NearestNeighbors</code> and the distance to the Kth neighbor (or <code>LocalOutlierFactor</code>) to flag outliers.</li>
                 <li><strong>Always scale</strong> features so no single feature dominates distance.</li>
                 <li>Choose <strong>K</strong> with cross-validation; avoid K=1 (noisy) and very large K (too smooth).</li>
                 <li>Good for small–medium data and as a baseline; watch out for speed and curse of dimensionality on large or high-dimensional data.</li>
