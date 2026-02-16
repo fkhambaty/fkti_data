@@ -1,0 +1,2619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Modelling - Kimball Dimensional Modeling | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #22c55e;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --border-color: #334155;
+            --card-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            --glow-blue: 0 0 20px rgba(59,130,246,0.3);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .bg-animation .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .bg-animation .orb:nth-child(1) {
+            width: 400px; height: 400px;
+            background: var(--accent-blue);
+            top: 10%; left: 10%;
+            animation-delay: 0s;
+        }
+        .bg-animation .orb:nth-child(2) {
+            width: 300px; height: 300px;
+            background: var(--accent-purple);
+            top: 60%; right: 10%;
+            animation-delay: -7s;
+        }
+        .bg-animation .orb:nth-child(3) {
+            width: 350px; height: 350px;
+            background: var(--accent-pink);
+            bottom: 10%; left: 30%;
+            animation-delay: -14s;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 50px) scale(0.9); }
+            75% { transform: translate(30px, 20px) scale(1.05); }
+        }
+
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        .top-nav {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-nav a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .top-nav a:hover { color: var(--accent-cyan); transform: translateX(-3px); }
+        .nav-title { font-size: 1.1em; color: var(--text-primary); font-weight: 800; }
+
+        /* Progress Bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            z-index: 200;
+            transition: width 0.1s;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.95em;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            margin-bottom: 25px;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        .hero .credit {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        .hero .credit a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        /* Star Schema Animation in Hero */
+        .star-schema-hero {
+            margin: 40px auto 0;
+            max-width: 500px;
+            position: relative;
+        }
+        .star-schema-hero svg {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Table of Contents */
+        .toc-section {
+            margin: 40px auto 60px;
+            max-width: 900px;
+        }
+        .toc-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .toc-header h2 {
+            font-size: 2em;
+            color: var(--text-primary);
+        }
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .toc-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .toc-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-blue);
+        }
+        .toc-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            flex-shrink: 0;
+        }
+        .toc-card-text h3 { font-size: 1em; font-weight: 700; margin-bottom: 4px; }
+        .toc-card-text p { font-size: 0.85em; color: var(--text-secondary); }
+
+        /* Section Styles */
+        .content-section {
+            margin-bottom: 80px;
+            scroll-margin-top: 80px;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.1;
+        }
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.3em;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+        .section-header h2 {
+            font-size: 2.2em;
+            font-weight: 900;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .section-header p {
+            font-size: 1.15em;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Topic Cards */
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .topic-card:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        }
+        .topic-card .card-accent {
+            position: absolute;
+            top: 0; left: 0;
+            width: 5px;
+            height: 100%;
+            border-radius: 20px 0 0 20px;
+        }
+        .topic-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .topic-title .icon-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        .topic-title h3 {
+            font-size: 1.4em;
+            font-weight: 800;
+        }
+        .topic-title .toggle-icon {
+            margin-left: auto;
+            color: var(--text-secondary);
+            transition: transform 0.3s;
+            font-size: 1.2em;
+        }
+        .topic-title .toggle-icon.open { transform: rotate(180deg); }
+
+        .topic-body { padding-left: 57px; }
+        .topic-body.collapsed { display: none; }
+
+        /* Analogy Box */
+        .analogy-box {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .analogy-box .analogy-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+        }
+        .analogy-box .analogy-text {
+            font-size: 1.05em;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        /* Example Box */
+        .example-box {
+            background: rgba(249, 115, 22, 0.08);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin: 20px 0;
+        }
+        .example-box .example-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .example-box p, .example-box ul {
+            color: var(--text-secondary);
+            font-size: 1em;
+        }
+        .example-box ul { padding-left: 20px; }
+        .example-box li { margin-bottom: 6px; }
+
+        /* Key Point Box */
+        .key-point {
+            background: rgba(139, 92, 246, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 0 12px 12px 0;
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+        .key-point .label {
+            font-weight: 800;
+            color: var(--accent-purple);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .warning-box .warning-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        .warning-box p { color: var(--accent-red); font-weight: 600; }
+
+        /* Diagram Containers */
+        .diagram-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .diagram-label {
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .comparison-table th {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+            padding: 14px 18px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95em;
+        }
+        .comparison-table td {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        .comparison-table tr:hover td {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* SCD Type Cards */
+        .scd-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .scd-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        .scd-card:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+        }
+        .scd-card .scd-badge {
+            display: inline-flex;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .scd-card h4 { font-size: 1.15em; margin-bottom: 10px; }
+        .scd-card p { font-size: 0.95em; color: var(--text-secondary); margin-bottom: 10px; }
+
+        /* Interactive Tabs */
+        .tabs-container { margin: 25px 0; }
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover { border-color: var(--accent-blue); }
+        .tab-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Step List */
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        .step-list li {
+            counter-increment: step-counter;
+            padding: 15px 20px 15px 65px;
+            position: relative;
+            margin-bottom: 12px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35px;
+            height: 35px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9em;
+        }
+
+        /* Interactive Quiz */
+        .quiz-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .quiz-box h4 {
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+        .quiz-option {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95em;
+            color: var(--text-primary);
+            text-align: left;
+        }
+        .quiz-option:hover { border-color: var(--accent-blue); }
+        .quiz-option.correct {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+        .quiz-option.wrong {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: none;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* Back to Top */
+        .back-to-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 99;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+        .back-to-top-btn.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-btn:hover {
+            background: var(--accent-purple);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        .page-footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2em; }
+            .hero .subtitle { font-size: 1.05em; }
+            .section-header h2 { font-size: 1.6em; }
+            .topic-card { padding: 20px; }
+            .topic-body { padding-left: 0; }
+            .topic-title h3 { font-size: 1.15em; }
+            .toc-grid { grid-template-columns: 1fr; }
+            .scd-grid { grid-template-columns: 1fr; }
+            .tab-buttons { flex-direction: column; }
+            .analogy-box { flex-direction: column; }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Pulse animation for diagrams */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .diagram-container:hover svg {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Glow text */
+        @keyframes glowText {
+            0%, 100% { text-shadow: 0 0 5px rgba(59,130,246,0.3); }
+            50% { text-shadow: 0 0 20px rgba(59,130,246,0.6); }
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+        /* Mini Table Diagrams */
+        .mini-table {
+            display: inline-block;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            margin: 8px;
+            vertical-align: top;
+            min-width: 160px;
+        }
+        .mini-table .table-header {
+            padding: 8px 14px;
+            font-weight: 800;
+            font-size: 0.85em;
+            text-align: center;
+            color: white;
+        }
+        .mini-table .table-row {
+            padding: 5px 14px;
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .mini-table .table-row:last-child { border-bottom: none; }
+
+        .tables-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            align-items: flex-start;
+            margin: 20px 0;
+        }
+
+        .arrow-connector {
+            display: flex;
+            align-items: center;
+            color: var(--accent-blue);
+            font-size: 1.5em;
+            padding: 0 5px;
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress" id="readingProgress"></div>
+
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <div class="page-wrapper">
+        <!-- Navigation -->
+        <nav class="top-nav">
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Learning Hub</a>
+            <span class="nav-title"><i class="fas fa-cubes"></i> Data Modelling</span>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-badge"><i class="fas fa-star"></i> The Kimball Way - Made Simple!</div>
+                <h1>Data Modelling for Dummies</h1>
+                <p class="subtitle">
+                    Imagine you're building the world's smartest filing cabinet. That's data modelling! 
+                    We'll teach you the Kimball way to organize data so anyone can find answers in seconds.
+                </p>
+                <p class="credit">
+                    Based on Kimball Dimensional Modeling Techniques by Ralph Kimball &amp; Margy Ross | 
+                    Explained simply by <a href="https://www.linkedin.com/in/fakhruddinkhambaty/" target="_blank">Fakhruddin Khambaty</a>
+                </p>
+
+                <!-- Animated Star Schema SVG -->
+                <div class="star-schema-hero">
+                    <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Connection lines -->
+                        <line x1="250" y1="200" x2="100" y2="80" stroke="#3b82f6" stroke-width="2" opacity="0.4">
+                            <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="250" y1="200" x2="400" y2="80" stroke="#8b5cf6" stroke-width="2" opacity="0.4">
+                            <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="250" y1="200" x2="60" y2="300" stroke="#22c55e" stroke-width="2" opacity="0.4">
+                            <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" begin="1s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="250" y1="200" x2="440" y2="300" stroke="#f97316" stroke-width="2" opacity="0.4">
+                            <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+                        </line>
+                        <line x1="250" y1="200" x2="250" y2="370" stroke="#ec4899" stroke-width="2" opacity="0.4">
+                            <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" begin="2s" repeatCount="indefinite"/>
+                        </line>
+
+                        <!-- Center Fact Table -->
+                        <rect x="195" y="160" width="110" height="80" rx="15" fill="#1e293b" stroke="#3b82f6" stroke-width="2">
+                            <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="250" y="195" text-anchor="middle" fill="#3b82f6" font-weight="800" font-size="13" font-family="Nunito">FACT</text>
+                        <text x="250" y="215" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Nunito">Sales Table</text>
+                        <text x="250" y="230" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">$$$ Measures</text>
+
+                        <!-- Date Dimension -->
+                        <rect x="50" y="50" width="100" height="60" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+                        <text x="100" y="78" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="11" font-family="Nunito">Date</text>
+                        <text x="100" y="95" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">When?</text>
+
+                        <!-- Product Dimension -->
+                        <rect x="350" y="50" width="100" height="60" rx="12" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+                        <text x="400" y="78" text-anchor="middle" fill="#a78bfa" font-weight="700" font-size="11" font-family="Nunito">Product</text>
+                        <text x="400" y="95" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">What?</text>
+
+                        <!-- Store Dimension -->
+                        <rect x="10" y="270" width="100" height="60" rx="12" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+                        <text x="60" y="298" text-anchor="middle" fill="#4ade80" font-weight="700" font-size="11" font-family="Nunito">Store</text>
+                        <text x="60" y="315" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">Where?</text>
+
+                        <!-- Customer Dimension -->
+                        <rect x="390" y="270" width="100" height="60" rx="12" fill="#1e293b" stroke="#f97316" stroke-width="1.5"/>
+                        <text x="440" y="298" text-anchor="middle" fill="#fb923c" font-weight="700" font-size="11" font-family="Nunito">Customer</text>
+                        <text x="440" y="315" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">Who?</text>
+
+                        <!-- Promotion Dimension -->
+                        <rect x="200" y="340" width="100" height="50" rx="12" fill="#1e293b" stroke="#ec4899" stroke-width="1.5"/>
+                        <text x="250" y="365" text-anchor="middle" fill="#f472b6" font-weight="700" font-size="11" font-family="Nunito">Promotion</text>
+                        <text x="250" y="380" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">Why?</text>
+
+                        <!-- Animated data particles -->
+                        <circle r="3" fill="#3b82f6">
+                            <animateMotion dur="2s" repeatCount="indefinite" path="M100,80 L250,200"/>
+                        </circle>
+                        <circle r="3" fill="#8b5cf6">
+                            <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,80 L250,200"/>
+                        </circle>
+                        <circle r="3" fill="#22c55e">
+                            <animateMotion dur="3s" repeatCount="indefinite" path="M60,300 L250,200"/>
+                        </circle>
+                        <circle r="3" fill="#f97316">
+                            <animateMotion dur="2.2s" repeatCount="indefinite" path="M440,300 L250,200"/>
+                        </circle>
+                    </svg>
+                    <p class="diagram-label">A Star Schema - The heart of dimensional modelling. Fact table in the center, dimensions around it like a star!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Table of Contents -->
+        <section class="toc-section" id="toc">
+            <div class="toc-header">
+                <h2>What's Inside This Guide?</h2>
+                <p style="color: var(--text-secondary); margin-top: 8px;">Click any section to jump straight there!</p>
+            </div>
+            <div class="toc-grid">
+                <a href="#fundamentals" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-lightbulb"></i></div>
+                    <div class="toc-card-text">
+                        <h3>1. Fundamental Concepts</h3>
+                        <p>The big picture of data modelling</p>
+                    </div>
+                </a>
+                <a href="#fact-basics" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-table"></i></div>
+                    <div class="toc-card-text">
+                        <h3>2. Basic Fact Tables</h3>
+                        <p>Where the numbers live</p>
+                    </div>
+                </a>
+                <a href="#dim-basics" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(139,92,246,0.15); color: var(--accent-purple);"><i class="fas fa-tags"></i></div>
+                    <div class="toc-card-text">
+                        <h3>3. Basic Dimension Tables</h3>
+                        <p>The descriptive labels</p>
+                    </div>
+                </a>
+                <a href="#conformed" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(249,115,22,0.15); color: var(--accent-orange);"><i class="fas fa-link"></i></div>
+                    <div class="toc-card-text">
+                        <h3>4. Conformed Dimensions</h3>
+                        <p>Integration across the enterprise</p>
+                    </div>
+                </a>
+                <a href="#scd" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(236,72,153,0.15); color: var(--accent-pink);"><i class="fas fa-clock"></i></div>
+                    <div class="toc-card-text">
+                        <h3>5. Slowly Changing Dimensions</h3>
+                        <p>Handling change over time (Types 0-7)</p>
+                    </div>
+                </a>
+                <a href="#hierarchies" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(6,182,212,0.15); color: var(--accent-cyan);"><i class="fas fa-sitemap"></i></div>
+                    <div class="toc-card-text">
+                        <h3>6. Dimension Hierarchies</h3>
+                        <p>Levels and drill-downs</p>
+                    </div>
+                </a>
+                <a href="#adv-fact" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(234,179,8,0.15); color: var(--accent-yellow);"><i class="fas fa-cogs"></i></div>
+                    <div class="toc-card-text">
+                        <h3>7. Advanced Fact Tables</h3>
+                        <p>Pro techniques for fact tables</p>
+                    </div>
+                </a>
+                <a href="#adv-dim" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(239,68,68,0.15); color: var(--accent-red);"><i class="fas fa-puzzle-piece"></i></div>
+                    <div class="toc-card-text">
+                        <h3>8. Advanced Dimension Tables</h3>
+                        <p>Expert dimension patterns</p>
+                    </div>
+                </a>
+                <a href="#special" class="toc-card" style="text-decoration:none; color:inherit;">
+                    <div class="toc-icon" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-trophy"></i></div>
+                    <div class="toc-card-text">
+                        <h3>9. Special Purpose Schemas</h3>
+                        <p>Real-time, errors, and more</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <div class="container">
+
+            <!-- ============================================ -->
+            <!-- SECTION 1: FUNDAMENTAL CONCEPTS              -->
+            <!-- ============================================ -->
+            <section class="content-section" id="fundamentals">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(59,130,246,0.2);">
+                    <div class="section-number" style="background: var(--accent-blue); color: white;">1</div>
+                    <h2>Fundamental Concepts</h2>
+                    <p>Before we build anything, we need to understand WHY and HOW we organize data. Think of this as the blueprint before building a house.</p>
+                </div>
+
+                <!-- Gather Business Requirements -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-clipboard-list"></i></div>
+                        <h3>Gather Business Requirements &amp; Data Realities</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Before you write a single line of SQL, you need to do two critical things:</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏠</div>
+                            <div class="analogy-text">
+                                Imagine you want to build a house. You don't just grab bricks and start stacking! First, you ask the family: "How many bedrooms? Do we need a garage? How big is the kitchen?" Then you check the land: "Is it flat? Is there a river nearby? Can we build 3 stories?" That's exactly what we do with data modelling!
+                            </div>
+                        </div>
+
+                        <p><strong>Step 1: Talk to the Business People</strong> - Sit down with managers, analysts, and decision-makers. Ask them: What decisions do you need to make? What numbers (KPIs) do you look at every day? What questions keep you up at night?</p>
+
+                        <p><strong>Step 2: Talk to the Data People</strong> - Meet with the engineers who manage the source systems. Look at what data actually exists. Profile the data - how clean is it? What's missing? What are the volumes?</p>
+
+                        <div class="example-box">
+                            <div class="example-label"><i class="fas fa-store"></i> Real-World Example</div>
+                            <p><strong>At a Retail Store:</strong> The Marketing VP says "I want to know which products sell best on weekends." The data team checks: "We have POS (point-of-sale) data with timestamps, product codes, and store IDs. But the product descriptions are messy - some say 'Coca Cola' and others say 'Coke 330ml'." Now you know what the business wants AND what the data reality looks like!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collaborative Workshops -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-purple);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(139,92,246,0.15); color: var(--accent-purple);"><i class="fas fa-users"></i></div>
+                        <h3>Collaborative Dimensional Modeling Workshops</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Dimensional models should <strong>NEVER</strong> be designed by a lone genius in a dark room. They must be designed together with the business people who actually use the data.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🍕</div>
+                            <div class="analogy-text">
+                                Think of ordering pizza for a big party. If one person decides everything alone, half the guests won't like it! Instead, you get everyone together: "Who's vegetarian? Who wants spicy? Any allergies?" The data modeller is like the pizza organizer - they lead the session, but everyone's voice matters.
+                            </div>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">Key Rule</div>
+                            <p>The data modeller leads the workshops, but subject matter experts from the business AND data governance representatives MUST participate. Models designed in isolation by techies who don't understand the business will fail!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Four-Step Process -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-list-ol"></i></div>
+                        <h3>The Four-Step Dimensional Design Process</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Every dimensional model follows these exact 4 steps. Always. No exceptions. This is the recipe!</p>
+
+                        <ol class="step-list">
+                            <li><strong>Select the Business Process</strong> - What activity are we modelling? (e.g., "retail sales", "insurance claims", "student registration")</li>
+                            <li><strong>Declare the Grain</strong> - What does ONE row in our fact table represent? (e.g., "one product sold in one transaction" or "one daily balance per account")</li>
+                            <li><strong>Identify the Dimensions</strong> - What are the descriptive "who, what, where, when, why, how" labels? (e.g., Date, Product, Store, Customer)</li>
+                            <li><strong>Identify the Facts</strong> - What are the numeric measurements? (e.g., quantity sold, dollar amount, discount percentage)</li>
+                        </ol>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📝</div>
+                            <div class="analogy-text">
+                                It's like writing a news article! Every journalist follows: What happened? (Process) How detailed? (Grain) The 5 W's? (Dimensions) The numbers? (Facts). "A customer (WHO) bought 3 bottles of milk (WHAT/HOW MANY) at Store #42 (WHERE) on Monday (WHEN) using a 10% coupon (WHY) for $8.97 (MEASUREMENT)."
+                            </div>
+                        </div>
+
+                        <div class="diagram-container">
+                            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="step1g" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#3b82f6"/>
+                                        <stop offset="100%" stop-color="#2563eb"/>
+                                    </linearGradient>
+                                    <linearGradient id="step2g" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#8b5cf6"/>
+                                        <stop offset="100%" stop-color="#7c3aed"/>
+                                    </linearGradient>
+                                    <linearGradient id="step3g" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#22c55e"/>
+                                        <stop offset="100%" stop-color="#16a34a"/>
+                                    </linearGradient>
+                                    <linearGradient id="step4g" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#f97316"/>
+                                        <stop offset="100%" stop-color="#ea580c"/>
+                                    </linearGradient>
+                                </defs>
+                                <!-- Step 1 -->
+                                <rect x="10" y="50" width="140" height="100" rx="15" fill="url(#step1g)" opacity="0.9"/>
+                                <text x="80" y="85" text-anchor="middle" fill="white" font-weight="800" font-size="12" font-family="Nunito">Step 1</text>
+                                <text x="80" y="105" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">Select Business</text>
+                                <text x="80" y="120" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">Process</text>
+                                <text x="80" y="140" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="18">🏭</text>
+                                <!-- Arrow -->
+                                <path d="M155 100 L175 100" stroke="#475569" stroke-width="2" marker-end="url(#arrowhead)"/>
+                                <!-- Step 2 -->
+                                <rect x="180" y="50" width="140" height="100" rx="15" fill="url(#step2g)" opacity="0.9"/>
+                                <text x="250" y="85" text-anchor="middle" fill="white" font-weight="800" font-size="12" font-family="Nunito">Step 2</text>
+                                <text x="250" y="105" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">Declare</text>
+                                <text x="250" y="120" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">the Grain</text>
+                                <text x="250" y="140" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="18">🔬</text>
+                                <!-- Arrow -->
+                                <path d="M325 100 L345 100" stroke="#475569" stroke-width="2"/>
+                                <!-- Step 3 -->
+                                <rect x="350" y="50" width="140" height="100" rx="15" fill="url(#step3g)" opacity="0.9"/>
+                                <text x="420" y="85" text-anchor="middle" fill="white" font-weight="800" font-size="12" font-family="Nunito">Step 3</text>
+                                <text x="420" y="105" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">Identify</text>
+                                <text x="420" y="120" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">Dimensions</text>
+                                <text x="420" y="140" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="18">🏷️</text>
+                                <!-- Arrow -->
+                                <path d="M495 100 L515 100" stroke="#475569" stroke-width="2"/>
+                                <!-- Step 4 -->
+                                <rect x="520" y="50" width="140" height="100" rx="15" fill="url(#step4g)" opacity="0.9"/>
+                                <text x="590" y="85" text-anchor="middle" fill="white" font-weight="800" font-size="12" font-family="Nunito">Step 4</text>
+                                <text x="590" y="105" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">Identify</text>
+                                <text x="590" y="120" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-family="Nunito">the Facts</text>
+                                <text x="590" y="140" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="18">📊</text>
+                            </svg>
+                            <p class="diagram-label">The 4-Step Dimensional Design Process - Follow this recipe every single time!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Processes -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-orange);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(249,115,22,0.15); color: var(--accent-orange);"><i class="fas fa-industry"></i></div>
+                        <h3>Business Processes</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>A business process is an <strong>operational activity</strong> that your organization does repeatedly. It's the "thing that happens" that generates data.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏪</div>
+                            <div class="analogy-text">
+                                Think of a grocery store. What "things happen" there every day? Customers check out (that's a process!), deliveries arrive (another process!), employees clock in/out (another one!). Each of these is a business process, and each one generates its own unique data that deserves its own fact table.
+                            </div>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-label"><i class="fas fa-th-list"></i> Examples of Business Processes</div>
+                            <ul>
+                                <li><strong>Retail:</strong> Taking an order, processing a return, receiving inventory</li>
+                                <li><strong>Insurance:</strong> Filing a claim, approving a policy, paying out</li>
+                                <li><strong>University:</strong> Registering students, grading exams, awarding degrees</li>
+                                <li><strong>Banking:</strong> Opening an account, depositing money, snapshotting balances monthly</li>
+                            </ul>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">Important Rule</div>
+                            <p>Each business process gets its own fact table. Don't try to cram "sales" and "inventory" into the same table - they happen at different times, with different measurements and different detail levels. Each process = one row in the Enterprise Bus Matrix.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grain -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-pink);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(236,72,153,0.15); color: var(--accent-pink);"><i class="fas fa-search-plus"></i></div>
+                        <h3>Grain - The Most Critical Decision!</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>The <strong>grain</strong> defines exactly what ONE row in your fact table represents. This is the single most important decision you'll make. Get it wrong, and everything falls apart.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📸</div>
+                            <div class="analogy-text">
+                                Think of a camera. The "grain" is your zoom level. Are you taking a photo of the entire city? (summary grain) Or zooming into one person's face? (atomic grain). In data modelling, we almost always want the most zoomed-in level possible - called <strong>atomic grain</strong> - because you can always zoom out from a detailed photo, but you can never zoom INTO a blurry one!
+                            </div>
+                        </div>
+
+                        <div class="example-box">
+                            <div class="example-label"><i class="fas fa-shopping-cart"></i> Grain Examples</div>
+                            <ul>
+                                <li><strong>Atomic grain:</strong> "One product line item in one transaction" (most detailed!)</li>
+                                <li><strong>Summary grain:</strong> "Total sales per store per day" (rolled up - less flexible)</li>
+                                <li><strong>Snapshot grain:</strong> "Account balance at end of each month"</li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-icon">⚠️</div>
+                            <p>NEVER mix different grains in the same fact table! If one row represents "a single item sold" and another represents "daily store total," your math will be completely wrong. Different grains = different tables. Period.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dimensions -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-cyan);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(6,182,212,0.15); color: var(--accent-cyan);"><i class="fas fa-tags"></i></div>
+                        <h3>Dimensions for Descriptive Context</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Dimensions answer the journalist's questions: <strong>Who? What? Where? When? Why? How?</strong> They contain all the descriptive text labels that make your numbers meaningful.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏷️</div>
+                            <div class="analogy-text">
+                                Imagine someone tells you: "We sold 47 units for $329.53." That's useless without context! But add dimensions: "We sold <em>47 units of Organic Almond Milk (Product)</em> at <em>Store #42 in Dubai (Store)</em> on <em>Tuesday January 14th (Date)</em> to <em>customers using a BOGO coupon (Promotion)</em> for $329.53." NOW that's useful! Dimensions are the labels that make numbers tell a story.
+                            </div>
+                        </div>
+
+                        <p>Dimension tables are sometimes called the <strong>"soul" of the data warehouse</strong> because they're what users actually see and interact with. When someone filters by "Category = Electronics" or groups by "Region = Middle East" - they're using dimensions!</p>
+
+                        <div class="key-point">
+                            <div class="label">Design Tip</div>
+                            <p>Each dimension should be <strong>single-valued</strong> for a given fact row. If a patient has multiple diagnoses, that's a special case (multivalued dimension) that needs a bridge table - we'll cover that in advanced topics!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Facts -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-yellow);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(234,179,8,0.15); color: var(--accent-yellow);"><i class="fas fa-calculator"></i></div>
+                        <h3>Facts for Measurements</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Facts are the <strong>numeric measurements</strong> that result from a business event. They're almost always numbers - things you can add up, average, count, etc.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">💰</div>
+                            <div class="analogy-text">
+                                If dimensions are the "labels on a box," facts are "what's INSIDE the box." When a customer buys something, the facts are: How many did they buy? (quantity = 3). How much did they pay? (amount = $15.99). What was the discount? (discount = $2.00). These are the numbers the CEO cares about!
+                            </div>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-icon">🚫</div>
+                            <p>Only facts consistent with the declared grain are allowed! If your grain is "one product sold in one transaction," you can include quantity_sold and item_price. But the store manager's salary? Nope - that doesn't match this grain!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Star Schemas and OLAP -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-star"></i></div>
+                        <h3>Star Schemas and OLAP Cubes</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>A <strong>Star Schema</strong> is the physical layout of your dimensional model in a database. It's called a "star" because when you draw it, the fact table sits in the center and dimension tables radiate outward like the points of a star.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">⭐</div>
+                            <div class="analogy-text">
+                                Draw a circle in the middle of a paper (that's your fact table with all the numbers). Now draw 5-6 rectangles around it, connected with lines (those are your dimension tables with all the descriptions). What does it look like? A star! Hence the name. It's the most common and most understandable way to organize analytical data.
+                            </div>
+                        </div>
+
+                        <p><strong>OLAP Cubes</strong> are similar in content but live in multidimensional databases. They allow more powerful analytical queries than regular SQL. Think of OLAP cubes as the "3D version" of a star schema - same data, fancier analysis tools.</p>
+
+                        <div class="key-point">
+                            <div class="label">Why Stars Are Great</div>
+                            <p>Star schemas are simple for business users to understand, fast for databases to query (fewer JOINs!), and flexible enough to handle virtually any business question. That's why they've been the gold standard since 1996!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graceful Extensions -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-expand-arrows-alt"></i></div>
+                        <h3>Graceful Extensions to Dimensional Modelling</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>One of the best things about dimensional models is they're <strong>resilient to change</strong>. When business needs evolve, you can extend without breaking anything!</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🧩</div>
+                            <div class="analogy-text">
+                                Dimensional models are like LEGO. Need a new room? Snap on more bricks. No need to demolish the house! All existing reports and dashboards keep working perfectly.
+                            </div>
+                        </div>
+
+                        <p>Here are the 4 changes you can make without breaking any existing queries:</p>
+                        <ul style="padding-left: 20px; margin: 15px 0; color: var(--text-secondary);">
+                            <li style="margin-bottom:10px;"><strong>Add new facts:</strong> Got a new measurement? Just add a column to the fact table.</li>
+                            <li style="margin-bottom:10px;"><strong>Add new dimensions:</strong> Need to track something new? Add a foreign key column to the fact table (as long as the grain doesn't change!).</li>
+                            <li style="margin-bottom:10px;"><strong>Add new attributes:</strong> Want more details on a dimension? Add columns to the dimension table.</li>
+                            <li style="margin-bottom:10px;"><strong>Make grain more atomic:</strong> Need finer detail? You can break down to a more detailed grain while preserving existing column names.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Quiz for Section 1 -->
+                <div class="quiz-box">
+                    <h4><i class="fas fa-brain"></i> Quick Check - Do You Get It?</h4>
+                    <p style="margin-bottom: 15px; color: var(--text-secondary);">What does "grain" mean in dimensional modelling?</p>
+                    <div class="quiz-options" data-correct="b">
+                        <button class="quiz-option" data-answer="a" onclick="checkAnswer(this)">A) The type of database you're using</button>
+                        <button class="quiz-option" data-answer="b" onclick="checkAnswer(this)">B) What exactly ONE row in the fact table represents</button>
+                        <button class="quiz-option" data-answer="c" onclick="checkAnswer(this)">C) The name of the star schema</button>
+                        <button class="quiz-option" data-answer="d" onclick="checkAnswer(this)">D) How many dimensions a table has</button>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 2: BASIC FACT TABLE TECHNIQUES       -->
+            <!-- ============================================ -->
+            <section class="content-section" id="fact-basics">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(6,182,212,0.1)); border: 1px solid rgba(34,197,94,0.2);">
+                    <div class="section-number" style="background: var(--accent-green); color: white;">2</div>
+                    <h2>Basic Fact Table Techniques</h2>
+                    <p>Fact tables are where the numbers live. Let's learn how to build them right, with all their variations and gotchas!</p>
+                </div>
+
+                <!-- Fact Table Structure -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-table"></i></div>
+                        <h3>Fact Table Structure</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>A fact table contains <strong>numeric measures</strong> from real-world events. Each row is one measurement event. Think of it as a receipt - each line is something that actually happened.</p>
+
+                        <p>Every fact table has:</p>
+                        <ul style="padding-left: 20px; margin: 10px 0; color: var(--text-secondary);">
+                            <li><strong>Foreign keys</strong> - links to each dimension table (date_key, product_key, store_key, etc.)</li>
+                            <li><strong>Numeric measures</strong> - the actual numbers (quantity, amount, cost)</li>
+                            <li><strong>Optional degenerate dimension keys</strong> - like invoice numbers (no separate dimension table)</li>
+                            <li><strong>Date/time stamps</strong> - for precise timing</li>
+                        </ul>
+
+                        <div class="diagram-container">
+                            <div class="tables-display">
+                                <div class="mini-table">
+                                    <div class="table-header" style="background: var(--accent-green);">sales_fact</div>
+                                    <div class="table-row"><strong>date_key</strong> (FK)</div>
+                                    <div class="table-row"><strong>product_key</strong> (FK)</div>
+                                    <div class="table-row"><strong>store_key</strong> (FK)</div>
+                                    <div class="table-row"><strong>customer_key</strong> (FK)</div>
+                                    <div class="table-row">invoice_number (DD)</div>
+                                    <div class="table-row">quantity_sold</div>
+                                    <div class="table-row">unit_price</div>
+                                    <div class="table-row">discount_amount</div>
+                                    <div class="table-row">net_amount</div>
+                                </div>
+                            </div>
+                            <p class="diagram-label">A typical fact table: foreign keys at the top, numeric measures below. FK = Foreign Key, DD = Degenerate Dimension</p>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">Golden Rule</div>
+                            <p>The design of a fact table is based entirely on what physically happens in the real world - NOT on what reports people want. If you design for reports, the model becomes brittle and breaks when someone asks a new question!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additive, Semi-Additive, Non-Additive -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-plus-circle"></i></div>
+                        <h3>Additive, Semi-Additive, and Non-Additive Facts</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Not all numbers can be added up the same way. This is one of the most important distinctions in fact tables!</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🧮</div>
+                            <div class="analogy-text">
+                                Imagine you have 3 piggy banks in 3 rooms. <strong>Additive:</strong> "How much money in total?" Just add all three - $10 + $20 + $15 = $45. Works! <strong>Semi-additive:</strong> "What's the bank balance?" You can add across stores ($10+$20+$15) but NOT across months (January balance + February balance = nonsense!). <strong>Non-additive:</strong> "What's the profit margin percentage?" You can't add 20% + 30% + 25% - that's meaningless!
+                            </div>
+                        </div>
+
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Can Sum Across...</th>
+                                    <th>Examples</th>
+                                    <th>Tip</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong style="color: var(--accent-green);">Additive</strong></td>
+                                    <td>ALL dimensions</td>
+                                    <td>Revenue, Quantity, Cost</td>
+                                    <td>Best kind! Most flexible</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: var(--accent-yellow);">Semi-Additive</strong></td>
+                                    <td>SOME dimensions (not time)</td>
+                                    <td>Account Balance, Inventory Count</td>
+                                    <td>Use AVG or latest for time</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: var(--accent-red);">Non-Additive</strong></td>
+                                    <td>NONE (can't meaningfully sum)</td>
+                                    <td>Ratios, Percentages, Unit Prices</td>
+                                    <td>Store components, calculate later</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="key-point">
+                            <div class="label">Pro Tip</div>
+                            <p>For non-additive facts like profit margin, store the additive components instead (revenue and cost) and let the BI tool calculate the ratio at the end. This way you can always roll up the components correctly!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nulls in Fact Tables -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-purple);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(139,92,246,0.15); color: var(--accent-purple);"><i class="fas fa-ban"></i></div>
+                        <h3>Nulls in Fact Tables</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Null measures (fact columns)</strong> are FINE. SUM, COUNT, MIN, MAX, AVG all handle nulls gracefully - they just skip them.</p>
+                        <p><strong>Null foreign keys</strong> are NOT fine. They break referential integrity. Instead, create a special "Unknown" or "Not Applicable" row in the dimension table with its own surrogate key.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📋</div>
+                            <div class="analogy-text">
+                                It's like a form. Leaving the "discount amount" blank is okay (the item had no discount). But leaving the "customer name" blank means we literally don't know who bought it. Instead, write "Unknown Customer" - at least now we know it's unknown rather than just missing!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conformed Facts -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-orange);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(249,115,22,0.15); color: var(--accent-orange);"><i class="fas fa-check-double"></i></div>
+                        <h3>Conformed Facts</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>When the same measurement appears in different fact tables, it MUST be defined identically if you want to compare them. Same formula, same units, same business rules.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📏</div>
+                            <div class="analogy-text">
+                                If the Sales team measures "revenue" as the amount before tax, but the Finance team measures "revenue" as the amount AFTER tax, comparing them side by side is like comparing meters to feet - you'll get wrong answers! If they mean the same thing, name them the same. If they're different, give them DIFFERENT names so nobody gets confused.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Three Types of Fact Tables -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-cyan);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(6,182,212,0.15); color: var(--accent-cyan);"><i class="fas fa-layer-group"></i></div>
+                        <h3>The Three Types of Fact Tables</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>There are exactly <strong>3 fundamental types</strong> of fact tables. Every fact table in the universe is one of these:</p>
+
+                        <div class="tabs-container">
+                            <div class="tab-buttons">
+                                <button class="tab-btn active" onclick="switchTab(this, 'txn-tab')">Transaction</button>
+                                <button class="tab-btn" onclick="switchTab(this, 'periodic-tab')">Periodic Snapshot</button>
+                                <button class="tab-btn" onclick="switchTab(this, 'accum-tab')">Accumulating Snapshot</button>
+                            </div>
+
+                            <div class="tab-content active" id="txn-tab">
+                                <h4 style="color: var(--accent-cyan); margin-bottom: 10px;">Transaction Fact Tables</h4>
+                                <p>One row = one event at a point in time. Like a receipt line item.</p>
+                                <div class="analogy-box">
+                                    <div class="analogy-icon">🧾</div>
+                                    <div class="analogy-text">Every beep at the cash register creates one row. Customer bought milk at 3:42 PM? That's one row. Bought bread at 3:42 PM? That's another row. Each row is a single, atomic event. These tables can be huge but very sparse - rows only appear when something happens.</div>
+                                </div>
+                                <div class="example-box">
+                                    <div class="example-label"><i class="fas fa-receipt"></i> Example</div>
+                                    <p>POS (Point of Sale) transactions, website clicks, ATM withdrawals, insurance claim filings</p>
+                                </div>
+                            </div>
+
+                            <div class="tab-content" id="periodic-tab">
+                                <h4 style="color: var(--accent-cyan); margin-bottom: 10px;">Periodic Snapshot Fact Tables</h4>
+                                <p>One row = a summary over a standard time period. Like a daily/weekly/monthly report card.</p>
+                                <div class="analogy-box">
+                                    <div class="analogy-icon">📅</div>
+                                    <div class="analogy-text">Think of your bank statement. At the end of each month, the bank writes down: "Your balance was $5,234." They don't list every transaction - just the snapshot at that moment. Even if you had NO transactions that month, there's still a row showing your balance!</div>
+                                </div>
+                                <div class="example-box">
+                                    <div class="example-label"><i class="fas fa-calendar-check"></i> Example</div>
+                                    <p>Daily inventory levels, monthly account balances, weekly sales summaries. These are always <strong>dense</strong> - every row exists even with zero activity.</p>
+                                </div>
+                            </div>
+
+                            <div class="tab-content" id="accum-tab">
+                                <h4 style="color: var(--accent-cyan); margin-bottom: 10px;">Accumulating Snapshot Fact Tables</h4>
+                                <p>One row = an entire process from start to finish, updated as milestones are reached.</p>
+                                <div class="analogy-box">
+                                    <div class="analogy-icon">📦</div>
+                                    <div class="analogy-text">Imagine tracking a package. Row created: "Order placed Jan 5." Updated: "Shipped Jan 7." Updated: "In transit Jan 8." Updated: "Delivered Jan 10." One row, multiple date columns, continuously updated. Each date column is a milestone in the process!</div>
+                                </div>
+                                <div class="example-box">
+                                    <div class="example-label"><i class="fas fa-tasks"></i> Example</div>
+                                    <p>Order fulfillment pipeline, insurance claim processing, loan application workflow. Multiple date foreign keys track each milestone. Rows get UPDATED (unique among fact tables!).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Factless Fact Tables -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-pink);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(236,72,153,0.15); color: var(--accent-pink);"><i class="fas fa-ghost"></i></div>
+                        <h3>Factless Fact Tables</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Wait - a fact table with NO facts? Yes! Sometimes events don't have numbers, but the event itself is worth recording.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🎓</div>
+                            <div class="analogy-text">
+                                A student attends a class on Monday. There's no number to measure - no grade, no score. But the event "Student X attended Class Y with Teacher Z in Room 101 on Monday" is valuable! That's a factless fact table - just foreign keys, no measurements. You can also use them to track <strong>what DIDN'T happen</strong>: "Which students were enrolled but DIDN'T attend?"
+                            </div>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">Two Types of Factless Tables</div>
+                            <p><strong>Coverage tables</strong> record what COULD happen (all students enrolled in all classes). <strong>Activity tables</strong> record what DID happen. Subtract one from the other to find what DIDN'T happen!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aggregate and Consolidated -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-yellow);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(234,179,8,0.15); color: var(--accent-yellow);"><i class="fas fa-compress-arrows-alt"></i></div>
+                        <h3>Aggregate &amp; Consolidated Fact Tables</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Aggregate fact tables</strong> are pre-calculated summaries built to speed up queries. Think of them as cheat sheets - they hold pre-computed totals so the database doesn't have to crunch billions of rows every time.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏎️</div>
+                            <div class="analogy-text">
+                                Imagine a library. The atomic fact table is every single book. The aggregate is a summary card: "Science section: 4,231 books, 12 shelves." When someone asks "How many science books?" you check the card (fast!) instead of counting every book (slow!). The BI tool should automatically pick the right level - this is called <strong>aggregate navigation</strong>.
+                            </div>
+                        </div>
+
+                        <p><strong>Consolidated fact tables</strong> combine facts from multiple processes into one table WHEN they share the same grain. For example, putting actual sales and forecasted sales side by side makes comparison easy and fast.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 3: BASIC DIMENSION TABLE TECHNIQUES  -->
+            <!-- ============================================ -->
+            <section class="content-section" id="dim-basics">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(236,72,153,0.1)); border: 1px solid rgba(139,92,246,0.2);">
+                    <div class="section-number" style="background: var(--accent-purple); color: white;">3</div>
+                    <h2>Basic Dimension Table Techniques</h2>
+                    <p>Dimensions are the "soul" of the warehouse. They're what users see, filter, and group by. Let's master them!</p>
+                </div>
+
+                <!-- Dimension Table Structure -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-purple);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(139,92,246,0.15); color: var(--accent-purple);"><i class="fas fa-columns"></i></div>
+                        <h3>Dimension Table Structure</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Dimension tables are <strong>wide, flat, and denormalized</strong>. They have one primary key and LOTS of descriptive text columns. They're the opposite of what you'd design in a normalized OLTP system!</p>
+
+                        <div class="diagram-container">
+                            <div class="tables-display">
+                                <div class="mini-table">
+                                    <div class="table-header" style="background: var(--accent-purple);">dim_product</div>
+                                    <div class="table-row"><strong>product_key</strong> (PK, surrogate)</div>
+                                    <div class="table-row">product_natural_key</div>
+                                    <div class="table-row">product_name</div>
+                                    <div class="table-row">product_description</div>
+                                    <div class="table-row">brand_name</div>
+                                    <div class="table-row">category_name</div>
+                                    <div class="table-row">department_name</div>
+                                    <div class="table-row">package_type</div>
+                                    <div class="table-row">package_size</div>
+                                    <div class="table-row">fat_content</div>
+                                    <div class="table-row">diet_type</div>
+                                    <div class="table-row">weight_uom</div>
+                                </div>
+                            </div>
+                            <p class="diagram-label">A typical dimension table: wide, flat, with many descriptive text columns. Brand, Category, Department all in ONE table (denormalized)!</p>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">Design Philosophy</div>
+                            <p>Use verbose, meaningful descriptions - not cryptic codes! Instead of "status = A", store "status = Active." Users should be able to read dimension values without needing a decoder ring.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Surrogate Keys -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-key"></i></div>
+                        <h3>Dimension Surrogate Keys</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Every dimension table gets an anonymous integer primary key - we call it a <strong>surrogate key</strong>. Simple numbers: 1, 2, 3, 4... That's it!</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🎫</div>
+                            <div class="analogy-text">
+                                Think of a coat check at a restaurant. You hand in your coat (the real data), and they give you a ticket with a number on it: "#47." That ticket number has no meaning - it's just a simple way to identify YOUR coat. That's a surrogate key! We don't use the coat's brand name or color because those could change or be duplicated.
+                            </div>
+                        </div>
+
+                        <p><strong>Why not use natural keys?</strong> Because natural keys (like employee ID "EMP-001") can change, come from multiple systems, be poorly managed, and when you track history with SCD Type 2, one employee will have MULTIPLE rows - so the natural key isn't unique anymore!</p>
+
+                        <div class="key-point">
+                            <div class="label">Exception</div>
+                            <p>The Date dimension can use a meaningful key like 20250216 (YYYYMMDD format) instead of a surrogate key, because dates are stable and predictable. But still add a special row for "Unknown Date"!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Natural, Durable, Supernatural Keys -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-fingerprint"></i></div>
+                        <h3>Natural, Durable, and Supernatural Keys</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Three types of keys you need to understand:</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🪪</div>
+                            <div class="analogy-text">
+                                <strong>Natural Key</strong> = Your school student ID (EMP-001). Can change if you transfer schools!<br>
+                                <strong>Durable/Supernatural Key</strong> = Your government-issued national ID. Never changes even if you change jobs, move cities, or get married. It's permanent.<br>
+                                <strong>Surrogate Key</strong> = The coat check ticket number. Just for internal warehouse use, sequential, meaningless outside the system.
+                            </div>
+                        </div>
+
+                        <p>The <strong>durable key</strong> is important when a natural key can change. Example: An employee quits and is rehired - they get a NEW employee number, but the warehouse wants to track them as the SAME person. The durable key stays constant forever.</p>
+                    </div>
+                </div>
+
+                <!-- Drilling Down -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-orange);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(249,115,22,0.15); color: var(--accent-orange);"><i class="fas fa-search-plus"></i></div>
+                        <h3>Drilling Down</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Drilling down simply means <strong>adding more detail</strong> to a report. In SQL terms, you add another column to your GROUP BY clause.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🔍</div>
+                            <div class="analogy-text">
+                                Report shows: "Total Sales = $1M." Boss asks: "Break that down by region." Now you see: "East = $400K, West = $350K, Central = $250K." Boss says: "Drill into East by store." Now: "Store A = $200K, Store B = $150K, Store C = $50K." Each click adds a dimension attribute as a new GROUP BY column. No special hierarchy needed!
+                            </div>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">Freedom!</div>
+                            <p>You don't need pre-defined drill paths! Users can drill down using ANY dimension attribute from ANY dimension attached to the fact table. Want to drill from Year to Product Brand? Go for it!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Degenerate Dimensions -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-pink);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(236,72,153,0.15); color: var(--accent-pink);"><i class="fas fa-hashtag"></i></div>
+                        <h3>Degenerate Dimensions</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>A degenerate dimension is a dimension key that lives directly in the fact table with <strong>no corresponding dimension table</strong>. The most common example: invoice numbers, order numbers, ticket numbers.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏷️</div>
+                            <div class="analogy-text">
+                                When you buy 5 items, all 5 line items belong to the same receipt number (#R-4521). The receipt number itself has no extra attributes - it's just a grouping label. So we don't create a whole table just for receipt numbers. We just drop the receipt number directly into the fact table as a "degenerate dimension."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Denormalized Flattened Dimensions -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-cyan);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(6,182,212,0.15); color: var(--accent-cyan);"><i class="fas fa-compress"></i></div>
+                        <h3>Denormalized Flattened Dimensions</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>In dimensional modelling, we <strong>deliberately denormalize</strong>. Instead of having separate tables for Product → Brand → Category → Department, we smash them all into ONE flat dimension table.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📋</div>
+                            <div class="analogy-text">
+                                Instead of: "Product #123 → look up brand in brand table → look up category in category table → look up department in department table" (3 JOINs!), we just store: "Product: Organic Milk, Brand: Happy Cow, Category: Dairy, Department: Food" all in one row. One table. Zero JOINs. Fast and simple!
+                            </div>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-icon">🧠</div>
+                            <p>Resist the urge to normalize! If you've spent years in OLTP database design, denormalization will feel "wrong." But in dimensional modelling, it's absolutely the RIGHT approach. Simplicity + Speed = Happy Users!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multiple Hierarchies, Flags, Nulls, Calendar, Role-Playing, Junk, Snowflake, Outrigger -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-yellow);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(234,179,8,0.15); color: var(--accent-yellow);"><i class="fas fa-stream"></i></div>
+                        <h3>Multiple Hierarchies, Flags &amp; Null Attributes</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Multiple Hierarchies:</strong> A single dimension can have many hierarchies living side by side. A Date dimension has Day→Week→Fiscal Period AND Day→Month→Year. A Geography dimension has City→State→Country AND City→Sales Region→Division. They all coexist peacefully in one table!</p>
+
+                        <p><strong>Flags and Indicators:</strong> Replace cryptic codes with readable text! Instead of "status = T/F", use "is_active = Yes/No". Instead of "type = A", use "customer_type = Active Premium Member". When codes have embedded meaning (like "NYC-RET-001"), break them into separate columns: city = New York, type = Retail, sequence = 001.</p>
+
+                        <p><strong>Null Attributes:</strong> Avoid NULL in dimension attributes! Use descriptive strings like "Unknown" or "Not Applicable" instead. Different databases handle NULLs in GROUP BY and WHERE clauses inconsistently, which leads to bugs.</p>
+                    </div>
+                </div>
+
+                <!-- Calendar Date Dimensions -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-calendar-alt"></i></div>
+                        <h3>Calendar Date Dimensions</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>The date dimension is the <strong>most common dimension</strong> - attached to virtually every fact table. It's a pre-built calendar that makes date-based analysis a breeze.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📆</div>
+                            <div class="analogy-text">
+                                Ever tried to figure out when Easter falls using math? Good luck! That's why we have a date dimension table - it pre-computes everything: "Is this a holiday? What fiscal quarter? What week number? Is it a weekend?" You'd never want to calculate this stuff in SQL every time. Just look it up!
+                            </div>
+                        </div>
+
+                        <div class="diagram-container">
+                            <div class="tables-display">
+                                <div class="mini-table">
+                                    <div class="table-header" style="background: var(--accent-blue);">dim_date</div>
+                                    <div class="table-row"><strong>date_key</strong> (20250216)</div>
+                                    <div class="table-row">full_date (2025-02-16)</div>
+                                    <div class="table-row">day_of_week (Sunday)</div>
+                                    <div class="table-row">day_number (16)</div>
+                                    <div class="table-row">week_number (7)</div>
+                                    <div class="table-row">month_name (February)</div>
+                                    <div class="table-row">quarter (Q1)</div>
+                                    <div class="table-row">year (2025)</div>
+                                    <div class="table-row">fiscal_period (FP11)</div>
+                                    <div class="table-row">is_holiday (No)</div>
+                                    <div class="table-row">is_weekend (Yes)</div>
+                                    <div class="table-row">holiday_name (N/A)</div>
+                                </div>
+                            </div>
+                            <p class="diagram-label">A date dimension - pre-computed calendar attributes. The primary key can be YYYYMMDD for easy partitioning.</p>
+                        </div>
+
+                        <p>If you need time-of-day precision, add a separate timestamp column to the fact table. If users filter by day parts (morning shift vs. evening shift), create a separate <strong>time-of-day dimension</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Role-Playing, Junk, Snowflake, Outrigger -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-theater-masks"></i></div>
+                        <h3>Role-Playing, Junk, Snowflaked &amp; Outrigger Dimensions</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <h4 style="color: var(--accent-blue); margin: 15px 0 8px;">Role-Playing Dimensions</h4>
+                        <p>One physical dimension table used multiple times in the same fact table. Example: An order has an "order date," a "ship date," and a "delivery date" - all pointing to the SAME date dimension through different foreign keys. Each reference is a separate "role" (view with unique column names).</p>
+
+                        <h4 style="color: var(--accent-purple); margin: 20px 0 8px;">Junk Dimensions</h4>
+                        <p>Miscellaneous low-cardinality flags (payment method, order priority, gift wrap yes/no) combined into a single "transaction profile" dimension instead of creating dozens of tiny separate dimensions.</p>
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🗑️</div>
+                            <div class="analogy-text">Think of a junk drawer in your kitchen - all the small random stuff that doesn't deserve its own drawer (tape, batteries, pens). Same idea: all the small flags that don't deserve their own dimension table get combined into one "junk dimension." Despite the name, it's a perfectly valid and useful technique!</div>
+                        </div>
+
+                        <h4 style="color: var(--accent-orange); margin: 20px 0 8px;">Snowflaked Dimensions</h4>
+                        <p>When dimension hierarchies are normalized into separate tables (Product → Brand table → Category table). Called "snowflake" because it looks like a snowflake instead of a star.</p>
+                        <div class="warning-box">
+                            <div class="warning-icon">❌</div>
+                            <p>AVOID snowflaking! It makes queries harder to write, confuses business users, and can hurt performance. A flat denormalized dimension contains exactly the same information and is much easier to use.</p>
+                        </div>
+
+                        <h4 style="color: var(--accent-cyan); margin: 20px 0 8px;">Outrigger Dimensions</h4>
+                        <p>A dimension that references another dimension. Example: A bank account dimension has an "account_open_date" that points to the date dimension. Use sparingly! In most cases, put both dimensions as separate foreign keys in the fact table instead.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 4: CONFORMED DIMENSIONS              -->
+            <!-- ============================================ -->
+            <section class="content-section" id="conformed">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(234,179,8,0.1)); border: 1px solid rgba(249,115,22,0.2);">
+                    <div class="section-number" style="background: var(--accent-orange); color: white;">4</div>
+                    <h2>Integration via Conformed Dimensions</h2>
+                    <p>This is how you connect different parts of the business together. The secret sauce of enterprise data warehousing!</p>
+                </div>
+
+                <!-- Conformed Dimensions -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-orange);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(249,115,22,0.15); color: var(--accent-orange);"><i class="fas fa-link"></i></div>
+                        <h3>Conformed Dimensions</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Conformed dimensions are the <strong>glue</strong> that holds the entire enterprise data warehouse together. When the same dimension (e.g., Customer, Product, Date) is shared across multiple fact tables with identical column names and values, you can combine reports across different business processes.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🔌</div>
+                            <div class="analogy-text">
+                                Think of electrical outlets. Every device in your house uses the SAME type of plug. Because they're "conformed" to one standard, you can plug your TV, phone charger, and blender into any outlet. If every room had a different plug type, chaos! Conformed dimensions are the universal plug standard of data warehousing.
+                            </div>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">The Essence of Integration</div>
+                            <p>When you use the same conformed dimension as a row header in a drill-across report, results from separate fact tables align perfectly on the same rows. This is what makes enterprise analytics possible. Build once, reuse everywhere!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shrunken Rollup, Drilling Across, Value Chain -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-yellow);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(234,179,8,0.15); color: var(--accent-yellow);"><i class="fas fa-compress-alt"></i></div>
+                        <h3>Shrunken Rollup Dimensions &amp; Drilling Across</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Shrunken Rollup Dimensions</strong> are subsets of a full dimension - fewer rows and/or columns. Used for aggregate fact tables or when a business process captures data at a higher level (e.g., forecasts by month+brand instead of day+product).</p>
+
+                        <p><strong>Drilling Across</strong> means querying two or more fact tables separately, then merging the results on common conformed dimension attributes. The key: each query runs independently, and the answers are aligned by sort-merging on shared row headers.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🧩</div>
+                            <div class="analogy-text">
+                                Think of two different spreadsheets: Sales by Product and Returns by Product. You can't just JOIN them (that creates messy duplicates!). Instead, run each query separately, get the answers, then merge them side by side: "Product A: Sales=$100, Returns=$5. Product B: Sales=$200, Returns=$12." That's drilling across!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value Chain & Bus Architecture -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-project-diagram"></i></div>
+                        <h3>Value Chain &amp; Enterprise Bus Architecture</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>The <strong>Value Chain</strong> is the natural flow of business processes in your organization. For retail: Purchasing → Warehousing → Retail Sales. For finance: Budgeting → Commitments → Payments. Each step produces its own fact table.</p>
+
+                        <p>The <strong>Enterprise Data Warehouse Bus Architecture</strong> provides an incremental, manageable approach to building the warehouse. It says: "Focus on one business process at a time, but make sure your dimensions are conformed across all of them." This way, each piece works alone AND integrates with everything else.</p>
+
+                        <div class="diagram-container">
+                            <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg">
+                                <text x="350" y="25" text-anchor="middle" fill="#94a3b8" font-weight="800" font-size="14" font-family="Nunito">Enterprise Data Warehouse Bus Matrix</text>
+                                <!-- Headers -->
+                                <text x="85" y="65" text-anchor="middle" fill="#f1f5f9" font-weight="700" font-size="11" font-family="Nunito">Process</text>
+                                <text x="210" y="55" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="10" font-family="Nunito">Date</text>
+                                <text x="280" y="55" text-anchor="middle" fill="#a78bfa" font-weight="700" font-size="10" font-family="Nunito">Product</text>
+                                <text x="350" y="55" text-anchor="middle" fill="#4ade80" font-weight="700" font-size="10" font-family="Nunito">Store</text>
+                                <text x="420" y="55" text-anchor="middle" fill="#fb923c" font-weight="700" font-size="10" font-family="Nunito">Customer</text>
+                                <text x="490" y="55" text-anchor="middle" fill="#f472b6" font-weight="700" font-size="10" font-family="Nunito">Vendor</text>
+                                <text x="560" y="55" text-anchor="middle" fill="#22d3ee" font-weight="700" font-size="10" font-family="Nunito">Employee</text>
+                                <text x="630" y="55" text-anchor="middle" fill="#fbbf24" font-weight="700" font-size="10" font-family="Nunito">Promo</text>
+                                <line x1="170" y1="70" x2="670" y2="70" stroke="#334155" stroke-width="1"/>
+
+                                <!-- Row 1: Retail Sales -->
+                                <text x="85" y="100" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Nunito">Retail Sales</text>
+                                <circle cx="210" cy="96" r="8" fill="#3b82f6" opacity="0.8"><animate attributeName="r" values="6;9;6" dur="2s" repeatCount="indefinite"/></circle>
+                                <circle cx="280" cy="96" r="8" fill="#8b5cf6" opacity="0.8"><animate attributeName="r" values="6;9;6" dur="2s" begin="0.3s" repeatCount="indefinite"/></circle>
+                                <circle cx="350" cy="96" r="8" fill="#22c55e" opacity="0.8"><animate attributeName="r" values="6;9;6" dur="2s" begin="0.6s" repeatCount="indefinite"/></circle>
+                                <circle cx="420" cy="96" r="8" fill="#f97316" opacity="0.8"/>
+                                <circle cx="630" cy="96" r="8" fill="#eab308" opacity="0.8"/>
+
+                                <!-- Row 2: Inventory -->
+                                <text x="85" y="135" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Nunito">Inventory</text>
+                                <circle cx="210" cy="131" r="8" fill="#3b82f6" opacity="0.8"/>
+                                <circle cx="280" cy="131" r="8" fill="#8b5cf6" opacity="0.8"/>
+                                <circle cx="350" cy="131" r="8" fill="#22c55e" opacity="0.8"/>
+                                <circle cx="490" cy="131" r="8" fill="#ec4899" opacity="0.8"/>
+
+                                <!-- Row 3: Purchasing -->
+                                <text x="85" y="170" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Nunito">Purchasing</text>
+                                <circle cx="210" cy="166" r="8" fill="#3b82f6" opacity="0.8"/>
+                                <circle cx="280" cy="166" r="8" fill="#8b5cf6" opacity="0.8"/>
+                                <circle cx="490" cy="166" r="8" fill="#ec4899" opacity="0.8"/>
+                                <circle cx="560" cy="166" r="8" fill="#06b6d4" opacity="0.8"/>
+
+                                <!-- Row 4: Promotions -->
+                                <text x="85" y="205" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Nunito">Promotions</text>
+                                <circle cx="210" cy="201" r="8" fill="#3b82f6" opacity="0.8"/>
+                                <circle cx="280" cy="201" r="8" fill="#8b5cf6" opacity="0.8"/>
+                                <circle cx="350" cy="201" r="8" fill="#22c55e" opacity="0.8"/>
+                                <circle cx="420" cy="201" r="8" fill="#f97316" opacity="0.8"/>
+                                <circle cx="630" cy="201" r="8" fill="#eab308" opacity="0.8"/>
+
+                                <!-- Legend -->
+                                <text x="350" y="240" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">Colored dots = dimension is used by that process. Shared columns = conformed dimensions!</text>
+                            </svg>
+                            <p class="diagram-label">The Bus Matrix: rows = business processes, columns = dimensions. Shared dimensions enable cross-process analytics!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opportunity Matrix -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-pink);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(236,72,153,0.15); color: var(--accent-pink);"><i class="fas fa-users-cog"></i></div>
+                        <h3>Opportunity/Stakeholder Matrix</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>A variation of the Bus Matrix where dimension columns are replaced with <strong>business functions</strong> (Marketing, Sales, Finance, Operations). The shaded cells show which business groups care about which processes.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📋</div>
+                            <div class="analogy-text">
+                                It's an RSVP list for your data modelling workshops! "For the Sales fact table design session, invite: Marketing (they want campaign analysis), Sales (they want commission tracking), and Finance (they want revenue reports)." This matrix makes sure no stakeholder gets left out.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 5: SLOWLY CHANGING DIMENSIONS        -->
+            <!-- ============================================ -->
+            <section class="content-section" id="scd">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(236,72,153,0.2);">
+                    <div class="section-number" style="background: var(--accent-pink); color: white;">5</div>
+                    <h2>Slowly Changing Dimensions (SCD)</h2>
+                    <p>Data changes over time. People move, products get renamed, prices change. How do we handle this? With 8 different techniques!</p>
+                </div>
+
+                <div class="analogy-box" style="margin: 0 0 30px;">
+                    <div class="analogy-icon">🏠</div>
+                    <div class="analogy-text">
+                        Imagine a customer named Sarah. She lives in Dubai, has a Silver membership, and her email is sarah@email.com. One day she moves to Abu Dhabi and upgrades to Gold. How do we record this change? Do we update the old record? Keep both? That's what SCD types are all about!
+                    </div>
+                </div>
+
+                <div class="scd-grid">
+                    <!-- Type 0 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(148,163,184,0.2); color: #94a3b8;">Type 0</div>
+                        <h4>Retain Original</h4>
+                        <p>The value NEVER changes. Whatever was first recorded stays forever.</p>
+                        <div class="example-box" style="margin: 10px 0 0;">
+                            <div class="example-label"><i class="fas fa-lock"></i> Use When</div>
+                            <p>"Original credit score", date of birth, first hire date. Things labeled "original" that should never be overwritten.</p>
+                        </div>
+                    </div>
+
+                    <!-- Type 1 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(59,130,246,0.2); color: var(--accent-blue);">Type 1</div>
+                        <h4>Overwrite</h4>
+                        <p>Simply overwrite the old value with the new one. History is <strong>destroyed</strong>.</p>
+                        <div class="analogy-box" style="margin: 10px 0 0;">
+                            <div class="analogy-icon">🗑️</div>
+                            <div class="analogy-text">Like correcting a typo - just erase and rewrite. "Sarah Dubai" becomes "Sarah Abu Dhabi". The old address vanishes. Simple but lossy!</div>
+                        </div>
+                    </div>
+
+                    <!-- Type 2 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(34,197,94,0.2); color: var(--accent-green);">Type 2</div>
+                        <h4>Add New Row</h4>
+                        <p>The MOST important SCD! Creates a NEW row with a new surrogate key. Old row is marked as expired. Full history preserved!</p>
+                        <div class="example-box" style="margin: 10px 0 0;">
+                            <div class="example-label"><i class="fas fa-history"></i> How It Works</div>
+                            <p>Row 1: Sarah, Dubai, effective 2020-01-01, expired 2025-01-15, current=N<br>
+                            Row 2: Sarah, Abu Dhabi, effective 2025-01-16, expired 9999-12-31, current=Y<br>
+                            Three extra columns: effective_date, expiration_date, current_row_indicator</p>
+                        </div>
+                    </div>
+
+                    <!-- Type 3 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(139,92,246,0.2); color: var(--accent-purple);">Type 3</div>
+                        <h4>Add New Attribute</h4>
+                        <p>Add a NEW column to store the old value. One row, but with both old and new values side by side. Called "alternate reality."</p>
+                        <div class="example-box" style="margin: 10px 0 0;">
+                            <div class="example-label"><i class="fas fa-columns"></i> Example</div>
+                            <p>One row: Sarah | current_city = Abu Dhabi | previous_city = Dubai. Users can filter by either! Rarely used because it only tracks ONE change.</p>
+                        </div>
+                    </div>
+
+                    <!-- Type 4 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(249,115,22,0.2); color: var(--accent-orange);">Type 4</div>
+                        <h4>Add Mini-Dimension</h4>
+                        <p>For rapidly changing attributes in huge dimensions. Split the fast-changing columns into a separate "mini-dimension" table.</p>
+                        <div class="analogy-box" style="margin: 10px 0 0;">
+                            <div class="analogy-icon">📦</div>
+                            <div class="analogy-text">Customer dimension has 10M rows. Age band and income band change frequently. Instead of creating 10M new Type 2 rows every time, pull those columns into a small "demographics mini-dimension" with maybe 1,000 rows.</div>
+                        </div>
+                    </div>
+
+                    <!-- Type 5 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(6,182,212,0.2); color: var(--accent-cyan);">Type 5</div>
+                        <h4>Mini-Dimension + Type 1 Outrigger</h4>
+                        <p>Builds on Type 4: the mini-dimension is also embedded as a Type 1 outrigger in the base dimension, so you can see CURRENT mini-dimension values without going through the fact table.</p>
+                    </div>
+
+                    <!-- Type 6 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(236,72,153,0.2); color: var(--accent-pink);">Type 6</div>
+                        <h4>Type 1 + Type 2 Hybrid</h4>
+                        <p>Adds Type 1 (current value) columns to a Type 2 dimension. Every row has both the "as was" value and the "as is" value. Filter by either one!</p>
+                        <div class="example-box" style="margin: 10px 0 0;">
+                            <div class="example-label"><i class="fas fa-exchange-alt"></i> Example</div>
+                            <p>Row 1: Sarah, historical_city=Dubai, current_city=Abu Dhabi, eff=2020<br>
+                            Row 2: Sarah, historical_city=Abu Dhabi, current_city=Abu Dhabi, eff=2025<br>
+                            The "current_city" is overwritten (Type 1) on ALL rows when it changes.</p>
+                        </div>
+                    </div>
+
+                    <!-- Type 7 -->
+                    <div class="scd-card">
+                        <div class="scd-badge" style="background: rgba(234,179,8,0.2); color: var(--accent-yellow);">Type 7</div>
+                        <h4>Dual Type 1 + Type 2</h4>
+                        <p>The fact table has TWO keys to the same dimension: a surrogate key (for Type 2 "as-was" view) AND a durable key (for Type 1 "as-is" view). Two different views of the same dimension for maximum flexibility.</p>
+                    </div>
+                </div>
+
+                <div class="quiz-box">
+                    <h4><i class="fas fa-brain"></i> Quick Check!</h4>
+                    <p style="margin-bottom: 15px; color: var(--text-secondary);">A customer changes their address. You need to see what their address was at the time of each order AND their current address. Which SCD type?</p>
+                    <div class="quiz-options" data-correct="c">
+                        <button class="quiz-option" data-answer="a" onclick="checkAnswer(this)">A) Type 1 - just overwrite it</button>
+                        <button class="quiz-option" data-answer="b" onclick="checkAnswer(this)">B) Type 2 - add a new row with history</button>
+                        <button class="quiz-option" data-answer="c" onclick="checkAnswer(this)">C) Type 6 - historical AND current values in every row</button>
+                        <button class="quiz-option" data-answer="d" onclick="checkAnswer(this)">D) Type 0 - never change it</button>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 6: DIMENSION HIERARCHIES             -->
+            <!-- ============================================ -->
+            <section class="content-section" id="hierarchies">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(59,130,246,0.1)); border: 1px solid rgba(6,182,212,0.2);">
+                    <div class="section-number" style="background: var(--accent-cyan); color: white;">6</div>
+                    <h2>Dealing with Dimension Hierarchies</h2>
+                    <p>From simple Product→Brand→Category to complex organizational structures with variable depth!</p>
+                </div>
+
+                <!-- Fixed Depth -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-cyan);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(6,182,212,0.15); color: var(--accent-cyan);"><i class="fas fa-layer-group"></i></div>
+                        <h3>Fixed Depth Positional Hierarchies</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>A fixed depth hierarchy has a <strong>predictable, consistent</strong> number of levels with agreed-upon names. Example: Product → Brand → Category → Department. Always exactly 4 levels, always the same names.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏢</div>
+                            <div class="analogy-text">
+                                Think of a company org chart with exactly 4 levels: CEO → VP → Director → Manager. Every person fits into exactly one of these levels. Easy! Each level gets its own column in the dimension table: ceo_name, vp_name, director_name, manager_name. Simple, fast, and predictable.
+                            </div>
+                        </div>
+
+                        <div class="key-point">
+                            <div class="label">Best Practice</div>
+                            <p>Fixed depth hierarchies are BY FAR the easiest to query and navigate. If your hierarchy fits this pattern, always use positional attributes in a flat dimension table. Don't overcomplicate it!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slightly Ragged -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-align-left"></i></div>
+                        <h3>Slightly Ragged / Variable Depth Hierarchies</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Sometimes the hierarchy depth varies a little bit - like geography: some places have City → State → Country (3 levels), while others have City → Province → Region → Country (4 levels).</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🗺️</div>
+                            <div class="analogy-text">
+                                Some countries have states, some have provinces, some have regions. The depth varies from 3 to maybe 6 levels. Rather than using complex recursive queries, just create columns for the MAXIMUM depth and fill in the blanks with business rules. Level 4 doesn't exist? Repeat Level 3's value. Simple!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ragged/Variable -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-purple);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(139,92,246,0.15); color: var(--accent-purple);"><i class="fas fa-random"></i></div>
+                        <h3>Ragged / Variable Depth Hierarchies</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>The really tricky ones! Organization charts, bill of materials, account charts - where the depth is completely unpredictable. Might be 2 levels, might be 20.</p>
+
+                        <p><strong>Solution 1: Bridge Table</strong> - A special helper table that stores every possible path through the hierarchy. One row for each "from-to" path. Enables all hierarchy queries with standard SQL.</p>
+
+                        <p><strong>Solution 2: Pathstring Attribute</strong> - A single column storing the full path as a string: "CEO|VP Sales|Director East|Manager NY". Can handle many hierarchy queries with LIKE operators, but less flexible for substituting alternative hierarchies.</p>
+
+                        <div class="warning-box">
+                            <div class="warning-icon">⚠️</div>
+                            <p>Ragged hierarchies are genuinely difficult in relational databases. SQL recursive queries (WITH RECURSIVE) have limitations. The bridge table approach is the most robust solution, though it requires extra ETL work.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 7: ADVANCED FACT TABLE TECHNIQUES    -->
+            <!-- ============================================ -->
+            <section class="content-section" id="adv-fact">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(234,179,8,0.1), rgba(249,115,22,0.1)); border: 1px solid rgba(234,179,8,0.2);">
+                    <div class="section-number" style="background: var(--accent-yellow); color: #1e293b;">7</div>
+                    <h2>Advanced Fact Table Techniques</h2>
+                    <p>Pro-level patterns for handling complex measurement scenarios. These are the techniques that separate beginners from experts!</p>
+                </div>
+
+                <!-- Fact Table Surrogate Keys -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-yellow);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(234,179,8,0.15); color: var(--accent-yellow);"><i class="fas fa-key"></i></div>
+                        <h3>Fact Table Surrogate Keys</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>While not required, adding a single surrogate key column to fact tables is useful. It serves as a simple primary key, helps identify rows during ETL, allows interrupted loads to resume, and converts risky UPDATE operations into safer INSERT+DELETE pairs.</p>
+                    </div>
+                </div>
+
+                <!-- Centipede Fact Tables -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-red);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(239,68,68,0.15); color: var(--accent-red);"><i class="fas fa-bug"></i></div>
+                        <h3>Centipede Fact Tables (Anti-Pattern!)</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <div class="warning-box">
+                            <div class="warning-icon">🐛</div>
+                            <p>A centipede fact table has dozens of foreign keys because someone created separate dimensions for every level of a hierarchy (date dim, month dim, quarter dim, year dim - all as separate foreign keys). DON'T DO THIS! Collapse them into one dimension at the lowest grain (just the date dimension).</p>
+                        </div>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🦶</div>
+                            <div class="analogy-text">
+                                If your fact table has so many foreign keys it looks like a centipede (dozens of little "legs"), something went wrong. Either collapse hierarchical dimensions back to their lowest grain, or combine miscellaneous flags into a junk dimension.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Numeric Values as Attributes or Facts -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-sort-numeric-down"></i></div>
+                        <h3>Numeric Values as Attributes or Facts</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Some numbers are ambiguous - is "list price" a fact or a dimension attribute? Here's the rule:</p>
+                        <ul style="padding-left: 20px; color: var(--text-secondary); margin: 10px 0;">
+                            <li>Used for <strong>calculations</strong>? → Put it in the fact table</li>
+                            <li>Used for <strong>filtering/grouping</strong>? → Put it in the dimension table</li>
+                            <li>Used for <strong>both</strong>? → Put it in both! Plus add value bands in the dimension ("$0-$50", "$50-$100")</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Lag/Duration Facts -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-purple);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(139,92,246,0.15); color: var(--accent-purple);"><i class="fas fa-stopwatch"></i></div>
+                        <h3>Lag/Duration Facts</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>In accumulating snapshots with multiple milestones, users want to analyze time lags between steps. Smart approach: store ONE lag per step (measured from the start), then any lag between two steps is a simple subtraction.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">⏱️</div>
+                            <div class="analogy-text">
+                                A marathon has mile markers. Instead of recording the time between every possible pair of markers (that's hundreds of combinations!), just record the time from the start to each marker: Mile 1 = 8min, Mile 2 = 16min, Mile 3 = 25min. Time between Mile 1 and Mile 3? Just subtract: 25 - 8 = 17min. Simple!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Header/Line, Allocated Facts -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-orange);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(249,115,22,0.15); color: var(--accent-orange);"><i class="fas fa-file-invoice"></i></div>
+                        <h3>Header/Line &amp; Allocated Facts</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Header/Line:</strong> Transactions often have a header (the order) and lines (individual items). In the fact table, include ALL header-level dimension keys on every line-level row. Don't force users to join back to a header table!</p>
+
+                        <p><strong>Allocated Facts:</strong> When a fact exists at the header level (like shipping cost for the whole order), allocate it down to the line level proportionally. This way, every fact can be sliced by every dimension.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">📦</div>
+                            <div class="analogy-text">
+                                You order 3 items online with $12 shipping. How do you split the shipping across items? By price proportion: Item A ($60, 60%) gets $7.20 shipping, Item B ($30, 30%) gets $3.60, Item C ($10, 10%) gets $1.20. Now you can analyze shipping cost by product, category, anything!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- P&L, Currency, UOM, YTD -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-dollar-sign"></i></div>
+                        <h3>P&amp;L, Multiple Currencies, Units of Measure &amp; YTD</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Profit &amp; Loss Tables:</strong> Revenue - Costs = Profit at atomic grain. Incredibly powerful but politically charged since cost allocation requires executive buy-in. Not a first-phase project!</p>
+
+                        <p><strong>Multiple Currencies:</strong> Store PAIRS of columns: one in the transaction's original currency, one in a standard currency (USD). Add a currency dimension to identify the original currency.</p>
+
+                        <p><strong>Multiple Units of Measure:</strong> Store facts once in a standard unit, plus conversion factors for all other units. Deploy views for each user group with their preferred unit. The conversion factors MUST live in the fact row for accuracy.</p>
+
+                        <p><strong>Year-to-Date:</strong> Don't store YTD in fact tables! Calculate it in the BI layer instead. YTD is a moving target - "YTD as of fiscal period end" is different from "YTD as of today" - and storing it creates maintenance nightmares.</p>
+                    </div>
+                </div>
+
+                <!-- Multipass SQL, Timespan, Late Arriving -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-pink);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(236,72,153,0.15); color: var(--accent-pink);"><i class="fas fa-code-branch"></i></div>
+                        <h3>Multipass SQL, Timespan Tracking &amp; Late Arriving Facts</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Multipass SQL (NEVER join fact-to-fact!):</strong> If you need to compare shipments and returns, DON'T join the two fact tables directly. It creates uncontrollable row explosions with wrong results. Instead, query each fact table separately and merge the results on common dimension attributes. This is called "drill-across."</p>
+
+                        <div class="warning-box">
+                            <div class="warning-icon">💥</div>
+                            <p>Joining two fact tables across foreign keys is one of the most common and dangerous mistakes in dimensional modelling. The cardinality explodes and results are WRONG. Always use drill-across (separate queries, then merge)!</p>
+                        </div>
+
+                        <p><strong>Timespan Tracking:</strong> In rare cases, add effective/expiration dates to fact rows (like SCD Type 2 for facts). Useful for slowly changing balances where periodic snapshots would create identical duplicate rows.</p>
+
+                        <p><strong>Late Arriving Facts:</strong> When a fact row arrives late (delayed data feed), you need to find the dimension keys that were effective at the TIME the event actually occurred, not when it arrived. Search the dimension's history to find the right surrogate keys.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 8: ADVANCED DIMENSION TECHNIQUES     -->
+            <!-- ============================================ -->
+            <section class="content-section" id="adv-dim">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(236,72,153,0.1)); border: 1px solid rgba(239,68,68,0.2);">
+                    <div class="section-number" style="background: var(--accent-red); color: white;">8</div>
+                    <h2>Advanced Dimension Table Techniques</h2>
+                    <p>Expert-level patterns for complex real-world scenarios. Multivalued relationships, behavior tracking, and more!</p>
+                </div>
+
+                <!-- Dim-to-Dim Joins -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-red);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(239,68,68,0.15); color: var(--accent-red);"><i class="fas fa-exchange-alt"></i></div>
+                        <h3>Dimension-to-Dimension Table Joins</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>When a dimension references another (via outrigger), Type 2 changes in the outrigger can force explosive Type 2 growth in the base dimension. Solution: demote the relationship to the fact table, where both dimensions are separate foreign keys.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🔗</div>
+                            <div class="analogy-text">
+                                Imagine the Account dimension links to the Branch dimension via an outrigger. Every time a branch changes (name, manager), ALL accounts at that branch need new Type 2 rows. That's millions of unnecessary rows! Instead, put both account_key AND branch_key directly in the fact table. The correlation is discovered through the fact table, which is perfectly fine for periodic snapshots.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multivalued Dimensions & Bridge Tables -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-purple);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(139,92,246,0.15); color: var(--accent-purple);"><i class="fas fa-project-diagram"></i></div>
+                        <h3>Multivalued Dimensions &amp; Bridge Tables</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Normally, each dimension has ONE value per fact row. But sometimes there are legitimately MULTIPLE values - like a patient with 3 simultaneous diagnoses.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏥</div>
+                            <div class="analogy-text">
+                                Patient John visits the hospital. He has: diabetes, high blood pressure, AND asthma. One treatment event, but THREE diagnoses. We can't put all three in one dimension column! Solution: a bridge table that maps a "diagnosis group key" to multiple individual diagnosis rows. The fact table points to the group, the bridge table expands the group into its members.
+                            </div>
+                        </div>
+
+                        <p>Bridge tables may also need effective/expiration dates (like Type 2 SCD) when the multivalued relationships change over time, such as bank accounts linked to multiple customers.</p>
+                    </div>
+                </div>
+
+                <!-- Behavior Tags & Study Groups -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-chart-bar"></i></div>
+                        <h3>Behavior Tag Time Series &amp; Study Groups</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Behavior Tags:</strong> Data mining produces textual behavior labels (like "High Spender", "Bargain Hunter", "Churning") assigned periodically. Store these as positional attributes in the customer dimension: behavior_jan, behavior_feb, etc. They're used for pattern matching, not math.</p>
+
+                        <p><strong>Study Groups:</strong> Complex behavior analysis (like "customers who bought Product A, then returned Product B within 30 days, and haven't bought in 90 days") is too complex for normal queries. Run the analysis once, save the results in a simple table of customer durable keys, and use that table as a filter in any schema.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🔬</div>
+                            <div class="analogy-text">
+                                Study groups are like "saved playlists" for customer segments. A data scientist spends days finding "customers likely to churn." Instead of re-running that analysis in every report, they save the list. Now any report can filter: "Show me sales ONLY for the 'likely to churn' group." You can even combine groups: "churning AND high-value" using set operations!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aggregated Facts as Dim Attributes, Dynamic Banding, Text Comments -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-orange);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(249,115,22,0.15); color: var(--accent-orange);"><i class="fas fa-sliders-h"></i></div>
+                        <h3>Aggregated Facts as Attributes, Value Banding &amp; Text Comments</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Aggregated Facts as Dimension Attributes:</strong> "Show me only customers who spent over $10,000 last year." To enable this, pre-calculate aggregated metrics and store them in the dimension table, often as banded ranges: "Lifetime Value = $10K-$25K".</p>
+
+                        <p><strong>Dynamic Value Banding:</strong> Reports grouped by value ranges ("Balance $0-$10", "$10-$25", etc.) where the ranges are defined at query time using a small banding dimension table joined via greater-than/less-than conditions, or SQL CASE statements.</p>
+
+                        <p><strong>Text Comments:</strong> Free-form text comments don't belong in fact tables! Store them in a separate comments dimension with a foreign key from the fact table. This keeps the fact table lean and fast.</p>
+                    </div>
+                </div>
+
+                <!-- Multiple Time Zones, Measure Type, Step, Hot Swappable, Abstract, Audit, Late Arriving -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-cyan);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(6,182,212,0.15); color: var(--accent-cyan);"><i class="fas fa-th"></i></div>
+                        <h3>More Advanced Techniques: Time Zones, Measure Types, Steps &amp; More</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p><strong>Multiple Time Zones:</strong> Use dual foreign keys in the fact table - one for UTC standard time and one for local time, each pointing to role-playing date dimensions.</p>
+
+                        <p><strong>Measure Type Dimensions:</strong> When a fact table has hundreds of sparsely populated fact columns, you MIGHT collapse them into a single "measure_value" column identified by a "measure_type" dimension. Generally NOT recommended because it multiplies fact table rows and makes cross-column math hard. Only use when facts number in the hundreds.</p>
+
+                        <p><strong>Step Dimensions:</strong> For sequential processes (web page flows), a step dimension tracks where each step fits: step_number=3, total_steps=7. Helps analyze drop-off points!</p>
+
+                        <p><strong>Hot Swappable Dimensions:</strong> Same fact table, different dimension versions for different users. A stock ticker fact table exposed to multiple investors, each with their own proprietary attributes on the same stocks.</p>
+
+                        <p><strong>Abstract Generic Dimensions (AVOID!):</strong> Don't create a single "Person" dimension for employees, customers, and vendors. Don't create a generic "Location" dimension for stores, warehouses, and customer addresses. These have different attributes and create large, confusing tables. Keep them separate!</p>
+
+                        <div class="warning-box">
+                            <div class="warning-icon">🚫</div>
+                            <p>Data abstraction is fine in OLTP source systems and ETL processing, but it HURTS query performance and legibility in dimensional models. Keep your dimensions specific and meaningful!</p>
+                        </div>
+
+                        <p><strong>Audit Dimensions:</strong> Track ETL metadata! When a fact row is created, stamp it with: data quality score, ETL code version, processing timestamp, source system identifier. Invaluable for compliance and debugging.</p>
+
+                        <p><strong>Late Arriving Dimensions:</strong> When facts arrive before their dimension context (real-time systems), create placeholder dimension rows with the natural key and "Unknown" for descriptive attributes. When the real data arrives later, overwrite with Type 1. For retroactive Type 2 changes, insert a new historical dimension row and restate affected fact rows.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SECTION 9: SPECIAL PURPOSE SCHEMAS           -->
+            <!-- ============================================ -->
+            <section class="content-section" id="special">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(59,130,246,0.2);">
+                    <div class="section-number" style="background: var(--accent-blue); color: white;">9</div>
+                    <h2>Special Purpose Schemas</h2>
+                    <p>Unique patterns for heterogeneous products, real-time data, and data quality management!</p>
+                </div>
+
+                <!-- Supertype/Subtype -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-blue);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);"><i class="fas fa-object-group"></i></div>
+                        <h3>Supertype &amp; Subtype Schemas</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>When a business offers wildly different products (checking accounts, mortgages, business loans - all "accounts" but completely different), a single fact table with every possible column is impossible.</p>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏦</div>
+                            <div class="analogy-text">
+                                A bank has checking accounts, savings, credit cards, mortgages, and business loans. They're all "accounts" but have completely different measurements. You can't put "interest rate", "monthly payment", "credit limit", "overdraft fee", and "loan balance" all in one table - most columns would be empty!
+                            </div>
+                        </div>
+
+                        <p><strong>Solution:</strong> Build a <strong>supertype</strong> (core) fact table with common facts shared by ALL account types (balance, transaction count), plus separate <strong>subtype</strong> (custom) fact tables for each account type with their unique facts. Same pattern for dimensions: one core dimension with common attributes, plus subtype-specific dimension tables.</p>
+
+                        <div class="diagram-container">
+                            <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Core table -->
+                                <rect x="200" y="20" width="200" height="70" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+                                <text x="300" y="50" text-anchor="middle" fill="#60a5fa" font-weight="800" font-size="13" font-family="Nunito">CORE (Supertype)</text>
+                                <text x="300" y="70" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Nunito">Common: balance, txn_count</text>
+
+                                <!-- Lines -->
+                                <line x1="250" y1="90" x2="100" y2="140" stroke="#475569" stroke-width="1.5"/>
+                                <line x1="300" y1="90" x2="300" y2="140" stroke="#475569" stroke-width="1.5"/>
+                                <line x1="350" y1="90" x2="500" y2="140" stroke="#475569" stroke-width="1.5"/>
+
+                                <!-- Checking -->
+                                <rect x="20" y="140" width="160" height="60" rx="10" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+                                <text x="100" y="168" text-anchor="middle" fill="#4ade80" font-weight="700" font-size="11" font-family="Nunito">Checking (Subtype)</text>
+                                <text x="100" y="185" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">overdraft_fee, atm_count</text>
+
+                                <!-- Mortgage -->
+                                <rect x="220" y="140" width="160" height="60" rx="10" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+                                <text x="300" y="168" text-anchor="middle" fill="#a78bfa" font-weight="700" font-size="11" font-family="Nunito">Mortgage (Subtype)</text>
+                                <text x="300" y="185" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">interest_rate, principal</text>
+
+                                <!-- Credit Card -->
+                                <rect x="420" y="140" width="160" height="60" rx="10" fill="#1e293b" stroke="#f97316" stroke-width="1.5"/>
+                                <text x="500" y="168" text-anchor="middle" fill="#fb923c" font-weight="700" font-size="11" font-family="Nunito">Credit Card (Subtype)</text>
+                                <text x="500" y="185" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito">credit_limit, apr</text>
+
+                                <text x="300" y="240" text-anchor="middle" fill="#64748b" font-size="10" font-family="Nunito">Core table has facts common to ALL account types.</text>
+                                <text x="300" y="255" text-anchor="middle" fill="#64748b" font-size="10" font-family="Nunito">Subtype tables have facts unique to each type.</text>
+                            </svg>
+                            <p class="diagram-label">Supertype/Subtype pattern: One core table for shared metrics, separate tables for product-specific details</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-Time Fact Tables -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-green);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(34,197,94,0.15); color: var(--accent-green);"><i class="fas fa-bolt"></i></div>
+                        <h3>Real-Time Fact Tables</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>When the nightly batch isn't fast enough and you need data updated in real-time (or near real-time). Techniques include:</p>
+
+                        <ul style="padding-left: 20px; color: var(--text-secondary); margin: 10px 0;">
+                            <li><strong>Hot partitions:</strong> A special partition pinned in memory, without indexes or aggregations, for incoming real-time data</li>
+                            <li><strong>Deferred updating:</strong> Let running queries complete, then apply updates</li>
+                            <li><strong>OLAP cube refresh:</strong> Some OLAP engines support incremental updates</li>
+                        </ul>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🏎️</div>
+                            <div class="analogy-text">
+                                The nightly batch is like a newspaper - printed once a day. Real-time is like a live Twitter feed - always updating. The "hot partition" is like a breaking news ticker at the bottom of the TV screen - fast and temporary, while the main program (batch) runs on schedule.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Event Schemas -->
+                <div class="topic-card fade-in">
+                    <div class="card-accent" style="background: var(--accent-red);"></div>
+                    <div class="topic-title" onclick="toggleTopic(this)">
+                        <div class="icon-box" style="background: rgba(239,68,68,0.15); color: var(--accent-red);"><i class="fas fa-exclamation-triangle"></i></div>
+                        <h3>Error Event Schemas</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="topic-body">
+                        <p>Data quality requires a system of <strong>screens/filters</strong> that test data as it flows from source to warehouse. When errors are detected, they're recorded in a special dimensional schema in the ETL back room.</p>
+
+                        <p>Two related tables:</p>
+                        <ul style="padding-left: 20px; color: var(--text-secondary); margin: 10px 0;">
+                            <li><strong>Error Event Fact Table:</strong> One row per error detected (grain = individual error event)</li>
+                            <li><strong>Error Event Detail Fact Table:</strong> One row per column in each table that participated in an error (grain = column level)</li>
+                        </ul>
+
+                        <div class="analogy-box">
+                            <div class="analogy-icon">🔍</div>
+                            <div class="analogy-text">
+                                Think of airport security. Every bag goes through an X-ray machine (data quality screen). When something suspicious is found, it's logged: "Bag #4521, Screen: Metal Detector, Error: Prohibited Item, Time: 3:42 PM." This error log lets you track data quality trends, find problematic sources, and demonstrate compliance to auditors.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- FINAL RECAP                                  -->
+            <!-- ============================================ -->
+            <section class="content-section" id="recap" style="text-align: center; padding: 60px 20px;">
+                <div style="background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15)); border: 1px solid rgba(59,130,246,0.3); border-radius: 24px; padding: 50px 30px; max-width: 800px; margin: 0 auto;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">🎉</div>
+                    <h2 style="font-size: 2em; margin-bottom: 15px; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">You Made It!</h2>
+                    <p style="font-size: 1.15em; color: var(--text-secondary); max-width: 600px; margin: 0 auto 25px;">
+                        You've just covered ALL the Kimball Dimensional Modeling Techniques - from basic star schemas to advanced bridge tables and error event schemas. That's the complete toolkit used by data warehouse professionals worldwide since 1996!
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 30px 0;">
+                        <div style="background: rgba(30,41,59,0.8); border-radius: 12px; padding: 15px;">
+                            <div style="font-size: 1.8em; font-weight: 900; color: var(--accent-blue);">9</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Major Sections</div>
+                        </div>
+                        <div style="background: rgba(30,41,59,0.8); border-radius: 12px; padding: 15px;">
+                            <div style="font-size: 1.8em; font-weight: 900; color: var(--accent-green);">60+</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Techniques Covered</div>
+                        </div>
+                        <div style="background: rgba(30,41,59,0.8); border-radius: 12px; padding: 15px;">
+                            <div style="font-size: 1.8em; font-weight: 900; color: var(--accent-purple);">8</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">SCD Types</div>
+                        </div>
+                        <div style="background: rgba(30,41,59,0.8); border-radius: 12px; padding: 15px;">
+                            <div style="font-size: 1.8em; font-weight: 900; color: var(--accent-orange);">3</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Fact Table Types</div>
+                        </div>
+                    </div>
+
+                    <a href="index.html" style="display: inline-flex; align-items: center; gap: 10px; background: var(--accent-blue); color: white; padding: 14px 30px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 1.05em; transition: all 0.3s; margin-top: 10px;">
+                        <i class="fas fa-home"></i> Back to Learning Hub
+                    </a>
+                </div>
+            </section>
+
+        </div><!-- end container -->
+    </div><!-- end page-wrapper -->
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top-btn" id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <div class="page-footer">
+        <p>Based on "Kimball Dimensional Modeling Techniques" by Ralph Kimball &amp; Margy Ross (2013)</p>
+        <p style="margin-top: 8px;">Explained with love by <a href="https://www.linkedin.com/in/fakhruddinkhambaty/" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-weight: 700;">Fakhruddin Khambaty</a> | FKTI Learning Hub</p>
+    </div>
+
+    <script>
+        // Toggle topic expand/collapse
+        function toggleTopic(titleElement) {
+            const body = titleElement.nextElementSibling;
+            const icon = titleElement.querySelector('.toggle-icon');
+            body.classList.toggle('collapsed');
+            icon.classList.toggle('open');
+        }
+
+        // Tab switching
+        function switchTab(btn, tabId) {
+            const container = btn.closest('.tabs-container');
+            container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            container.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Quiz checking
+        function checkAnswer(btn) {
+            const options = btn.closest('.quiz-options');
+            const correctAnswer = options.dataset.correct;
+            const feedback = options.nextElementSibling;
+
+            options.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.disabled = true;
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.answer === correctAnswer) {
+                    opt.classList.add('correct');
+                }
+            });
+
+            if (btn.dataset.answer === correctAnswer) {
+                feedback.textContent = 'Correct! Great job!';
+                feedback.style.background = 'rgba(34, 197, 94, 0.15)';
+                feedback.style.color = '#22c55e';
+            } else {
+                btn.classList.add('wrong');
+                feedback.textContent = 'Not quite! The correct answer is highlighted in green.';
+                feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+                feedback.style.color = '#ef4444';
+            }
+            feedback.style.display = 'block';
+        }
+
+        // Reading progress bar
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('readingProgress').style.width = progress + '%';
+
+            // Back to top button
+            const btn = document.getElementById('backToTopBtn');
+            if (scrollTop > 500) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Expand all topics by default (they start visible)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Topics start expanded - no collapsed class by default
+        });
+    </script>
+</body>
+</html>
