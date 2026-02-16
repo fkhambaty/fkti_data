@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Bus Matrix Builder | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- html2canvas + jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #22c55e;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --border-color: #334155;
+            --border-light: #475569;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ── Background Animation ── */
+        .bg-anim {
+            position: fixed; inset: 0;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .bg-anim .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(100px); opacity: 0.12;
+            animation: drift 22s ease-in-out infinite;
+        }
+        .bg-anim .orb:nth-child(1) { width: 420px; height: 420px; background: var(--accent-blue); top: 5%; left: 8%; }
+        .bg-anim .orb:nth-child(2) { width: 350px; height: 350px; background: var(--accent-purple); bottom: 10%; right: 5%; animation-delay: -8s; }
+        .bg-anim .orb:nth-child(3) { width: 300px; height: 300px; background: var(--accent-pink); top: 50%; left: 50%; animation-delay: -15s; }
+        @keyframes drift {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(40px,-30px) scale(1.08); }
+            66% { transform: translate(-25px,35px) scale(0.94); }
+        }
+
+        .page { position: relative; z-index: 1; }
+
+        /* ── Top Nav ── */
+        .top-nav {
+            background: rgba(15,23,42,0.92);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 28px;
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .top-nav a {
+            color: var(--accent-blue); text-decoration: none;
+            font-weight: 700; display: flex; align-items: center; gap: 8px;
+            transition: all .25s;
+        }
+        .top-nav a:hover { color: var(--accent-cyan); transform: translateX(-3px); }
+        .nav-title { font-size: 1.1em; color: var(--text-primary); font-weight: 800; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 55px 20px 35px;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(139,92,246,0.14);
+            color: var(--accent-purple);
+            padding: 9px 22px; border-radius: 28px;
+            font-weight: 700; font-size: 0.92em;
+            border: 1px solid rgba(139,92,246,0.3);
+            margin-bottom: 18px;
+        }
+        .hero h1 {
+            font-size: 2.8em; font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 12px; line-height: 1.2;
+        }
+        .hero p { color: var(--text-secondary); font-size: 1.12em; max-width: 620px; margin: 0 auto; }
+
+        /* ── Input Panel ── */
+        .input-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px 35px;
+            margin: 35px auto 40px;
+            max-width: 900px;
+        }
+        .input-panel h3 {
+            font-size: 1.15em; margin-bottom: 20px; color: var(--text-primary);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        @media (max-width: 640px) { .input-row { grid-template-columns: 1fr; } }
+
+        .input-group label {
+            display: block; font-weight: 700; font-size: 0.88em;
+            color: var(--text-secondary); text-transform: uppercase;
+            letter-spacing: 0.6px; margin-bottom: 10px;
+        }
+        .add-row {
+            display: flex; gap: 8px; margin-bottom: 10px;
+        }
+        .add-row input {
+            flex: 1; background: var(--bg-input); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 10px 14px; color: var(--text-primary);
+            font-family: 'Nunito', sans-serif; font-size: 0.95em;
+            transition: border-color .2s;
+        }
+        .add-row input:focus { outline: none; border-color: var(--accent-blue); }
+        .add-row input::placeholder { color: var(--text-muted); }
+
+        .btn-add {
+            background: var(--accent-blue); color: white; border: none;
+            border-radius: 10px; padding: 10px 16px; cursor: pointer;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.92em;
+            display: flex; align-items: center; gap: 6px;
+            transition: all .2s; white-space: nowrap;
+        }
+        .btn-add:hover { background: #2563eb; transform: translateY(-1px); }
+
+        .tag-list {
+            display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px;
+        }
+        .tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 8px;
+            font-size: 0.88em; font-weight: 700;
+            animation: tagPop .3s ease-out;
+        }
+        @keyframes tagPop {
+            0% { opacity: 0; transform: scale(0.7); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .tag .remove-tag {
+            cursor: pointer; opacity: 0.6; transition: opacity .2s;
+            font-size: 0.85em;
+        }
+        .tag .remove-tag:hover { opacity: 1; }
+
+        .tag-process {
+            background: rgba(59,130,246,0.15); color: var(--accent-blue);
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+        .tag-dimension {
+            background: rgba(139,92,246,0.15); color: var(--accent-purple);
+            border: 1px solid rgba(139,92,246,0.3);
+        }
+
+        /* ── Quick-fill bar ── */
+        .quickfill {
+            margin-top: 20px; padding-top: 18px;
+            border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        }
+        .quickfill span { font-size: 0.85em; color: var(--text-muted); font-weight: 600; }
+        .btn-quick {
+            background: rgba(34,197,94,0.12); color: var(--accent-green);
+            border: 1px solid rgba(34,197,94,0.3); border-radius: 8px;
+            padding: 7px 14px; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-weight: 700; font-size: 0.82em; transition: all .2s;
+        }
+        .btn-quick:hover { background: rgba(34,197,94,0.25); transform: translateY(-1px); }
+
+        /* ── Matrix Area ── */
+        .matrix-area {
+            margin: 0 auto 50px; max-width: 100%; overflow-x: auto;
+        }
+        .matrix-toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
+        }
+        .matrix-toolbar h3 {
+            font-size: 1.15em; display: flex; align-items: center; gap: 8px;
+        }
+        .export-btns { display: flex; gap: 8px; }
+        .btn-export {
+            display: flex; align-items: center; gap: 6px;
+            padding: 9px 18px; border-radius: 10px; cursor: pointer;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.88em;
+            border: none; transition: all .25s;
+        }
+        .btn-export:hover { transform: translateY(-2px); }
+        .btn-excel { background: #16a34a; color: white; }
+        .btn-excel:hover { background: #15803d; box-shadow: 0 4px 15px rgba(22,163,74,0.35); }
+        .btn-pdf { background: var(--accent-red); color: white; }
+        .btn-pdf:hover { background: #dc2626; box-shadow: 0 4px 15px rgba(239,68,68,0.35); }
+
+        /* ── The Matrix Table ── */
+        .matrix-wrap {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 25px;
+            overflow-x: auto;
+        }
+        #matrixTable {
+            width: 100%; border-collapse: separate;
+            border-spacing: 0;
+        }
+        #matrixTable th, #matrixTable td {
+            padding: 14px 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        #matrixTable thead th {
+            font-weight: 800; font-size: 0.92em;
+            border-bottom: 2px solid var(--border-light);
+            position: sticky; top: 0;
+            background: var(--bg-secondary);
+            z-index: 2;
+        }
+        #matrixTable thead th:first-child {
+            text-align: left; font-size: 0.85em; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        #matrixTable tbody td:first-child {
+            text-align: left; font-weight: 600; color: var(--text-secondary);
+            font-size: 0.95em; padding-left: 14px;
+        }
+        #matrixTable tbody tr {
+            transition: background .2s;
+        }
+        #matrixTable tbody tr:hover {
+            background: rgba(59,130,246,0.04);
+        }
+        #matrixTable tbody td {
+            border-bottom: 1px solid rgba(51,65,85,0.4);
+        }
+
+        /* ── Dot Cells ── */
+        .dot-cell {
+            cursor: pointer;
+            position: relative;
+            padding: 10px;
+        }
+        .dot-cell .dot {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            margin: 0 auto;
+            transition: all .3s cubic-bezier(.34,1.56,.64,1);
+            position: relative;
+        }
+        .dot-cell .dot.linked {
+            box-shadow: 0 0 12px rgba(var(--dot-r),var(--dot-g),var(--dot-b),0.45);
+            transform: scale(1);
+        }
+        .dot-cell .dot.unlinked {
+            background: rgba(51,65,85,0.35) !important;
+            border: 2px dashed var(--border-light);
+            box-shadow: none;
+            transform: scale(0.75);
+            opacity: 0.4;
+        }
+        .dot-cell:hover .dot.unlinked {
+            opacity: 0.7;
+            transform: scale(0.9);
+            border-color: var(--accent-blue);
+        }
+        .dot-cell:hover .dot.linked {
+            transform: scale(1.15);
+            filter: brightness(1.15);
+        }
+
+        /* ── Tooltip ── */
+        .dot-cell .tooltip {
+            position: absolute; bottom: calc(100% + 8px); left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: #0f172a; color: var(--text-primary);
+            padding: 6px 14px; border-radius: 8px;
+            font-size: 0.78em; font-weight: 600;
+            white-space: nowrap; pointer-events: none;
+            opacity: 0; transition: all .2s;
+            border: 1px solid var(--border-color);
+            z-index: 10;
+        }
+        .dot-cell:hover .tooltip {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center; padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state i { font-size: 3em; margin-bottom: 15px; opacity: 0.3; }
+        .empty-state p { font-size: 1.05em; }
+
+        /* ── Link animation ── */
+        @keyframes linkPulse {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes unlinkShrink {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.75); opacity: 0.4; }
+        }
+        .dot.anim-link { animation: linkPulse .4s cubic-bezier(.34,1.56,.64,1); }
+        .dot.anim-unlink { animation: unlinkShrink .3s ease-out; }
+
+        /* ── Dim header colors (cycle through) ── */
+        .dim-color-0 { color: #60a5fa; }
+        .dim-color-1 { color: #a78bfa; }
+        .dim-color-2 { color: #4ade80; }
+        .dim-color-3 { color: #fb923c; }
+        .dim-color-4 { color: #f472b6; }
+        .dim-color-5 { color: #22d3ee; }
+        .dim-color-6 { color: #fbbf24; }
+        .dim-color-7 { color: #f87171; }
+        .dim-color-8 { color: #a3e635; }
+        .dim-color-9 { color: #e879f9; }
+
+        /* dot colors */
+        .dot-bg-0 { background: #3b82f6; --dot-r:59;  --dot-g:130; --dot-b:246; }
+        .dot-bg-1 { background: #8b5cf6; --dot-r:139; --dot-g:92;  --dot-b:246; }
+        .dot-bg-2 { background: #22c55e; --dot-r:34;  --dot-g:197; --dot-b:94;  }
+        .dot-bg-3 { background: #f97316; --dot-r:249; --dot-g:115; --dot-b:22;  }
+        .dot-bg-4 { background: #ec4899; --dot-r:236; --dot-g:72;  --dot-b:153; }
+        .dot-bg-5 { background: #06b6d4; --dot-r:6;   --dot-g:182; --dot-b:212; }
+        .dot-bg-6 { background: #eab308; --dot-r:234; --dot-g:179; --dot-b:8;   }
+        .dot-bg-7 { background: #ef4444; --dot-r:239; --dot-g:68;  --dot-b:68;  }
+        .dot-bg-8 { background: #84cc16; --dot-r:132; --dot-g:204; --dot-b:22;  }
+        .dot-bg-9 { background: #d946ef; --dot-r:217; --dot-g:70;  --dot-b:239; }
+
+        /* ── Legend ── */
+        .legend {
+            display: flex; gap: 20px; justify-content: center;
+            margin-top: 18px; flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.85em; color: var(--text-secondary);
+        }
+        .legend-dot {
+            width: 18px; height: 18px; border-radius: 50%;
+        }
+        .legend-dot.on { background: var(--accent-blue); box-shadow: 0 0 8px rgba(59,130,246,0.4); }
+        .legend-dot.off {
+            background: rgba(51,65,85,0.35);
+            border: 2px dashed var(--border-light);
+        }
+
+        /* ── Footer ── */
+        .page-footer {
+            text-align: center; padding: 35px 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted); font-size: 0.9em;
+        }
+        .page-footer a { color: var(--accent-blue); text-decoration: none; font-weight: 700; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2em; }
+            .input-panel { padding: 20px; }
+            .matrix-wrap { padding: 15px; }
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+
+        /* ── Stats strip ── */
+        .stats-strip {
+            display: flex; justify-content: center; gap: 30px;
+            margin-top: 18px; flex-wrap: wrap;
+        }
+        .stat-pill {
+            background: rgba(30,41,59,0.8); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 8px 18px;
+            font-size: 0.88em; color: var(--text-secondary);
+        }
+        .stat-pill strong { color: var(--text-primary); margin-right: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="bg-anim"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+
+<div class="page">
+    <!-- Nav -->
+    <nav class="top-nav">
+        <a href="data-modelling.html"><i class="fas fa-arrow-left"></i> Back to Data Modelling</a>
+        <span class="nav-title"><i class="fas fa-th"></i> Bus Matrix Builder</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge"><i class="fas fa-th"></i> Interactive Tool</div>
+            <h1>Enterprise Bus Matrix Builder</h1>
+            <p>Add your business processes and dimensions, click dots to link or unlink them, then export to Excel or PDF. It's that easy!</p>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- ── Input Panel ── -->
+        <div class="input-panel">
+            <h3><i class="fas fa-edit" style="color:var(--accent-blue);"></i> Define Your Matrix</h3>
+
+            <div class="input-row">
+                <!-- Processes (rows) -->
+                <div class="input-group">
+                    <label><i class="fas fa-industry"></i> Business Processes (Rows)</label>
+                    <div class="add-row">
+                        <input type="text" id="processInput" placeholder='e.g. "Retail Sales"' onkeydown="if(event.key==='Enter') addProcess()">
+                        <button class="btn-add" onclick="addProcess()"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <div class="tag-list" id="processTags"></div>
+                </div>
+
+                <!-- Dimensions (columns) -->
+                <div class="input-group">
+                    <label><i class="fas fa-tags"></i> Dimensions (Columns)</label>
+                    <div class="add-row">
+                        <input type="text" id="dimensionInput" placeholder='e.g. "Date"' onkeydown="if(event.key==='Enter') addDimension()">
+                        <button class="btn-add" onclick="addDimension()" style="background:var(--accent-purple);"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <div class="tag-list" id="dimensionTags"></div>
+                </div>
+            </div>
+
+            <!-- Quick fill -->
+            <div class="quickfill">
+                <span><i class="fas fa-magic"></i> Quick Fill:</span>
+                <button class="btn-quick" onclick="loadRetailExample()">Retail Example</button>
+                <button class="btn-quick" onclick="loadBankingExample()">Banking Example</button>
+                <button class="btn-quick" onclick="loadHealthcareExample()">Healthcare Example</button>
+                <button class="btn-quick" onclick="clearAll()" style="color:var(--accent-red); background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.3);">
+                    <i class="fas fa-trash-alt"></i> Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Matrix Display ── -->
+        <div class="matrix-area" id="matrixArea">
+            <div class="matrix-toolbar">
+                <h3><i class="fas fa-th" style="color:var(--accent-purple);"></i> Your Bus Matrix</h3>
+                <div class="export-btns" id="exportBtns" style="display:none;">
+                    <button class="btn-export btn-excel" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+                    <button class="btn-export btn-pdf" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                </div>
+            </div>
+
+            <div class="matrix-wrap" id="matrixWrap">
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-th-large"></i>
+                    <p>Add at least one process and one dimension above to see the matrix!</p>
+                </div>
+                <table id="matrixTable" style="display:none;"></table>
+            </div>
+
+            <div class="legend" id="legend" style="display:none;">
+                <div class="legend-item"><div class="legend-dot on"></div> Linked (click to unlink)</div>
+                <div class="legend-item"><div class="legend-dot off"></div> Unlinked (click to link)</div>
+            </div>
+
+            <div class="stats-strip" id="statsStrip" style="display:none;"></div>
+        </div>
+
+    </div>
+
+    <div class="page-footer">
+        <p>Part of the <a href="data-modelling.html">Data Modelling Guide</a> | <a href="index.html">FKTI Learning Hub</a></p>
+    </div>
+</div>
+
+<script>
+/* ─── State ─── */
+let processes = [];
+let dimensions = [];
+let links = {};  // "process|dimension" => true/false
+
+/* ─── Dot colors (indexed by dimension position) ─── */
+const DOT_COLORS = [
+    '#3b82f6','#8b5cf6','#22c55e','#f97316','#ec4899',
+    '#06b6d4','#eab308','#ef4444','#84cc16','#d946ef'
+];
+
+/* ─── Add / Remove ─── */
+function addProcess() {
+    const input = document.getElementById('processInput');
+    const name = input.value.trim();
+    if (!name || processes.includes(name)) { input.value = ''; return; }
+    processes.push(name);
+    input.value = '';
+    renderTags();
+    renderMatrix();
+    input.focus();
+}
+
+function addDimension() {
+    const input = document.getElementById('dimensionInput');
+    const name = input.value.trim();
+    if (!name || dimensions.includes(name)) { input.value = ''; return; }
+    dimensions.push(name);
+    input.value = '';
+    renderTags();
+    renderMatrix();
+    input.focus();
+}
+
+function removeProcess(name) {
+    processes = processes.filter(p => p !== name);
+    Object.keys(links).forEach(k => { if (k.startsWith(name + '|')) delete links[k]; });
+    renderTags();
+    renderMatrix();
+}
+
+function removeDimension(name) {
+    dimensions = dimensions.filter(d => d !== name);
+    Object.keys(links).forEach(k => { if (k.endsWith('|' + name)) delete links[k]; });
+    renderTags();
+    renderMatrix();
+}
+
+/* ─── Tags ─── */
+function renderTags() {
+    const pContainer = document.getElementById('processTags');
+    const dContainer = document.getElementById('dimensionTags');
+
+    pContainer.innerHTML = processes.map(p =>
+        `<span class="tag tag-process">${esc(p)} <span class="remove-tag" onclick="removeProcess('${escAttr(p)}')">&times;</span></span>`
+    ).join('');
+
+    dContainer.innerHTML = dimensions.map(d =>
+        `<span class="tag tag-dimension">${esc(d)} <span class="remove-tag" onclick="removeDimension('${escAttr(d)}')">&times;</span></span>`
+    ).join('');
+}
+
+/* ─── Toggle Link ─── */
+function toggleLink(proc, dim) {
+    const key = proc + '|' + dim;
+    const wasLinked = !!links[key];
+    links[key] = !wasLinked;
+
+    const dotEl = document.querySelector(`[data-proc="${CSS.escape(proc)}"][data-dim="${CSS.escape(dim)}"] .dot`);
+    if (dotEl) {
+        const dIdx = dimensions.indexOf(dim) % DOT_COLORS.length;
+        dotEl.classList.remove('anim-link', 'anim-unlink');
+        void dotEl.offsetWidth; // reflow
+
+        if (links[key]) {
+            dotEl.className = `dot linked dot-bg-${dIdx} anim-link`;
+        } else {
+            dotEl.className = `dot unlinked anim-unlink`;
+            dotEl.style.background = '';
+        }
+    }
+    updateStats();
+}
+
+/* ─── Render Matrix ─── */
+function renderMatrix() {
+    const table = document.getElementById('matrixTable');
+    const empty = document.getElementById('emptyState');
+    const legend = document.getElementById('legend');
+    const exportBtns = document.getElementById('exportBtns');
+    const statsStrip = document.getElementById('statsStrip');
+
+    if (processes.length === 0 || dimensions.length === 0) {
+        table.style.display = 'none';
+        empty.style.display = '';
+        legend.style.display = 'none';
+        exportBtns.style.display = 'none';
+        statsStrip.style.display = 'none';
+        return;
+    }
+
+    empty.style.display = 'none';
+    table.style.display = '';
+    legend.style.display = '';
+    exportBtns.style.display = '';
+    statsStrip.style.display = '';
+
+    // Header row
+    let html = '<thead><tr><th>Process</th>';
+    dimensions.forEach((d, i) => {
+        const cIdx = i % 10;
+        html += `<th class="dim-color-${cIdx}">${esc(d)}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    // Data rows
+    processes.forEach(proc => {
+        html += '<tr>';
+        html += `<td>${esc(proc)}</td>`;
+        dimensions.forEach((dim, dIdx) => {
+            const key = proc + '|' + dim;
+            const isLinked = !!links[key];
+            const cIdx = dIdx % 10;
+            const status = isLinked ? 'linked' : 'unlinked';
+            const dotClass = isLinked ? `dot linked dot-bg-${cIdx}` : 'dot unlinked';
+            const tipText = isLinked
+                ? `${esc(proc)} uses ${esc(dim)} — click to unlink`
+                : `Click to link ${esc(dim)} to ${esc(proc)}`;
+
+            html += `<td class="dot-cell" data-proc="${escAttr(proc)}" data-dim="${escAttr(dim)}" onclick="toggleLink('${escAttr(proc)}','${escAttr(dim)}')">
+                <div class="${dotClass}"></div>
+                <div class="tooltip">${tipText}</div>
+            </td>`;
+        });
+        html += '</tr>';
+    });
+
+    html += '</tbody>';
+    table.innerHTML = html;
+    updateStats();
+}
+
+/* ─── Stats ─── */
+function updateStats() {
+    const strip = document.getElementById('statsStrip');
+    const totalCells = processes.length * dimensions.length;
+    const linkedCount = Object.values(links).filter(Boolean).length;
+    const pct = totalCells ? Math.round((linkedCount / totalCells) * 100) : 0;
+
+    strip.innerHTML = `
+        <div class="stat-pill"><strong>${processes.length}</strong> Processes</div>
+        <div class="stat-pill"><strong>${dimensions.length}</strong> Dimensions</div>
+        <div class="stat-pill"><strong>${linkedCount}</strong> / ${totalCells} Linked</div>
+        <div class="stat-pill"><strong>${pct}%</strong> Coverage</div>
+    `;
+}
+
+/* ─── Quick-fill Examples ─── */
+function loadRetailExample() {
+    processes = ['Retail Sales', 'Inventory', 'Purchasing', 'Promotions'];
+    dimensions = ['Date', 'Product', 'Store', 'Customer', 'Vendor', 'Employee', 'Promotion'];
+    links = {
+        'Retail Sales|Date': true, 'Retail Sales|Product': true, 'Retail Sales|Store': true,
+        'Retail Sales|Customer': true, 'Retail Sales|Promotion': true,
+        'Inventory|Date': true, 'Inventory|Product': true, 'Inventory|Store': true, 'Inventory|Vendor': true,
+        'Purchasing|Date': true, 'Purchasing|Product': true, 'Purchasing|Vendor': true, 'Purchasing|Employee': true,
+        'Promotions|Date': true, 'Promotions|Product': true, 'Promotions|Store': true,
+        'Promotions|Customer': true, 'Promotions|Promotion': true
+    };
+    renderTags(); renderMatrix();
+}
+
+function loadBankingExample() {
+    processes = ['Account Opening', 'Transactions', 'Loan Origination', 'Customer Service'];
+    dimensions = ['Date', 'Customer', 'Account', 'Branch', 'Product', 'Employee', 'Channel'];
+    links = {
+        'Account Opening|Date': true, 'Account Opening|Customer': true, 'Account Opening|Account': true,
+        'Account Opening|Branch': true, 'Account Opening|Product': true, 'Account Opening|Employee': true,
+        'Transactions|Date': true, 'Transactions|Customer': true, 'Transactions|Account': true, 'Transactions|Channel': true,
+        'Loan Origination|Date': true, 'Loan Origination|Customer': true, 'Loan Origination|Account': true,
+        'Loan Origination|Branch': true, 'Loan Origination|Product': true, 'Loan Origination|Employee': true,
+        'Customer Service|Date': true, 'Customer Service|Customer': true, 'Customer Service|Employee': true, 'Customer Service|Channel': true
+    };
+    renderTags(); renderMatrix();
+}
+
+function loadHealthcareExample() {
+    processes = ['Patient Admission', 'Lab Tests', 'Prescriptions', 'Billing'];
+    dimensions = ['Date', 'Patient', 'Doctor', 'Department', 'Diagnosis', 'Medication', 'Payer'];
+    links = {
+        'Patient Admission|Date': true, 'Patient Admission|Patient': true, 'Patient Admission|Doctor': true,
+        'Patient Admission|Department': true, 'Patient Admission|Diagnosis': true,
+        'Lab Tests|Date': true, 'Lab Tests|Patient': true, 'Lab Tests|Doctor': true, 'Lab Tests|Department': true,
+        'Prescriptions|Date': true, 'Prescriptions|Patient': true, 'Prescriptions|Doctor': true, 'Prescriptions|Medication': true,
+        'Billing|Date': true, 'Billing|Patient': true, 'Billing|Department': true, 'Billing|Payer': true
+    };
+    renderTags(); renderMatrix();
+}
+
+function clearAll() {
+    processes = []; dimensions = []; links = {};
+    renderTags(); renderMatrix();
+}
+
+/* ─── Export to Excel ─── */
+function exportExcel() {
+    const data = [];
+    // Header
+    const header = ['Process', ...dimensions];
+    data.push(header);
+    // Rows
+    processes.forEach(proc => {
+        const row = [proc];
+        dimensions.forEach(dim => {
+            row.push(links[proc + '|' + dim] ? 'X' : '');
+        });
+        data.push(row);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Column widths
+    ws['!cols'] = [{ wch: 22 }, ...dimensions.map(() => ({ wch: 14 }))];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Bus Matrix');
+    XLSX.writeFile(wb, 'Bus_Matrix.xlsx');
+}
+
+/* ─── Export to PDF ─── */
+async function exportPDF() {
+    const el = document.getElementById('matrixWrap');
+    const canvas = await html2canvas(el, {
+        backgroundColor: '#1e293b',
+        scale: 2,
+        useCORS: true,
+        logging: false
+    });
+
+    const { jsPDF } = window.jspdf;
+    const imgData = canvas.toDataURL('image/png');
+    const imgW = canvas.width;
+    const imgH = canvas.height;
+
+    const pdfW = imgW * 0.264583; // px to mm at 96dpi
+    const pdfH = imgH * 0.264583;
+
+    const orientation = pdfW > pdfH ? 'l' : 'p';
+    const pdf = new jsPDF({ orientation, unit: 'mm', format: [pdfW + 20, pdfH + 30] });
+
+    pdf.setFillColor(15, 23, 42);
+    pdf.rect(0, 0, pdfW + 20, pdfH + 30, 'F');
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.setTextColor(241, 245, 249);
+    pdf.text('Enterprise Bus Matrix', 10, 14);
+
+    pdf.addImage(imgData, 'PNG', 10, 22, pdfW, pdfH);
+    pdf.save('Bus_Matrix.pdf');
+}
+
+/* ─── Helpers ─── */
+function esc(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+function escAttr(str) {
+    return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+</script>
+</body>
+</html>
