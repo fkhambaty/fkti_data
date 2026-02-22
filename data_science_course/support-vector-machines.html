@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Vector Machines (SVM) | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f5d0fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .nav a { color: #9333ea; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #7e22ce; }
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 50%, #7e22ce 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(147, 51, 234, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .beginner-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #f0abfc;
+        }
+        .section h2 { color: #9333ea; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #f5d0fe; }
+        .section h3 { color: #7e22ce; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #a855f7; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        .analogy-box {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border-left: 5px solid #9333ea;
+        }
+        .analogy-box h4 { color: #7e22ce; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p, .analogy-box li { color: #581c87; }
+        .key-point {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #a855f7;
+        }
+        .key-point h4 { color: #7e22ce; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #581c87; }
+        .key-point li { margin-bottom: 8px; }
+        .warning-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .warning-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .warning-box p { color: #991b1b; }
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); color: white; padding: 18px 15px; text-align: left; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #faf5ff; }
+        .step-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            background: #faf5ff;
+            padding: 22px 25px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid #f0abfc;
+        }
+        .step-num {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #a855f7, #9333ea);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .step-card h5 { color: #7e22ce; font-size: 1.15em; margin-bottom: 6px; }
+        .step-card p { color: #475569; margin: 0; font-size: 1em; }
+        .svm-visual {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+            text-align: center;
+        }
+        .svm-visual h4 { color: #7e22ce; margin-bottom: 15px; }
+        .svm-visual svg { max-width: 100%; height: auto; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .comparison-card {
+            background: #faf5ff;
+            border: 2px solid #f0abfc;
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .comparison-card h5 { color: #9333ea; margin-bottom: 8px; }
+        .comparison-card p { margin: 0; font-size: 0.95em; }
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .nav-buttons { flex-direction: column; }
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="k-nearest-neighbors.html"><i class="fas fa-arrow-left"></i><span>Previous: kNN</span></a>
+            <a href="index.html"><i class="fas fa-th-large"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <span class="beginner-badge">👶 ABSOLUTE BEGINNER FRIENDLY</span>
+            <h1>🗡️ Support Vector Machines (SVM)</h1>
+            <p>The algorithm that draws the BEST possible boundary between groups. Think of it as building the widest road between two neighborhoods!</p>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 1: What is SVM?                     -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Part 1: What is a Support Vector Machine?</h2>
+
+            <p>A Support Vector Machine (SVM) is a <strong>supervised learning algorithm</strong> used for both <strong>classification</strong> and <strong>regression</strong>. Its superpower? It finds the <strong>best possible boundary</strong> (called a <strong>hyperplane</strong>) that separates different classes with the <strong>maximum margin</strong>.</p>
+
+            <h3>👶 In One Sentence (Like You're 5)</h3>
+            <p><strong>SVM</strong> means: "Draw a line between the red balls and blue balls, but make it as FAR from both groups as possible. That way, even if a new ball wobbles a little, it still ends up on the right side."</p>
+
+            <div class="eli5-box">
+                <h4>🏠 Imagine This...</h4>
+                <p>You have a big playground. On the left side, all the cats hang out. On the right side, all the dogs hang out. You need to build a fence between them.</p>
+                <p>You COULD build it right next to the cats (but then a cat might jump over!). You COULD build it right next to the dogs (same problem!).</p>
+                <p>The SMARTEST thing? Build the fence <strong>exactly in the middle</strong> so it's as far from BOTH groups as possible. That's what SVM does! It builds the fence (the <strong>hyperplane</strong>) with the <strong>widest possible gap</strong> (the <strong>margin</strong>) between both sides.</p>
+                <p>The cats and dogs sitting closest to the fence? Those are the <strong>support vectors</strong>. They're the ones that determine where the fence goes!</p>
+            </div>
+
+            <div class="svm-visual">
+                <h4>The SVM Concept - Maximum Margin Classifier</h4>
+                <svg viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Margin area -->
+                    <rect x="210" y="20" width="80" height="310" fill="#f3e8ff" stroke="none" opacity="0.6">
+                        <animate attributeName="opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/>
+                    </rect>
+
+                    <!-- Decision boundary (hyperplane) -->
+                    <line x1="250" y1="15" x2="250" y2="335" stroke="#9333ea" stroke-width="3" stroke-dasharray="8,4">
+                        <animate attributeName="stroke-opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+                    </line>
+
+                    <!-- Margin lines -->
+                    <line x1="210" y1="15" x2="210" y2="335" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+                    <line x1="290" y1="15" x2="290" y2="335" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+
+                    <!-- Margin arrow -->
+                    <line x1="210" y1="340" x2="290" y2="340" stroke="#7e22ce" stroke-width="2"/>
+                    <polygon points="210,340 216,336 216,344" fill="#7e22ce"/>
+                    <polygon points="290,340 284,336 284,344" fill="#7e22ce"/>
+                    <text x="250" y="355" text-anchor="middle" fill="#7e22ce" font-size="11" font-weight="700" font-family="Nunito">MARGIN (as wide as possible!)</text>
+
+                    <!-- Class A points (blue circles - left side) -->
+                    <circle cx="80" cy="60" r="14" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="120" cy="120" r="14" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="60" cy="180" r="14" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="140" cy="220" r="14" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="100" cy="280" r="14" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="50" cy="100" r="14" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="160" cy="160" r="14" fill="#3b82f6" opacity="0.8"/>
+
+                    <!-- Support vectors (class A - closest to boundary) -->
+                    <circle cx="210" cy="90" r="14" fill="#3b82f6" stroke="#1d4ed8" stroke-width="3">
+                        <animate attributeName="r" values="14;17;14" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="210" cy="250" r="14" fill="#3b82f6" stroke="#1d4ed8" stroke-width="3">
+                        <animate attributeName="r" values="14;17;14" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Class B points (orange circles - right side) -->
+                    <circle cx="400" cy="50" r="14" fill="#f97316" opacity="0.8"/>
+                    <circle cx="370" cy="130" r="14" fill="#f97316" opacity="0.8"/>
+                    <circle cx="420" cy="200" r="14" fill="#f97316" opacity="0.8"/>
+                    <circle cx="380" cy="270" r="14" fill="#f97316" opacity="0.8"/>
+                    <circle cx="440" cy="300" r="14" fill="#f97316" opacity="0.8"/>
+                    <circle cx="450" cy="140" r="14" fill="#f97316" opacity="0.8"/>
+                    <circle cx="350" cy="60" r="14" fill="#f97316" opacity="0.8"/>
+
+                    <!-- Support vectors (class B) -->
+                    <circle cx="290" cy="170" r="14" fill="#f97316" stroke="#c2410c" stroke-width="3">
+                        <animate attributeName="r" values="14;17;14" dur="2s" begin="1s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Labels -->
+                    <text x="95" y="25" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="800" font-family="Nunito">Class A (Blue)</text>
+                    <text x="400" y="25" text-anchor="middle" fill="#c2410c" font-size="13" font-weight="800" font-family="Nunito">Class B (Orange)</text>
+                    <text x="250" y="10" text-anchor="middle" fill="#9333ea" font-size="11" font-weight="700" font-family="Nunito">HYPERPLANE</text>
+
+                    <!-- SV labels -->
+                    <text x="210" y="78" text-anchor="middle" fill="#1e40af" font-size="8" font-weight="700" font-family="Nunito">Support Vector</text>
+                    <text x="290" y="158" text-anchor="end" fill="#9a3412" font-size="8" font-weight="700" font-family="Nunito">Support Vector</text>
+                </svg>
+                <p style="color: #7e22ce; font-size: 0.95em; margin-top: 10px;">The pulsing dots are <strong>support vectors</strong> - the critical points that define the boundary. The shaded area is the <strong>margin</strong>.</p>
+            </div>
+
+            <h3>Why Is It Called "Support Vector Machine"?</h3>
+            <ul style="margin-left: 22px; color: #334155; margin-bottom: 20px;">
+                <li><strong>Support Vectors</strong> = the data points closest to the boundary (the ones that "support" or define where the boundary goes)</li>
+                <li><strong>Vector</strong> = a fancy math word for "a point in space with coordinates"</li>
+                <li><strong>Machine</strong> = it's a learning machine (algorithm)</li>
+            </ul>
+
+            <div class="key-point">
+                <h4>💡 The Key Insight</h4>
+                <ul>
+                    <li>Out of potentially millions of data points, only a <strong>handful</strong> (the support vectors) actually matter for defining the boundary</li>
+                    <li>Moving or removing any non-support-vector point does NOT change the boundary at all</li>
+                    <li>This makes SVM <strong>memory efficient</strong> and robust to outliers far from the boundary</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 2: How SVM Works (The Math Made Easy) -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> Part 2: How SVM Works (The Math Made Simple)</h2>
+
+            <p>Don't worry - we'll make this painless! SVM is trying to solve one problem: <strong>"What's the best line (or surface) that separates the two classes?"</strong></p>
+
+            <h3>The Hyperplane</h3>
+            <p>A <strong>hyperplane</strong> is just a fancy word for a boundary:</p>
+            <ul style="margin-left: 22px; color: #334155; margin-bottom: 20px;">
+                <li>In <strong>2D</strong> (two features): the hyperplane is a <strong>line</strong></li>
+                <li>In <strong>3D</strong> (three features): the hyperplane is a <strong>flat surface</strong> (like a sheet of paper)</li>
+                <li>In <strong>100D</strong> (100 features): it's a 99-dimensional surface (can't visualize, but the math works the same!)</li>
+            </ul>
+
+            <div class="analogy-box">
+                <h4>🍕 Pizza Analogy</h4>
+                <p>Imagine a pizza with toppings on one half (pepperoni) and different toppings on the other (mushrooms). The hyperplane is the cut that perfectly divides the pizza in half. SVM finds the cut that keeps the widest "crust border" between pepperoni territory and mushroom territory.</p>
+            </div>
+
+            <h3>The Margin</h3>
+            <p>The <strong>margin</strong> is the distance between the hyperplane and the nearest data point from either class. SVM wants to <strong>maximize this margin</strong>. A wider margin means better generalization to new, unseen data.</p>
+
+            <div class="eli5-box">
+                <h4>🛣️ The Highway Analogy</h4>
+                <p>Think of the hyperplane as a <strong>highway</strong> between two cities (two classes). The support vectors are the buildings closest to the highway on each side. SVM builds the <strong>widest possible highway</strong> so there's maximum clearance from the buildings on both sides. A wider highway means even if a new building is slightly off, it still clearly belongs to its city!</p>
+            </div>
+
+            <h3>The Math (Simplified)</h3>
+            <p>For a 2D case, the hyperplane equation is:</p>
+            <div class="code-block">
+<pre><span class="comment"># The hyperplane equation</span>
+w1 * x1 + w2 * x2 + b = <span class="number">0</span>
+
+<span class="comment"># Where:</span>
+<span class="comment"># w1, w2 = weights (determine the orientation of the line)</span>
+<span class="comment"># x1, x2 = feature values</span>
+<span class="comment"># b = bias (shifts the line up/down)</span>
+
+<span class="comment"># For a new point, we compute:</span>
+<span class="comment">#   If w1*x1 + w2*x2 + b > 0  → Class A</span>
+<span class="comment">#   If w1*x1 + w2*x2 + b < 0  → Class B</span></pre>
+            </div>
+
+            <p>SVM finds the values of <strong>w</strong> and <strong>b</strong> that maximize the margin while correctly classifying all training points (or allowing some slack for noisy data).</p>
+
+            <h3>Step-by-Step: How SVM Finds the Best Boundary</h3>
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <div><h5>Start with labeled data</h5><p>Each data point has features (X) and a class label (+1 or -1).</p></div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <div><h5>Find all possible separating hyperplanes</h5><p>There are infinitely many lines that could separate the classes. SVM tests them all (mathematically, via optimization).</p></div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <div><h5>Pick the one with the MAXIMUM margin</h5><p>The hyperplane with the widest gap to the nearest points on both sides wins. This is found by solving a convex optimization problem (quadratic programming).</p></div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <div><h5>Identify the support vectors</h5><p>The points that sit exactly on the margin boundary are the support vectors. Only these points influence the final model.</p></div>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 3: Hard Margin vs Soft Margin       -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale"></i> Part 3: Hard Margin vs. Soft Margin (The C Parameter)</h2>
+
+            <p>What happens when the data ISN'T perfectly separable? Like when one cat accidentally wandered into the dog side of the playground?</p>
+
+            <h3>Hard Margin SVM</h3>
+            <p><strong>Hard margin</strong> means: "I demand PERFECT separation. Not a single point can be on the wrong side!" This only works when data is perfectly linearly separable (rare in real life!).</p>
+
+            <div class="warning-box">
+                <h4>⚠️ Problem with Hard Margin</h4>
+                <p>Real-world data is messy. There's almost always overlap or noise. Hard margin SVM will either fail completely (no solution exists) or overfit to one weird outlier, creating a terrible boundary. That's why we almost NEVER use hard margin in practice.</p>
+            </div>
+
+            <h3>Soft Margin SVM (The Practical One)</h3>
+            <p><strong>Soft margin</strong> means: "I'll try to separate perfectly, but I'll <em>tolerate some misclassifications</em> if it gives me a wider, more robust margin." Each misclassified or margin-violating point gets a <strong>penalty</strong>.</p>
+
+            <div class="analogy-box">
+                <h4>🏫 The Classroom Analogy</h4>
+                <p><strong>Hard margin teacher:</strong> "If even ONE student is sitting on the wrong side of the classroom, I REFUSE to draw the dividing line!" (Impractical - what if a student fell?)</p>
+                <p><strong>Soft margin teacher:</strong> "I'll draw the best line I can. If 2 students are slightly on the wrong side, I'll allow it as long as the overall separation is good. Those 2 get a small penalty (detention!), but the line still works great for the other 98 students."</p>
+            </div>
+
+            <h3>The C Parameter (Regularization Strength)</h3>
+            <p>The <strong>C parameter</strong> controls how much we penalize misclassifications:</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr><th>C Value</th><th>What Happens</th><th>Analogy</th><th>Risk</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong style="color:#9333ea;">Large C</strong> (e.g., 1000)</td>
+                        <td>Heavy penalty for errors. Tries very hard to classify every point correctly. Narrow margin.</td>
+                        <td>Strict teacher: "Zero tolerance for mistakes!"</td>
+                        <td>Overfitting</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color:#9333ea;">Small C</strong> (e.g., 0.01)</td>
+                        <td>Light penalty for errors. Allows more misclassifications. Wider margin.</td>
+                        <td>Chill teacher: "A few mistakes are fine, as long as the big picture works."</td>
+                        <td>Underfitting</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color:#9333ea;">C = 1</strong> (default)</td>
+                        <td>Balanced. Usually a good starting point.</td>
+                        <td>Reasonable teacher: fair but firm.</td>
+                        <td>Good default</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="key-point">
+                <h4>💡 How to Choose C?</h4>
+                <ul>
+                    <li>Use <strong>cross-validation</strong> to try different C values (e.g., 0.001, 0.01, 0.1, 1, 10, 100, 1000)</li>
+                    <li>Pick the C that gives the best validation accuracy</li>
+                    <li>Scikit-learn makes this easy with <code>GridSearchCV</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 4: The Kernel Trick                 -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-magic"></i> Part 4: The Kernel Trick (SVM's Secret Weapon!)</h2>
+
+            <p>What if the data <strong>can't be separated by a straight line at all</strong>? Like if the blue points form a circle surrounded by orange points? No straight line can separate them!</p>
+
+            <div class="svm-visual">
+                <h4>The Problem: Non-Linearly Separable Data</h4>
+                <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Inner circle points (blue) -->
+                    <circle cx="250" cy="125" r="12" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="230" cy="100" r="12" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="270" cy="100" r="12" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="240" cy="145" r="12" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="260" cy="145" r="12" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="250" cy="90" r="12" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="235" cy="125" r="12" fill="#3b82f6" opacity="0.8"/>
+
+                    <!-- Outer ring points (orange) -->
+                    <circle cx="150" cy="60" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="350" cy="60" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="100" cy="125" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="400" cy="125" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="150" cy="190" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="350" cy="190" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="200" cy="40" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="300" cy="40" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="200" cy="210" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="300" cy="210" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="130" cy="80" r="12" fill="#f97316" opacity="0.8"/>
+                    <circle cx="370" cy="80" r="12" fill="#f97316" opacity="0.8"/>
+
+                    <text x="250" y="240" text-anchor="middle" fill="#991b1b" font-size="12" font-weight="700" font-family="Nunito">No straight line can separate these! We need the kernel trick.</text>
+                </svg>
+            </div>
+
+            <h3>The Magic: Transform to Higher Dimensions!</h3>
+
+            <div class="eli5-box">
+                <h4>🎪 The Circus Trick Analogy</h4>
+                <p>Imagine blue coins and orange coins scattered on a table. The blue coins are in the center, orange coins surround them. No straight ruler can separate them on the <strong>flat table</strong> (2D).</p>
+                <p>Now imagine you <strong>SLAM the table</strong> from below! 💥 The coins fly up into the air. The blue coins (lighter) fly higher, the orange ones (heavier) stay lower. NOW, in 3D space, you CAN draw a flat sheet between them!</p>
+                <p>That "slamming" is the <strong>kernel trick</strong>. It projects data into a higher dimension where a linear boundary WORKS. The brilliant part? SVM does this <strong>without actually computing</strong> the higher-dimensional coordinates (saving massive computation). It uses a mathematical shortcut called the <strong>kernel function</strong>.</p>
+            </div>
+
+            <h3>Types of Kernels</h3>
+
+            <table class="data-table">
+                <thead>
+                    <tr><th>Kernel</th><th>When to Use</th><th>What It Does</th><th>Speed</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong style="color:#9333ea;">Linear</strong><br><code>kernel='linear'</code></td>
+                        <td>Data is (mostly) linearly separable, or you have LOTS of features (text, genomics)</td>
+                        <td>No transformation. Just finds the best straight line/plane.</td>
+                        <td>Fastest</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color:#9333ea;">RBF / Gaussian</strong><br><code>kernel='rbf'</code></td>
+                        <td>Most common default. Works well when you're not sure about the data shape.</td>
+                        <td>Maps to infinite dimensions! Can handle very complex, curvy boundaries.</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color:#9333ea;">Polynomial</strong><br><code>kernel='poly'</code></td>
+                        <td>When relationships are polynomial (e.g., x1*x2 or x1^2 matters)</td>
+                        <td>Maps to a higher (finite) dimensional space. Controlled by degree parameter.</td>
+                        <td>Slower</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color:#9333ea;">Sigmoid</strong><br><code>kernel='sigmoid'</code></td>
+                        <td>Rarely used. Similar to a neural network with one hidden layer.</td>
+                        <td>Uses tanh function as the kernel. Mostly for specific research use cases.</td>
+                        <td>Medium</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>The Gamma Parameter (for RBF Kernel)</h3>
+            <p>The <strong>gamma</strong> parameter controls how far the influence of a single training example reaches:</p>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h5>High Gamma</h5>
+                    <p>Each point has very <strong>local</strong> influence. The boundary becomes very wiggly, hugging each point closely. Risk: <strong>overfitting</strong>.</p>
+                    <p style="font-size: 0.85em; color: #9333ea; margin-top: 8px;">Like looking at the world through a magnifying glass - you see every tiny detail but miss the big picture.</p>
+                </div>
+                <div class="comparison-card">
+                    <h5>Low Gamma</h5>
+                    <p>Each point has very <strong>wide</strong> influence. The boundary is smoother and more general. Risk: <strong>underfitting</strong>.</p>
+                    <p style="font-size: 0.85em; color: #9333ea; margin-top: 8px;">Like looking at the world from an airplane - you see the big picture but miss individual details.</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 C and Gamma Together</h4>
+                <ul>
+                    <li><strong>High C + High Gamma</strong> = complex boundary, tight fit → likely overfitting</li>
+                    <li><strong>Low C + Low Gamma</strong> = simple boundary, loose fit → likely underfitting</li>
+                    <li>Find the sweet spot with <strong>GridSearchCV</strong>, trying combinations like C=[0.1, 1, 10, 100] and gamma=[0.001, 0.01, 0.1, 1]</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 5: SVM for Regression (SVR)         -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> Part 5: SVM for Regression (SVR)</h2>
+
+            <p>SVM isn't just for classification! <strong>Support Vector Regression (SVR)</strong> flips the idea: instead of finding the widest margin between classes, it finds a tube (called the <strong>epsilon-tube</strong>) around the prediction line, and tries to fit as many points INSIDE the tube as possible.</p>
+
+            <div class="analogy-box">
+                <h4>🚇 The Subway Tunnel Analogy</h4>
+                <p>Imagine drawing a line through your data (the regression line). Now inflate it into a <strong>tube/tunnel</strong> of width epsilon (ε). Points INSIDE the tube? No penalty. Points OUTSIDE the tube? They get penalized (they're errors). SVR finds the line and tube that contains the most points with the flattest (simplest) line possible.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVR
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Create sample data</span>
+np.random.<span class="function">seed</span>(<span class="number">42</span>)
+X = np.<span class="function">sort</span>(<span class="number">5</span> * np.random.<span class="function">rand</span>(<span class="number">100</span>, <span class="number">1</span>), axis=<span class="number">0</span>)
+y = np.<span class="function">sin</span>(X).<span class="function">ravel</span>() + np.random.<span class="function">normal</span>(<span class="number">0</span>, <span class="number">0.1</span>, X.shape[<span class="number">0</span>])
+
+<span class="comment"># Scale features (ALWAYS scale for SVM!)</span>
+scaler = <span class="function">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># Create SVR with RBF kernel</span>
+svr = <span class="function">SVR</span>(kernel=<span class="string">'rbf'</span>, C=<span class="number">100</span>, gamma=<span class="number">0.1</span>, epsilon=<span class="number">0.1</span>)
+svr.<span class="function">fit</span>(X_scaled, y)
+
+<span class="comment"># Predict</span>
+y_pred = svr.<span class="function">predict</span>(X_scaled)
+<span class="function">print</span>(<span class="string">f"R² Score: {svr.score(X_scaled, y):.4f}"</span>)
+<span class="function">print</span>(<span class="string">f"Number of support vectors: {len(svr.support_)}"</span>)</pre>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 6: SVM for Multi-Class              -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-layer-group"></i> Part 6: Multi-Class Classification</h2>
+
+            <p>SVM is natively a <strong>binary classifier</strong> (two classes only). But what if you have 3, 5, or 10 classes? Two strategies:</p>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h5>One-vs-Rest (OvR)</h5>
+                    <p>Train K separate SVMs (one for each class). Each SVM asks: "Is this point Class A or Not A?" For 10 classes, train 10 SVMs. Assign the class whose SVM gives the highest confidence.</p>
+                    <p style="font-size: 0.85em; color: #9333ea; margin-top: 8px;">Faster, fewer models. Used by <code>LinearSVC</code> by default.</p>
+                </div>
+                <div class="comparison-card">
+                    <h5>One-vs-One (OvO)</h5>
+                    <p>Train an SVM for every PAIR of classes. For 10 classes, that's 45 SVMs! Each one votes. The class with the most votes wins.</p>
+                    <p style="font-size: 0.85em; color: #9333ea; margin-top: 8px;">More models but each trains on less data. Used by <code>SVC</code> by default.</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Don't Worry About This!</h4>
+                <ul>
+                    <li>Scikit-learn handles multi-class <strong>automatically</strong>! Just pass your multi-class labels and it picks OvR or OvO internally.</li>
+                    <li><code>SVC()</code> uses One-vs-One by default</li>
+                    <li><code>LinearSVC()</code> uses One-vs-Rest by default</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 7: Feature Scaling                  -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-ruler-combined"></i> Part 7: Feature Scaling (CRITICAL for SVM!)</h2>
+
+            <p>SVM is <strong>extremely sensitive</strong> to feature scales. If one feature ranges from 0-1 and another from 0-1,000,000, the large feature will dominate the distance calculations and the model will be terrible.</p>
+
+            <div class="warning-box">
+                <h4>⚠️ ALWAYS Scale Before SVM!</h4>
+                <p>This is not optional. SVM REQUIRES scaled features to work properly. Use StandardScaler (zero mean, unit variance) or MinMaxScaler (0 to 1). This is the #1 mistake beginners make with SVM!</p>
+            </div>
+
+            <div class="analogy-box">
+                <h4>⚖️ Why Scaling Matters</h4>
+                <p>Imagine comparing houses by "number of bedrooms" (1-5) and "price in dollars" (100,000-5,000,000). Without scaling, the price dominates everything because 5,000,000 >> 5. The bedroom count is essentially ignored! Scaling puts both features on equal footing so SVM can consider them fairly.</p>
+            </div>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline
+<span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC
+
+<span class="comment"># BEST PRACTICE: use a Pipeline so scaling is automatic</span>
+svm_pipeline = <span class="function">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="function">StandardScaler</span>()),
+    (<span class="string">'svm'</span>, <span class="function">SVC</span>(kernel=<span class="string">'rbf'</span>, C=<span class="number">1.0</span>, gamma=<span class="string">'scale'</span>))
+])
+
+<span class="comment"># Now just fit and predict - scaling happens automatically!</span>
+svm_pipeline.<span class="function">fit</span>(X_train, y_train)
+y_pred = svm_pipeline.<span class="function">predict</span>(X_test)</pre>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 8: Complete Python Example          -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Part 8: Complete SVM in Python (Step by Step)</h2>
+
+            <p>Let's build a complete SVM classifier on a real dataset. We'll use the <strong>Breast Cancer Wisconsin</strong> dataset (built into scikit-learn) to classify tumors as malignant or benign.</p>
+
+            <div class="code-block">
+<pre><span class="comment"># ============================================</span>
+<span class="comment"># COMPLETE SVM CLASSIFICATION EXAMPLE</span>
+<span class="comment"># Dataset: Breast Cancer Wisconsin</span>
+<span class="comment"># Goal: Classify tumors as malignant or benign</span>
+<span class="comment"># ============================================</span>
+
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_breast_cancer
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split, GridSearchCV
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> (classification_report,
+    confusion_matrix, accuracy_score, roc_auc_score)
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline
+
+<span class="comment"># ── Step 1: Load the data ──</span>
+data = <span class="function">load_breast_cancer</span>()
+X = data.data
+y = data.target
+<span class="function">print</span>(<span class="string">f"Dataset shape: {X.shape}"</span>)
+<span class="function">print</span>(<span class="string">f"Classes: {data.target_names}"</span>)
+<span class="function">print</span>(<span class="string">f"Features: {data.feature_names[:5]}..."</span>)
+
+<span class="comment"># ── Step 2: Split into train/test ──</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>, stratify=y
+)
+<span class="function">print</span>(<span class="string">f"\nTrain size: {len(X_train)}, Test size: {len(X_test)}"</span>)
+
+<span class="comment"># ── Step 3: Create pipeline (Scale + SVM) ──</span>
+pipeline = <span class="function">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="function">StandardScaler</span>()),
+    (<span class="string">'svm'</span>, <span class="function">SVC</span>(probability=<span class="keyword">True</span>))
+])
+
+<span class="comment"># ── Step 4: Hyperparameter Tuning with GridSearchCV ──</span>
+param_grid = {
+    <span class="string">'svm__C'</span>: [<span class="number">0.1</span>, <span class="number">1</span>, <span class="number">10</span>, <span class="number">100</span>],
+    <span class="string">'svm__gamma'</span>: [<span class="number">0.001</span>, <span class="number">0.01</span>, <span class="number">0.1</span>, <span class="number">1</span>],
+    <span class="string">'svm__kernel'</span>: [<span class="string">'rbf'</span>, <span class="string">'linear'</span>]
+}
+
+grid_search = <span class="function">GridSearchCV</span>(
+    pipeline, param_grid,
+    cv=<span class="number">5</span>, scoring=<span class="string">'accuracy'</span>,
+    n_jobs=-<span class="number">1</span>, verbose=<span class="number">0</span>
+)
+grid_search.<span class="function">fit</span>(X_train, y_train)
+
+<span class="function">print</span>(<span class="string">f"\nBest Parameters: {grid_search.best_params_}"</span>)
+<span class="function">print</span>(<span class="string">f"Best CV Accuracy: {grid_search.best_score_:.4f}"</span>)
+
+<span class="comment"># ── Step 5: Evaluate on test set ──</span>
+best_model = grid_search.best_estimator_
+y_pred = best_model.<span class="function">predict</span>(X_test)
+y_proba = best_model.<span class="function">predict_proba</span>(X_test)[:, <span class="number">1</span>]
+
+<span class="function">print</span>(<span class="string">f"\nTest Accuracy: {accuracy_score(y_test, y_pred):.4f}"</span>)
+<span class="function">print</span>(<span class="string">f"ROC AUC: {roc_auc_score(y_test, y_proba):.4f}"</span>)
+<span class="function">print</span>(<span class="string">f"\nClassification Report:"</span>)
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred,
+    target_names=data.target_names))
+
+<span class="comment"># ── Step 6: Check support vectors ──</span>
+svm_model = best_model.named_steps[<span class="string">'svm'</span>]
+<span class="function">print</span>(<span class="string">f"Number of support vectors: {svm_model.n_support_}"</span>)
+<span class="function">print</span>(<span class="string">f"Total support vectors: {sum(svm_model.n_support_)}"</span>)
+<span class="function">print</span>(<span class="string">f"Out of {len(X_train)} training samples"</span>)</pre>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 Key Things to Notice</h4>
+                <ul>
+                    <li>We used a <strong>Pipeline</strong> to combine scaling + SVM (best practice!)</li>
+                    <li>We used <strong>GridSearchCV</strong> with 5-fold cross-validation to find the best C, gamma, and kernel</li>
+                    <li><code>probability=True</code> enables probability estimates (needed for ROC AUC)</li>
+                    <li><code>stratify=y</code> in train_test_split ensures balanced class distribution</li>
+                    <li>We checked the number of support vectors - typically a small fraction of total training data</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 9: LinearSVC vs SVC                 -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-bolt"></i> Part 9: LinearSVC vs. SVC (When Speed Matters)</h2>
+
+            <p>Scikit-learn offers two SVM classes. Knowing when to use which is key:</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr><th>Feature</th><th>SVC</th><th>LinearSVC</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Kernels</strong></td><td>linear, rbf, poly, sigmoid</td><td>Linear only</td></tr>
+                    <tr><td><strong>Speed</strong></td><td>Slower (O(n²) to O(n³))</td><td>Much faster (O(n))</td></tr>
+                    <tr><td><strong>Large datasets</strong></td><td>Struggles above 10K-50K samples</td><td>Handles 100K+ easily</td></tr>
+                    <tr><td><strong>Multi-class</strong></td><td>One-vs-One (default)</td><td>One-vs-Rest (default)</td></tr>
+                    <tr><td><strong>Probabilities</strong></td><td>Yes (with probability=True)</td><td>Not directly (use CalibratedClassifierCV)</td></tr>
+                    <tr><td><strong>Best for</strong></td><td>Small-medium data with non-linear boundaries</td><td>Large data, text classification, high-dimensional data</td></tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> LinearSVC
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+
+<span class="comment"># For large datasets or text data, use LinearSVC</span>
+fast_svm = <span class="function">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="function">StandardScaler</span>()),
+    (<span class="string">'svm'</span>, <span class="function">LinearSVC</span>(C=<span class="number">1.0</span>, max_iter=<span class="number">10000</span>))
+])
+fast_svm.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">f"Accuracy: {fast_svm.score(X_test, y_test):.4f}"</span>)</pre>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 10: Pros, Cons & When to Use        -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-balance-scale-right"></i> Part 10: Pros, Cons &amp; When to Use SVM</h2>
+
+            <h3>Advantages</h3>
+            <div class="key-point">
+                <h4>✅ Why SVM is Great</h4>
+                <ul>
+                    <li><strong>Works in high dimensions</strong> - Even when features outnumber samples (text classification, genomics)</li>
+                    <li><strong>Memory efficient</strong> - Only stores support vectors, not all training data</li>
+                    <li><strong>Versatile kernels</strong> - RBF kernel handles complex non-linear boundaries beautifully</li>
+                    <li><strong>Robust to overfitting</strong> in high-dimensional spaces (with proper C tuning)</li>
+                    <li><strong>Works well with clear margin</strong> of separation between classes</li>
+                    <li><strong>Effective on small-to-medium datasets</strong> - Often outperforms other algorithms</li>
+                </ul>
+            </div>
+
+            <h3>Disadvantages</h3>
+            <div class="warning-box">
+                <h4>❌ When SVM Struggles</h4>
+                <ul style="margin-left: 22px; color: #991b1b;">
+                    <li><strong>Slow on large datasets</strong> - Training time is O(n²) to O(n³) for kernel SVM. 100K+ rows? Use LinearSVC or another algorithm.</li>
+                    <li><strong>Sensitive to feature scaling</strong> - MUST scale features (easy to forget!)</li>
+                    <li><strong>Hard to interpret</strong> - Unlike decision trees, you can't easily explain "why" a prediction was made</li>
+                    <li><strong>Noisy data with overlapping classes</strong> - When classes heavily overlap, SVM may not be the best choice</li>
+                    <li><strong>Choosing the right kernel and hyperparameters</strong> - Requires experimentation with GridSearchCV</li>
+                    <li><strong>No native probability estimates</strong> - Uses Platt scaling which can be slow</li>
+                </ul>
+            </div>
+
+            <h3>When Should You Use SVM?</h3>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Scenario</th><th>Use SVM?</th><th>Why / Alternative</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Text classification (spam detection)</td><td><strong style="color: #16a34a;">YES</strong></td><td>High-dimensional, sparse data. LinearSVC excels here!</td></tr>
+                    <tr><td>Image classification (small dataset)</td><td><strong style="color: #16a34a;">YES</strong></td><td>SVM with RBF kernel works great on small image datasets</td></tr>
+                    <tr><td>Tabular data with 1M+ rows</td><td><strong style="color: #dc2626;">NO</strong></td><td>Too slow. Use XGBoost, Random Forest, or neural networks</td></tr>
+                    <tr><td>Need to explain predictions</td><td><strong style="color: #dc2626;">NO</strong></td><td>SVM is a black box. Use Decision Trees or Logistic Regression</td></tr>
+                    <tr><td>Medical diagnosis (small dataset)</td><td><strong style="color: #16a34a;">YES</strong></td><td>SVM is excellent with small, high-dimensional medical data</td></tr>
+                    <tr><td>Binary classification baseline</td><td><strong style="color: #16a34a;">YES</strong></td><td>Great baseline to compare against other models</td></tr>
+                    <tr><td>Regression with non-linear patterns</td><td><strong style="color: #f59e0b;">MAYBE</strong></td><td>SVR works but XGBoost/Random Forest often better</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 11: SVM vs Other Algorithms         -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-users"></i> Part 11: SVM vs. Other Algorithms</h2>
+
+            <table class="data-table">
+                <thead>
+                    <tr><th>Algorithm</th><th>Speed</th><th>Interpretability</th><th>Handles Non-Linear</th><th>Large Data</th><th>Best For</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>SVM (RBF)</strong></td>
+                        <td>Slow</td><td>Low</td><td>Excellent</td><td>Poor</td>
+                        <td>Small-medium data, clear margins</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Logistic Regression</strong></td>
+                        <td>Fast</td><td>High</td><td>No (linear only)</td><td>Good</td>
+                        <td>Interpretable linear classification</td>
+                    </tr>
+                    <tr>
+                        <td><strong>kNN</strong></td>
+                        <td>Fast train, slow predict</td><td>Medium</td><td>Yes</td><td>Poor</td>
+                        <td>Simple baseline, local patterns</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Decision Tree</strong></td>
+                        <td>Fast</td><td>Very High</td><td>Yes</td><td>Good</td>
+                        <td>Explainable models</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Forest</strong></td>
+                        <td>Medium</td><td>Medium</td><td>Yes</td><td>Good</td>
+                        <td>General purpose, robust</td>
+                    </tr>
+                    <tr>
+                        <td><strong>XGBoost</strong></td>
+                        <td>Fast</td><td>Medium</td><td>Yes</td><td>Excellent</td>
+                        <td>Competitions, tabular data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- Part 12: Summary & Cheat Sheet           -->
+        <!-- ======================================== -->
+        <div class="section">
+            <h2><i class="fas fa-trophy"></i> Part 12: Summary &amp; Cheat Sheet</h2>
+
+            <div class="key-point">
+                <h4>📝 Everything You Need to Remember</h4>
+                <ul>
+                    <li><strong>SVM</strong> finds the hyperplane with the maximum margin between classes. Only <strong>support vectors</strong> (nearest points) matter.</li>
+                    <li><strong>C parameter</strong>: High C = strict (overfit risk), Low C = relaxed (underfit risk). Tune with GridSearchCV.</li>
+                    <li><strong>Kernel trick</strong>: Projects data into higher dimensions so non-linear data becomes linearly separable. Use <strong>RBF</strong> (default) for non-linear, <strong>linear</strong> for large/high-dimensional data.</li>
+                    <li><strong>Gamma parameter</strong> (RBF kernel): High = wiggly boundary (overfit), Low = smooth boundary (underfit).</li>
+                    <li><strong>ALWAYS SCALE</strong> your features before SVM. Use <code>StandardScaler</code> inside a <code>Pipeline</code>.</li>
+                    <li><strong>SVC</strong> for small-medium data with kernels. <strong>LinearSVC</strong> for large data with linear boundaries.</li>
+                    <li><strong>SVR</strong> for regression: fits an epsilon-tube around the prediction line.</li>
+                    <li><strong>Best use cases</strong>: text classification, medical data, image classification (small datasets), any problem with clear margins and moderate data size.</li>
+                    <li><strong>Avoid when</strong>: dataset is very large (100K+ rows), you need interpretability, or classes heavily overlap.</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<pre><span class="comment"># ── QUICK REFERENCE CHEAT SHEET ──</span>
+
+<span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC, LinearSVC, SVR
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline
+
+<span class="comment"># Classification with RBF kernel (small-medium data)</span>
+clf = <span class="function">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="function">StandardScaler</span>()),
+    (<span class="string">'svm'</span>, <span class="function">SVC</span>(kernel=<span class="string">'rbf'</span>, C=<span class="number">1</span>, gamma=<span class="string">'scale'</span>))
+])
+
+<span class="comment"># Fast linear classification (large data, text)</span>
+clf_fast = <span class="function">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="function">StandardScaler</span>()),
+    (<span class="string">'svm'</span>, <span class="function">LinearSVC</span>(C=<span class="number">1</span>, max_iter=<span class="number">10000</span>))
+])
+
+<span class="comment"># Regression</span>
+reg = <span class="function">Pipeline</span>([
+    (<span class="string">'scaler'</span>, <span class="function">StandardScaler</span>()),
+    (<span class="string">'svr'</span>, <span class="function">SVR</span>(kernel=<span class="string">'rbf'</span>, C=<span class="number">100</span>, epsilon=<span class="number">0.1</span>))
+])</pre>
+            </div>
+
+            <p style="margin-top: 20px;">Next, head to <a href="decision-trees.html" style="color: #9333ea; font-weight: 700;">Decision Trees & Random Forests</a> to learn about tree-based models, or go back to <a href="k-nearest-neighbors.html" style="color: #9333ea; font-weight: 700;">kNN</a> to compare approaches.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="k-nearest-neighbors.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: kNN</a>
+            <a href="decision-trees.html" class="nav-btn next">Next: Decision Trees <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        const backToTopButton = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) backToTopButton.classList.add('show');
+            else backToTopButton.classList.remove('show');
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+</body>
+</html>
