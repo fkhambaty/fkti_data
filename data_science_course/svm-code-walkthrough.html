@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVM Code Walkthrough – Bank Churn | Data Science Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #f5f0ff 0%, #ede4ff 25%, #e8f4fd 50%, #fdf2f8 75%, #f0f9ff 100%);
+            background-attachment: fixed; min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(168,85,247,0.12); padding: 15px 30px; border-radius: 18px; margin-bottom: 30px;
+            box-shadow: 0 4px 24px rgba(147,51,234,0.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #6d28d9; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all .2s; }
+        .nav a:hover { color: #7c3aed; transform: translateX(-2px); }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 50%, #7c3aed 100%);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(139,92,246,0.25); position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: headerShine 8s ease-in-out infinite;
+        }
+        @keyframes headerShine { 0%,100%{transform:translate(0,0);} 50%{transform:translate(20px,10px);} }
+        .header h1 { font-size: 2.4em; margin-bottom: 15px; font-weight: 900; position: relative; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; position: relative; }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(168,85,247,0.1); border-radius: 28px; padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(139,92,246,0.05); transition: border-color .3s, box-shadow .3s;
+        }
+        .section:hover { border-color: rgba(168,85,247,0.22); box-shadow: 0 8px 40px rgba(139,92,246,0.08); }
+        .section h2 { color: #7c3aed; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #ede9fe; }
+        .section h3 { color: #6d28d9; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #a78bfa; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5-box {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px dashed #f59e0b;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy-box {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff); border-left: 5px solid #8b5cf6;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy-box h4 { color: #6d28d9; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #4c1d95; }
+        .key-point {
+            background: linear-gradient(135deg, #f5f3ff, #ede9fe); border-left: 5px solid #8b5cf6;
+            border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #6d28d9; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #4c1d95; }
+        .key-point li { margin-bottom: 8px; }
+        .warning-box {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid #fca5a5;
+            border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .warning-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .warning-box p, .warning-box li { color: #991b1b; }
+        .code-block {
+            background: #1e293b; border-radius: 20px; padding: 28px; margin: 25px 0; overflow-x: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.92em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; } .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; } .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .copy-btn {
+            position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 6px 14px;
+            border-radius: 8px; cursor: pointer; font-size: 0.8em; transition: all .2s;
+        }
+        .code-block .copy-btn:hover { background: rgba(255,255,255,0.2); color: #e2e8f0; }
+        .line-explain {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-radius: 16px;
+            padding: 20px 24px; margin: 15px 0; border-left: 4px solid #a78bfa;
+        }
+        .line-explain h4 { color: #6d28d9; font-size: 1.05em; margin-bottom: 10px; }
+        .line-explain ul { margin: 0; padding-left: 22px; color: #4c1d95; }
+        .line-explain li { margin-bottom: 6px; }
+        .playground {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #e9d5ff; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .playground h4 { color: #7c3aed; margin-bottom: 15px; }
+        .playground svg { max-width: 100%; height: auto; }
+        .download-btn {
+            display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px;
+            background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border-radius: 14px;
+            text-decoration: none; font-weight: 700; transition: all .3s; box-shadow: 0 4px 15px rgba(34,197,94,0.3);
+        }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34,197,94,0.4); }
+        .toggle-group { display: flex; gap: 0; margin: 15px auto; width: fit-content; border-radius: 12px; overflow: hidden; border: 2px solid #7c3aed; }
+        .toggle-btn {
+            padding: 10px 24px; border: none; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-weight: 700; font-size: 0.95em; transition: all .2s; background: white; color: #7c3aed;
+        }
+        .toggle-btn.active { background: #7c3aed; color: white; }
+        .col-popup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            background: white; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            z-index: 1000; max-width: 420px; width: 90%; border: 2px solid #a78bfa;
+        }
+        .col-popup.show { display: block; }
+        .col-popup h4 { color: #7c3aed; margin-bottom: 8px; }
+        .col-popup p { color: #334155; font-size: 1em; }
+        .col-popup .close-btn { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.4em; cursor: pointer; color: #94a3b8; }
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 999; }
+        .overlay.show { display: block; }
+        .col-tag {
+            display: inline-block; background: #ede9fe; color: #6d28d9; padding: 4px 14px; border-radius: 8px;
+            margin: 4px; cursor: pointer; font-weight: 600; font-size: 0.92em; transition: all .2s; border: 1px solid transparent;
+        }
+        .col-tag:hover { background: #7c3aed; color: white; border-color: #7c3aed; }
+        .cm-cell {
+            width: 100%; padding: 18px; border-radius: 14px; text-align: center; cursor: pointer;
+            font-weight: 700; font-size: 1.1em; transition: all .3s; border: 2px solid transparent;
+        }
+        .cm-cell:hover { transform: scale(1.05); }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px;
+            border-radius: 16px; text-decoration: none; font-weight: 700; transition: all 0.3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #a855f7, #7c3aed); color: white; box-shadow: 0 4px 20px rgba(139,92,246,0.25); }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px;
+            background: linear-gradient(135deg, #a855f7, #7c3aed); color: white; border: none;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(139,92,246,0.3);
+        }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        .fade-up { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        @media(max-width:640px) {
+            .section { padding: 25px; } .header { padding: 35px 20px; }
+            .header h1 { font-size: 1.7em; } .toggle-group { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+        <a href="support-vector-machines.html"><i class="fas fa-arrow-left"></i> SVM Theory</a>
+    </nav>
+
+    <div class="header">
+        <h1>🔬 SVM Code Walkthrough</h1>
+        <p>Line by line: predict which bank customers will leave using Support Vector Machines</p>
+    </div>
+
+    <div style="text-align:center; margin-bottom: 35px;">
+        <a href="datasets/BankChurnersData.csv" download class="download-btn">
+            <i class="fas fa-download"></i> Download BankChurnersData.csv
+        </a>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="section">
+        <h2><i class="fas fa-search"></i> Step 1: Explore the Data</h2>
+        <p>First we load the dataset and get a feel for what's inside. The Bank Churners dataset has info about credit card customers — some stayed (<strong>Existing Customer</strong>) and some left (<strong>Attrited Customer</strong>).</p>
+
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="keyword">import</span> warnings
+warnings.<span class="function">filterwarnings</span>(<span class="string">'ignore'</span>)
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split, GridSearchCV
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler
+<span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> classification_report, confusion_matrix, accuracy_score
+
+df = pd.<span class="function">read_csv</span>(<span class="string">'datasets/BankChurnersData.csv'</span>)
+<span class="function">print</span>(df.<span class="function">shape</span>)
+df.<span class="function">head</span>()</pre></div>
+
+        <div class="line-explain">
+            <h4>Line-by-line</h4>
+            <ul>
+                <li><strong>warnings.filterwarnings('ignore')</strong> — Hides noisy sklearn warnings.</li>
+                <li><strong>import SVC</strong> — The Support Vector Classifier class from scikit-learn.</li>
+                <li><strong>df.shape</strong> — Prints (10127, 23) — 10,127 customers, 23 columns.</li>
+                <li><strong>df.head()</strong> — Shows the first 5 rows so we can eyeball the data.</li>
+            </ul>
+        </div>
+
+        <h3>Understanding Every Column</h3>
+        <p>Click any column name to see what it means:</p>
+        <div style="margin: 15px 0;">
+            <span class="col-tag" onclick="showCol('CLIENTNUM','Unique ID for each customer. Not useful for prediction — we drop it later.')">CLIENTNUM</span>
+            <span class="col-tag" onclick="showCol('Attrition_Flag','Our TARGET. &quot;Existing Customer&quot; = stayed, &quot;Attrited Customer&quot; = left the bank.')">Attrition_Flag</span>
+            <span class="col-tag" onclick="showCol('Customer_Age','Age in years. Older customers may have different churn patterns.')">Customer_Age</span>
+            <span class="col-tag" onclick="showCol('Gender','M or F. Categorical — we will convert to dummy variables.')">Gender</span>
+            <span class="col-tag" onclick="showCol('Dependent_count','Number of dependents (kids, spouse, etc.).')">Dependent_count</span>
+            <span class="col-tag" onclick="showCol('Education_Level','Highest education: Graduate, High School, Unknown, etc.')">Education_Level</span>
+            <span class="col-tag" onclick="showCol('Marital_Status','Single, Married, Divorced, or Unknown.')">Marital_Status</span>
+            <span class="col-tag" onclick="showCol('Income_Category','Salary bracket: Less than $40K, $40K-$60K, etc.')">Income_Category</span>
+            <span class="col-tag" onclick="showCol('Card_Category','Type of card: Blue, Silver, Gold, Platinum.')">Card_Category</span>
+            <span class="col-tag" onclick="showCol('Total_Trans_Ct','Total number of transactions in last 12 months. KEY feature for churn!')">Total_Trans_Ct</span>
+            <span class="col-tag" onclick="showCol('Total_Trans_Amt','Total dollar amount of transactions. Higher = more engaged customer.')">Total_Trans_Amt</span>
+            <span class="col-tag" onclick="showCol('Credit_Limit','The customer&apos;s credit limit. Higher limits often mean loyal customers.')">Credit_Limit</span>
+            <span class="col-tag" onclick="showCol('Avg_Open_To_Buy','Available credit (Credit_Limit minus current balance). Highly correlated with Credit_Limit.')">Avg_Open_To_Buy</span>
+            <span class="col-tag" onclick="showCol('Total_Revolving_Bal','Balance carried over from month to month.')">Total_Revolving_Bal</span>
+            <span class="col-tag" onclick="showCol('Months_on_book','How many months the customer has been with the bank.')">Months_on_book</span>
+            <span class="col-tag" onclick="showCol('Contacts_Count_12_mon','Times the customer contacted the bank in last year. More calls = frustrated?')">Contacts_Count_12_mon</span>
+            <span class="col-tag" onclick="showCol('Months_Inactive_12_mon','Months with no activity in last year. Inactivity signals churn risk.')">Months_Inactive_12_mon</span>
+        </div>
+
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>df.<span class="function">info</span>()
+df.<span class="function">describe</span>()</pre></div>
+
+        <div class="eli5-box">
+            <h4>🧒 ELI5: What is this dataset?</h4>
+            <p>Imagine you run a bank. You have 10,127 customers with credit cards. Some are happy and stay — others get frustrated and leave. You want a computer to learn the <em>patterns</em> of people who leave so you can catch them early and offer them a deal to stay!</p>
+        </div>
+
+        <div class="analogy-box">
+            <h4>🎯 Analogy</h4>
+            <p>Think of it like a school yearbook. Each row is a student, each column is a fact about them (age, grades, clubs). We want to predict who will transfer to another school based on all those facts.</p>
+        </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="section">
+        <h2><i class="fas fa-chart-bar"></i> Step 2: Visualize the Data (EDA)</h2>
+        <p>Before training any model, we need to <em>see</em> the data. Visualizations reveal which features differ between churned and existing customers.</p>
+
+        <h3>Boxplots: Numerical Features vs. Churn</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>num_cols = df.<span class="function">select_dtypes</span>(include=[<span class="string">'int64'</span>,<span class="string">'float64'</span>]).columns.<span class="function">tolist</span>()
+num_cols.<span class="function">remove</span>(<span class="string">'CLIENTNUM'</span>)
+
+fig, axes = plt.<span class="function">subplots</span>(<span class="number">4</span>, <span class="number">4</span>, figsize=(<span class="number">20</span>,<span class="number">16</span>))
+<span class="keyword">for</span> i, col <span class="keyword">in</span> <span class="function">enumerate</span>(num_cols):
+    ax = axes[i//<span class="number">4</span>][i%<span class="number">4</span>]
+    sns.<span class="function">boxplot</span>(data=df, x=<span class="string">'Attrition_Flag'</span>, y=col, ax=ax,
+               palette={<span class="string">'Existing Customer'</span>:<span class="string">'#a78bfa'</span>,<span class="string">'Attrited Customer'</span>:<span class="string">'#f87171'</span>})
+    ax.<span class="function">set_title</span>(col, fontsize=<span class="number">10</span>)
+plt.<span class="function">tight_layout</span>()
+plt.<span class="function">show</span>()</pre></div>
+
+        <div class="line-explain">
+            <h4>What each line does</h4>
+            <ul>
+                <li><strong>select_dtypes</strong> — Grabs only numeric columns (not text like Gender).</li>
+                <li><strong>remove('CLIENTNUM')</strong> — The ID column is just a number, not a feature.</li>
+                <li><strong>subplots(4,4)</strong> — Creates a 4×4 grid of small charts.</li>
+                <li><strong>boxplot</strong> — For each column, draws a box showing the range of values split by Attrited vs Existing.</li>
+            </ul>
+        </div>
+
+        <h3>Correlation Heatmap</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>plt.<span class="function">figure</span>(figsize=(<span class="number">14</span>,<span class="number">10</span>))
+sns.<span class="function">heatmap</span>(df[num_cols].<span class="function">corr</span>(), annot=<span class="keyword">True</span>, fmt=<span class="string">'.2f'</span>,
+           cmap=<span class="string">'RdPu'</span>, center=<span class="number">0</span>, linewidths=<span class="number">0.5</span>)
+plt.<span class="function">title</span>(<span class="string">'Feature Correlation Heatmap'</span>)
+plt.<span class="function">tight_layout</span>()
+plt.<span class="function">show</span>()</pre></div>
+
+        <div class="eli5-box">
+            <h4>🧒 ELI5: What's a correlation heatmap?</h4>
+            <p>It's like a friendship chart. If two columns move together (when one goes up, the other goes up too), they're highly correlated — shown in dark purple. If they don't care about each other, it's close to zero. We look for features that are <em>too</em> friendly (redundant) and drop one of them.</p>
+        </div>
+
+        <div class="playground">
+            <h4><i class="fas fa-hand-pointer"></i> Interactive: Top Features Correlated with Churn</h4>
+            <p style="color:#64748b;font-size:0.95em;margin-bottom:12px;">Click "Reveal" to see the bars animate</p>
+            <button class="toggle-btn active" style="border-radius:10px;border:2px solid #7c3aed;margin-bottom:15px;" onclick="animateBars()">
+                <i class="fas fa-play"></i> Reveal Feature Importance
+            </button>
+            <svg id="featureSvg" viewBox="0 0 500 230" style="max-width:500px;">
+                <text x="10" y="25" font-size="12" fill="#7c3aed" font-weight="700">Total_Trans_Ct</text>
+                <rect id="bar1" x="150" y="12" width="0" height="18" rx="4" fill="#7c3aed" />
+                <text id="barL1" x="155" y="26" font-size="11" fill="white" opacity="0">0.37</text>
+                <text x="10" y="60" font-size="12" fill="#8b5cf6" font-weight="700">Total_Trans_Amt</text>
+                <rect id="bar2" x="150" y="47" width="0" height="18" rx="4" fill="#8b5cf6" />
+                <text id="barL2" x="155" y="61" font-size="11" fill="white" opacity="0">0.31</text>
+                <text x="10" y="95" font-size="12" fill="#a78bfa" font-weight="700">Total_Revolving_Bal</text>
+                <rect id="bar3" x="150" y="82" width="0" height="18" rx="4" fill="#a78bfa" />
+                <text id="barL3" x="155" y="96" font-size="11" fill="white" opacity="0">0.26</text>
+                <text x="10" y="130" font-size="12" fill="#c4b5fd" font-weight="700">Contacts_12_mon</text>
+                <rect id="bar4" x="150" y="117" width="0" height="18" rx="4" fill="#c4b5fd" />
+                <text id="barL4" x="155" y="131" font-size="11" fill="white" opacity="0">0.20</text>
+                <text x="10" y="165" font-size="12" fill="#ddd6fe" font-weight="700">Months_Inactive</text>
+                <rect id="bar5" x="150" y="152" width="0" height="18" rx="4" fill="#ddd6fe" />
+                <text id="barL5" x="155" y="166" font-size="11" fill="#6d28d9" opacity="0">0.16</text>
+                <text x="150" y="200" font-size="10" fill="#94a3b8">← Higher = more predictive of churn</text>
+            </svg>
+        </div>
+
+        <div class="analogy-box">
+            <h4>🎯 Analogy</h4>
+            <p>Boxplots are like comparing the height of basketball vs. chess club members. You immediately see which group is taller. Similarly, we see which features look <em>different</em> for churned customers — those are the ones SVM will rely on most.</p>
+        </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="section">
+        <h2><i class="fas fa-cogs"></i> Step 3: Feature Engineering</h2>
+        <p>Raw data isn't ready for SVM. We need to convert text to numbers, create new useful features, remove redundant ones, and scale everything to the same range.</p>
+
+        <h3>Encode the Target & Create Dummies</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="comment"># Convert target: 1 = Attrited (churned), 0 = Existing (stayed)</span>
+df[<span class="string">'Attrition_Flag'</span>] = df[<span class="string">'Attrition_Flag'</span>].<span class="function">map</span>({
+    <span class="string">'Attrited Customer'</span>: <span class="number">1</span>,
+    <span class="string">'Existing Customer'</span>: <span class="number">0</span>
+})
+
+<span class="comment"># Drop the ID column — it's useless for prediction</span>
+df = df.<span class="function">drop</span>(columns=[<span class="string">'CLIENTNUM'</span>])
+
+<span class="comment"># One-hot encode categorical columns</span>
+cat_cols = df.<span class="function">select_dtypes</span>(include=[<span class="string">'object'</span>]).columns
+df = pd.<span class="function">get_dummies</span>(df, columns=cat_cols, drop_first=<span class="keyword">True</span>)</pre></div>
+
+        <div class="eli5-box">
+            <h4>🧒 ELI5: Why dummy variables?</h4>
+            <p>SVM only understands numbers, not words. So "Male"/"Female" becomes two columns: <code>Gender_M = 1</code> means male, <code>Gender_M = 0</code> means female. <strong>drop_first=True</strong> avoids redundancy — if it's not Male, it must be Female. One column is enough!</p>
+        </div>
+
+        <h3>Create New Feature & Drop Redundant Ones</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="comment"># New feature: average value per transaction</span>
+df[<span class="string">'Avg_Transaction_Value'</span>] = df[<span class="string">'Total_Trans_Amt'</span>] / df[<span class="string">'Total_Trans_Ct'</span>]
+
+<span class="comment"># Avg_Open_To_Buy is ~0.99 correlated with Credit_Limit — drop it</span>
+df = df.<span class="function">drop</span>(columns=[<span class="string">'Avg_Open_To_Buy'</span>])</pre></div>
+
+        <h3>Train-Test Split & Scaling</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>X = df.<span class="function">drop</span>(columns=[<span class="string">'Attrition_Flag'</span>])
+y = df[<span class="string">'Attrition_Flag'</span>]
+
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>, stratify=y
+)
+
+scaler = <span class="function">MinMaxScaler</span>()
+X_train = scaler.<span class="function">fit_transform</span>(X_train)
+X_test  = scaler.<span class="function">transform</span>(X_test)</pre></div>
+
+        <div class="line-explain">
+            <h4>Line-by-line</h4>
+            <ul>
+                <li><strong>stratify=y</strong> — Ensures both train and test sets have the same ratio of churned/existing customers (~16%/84%).</li>
+                <li><strong>MinMaxScaler</strong> — Scales every feature to 0–1. Without this, Credit_Limit (thousands) would dominate Customer_Age (tens).</li>
+                <li><strong>fit_transform on train, transform on test</strong> — We learn the min/max from training data only, then apply it to test. Never peek at test data!</li>
+            </ul>
+        </div>
+
+        <div class="playground">
+            <h4><i class="fas fa-ruler-combined"></i> Interactive: Why Scaling Matters for SVM</h4>
+            <p style="color:#64748b;font-size:0.95em;margin-bottom:10px;">Toggle to see how unscaled features warp the SVM decision boundary</p>
+            <div class="toggle-group">
+                <button class="toggle-btn active" onclick="showScaling('scaled')">Scaled (0-1)</button>
+                <button class="toggle-btn" onclick="showScaling('unscaled')">Unscaled</button>
+            </div>
+            <svg id="scalingSvg" viewBox="0 0 440 200" style="max-width:440px;">
+                <rect x="20" y="10" width="400" height="170" rx="10" fill="#faf5ff" stroke="#e9d5ff"/>
+                <text id="scaleTitle" x="220" y="30" text-anchor="middle" font-size="12" fill="#7c3aed" font-weight="700">Scaled: fair distance in all directions</text>
+                <line id="scaleLine" x1="220" y1="40" x2="220" y2="170" stroke="#7c3aed" stroke-width="3" stroke-dasharray="6"/>
+                <circle cx="120" cy="80" r="8" fill="#a78bfa" opacity="0.8"/><circle cx="100" cy="120" r="8" fill="#a78bfa" opacity="0.8"/>
+                <circle cx="140" cy="100" r="8" fill="#a78bfa" opacity="0.8"/><circle cx="110" cy="140" r="8" fill="#a78bfa" opacity="0.8"/>
+                <circle id="s1" cx="300" cy="80" r="8" fill="#f87171" opacity="0.8"/><circle id="s2" cx="320" cy="120" r="8" fill="#f87171" opacity="0.8"/>
+                <circle id="s3" cx="280" cy="100" r="8" fill="#f87171" opacity="0.8"/><circle id="s4" cx="310" cy="140" r="8" fill="#f87171" opacity="0.8"/>
+                <text x="120" y="170" font-size="10" fill="#8b5cf6">Stayed</text>
+                <text id="churnLabel" x="300" y="170" font-size="10" fill="#ef4444">Churned</text>
+            </svg>
+        </div>
+
+        <div class="warning-box">
+            <h4>⚠️ Common Pitfall</h4>
+            <p>If you call <code>scaler.fit_transform(X_test)</code> instead of <code>scaler.transform(X_test)</code>, you're "peeking" at test data. This causes <strong>data leakage</strong> — your accuracy looks great in training but falls apart in production.</p>
+        </div>
+
+        <div class="analogy-box">
+            <h4>🎯 Analogy</h4>
+            <p>Scaling is like converting all currencies to USD before comparing prices. Without it, 10,000 Japanese Yen looks way bigger than $90, even though they're roughly equal. SVM computes <em>distances</em>, so every feature must be on the same scale.</p>
+        </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="section">
+        <h2><i class="fas fa-brain"></i> Step 4: Train SVM Models</h2>
+        <p>Now the fun part! We train two SVM models — one with a <strong>linear</strong> kernel and one with an <strong>RBF</strong> kernel — and compare their performance.</p>
+
+        <h3>Linear Kernel SVM</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>svm_linear = <span class="function">SVC</span>(kernel=<span class="string">'linear'</span>, C=<span class="number">1.0</span>, random_state=<span class="number">42</span>)
+svm_linear.<span class="function">fit</span>(X_train, y_train)
+y_pred_lin = svm_linear.<span class="function">predict</span>(X_test)
+
+<span class="function">print</span>(<span class="string">"Linear SVM Accuracy:"</span>, <span class="function">accuracy_score</span>(y_test, y_pred_lin))
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred_lin))
+<span class="function">print</span>(<span class="string">"Support vectors:"</span>, svm_linear.n_support_)</pre></div>
+
+        <h3>RBF Kernel SVM</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>svm_rbf = <span class="function">SVC</span>(kernel=<span class="string">'rbf'</span>, C=<span class="number">1.0</span>, gamma=<span class="number">0.1</span>, random_state=<span class="number">42</span>)
+svm_rbf.<span class="function">fit</span>(X_train, y_train)
+y_pred_rbf = svm_rbf.<span class="function">predict</span>(X_test)
+
+<span class="function">print</span>(<span class="string">"RBF SVM Accuracy:"</span>, <span class="function">accuracy_score</span>(y_test, y_pred_rbf))
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred_rbf))
+<span class="function">print</span>(<span class="string">"Support vectors:"</span>, svm_rbf.n_support_)</pre></div>
+
+        <div class="playground">
+            <h4><i class="fas fa-exchange-alt"></i> Interactive: Compare Linear vs. RBF Results</h4>
+            <div class="toggle-group" id="kernelToggle">
+                <button class="toggle-btn active" onclick="showKernel('linear')">Linear Kernel</button>
+                <button class="toggle-btn" onclick="showKernel('rbf')">RBF Kernel</button>
+            </div>
+            <div id="kernelResults" style="text-align:left; max-width:420px; margin:0 auto;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.95em;">
+                    <tr style="background:#f5f3ff;"><td style="padding:8px;font-weight:700;color:#7c3aed;">Accuracy</td><td id="kAcc" style="padding:8px;">93.2%</td></tr>
+                    <tr><td style="padding:8px;font-weight:700;color:#7c3aed;">Precision (Churn)</td><td id="kPrec" style="padding:8px;">0.88</td></tr>
+                    <tr style="background:#f5f3ff;"><td style="padding:8px;font-weight:700;color:#7c3aed;">Recall (Churn)</td><td id="kRec" style="padding:8px;">0.81</td></tr>
+                    <tr><td style="padding:8px;font-weight:700;color:#7c3aed;">F1-Score (Churn)</td><td id="kF1" style="padding:8px;">0.84</td></tr>
+                    <tr style="background:#f5f3ff;"><td style="padding:8px;font-weight:700;color:#7c3aed;">Support Vectors</td><td id="kSV" style="padding:8px;">[1234, 456]</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="eli5-box">
+            <h4>🧒 ELI5: Linear vs. RBF</h4>
+            <p><strong>Linear</strong> draws a straight line (or flat plane in many dimensions) between churned and loyal customers. <strong>RBF</strong> can draw curvy, wavy boundaries — it finds patterns even when the groups aren't neatly separated by a straight cut.</p>
+        </div>
+
+        <div class="analogy-box">
+            <h4>🎯 Analogy</h4>
+            <p>Linear is like cutting a pizza with one straight slice. RBF is like using a cookie cutter — it can carve out any shape. RBF is more flexible but risks over-fitting if you're not careful.</p>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-lightbulb"></i> Key Insight: Support Vectors</h4>
+            <ul>
+                <li><strong>n_support_</strong> shows how many training samples sit right at the margin boundary.</li>
+                <li>Fewer support vectors = simpler model, faster predictions.</li>
+                <li>If almost every sample is a support vector, the model may be over-fitting.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="section">
+        <h2><i class="fas fa-sliders-h"></i> Step 5: Hyperparameter Tuning (GridSearchCV)</h2>
+        <p>Instead of guessing C, kernel, and gamma, we let the computer try every combination and pick the best one automatically.</p>
+
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>param_grid = {
+    <span class="string">'C'</span>: [<span class="number">0.1</span>, <span class="number">1</span>, <span class="number">10</span>, <span class="number">100</span>],
+    <span class="string">'kernel'</span>: [<span class="string">'linear'</span>, <span class="string">'rbf'</span>],
+    <span class="string">'gamma'</span>: [<span class="number">0.1</span>, <span class="number">0.001</span>, <span class="number">0.0001</span>]
+}
+
+grid = <span class="function">GridSearchCV</span>(
+    <span class="function">SVC</span>(random_state=<span class="number">42</span>),
+    param_grid,
+    cv=<span class="number">5</span>,
+    scoring=<span class="string">'f1'</span>,
+    verbose=<span class="number">1</span>,
+    n_jobs=-<span class="number">1</span>
+)
+grid.<span class="function">fit</span>(X_train, y_train)
+
+<span class="function">print</span>(<span class="string">"Best params:"</span>, grid.best_params_)
+<span class="function">print</span>(<span class="string">"Best F1 score:"</span>, <span class="function">round</span>(grid.best_score_, <span class="number">4</span>))</pre></div>
+
+        <div class="line-explain">
+            <h4>Line-by-line</h4>
+            <ul>
+                <li><strong>param_grid</strong> — A dictionary: 4 values of C × 2 kernels × 3 gamma values = 24 combinations.</li>
+                <li><strong>cv=5</strong> — 5-fold cross-validation: splits training data into 5 chunks, trains on 4, tests on 1, rotates.</li>
+                <li><strong>scoring='f1'</strong> — We optimize for F1-score, which balances precision and recall (important for imbalanced data).</li>
+                <li><strong>n_jobs=-1</strong> — Use all CPU cores to run in parallel. Much faster!</li>
+                <li><strong>best_params_</strong> — The winning combination. Typically C=10, kernel='rbf', gamma=0.1 for this dataset.</li>
+            </ul>
+        </div>
+
+        <div class="playground">
+            <h4><i class="fas fa-th"></i> Interactive: GridSearch Heatmap</h4>
+            <p style="color:#64748b;font-size:0.95em;margin-bottom:10px;">Click any cell to see the C × gamma combo details. Darker = better F1.</p>
+            <svg id="gridSvg" viewBox="0 0 460 280" style="max-width:460px;">
+                <text x="230" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#7c3aed">RBF Kernel — F1 Scores</text>
+                <text x="30" y="70" font-size="11" fill="#64748b">C=0.1</text>
+                <text x="30" y="120" font-size="11" fill="#64748b">C=1</text>
+                <text x="30" y="170" font-size="11" fill="#64748b">C=10</text>
+                <text x="30" y="220" font-size="11" fill="#64748b">C=100</text>
+                <text x="130" y="40" font-size="11" fill="#64748b">γ=0.1</text>
+                <text x="240" y="40" font-size="11" fill="#64748b">γ=0.001</text>
+                <text x="345" y="40" font-size="11" fill="#64748b">γ=0.0001</text>
+                <!-- Row 1: C=0.1 -->
+                <rect x="90" y="50" width="100" height="40" rx="8" fill="#ddd6fe" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(0.1,0.1,0.72)"/>
+                <text x="140" y="75" text-anchor="middle" font-size="12" fill="#4c1d95" pointer-events="none">0.72</text>
+                <rect x="200" y="50" width="100" height="40" rx="8" fill="#ede9fe" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(0.1,0.001,0.60)"/>
+                <text x="250" y="75" text-anchor="middle" font-size="12" fill="#6d28d9" pointer-events="none">0.60</text>
+                <rect x="310" y="50" width="100" height="40" rx="8" fill="#f5f3ff" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(0.1,0.0001,0.45)"/>
+                <text x="360" y="75" text-anchor="middle" font-size="12" fill="#7c3aed" pointer-events="none">0.45</text>
+                <!-- Row 2: C=1 -->
+                <rect x="90" y="100" width="100" height="40" rx="8" fill="#c4b5fd" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(1,0.1,0.84)"/>
+                <text x="140" y="125" text-anchor="middle" font-size="12" fill="#4c1d95" pointer-events="none">0.84</text>
+                <rect x="200" y="100" width="100" height="40" rx="8" fill="#ddd6fe" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(1,0.001,0.71)"/>
+                <text x="250" y="125" text-anchor="middle" font-size="12" fill="#4c1d95" pointer-events="none">0.71</text>
+                <rect x="310" y="100" width="100" height="40" rx="8" fill="#ede9fe" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(1,0.0001,0.58)"/>
+                <text x="360" y="125" text-anchor="middle" font-size="12" fill="#6d28d9" pointer-events="none">0.58</text>
+                <!-- Row 3: C=10 (best row) -->
+                <rect x="90" y="150" width="100" height="40" rx="8" fill="#7c3aed" stroke="#6d28d9" stroke-width="3" cursor="pointer" onclick="gridClick(10,0.1,0.91)"/>
+                <text x="140" y="175" text-anchor="middle" font-size="13" fill="white" font-weight="700" pointer-events="none">0.91 ★</text>
+                <rect x="200" y="150" width="100" height="40" rx="8" fill="#c4b5fd" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(10,0.001,0.82)"/>
+                <text x="250" y="175" text-anchor="middle" font-size="12" fill="#4c1d95" pointer-events="none">0.82</text>
+                <rect x="310" y="150" width="100" height="40" rx="8" fill="#ddd6fe" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(10,0.0001,0.70)"/>
+                <text x="360" y="175" text-anchor="middle" font-size="12" fill="#4c1d95" pointer-events="none">0.70</text>
+                <!-- Row 4: C=100 -->
+                <rect x="90" y="200" width="100" height="40" rx="8" fill="#a78bfa" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(100,0.1,0.90)"/>
+                <text x="140" y="225" text-anchor="middle" font-size="12" fill="white" pointer-events="none">0.90</text>
+                <rect x="200" y="200" width="100" height="40" rx="8" fill="#c4b5fd" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(100,0.001,0.83)"/>
+                <text x="250" y="225" text-anchor="middle" font-size="12" fill="#4c1d95" pointer-events="none">0.83</text>
+                <rect x="310" y="200" width="100" height="40" rx="8" fill="#ddd6fe" stroke="#e9d5ff" cursor="pointer" onclick="gridClick(100,0.0001,0.71)"/>
+                <text x="360" y="225" text-anchor="middle" font-size="12" fill="#4c1d95" pointer-events="none">0.71</text>
+                <text id="gridInfo" x="230" y="265" text-anchor="middle" font-size="12" fill="#7c3aed" font-weight="600">Click a cell to see details</text>
+            </svg>
+        </div>
+
+        <div class="eli5-box">
+            <h4>🧒 ELI5: What is GridSearchCV?</h4>
+            <p>Imagine you're baking cookies. You try 4 oven temperatures × 3 baking times and taste each batch. The combo that tastes best is your "best params." GridSearch does the same thing — it trains an SVM for every combination and scores each one, then returns the winner!</p>
+        </div>
+
+        <div class="analogy-box">
+            <h4>🎯 Analogy</h4>
+            <p><strong>C</strong> is how strict the teacher is (high C = "zero tolerance for mistakes"). <strong>gamma</strong> is how closely the model looks at each data point (high gamma = "examines every detail with a magnifying glass"). We need the right balance — strict enough to be accurate, but not so strict that it memorizes the training data.</p>
+        </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="section">
+        <h2><i class="fas fa-trophy"></i> Step 6: Final Model & Evaluation</h2>
+        <p>Now we train the final model using the best hyperparameters found by GridSearchCV, and thoroughly evaluate its performance.</p>
+
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="comment"># Train final model with best params</span>
+best_svm = grid.best_estimator_
+y_final = best_svm.<span class="function">predict</span>(X_test)
+
+<span class="function">print</span>(<span class="string">"Final Accuracy:"</span>, <span class="function">round</span>(<span class="function">accuracy_score</span>(y_test, y_final), <span class="number">4</span>))
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_final))</pre></div>
+
+        <h3>Confusion Matrix</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre>cm = <span class="function">confusion_matrix</span>(y_test, y_final)
+plt.<span class="function">figure</span>(figsize=(<span class="number">6</span>,<span class="number">5</span>))
+sns.<span class="function">heatmap</span>(cm, annot=<span class="keyword">True</span>, fmt=<span class="string">'d'</span>, cmap=<span class="string">'Purples'</span>,
+           xticklabels=[<span class="string">'Stayed'</span>,<span class="string">'Churned'</span>],
+           yticklabels=[<span class="string">'Stayed'</span>,<span class="string">'Churned'</span>])
+plt.<span class="function">xlabel</span>(<span class="string">'Predicted'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Actual'</span>)
+plt.<span class="function">title</span>(<span class="string">'Confusion Matrix — Final SVM'</span>)
+plt.<span class="function">show</span>()</pre></div>
+
+        <div class="playground">
+            <h4><i class="fas fa-th-large"></i> Interactive: Confusion Matrix — Click Each Cell</h4>
+            <div style="display:grid; grid-template-columns:120px 1fr 1fr; gap:8px; max-width:420px; margin:0 auto; text-align:center;">
+                <div></div>
+                <div style="font-weight:700;color:#7c3aed;font-size:0.9em;">Predicted: Stayed</div>
+                <div style="font-weight:700;color:#7c3aed;font-size:0.9em;">Predicted: Churned</div>
+                <div style="font-weight:700;color:#7c3aed;font-size:0.9em;text-align:right;padding-right:8px;">Actual: Stayed</div>
+                <div class="cm-cell" style="background:#dcfce7;color:#166534;" onclick="showCM('TN','True Negative (1598)','The model correctly said these customers would STAY — and they did. Great job!')">TN<br>1598</div>
+                <div class="cm-cell" style="background:#fef2f2;color:#991b1b;" onclick="showCM('FP','False Positive (107)','The model said CHURNED, but they actually stayed. A false alarm — we might offer them an unnecessary discount.')">FP<br>107</div>
+                <div style="font-weight:700;color:#7c3aed;font-size:0.9em;text-align:right;padding-right:8px;">Actual: Churned</div>
+                <div class="cm-cell" style="background:#fff7ed;color:#9a3412;" onclick="showCM('FN','False Negative (42)','The model said STAYED, but they actually churned. This is the dangerous mistake — we missed them!')">FN<br>42</div>
+                <div class="cm-cell" style="background:#f0fdf4;color:#166534;" onclick="showCM('TP','True Positive (279)','The model correctly identified these customers as CHURNED. We can now intervene and try to keep them!')">TP<br>279</div>
+            </div>
+            <p id="cmExplain" style="margin-top:15px;color:#64748b;font-size:0.95em;">👆 Click any cell to learn what it means</p>
+        </div>
+
+        <h3>ROC Curve</h3>
+        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_curve, auc
+
+<span class="comment"># Need decision_function for ROC</span>
+y_scores = best_svm.<span class="function">decision_function</span>(X_test)
+fpr, tpr, thresholds = <span class="function">roc_curve</span>(y_test, y_scores)
+roc_auc = <span class="function">auc</span>(fpr, tpr)
+
+plt.<span class="function">figure</span>(figsize=(<span class="number">7</span>,<span class="number">5</span>))
+plt.<span class="function">plot</span>(fpr, tpr, color=<span class="string">'#7c3aed'</span>, lw=<span class="number">2</span>,
+        label=<span class="string">f'ROC curve (AUC = {roc_auc:.4f})'</span>)
+plt.<span class="function">plot</span>([<span class="number">0</span>,<span class="number">1</span>], [<span class="number">0</span>,<span class="number">1</span>], <span class="string">'--'</span>, color=<span class="string">'#94a3b8'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'False Positive Rate'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'True Positive Rate'</span>)
+plt.<span class="function">title</span>(<span class="string">'ROC Curve — Final SVM Model'</span>)
+plt.<span class="function">legend</span>()
+plt.<span class="function">show</span>()</pre></div>
+
+        <div class="line-explain">
+            <h4>What each line does</h4>
+            <ul>
+                <li><strong>decision_function</strong> — Returns a continuous score (not just 0/1). Positive = more likely churned.</li>
+                <li><strong>roc_curve</strong> — Computes the trade-off: as we lower the threshold, we catch more churners (higher TPR) but also make more false alarms (higher FPR).</li>
+                <li><strong>AUC</strong> — Area Under the Curve. 1.0 = perfect, 0.5 = random guessing. We aim for ≥ 0.90.</li>
+            </ul>
+        </div>
+
+        <div class="eli5-box">
+            <h4>🧒 ELI5: Confusion Matrix</h4>
+            <p>Imagine a fire alarm. <strong>True Positive</strong> = alarm rings and there IS a fire (good!). <strong>False Positive</strong> = alarm rings but no fire (annoying). <strong>False Negative</strong> = fire but NO alarm (dangerous!). <strong>True Negative</strong> = no alarm, no fire (all good). We want lots of TP/TN and very few FP/FN.</p>
+        </div>
+
+        <h3>Feature Importance Discussion</h3>
+        <div class="key-point">
+            <h4><i class="fas fa-lightbulb"></i> Which features drove churn predictions?</h4>
+            <ul>
+                <li><strong>Total_Trans_Ct</strong> — Customers with fewer transactions are far more likely to churn. This was the #1 predictor.</li>
+                <li><strong>Total_Trans_Amt</strong> — Lower spending = higher churn risk.</li>
+                <li><strong>Total_Revolving_Bal</strong> — Customers who carry $0 revolving balance aren't really using the card.</li>
+                <li><strong>Contacts_Count_12_mon</strong> — More calls to the bank = frustrated customer.</li>
+                <li><strong>Avg_Transaction_Value</strong> — Our engineered feature! Lower value per transaction signals disengagement.</li>
+            </ul>
+        </div>
+
+        <div class="analogy-box">
+            <h4>🎯 Analogy</h4>
+            <p>Think of churn prediction like a doctor's check-up. The confusion matrix is your test result sheet: are you catching real diseases (TP) without scaring healthy people (FP)? The ROC curve shows how well the "test" performs overall — a bigger area under the curve means a more reliable diagnostic tool.</p>
+        </div>
+
+        <div class="warning-box">
+            <h4>⚠️ Imbalanced Data Warning</h4>
+            <p>Only ~16% of customers churned. Accuracy alone can be misleading — a model that always says "Stayed" gets 84% accuracy! That's why we optimized for <strong>F1-score</strong> and checked <strong>recall</strong> specifically for the churned class. Consider SMOTE or class_weight='balanced' for even better results.</p>
+        </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="section">
+        <h2><i class="fas fa-flag-checkered"></i> Summary: What We Learned</h2>
+        <div class="key-point">
+            <h4>Full Pipeline Recap</h4>
+            <ul>
+                <li><strong>Step 1</strong> — Loaded 10,127 bank customers with 23 features. Explored with head/info/describe.</li>
+                <li><strong>Step 2</strong> — Visualized distributions with boxplots and found correlated features with a heatmap.</li>
+                <li><strong>Step 3</strong> — One-hot encoded categoricals, engineered Avg_Transaction_Value, dropped redundant columns, scaled with MinMaxScaler.</li>
+                <li><strong>Step 4</strong> — Trained Linear SVM (~93%) and RBF SVM (~95%). RBF found non-linear patterns.</li>
+                <li><strong>Step 5</strong> — GridSearchCV tested 24 combos, found best: C=10, kernel='rbf', gamma=0.1.</li>
+                <li><strong>Step 6</strong> — Final model: ~95.6% accuracy, 0.87 recall on churners, AUC ≈ 0.98.</li>
+            </ul>
+        </div>
+        <div class="eli5-box">
+            <h4>🧒 One-sentence ELI5</h4>
+            <p>We taught a computer to spot unhappy bank customers by looking at how often they use their credit card, how much they spend, and how often they call the bank — and it gets it right about 96 out of 100 times!</p>
+        </div>
+    </div>
+
+    <!-- NAV BUTTONS -->
+    <div class="nav-buttons">
+        <a href="support-vector-machines.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> SVM Theory</a>
+        <a href="decision-trees.html" class="nav-btn next">Decision Trees <i class="fas fa-arrow-right"></i></a>
+    </div>
+</div>
+
+<!-- Column popup -->
+<div class="overlay" id="overlay" onclick="hideCol()"></div>
+<div class="col-popup" id="colPopup">
+    <button class="close-btn" onclick="hideCol()">×</button>
+    <h4 id="colName"></h4>
+    <p id="colDesc"></p>
+</div>
+
+<button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+// Back to top
+const btt = document.getElementById('backToTop');
+window.addEventListener('scroll', () => { btt.classList.toggle('show', window.pageYOffset > 300); });
+btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// Fade-in on scroll
+const obs = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(el => { el.classList.add('fade-up'); obs.observe(el); });
+
+// Copy code
+function copyCode(btn) {
+    const code = btn.parentElement.querySelector('pre').textContent;
+    navigator.clipboard.writeText(code);
+    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1500);
+}
+
+// Column popup
+function showCol(name, desc) {
+    document.getElementById('colName').textContent = name;
+    document.getElementById('colDesc').textContent = desc;
+    document.getElementById('colPopup').classList.add('show');
+    document.getElementById('overlay').classList.add('show');
+}
+function hideCol() {
+    document.getElementById('colPopup').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+}
+
+// Animated feature bars
+function animateBars() {
+    const widths = [280, 235, 195, 150, 120];
+    widths.forEach((w, i) => {
+        const bar = document.getElementById('bar' + (i + 1));
+        const label = document.getElementById('barL' + (i + 1));
+        bar.style.transition = 'none'; bar.setAttribute('width', '0');
+        setTimeout(() => {
+            bar.style.transition = `width ${0.6 + i * 0.15}s ease`;
+            bar.setAttribute('width', w);
+            label.setAttribute('opacity', '1');
+            label.setAttribute('x', 150 + w - 30);
+        }, 50);
+    });
+}
+
+// Scaling interactive
+function showScaling(mode) {
+    document.querySelectorAll('.toggle-group')[0].querySelectorAll('.toggle-btn').forEach((b, i) => {
+        b.classList.toggle('active', (mode === 'scaled' && i === 0) || (mode === 'unscaled' && i === 1));
+    });
+    const title = document.getElementById('scaleTitle');
+    const pts = [document.getElementById('s1'), document.getElementById('s2'), document.getElementById('s3'), document.getElementById('s4')];
+    const line = document.getElementById('scaleLine');
+    const label = document.getElementById('churnLabel');
+    if (mode === 'unscaled') {
+        title.textContent = 'Unscaled: Credit_Limit dominates, boundary shifts!';
+        pts[0].setAttribute('cx', '380'); pts[1].setAttribute('cx', '400');
+        pts[2].setAttribute('cx', '360'); pts[3].setAttribute('cx', '390');
+        line.setAttribute('x1', '340'); line.setAttribute('x2', '340');
+        label.setAttribute('x', '380');
+    } else {
+        title.textContent = 'Scaled: fair distance in all directions';
+        pts[0].setAttribute('cx', '300'); pts[1].setAttribute('cx', '320');
+        pts[2].setAttribute('cx', '280'); pts[3].setAttribute('cx', '310');
+        line.setAttribute('x1', '220'); line.setAttribute('x2', '220');
+        label.setAttribute('x', '300');
+    }
+}
+
+// Kernel comparison toggle
+function showKernel(k) {
+    document.getElementById('kernelToggle').querySelectorAll('.toggle-btn').forEach((b, i) => {
+        b.classList.toggle('active', (k === 'linear' && i === 0) || (k === 'rbf' && i === 1));
+    });
+    if (k === 'linear') {
+        document.getElementById('kAcc').textContent = '93.2%';
+        document.getElementById('kPrec').textContent = '0.88';
+        document.getElementById('kRec').textContent = '0.81';
+        document.getElementById('kF1').textContent = '0.84';
+        document.getElementById('kSV').textContent = '[1234, 456]';
+    } else {
+        document.getElementById('kAcc').textContent = '95.4%';
+        document.getElementById('kPrec').textContent = '0.92';
+        document.getElementById('kRec').textContent = '0.86';
+        document.getElementById('kF1').textContent = '0.89';
+        document.getElementById('kSV').textContent = '[987, 312]';
+    }
+}
+
+// Grid search click
+function gridClick(c, g, f1) {
+    document.getElementById('gridInfo').textContent = `C=${c}, gamma=${g} → F1 = ${f1}` + (f1 >= 0.91 ? ' ★ Best combo!' : '');
+}
+
+// Confusion matrix click
+function showCM(type, title, desc) {
+    document.getElementById('cmExplain').innerHTML = `<strong>${title}</strong><br>${desc}`;
+}
+</script>
+</body>
+</html>

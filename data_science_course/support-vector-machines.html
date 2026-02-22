@@ -357,6 +357,83 @@
                     <li>This makes SVM <strong>memory efficient</strong> and robust to outliers far from the boundary</li>
                 </ul>
             </div>
+            <h3>Real-World Applications of SVM</h3>
+            <p>SVM isn't just theoretical — it's used everywhere! Here are the most common applications:</p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin:20px 0;">
+                <div style="background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); border:1px solid #e9d5ff; border-radius:16px; padding:18px; text-align:center;">
+                    <div style="font-size:2em; margin-bottom:8px;">📸</div>
+                    <h5 style="color:#5b21b6; margin-bottom:4px;">Image Classification</h5>
+                    <p style="font-size:0.88em; color:#475569; margin:0;">Object detection, handwriting recognition (MNIST). SVM's kernel trick handles complex visual patterns.</p>
+                </div>
+                <div style="background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); border:1px solid #e9d5ff; border-radius:16px; padding:18px; text-align:center;">
+                    <div style="font-size:2em; margin-bottom:8px;">👤</div>
+                    <h5 style="color:#5b21b6; margin-bottom:4px;">Face Detection</h5>
+                    <p style="font-size:0.88em; color:#475569; margin:0;">Early face detection systems used SVM. Features extracted from images → SVM classifies face vs not-face.</p>
+                </div>
+                <div style="background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); border:1px solid #e9d5ff; border-radius:16px; padding:18px; text-align:center;">
+                    <div style="font-size:2em; margin-bottom:8px;">📧</div>
+                    <h5 style="color:#5b21b6; margin-bottom:4px;">Email Spam Detection</h5>
+                    <p style="font-size:0.88em; color:#475569; margin:0;">Text features (word counts) → LinearSVC classifies spam vs not-spam. Very fast on high-dimensional text data.</p>
+                </div>
+                <div style="background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); border:1px solid #e9d5ff; border-radius:16px; padding:18px; text-align:center;">
+                    <div style="font-size:2em; margin-bottom:8px;">🧬</div>
+                    <h5 style="color:#5b21b6; margin-bottom:4px;">Medical Diagnosis</h5>
+                    <p style="font-size:0.88em; color:#475569; margin:0;">Cancer detection from small datasets with many features. SVM works well when features > samples.</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <h4>💡 SVM is a Non-Probabilistic Binary Linear Classifier</h4>
+                <ul>
+                    <li><strong>Non-probabilistic:</strong> SVM doesn't naturally give you probabilities (like "80% likely to be spam"). It gives a hard decision: spam or not-spam. (You CAN get probabilities with Platt scaling, but it's bolted on.)</li>
+                    <li><strong>Binary:</strong> Natively handles only 2 classes. Multi-class is done via One-vs-One or One-vs-Rest wrappers.</li>
+                    <li><strong>Linear:</strong> In its basic form, it draws a straight line/plane. The kernel trick makes it non-linear!</li>
+                    <li><strong>Fast at prediction time:</strong> Once trained, SVM only uses support vectors (a small subset) for prediction — faster than tree-based models on small data.</li>
+                </ul>
+            </div>
+
+            <h3>Linearly Separable vs Non-Linearly Separable Data</h3>
+            <p>Before choosing a kernel, you need to understand this fundamental concept:</p>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin:20px 0;">
+                <div class="svm-visual" style="margin:0;">
+                    <h4 style="font-size:1em;">Linearly Separable ✅</h4>
+                    <svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="220" height="200" rx="10" fill="#f5f3ff"/>
+                        <line x1="110" y1="10" x2="110" y2="190" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="6,4"/>
+                        <circle cx="40" cy="50" r="10" fill="#3b82f6"/><circle cx="60" cy="90" r="10" fill="#3b82f6"/>
+                        <circle cx="30" cy="140" r="10" fill="#3b82f6"/><circle cx="80" cy="170" r="10" fill="#3b82f6"/>
+                        <circle cx="70" cy="60" r="10" fill="#3b82f6"/>
+                        <circle cx="160" cy="40" r="10" fill="#f97316"/><circle cx="180" cy="100" r="10" fill="#f97316"/>
+                        <circle cx="150" cy="150" r="10" fill="#f97316"/><circle cx="190" cy="170" r="10" fill="#f97316"/>
+                        <circle cx="170" cy="80" r="10" fill="#f97316"/>
+                        <text x="110" y="198" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="700" font-family="Nunito">A straight line works!</text>
+                    </svg>
+                </div>
+                <div class="svm-visual" style="margin:0;">
+                    <h4 style="font-size:1em;">Non-Linearly Separable ❌</h4>
+                    <svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="220" height="200" rx="10" fill="#fef2f2"/>
+                        <circle cx="110" cy="100" r="9" fill="#3b82f6"/><circle cx="100" cy="85" r="9" fill="#3b82f6"/>
+                        <circle cx="120" cy="85" r="9" fill="#3b82f6"/><circle cx="105" cy="115" r="9" fill="#3b82f6"/>
+                        <circle cx="115" cy="115" r="9" fill="#3b82f6"/>
+                        <circle cx="50" cy="40" r="9" fill="#f97316"/><circle cx="170" cy="40" r="9" fill="#f97316"/>
+                        <circle cx="30" cy="100" r="9" fill="#f97316"/><circle cx="190" cy="100" r="9" fill="#f97316"/>
+                        <circle cx="50" cy="160" r="9" fill="#f97316"/><circle cx="170" cy="160" r="9" fill="#f97316"/>
+                        <circle cx="110" cy="30" r="9" fill="#f97316"/><circle cx="110" cy="170" r="9" fill="#f97316"/>
+                        <text x="110" y="198" text-anchor="middle" fill="#b91c1c" font-size="10" font-weight="700" font-family="Nunito">No straight line works! Need kernel trick.</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🏗️ What Exactly is a Hyperplane?</h4>
+                <p>A hyperplane is a subspace with dimension <strong>(d-1)</strong> where d is the number of features:</p>
+                <p>• In <strong>2D</strong> space (2 features): the hyperplane is a <strong>1D line</strong></p>
+                <p>• In <strong>3D</strong> space (3 features): the hyperplane is a <strong>2D flat surface</strong> (like a sheet of paper)</p>
+                <p>• In <strong>100D</strong> space (100 features): the hyperplane is a <strong>99D surface</strong> (can't visualize, but math works!)</p>
+                <p>It's always "one dimension less" than the space it lives in. The equation is always <strong>w·x + b = 0</strong>.</p>
+            </div>
         </div>
 
         <!-- Interactive: Try Different Boundaries -->

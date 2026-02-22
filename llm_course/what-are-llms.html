@@ -391,6 +391,189 @@
         </div>
     </div>
 
+    <!-- ======================================== -->
+    <!-- Part 5: Your LLM Toolbox                 -->
+    <!-- ======================================== -->
+    <div class="section" id="tools">
+        <h2><i class="fas fa-toolbox"></i> Part 5: Your LLM Toolbox — Technologies You'll Use</h2>
+
+        <p>Before we dive into building, here's every tool in your toolkit. Think of this as the "ingredients list" before cooking a recipe. For each one, we explain <strong>what it is</strong>, <strong>why LLMs need it</strong>, and <strong>exactly where you'll use it</strong> in this course.</p>
+
+        <div class="eli5">
+            <h4>🍳 The Kitchen Analogy</h4>
+            <p>Building an LLM is like cooking a complex dish. You need a <strong>stove</strong> (PyTorch), <strong>ingredients</strong> (Datasets), a <strong>recipe book</strong> (HuggingFace), a <strong>food processor</strong> (Tokenizers), <strong>measuring cups</strong> (NumPy), a <strong>serving plate</strong> (FastAPI), and <strong>spice adjustments</strong> (PEFT/LoRA). Each tool has a specific job. Here they all are:</p>
+        </div>
+
+        <!-- PyTorch -->
+        <h3>🔥 PyTorch — The Engine That Powers Everything</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#fef2f2,#fee2e2); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">🔥</div>
+                <div style="font-weight:800; color:#b91c1c; font-size:0.85em; margin-top:4px;">Module 3–6</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> An open-source deep learning framework created by Meta (Facebook). It's the language you use to define, train, and run neural networks.</p>
+                <p><strong>Why LLMs need it:</strong> Every modern LLM (GPT, LLaMA, Mistral, Claude) is built on PyTorch. It provides <strong>tensors</strong> (multi-dimensional arrays that run on GPUs), <strong>autograd</strong> (automatic calculation of gradients for backpropagation), and <strong>nn.Module</strong> (building blocks for layers like Attention, LayerNorm, Linear).</p>
+                <p><strong>How you'll use it:</strong></p>
+                <ul style="margin-left:20px; color:#334155;">
+                    <li><strong>Module 3:</strong> Learn tensors, autograd, and write your first training loop</li>
+                    <li><strong>Module 4:</strong> Build the Attention mechanism as a <code>nn.Module</code> class</li>
+                    <li><strong>Module 5:</strong> Assemble the full Transformer from PyTorch layers</li>
+                    <li><strong>Module 6:</strong> Train your mini-GPT end-to-end with optimizer and loss function</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- HuggingFace Transformers -->
+        <h3>🤗 HuggingFace Transformers — The Model Supermarket</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#fefce8,#fef9c3); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">🤗</div>
+                <div style="font-weight:800; color:#92400e; font-size:0.85em; margin-top:4px;">Module 7–9</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> A Python library and platform with 200,000+ pre-trained models. Download GPT-2, LLaMA, Mistral in 3 lines of code.</p>
+                <p><strong>Why LLMs need it:</strong> Training an LLM from absolute scratch takes millions of dollars. HuggingFace gives you <strong>pre-trained models</strong> that already know language. You just fine-tune them for your specific task (customer support, code generation, medical Q&A).</p>
+                <p><strong>How you'll use it:</strong></p>
+                <ul style="margin-left:20px; color:#334155;">
+                    <li><strong>Module 7:</strong> Load a pre-trained model and fine-tune it on custom data with <code>Trainer</code> API</li>
+                    <li><strong>Module 8:</strong> Load quantized models for deployment, use pipelines for inference</li>
+                    <li><strong>Module 9:</strong> Combine everything — load model, fine-tune, serve via API</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tokenizers -->
+        <h3>📝 Tokenizers (BPE / SentencePiece) — The Translator</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#ecfeff,#cffafe); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">📝</div>
+                <div style="font-weight:800; color:#155e75; font-size:0.85em; margin-top:4px;">Module 2</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> Algorithms that convert raw text into numbers (tokens) that neural networks can process. "Hello world" → [15496, 995].</p>
+                <p><strong>Why LLMs need it:</strong> Neural networks can't read English — they only understand numbers. The tokenizer is the <strong>first and last step</strong> of every LLM interaction. Text → tokens → model → tokens → text. GPT-4 uses ~100,000 unique tokens.</p>
+                <p><strong>How you'll use it:</strong></p>
+                <ul style="margin-left:20px; color:#334155;">
+                    <li><strong>Module 2:</strong> Build a character-level tokenizer from scratch in pure Python</li>
+                    <li><strong>Module 2:</strong> Build a BPE (Byte-Pair Encoding) tokenizer from scratch</li>
+                    <li><strong>Module 6+:</strong> Use HuggingFace's fast Rust-based tokenizer library for real models</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- NumPy -->
+        <h3>📊 NumPy — The Math Swiss Army Knife</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">📊</div>
+                <div style="font-weight:800; color:#166534; font-size:0.85em; margin-top:4px;">Throughout</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> Python library for fast numerical operations — arrays, matrices, linear algebra, random numbers.</p>
+                <p><strong>Why LLMs need it:</strong> LLMs are fundamentally <strong>giant matrix multiplication machines</strong>. NumPy is the foundation that PyTorch is built on. You use it for data preparation, computing metrics, and understanding the math behind attention and embeddings.</p>
+                <p><strong>How you'll use it:</strong> Data loading, computing softmax manually, generating positional encodings, evaluation metrics, and quick prototyping before moving to PyTorch.</p>
+            </div>
+        </div>
+
+        <!-- PEFT / LoRA -->
+        <h3>🧩 PEFT (LoRA / QLoRA) — The Efficiency Hack</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">🧩</div>
+                <div style="font-weight:800; color:#5b21b6; font-size:0.85em; margin-top:4px;">Module 7</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> Parameter-Efficient Fine-Tuning. Instead of updating all 7 billion weights in a model, LoRA adds tiny "adapter" matrices (0.1% of parameters) and trains only those.</p>
+                <p><strong>Why LLMs need it:</strong> Fine-tuning a 7B model normally requires 4× A100 GPUs ($50K+). With QLoRA (4-bit quantization + LoRA), you can fine-tune <strong>on a single consumer GPU with 16GB VRAM</strong>. This is how individuals and startups customize LLMs.</p>
+                <p><strong>How you'll use it:</strong></p>
+                <ul style="margin-left:20px; color:#334155;">
+                    <li><strong>Module 7:</strong> Fine-tune a model using the PEFT library with rank-4 LoRA adapters</li>
+                    <li><strong>Module 9:</strong> Apply QLoRA in the capstone project for memory-efficient training</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- bitsandbytes -->
+        <h3>🗜️ bitsandbytes — The Model Shrinker</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#fdf2f8,#fce7f3); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">🗜️</div>
+                <div style="font-weight:800; color:#9d174d; font-size:0.85em; margin-top:4px;">Module 8</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> A library that compresses model weights from 32-bit floats to 8-bit or 4-bit integers. A 7B model goes from <strong>28GB → 4GB</strong>.</p>
+                <p><strong>Why LLMs need it:</strong> LLMs are huge. LLaMA-7B is 28GB at full precision — that won't fit on most GPUs. Quantization shrinks it to 4GB with minimal quality loss. This is how you run models on a laptop or a $10/month cloud GPU.</p>
+                <p><strong>How you'll use it:</strong></p>
+                <ul style="margin-left:20px; color:#334155;">
+                    <li><strong>Module 8:</strong> Load a model in 4-bit precision with <code>BitsAndBytesConfig</code></li>
+                    <li><strong>Module 9:</strong> Quantize the capstone model for fast inference</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Datasets -->
+        <h3>💾 HuggingFace Datasets — The Data Library</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">💾</div>
+                <div style="font-weight:800; color:#1e40af; font-size:0.85em; margin-top:4px;">Module 6–7</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> A library with 100,000+ datasets. Load any dataset in one line: <code>load_dataset("tiny_shakespeare")</code>.</p>
+                <p><strong>Why LLMs need it:</strong> LLMs are trained on massive text — books, Wikipedia, code, conversations. The Datasets library handles streaming (load data that's too big for RAM), tokenization mapping, and train/test splitting automatically.</p>
+                <p><strong>How you'll use it:</strong></p>
+                <ul style="margin-left:20px; color:#334155;">
+                    <li><strong>Module 6:</strong> Load TinyShakespeare (1MB text) for training your mini-GPT</li>
+                    <li><strong>Module 7:</strong> Load Alpaca instruction dataset for fine-tuning</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- FastAPI -->
+        <h3>🚀 FastAPI — The Serving Layer</h3>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; margin-bottom:25px;">
+            <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7); border-radius:16px; padding:18px 22px; text-align:center; min-width:110px;">
+                <div style="font-size:2.5em;">🚀</div>
+                <div style="font-weight:800; color:#166534; font-size:0.85em; margin-top:4px;">Module 8–9</div>
+            </div>
+            <div>
+                <p><strong>What:</strong> A modern Python web framework for building APIs. It's async, auto-generates documentation, and is the standard for ML model serving.</p>
+                <p><strong>Why LLMs need it:</strong> A trained model sitting on your laptop is useless to others. FastAPI wraps your model in an HTTP API: send a POST request with a prompt, get back generated text. This is how ChatGPT works behind the scenes — it's an API.</p>
+                <p><strong>How you'll use it:</strong></p>
+                <ul style="margin-left:20px; color:#334155;">
+                    <li><strong>Module 8:</strong> Build a <code>/generate</code> endpoint that accepts prompts and returns completions</li>
+                    <li><strong>Module 9:</strong> Connect the capstone model to a simple chat web interface via API</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quick Install -->
+        <div class="analogy">
+            <h4>⚡ Install Everything in One Command</h4>
+            <p style="font-family:'Fira Code',monospace; font-size:0.9em; background:white; padding:14px 18px; border-radius:10px; margin-top:10px; color:#1e293b; line-height:1.8;">
+                pip install torch numpy transformers datasets tokenizers<br>
+                pip install peft bitsandbytes accelerate trl<br>
+                pip install fastapi uvicorn
+            </p>
+            <p style="margin-top:10px;">Requires Python 3.9+. GPU recommended from Module 6 onward (but CPU works — just slower). We'll remind you to install each tool when the time comes in each module!</p>
+        </div>
+
+        <div class="key-point">
+            <h4>🗺️ Which Tool Goes Where?</h4>
+            <ul>
+                <li><strong>Module 2:</strong> Tokenizers + NumPy</li>
+                <li><strong>Module 3:</strong> PyTorch (tensors, autograd, nn.Module)</li>
+                <li><strong>Module 4:</strong> PyTorch (build Attention)</li>
+                <li><strong>Module 5:</strong> PyTorch (build full Transformer)</li>
+                <li><strong>Module 6:</strong> PyTorch + Datasets + Tokenizers (train mini-GPT)</li>
+                <li><strong>Module 7:</strong> HuggingFace Transformers + PEFT + Datasets (fine-tune)</li>
+                <li><strong>Module 8:</strong> bitsandbytes + FastAPI + Transformers (deploy)</li>
+                <li><strong>Module 9:</strong> ALL of the above combined into one project!</li>
+            </ul>
+        </div>
+    </div>
+
     <div class="nav-buttons">
         <a href="index.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Course Hub</a>
         <a href="text-to-numbers.html" class="nav-btn next">Next: Text to Numbers <i class="fas fa-arrow-right"></i></a>
