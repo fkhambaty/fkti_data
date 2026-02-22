@@ -388,6 +388,62 @@ plt.<span class="function">show</span>()</pre>
             </table>
         </div>
 
+        <!-- INTERACTIVE: Tree Depth vs Overfitting -->
+        <div style="background:rgba(255,255,255,0.7); backdrop-filter:blur(12px); border:2px solid #bbf7d0; border-radius:22px; padding:28px; margin:0 0 35px; text-align:center;">
+            <h4 style="color:#166534; margin-bottom:8px; font-size:1.15em;">🎮 Interactive: Tree Depth vs Overfitting</h4>
+            <p style="color:#334155; font-size:0.95em; margin-bottom:15px;">A shallow tree (depth 1) underfits. A deep tree (depth 10) overfits. Drag the slider to see!</p>
+            <svg id="treeSvg" viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg" style="background:white;border-radius:16px;border:1px solid #bbf7d0;max-width:100%;">
+                <!-- Axes -->
+                <line x1="60" y1="220" x2="460" y2="220" stroke="#94a3b8" stroke-width="1.5"/>
+                <line x1="60" y1="220" x2="60" y2="30" stroke="#94a3b8" stroke-width="1.5"/>
+                <text x="260" y="250" text-anchor="middle" fill="#334155" font-size="11" font-weight="700" font-family="Nunito">Tree Depth →</text>
+                <text x="25" y="125" text-anchor="middle" fill="#334155" font-size="11" font-weight="700" font-family="Nunito" transform="rotate(-90,25,125)">Error →</text>
+                <!-- Training error (always goes down) -->
+                <polyline id="trainErr" points="80,180 140,140 200,100 260,70 320,50 380,38 440,32" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Test error (U-shaped) -->
+                <polyline id="testErr" points="80,190 140,150 200,120 260,105 320,110 380,140 440,180" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Marker for current depth -->
+                <circle id="depthDot" cx="200" cy="120" r="8" fill="#ef4444" stroke="white" stroke-width="2"/>
+                <line id="depthLine" x1="200" y1="30" x2="200" y2="220" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>
+                <!-- Legend -->
+                <line x1="280" y1="15" x2="310" y2="15" stroke="#3b82f6" stroke-width="2.5"/><text x="315" y="19" fill="#1d4ed8" font-size="10" font-weight="700" font-family="Nunito">Training Error</text>
+                <line x1="280" y1="30" x2="310" y2="30" stroke="#ef4444" stroke-width="2.5"/><text x="315" y="34" fill="#b91c1c" font-size="10" font-weight="700" font-family="Nunito">Test Error</text>
+                <!-- Status label -->
+                <rect id="depthBg" x="130" y="228" width="240" height="26" rx="8" fill="#fef9c3"/>
+                <text id="depthText" x="250" y="246" text-anchor="middle" fill="#92400e" font-size="11" font-weight="800" font-family="Nunito">Depth=3 — Good balance ✅</text>
+            </svg>
+            <div style="display:flex;align-items:center;gap:15px;justify-content:center;margin-top:15px;flex-wrap:wrap;">
+                <label style="color:#166534;font-weight:700;font-size:0.92em;">Shallow (underfit)</label>
+                <input type="range" id="depthSlider" min="1" max="7" value="3" oninput="updateDepth(this.value)" style="-webkit-appearance:none;width:200px;height:6px;background:#bbf7d0;border-radius:3px;outline:none;">
+                <label style="color:#166534;font-weight:700;font-size:0.92em;">Deep (overfit)</label>
+                <span id="depthVal" style="background:#dcfce7;color:#166534;padding:4px 14px;border-radius:8px;font-weight:700;font-family:'Fira Code',monospace;">depth = 3</span>
+            </div>
+            <p style="font-size:0.85em;color:#475569;margin-top:8px;">Watch: training error always drops with depth, but test error rises after the sweet spot. That's overfitting!</p>
+        </div>
+        <script>
+        (function(){
+            var testPts = [[80,190],[140,150],[200,120],[260,105],[320,110],[380,140],[440,180]];
+            var trainPts = [[80,180],[140,140],[200,100],[260,70],[320,50],[380,38],[440,32]];
+            function updateDepth(v) {
+                v = parseInt(v);
+                document.getElementById('depthVal').textContent = 'depth = ' + v;
+                var x = 80 + (v - 1) * 60;
+                var ty = testPts[v-1][1];
+                document.getElementById('depthDot').setAttribute('cx', x);
+                document.getElementById('depthDot').setAttribute('cy', ty);
+                document.getElementById('depthLine').setAttribute('x1', x);
+                document.getElementById('depthLine').setAttribute('x2', x);
+                var txt = document.getElementById('depthText');
+                var bg = document.getElementById('depthBg');
+                if (v <= 2) { txt.textContent = 'Depth=' + v + ' — Underfitting! Too simple.'; bg.setAttribute('fill','#fee2e2'); txt.setAttribute('fill','#b91c1c'); }
+                else if (v <= 4) { txt.textContent = 'Depth=' + v + ' — Good balance! ✅'; bg.setAttribute('fill','#dcfce7'); txt.setAttribute('fill','#166534'); }
+                else { txt.textContent = 'Depth=' + v + ' — Overfitting! Memorizing noise ⚠️'; bg.setAttribute('fill','#fef9c3'); txt.setAttribute('fill','#92400e'); }
+            }
+            window.updateDepth = updateDepth;
+            updateDepth(3);
+        })();
+        </script>
+
         <!-- CHAPTER 5: RANDOM FOREST -->
         <div class="section">
             <h2><i class="fas fa-trees"></i> Chapter 5: Random Forest - Many Trees!</h2>

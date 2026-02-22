@@ -172,7 +172,8 @@ function enterCourse(courseType) {
         'dbt': 'dbt_course/hub.html',
         'metabase': 'metabase_course/hub.html',
         'postgres': 'postgres_course/hub.html',
-        'dms': 'dms_course/index.html'
+        'dms': 'dms_course/index.html',
+        'llm': 'llm_course/index.html'
     };
     
     const url = courseUrls[courseType];

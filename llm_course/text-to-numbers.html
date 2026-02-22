@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Numbers | LLM Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family:'Nunito',sans-serif; background:linear-gradient(160deg,#f5f0ff 0%,#ede4ff 25%,#e8f4fd 50%,#fdf2f8 75%,#f0f9ff 100%); background-attachment:fixed; min-height:100vh; padding:20px; color:#1e293b; line-height:2; font-size:18px; }
+        .container { max-width:900px; margin:0 auto; }
+        .nav { background:rgba(255,255,255,0.65); backdrop-filter:blur(20px); border:1px solid rgba(139,92,246,0.12); padding:15px 30px; border-radius:18px; margin-bottom:30px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; box-shadow:0 4px 24px rgba(139,92,246,0.06); }
+        .nav a { color:#6d28d9; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:8px; }
+        .header { text-align:center; padding:55px 40px; background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 50%,#6d28d9 100%); border-radius:28px; color:white; margin-bottom:40px; box-shadow:0 12px 40px rgba(109,40,217,0.25); }
+        .header h1 { font-size:2.5em; margin-bottom:15px; font-weight:900; }
+        .header p { font-size:1.15em; opacity:0.95; max-width:700px; margin:0 auto; }
+        .badge { background:#f59e0b; color:white; padding:8px 20px; border-radius:25px; font-weight:700; display:inline-block; margin-bottom:20px; font-size:0.9em; }
+        .section { background:rgba(255,255,255,0.6); backdrop-filter:blur(18px); border:1px solid rgba(139,92,246,0.1); border-radius:28px; padding:45px; margin-bottom:35px; box-shadow:0 4px 30px rgba(139,92,246,0.05); }
+        .section h2 { color:#6d28d9; font-size:1.8em; margin-bottom:25px; border-bottom:3px solid #ede9fe; padding-bottom:15px; display:flex; align-items:center; gap:15px; }
+        .section h3 { color:#5b21b6; font-size:1.35em; margin:35px 0 20px; padding-left:20px; border-left:5px solid #8b5cf6; }
+        .section p { font-size:1.08em; color:#334155; margin-bottom:18px; }
+        .eli5 { background:linear-gradient(135deg,#fffbeb,#fef3c7); border:2px dashed #f59e0b; border-radius:20px; padding:28px; margin:25px 0; }
+        .eli5 h4 { color:#92400e; font-size:1.25em; margin-bottom:15px; }
+        .eli5 p { color:#78350f; font-size:1.1em; margin-bottom:10px; }
+        .analogy { background:linear-gradient(135deg,#faf5ff,#f3e8ff); border-left:5px solid #8b5cf6; border-radius:20px; padding:28px; margin:25px 0; }
+        .analogy h4 { color:#5b21b6; font-size:1.2em; margin-bottom:15px; }
+        .analogy p { color:#4c1d95; }
+        .key-point { background:linear-gradient(135deg,#f5f3ff,#ede9fe); border-left:5px solid #8b5cf6; border-radius:20px; padding:25px; margin:25px 0; }
+        .key-point h4 { color:#5b21b6; margin-bottom:12px; }
+        .key-point ul { margin-left:22px; color:#4c1d95; }
+        .key-point li { margin-bottom:8px; }
+        .code-block { background:#1e293b; border-radius:20px; padding:28px; margin:25px 0; overflow-x:auto; position:relative; }
+        .code-block pre { font-family:'Fira Code',monospace; font-size:0.92em; color:#e2e8f0; line-height:1.8; }
+        .code-block .copy-btn { position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#94a3b8; padding:6px 14px; border-radius:10px; cursor:pointer; font-size:0.8em; font-family:'Nunito',sans-serif; transition:all .3s; }
+        .code-block .copy-btn:hover { background:rgba(255,255,255,0.2); color:#e2e8f0; }
+        .visual { background:rgba(255,255,255,0.5); border:1px solid #e9d5ff; border-radius:20px; padding:30px; margin:25px 0; text-align:center; }
+        .visual h4 { color:#6d28d9; margin-bottom:15px; }
+        .visual svg { max-width:100%; height:auto; }
+        .playground { background:rgba(255,255,255,0.55); border:1px solid #bfdbfe; border-radius:22px; padding:30px; margin:30px 0; text-align:center; }
+        .playground h4 { color:#1e40af; margin-bottom:8px; font-size:1.15em; }
+        .playground p { color:#334155; font-size:0.95em; margin-bottom:15px; }
+        .playground input[type="text"], .playground textarea { width:100%; max-width:600px; padding:14px 20px; border:2px solid #c4b5fd; border-radius:14px; font-size:1em; font-family:'Nunito',sans-serif; outline:none; transition:border-color .3s; background:rgba(255,255,255,0.8); }
+        .playground input[type="text"]:focus, .playground textarea:focus { border-color:#7c3aed; }
+        .playground .result { margin-top:18px; min-height:60px; text-align:left; padding:18px; background:rgba(255,255,255,0.6); border-radius:14px; border:1px solid #e9d5ff; }
+        .token-span { display:inline-block; padding:4px 10px; margin:3px; border-radius:8px; font-weight:600; font-size:0.95em; transition:all .3s; cursor:default; }
+        .shuffle-btn { background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; border:none; padding:12px 28px; border-radius:14px; font-size:1em; font-weight:700; cursor:pointer; font-family:'Nunito',sans-serif; transition:all .3s; margin:8px; }
+        .shuffle-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(109,40,217,0.3); }
+        .nav-buttons { display:flex; justify-content:space-between; margin-top:50px; gap:20px; flex-wrap:wrap; }
+        .nav-btn { display:inline-flex; align-items:center; gap:10px; padding:16px 32px; border-radius:16px; text-decoration:none; font-weight:700; transition:all .3s; }
+        .nav-btn.prev { background:rgba(255,255,255,0.7); backdrop-filter:blur(10px); color:#475569; border:1px solid #e2e8f0; }
+        .nav-btn.next { background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; box-shadow:0 4px 20px rgba(109,40,217,0.25); }
+        .nav-btn:hover { transform:translateY(-3px); }
+        .comment { color:#6b7280; }
+        .keyword { color:#c084fc; }
+        .string { color:#86efac; }
+        .func { color:#67e8f9; }
+        .number { color:#fbbf24; }
+        .bar-chart { display:flex; align-items:flex-end; justify-content:center; gap:6px; margin:20px auto; max-width:500px; height:140px; }
+        .bar { border-radius:6px 6px 0 0; min-width:28px; transition:all .5s; position:relative; }
+        .bar span { position:absolute; top:-22px; left:50%; transform:translateX(-50%); font-size:0.7em; font-weight:700; color:#475569; }
+        .wave-container { margin:20px 0; }
+        .word-order-display { font-size:1.5em; font-weight:800; color:#6d28d9; min-height:60px; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin:15px 0; }
+        .word-order-display .word-chip { background:rgba(139,92,246,0.12); padding:8px 18px; border-radius:12px; transition:all .4s; }
+        .meaning-text { font-size:1.05em; color:#475569; min-height:40px; margin-top:10px; font-weight:600; }
+
+        @media (max-width:768px) {
+            body { padding:10px; font-size:16px; }
+            .header { padding:30px 20px; }
+            .header h1 { font-size:1.8em; }
+            .section { padding:25px 18px; }
+            .nav-buttons { flex-direction:column; }
+            .bar-chart { height:100px; }
+            .bar { min-width:20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="what-are-llms.html"><i class="fas fa-arrow-left"></i> Prev: What Are LLMs?</a>
+        <a href="index.html"><i class="fas fa-home"></i> Course Hub</a>
+        <a href="nn-refresher.html">Next: NN Refresher <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <div class="header">
+        <span class="badge"><i class="fas fa-hashtag"></i> Module 2</span>
+        <h1><i class="fas fa-language"></i> Text to Numbers</h1>
+        <p>How do we teach a computer to "read"? Spoiler: we convert every word into numbers. Let's see exactly how that works.</p>
+    </div>
+
+    <!-- ==================== PART 1: WHY COMPUTERS CAN'T READ ==================== -->
+    <div class="section" id="why-numbers">
+        <h2><i class="fas fa-microchip"></i> Part 1: Why Computers Can't Read Words</h2>
+
+        <p>Here's the fundamental problem: <strong>computers are gloriously dumb calculators</strong>. They can add, subtract, multiply, and compare numbers at lightning speed, but they have absolutely no idea what a "word" is.</p>
+
+        <p>Deep inside every computer, everything is stored as <strong>0s and 1s</strong> (binary). Your photos? Numbers. Your music? Numbers. This web page? You guessed it... numbers.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-baby"></i> ELI5: Why Numbers?</h4>
+            <p>Imagine your best friend only speaks Math. You want to tell them about your day, but you can only pass them numbers on a piece of paper. You'd need a codebook: "1 = happy", "2 = sad", "3 = hungry"... That's exactly the challenge we face with computers!</p>
+        </div>
+
+        <div class="visual">
+            <h4><i class="fas fa-exchange-alt"></i> From Words to Binary to Numbers</h4>
+            <svg id="binary-svg" viewBox="0 0 800 200" width="800" height="200">
+                <defs>
+                    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#8b5cf6"/>
+                        <stop offset="100%" style="stop-color:#6d28d9"/>
+                    </linearGradient>
+                    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#3b82f6"/>
+                        <stop offset="100%" style="stop-color:#1d4ed8"/>
+                    </linearGradient>
+                    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#22c55e"/>
+                        <stop offset="100%" style="stop-color:#16a34a"/>
+                    </linearGradient>
+                </defs>
+                <rect x="20" y="60" width="180" height="70" rx="18" fill="url(#purpleGrad)" opacity="0.9"/>
+                <text x="110" y="103" text-anchor="middle" fill="white" font-size="28" font-weight="800" font-family="Nunito">"Hello"</text>
+
+                <g class="binary-bits">
+                    <text x="310" y="75" text-anchor="middle" fill="#64748b" font-size="13" font-weight="600" font-family="Fira Code">
+                        <tspan>01001000</tspan>
+                    </text>
+                    <text x="310" y="95" text-anchor="middle" fill="#64748b" font-size="13" font-weight="600" font-family="Fira Code">
+                        <tspan>01100101</tspan>
+                    </text>
+                    <text x="310" y="115" text-anchor="middle" fill="#64748b" font-size="13" font-weight="600" font-family="Fira Code">
+                        <tspan>01101100</tspan>
+                    </text>
+                    <text x="310" y="135" text-anchor="middle" fill="#64748b" font-size="13" font-weight="600" font-family="Fira Code">
+                        <tspan>01101100</tspan>
+                    </text>
+                    <text x="310" y="155" text-anchor="middle" fill="#64748b" font-size="13" font-weight="600" font-family="Fira Code">
+                        <tspan>01101111</tspan>
+                    </text>
+                </g>
+
+                <rect x="420" y="60" width="160" height="70" rx="18" fill="url(#blueGrad)" opacity="0.9"/>
+                <text x="500" y="88" text-anchor="middle" fill="white" font-size="14" font-weight="600" font-family="Fira Code">72 101 108</text>
+                <text x="500" y="112" text-anchor="middle" fill="white" font-size="14" font-weight="600" font-family="Fira Code">108 111</text>
+
+                <rect x="620" y="60" width="160" height="70" rx="18" fill="url(#greenGrad)" opacity="0.9"/>
+                <text x="700" y="88" text-anchor="middle" fill="white" font-size="14" font-weight="700" font-family="Nunito">Token ID:</text>
+                <text x="700" y="112" text-anchor="middle" fill="white" font-size="22" font-weight="800" font-family="Fira Code">15339</text>
+
+                <!-- Arrows -->
+                <path d="M205 95 L250 95" stroke="#a78bfa" stroke-width="3" fill="none" marker-end="url(#arrowPurple)"/>
+                <path d="M370 95 L415 95" stroke="#60a5fa" stroke-width="3" fill="none" marker-end="url(#arrowBlue)"/>
+                <path d="M585 95 L615 95" stroke="#4ade80" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
+
+                <defs>
+                    <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/></marker>
+                    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#60a5fa"/></marker>
+                    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#4ade80"/></marker>
+                </defs>
+
+                <text x="110" y="155" text-anchor="middle" fill="#7c3aed" font-size="12" font-weight="700" font-family="Nunito">Human text</text>
+                <text x="310" y="175" text-anchor="middle" fill="#64748b" font-size="12" font-weight="700" font-family="Nunito">Binary (0s &amp; 1s)</text>
+                <text x="500" y="155" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="700" font-family="Nunito">ASCII codes</text>
+                <text x="700" y="155" text-anchor="middle" fill="#16a34a" font-size="12" font-weight="700" font-family="Nunito">Token ID</text>
+            </svg>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-globe"></i> The Foreigner Who Only Speaks Math</h4>
+            <p>Imagine meeting someone from the Planet Computoria. They don't know any human language, but they're a math genius. To communicate, you create a dictionary: <strong>"apple" = 42</strong>, <strong>"eat" = 7</strong>, <strong>"I" = 1</strong>. Now you can say "I eat apple" as <strong>[1, 7, 42]</strong>. They understand perfectly! That's tokenization in a nutshell.</p>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-lightbulb"></i> The Big Idea</h4>
+            <ul>
+                <li>Computers process <strong>numbers</strong>, not letters or words</li>
+                <li>We need a systematic way to convert text → numbers</li>
+                <li>The conversion must be <strong>reversible</strong> (numbers → text too)</li>
+                <li>Similar words should ideally get similar number representations</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ==================== PART 2: TOKENIZATION ==================== -->
+    <div class="section" id="tokenization">
+        <h2><i class="fas fa-puzzle-piece"></i> Part 2: Tokenization — Chopping Text into Pieces</h2>
+
+        <p>Before we can turn words into numbers, we first need to decide: <strong>what counts as one "piece" of text?</strong> This is called <em>tokenization</em>, and it's the very first step in every LLM.</p>
+
+        <h3>What Are Tokens?</h3>
+
+        <p>A <strong>token</strong> is the smallest unit of text that the model works with. It could be a whole word, part of a word, or even a single character. Most modern LLMs use <em>subword</em> tokens — chunks somewhere between characters and full words.</p>
+
+        <div class="visual">
+            <h4><i class="fas fa-cut"></i> How "playing" Gets Tokenized</h4>
+            <svg viewBox="0 0 700 180" width="700" height="180">
+                <rect x="150" y="20" width="400" height="55" rx="16" fill="url(#purpleGrad)" opacity="0.9"/>
+                <text x="350" y="55" text-anchor="middle" fill="white" font-size="26" font-weight="800" font-family="Nunito">"playing"</text>
+
+                <!-- Arrow down -->
+                <line x1="350" y1="80" x2="350" y2="105" stroke="#a78bfa" stroke-width="3" marker-end="url(#arrowPurple)"/>
+                <text x="390" y="98" fill="#7c3aed" font-size="13" font-weight="700" font-family="Nunito">tokenize!</text>
+
+                <!-- Token boxes -->
+                <rect x="120" y="110" width="160" height="50" rx="14" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="2"/>
+                <text x="200" y="142" text-anchor="middle" fill="#5b21b6" font-size="22" font-weight="800" font-family="Fira Code">"play"</text>
+
+                <text x="310" y="142" text-anchor="middle" fill="#a78bfa" font-size="22" font-weight="800">+</text>
+
+                <rect x="340" y="110" width="160" height="50" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="420" y="142" text-anchor="middle" fill="#92400e" font-size="22" font-weight="800" font-family="Fira Code">"ing"</text>
+
+                <!-- Labels -->
+                <text x="200" y="175" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="600" font-family="Nunito">Token 1 (root)</text>
+                <text x="420" y="175" text-anchor="middle" fill="#b45309" font-size="11" font-weight="600" font-family="Nunito">Token 2 (suffix)</text>
+            </svg>
+        </div>
+
+        <div class="eli5">
+            <h4><i class="fas fa-baby"></i> ELI5: Tokens Are Like LEGO Bricks</h4>
+            <p>Think of words as LEGO creations. Instead of having a unique brick for every creation (billions needed!), we have a smaller set of reusable bricks. "playing" = "play" brick + "ing" brick. "played" = "play" brick + "ed" brick. Same root, different endings — and the model learns what each brick means!</p>
+        </div>
+
+        <h3>Byte Pair Encoding (BPE) — How Tokens Are Learned</h3>
+
+        <p>The most popular tokenization method is called <strong>Byte Pair Encoding (BPE)</strong>. It starts with individual characters and repeatedly merges the most frequent pair. Let's walk through it step by step:</p>
+
+        <div class="visual">
+            <h4><i class="fas fa-layer-group"></i> BPE: Step-by-Step Merging</h4>
+            <svg id="bpe-svg" viewBox="0 0 750 320" width="750" height="320">
+                <text x="375" y="25" text-anchor="middle" fill="#475569" font-size="14" font-weight="700" font-family="Nunito">Corpus: "low low low lowest newest"</text>
+
+                <!-- Step 0 -->
+                <rect x="20" y="40" width="710" height="48" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+                <text x="40" y="60" fill="#6d28d9" font-size="13" font-weight="800" font-family="Nunito">Step 0:</text>
+                <text x="40" y="78" fill="#475569" font-size="12" font-weight="600" font-family="Fira Code">l o w _ l o w _ l o w e s t _ n e w e s t</text>
+                <text x="620" y="70" fill="#94a3b8" font-size="11" font-weight="600" font-family="Nunito">Start: characters</text>
+
+                <!-- Step 1 -->
+                <rect x="20" y="98" width="710" height="48" rx="12" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.5"/>
+                <text x="40" y="118" fill="#6d28d9" font-size="13" font-weight="800" font-family="Nunito">Step 1:</text>
+                <text x="40" y="136" fill="#475569" font-size="12" font-weight="600" font-family="Fira Code">lo w _ lo w _ lo w e s t _ n e w e s t</text>
+                <text x="620" y="125" fill="#7c3aed" font-size="11" font-weight="700" font-family="Nunito">Merge: l+o → lo</text>
+
+                <!-- Step 2 -->
+                <rect x="20" y="156" width="710" height="48" rx="12" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="40" y="176" fill="#6d28d9" font-size="13" font-weight="800" font-family="Nunito">Step 2:</text>
+                <text x="40" y="194" fill="#475569" font-size="12" font-weight="600" font-family="Fira Code">low _ low _ low e s t _ n e w e s t</text>
+                <text x="620" y="183" fill="#7c3aed" font-size="11" font-weight="700" font-family="Nunito">Merge: lo+w → low</text>
+
+                <!-- Step 3 -->
+                <rect x="20" y="214" width="710" height="48" rx="12" fill="#c4b5fd" stroke="#7c3aed" stroke-width="1.5"/>
+                <text x="40" y="234" fill="white" font-size="13" font-weight="800" font-family="Nunito">Step 3:</text>
+                <text x="40" y="252" fill="white" font-size="12" font-weight="600" font-family="Fira Code">low _ low _ low es t _ n e w es t</text>
+                <text x="620" y="241" fill="white" font-size="11" font-weight="700" font-family="Nunito">Merge: e+s → es</text>
+
+                <!-- Step 4 -->
+                <rect x="20" y="272" width="710" height="42" rx="12" fill="#7c3aed"/>
+                <text x="40" y="292" fill="white" font-size="13" font-weight="800" font-family="Nunito">Step 4:</text>
+                <text x="40" y="306" fill="white" font-size="12" font-weight="600" font-family="Fira Code">low _ low _ low est _ n e w est</text>
+                <text x="620" y="298" fill="#e9d5ff" font-size="11" font-weight="700" font-family="Nunito">Merge: es+t → est</text>
+            </svg>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-compress-arrows-alt"></i> BPE Is Like Texting Shorthand</h4>
+            <p>Remember how you started texting "laughing out loud" then shortened it to "LOL"? BPE does the same thing automatically. It looks at tons of text, finds letter combos that show up together constantly (like "th", "ing", "tion"), and creates shortcuts for them. The most common combos become single tokens. Rare words stay broken into smaller pieces.</p>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-brain"></i> Why Subword Tokenization Wins</h4>
+            <ul>
+                <li><strong>Word-level:</strong> Needs a HUGE vocabulary. Can't handle new words. "ChatGPT" → unknown!</li>
+                <li><strong>Character-level:</strong> Tiny vocabulary but very long sequences. Slow to train.</li>
+                <li><strong>Subword (BPE):</strong> Sweet spot! Common words stay whole, rare words get split into known pieces.</li>
+            </ul>
+        </div>
+
+        <!-- Interactive Tokenizer Playground -->
+        <div class="playground" id="tokenizer-playground">
+            <h4><i class="fas fa-keyboard"></i> Interactive Tokenizer Playground</h4>
+            <p>Type any text below and watch it get split into tokens in real-time!</p>
+            <input type="text" id="tokenizer-input" placeholder="Try: I am learning about LLMs and tokenization" value="I am learning about LLMs and tokenization">
+            <div class="result" id="tokenizer-result"></div>
+            <p style="font-size:0.85em; color:#94a3b8; margin-top:10px;"><i class="fas fa-info-circle"></i> This uses a simplified BPE-like algorithm for demonstration</p>
+        </div>
+
+        <h3>Code: Using a Real Tokenizer</h3>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="comment"># Install: pip install transformers</span>
+<span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer
+
+<span class="comment"># Load GPT-2's tokenizer (same family as ChatGPT)</span>
+tokenizer = AutoTokenizer.<span class="func">from_pretrained</span>(<span class="string">"gpt2"</span>)
+
+text = <span class="string">"Hello, I am learning about LLMs!"</span>
+
+<span class="comment"># Tokenize the text</span>
+tokens = tokenizer.<span class="func">tokenize</span>(text)
+<span class="func">print</span>(<span class="string">"Tokens:"</span>, tokens)
+<span class="comment"># ['Hello', ',', ' I', ' am', ' learning', ' about', ' LL', 'Ms', '!']</span>
+
+<span class="comment"># Convert tokens to their numeric IDs</span>
+token_ids = tokenizer.<span class="func">encode</span>(text)
+<span class="func">print</span>(<span class="string">"Token IDs:"</span>, token_ids)
+<span class="comment"># [15496, 11, 314, 716, 4673, 546, 27140, 10128, 0]</span>
+
+<span class="comment"># Decode back to text</span>
+decoded = tokenizer.<span class="func">decode</span>(token_ids)
+<span class="func">print</span>(<span class="string">"Decoded:"</span>, decoded)
+<span class="comment"># "Hello, I am learning about LLMs!"</span></pre>
+        </div>
+    </div>
+
+    <!-- ==================== PART 3: WORD EMBEDDINGS ==================== -->
+    <div class="section" id="embeddings">
+        <h2><i class="fas fa-map-marked-alt"></i> Part 3: Word Embeddings — Words as Coordinates</h2>
+
+        <p>Token IDs (like 15496 for "Hello") are just labels — the number itself has no meaning. We need something smarter: a way to represent words so that <strong>similar words have similar numbers</strong>. Enter: <em>embeddings</em>.</p>
+
+        <h3>Words on a Map</h3>
+
+        <p>An <strong>embedding</strong> is a list of numbers (a vector) that represents a word's <em>meaning</em>. Think of it as GPS coordinates — but instead of 2 dimensions (latitude, longitude), embeddings use hundreds of dimensions!</p>
+
+        <div class="analogy">
+            <h4><i class="fas fa-map"></i> The Word City Analogy</h4>
+            <p>Imagine every word lives in a gigantic city. Words with similar meanings are <strong>neighbors</strong>. "King" and "Queen" live on the same street. "Cat" and "Dog" share an apartment building. "Happy" and "Joyful" are literally roommates. The embedding is each word's <strong>home address</strong> in this city — a set of coordinates that tells you exactly where it lives.</p>
+        </div>
+
+        <div class="visual">
+            <h4><i class="fas fa-crown"></i> The Famous King − Man + Woman = Queen</h4>
+            <svg viewBox="0 0 700 350" width="700" height="350">
+                <defs>
+                    <marker id="arrowDark" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#6d28d9"/>
+                    </marker>
+                    <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#ea580c"/>
+                    </marker>
+                </defs>
+
+                <!-- Axes -->
+                <line x1="80" y1="300" x2="650" y2="300" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="80" y1="300" x2="80" y2="30" stroke="#cbd5e1" stroke-width="2"/>
+                <text x="370" y="340" text-anchor="middle" fill="#94a3b8" font-size="14" font-weight="600" font-family="Nunito">Gender dimension →</text>
+                <text x="30" y="170" text-anchor="middle" fill="#94a3b8" font-size="14" font-weight="600" font-family="Nunito" transform="rotate(-90,30,170)">Royalty dimension →</text>
+
+                <!-- Points -->
+                <circle cx="220" cy="80" r="22" fill="#7c3aed" opacity="0.9"/>
+                <text x="220" y="86" text-anchor="middle" fill="white" font-size="13" font-weight="800" font-family="Nunito">King</text>
+                <text x="220" y="55" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="600">👑</text>
+
+                <circle cx="480" cy="80" r="22" fill="#ec4899" opacity="0.9"/>
+                <text x="480" y="86" text-anchor="middle" fill="white" font-size="13" font-weight="800" font-family="Nunito">Queen</text>
+                <text x="480" y="55" text-anchor="middle" fill="#ec4899" font-size="11" font-weight="600">👑</text>
+
+                <circle cx="220" cy="230" r="22" fill="#3b82f6" opacity="0.9"/>
+                <text x="220" y="236" text-anchor="middle" fill="white" font-size="13" font-weight="800" font-family="Nunito">Man</text>
+                <text x="220" y="205" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="600">🧑</text>
+
+                <circle cx="480" cy="230" r="22" fill="#f43f5e" opacity="0.9"/>
+                <text x="480" y="236" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">Woman</text>
+                <text x="480" y="205" text-anchor="middle" fill="#f43f5e" font-size="11" font-weight="600">👩</text>
+
+                <!-- Arrows: King→Queen (gender) -->
+                <line x1="245" y1="80" x2="455" y2="80" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="8,4" marker-end="url(#arrowDark)"/>
+                <text x="350" y="70" text-anchor="middle" fill="#6d28d9" font-size="12" font-weight="700" font-family="Nunito">+ "female"</text>
+
+                <!-- Arrows: Man→Woman (gender) -->
+                <line x1="245" y1="230" x2="455" y2="230" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="8,4" marker-end="url(#arrowDark)"/>
+                <text x="350" y="220" text-anchor="middle" fill="#6d28d9" font-size="12" font-weight="700" font-family="Nunito">+ "female"</text>
+
+                <!-- Arrows: Man→King (royalty) -->
+                <line x1="220" y1="205" x2="220" y2="105" stroke="#ea580c" stroke-width="2.5" stroke-dasharray="8,4" marker-end="url(#arrowOrange)"/>
+                <text x="180" y="155" text-anchor="middle" fill="#ea580c" font-size="12" font-weight="700" font-family="Nunito" transform="rotate(-90,180,155)">+ "royalty"</text>
+
+                <!-- Arrows: Woman→Queen (royalty) -->
+                <line x1="480" y1="205" x2="480" y2="105" stroke="#ea580c" stroke-width="2.5" stroke-dasharray="8,4" marker-end="url(#arrowOrange)"/>
+                <text x="530" y="155" text-anchor="middle" fill="#ea580c" font-size="12" font-weight="700" font-family="Nunito" transform="rotate(-90,530,155)">+ "royalty"</text>
+
+                <!-- Formula -->
+                <rect x="180" y="280" width="340" height="35" rx="10" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+                <text x="350" y="303" text-anchor="middle" fill="#5b21b6" font-size="14" font-weight="800" font-family="Fira Code">King − Man + Woman ≈ Queen</text>
+            </svg>
+        </div>
+
+        <div class="eli5">
+            <h4><i class="fas fa-baby"></i> ELI5: What's an Embedding?</h4>
+            <p>Each word gets a "personality profile" — a list of numbers describing it. Maybe number 1 measures "how royal" it is, number 2 measures "how feminine," number 3 measures "how alive," and so on. "King" might be [0.9 royal, 0.1 feminine, 0.8 alive]. "Queen" would be [0.9 royal, 0.9 feminine, 0.8 alive]. Similar profiles = similar meanings!</p>
+        </div>
+
+        <h3>Embedding = A List of Numbers</h3>
+
+        <p>In practice, an embedding is a vector of <strong>hundreds of decimal numbers</strong>. Here's what the embedding for "cat" might look like (simplified to 8 dimensions):</p>
+
+        <div class="visual">
+            <h4><i class="fas fa-chart-bar"></i> Embedding Vector for "cat" (8 dimensions shown)</h4>
+            <div class="bar-chart" id="embedding-bars">
+                <!-- Filled by JS -->
+            </div>
+            <p style="font-size:0.9em; color:#94a3b8; margin-top:8px;">Real embeddings have 768+ dimensions — we show 8 for clarity</p>
+        </div>
+
+        <!-- Embedding Similarity Playground -->
+        <div class="playground" id="similarity-playground">
+            <h4><i class="fas fa-search"></i> Word Similarity Playground</h4>
+            <p>Pick a word and see which words are closest in embedding space!</p>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:15px;">
+                <button class="shuffle-btn" onclick="showSimilar('king')"><i class="fas fa-crown"></i> King</button>
+                <button class="shuffle-btn" onclick="showSimilar('cat')"><i class="fas fa-cat"></i> Cat</button>
+                <button class="shuffle-btn" onclick="showSimilar('happy')"><i class="fas fa-smile"></i> Happy</button>
+                <button class="shuffle-btn" onclick="showSimilar('python')"><i class="fas fa-code"></i> Python</button>
+                <button class="shuffle-btn" onclick="showSimilar('food')"><i class="fas fa-utensils"></i> Food</button>
+            </div>
+            <div class="result" id="similarity-result" style="text-align:center;">
+                <p style="color:#94a3b8;">Click a word above to see its nearest neighbors!</p>
+            </div>
+        </div>
+
+        <h3>Code: Working with Embeddings</h3>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="comment"># Install: pip install gensim</span>
+<span class="keyword">import</span> gensim.downloader <span class="keyword">as</span> api
+
+<span class="comment"># Load pre-trained word vectors (this downloads ~66MB)</span>
+model = api.<span class="func">load</span>(<span class="string">"glove-wiki-gigaword-50"</span>)
+
+<span class="comment"># See the embedding for a word (50 numbers!)</span>
+vector = model[<span class="string">"cat"</span>]
+<span class="func">print</span>(<span class="string">f"Shape: {vector.shape}"</span>)    <span class="comment"># (50,)</span>
+<span class="func">print</span>(<span class="string">f"First 5 values: {vector[:5]}"</span>) <span class="comment"># [0.22, -0.08, 0.48, ...]</span>
+
+<span class="comment"># Find the most similar words</span>
+similar = model.<span class="func">most_similar</span>(<span class="string">"cat"</span>, topn=<span class="number">5</span>)
+<span class="func">print</span>(<span class="string">"Words closest to 'cat':"</span>)
+<span class="keyword">for</span> word, score <span class="keyword">in</span> similar:
+    <span class="func">print</span>(<span class="string">f"  {word}: {score:.3f}"</span>)
+<span class="comment"># dog: 0.922, cats: 0.899, pet: 0.875, ...</span>
+
+<span class="comment"># The famous analogy: king - man + woman ≈ queen</span>
+result = model.<span class="func">most_similar</span>(
+    positive=[<span class="string">"king"</span>, <span class="string">"woman"</span>],
+    negative=[<span class="string">"man"</span>],
+    topn=<span class="number">1</span>
+)
+<span class="func">print</span>(<span class="string">f"king - man + woman = {result[0][0]}"</span>)
+<span class="comment"># queen!</span></pre>
+        </div>
+    </div>
+
+    <!-- ==================== PART 4: POSITIONAL ENCODING ==================== -->
+    <div class="section" id="positional">
+        <h2><i class="fas fa-sort-numeric-down"></i> Part 4: Positional Encoding — Order Matters!</h2>
+
+        <p>We've turned words into number vectors. But there's a sneaky problem: <strong>we lost word order!</strong> The vectors for "dog bites man" and "man bites dog" would be the same set of numbers. Clearly, order changes everything.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-baby"></i> ELI5: Why Position Matters</h4>
+            <p>Imagine a recipe that says "add sugar, then add salt." If you shuffle those instructions to "add salt, then add sugar," the cake still works. But if a fire safety guide says "call 911, then leave the building" and you shuffle it to "leave the building, then call 911"... that's a very different situation! Word order carries meaning, and we need to preserve it.</p>
+        </div>
+
+        <!-- Interactive: Word Order Matters -->
+        <div class="playground" id="word-order-playground">
+            <h4><i class="fas fa-random"></i> Word Order Changes Meaning!</h4>
+            <p>Click Shuffle to rearrange the words and see how the meaning changes!</p>
+            <div class="word-order-display" id="word-display">
+                <span class="word-chip">dog</span>
+                <span class="word-chip">bites</span>
+                <span class="word-chip">man</span>
+            </div>
+            <div class="meaning-text" id="meaning-text">🐕 A dog attacks a person — scary news!</div>
+            <div style="margin-top:12px;">
+                <button class="shuffle-btn" onclick="shuffleWords()"><i class="fas fa-random"></i> Shuffle Words</button>
+                <button class="shuffle-btn" onclick="resetWords()" style="background:linear-gradient(135deg,#64748b,#475569);"><i class="fas fa-undo"></i> Reset</button>
+            </div>
+        </div>
+
+        <h3>The Seat Number Analogy</h3>
+
+        <div class="analogy">
+            <h4><i class="fas fa-chair"></i> Concert Seating</h4>
+            <p>Imagine a concert where everyone has the same ticket that just says "admitted." Chaos! Nobody knows where to sit. Now imagine each ticket says <strong>"Row 3, Seat 7."</strong> That's positional encoding! We stamp each word-vector with a special "seat number" so the model knows the word's exact position in the sentence. Even if words get processed in parallel, the model knows that "dog" came first and "man" came last.</p>
+        </div>
+
+        <h3>How It Works: Sin/Cos Waves</h3>
+
+        <p>Transformers use a clever trick: they generate position information using <strong>sine and cosine waves</strong> at different frequencies. Each position gets a unique pattern, like a fingerprint made of waves.</p>
+
+        <div class="visual">
+            <h4><i class="fas fa-wave-square"></i> Positional Encoding Waves</h4>
+            <svg viewBox="0 0 700 250" width="700" height="250">
+                <!-- Grid lines -->
+                <line x1="60" y1="60" x2="660" y2="60" stroke="#e2e8f0" stroke-width="1"/>
+                <line x1="60" y1="125" x2="660" y2="125" stroke="#e2e8f0" stroke-width="1"/>
+                <line x1="60" y1="190" x2="660" y2="190" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Sin wave (low frequency) -->
+                <path d="M60,125 Q120,40 180,125 Q240,210 300,125 Q360,40 420,125 Q480,210 540,125 Q600,40 660,125" fill="none" stroke="#8b5cf6" stroke-width="3" opacity="0.8"/>
+                <text x="670" y="125" fill="#8b5cf6" font-size="12" font-weight="700" font-family="Nunito">sin (slow)</text>
+
+                <!-- Sin wave (high frequency) -->
+                <path d="M60,125 Q75,60 90,125 Q105,190 120,125 Q135,60 150,125 Q165,190 180,125 Q195,60 210,125 Q225,190 240,125 Q255,60 270,125 Q285,190 300,125 Q315,60 330,125 Q345,190 360,125 Q375,60 390,125 Q405,190 420,125 Q435,60 450,125 Q465,190 480,125 Q495,60 510,125 Q525,190 540,125 Q555,60 570,125 Q585,190 600,125 Q615,60 630,125 Q645,190 660,125" fill="none" stroke="#ec4899" stroke-width="2" opacity="0.6"/>
+                <text x="670" y="105" fill="#ec4899" font-size="12" font-weight="700" font-family="Nunito">sin (fast)</text>
+
+                <!-- Cos wave -->
+                <path d="M60,40 Q120,125 180,210 Q240,125 300,40 Q360,125 420,210 Q480,125 540,40 Q600,125 660,210" fill="none" stroke="#3b82f6" stroke-width="2.5" opacity="0.7" stroke-dasharray="6,3"/>
+                <text x="670" y="145" fill="#3b82f6" font-size="12" font-weight="700" font-family="Nunito">cos (slow)</text>
+
+                <!-- Position markers -->
+                <g>
+                    <line x1="120" y1="35" x2="120" y2="215" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+                    <text x="120" y="235" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700" font-family="Nunito">pos 1</text>
+                </g>
+                <g>
+                    <line x1="240" y1="35" x2="240" y2="215" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+                    <text x="240" y="235" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700" font-family="Nunito">pos 2</text>
+                </g>
+                <g>
+                    <line x1="360" y1="35" x2="360" y2="215" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+                    <text x="360" y="235" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700" font-family="Nunito">pos 3</text>
+                </g>
+                <g>
+                    <line x1="480" y1="35" x2="480" y2="215" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+                    <text x="480" y="235" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700" font-family="Nunito">pos 4</text>
+                </g>
+                <g>
+                    <line x1="600" y1="35" x2="600" y2="215" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+                    <text x="600" y="235" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700" font-family="Nunito">pos 5</text>
+                </g>
+
+                <text x="360" y="15" text-anchor="middle" fill="#475569" font-size="13" font-weight="700" font-family="Nunito">Each position gets a unique combination of wave values</text>
+            </svg>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-magic"></i> Why Sin/Cos? Three Superpowers</h4>
+            <ul>
+                <li><strong>Unique fingerprint:</strong> Every position gets a different pattern of values</li>
+                <li><strong>Relative distances:</strong> The model can learn that position 5 is "3 steps after" position 2</li>
+                <li><strong>Infinite length:</strong> Works for any sequence length — no upper limit!</li>
+            </ul>
+        </div>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="keyword">def</span> <span class="func">positional_encoding</span>(max_len, d_model):
+    <span class="string">"""Generate positional encodings using sin/cos waves."""</span>
+    pe = np.<span class="func">zeros</span>((max_len, d_model))
+    position = np.<span class="func">arange</span>(<span class="number">0</span>, max_len).reshape(-<span class="number">1</span>, <span class="number">1</span>)
+    div_term = np.<span class="func">exp</span>(
+        np.<span class="func">arange</span>(<span class="number">0</span>, d_model, <span class="number">2</span>) * -(np.<span class="func">log</span>(<span class="number">10000.0</span>) / d_model)
+    )
+
+    pe[:, <span class="number">0</span>::<span class="number">2</span>] = np.<span class="func">sin</span>(position * div_term)  <span class="comment"># Even indices</span>
+    pe[:, <span class="number">1</span>::<span class="number">2</span>] = np.<span class="func">cos</span>(position * div_term)  <span class="comment"># Odd indices</span>
+    <span class="keyword">return</span> pe
+
+<span class="comment"># Generate encodings for 10 positions, 8 dimensions</span>
+pe = <span class="func">positional_encoding</span>(<span class="number">10</span>, <span class="number">8</span>)
+<span class="func">print</span>(<span class="string">"Position 0:"</span>, np.<span class="func">round</span>(pe[<span class="number">0</span>], <span class="number">3</span>))
+<span class="func">print</span>(<span class="string">"Position 1:"</span>, np.<span class="func">round</span>(pe[<span class="number">1</span>], <span class="number">3</span>))
+<span class="comment"># Each position has a unique wave fingerprint!</span></pre>
+        </div>
+    </div>
+
+    <!-- ==================== PART 5: BUILD A TOKENIZER ==================== -->
+    <div class="section" id="code">
+        <h2><i class="fas fa-hammer"></i> Part 5: Build a Tokenizer from Scratch</h2>
+
+        <p>Theory is great, but building it yourself is where the real learning happens. Let's code two tokenizers: a simple <strong>character-level</strong> one, then a real <strong>BPE</strong> tokenizer.</p>
+
+        <h3>Step 1: Character-Level Tokenizer</h3>
+
+        <p>The simplest possible tokenizer: every character is a token. Like spelling out every word letter by letter.</p>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="keyword">class</span> <span class="func">CharTokenizer</span>:
+    <span class="string">"""A dead-simple character-level tokenizer."""</span>
+
+    <span class="keyword">def</span> <span class="func">__init__</span>(self):
+        self.char_to_id = {}
+        self.id_to_char = {}
+
+    <span class="keyword">def</span> <span class="func">train</span>(self, text):
+        <span class="string">"""Build vocabulary from text."""</span>
+        chars = <span class="func">sorted</span>(<span class="func">set</span>(text))
+        self.char_to_id = {ch: i <span class="keyword">for</span> i, ch <span class="keyword">in</span> <span class="func">enumerate</span>(chars)}
+        self.id_to_char = {i: ch <span class="keyword">for</span> ch, i <span class="keyword">in</span> self.char_to_id.<span class="func">items</span>()}
+        <span class="func">print</span>(<span class="string">f"Vocabulary size: {len(chars)} characters"</span>)
+        <span class="func">print</span>(<span class="string">f"Vocab: {chars}"</span>)
+
+    <span class="keyword">def</span> <span class="func">encode</span>(self, text):
+        <span class="string">"""Convert text to list of integer IDs."""</span>
+        <span class="keyword">return</span> [self.char_to_id[ch] <span class="keyword">for</span> ch <span class="keyword">in</span> text]
+
+    <span class="keyword">def</span> <span class="func">decode</span>(self, ids):
+        <span class="string">"""Convert list of integer IDs back to text."""</span>
+        <span class="keyword">return</span> <span class="string">""</span>.<span class="func">join</span>(self.id_to_char[i] <span class="keyword">for</span> i <span class="keyword">in</span> ids)
+
+<span class="comment"># Try it out!</span>
+tok = <span class="func">CharTokenizer</span>()
+tok.<span class="func">train</span>(<span class="string">"hello world"</span>)
+
+encoded = tok.<span class="func">encode</span>(<span class="string">"hello"</span>)
+<span class="func">print</span>(<span class="string">f"'hello' → {encoded}"</span>)  <span class="comment"># [3, 2, 5, 5, 6]</span>
+
+decoded = tok.<span class="func">decode</span>(encoded)
+<span class="func">print</span>(<span class="string">f"{encoded} → '{decoded}'"</span>)  <span class="comment"># 'hello'</span></pre>
+        </div>
+
+        <h3>Step 2: BPE Tokenizer from Scratch</h3>
+
+        <p>Now the real deal. This is the same algorithm GPT uses (simplified). We start with characters and keep merging the most common pair.</p>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><span class="keyword">from</span> collections <span class="keyword">import</span> Counter
+
+<span class="keyword">class</span> <span class="func">SimpleBPE</span>:
+    <span class="string">"""A minimal BPE tokenizer built from scratch."""</span>
+
+    <span class="keyword">def</span> <span class="func">__init__</span>(self, num_merges=<span class="number">20</span>):
+        self.num_merges = num_merges
+        self.merges = {}     <span class="comment"># (pair) → merged token</span>
+        self.vocab = {}      <span class="comment"># token → id</span>
+
+    <span class="keyword">def</span> <span class="func">_get_pairs</span>(self, tokens):
+        <span class="string">"""Count frequency of adjacent token pairs."""</span>
+        pairs = Counter()
+        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="func">range</span>(<span class="func">len</span>(tokens) - <span class="number">1</span>):
+            pairs[(tokens[i], tokens[i + <span class="number">1</span>])] += <span class="number">1</span>
+        <span class="keyword">return</span> pairs
+
+    <span class="keyword">def</span> <span class="func">_merge_pair</span>(self, tokens, pair, merged):
+        <span class="string">"""Replace all occurrences of pair with merged token."""</span>
+        new_tokens = []
+        i = <span class="number">0</span>
+        <span class="keyword">while</span> i &lt; <span class="func">len</span>(tokens):
+            <span class="keyword">if</span> (i &lt; <span class="func">len</span>(tokens) - <span class="number">1</span>
+                <span class="keyword">and</span> tokens[i] == pair[<span class="number">0</span>]
+                <span class="keyword">and</span> tokens[i + <span class="number">1</span>] == pair[<span class="number">1</span>]):
+                new_tokens.<span class="func">append</span>(merged)
+                i += <span class="number">2</span>
+            <span class="keyword">else</span>:
+                new_tokens.<span class="func">append</span>(tokens[i])
+                i += <span class="number">1</span>
+        <span class="keyword">return</span> new_tokens
+
+    <span class="keyword">def</span> <span class="func">train</span>(self, text):
+        <span class="string">"""Learn BPE merges from training text."""</span>
+        tokens = <span class="func">list</span>(text)
+
+        <span class="keyword">for</span> step <span class="keyword">in</span> <span class="func">range</span>(self.num_merges):
+            pairs = self.<span class="func">_get_pairs</span>(tokens)
+            <span class="keyword">if not</span> pairs:
+                <span class="keyword">break</span>
+
+            best_pair = pairs.<span class="func">most_common</span>(<span class="number">1</span>)[<span class="number">0</span>][<span class="number">0</span>]
+            merged = best_pair[<span class="number">0</span>] + best_pair[<span class="number">1</span>]
+            self.merges[best_pair] = merged
+            tokens = self.<span class="func">_merge_pair</span>(tokens, best_pair, merged)
+            <span class="func">print</span>(<span class="string">f"Step {step+1}: merge '{best_pair[0]}'+'{best_pair[1]}' → '{merged}'"</span>)
+
+        <span class="comment"># Build vocabulary from unique tokens</span>
+        unique = <span class="func">sorted</span>(<span class="func">set</span>(tokens))
+        self.vocab = {tok: i <span class="keyword">for</span> i, tok <span class="keyword">in</span> <span class="func">enumerate</span>(unique)}
+        <span class="func">print</span>(<span class="string">f"\nFinal vocab ({len(self.vocab)} tokens): {unique}"</span>)
+
+    <span class="keyword">def</span> <span class="func">encode</span>(self, text):
+        <span class="string">"""Tokenize new text using learned merges."""</span>
+        tokens = <span class="func">list</span>(text)
+        <span class="keyword">for</span> pair, merged <span class="keyword">in</span> self.merges.<span class="func">items</span>():
+            tokens = self.<span class="func">_merge_pair</span>(tokens, pair, merged)
+        <span class="keyword">return</span> tokens, [self.vocab.<span class="func">get</span>(t, -<span class="number">1</span>) <span class="keyword">for</span> t <span class="keyword">in</span> tokens]
+
+<span class="comment"># Train on sample text</span>
+bpe = <span class="func">SimpleBPE</span>(num_merges=<span class="number">10</span>)
+bpe.<span class="func">train</span>(<span class="string">"low low low lowest newest widest"</span>)
+
+<span class="comment"># Tokenize new text</span>
+tokens, ids = bpe.<span class="func">encode</span>(<span class="string">"lowest"</span>)
+<span class="func">print</span>(<span class="string">f"\n'lowest' → tokens: {tokens}, ids: {ids}"</span>)</pre>
+        </div>
+
+        <div class="eli5">
+            <h4><i class="fas fa-baby"></i> ELI5: What We Just Built</h4>
+            <p>We built a machine that reads a lot of text, notices which letter combos keep showing up together (like "l" and "o" always appear as "lo"), and creates shortcuts. Next time it sees new text, it uses those shortcuts to chop it into efficient pieces. That's the same core idea behind GPT's tokenizer — just with more training data and more merge steps!</p>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-graduation-cap"></i> Module 2: Key Takeaways</h4>
+            <ul>
+                <li><strong>Computers need numbers:</strong> Text must be converted to numerical form before any processing</li>
+                <li><strong>Tokenization:</strong> Splits text into subword pieces using BPE — a balance between words and characters</li>
+                <li><strong>Embeddings:</strong> Convert token IDs into rich vectors where similar words have similar vectors</li>
+                <li><strong>Positional encoding:</strong> Stamps each token with its position using sin/cos waves</li>
+                <li><strong>The pipeline:</strong> Text → Tokens → Token IDs → Embeddings + Position → Ready for the neural network!</li>
+            </ul>
+        </div>
+
+        <div class="visual">
+            <h4><i class="fas fa-project-diagram"></i> The Full Text-to-Numbers Pipeline</h4>
+            <svg viewBox="0 0 750 120" width="750" height="120">
+                <!-- Step boxes -->
+                <rect x="10" y="25" width="120" height="60" rx="14" fill="url(#purpleGrad)" opacity="0.9"/>
+                <text x="70" y="50" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Nunito">Raw Text</text>
+                <text x="70" y="68" text-anchor="middle" fill="#e9d5ff" font-size="10" font-family="Fira Code">"Hello world"</text>
+
+                <path d="M135 55 L160 55" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+
+                <rect x="165" y="25" width="120" height="60" rx="14" fill="#7c3aed"/>
+                <text x="225" y="50" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Nunito">Tokenize</text>
+                <text x="225" y="68" text-anchor="middle" fill="#e9d5ff" font-size="10" font-family="Fira Code">["Hello","world"]</text>
+
+                <path d="M290 55 L315 55" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+
+                <rect x="320" y="25" width="120" height="60" rx="14" fill="#6d28d9"/>
+                <text x="380" y="50" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Nunito">Token IDs</text>
+                <text x="380" y="68" text-anchor="middle" fill="#e9d5ff" font-size="10" font-family="Fira Code">[15339, 995]</text>
+
+                <path d="M445 55 L470 55" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+
+                <rect x="475" y="25" width="120" height="60" rx="14" fill="#5b21b6"/>
+                <text x="535" y="50" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Nunito">Embeddings</text>
+                <text x="535" y="68" text-anchor="middle" fill="#e9d5ff" font-size="10" font-family="Fira Code">[0.2, -0.5, ...]</text>
+
+                <path d="M600 55 L625 55" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#arrowPurple)"/>
+
+                <rect x="630" y="25" width="110" height="60" rx="14" fill="#4c1d95"/>
+                <text x="685" y="50" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Nunito">+ Position</text>
+                <text x="685" y="68" text-anchor="middle" fill="#e9d5ff" font-size="10" font-family="Fira Code">Ready! ✓</text>
+
+                <text x="375" y="112" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="700" font-family="Nunito">This is the input pipeline for every Transformer / LLM</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+        <a href="what-are-llms.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Prev: What Are LLMs?</a>
+        <a href="nn-refresher.html" class="nav-btn next">Next: NN Refresher <i class="fas fa-arrow-right"></i></a>
+    </div>
+</div>
+
+<script>
+// ============ Token Colors ============
+const tokenColors = [
+    '#8b5cf6','#3b82f6','#22c55e','#ef4444','#f59e0b',
+    '#ec4899','#14b8a6','#f97316','#6366f1','#84cc16',
+    '#06b6d4','#e11d48','#a855f7','#10b981','#eab308'
+];
+
+// ============ Interactive Tokenizer ============
+const commonSubwords = [
+    'tion','sion','ment','ness','able','ible','ful','less','ing','ous',
+    'ive','al','er','est','ly','ed','un','re','pre','dis','mis','over',
+    'the','and','for','are','but','not','you','all','can','her','was',
+    'one','our','out','day','had','has','his','how','its','may','new',
+    'now','old','see','way','who','did','get','let','say','she','too','use'
+];
+
+function simpleTokenize(text) {
+    if (!text.trim()) return [];
+    const tokens = [];
+    let remaining = text.toLowerCase();
+    let i = 0;
+    while (i < remaining.length) {
+        if (remaining[i] === ' ') { tokens.push(' '); i++; continue; }
+        let bestMatch = remaining[i];
+        let bestLen = 1;
+        let wordEnd = i;
+        while (wordEnd < remaining.length && remaining[wordEnd] !== ' ') wordEnd++;
+        const word = remaining.substring(i, wordEnd);
+
+        if (word.length <= 3) {
+            tokens.push(word);
+            i += word.length;
+            continue;
+        }
+
+        let pos = 0;
+        while (pos < word.length) {
+            let matched = false;
+            for (let len = Math.min(6, word.length - pos); len >= 2; len--) {
+                const sub = word.substring(pos, pos + len);
+                if (commonSubwords.includes(sub) || len >= 3) {
+                    tokens.push(sub);
+                    pos += len;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                tokens.push(word[pos]);
+                pos++;
+            }
+        }
+        i = wordEnd;
+    }
+    return tokens.filter(t => t !== ' ');
+}
+
+function renderTokens() {
+    const text = document.getElementById('tokenizer-input').value;
+    const tokens = simpleTokenize(text);
+    const result = document.getElementById('tokenizer-result');
+    if (tokens.length === 0) {
+        result.innerHTML = '<p style="color:#94a3b8;">Type something above...</p>';
+        return;
+    }
+    let html = '<div style="margin-bottom:12px;">';
+    tokens.forEach((tok, i) => {
+        const color = tokenColors[i % tokenColors.length];
+        html += `<span class="token-span" style="background:${color}18; color:${color}; border:1.5px solid ${color}44;">${tok}</span>`;
+    });
+    html += '</div>';
+    html += `<p style="color:#64748b; font-size:0.9em;"><strong>${tokens.length}</strong> tokens | Token IDs: [${tokens.map((_, i) => Math.floor(Math.random() * 50000)).join(', ')}]</p>`;
+    result.innerHTML = html;
+}
+
+document.getElementById('tokenizer-input').addEventListener('input', renderTokens);
+renderTokens();
+
+// ============ Embedding Bar Chart ============
+const embeddingValues = [0.72, -0.31, 0.45, 0.88, -0.15, 0.63, -0.42, 0.29];
+const dimColors = ['#8b5cf6','#3b82f6','#22c55e','#ef4444','#f59e0b','#ec4899','#14b8a6','#6366f1'];
+
+function renderEmbeddingBars() {
+    const container = document.getElementById('embedding-bars');
+    container.innerHTML = '';
+    embeddingValues.forEach((val, i) => {
+        const height = Math.abs(val) * 120;
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = height + 'px';
+        bar.style.width = '50px';
+        bar.style.background = dimColors[i];
+        bar.style.opacity = '0.8';
+        if (val < 0) {
+            bar.style.alignSelf = 'flex-start';
+            bar.style.marginTop = (120 - height) + 'px';
+            bar.style.borderRadius = '0 0 6px 6px';
+        }
+        bar.innerHTML = `<span>${val.toFixed(2)}</span>`;
+        bar.title = `Dimension ${i}: ${val.toFixed(2)}`;
+        container.appendChild(bar);
+    });
+}
+renderEmbeddingBars();
+
+// ============ Word Similarity Playground ============
+const similarityData = {
+    king: [
+        { word: 'queen', score: 0.89, icon: 'fa-crown' },
+        { word: 'prince', score: 0.84, icon: 'fa-chess' },
+        { word: 'monarch', score: 0.82, icon: 'fa-landmark' },
+        { word: 'throne', score: 0.78, icon: 'fa-chair' },
+        { word: 'royal', score: 0.76, icon: 'fa-star' }
+    ],
+    cat: [
+        { word: 'dog', score: 0.92, icon: 'fa-dog' },
+        { word: 'kitten', score: 0.89, icon: 'fa-paw' },
+        { word: 'pet', score: 0.87, icon: 'fa-heart' },
+        { word: 'animal', score: 0.83, icon: 'fa-hippo' },
+        { word: 'puppy', score: 0.79, icon: 'fa-bone' }
+    ],
+    happy: [
+        { word: 'joyful', score: 0.91, icon: 'fa-face-laugh' },
+        { word: 'glad', score: 0.88, icon: 'fa-face-grin' },
+        { word: 'cheerful', score: 0.86, icon: 'fa-sun' },
+        { word: 'pleased', score: 0.82, icon: 'fa-thumbs-up' },
+        { word: 'delighted', score: 0.80, icon: 'fa-champagne-glasses' }
+    ],
+    python: [
+        { word: 'programming', score: 0.87, icon: 'fa-laptop-code' },
+        { word: 'java', score: 0.85, icon: 'fa-coffee' },
+        { word: 'code', score: 0.83, icon: 'fa-terminal' },
+        { word: 'language', score: 0.79, icon: 'fa-globe' },
+        { word: 'script', score: 0.76, icon: 'fa-scroll' }
+    ],
+    food: [
+        { word: 'meal', score: 0.90, icon: 'fa-bowl-food' },
+        { word: 'eating', score: 0.87, icon: 'fa-utensils' },
+        { word: 'cooking', score: 0.84, icon: 'fa-fire-burner' },
+        { word: 'restaurant', score: 0.80, icon: 'fa-store' },
+        { word: 'cuisine', score: 0.78, icon: 'fa-plate-wheat' }
+    ]
+};
+
+function showSimilar(word) {
+    const data = similarityData[word];
+    const result = document.getElementById('similarity-result');
+    let html = `<p style="color:#6d28d9; font-weight:700; font-size:1.1em; margin-bottom:12px;">Words closest to "<strong>${word}</strong>" in embedding space:</p>`;
+    html += '<div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">';
+    data.forEach((item, i) => {
+        const opacity = 1 - (i * 0.12);
+        html += `<div style="background:rgba(139,92,246,${0.08 + i*0.03}); border:1.5px solid rgba(139,92,246,${0.3 - i*0.04}); border-radius:14px; padding:12px 18px; min-width:120px;">
+            <div style="font-size:1.4em; margin-bottom:4px;"><i class="fas ${item.icon}" style="color:#7c3aed;"></i></div>
+            <div style="font-weight:700; color:#5b21b6;">${item.word}</div>
+            <div style="font-size:0.85em; color:#7c3aed;">similarity: ${item.score.toFixed(2)}</div>
+            <div style="background:#e9d5ff; height:6px; border-radius:3px; margin-top:6px;">
+                <div style="background:#7c3aed; height:100%; border-radius:3px; width:${item.score * 100}%;"></div>
+            </div>
+        </div>`;
+    });
+    html += '</div>';
+    result.innerHTML = html;
+}
+
+// ============ Word Order Shuffle ============
+const wordSentences = [
+    { words: ['dog', 'bites', 'man'], meaning: '🐕 A dog attacks a person — scary news!' },
+    { words: ['man', 'bites', 'dog'], meaning: '😱 A person bites a dog — bizarre headline!' },
+    { words: ['bites', 'dog', 'man'], meaning: '🤔 Makes no grammatical sense... gibberish!' },
+    { words: ['bites', 'man', 'dog'], meaning: '❓ Still nonsense — word order is broken!' },
+    { words: ['man', 'dog', 'bites'], meaning: '🧐 "Man dog bites"? Maybe a man-dog hybrid bites?' },
+    { words: ['dog', 'man', 'bites'], meaning: '🐾 "Dog man bites"? A dog-man creature that bites?' }
+];
+let currentSentenceIdx = 0;
+
+function shuffleWords() {
+    currentSentenceIdx = (currentSentenceIdx + 1) % wordSentences.length;
+    updateWordDisplay();
+}
+
+function resetWords() {
+    currentSentenceIdx = 0;
+    updateWordDisplay();
+}
+
+function updateWordDisplay() {
+    const s = wordSentences[currentSentenceIdx];
+    const display = document.getElementById('word-display');
+    const meaning = document.getElementById('meaning-text');
+
+    display.innerHTML = '';
+    s.words.forEach((w, i) => {
+        const chip = document.createElement('span');
+        chip.className = 'word-chip';
+        chip.textContent = w;
+        chip.style.animationDelay = (i * 0.1) + 's';
+        chip.style.opacity = '0';
+        chip.style.transform = 'translateY(-10px)';
+        display.appendChild(chip);
+        setTimeout(() => {
+            chip.style.opacity = '1';
+            chip.style.transform = 'translateY(0)';
+        }, i * 120);
+    });
+
+    meaning.style.opacity = '0';
+    setTimeout(() => {
+        meaning.textContent = s.meaning;
+        meaning.style.opacity = '1';
+    }, 300);
+}
+
+// ============ Copy Code ============
+function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    const text = pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 2000);
+    });
+}
+</script>
+</body>
+</html>

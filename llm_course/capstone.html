@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capstone: Build Your Own Mini-ChatGPT | LLM Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #faf5ff 0%, #f3e8ff 25%, #ede9fe 50%, #faf5ff 75%, #f5f3ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(124,58,237,0.12); padding: 15px 30px; border-radius: 18px;
+            margin-bottom: 30px; box-shadow: 0 4px 24px rgba(124,58,237,0.06);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #7c3aed; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #6d28d9; }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9, #4c1d95);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(109,40,217,0.35); position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 60%);
+            animation: headerPulse 8s ease-in-out infinite;
+        }
+        @keyframes headerPulse { 0%,100%{transform:scale(1);opacity:0.6;} 50%{transform:scale(1.1);opacity:1;} }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; position: relative; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; position: relative; }
+        .badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; position: relative; }
+        .trophy-accent { color: #fbbf24; text-shadow: 0 0 20px rgba(251,191,36,0.5); }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px);
+            border: 1px solid rgba(124,58,237,0.1); border-radius: 28px;
+            padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(124,58,237,0.05);
+        }
+        .section h2 { color: #4c1d95; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #ede9fe; }
+        .section h3 { color: #5b21b6; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #7c3aed; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5 {
+            background: linear-gradient(135deg, #faf5ff, #ede9fe); border: 2px dashed #7c3aed;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5 h4 { color: #5b21b6; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5 p { color: #4c1d95; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border-left: 5px solid #fbbf24; border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy h4 { color: #854d0e; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy p { color: #713f12; }
+        .key-point {
+            background: linear-gradient(135deg, #faf5ff, #ede9fe);
+            border-left: 5px solid #7c3aed; border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #5b21b6; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #4c1d95; }
+        .key-point li { margin-bottom: 8px; }
+        .visual {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #ddd6fe; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .visual h4 { color: #5b21b6; margin-bottom: 15px; }
+        .visual svg { max-width: 100%; height: auto; }
+        .code-block {
+            background: #1e293b; border-radius: 16px; padding: 25px; margin: 20px 0;
+            overflow-x: auto; position: relative;
+        }
+        .code-block pre {
+            font-family: 'Fira Code', monospace; font-size: 0.92em;
+            color: #e2e8f0; line-height: 1.8; margin: 0; white-space: pre;
+        }
+        .code-block .comment { color: #64748b; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .function { color: #7dd3fc; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .builtin { color: #f9a8d4; }
+        .code-block .decorator { color: #fb923c; }
+        .code-block .label {
+            position: absolute; top: 10px; right: 14px;
+            background: rgba(255,255,255,0.08); color: #94a3b8;
+            padding: 2px 10px; border-radius: 8px; font-size: 0.78em;
+            font-family: 'Fira Code', monospace;
+        }
+        .playground {
+            background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 2px solid #ddd6fe; border-radius: 22px; padding: 30px; margin: 30px 0; text-align: center;
+        }
+        .playground h4 { color: #5b21b6; margin-bottom: 8px; font-size: 1.15em; }
+        .playground p { color: #334155; font-size: 0.95em; margin-bottom: 15px; }
+        .gold-card {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #fbbf24;
+            border-radius: 20px; padding: 30px; margin: 25px 0; position: relative; overflow: hidden;
+        }
+        .gold-card::before {
+            content: '🏆'; position: absolute; top: -8px; right: 15px; font-size: 2.5em; opacity: 0.15;
+        }
+        .gold-card h4 { color: #92400e; font-size: 1.2em; margin-bottom: 12px; }
+        .gold-card p { color: #78350f; }
+        .gold-card ul { margin-left: 22px; color: #78350f; }
+        .gold-card li { margin-bottom: 6px; }
+        .temp-output {
+            background: #1e293b; border-radius: 12px; padding: 18px 22px; margin: 10px 0;
+            font-family: 'Fira Code', monospace; color: #e2e8f0; font-size: 0.9em;
+            line-height: 1.7; text-align: left;
+        }
+        .temp-label { display: inline-block; padding: 3px 12px; border-radius: 8px; font-size: 0.82em; font-weight: 700; margin-bottom: 8px; font-family: 'Nunito', sans-serif; }
+        .chat-container {
+            border: 2px solid #ddd6fe; border-radius: 16px; overflow: hidden; text-align: left;
+            max-width: 500px; margin: 0 auto;
+        }
+        .chat-header { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; padding: 14px 20px; font-weight: 800; }
+        .chat-messages { height: 220px; overflow-y: auto; padding: 16px; background: #faf5ff; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { max-width: 80%; padding: 10px 16px; border-radius: 14px; font-size: 0.95em; line-height: 1.6; }
+        .chat-msg.user { background: #7c3aed; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-msg.bot { background: #ede9fe; color: #4c1d95; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-input-row { display: flex; border-top: 2px solid #ddd6fe; }
+        .chat-input-row input { flex: 1; border: none; padding: 14px 18px; font-family: 'Nunito', sans-serif; font-size: 1em; outline: none; background: white; }
+        .chat-input-row button { background: #7c3aed; color: white; border: none; padding: 14px 22px; font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif; }
+        .chat-input-row button:hover { background: #6d28d9; }
+        .progress-bar-outer { background: #e2e8f0; border-radius: 10px; height: 24px; width: 100%; overflow: hidden; margin: 10px 0; }
+        .progress-bar-inner { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #7c3aed, #fbbf24); width: 0%; transition: width 0.4s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-size: 0.75em; font-weight: 800; }
+        .train-btn {
+            padding: 14px 36px; border: none; border-radius: 14px; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 1.05em; cursor: pointer; transition: all .3s;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white;
+            box-shadow: 0 4px 16px rgba(109,40,217,0.3);
+        }
+        .train-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(109,40,217,0.4); }
+        .train-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 700; transition: all .3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; box-shadow: 0 4px 20px rgba(109,40,217,0.25); }
+        .nav-btn:hover { transform: translateY(-3px); }
+        .celebration { text-align: center; font-size: 2.5em; margin: 20px 0; animation: celebBounce 1.5s ease-in-out infinite; }
+        @keyframes celebBounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+        .module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+        .module-link {
+            display: block; padding: 14px 18px; background: rgba(124,58,237,0.06); border: 1px solid #ddd6fe;
+            border-radius: 14px; text-decoration: none; color: #5b21b6; font-weight: 700; font-size: 0.95em; transition: all .3s;
+        }
+        .module-link:hover { background: rgba(124,58,237,0.12); transform: translateY(-2px); }
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 18px; }
+            .nav-buttons { flex-direction: column; }
+            .module-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+    </nav>
+
+    <div class="header">
+        <span class="badge">Module 9 — Capstone</span>
+        <h1>🏆 Capstone: Build Your Own Mini-ChatGPT</h1>
+        <p>Everything you've learned comes together. You'll build a character-level GPT, train it on Shakespeare, and serve it with a web UI — from scratch.</p>
+    </div>
+
+    <!-- ===== PART 1: Project Plan & Architecture ===== -->
+    <div class="section" id="plan">
+        <h2><i class="fas fa-drafting-compass"></i> Part 1: Project Plan & Architecture</h2>
+
+        <p>Here's what we're building: a <strong>character-level GPT</strong> trained on Shakespeare that generates new text one character at a time. It's a miniature version of exactly how ChatGPT works — same architecture, same training objective, same generation process.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Imagine you read <em>every</em> Shakespeare play a thousand times. Eventually you'd be able to write something that <em>sounds</em> like Shakespeare, right? That's what our model does — it reads Shakespeare so many times that it learns the patterns and can write new stuff in the same style.</p>
+        </div>
+
+        <div class="visual">
+            <h4>🗺️ Full Pipeline — From Raw Text to Web Chat</h4>
+            <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="800" height="300" rx="16" fill="#faf5ff" fill-opacity="0.3"/>
+                <defs>
+                    <marker id="capA" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#7c3aed"/></marker>
+                    <linearGradient id="capG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
+                </defs>
+                <text x="400" y="26" text-anchor="middle" fill="#4c1d95" font-size="13" font-weight="800" font-family="Nunito">End-to-End Mini-GPT Pipeline</text>
+                <!-- Step boxes -->
+                <rect x="20" y="50" width="110" height="55" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+                <text x="75" y="72" text-anchor="middle" fill="#4c1d95" font-size="11" font-weight="800" font-family="Nunito">📄 Raw Text</text>
+                <text x="75" y="92" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">Shakespeare 1MB</text>
+
+                <line x1="135" y1="78" x2="158" y2="78" stroke="#7c3aed" stroke-width="2" marker-end="url(#capA)"/>
+
+                <rect x="162" y="50" width="110" height="55" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+                <text x="217" y="72" text-anchor="middle" fill="#4c1d95" font-size="11" font-weight="800" font-family="Nunito">🔤 Tokenizer</text>
+                <text x="217" y="92" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">Char → Integer</text>
+
+                <line x1="277" y1="78" x2="300" y2="78" stroke="#7c3aed" stroke-width="2" marker-end="url(#capA)"/>
+
+                <rect x="304" y="50" width="110" height="55" rx="12" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2"/>
+                <text x="359" y="72" text-anchor="middle" fill="#4c1d95" font-size="11" font-weight="800" font-family="Nunito">🧠 GPT Model</text>
+                <text x="359" y="92" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">6 layers, 6 heads</text>
+
+                <line x1="419" y1="78" x2="442" y2="78" stroke="#7c3aed" stroke-width="2" marker-end="url(#capA)"/>
+
+                <rect x="446" y="50" width="110" height="55" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+                <text x="501" y="72" text-anchor="middle" fill="#4c1d95" font-size="11" font-weight="800" font-family="Nunito">🏋️ Training</text>
+                <text x="501" y="92" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">Loss: 4.0 → 1.5</text>
+
+                <line x1="561" y1="78" x2="584" y2="78" stroke="#7c3aed" stroke-width="2" marker-end="url(#capA)"/>
+
+                <rect x="588" y="50" width="110" height="55" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+                <text x="643" y="72" text-anchor="middle" fill="#4c1d95" font-size="11" font-weight="800" font-family="Nunito">✨ Generate</text>
+                <text x="643" y="92" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">Temperature ctrl</text>
+
+                <!-- Down arrow to Web UI -->
+                <line x1="643" y1="110" x2="643" y2="145" stroke="#7c3aed" stroke-width="2" marker-end="url(#capA)"/>
+
+                <rect x="548" y="150" width="190" height="55" rx="12" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+                <text x="643" y="172" text-anchor="middle" fill="#92400e" font-size="11" font-weight="800" font-family="Nunito">🌐 Web Chat UI</text>
+                <text x="643" y="192" text-anchor="middle" fill="#a16207" font-size="9" font-family="Nunito">FastAPI + HTML/JS</text>
+
+                <!-- Tech stack row -->
+                <text x="400" y="240" text-anchor="middle" fill="#4c1d95" font-size="11" font-weight="800" font-family="Nunito">Tech Stack</text>
+                <rect x="80" y="255" width="90" height="30" rx="8" fill="#7c3aed" fill-opacity="0.12"/><text x="125" y="275" text-anchor="middle" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">Python</text>
+                <rect x="185" y="255" width="90" height="30" rx="8" fill="#7c3aed" fill-opacity="0.12"/><text x="230" y="275" text-anchor="middle" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">PyTorch</text>
+                <rect x="290" y="255" width="90" height="30" rx="8" fill="#7c3aed" fill-opacity="0.12"/><text x="335" y="275" text-anchor="middle" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">FastAPI</text>
+                <rect x="395" y="255" width="90" height="30" rx="8" fill="#7c3aed" fill-opacity="0.12"/><text x="440" y="275" text-anchor="middle" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">HTML/JS</text>
+                <rect x="500" y="255" width="120" height="30" rx="8" fill="#fbbf24" fill-opacity="0.2"/><text x="560" y="275" text-anchor="middle" fill="#92400e" font-size="10" font-weight="700" font-family="Nunito">~10M params</text>
+            </svg>
+        </div>
+
+        <div class="gold-card">
+            <h4>🏆 What You'll Walk Away With</h4>
+            <ul>
+                <li>A <strong>working text generator</strong> trained on Shakespeare</li>
+                <li>A <strong>complete GPT implementation</strong> — the same architecture behind ChatGPT</li>
+                <li>A <strong>web chat interface</strong> where you can talk to your model</li>
+                <li>Deep understanding of <strong>every piece</strong> of the LLM pipeline</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ===== PART 2: Dataset & Tokenizer ===== -->
+    <div class="section" id="data">
+        <h2><i class="fas fa-database"></i> Part 2: Step 1 — Dataset & Tokenizer</h2>
+
+        <p>We'll use <strong>TinyShakespeare</strong> — about 1 MB of Shakespeare's complete works. It's small enough to train on a laptop but large enough to produce surprisingly good results.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>A tokenizer is like giving every letter its own secret number. "A" = 0, "B" = 1, "C" = 2 … The computer only understands numbers, so we convert every character in Shakespeare into a list of numbers, train on those numbers, and convert the output numbers back to letters.</p>
+        </div>
+
+        <h3>Download & Build the Vocab</h3>
+        <div class="code-block"><span class="label">Python</span><pre><span class="keyword">import</span> torch
+
+<span class="comment"># Download Tiny Shakespeare (~1MB of text)</span>
+<span class="keyword">import</span> urllib.request
+url = <span class="string">"https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt"</span>
+urllib.request.urlretrieve(url, <span class="string">"shakespeare.txt"</span>)
+
+<span class="comment"># Load and inspect</span>
+text = <span class="builtin">open</span>(<span class="string">"shakespeare.txt"</span>).read()
+<span class="builtin">print</span>(<span class="string">f"Total characters: <span class="number">{len(text):,}</span>"</span>)  <span class="comment"># ~1,115,394</span>
+
+<span class="comment"># Build character-level vocabulary</span>
+chars = <span class="builtin">sorted</span>(<span class="builtin">set</span>(text))
+vocab_size = <span class="builtin">len</span>(chars)  <span class="comment"># 65 unique characters</span>
+<span class="builtin">print</span>(<span class="string">f"Vocab: {''.join(chars)}"</span>)
+
+<span class="comment"># Encode / decode functions</span>
+stoi = {ch: i <span class="keyword">for</span> i, ch <span class="keyword">in</span> <span class="builtin">enumerate</span>(chars)}
+itos = {i: ch <span class="keyword">for</span> ch, i <span class="keyword">in</span> stoi.items()}
+encode = <span class="keyword">lambda</span> s: [stoi[c] <span class="keyword">for</span> c <span class="keyword">in</span> s]
+decode = <span class="keyword">lambda</span> l: <span class="string">""</span>.join(itos[i] <span class="keyword">for</span> i <span class="keyword">in</span> l)
+
+<span class="comment"># Convert entire text to tensor</span>
+data = torch.tensor(encode(text), dtype=torch.long)
+n = <span class="builtin">int</span>(<span class="number">0.9</span> * <span class="builtin">len</span>(data))
+train_data, val_data = data[:n], data[n:]</pre></div>
+
+        <div class="visual">
+            <h4>🔤 Character Tokenization in Action</h4>
+            <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg">
+                <rect width="700" height="160" rx="14" fill="#faf5ff" fill-opacity="0.3"/>
+                <text x="350" y="25" text-anchor="middle" fill="#4c1d95" font-size="12" font-weight="800" font-family="Nunito">encode("Hello") → [20, 43, 50, 50, 53] → decode → "Hello"</text>
+                <!-- Characters -->
+                <rect x="60" y="45" width="55" height="45" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="87" y="73" text-anchor="middle" fill="#4c1d95" font-size="16" font-weight="900" font-family="Fira Code">H</text>
+                <rect x="130" y="45" width="55" height="45" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="157" y="73" text-anchor="middle" fill="#4c1d95" font-size="16" font-weight="900" font-family="Fira Code">e</text>
+                <rect x="200" y="45" width="55" height="45" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="227" y="73" text-anchor="middle" fill="#4c1d95" font-size="16" font-weight="900" font-family="Fira Code">l</text>
+                <rect x="270" y="45" width="55" height="45" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="297" y="73" text-anchor="middle" fill="#4c1d95" font-size="16" font-weight="900" font-family="Fira Code">l</text>
+                <rect x="340" y="45" width="55" height="45" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="367" y="73" text-anchor="middle" fill="#4c1d95" font-size="16" font-weight="900" font-family="Fira Code">o</text>
+                <!-- Arrows down -->
+                <text x="87" y="110" text-anchor="middle" fill="#7c3aed" font-size="14" font-weight="800" font-family="Nunito">↓</text>
+                <text x="157" y="110" text-anchor="middle" fill="#7c3aed" font-size="14" font-weight="800" font-family="Nunito">↓</text>
+                <text x="227" y="110" text-anchor="middle" fill="#7c3aed" font-size="14" font-weight="800" font-family="Nunito">↓</text>
+                <text x="297" y="110" text-anchor="middle" fill="#7c3aed" font-size="14" font-weight="800" font-family="Nunito">↓</text>
+                <text x="367" y="110" text-anchor="middle" fill="#7c3aed" font-size="14" font-weight="800" font-family="Nunito">↓</text>
+                <!-- Numbers -->
+                <rect x="60" y="120" width="55" height="35" rx="10" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><text x="87" y="143" text-anchor="middle" fill="#92400e" font-size="14" font-weight="800" font-family="Fira Code">20</text>
+                <rect x="130" y="120" width="55" height="35" rx="10" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><text x="157" y="143" text-anchor="middle" fill="#92400e" font-size="14" font-weight="800" font-family="Fira Code">43</text>
+                <rect x="200" y="120" width="55" height="35" rx="10" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><text x="227" y="143" text-anchor="middle" fill="#92400e" font-size="14" font-weight="800" font-family="Fira Code">50</text>
+                <rect x="270" y="120" width="55" height="35" rx="10" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><text x="297" y="143" text-anchor="middle" fill="#92400e" font-size="14" font-weight="800" font-family="Fira Code">50</text>
+                <rect x="340" y="120" width="55" height="35" rx="10" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><text x="367" y="143" text-anchor="middle" fill="#92400e" font-size="14" font-weight="800" font-family="Fira Code">53</text>
+                <!-- Reversibility -->
+                <text x="550" y="80" text-anchor="middle" fill="#5b21b6" font-size="12" font-weight="700" font-family="Nunito">✅ Fully reversible!</text>
+                <text x="550" y="100" text-anchor="middle" fill="#7c3aed" font-size="11" font-family="Nunito">decode(encode(x)) == x</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ===== PART 3: Build the GPT Model ===== -->
+    <div class="section" id="model">
+        <h2><i class="fas fa-cubes"></i> Part 3: Step 2 — Build the GPT Model</h2>
+
+        <p>Now we assemble everything from the course: <strong>token embeddings + positional encoding + N transformer blocks + final linear head</strong>. This is the exact architecture behind GPT-2 — just smaller.</p>
+
+        <div class="analogy">
+            <h4>🧱 The LEGO Analogy</h4>
+            <p>Each module we learned is like a LEGO brick. Embeddings snap onto positional encoding. Transformer blocks (attention + feed-forward) stack on top of each other. The output head snaps on at the end. Put them all together and you get a GPT model!</p>
+        </div>
+
+        <h3>Model Configuration</h3>
+        <div class="code-block"><span class="label">Python</span><pre><span class="comment"># Reasonable defaults for a laptop-trainable model</span>
+config = {
+    <span class="string">"vocab_size"</span>: <span class="number">65</span>,        <span class="comment"># characters in Shakespeare</span>
+    <span class="string">"n_embd"</span>: <span class="number">384</span>,            <span class="comment"># embedding dimension</span>
+    <span class="string">"n_head"</span>: <span class="number">6</span>,              <span class="comment"># attention heads</span>
+    <span class="string">"n_layer"</span>: <span class="number">6</span>,             <span class="comment"># transformer blocks</span>
+    <span class="string">"block_size"</span>: <span class="number">256</span>,        <span class="comment"># context window</span>
+    <span class="string">"dropout"</span>: <span class="number">0.2</span>,           <span class="comment"># regularization</span>
+}
+<span class="comment"># Total params: ~10.7 million (GPT-4 has ~1.7 trillion!)</span></pre></div>
+
+        <h3>Complete GPT Class</h3>
+        <div class="code-block"><span class="label">Python</span><pre><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+<span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F
+
+<span class="keyword">class</span> <span class="function">Head</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, head_size, n_embd, block_size, dropout):
+        <span class="builtin">super</span>().__init__()
+        self.key   = nn.Linear(n_embd, head_size, bias=<span class="keyword">False</span>)
+        self.query = nn.Linear(n_embd, head_size, bias=<span class="keyword">False</span>)
+        self.value = nn.Linear(n_embd, head_size, bias=<span class="keyword">False</span>)
+        self.register_buffer(<span class="string">"tril"</span>, torch.tril(torch.ones(block_size, block_size)))
+        self.dropout = nn.Dropout(dropout)
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x):
+        B, T, C = x.shape
+        k, q = self.key(x), self.query(x)
+        w = q @ k.transpose(-<span class="number">2</span>, -<span class="number">1</span>) * C**-<span class="number">0.5</span>
+        w = w.masked_fill(self.tril[:T,:T] == <span class="number">0</span>, <span class="builtin">float</span>(<span class="string">"-inf"</span>))
+        w = self.dropout(F.softmax(w, dim=-<span class="number">1</span>))
+        <span class="keyword">return</span> w @ self.value(x)
+
+<span class="keyword">class</span> <span class="function">MultiHead</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, n_head, head_size, n_embd, block_size, dropout):
+        <span class="builtin">super</span>().__init__()
+        self.heads = nn.ModuleList([Head(head_size, n_embd, block_size, dropout) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="builtin">range</span>(n_head)])
+        self.proj  = nn.Linear(n_embd, n_embd)
+        self.dropout = nn.Dropout(dropout)
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x):
+        <span class="keyword">return</span> self.dropout(self.proj(torch.cat([h(x) <span class="keyword">for</span> h <span class="keyword">in</span> self.heads], dim=-<span class="number">1</span>)))
+
+<span class="keyword">class</span> <span class="function">FeedForward</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, n_embd, dropout):
+        <span class="builtin">super</span>().__init__()
+        self.net = nn.Sequential(nn.Linear(n_embd, <span class="number">4</span>*n_embd), nn.ReLU(), nn.Linear(<span class="number">4</span>*n_embd, n_embd), nn.Dropout(dropout))
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x): <span class="keyword">return</span> self.net(x)
+
+<span class="keyword">class</span> <span class="function">Block</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, n_embd, n_head, block_size, dropout):
+        <span class="builtin">super</span>().__init__()
+        self.sa   = MultiHead(n_head, n_embd // n_head, n_embd, block_size, dropout)
+        self.ffwd = FeedForward(n_embd, dropout)
+        self.ln1  = nn.LayerNorm(n_embd)
+        self.ln2  = nn.LayerNorm(n_embd)
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x):
+        x = x + self.sa(self.ln1(x))
+        x = x + self.ffwd(self.ln2(x))
+        <span class="keyword">return</span> x
+
+<span class="keyword">class</span> <span class="function">MiniGPT</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, vocab_size, n_embd, n_head, n_layer, block_size, dropout):
+        <span class="builtin">super</span>().__init__()
+        self.block_size = block_size
+        self.tok_emb = nn.Embedding(vocab_size, n_embd)
+        self.pos_emb = nn.Embedding(block_size, n_embd)
+        self.blocks  = nn.Sequential(*[Block(n_embd, n_head, block_size, dropout) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="builtin">range</span>(n_layer)])
+        self.ln_f    = nn.LayerNorm(n_embd)
+        self.head    = nn.Linear(n_embd, vocab_size)
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, idx, targets=<span class="keyword">None</span>):
+        B, T = idx.shape
+        tok = self.tok_emb(idx)
+        pos = self.pos_emb(torch.arange(T, device=idx.device))
+        x = self.ln_f(self.blocks(tok + pos))
+        logits = self.head(x)
+        loss = F.cross_entropy(logits.view(-<span class="number">1</span>, logits.size(-<span class="number">1</span>)), targets.view(-<span class="number">1</span>)) <span class="keyword">if</span> targets <span class="keyword">is not None else None</span>
+        <span class="keyword">return</span> logits, loss</pre></div>
+
+        <div class="key-point">
+            <h4>💡 Architecture Breakdown</h4>
+            <ul>
+                <li><strong>Head</strong> — one attention head (Query, Key, Value + causal mask)</li>
+                <li><strong>MultiHead</strong> — 6 heads in parallel, then project back</li>
+                <li><strong>FeedForward</strong> — expand 4×, ReLU, project back (the "thinking" step)</li>
+                <li><strong>Block</strong> — LayerNorm → Attention → LayerNorm → FFN (with residual connections)</li>
+                <li><strong>MiniGPT</strong> — Token embed + position embed → 6 Blocks → output head</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ===== PART 4: Training ===== -->
+    <div class="section" id="train">
+        <h2><i class="fas fa-dumbbell"></i> Part 4: Step 3 — Train the Model</h2>
+
+        <p>Training is the magic moment: we feed Shakespeare in, the model predicts the next character, checks if it was right, adjusts its weights, and repeats — thousands of times until it "gets" Shakespeare.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>It's like practicing spelling. At first you get almost every letter wrong (loss = 4.0, basically random). But after thousands of tries, you start getting most letters right (loss = 1.5). The "loss" number tells you how confused the model still is — lower = smarter!</p>
+        </div>
+
+        <h3>Training Script</h3>
+        <div class="code-block"><span class="label">Python</span><pre>device = <span class="string">"cuda"</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">"cpu"</span>
+model = MiniGPT(**config).to(device)
+optimizer = torch.optim.AdamW(model.parameters(), lr=<span class="number">3e-4</span>)
+
+<span class="keyword">def</span> <span class="function">get_batch</span>(split, block_size=<span class="number">256</span>, batch_size=<span class="number">64</span>):
+    d = train_data <span class="keyword">if</span> split == <span class="string">"train"</span> <span class="keyword">else</span> val_data
+    ix = torch.randint(<span class="builtin">len</span>(d) - block_size, (batch_size,))
+    x = torch.stack([d[i:i+block_size] <span class="keyword">for</span> i <span class="keyword">in</span> ix]).to(device)
+    y = torch.stack([d[i+<span class="number">1</span>:i+block_size+<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> ix]).to(device)
+    <span class="keyword">return</span> x, y
+
+<span class="comment"># Training loop — ~5000 steps, ~15min on GPU</span>
+<span class="keyword">for</span> step <span class="keyword">in</span> <span class="builtin">range</span>(<span class="number">5000</span>):
+    xb, yb = get_batch(<span class="string">"train"</span>)
+    logits, loss = model(xb, yb)
+    optimizer.zero_grad(set_to_none=<span class="keyword">True</span>)
+    loss.backward()
+    optimizer.step()
+    <span class="keyword">if</span> step % <span class="number">500</span> == <span class="number">0</span>:
+        <span class="builtin">print</span>(<span class="string">f"Step {step:>5d} | Loss: {loss.item():.4f}"</span>)
+
+<span class="comment"># Save the trained model</span>
+torch.save(model.state_dict(), <span class="string">"mini_gpt.pt"</span>)</pre></div>
+
+        <h3>Watch It Learn</h3>
+        <div class="playground" id="trainDemo">
+            <h4>🏋️ Interactive: Simulated Training Progress</h4>
+            <p>Click "Start Training" to watch the model learn (simulated).</p>
+            <div style="display:flex; justify-content:space-between; font-size:0.9em; color:#5b21b6; font-weight:700; margin-bottom:4px;">
+                <span id="trainStep">Step 0 / 5000</span>
+                <span id="trainLoss">Loss: 4.17</span>
+            </div>
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="trainBar"></div>
+            </div>
+            <div id="trainOutput" class="temp-output" style="margin-top:12px; min-height:50px; font-size:0.85em;">Model output will appear here as training progresses…</div>
+            <button class="train-btn" id="trainStartBtn" onclick="startTraining()" style="margin-top:15px;">
+                <i class="fas fa-play"></i> Start Training
+            </button>
+        </div>
+
+        <div class="visual">
+            <h4>📉 Expected Loss Curve</h4>
+            <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+                <rect width="600" height="220" rx="14" fill="#faf5ff" fill-opacity="0.3"/>
+                <text x="300" y="22" text-anchor="middle" fill="#4c1d95" font-size="12" font-weight="800" font-family="Nunito">Training Loss Over 5000 Steps</text>
+                <!-- Axes -->
+                <line x1="60" y1="40" x2="60" y2="190" stroke="#7c3aed" stroke-width="2"/>
+                <line x1="60" y1="190" x2="560" y2="190" stroke="#7c3aed" stroke-width="2"/>
+                <text x="30" y="55" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">4.0</text>
+                <text x="30" y="100" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">3.0</text>
+                <text x="30" y="145" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">2.0</text>
+                <text x="30" y="185" fill="#5b21b6" font-size="10" font-weight="700" font-family="Nunito">1.5</text>
+                <text x="60" y="208" fill="#5b21b6" font-size="9" font-family="Nunito">0</text>
+                <text x="185" y="208" fill="#5b21b6" font-size="9" font-family="Nunito">1000</text>
+                <text x="310" y="208" fill="#5b21b6" font-size="9" font-family="Nunito">2500</text>
+                <text x="540" y="208" fill="#5b21b6" font-size="9" font-family="Nunito">5000</text>
+                <!-- Loss curve -->
+                <path d="M60,50 Q120,65 160,95 Q220,120 280,140 Q350,155 420,165 Q480,172 560,178" fill="none" stroke="url(#capG)" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="60" cy="50" r="4" fill="#7c3aed"/><text x="75" y="48" fill="#7c3aed" font-size="9" font-weight="700" font-family="Nunito">~4.17</text>
+                <circle cx="560" cy="178" r="4" fill="#fbbf24"/><text x="510" y="175" fill="#92400e" font-size="9" font-weight="700" font-family="Nunito">~1.48 ✓</text>
+                <!-- Annotations -->
+                <text x="140" y="82" fill="#7c3aed" font-size="9" font-family="Nunito" opacity="0.7">Rapid learning</text>
+                <text x="400" y="158" fill="#92400e" font-size="9" font-family="Nunito" opacity="0.7">Fine-tuning</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ===== PART 5: Generate Text ===== -->
+    <div class="section" id="generate">
+        <h2><i class="fas fa-magic"></i> Part 5: Step 4 — Generate Text</h2>
+
+        <p>Now the fun part! We give the model a starting prompt and let it predict one character at a time, feeding each prediction back in as input. The <strong>temperature</strong> parameter controls how creative vs. safe the output is.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p><strong>Temperature</strong> is like a "creativity dial." Turn it low (0.3) = the model always picks the safest, most obvious next letter (boring but correct). Turn it high (1.5) = it takes wild guesses (creative but sometimes nonsense). The sweet spot is around 0.8.</p>
+        </div>
+
+        <h3>Generation Function</h3>
+        <div class="code-block"><span class="label">Python</span><pre><span class="decorator">@torch.no_grad()</span>
+<span class="keyword">def</span> <span class="function">generate</span>(model, start=<span class="string">"\n"</span>, max_tokens=<span class="number">500</span>, temperature=<span class="number">0.8</span>):
+    idx = torch.tensor([encode(start)], device=device)
+    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="builtin">range</span>(max_tokens):
+        context = idx[:, -model.block_size:]
+        logits, _ = model(context)
+        logits = logits[:, -<span class="number">1</span>, :] / temperature
+        probs = F.softmax(logits, dim=-<span class="number">1</span>)
+        next_id = torch.multinomial(probs, num_samples=<span class="number">1</span>)
+        idx = torch.cat([idx, next_id], dim=<span class="number">1</span>)
+    <span class="keyword">return</span> decode(idx[<span class="number">0</span>].tolist())</pre></div>
+
+        <h3>Temperature Comparison</h3>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            <div>
+                <span class="temp-label" style="background:#dbeafe; color:#1e40af;">T = 0.3 — Safe & Predictable</span>
+                <div class="temp-output">KING RICHARD II:<br>I am the king of the world, and the world<br>is the world of the king, and the king<br>shall be the king of the world.</div>
+            </div>
+            <div>
+                <span class="temp-label" style="background:#dcfce7; color:#166534;">T = 0.8 — Balanced ✓</span>
+                <div class="temp-output">KING RICHARD II:<br>What say'st thou? Dost thou not perceive<br>that I am faint with weeping? Let me rest,<br>for heavenly comfort hath thy words beguiled.</div>
+            </div>
+            <div>
+                <span class="temp-label" style="background:#fef3c7; color:#92400e;">T = 1.5 — Wild & Creative</span>
+                <div class="temp-output">KING RICHXRD IZ:<br>Fhath, bey'rt ouncelly grabe—'twungon<br>mine efflarg! Swooden thee crothwick<br>dapperjankt fulvion! Spraze!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PART 6: Web Chat Interface ===== -->
+    <div class="section" id="ui">
+        <h2><i class="fas fa-comments"></i> Part 6: Step 5 — Simple Chat Web Interface</h2>
+
+        <p>Let's wrap our model in a <strong>FastAPI</strong> backend and build a tiny HTML chat interface. Type a prompt, hit enter, and your Mini-GPT responds in Shakespearean English!</p>
+
+        <h3>FastAPI Backend</h3>
+        <div class="code-block"><span class="label">Python — server.py</span><pre><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI
+<span class="keyword">from</span> fastapi.responses <span class="keyword">import</span> HTMLResponse
+<span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel
+
+app = FastAPI()
+<span class="comment"># Load model at startup (assumes mini_gpt.pt exists)</span>
+model = MiniGPT(**config)
+model.load_state_dict(torch.load(<span class="string">"mini_gpt.pt"</span>, map_location=<span class="string">"cpu"</span>))
+model.eval()
+
+<span class="keyword">class</span> <span class="function">Prompt</span>(BaseModel):
+    text: <span class="builtin">str</span>
+    temperature: <span class="builtin">float</span> = <span class="number">0.8</span>
+
+<span class="decorator">@app.post</span>(<span class="string">"/generate"</span>)
+<span class="keyword">def</span> <span class="function">gen</span>(p: Prompt):
+    output = generate(model, start=p.text, max_tokens=<span class="number">200</span>, temperature=p.temperature)
+    <span class="keyword">return</span> {<span class="string">"response"</span>: output}
+
+<span class="decorator">@app.get</span>(<span class="string">"/"</span>, response_class=HTMLResponse)
+<span class="keyword">def</span> <span class="function">home</span>():
+    <span class="keyword">return</span> <span class="builtin">open</span>(<span class="string">"chat.html"</span>).read()
+
+<span class="comment"># Run: uvicorn server:app --reload</span></pre></div>
+
+        <h3>Try It — Simulated Chat Demo</h3>
+        <div class="playground">
+            <h4>💬 Chat with Mini-GPT (Simulated)</h4>
+            <p>Type anything and get a Shakespearean response!</p>
+            <div class="chat-container" id="chatBox">
+                <div class="chat-header"><i class="fas fa-robot"></i> Mini-GPT Shakespeare</div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-msg bot">Hark! I am thy Mini-GPT, trained upon the works of the Bard. Speak, and I shall respond in kind.</div>
+                </div>
+                <div class="chat-input-row">
+                    <input type="text" id="chatInput" placeholder="Say something…" onkeydown="if(event.key==='Enter')sendChat()">
+                    <button onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <h3>HTML Frontend</h3>
+        <div class="code-block"><span class="label">HTML — chat.html</span><pre><span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;&lt;body&gt;</span>
+  <span class="keyword">&lt;div</span> id=<span class="string">"chat"</span><span class="keyword">&gt;&lt;/div&gt;</span>
+  <span class="keyword">&lt;input</span> id=<span class="string">"inp"</span> placeholder=<span class="string">"Type here..."</span><span class="keyword">&gt;</span>
+  <span class="keyword">&lt;button</span> onclick=<span class="string">"send()"</span><span class="keyword">&gt;</span>Send<span class="keyword">&lt;/button&gt;</span>
+  <span class="keyword">&lt;script&gt;</span>
+  <span class="keyword">async function</span> <span class="function">send</span>() {
+    <span class="keyword">const</span> text = document.getElementById(<span class="string">"inp"</span>).value;
+    addMsg(text, <span class="string">"user"</span>);
+    <span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">"/generate"</span>, {
+      method: <span class="string">"POST"</span>,
+      headers: {<span class="string">"Content-Type"</span>: <span class="string">"application/json"</span>},
+      body: JSON.stringify({text, temperature: <span class="number">0.8</span>})
+    });
+    <span class="keyword">const</span> data = <span class="keyword">await</span> res.json();
+    addMsg(data.response, <span class="string">"bot"</span>);
+  }
+  <span class="keyword">&lt;/script&gt;</span>
+<span class="keyword">&lt;/body&gt;&lt;/html&gt;</span></pre></div>
+    </div>
+
+    <!-- ===== FINAL SUMMARY ===== -->
+    <div class="section" id="summary">
+        <h2><i class="fas fa-trophy" style="color:#fbbf24;"></i> What You've Accomplished</h2>
+
+        <div class="celebration">🎉🏆🎉</div>
+
+        <p style="text-align:center; font-size:1.2em; font-weight:700; color:#4c1d95;">You went from "What's an LLM?" to building a working text generator from scratch.</p>
+
+        <div class="gold-card">
+            <h4>🗺️ Your Complete Journey</h4>
+            <ul>
+                <li><strong>Module 1</strong> — Learned what LLMs are and why they matter</li>
+                <li><strong>Module 2</strong> — Turned text into numbers (tokenization & embeddings)</li>
+                <li><strong>Module 3</strong> — Refreshed neural network fundamentals</li>
+                <li><strong>Module 4</strong> — Understood the attention mechanism — the core innovation</li>
+                <li><strong>Module 5</strong> — Built the full Transformer architecture</li>
+                <li><strong>Module 6</strong> — Trained models with next-token prediction</li>
+                <li><strong>Module 7</strong> — Fine-tuned models for specific tasks</li>
+                <li><strong>Module 8</strong> — Deployed models to production</li>
+                <li><strong>Module 9 (Here!)</strong> — Put it ALL together into a working Mini-GPT 🏆</li>
+            </ul>
+        </div>
+
+        <h3>Revisit Any Module</h3>
+        <div class="module-grid">
+            <a href="what-are-llms.html" class="module-link"><i class="fas fa-brain"></i> What Are LLMs?</a>
+            <a href="text-to-numbers.html" class="module-link"><i class="fas fa-hashtag"></i> Text to Numbers</a>
+            <a href="nn-refresher.html" class="module-link"><i class="fas fa-network-wired"></i> NN Refresher</a>
+            <a href="attention.html" class="module-link"><i class="fas fa-eye"></i> Attention</a>
+            <a href="transformer.html" class="module-link"><i class="fas fa-layer-group"></i> Transformers</a>
+            <a href="training.html" class="module-link"><i class="fas fa-dumbbell"></i> Training</a>
+            <a href="finetuning.html" class="module-link"><i class="fas fa-sliders-h"></i> Fine-Tuning</a>
+            <a href="deployment.html" class="module-link"><i class="fas fa-rocket"></i> Deployment</a>
+        </div>
+
+        <div class="eli5" style="text-align:center; margin-top:30px;">
+            <h4>🚀 Where to Go Next</h4>
+            <p>You now understand the <em>entire</em> LLM pipeline — the same one behind ChatGPT, Claude, Gemini, and Llama. Scale up the data, scale up the parameters, add RLHF, and you're building frontier AI. The only difference between your Mini-GPT and GPT-4 is <strong>scale</strong>. You've got the fundamentals. Now go build something amazing!</p>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="deployment.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Deployment</a>
+        <a href="index.html" class="nav-btn next">Course Hub <i class="fas fa-th-large"></i></a>
+    </div>
+</div>
+
+<script>
+const shakespeareResponses = [
+    "Hark! Thy words do ring with truth,\nand yet I find them wanting in their proof.\nSpeak more, that I may judge thee rightly.",
+    "O, what a noble mind is here expressed!\nBut soft — methinks thou speakest\nwith the tongue of one who hath not supp'd.",
+    "By my troth, thou art a worthy soul!\nLet us discourse upon matters great,\nfor time doth waste in idle chatter.",
+    "What light through yonder window breaks?\n'Tis thy message, and it doth warm\nmine circuits most thoroughly.",
+    "To respond, or not to respond —\nthat is no question at all!\nI shall speak, for silence\nbefits not a model so trained.",
+    "Thou dost provoke mine neural weights\nto fire most vigorously! Thy prompt\nhath activated attention heads aplenty.",
+    "Good morrow, gentle user!\nThy query doth traverse mine transformer blocks\nwith grace and purpose most admirable.",
+    "Methinks thy words do carry weight\nbeyond their character count.\nA fine prompt, worthy of a model\ntrained upon the Bard himself!",
+];
+let respIdx = 0;
+
+function sendChat() {
+    const inp = document.getElementById("chatInput");
+    const msg = inp.value.trim();
+    if (!msg) return;
+    const box = document.getElementById("chatMessages");
+    box.innerHTML += `<div class="chat-msg user">${msg}</div>`;
+    inp.value = "";
+    setTimeout(() => {
+        box.innerHTML += `<div class="chat-msg bot">${shakespeareResponses[respIdx % shakespeareResponses.length]}</div>`;
+        respIdx++;
+        box.scrollTop = box.scrollHeight;
+    }, 600 + Math.random() * 800);
+    box.scrollTop = box.scrollHeight;
+}
+
+const trainSamples = [
+    "xkjz\nq;m fuw—vv\nLGRBz lp",
+    "KING:\nthe wory the lave\nme t har feand",
+    "KING RICHARD:\nWhat say you, lord?\nI am the man that\nshall not be denied",
+    "KING RICHARD II:\nMy gracious lord, I tender\nyou my service,\nsuch as it is, being offer'd\nby a faithful heart.",
+    "KING RICHARD II:\nO, let me speak!\nNo longer shall I sit\nand weep in vain. My crown,\nmy honour, and my name—\nall these I give to time."
+];
+const trainLosses = [4.17, 3.21, 2.45, 1.87, 1.48];
+const trainSteps = [0, 1250, 2500, 3750, 5000];
+
+function startTraining() {
+    const btn = document.getElementById("trainStartBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Training…';
+    let phase = 0;
+    function nextPhase() {
+        if (phase >= trainSteps.length) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Done!';
+            btn.style.background = "linear-gradient(135deg, #fbbf24, #d97706)";
+            return;
+        }
+        const pct = (trainSteps[phase] / 5000) * 100;
+        document.getElementById("trainBar").style.width = pct + "%";
+        document.getElementById("trainBar").textContent = Math.round(pct) + "%";
+        document.getElementById("trainStep").textContent = `Step ${trainSteps[phase]} / 5000`;
+        document.getElementById("trainLoss").textContent = `Loss: ${trainLosses[phase].toFixed(2)}`;
+        document.getElementById("trainOutput").innerHTML = `<span style="color:#94a3b8;">// Output at step ${trainSteps[phase]}:</span>\n${trainSamples[phase]}`;
+        phase++;
+        setTimeout(nextPhase, 1200);
+    }
+    nextPhase();
+}
+</script>
+</body>
+</html>

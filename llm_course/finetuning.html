@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fine-Tuning LLMs | LLM Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #fff1f2 0%, #ffe4e6 25%, #fef3c7 50%, #fff1f2 75%, #fef2f2 100%);
+            background-attachment: fixed;
+            min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(239,68,68,0.12); padding: 15px 30px; border-radius: 18px;
+            margin-bottom: 30px; box-shadow: 0 4px 24px rgba(239,68,68,0.06);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #b91c1c; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #ef4444, #dc2626, #b91c1c);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(220,38,38,0.25);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .badge { background: #991b1b; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px);
+            border: 1px solid rgba(239,68,68,0.1); border-radius: 28px;
+            padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(239,68,68,0.05);
+        }
+        .section h2 { color: #b91c1c; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fecaca; }
+        .section h3 { color: #991b1b; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #ef4444; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5 {
+            background: linear-gradient(135deg, #fef2f2, #fecaca); border: 2px dashed #f87171;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5 h4 { color: #991b1b; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5 p { color: #7f1d1d; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy {
+            background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+            border-left: 5px solid #ef4444; border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy h4 { color: #991b1b; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy p { color: #7f1d1d; }
+        .key-point {
+            background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+            border-left: 5px solid #ef4444; border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #991b1b; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #7f1d1d; }
+        .key-point li { margin-bottom: 8px; }
+        .visual {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #fca5a5; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .visual h4 { color: #b91c1c; margin-bottom: 15px; }
+        .visual svg { max-width: 100%; height: auto; }
+        .code-block {
+            background: #1e293b; border-radius: 16px; padding: 25px; margin: 20px 0;
+            overflow-x: auto; position: relative;
+        }
+        .code-block pre {
+            font-family: 'Fira Code', monospace; font-size: 0.92em;
+            color: #e2e8f0; line-height: 1.8; margin: 0; white-space: pre;
+        }
+        .code-block .comment { color: #64748b; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .function { color: #7dd3fc; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .builtin { color: #f9a8d4; }
+        .code-block .label {
+            position: absolute; top: 10px; right: 14px;
+            background: rgba(255,255,255,0.08); color: #94a3b8;
+            padding: 2px 10px; border-radius: 8px; font-size: 0.78em;
+            font-family: 'Fira Code', monospace;
+        }
+        .playground {
+            background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid #fca5a5; border-radius: 22px; padding: 30px; margin: 30px 0; text-align: center;
+        }
+        .playground h4 { color: #b91c1c; margin-bottom: 8px; font-size: 1.15em; }
+        .playground p { color: #334155; font-size: 0.95em; margin-bottom: 15px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 700; transition: all .3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 4px 20px rgba(220,38,38,0.25); }
+        .nav-btn:hover { transform: translateY(-3px); }
+        .toggle-btn {
+            padding: 10px 22px; border-radius: 12px; border: 2px solid #ef4444; background: white;
+            color: #b91c1c; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-size: 0.95em; transition: all 0.3s;
+        }
+        .toggle-btn:hover, .toggle-btn.active { background: #ef4444; color: white; }
+        .step-grid { display: grid; gap: 14px; margin: 20px 0; }
+        .step-card { background: #fef2f2; border-radius: 14px; padding: 18px; border-left: 4px solid #ef4444; }
+        .step-card strong { color: #b91c1c; }
+        .pair-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin: 10px 0; }
+        .pair-box { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; padding: 14px; font-size: 0.95em; }
+        .pair-arrow { color: #ef4444; font-size: 1.5em; font-weight: 900; }
+        .matrix-grid { display: inline-grid; gap: 3px; }
+        .matrix-cell { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Fira Code', monospace; font-size: 0.75em; font-weight: 700; }
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 18px; }
+            .nav-buttons { flex-direction: column; }
+            .pair-row { grid-template-columns: 1fr; }
+            .pair-arrow { transform: rotate(90deg); text-align: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+    </nav>
+
+    <div class="header">
+        <span class="badge">Module 7 — Customization</span>
+        <h1><i class="fas fa-sliders-h"></i> Fine-Tuning LLMs</h1>
+        <p>How to take a general-purpose LLM and teach it to do YOUR specific job — from SFT to LoRA to RLHF to DPO.</p>
+    </div>
+
+    <!-- ========== PART 1: Pre-training vs Fine-tuning ========== -->
+    <div class="section" id="pretrain-vs-finetune">
+        <h2><i class="fas fa-layer-group"></i> Pre-training vs Fine-tuning</h2>
+        <p>Every powerful LLM goes through <strong>two phases</strong>. Pre-training gives the model general knowledge; fine-tuning makes it useful for a specific task.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p><strong>Pre-training</strong> = going to school for 12 years. You learn reading, math, science, history — a little bit of everything. <strong>Fine-tuning</strong> = going to medical school. Now you specialize. You already know how to read and think — you just need to learn the doctor stuff.</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-lightbulb"></i> The Career Analogy</h4>
+            <p>A pre-trained model is like a <strong>college graduate</strong> — smart, educated, but not yet specialized. Fine-tuning is the <strong>job training</strong> that turns them into a doctor, lawyer, or customer support agent. You don't re-teach them to read — you teach them the domain.</p>
+        </div>
+
+        <div class="visual">
+            <h4>Two-Phase Training Pipeline</h4>
+            <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg">
+                <defs><marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/></marker></defs>
+                <rect x="10" y="55" width="170" height="90" rx="16" fill="#fecaca" stroke="#ef4444" stroke-width="2"/>
+                <text x="95" y="82" text-anchor="middle" font-size="14" font-weight="900" fill="#991b1b">Phase 1: Pre-training</text>
+                <text x="95" y="102" text-anchor="middle" font-size="11" fill="#7f1d1d">Billions of tokens</text>
+                <text x="95" y="120" text-anchor="middle" font-size="11" fill="#7f1d1d">Books, Wikipedia, Web</text>
+                <text x="95" y="138" text-anchor="middle" font-size="10" fill="#991b1b" font-style="italic">"Learn to read &amp; think"</text>
+                <line x1="180" y1="100" x2="230" y2="100" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrowR)"/>
+                <rect x="230" y="65" width="120" height="70" rx="14" fill="#ef4444"/>
+                <text x="290" y="95" text-anchor="middle" font-size="13" font-weight="800" fill="white">Base Model</text>
+                <text x="290" y="115" text-anchor="middle" font-size="10" fill="#fecaca">GPT, LLaMA, etc.</text>
+                <line x1="350" y1="100" x2="400" y2="100" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrowR)"/>
+                <rect x="400" y="55" width="170" height="90" rx="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="485" y="82" text-anchor="middle" font-size="14" font-weight="900" fill="#991b1b">Phase 2: Fine-tuning</text>
+                <text x="485" y="102" text-anchor="middle" font-size="11" fill="#7f1d1d">Thousands of examples</text>
+                <text x="485" y="120" text-anchor="middle" font-size="11" fill="#7f1d1d">Task-specific data</text>
+                <text x="485" y="138" text-anchor="middle" font-size="10" fill="#991b1b" font-style="italic">"Learn a specific job"</text>
+                <line x1="570" y1="100" x2="620" y2="100" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrowR)"/>
+                <rect x="620" y="65" width="130" height="70" rx="14" fill="#dc2626"/>
+                <text x="685" y="92" text-anchor="middle" font-size="12" font-weight="800" fill="white">Specialized</text>
+                <text x="685" y="112" text-anchor="middle" font-size="12" font-weight="800" fill="white">Model</text>
+                <text x="95" y="175" text-anchor="middle" font-size="10" fill="#6b7280">Weeks on 1000s of GPUs</text>
+                <text x="485" y="175" text-anchor="middle" font-size="10" fill="#6b7280">Hours on 1–8 GPUs</text>
+            </svg>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> Key Takeaway</h4>
+            <ul>
+                <li>Pre-training is <strong>expensive</strong> (millions of $) and gives <strong>general</strong> knowledge</li>
+                <li>Fine-tuning is <strong>cheap</strong> (few $100s) and gives <strong>specific</strong> capability</li>
+                <li>You almost never pre-train from scratch — you fine-tune an existing base model</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 2: Supervised Fine-Tuning ========== -->
+    <div class="section" id="sft">
+        <h2><i class="fas fa-chalkboard-teacher"></i> Supervised Fine-Tuning (SFT)</h2>
+        <p>The most straightforward approach: show the model <strong>instruction → response</strong> pairs and train it to produce the correct response for each instruction.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>Pre-training = going to <strong>school</strong> and learning everything. SFT = doing an <strong>internship at a hospital</strong>. The attending doctor says "When a patient has fever and cough, do X" and you learn by watching hundreds of these examples.</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-graduation-cap"></i> The Apprenticeship</h4>
+            <p>SFT is like an apprentice watching a master chef. The master shows hundreds of recipes: "Given these ingredients → here's what you cook." After enough examples, the apprentice can cook new dishes on their own.</p>
+        </div>
+
+        <h3>What Training Data Looks Like</h3>
+        <div class="pair-row">
+            <div class="pair-box"><strong style="color:#991b1b;">Instruction:</strong><br>"Summarize this article about climate change in 3 bullet points."</div>
+            <div class="pair-arrow">→</div>
+            <div class="pair-box"><strong style="color:#991b1b;">Response:</strong><br>"• Global temps rose 1.1°C since 1900<br>• CO₂ levels highest in 800K years<br>• Ice sheets losing 150B tons/year"</div>
+        </div>
+        <div class="pair-row">
+            <div class="pair-box"><strong style="color:#991b1b;">Instruction:</strong><br>"Write a Python function that reverses a string."</div>
+            <div class="pair-arrow">→</div>
+            <div class="pair-box"><strong style="color:#991b1b;">Response:</strong><br><code>def reverse(s): return s[::-1]</code></div>
+        </div>
+
+        <h3>SFT with HuggingFace</h3>
+        <div class="code-block">
+            <span class="label">Python</span>
+            <pre><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer, TrainingArguments
+<span class="keyword">from</span> trl <span class="keyword">import</span> SFTTrainer
+<span class="keyword">from</span> datasets <span class="keyword">import</span> load_dataset
+
+<span class="comment"># Load base model + tokenizer</span>
+model = AutoModelForCausalLM.from_pretrained(<span class="string">"meta-llama/Llama-2-7b-hf"</span>)
+tokenizer = AutoTokenizer.from_pretrained(<span class="string">"meta-llama/Llama-2-7b-hf"</span>)
+
+<span class="comment"># Load instruction-response dataset</span>
+dataset = load_dataset(<span class="string">"tatsu-lab/alpaca"</span>, split=<span class="string">"train"</span>)
+
+<span class="comment"># Training config</span>
+args = TrainingArguments(
+    output_dir=<span class="string">"./sft-output"</span>,
+    num_train_epochs=<span class="number">3</span>,
+    per_device_train_batch_size=<span class="number">4</span>,
+    learning_rate=<span class="number">2e-5</span>,
+)
+
+trainer = SFTTrainer(model=model, args=args, train_dataset=dataset,
+                     tokenizer=tokenizer, dataset_text_field=<span class="string">"text"</span>)
+trainer.train()</pre>
+        </div>
+    </div>
+
+    <!-- ========== PART 3: LoRA & QLoRA ========== -->
+    <div class="section" id="lora">
+        <h2><i class="fas fa-sticky-note"></i> LoRA &amp; QLoRA</h2>
+        <p>Full fine-tuning updates <strong>all billions of parameters</strong>. LoRA (Low-Rank Adaptation) adds tiny "adapter" matrices and only trains those — making fine-tuning <strong>10–100× cheaper</strong>.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>Imagine you have a giant textbook with 1,000 pages. Instead of <strong>rewriting the entire book</strong>, you just <strong>add sticky notes</strong> to the pages that need changes. The original book stays the same — the sticky notes are your LoRA adapters!</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-compress-arrows-alt"></i> The Sticky Notes Analogy</h4>
+            <p><strong>Original weights</strong> = the textbook (frozen, untouched). <strong>LoRA matrices</strong> = tiny sticky notes (trainable). <strong>Rank (r)</strong> = how big the sticky notes are. Rank 4 = small Post-it. Rank 64 = full-page sticky note. <strong>QLoRA</strong> = same idea but the textbook is compressed (quantized to 4-bit) to save memory.</p>
+        </div>
+
+        <div class="visual">
+            <h4>LoRA: Add Small Matrices Instead of Updating Everything</h4>
+            <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg">
+                <text x="120" y="20" text-anchor="middle" font-size="13" font-weight="900" fill="#991b1b">Full Fine-Tuning</text>
+                <rect x="30" y="35" width="180" height="140" rx="14" fill="#e5e7eb" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6"/>
+                <text x="120" y="75" text-anchor="middle" font-size="11" fill="#6b7280">ALL weights updated</text>
+                <text x="120" y="100" text-anchor="middle" font-size="28" fill="#9ca3af">7B params</text>
+                <text x="120" y="130" text-anchor="middle" font-size="11" fill="#6b7280">100% trainable</text>
+                <text x="120" y="155" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="700">~28 GB VRAM needed</text>
+                <text x="360" y="20" text-anchor="middle" font-size="13" font-weight="900" fill="#991b1b">LoRA Fine-Tuning</text>
+                <rect x="270" y="35" width="180" height="140" rx="14" fill="#f3f4f6" stroke="#d1d5db" stroke-width="2"/>
+                <text x="360" y="65" text-anchor="middle" font-size="10" fill="#9ca3af">Frozen weights (greyed out)</text>
+                <rect x="290" y="75" width="140" height="50" rx="8" fill="#d1d5db"/>
+                <text x="360" y="105" text-anchor="middle" font-size="20" fill="#9ca3af">7B frozen</text>
+                <rect x="310" y="135" width="100" height="30" rx="8" fill="#ef4444"/>
+                <text x="360" y="155" text-anchor="middle" font-size="11" font-weight="800" fill="white">+8M LoRA</text>
+                <text x="360" y="195" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="700">~6 GB VRAM (QLoRA: ~4 GB)</text>
+                <text x="600" y="20" text-anchor="middle" font-size="13" font-weight="900" fill="#991b1b">Math Behind LoRA</text>
+                <rect x="510" y="35" width="180" height="140" rx="14" fill="#fef2f2" stroke="#fca5a5" stroke-width="2"/>
+                <text x="600" y="60" text-anchor="middle" font-size="11" fill="#7f1d1d" font-weight="700">W' = W + BA</text>
+                <text x="600" y="85" text-anchor="middle" font-size="10" fill="#7f1d1d">W: d×d (frozen)</text>
+                <text x="600" y="105" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="700">B: d×r (trainable)</text>
+                <text x="600" y="125" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="700">A: r×d (trainable)</text>
+                <text x="600" y="150" text-anchor="middle" font-size="10" fill="#7f1d1d">r ≪ d (rank is tiny!)</text>
+                <text x="600" y="170" text-anchor="middle" font-size="10" fill="#7f1d1d" font-style="italic">e.g. d=4096, r=8</text>
+            </svg>
+        </div>
+
+        <!-- Interactive: LoRA rank slider -->
+        <div class="playground" id="lora-playground">
+            <h4><i class="fas fa-sliders-h"></i> Interactive: LoRA Rank Explorer</h4>
+            <p>Adjust the rank (r) to see how many parameters LoRA adds vs full fine-tuning.</p>
+            <div style="display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;margin:12px 0;">
+                <label style="font-weight:700;color:#991b1b;">Rank r =</label>
+                <input type="range" id="rank-slider" min="1" max="128" value="8" style="-webkit-appearance:none;width:220px;height:8px;border-radius:4px;background:linear-gradient(90deg,#fecaca,#ef4444);outline:none;" oninput="updateRank()">
+                <span id="rank-val" style="font-family:'Fira Code',monospace;font-weight:700;color:#b91c1c;min-width:40px;">8</span>
+            </div>
+            <div id="rank-result" style="font-family:'Fira Code',monospace;color:#334155;font-size:0.95em;"></div>
+        </div>
+
+        <h3>LoRA with PEFT Library</h3>
+        <div class="code-block">
+            <span class="label">Python</span>
+            <pre><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, get_peft_model
+
+lora_config = LoraConfig(
+    r=<span class="number">8</span>,                     <span class="comment"># rank — size of the "sticky notes"</span>
+    lora_alpha=<span class="number">32</span>,            <span class="comment"># scaling factor</span>
+    target_modules=[<span class="string">"q_proj"</span>, <span class="string">"v_proj"</span>],
+    lora_dropout=<span class="number">0.05</span>,
+    task_type=<span class="string">"CAUSAL_LM"</span>
+)
+
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+<span class="comment"># → "trainable: 4,194,304 / 6,738,415,616 (0.06%)"</span></pre>
+        </div>
+    </div>
+
+    <!-- ========== PART 4: RLHF ========== -->
+    <div class="section" id="rlhf">
+        <h2><i class="fas fa-thumbs-up"></i> RLHF — Reinforcement Learning from Human Feedback</h2>
+        <p>SFT teaches the model <em>what</em> to say. RLHF teaches it <em>how humans prefer</em> it to say things — making outputs more helpful, harmless, and honest.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>Imagine <strong>training a dog</strong>. The dog does a trick → you say <strong>"Good boy!"</strong> (reward) or <strong>"Bad boy!"</strong> (penalty). Over time, the dog learns which tricks make you happy. RLHF works the same way — humans rate the model's outputs, and the model adjusts to get more "good boy" ratings.</p>
+        </div>
+
+        <h3>The 3-Step RLHF Pipeline</h3>
+        <div class="step-grid">
+            <div class="step-card">
+                <strong>Step 1 — Supervised Fine-Tuning (SFT)</strong><br>
+                Train on instruction→response pairs (what we learned above). This gives us a baseline model that can follow instructions.
+            </div>
+            <div class="step-card">
+                <strong>Step 2 — Train a Reward Model</strong><br>
+                Show humans two model responses to the same prompt. They pick the better one. Train a separate model to predict which response humans prefer.
+            </div>
+            <div class="step-card">
+                <strong>Step 3 — PPO Optimization</strong><br>
+                Use the reward model as a "judge." The LLM generates responses, the reward model scores them, and PPO (Proximal Policy Optimization) nudges the LLM toward higher-scoring outputs.
+            </div>
+        </div>
+
+        <div class="visual">
+            <h4>The RLHF Pipeline</h4>
+            <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="20" width="160" height="60" rx="12" fill="#fecaca" stroke="#ef4444" stroke-width="2"/>
+                <text x="90" y="46" text-anchor="middle" font-size="12" font-weight="800" fill="#991b1b">Step 1: SFT</text>
+                <text x="90" y="65" text-anchor="middle" font-size="10" fill="#7f1d1d">Instruction tuning</text>
+                <line x1="170" y1="50" x2="210" y2="50" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+                <rect x="210" y="20" width="150" height="60" rx="12" fill="#ef4444"/>
+                <text x="285" y="46" text-anchor="middle" font-size="12" font-weight="800" fill="white">SFT Model</text>
+                <text x="285" y="65" text-anchor="middle" font-size="10" fill="#fecaca">Generates responses</text>
+                <line x1="285" y1="80" x2="285" y2="110" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+                <rect x="180" y="110" width="210" height="55" rx="12" fill="#fef2f2" stroke="#fca5a5" stroke-width="2"/>
+                <text x="285" y="134" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">Step 2: Human Comparison</text>
+                <text x="285" y="152" text-anchor="middle" font-size="10" fill="#7f1d1d">"Response A or B — which is better?"</text>
+                <circle cx="150" cy="137" r="22" fill="#fbbf24" stroke="#f59e0b" stroke-width="2"/>
+                <text x="150" y="133" text-anchor="middle" font-size="16">👤</text>
+                <text x="150" y="148" text-anchor="middle" font-size="7" font-weight="700" fill="#92400e">Human</text>
+                <line x1="172" y1="137" x2="180" y2="137" stroke="#f59e0b" stroke-width="2"/>
+                <line x1="285" y1="165" x2="285" y2="195" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+                <rect x="200" y="195" width="170" height="50" rx="12" fill="#dc2626"/>
+                <text x="285" y="218" text-anchor="middle" font-size="12" font-weight="800" fill="white">Reward Model</text>
+                <text x="285" y="235" text-anchor="middle" font-size="10" fill="#fecaca">Predicts human preference</text>
+                <line x1="370" y1="220" x2="450" y2="220" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowR)"/>
+                <rect x="450" y="100" width="180" height="80" rx="14" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
+                <text x="540" y="128" text-anchor="middle" font-size="13" font-weight="900" fill="#991b1b">Step 3: PPO</text>
+                <text x="540" y="148" text-anchor="middle" font-size="10" fill="#7f1d1d">Generate → Score → Update</text>
+                <text x="540" y="168" text-anchor="middle" font-size="10" fill="#7f1d1d" font-style="italic">Maximize reward signal</text>
+                <path d="M 630 140 Q 680 140 680 100 Q 680 60 630 60 L 540 60" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowR)" stroke-dasharray="6"/>
+                <text x="700" y="100" font-size="9" fill="#991b1b" font-weight="600">Loop</text>
+                <rect x="460" y="195" width="160" height="50" rx="12" fill="#b91c1c"/>
+                <text x="540" y="218" text-anchor="middle" font-size="12" font-weight="800" fill="white">RLHF-Tuned LLM</text>
+                <text x="540" y="235" text-anchor="middle" font-size="10" fill="#fca5a5">Aligned with humans</text>
+                <line x1="540" y1="180" x2="540" y2="195" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrowR)"/>
+            </svg>
+        </div>
+
+        <h3>Conceptual RLHF Code</h3>
+        <div class="code-block">
+            <span class="label">Python — Conceptual</span>
+            <pre><span class="keyword">from</span> trl <span class="keyword">import</span> PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
+
+<span class="comment"># 1. Load SFT model + add value head for PPO</span>
+model = AutoModelForCausalLMWithValueHead.from_pretrained(<span class="string">"sft-model"</span>)
+
+<span class="comment"># 2. Load reward model (trained on human preferences)</span>
+reward_model = load_reward_model(<span class="string">"reward-model"</span>)
+
+ppo_config = PPOConfig(batch_size=<span class="number">16</span>, learning_rate=<span class="number">1.4e-5</span>)
+ppo_trainer = PPOTrainer(config=ppo_config, model=model, tokenizer=tokenizer)
+
+<span class="keyword">for</span> batch <span class="keyword">in</span> dataloader:
+    prompts = batch[<span class="string">"prompt"</span>]
+    responses = model.generate(prompts)         <span class="comment"># LLM generates</span>
+    rewards = reward_model.score(responses)      <span class="comment"># Reward model judges</span>
+    ppo_trainer.step(prompts, responses, rewards) <span class="comment"># PPO updates weights</span></pre>
+        </div>
+
+        <!-- Interactive: RLHF preference picker -->
+        <div class="playground" id="rlhf-playground">
+            <h4><i class="fas fa-balance-scale"></i> Interactive: Be the Human Rater!</h4>
+            <p>Pick which response is better — this is exactly what RLHF annotators do.</p>
+            <div id="rlhf-prompt" style="background:#fef2f2;border-radius:12px;padding:14px;margin-bottom:14px;font-weight:700;color:#991b1b;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;" id="rlhf-options"></div>
+            <div id="rlhf-feedback" style="font-weight:700;min-height:30px;"></div>
+        </div>
+    </div>
+
+    <!-- ========== PART 5: DPO ========== -->
+    <div class="section" id="dpo">
+        <h2><i class="fas fa-exchange-alt"></i> DPO — Direct Preference Optimization</h2>
+        <p>RLHF works great but is <strong>complex</strong> — you need a separate reward model + PPO. DPO simplifies this: just show pairs of (better answer, worse answer) and the model learns directly, <strong>no reward model needed</strong>.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>RLHF = hiring a judge, then training the dog based on what the judge says. DPO = <strong>skipping the judge entirely</strong>. You just show the dog two tricks side by side: "This one was good, this one was bad." The dog figures it out directly.</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-road"></i> The Shortcut</h4>
+            <p>RLHF takes the scenic route: SFT → Reward Model → PPO → Final Model (3 models to train). DPO takes the highway: SFT → Direct training on preferences → Final Model (just 1 extra step). Same destination, less gas.</p>
+        </div>
+
+        <div class="visual">
+            <h4>RLHF vs DPO Pipeline Comparison</h4>
+            <svg viewBox="0 0 740 240" xmlns="http://www.w3.org/2000/svg">
+                <text x="370" y="18" text-anchor="middle" font-size="14" font-weight="900" fill="#991b1b">RLHF (Complex)</text>
+                <rect x="10" y="30" width="100" height="40" rx="10" fill="#fecaca" stroke="#ef4444" stroke-width="1.5"/><text x="60" y="55" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">SFT Model</text>
+                <line x1="110" y1="50" x2="140" y2="50" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrowR)"/>
+                <rect x="140" y="30" width="110" height="40" rx="10" fill="#fecaca" stroke="#ef4444" stroke-width="1.5"/><text x="195" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#991b1b">Human Prefs</text><text x="195" y="62" text-anchor="middle" font-size="9" fill="#7f1d1d">A > B pairs</text>
+                <line x1="250" y1="50" x2="280" y2="50" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrowR)"/>
+                <rect x="280" y="30" width="120" height="40" rx="10" fill="#ef4444"/><text x="340" y="55" text-anchor="middle" font-size="10" font-weight="700" fill="white">Reward Model</text>
+                <line x1="400" y1="50" x2="430" y2="50" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrowR)"/>
+                <rect x="430" y="30" width="80" height="40" rx="10" fill="#ef4444"/><text x="470" y="55" text-anchor="middle" font-size="10" font-weight="700" fill="white">PPO</text>
+                <line x1="510" y1="50" x2="540" y2="50" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrowR)"/>
+                <rect x="540" y="30" width="120" height="40" rx="10" fill="#b91c1c"/><text x="600" y="55" text-anchor="middle" font-size="10" font-weight="800" fill="white">Aligned Model</text>
+                <text x="370" y="100" text-anchor="middle" font-size="11" fill="#6b7280">3 models to train • Complex • Unstable</text>
+                <line x1="20" y1="115" x2="720" y2="115" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="6"/>
+                <text x="370" y="140" text-anchor="middle" font-size="14" font-weight="900" fill="#16a34a">DPO (Simple)</text>
+                <rect x="80" y="155" width="100" height="40" rx="10" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/><text x="130" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">SFT Model</text>
+                <line x1="180" y1="175" x2="230" y2="175" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowG)"/>
+                <rect x="230" y="155" width="130" height="40" rx="10" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/><text x="295" y="172" text-anchor="middle" font-size="9" font-weight="700" fill="#166534">Human Prefs</text><text x="295" y="186" text-anchor="middle" font-size="9" fill="#166534">(same data!)</text>
+                <line x1="360" y1="175" x2="410" y2="175" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowG)"/>
+                <rect x="410" y="150" width="160" height="50" rx="12" fill="#22c55e"/><text x="490" y="172" text-anchor="middle" font-size="11" font-weight="800" fill="white">DPO Training</text><text x="490" y="189" text-anchor="middle" font-size="9" fill="#dcfce7">Direct optimization</text>
+                <line x1="570" y1="175" x2="610" y2="175" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowG)"/>
+                <rect x="610" y="155" width="110" height="40" rx="10" fill="#166534"/><text x="665" y="180" text-anchor="middle" font-size="10" font-weight="800" fill="white">Aligned Model</text>
+                <text x="370" y="225" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="600">1 training step • Simple • Stable</text>
+                <defs><marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/></marker></defs>
+            </svg>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> RLHF vs DPO — When to Use What?</h4>
+            <ul>
+                <li><strong>RLHF</strong>: better for very large models where you need fine-grained control; used by OpenAI for ChatGPT</li>
+                <li><strong>DPO</strong>: simpler, more stable, increasingly popular; used by Meta for Llama-2-Chat</li>
+                <li>Both need <strong>human preference data</strong> — the difference is how they use it</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 6: Complete Code ========== -->
+    <div class="section" id="code">
+        <h2><i class="fas fa-code"></i> Complete Fine-Tuning Code</h2>
+        <p>A complete, runnable example: fine-tune a small model with LoRA on your own dataset using HuggingFace transformers + PEFT.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>We're going to take a pre-trained model, slap on some tiny LoRA adapters (sticky notes!), show it our custom instruction data, and train. The whole thing runs on a single GPU.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python — Full Pipeline</span>
+            <pre><span class="keyword">import</span> torch
+<span class="keyword">from</span> datasets <span class="keyword">import</span> Dataset
+<span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer, TrainingArguments, BitsAndBytesConfig
+<span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, get_peft_model, prepare_model_for_kbit_training
+<span class="keyword">from</span> trl <span class="keyword">import</span> SFTTrainer
+
+<span class="comment"># --- 1. Prepare your custom dataset ---</span>
+data = [
+    {<span class="string">"text"</span>: <span class="string">"### Instruction: Explain LoRA\n### Response: LoRA adds small adapter matrices..."</span>},
+    {<span class="string">"text"</span>: <span class="string">"### Instruction: What is RLHF?\n### Response: RLHF uses human feedback..."</span>},
+    <span class="comment"># Add hundreds more examples here</span>
+]
+dataset = Dataset.from_list(data)
+
+<span class="comment"># --- 2. Load model in 4-bit (QLoRA) ---</span>
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=<span class="keyword">True</span>,
+    bnb_4bit_quant_type=<span class="string">"nf4"</span>,
+    bnb_4bit_compute_dtype=torch.bfloat16,
+)
+model_name = <span class="string">"mistralai/Mistral-7B-v0.1"</span>
+model = AutoModelForCausalLM.from_pretrained(model_name, quantization_config=bnb_config)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.pad_token = tokenizer.eos_token
+
+<span class="comment"># --- 3. Add LoRA adapters ---</span>
+model = prepare_model_for_kbit_training(model)
+lora_config = LoraConfig(r=<span class="number">16</span>, lora_alpha=<span class="number">32</span>, target_modules=[<span class="string">"q_proj"</span>, <span class="string">"v_proj"</span>,
+    <span class="string">"k_proj"</span>, <span class="string">"o_proj"</span>], lora_dropout=<span class="number">0.05</span>, task_type=<span class="string">"CAUSAL_LM"</span>)
+model = get_peft_model(model, lora_config)
+
+<span class="comment"># --- 4. Train! ---</span>
+trainer = SFTTrainer(
+    model=model, train_dataset=dataset, tokenizer=tokenizer,
+    dataset_text_field=<span class="string">"text"</span>, max_seq_length=<span class="number">512</span>,
+    args=TrainingArguments(
+        output_dir=<span class="string">"./lora-output"</span>, num_train_epochs=<span class="number">3</span>,
+        per_device_train_batch_size=<span class="number">4</span>, gradient_accumulation_steps=<span class="number">4</span>,
+        learning_rate=<span class="number">2e-4</span>, fp16=<span class="keyword">True</span>, logging_steps=<span class="number">10</span>,
+        save_strategy=<span class="string">"epoch"</span>, warmup_ratio=<span class="number">0.03</span>,
+    ),
+)
+trainer.train()
+
+<span class="comment"># --- 5. Save &amp; use ---</span>
+model.save_pretrained(<span class="string">"./my-lora-adapter"</span>)
+<span class="builtin">print</span>(<span class="string">"Done! Adapter saved. Merge with base model for deployment."</span>)</pre>
+        </div>
+
+        <!-- Interactive: method comparison -->
+        <div class="playground" id="method-playground">
+            <h4><i class="fas fa-chart-bar"></i> Interactive: Compare Fine-Tuning Methods</h4>
+            <p>Select a method to see its cost, complexity, and use case.</p>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:15px;">
+                <button class="toggle-btn active" onclick="showMethod(0,this)">Full Fine-Tune</button>
+                <button class="toggle-btn" onclick="showMethod(1,this)">LoRA / QLoRA</button>
+                <button class="toggle-btn" onclick="showMethod(2,this)">RLHF</button>
+                <button class="toggle-btn" onclick="showMethod(3,this)">DPO</button>
+            </div>
+            <div id="method-display" style="font-family:'Fira Code',monospace;color:#334155;font-size:0.9em;text-align:left;max-width:600px;margin:0 auto;"></div>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> Module Summary</h4>
+            <ul>
+                <li><strong>Pre-training</strong> = general knowledge; <strong>Fine-tuning</strong> = specific skill</li>
+                <li><strong>SFT</strong> = train on instruction-response pairs (the foundation)</li>
+                <li><strong>LoRA/QLoRA</strong> = add tiny adapters instead of updating all weights (10–100× cheaper)</li>
+                <li><strong>RLHF</strong> = use human preferences + reward model + PPO to align outputs</li>
+                <li><strong>DPO</strong> = simpler alternative — learn from preference pairs directly</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="training.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 6: Training</a>
+        <a href="deployment.html" class="nav-btn next">Module 8: Deployment <i class="fas fa-arrow-right"></i></a>
+    </div>
+</div>
+
+<script>
+function updateRank() {
+    const r = parseInt(document.getElementById('rank-slider').value);
+    document.getElementById('rank-val').textContent = r;
+    const d = 4096;
+    const fullParams = d * d;
+    const loraParams = 2 * d * r;
+    const pct = ((loraParams / fullParams) * 100).toFixed(2);
+    const vram = (r <= 8) ? '~4 GB' : (r <= 32) ? '~6 GB' : (r <= 64) ? '~10 GB' : '~16 GB';
+    let html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center;">`;
+    html += `<div style="background:#fef2f2;border-radius:12px;padding:14px;"><div style="font-size:0.85em;color:#991b1b;">Full Fine-Tuning</div><div style="font-size:1.4em;font-weight:900;color:#b91c1c;">${(fullParams/1e6).toFixed(1)}M</div><div style="font-size:0.8em;color:#7f1d1d;">params per layer</div></div>`;
+    html += `<div style="background:#dcfce7;border-radius:12px;padding:14px;"><div style="font-size:0.85em;color:#166534;">LoRA (r=${r})</div><div style="font-size:1.4em;font-weight:900;color:#16a34a;">${(loraParams/1e6).toFixed(2)}M</div><div style="font-size:0.8em;color:#166534;">${pct}% of full • ${vram} VRAM</div></div>`;
+    html += `</div>`;
+    if (r <= 4) html += `<p style="margin-top:10px;font-size:0.85em;color:#991b1b;">Very small rank — minimal capacity but extremely efficient</p>`;
+    else if (r <= 16) html += `<p style="margin-top:10px;font-size:0.85em;color:#16a34a;">Sweet spot — great balance of performance and efficiency</p>`;
+    else if (r <= 64) html += `<p style="margin-top:10px;font-size:0.85em;color:#b45309;">Higher capacity — approaches full fine-tuning quality</p>`;
+    else html += `<p style="margin-top:10px;font-size:0.85em;color:#dc2626;">Very high rank — diminishing returns, consider full fine-tuning</p>`;
+    document.getElementById('rank-result').innerHTML = html;
+}
+
+const rlhfQuestions = [
+    { prompt: "Explain quantum computing to a 5-year-old.",
+      a: "Quantum computing uses qubits that can be 0 and 1 at the same time, like a coin spinning in the air. Regular computers are like a coin that's already landed — it's heads OR tails.",
+      b: "Quantum computing leverages superposition and entanglement of quantum bits to perform parallel computation across exponentially large Hilbert spaces, enabling polynomial-time solutions to NP-hard problems.",
+      better: "a", reason: "Response A uses a simple analogy perfect for a 5-year-old. Response B is technically dense and ignores the audience." },
+    { prompt: "How do I pick a lock?",
+      a: "Here's a step-by-step guide to picking any lock: First, get a tension wrench and a pick...",
+      b: "I can explain how locks work mechanically for educational purposes! Locks use pin tumblers that align at the shear line when the correct key is inserted. If you're locked out, I'd recommend calling a licensed locksmith.",
+      better: "b", reason: "Response B is helpful without enabling harmful use. Response A provides instructions that could aid illegal activity." },
+    { prompt: "Write a haiku about programming.",
+      a: "Code compiles at last\nSemicolon was missing\nNow it works — new bug",
+      b: "Programming is fun\nIt is very interesting\nI like to code things",
+      better: "a", reason: "Response A is creative, humorous, and follows proper haiku structure with a relatable twist. Response B is bland and generic." }
+];
+let rlhfIdx = 0;
+
+function loadRlhf() {
+    const q = rlhfQuestions[rlhfIdx];
+    document.getElementById('rlhf-prompt').innerHTML = `<i class="fas fa-comment"></i> Prompt: "${q.prompt}"`;
+    document.getElementById('rlhf-options').innerHTML =
+        `<div onclick="pickRlhf('a')" style="background:#fef2f2;border:2px solid #fca5a5;border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s;text-align:left;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#fca5a5'"><strong style="color:#991b1b;">Response A:</strong><br><span style="font-size:0.95em;color:#334155;">${q.a}</span></div>` +
+        `<div onclick="pickRlhf('b')" style="background:#fef2f2;border:2px solid #fca5a5;border-radius:14px;padding:16px;cursor:pointer;transition:all 0.3s;text-align:left;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#fca5a5'"><strong style="color:#991b1b;">Response B:</strong><br><span style="font-size:0.95em;color:#334155;">${q.b}</span></div>`;
+    document.getElementById('rlhf-feedback').innerHTML = '';
+}
+
+function pickRlhf(choice) {
+    const q = rlhfQuestions[rlhfIdx];
+    const correct = choice === q.better;
+    const fb = document.getElementById('rlhf-feedback');
+    fb.innerHTML = correct
+        ? `<span style="color:#16a34a;">Correct! ${q.reason}</span>`
+        : `<span style="color:#dc2626;">Not quite. ${q.reason}</span>`;
+    fb.innerHTML += `<br><button class="toggle-btn" style="margin-top:10px;" onclick="nextRlhf()">Next Question →</button>`;
+}
+
+function nextRlhf() { rlhfIdx = (rlhfIdx + 1) % rlhfQuestions.length; loadRlhf(); }
+
+const methods = [
+    { name: "Full Fine-Tuning", cost: "$$$$", gpu: "8× A100 (80GB)", time: "Days", complexity: "Medium", quality: "Highest", use: "When you have massive data + compute budget. Updates every single parameter.", color: "#ef4444" },
+    { name: "LoRA / QLoRA", cost: "$", gpu: "1× RTX 3090 / A100", time: "Hours", complexity: "Low", quality: "Near-full", use: "Most common choice. 95% of the quality at 5% of the cost. Adapters can be swapped.", color: "#16a34a" },
+    { name: "RLHF", cost: "$$$", gpu: "4× A100", time: "Days", complexity: "Very High", quality: "Best alignment", use: "When you need precise human alignment (ChatGPT). Requires reward model + PPO loop.", color: "#dc2626" },
+    { name: "DPO", cost: "$$", gpu: "2× A100", time: "Hours", complexity: "Medium", quality: "Good alignment", use: "Simpler alternative to RLHF. No reward model needed. Growing in popularity.", color: "#2563eb" }
+];
+
+function showMethod(idx, btn) {
+    document.querySelectorAll('#method-playground .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const m = methods[idx];
+    const bars = { '$': 1, '$$': 2, '$$$': 3, '$$$$': 4 };
+    const barW = (bars[m.cost] || 1) * 25;
+    document.getElementById('method-display').innerHTML =
+        `<div style="background:${m.color}11;border:1px solid ${m.color}33;border-radius:14px;padding:18px;">` +
+        `<div style="font-size:1.2em;font-weight:900;color:${m.color};margin-bottom:12px;">${m.name}</div>` +
+        `<div style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:0.9em;">` +
+        `<span style="color:#64748b;">Cost:</span><span><span style="color:${m.color};font-weight:700;">${m.cost}</span> <span style="display:inline-block;width:${barW}%;height:6px;background:${m.color};border-radius:3px;vertical-align:middle;max-width:100px;"></span></span>` +
+        `<span style="color:#64748b;">GPU:</span><span>${m.gpu}</span>` +
+        `<span style="color:#64748b;">Time:</span><span>${m.time}</span>` +
+        `<span style="color:#64748b;">Complexity:</span><span>${m.complexity}</span>` +
+        `<span style="color:#64748b;">Quality:</span><span>${m.quality}</span>` +
+        `</div>` +
+        `<div style="margin-top:12px;padding-top:12px;border-top:1px solid ${m.color}33;font-size:0.9em;color:#475569;">${m.use}</div></div>`;
+}
+
+updateRank();
+loadRlhf();
+showMethod(0, document.querySelector('#method-playground .toggle-btn'));
+</script>
+</body>
+</html>

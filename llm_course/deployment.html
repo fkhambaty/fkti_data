@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment & Production | LLM Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #f5f0ff 0%, #ede4ff 25%, #e8f4fd 50%, #fdf2f8 75%, #f0f9ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(6,182,212,0.12); padding: 15px 30px; border-radius: 18px;
+            margin-bottom: 30px; box-shadow: 0 4px 24px rgba(6,182,212,0.06);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #0e7490; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #06b6d4, #0891b2, #0e7490);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(6,182,212,0.25);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .badge { background: #155e75; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px);
+            border: 1px solid rgba(6,182,212,0.1); border-radius: 28px;
+            padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(6,182,212,0.05);
+        }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #06b6d4; }
+        .section h3 { color: #155e75; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5 {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px dashed #fbbf24;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5 h4 { color: #92400e; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5 p { color: #78350f; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy {
+            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            border-left: 5px solid #06b6d4; border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy h4 { color: #155e75; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy p { color: #164e63; }
+        .key-point {
+            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            border-left: 5px solid #06b6d4; border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #155e75; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #164e63; }
+        .key-point li { margin-bottom: 8px; }
+        .visual {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #06b6d4; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .visual h4 { color: #0e7490; margin-bottom: 15px; }
+        .visual svg { max-width: 100%; height: auto; }
+        .code-block {
+            background: #1e293b; border-radius: 16px; padding: 25px; margin: 20px 0;
+            overflow-x: auto; position: relative;
+        }
+        .code-block pre {
+            font-family: 'Fira Code', monospace; font-size: 0.92em;
+            color: #e2e8f0; line-height: 1.8; margin: 0; white-space: pre;
+        }
+        .code-block .comment { color: #64748b; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .function { color: #7dd3fc; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .builtin { color: #f9a8d4; }
+        .code-block .label {
+            position: absolute; top: 10px; right: 14px;
+            background: rgba(255,255,255,0.08); color: #94a3b8;
+            padding: 2px 10px; border-radius: 8px; font-size: 0.78em;
+            font-family: 'Fira Code', monospace;
+        }
+        .playground {
+            background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid #06b6d4; border-radius: 22px; padding: 30px; margin: 30px 0; text-align: center;
+        }
+        .playground h4 { color: #0e7490; margin-bottom: 8px; font-size: 1.15em; }
+        .playground p { color: #334155; font-size: 0.95em; margin-bottom: 15px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 700; transition: all .3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; box-shadow: 0 4px 20px rgba(6,182,212,0.25); }
+        .nav-btn:hover { transform: translateY(-2px); }
+        ul, ol { margin-left: 22px; margin-bottom: 18px; }
+        li { margin-bottom: 8px; color: #334155; }
+        .slider-container { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 15px 0; }
+        .slider-container input[type="range"] { width: 80%; accent-color: #06b6d4; height: 8px; cursor: pointer; }
+        .slider-label { font-size: 1.3em; font-weight: 800; color: #0e7490; }
+        .slider-sub { font-size: 0.95em; color: #475569; }
+        .toggle-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        .toggle-btn {
+            padding: 10px 22px; border-radius: 12px; border: 2px solid #06b6d4;
+            background: white; color: #0e7490; font-weight: 700; cursor: pointer;
+            font-family: 'Nunito', sans-serif; font-size: 0.95em; transition: all .2s;
+        }
+        .toggle-btn.active { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
+        .prompt-output {
+            background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 14px;
+            padding: 20px; text-align: left; min-height: 100px; font-size: 0.98em;
+            color: #134e4a; line-height: 1.8; transition: all .3s;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 28px; }
+            .header { padding: 35px 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-home"></i> Course Home</a>
+        <a href="finetuning.html"><i class="fas fa-arrow-left"></i> Previous</a>
+        <a href="capstone.html">Next <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <div class="header">
+        <div class="badge">MODULE 8</div>
+        <h1><i class="fas fa-rocket"></i> Deployment &amp; Production</h1>
+        <p>Take your LLM from a notebook prototype to a fast, safe, production-ready system that real users depend on.</p>
+    </div>
+
+    <!-- PART 1: Inference Optimization -->
+    <div class="section" id="inference">
+        <h2><i class="fas fa-bolt"></i> Part 1: Making the Model Fast</h2>
+        <p>Training a model is only half the battle. When real users hit your API, every millisecond counts. <strong>Inference optimization</strong> is the art of generating tokens as quickly and cheaply as possible.</p>
+
+        <h3>Why Inference Is Slow</h3>
+        <p>Autoregressive generation means the model produces one token at a time, each depending on every previous token. For a 500-token response, the model runs forward 500 times. Without tricks, each pass recomputes attention over the entire sequence from scratch.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5: Drive-Through vs Sit-Down Restaurant</h4>
+            <p>Imagine a sit-down restaurant where the waiter walks back to the kitchen, re-reads the <em>entire</em> order from scratch, and brings one dish at a time. That's naive inference.</p>
+            <p>A <strong>drive-through</strong> keeps your order on a sticky note (the <em>KV-cache</em>) so each new item is added instantly without re-reading everything. Way faster!</p>
+        </div>
+
+        <h3>KV-Cache</h3>
+        <p>The <strong>Key-Value cache</strong> stores the K and V matrices from previous tokens so they never need recomputing. At step <em>t</em>, only the new token's K and V are computed and appended. This turns an O(n&sup2;) operation into O(n) per step.</p>
+
+        <div class="visual">
+            <h4><i class="fas fa-diagram-project"></i> Token Generation: Without vs With KV-Cache</h4>
+            <svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="cg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#0e7490"/></linearGradient></defs>
+                <text x="200" y="25" text-anchor="middle" font-family="Nunito" font-weight="800" fill="#b91c1c" font-size="14">Without KV-Cache (slow)</text>
+                <rect x="30" y="40" width="340" height="90" rx="14" fill="#fff1f2" stroke="#fca5a5"/>
+                <text x="55" y="68" font-family="Fira Code" font-size="11" fill="#991b1b">Step 3: recompute K,V for t1,t2,t3</text>
+                <rect x="50" y="78" width="50" height="22" rx="6" fill="#fecaca"/><text x="75" y="93" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#991b1b">t1</text>
+                <rect x="108" y="78" width="50" height="22" rx="6" fill="#fecaca"/><text x="133" y="93" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#991b1b">t2</text>
+                <rect x="166" y="78" width="50" height="22" rx="6" fill="#fecaca"/><text x="191" y="93" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#991b1b">t3</text>
+                <text x="230" y="93" font-family="Nunito" font-size="11" fill="#991b1b">→ recompute ALL</text>
+                <text x="55" y="122" font-family="Nunito" font-size="11" fill="#7f1d1d">⏱ Each step = O(n) recomputation</text>
+                <text x="600" y="25" text-anchor="middle" font-family="Nunito" font-weight="800" fill="#0e7490" font-size="14">With KV-Cache (fast)</text>
+                <rect x="430" y="40" width="340" height="90" rx="14" fill="#ecfeff" stroke="#06b6d4"/>
+                <text x="455" y="68" font-family="Fira Code" font-size="11" fill="#0e7490">Step 3: read cached K,V + compute t3</text>
+                <rect x="450" y="78" width="50" height="22" rx="6" fill="#a5f3fc"/><text x="475" y="93" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#0e7490">t1✓</text>
+                <rect x="508" y="78" width="50" height="22" rx="6" fill="#a5f3fc"/><text x="533" y="93" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#0e7490">t2✓</text>
+                <rect x="566" y="78" width="50" height="22" rx="6" fill="#06b6d4"/><text x="591" y="93" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#fff">t3★</text>
+                <text x="630" y="93" font-family="Nunito" font-size="11" fill="#0e7490">→ only NEW</text>
+                <text x="455" y="122" font-family="Nunito" font-size="11" fill="#155e75">⚡ Each step = O(1) new compute</text>
+                <rect x="100" y="160" width="250" height="45" rx="12" fill="#fee2e2" stroke="#fca5a5"/>
+                <text x="225" y="187" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#991b1b">🐌 100 tokens → 5,050 ops total</text>
+                <rect x="450" y="160" width="250" height="45" rx="12" fill="#cffafe" stroke="#06b6d4"/>
+                <text x="575" y="187" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#0e7490">⚡ 100 tokens → 100 ops total</text>
+                <text x="400" y="240" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="15" fill="#0e7490">KV-Cache = ~50× fewer redundant computations</text>
+            </svg>
+        </div>
+
+        <h3>Continuous Batching</h3>
+        <p>GPUs are parallel beasts — running one request wastes most of their capacity. <strong>Continuous batching</strong> groups multiple user requests together so the GPU stays saturated. Unlike static batching, new requests join the batch as soon as a slot frees up.</p>
+
+        <div class="analogy">
+            <h4><i class="fas fa-lightbulb"></i> Analogy: Elevator vs Stairs</h4>
+            <p>Static batching is like an elevator that waits until it's completely full before moving. Continuous batching lets people hop on and off at every floor — the elevator never stops to wait.</p>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> Key Inference Frameworks</h4>
+            <ul>
+                <li><strong>vLLM</strong> — PagedAttention for memory-efficient KV-cache management</li>
+                <li><strong>TGI (Text Generation Inference)</strong> — Hugging Face's production server</li>
+                <li><strong>TensorRT-LLM</strong> — NVIDIA's optimized runtime for maximum GPU throughput</li>
+                <li><strong>llama.cpp</strong> — Run quantized models on CPUs and Apple Silicon</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PART 2: Quantization -->
+    <div class="section" id="quant">
+        <h2><i class="fas fa-compress-arrows-alt"></i> Part 2: Quantization</h2>
+        <p>A 7-billion-parameter model in FP32 needs <strong>28 GB</strong> of memory just for the weights. Most GPUs can't hold that. Quantization shrinks each number's precision so the model fits on smaller hardware with minimal quality loss.</p>
+
+        <h3>The Precision Ladder</h3>
+        <p><strong>FP32</strong> (32 bits per weight) → <strong>FP16</strong> (16 bits) → <strong>INT8</strong> (8 bits) → <strong>INT4</strong> (4 bits). Each halving cuts memory roughly in half.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5: Ruler Precision</h4>
+            <p>FP32 is measuring with a ruler that has marks every 0.001 mm — super precise but heavy to carry. INT4 is a pocket ruler with marks every centimetre — <strong>much lighter</strong>, and for most tasks, close enough!</p>
+        </div>
+
+        <div class="visual">
+            <h4><i class="fas fa-weight-hanging"></i> Precision vs Memory Trade-Off</h4>
+            <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="30" y="30" width="160" height="140" rx="16" fill="#fef2f2" stroke="#fca5a5"/>
+                <text x="110" y="65" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="16" fill="#991b1b">FP32</text>
+                <text x="110" y="90" text-anchor="middle" font-family="Nunito" font-size="13" fill="#7f1d1d">32 bits / param</text>
+                <text x="110" y="130" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="22" fill="#dc2626">28 GB</text>
+                <text x="110" y="155" text-anchor="middle" font-family="Nunito" font-size="11" fill="#991b1b">Max precision</text>
+                <text x="210" y="105" font-family="Nunito" font-weight="800" font-size="20" fill="#94a3b8">→</text>
+                <rect x="220" y="45" width="140" height="115" rx="16" fill="#fef9c3" stroke="#fbbf24"/>
+                <text x="290" y="75" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="16" fill="#92400e">FP16</text>
+                <text x="290" y="97" text-anchor="middle" font-family="Nunito" font-size="13" fill="#78350f">16 bits</text>
+                <text x="290" y="130" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="22" fill="#d97706">14 GB</text>
+                <text x="378" y="105" font-family="Nunito" font-weight="800" font-size="20" fill="#94a3b8">→</text>
+                <rect x="395" y="55" width="130" height="100" rx="16" fill="#ecfeff" stroke="#06b6d4"/>
+                <text x="460" y="82" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="16" fill="#0e7490">INT8</text>
+                <text x="460" y="104" text-anchor="middle" font-family="Nunito" font-size="13" fill="#155e75">8 bits</text>
+                <text x="460" y="133" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="22" fill="#0891b2">7 GB</text>
+                <text x="543" y="105" font-family="Nunito" font-weight="800" font-size="20" fill="#94a3b8">→</text>
+                <rect x="560" y="65" width="120" height="85" rx="16" fill="#d1fae5" stroke="#34d399"/>
+                <text x="620" y="90" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="16" fill="#065f46">INT4</text>
+                <text x="620" y="110" text-anchor="middle" font-family="Nunito" font-size="13" fill="#064e3b">4 bits</text>
+                <text x="620" y="137" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="22" fill="#059669">3.5 GB</text>
+                <text x="400" y="192" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#0e7490">↑ Each step ≈ halves memory with small quality trade-off</text>
+            </svg>
+        </div>
+
+        <div class="playground" id="quant-slider">
+            <h4><i class="fas fa-sliders-h"></i> Interactive: Quantization Slider</h4>
+            <p>Drag the slider to change bit precision and watch the model shrink!</p>
+            <div class="slider-container">
+                <input type="range" min="0" max="3" step="1" value="0" id="quantSlider" oninput="updateQuant(this.value)">
+                <div class="slider-label" id="quantLabel">FP32 — 8 GB</div>
+                <div class="slider-sub" id="quantDesc">Full precision. Maximum quality, maximum memory.</div>
+                <div style="width:80%;height:30px;background:#e2e8f0;border-radius:10px;overflow:hidden;margin-top:8px">
+                    <div id="quantBar" style="width:100%;height:100%;background:linear-gradient(90deg,#06b6d4,#0e7490);border-radius:10px;transition:width .4s"></div>
+                </div>
+            </div>
+        </div>
+
+        <h3>Code: 4-Bit Loading with bitsandbytes</h3>
+        <div class="code-block">
+            <span class="label">Python</span>
+            <pre><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, BitsAndBytesConfig
+
+quant_config = BitsAndBytesConfig(
+    <span class="function">load_in_4bit</span>=<span class="builtin">True</span>,
+    <span class="function">bnb_4bit_compute_dtype</span>=<span class="string">"float16"</span>,
+    <span class="function">bnb_4bit_quant_type</span>=<span class="string">"nf4"</span>,         <span class="comment"># normalized float 4-bit</span>
+    <span class="function">bnb_4bit_use_double_quant</span>=<span class="builtin">True</span>,  <span class="comment"># quantize the quantization constants</span>
+)
+
+model = AutoModelForCausalLM.<span class="function">from_pretrained</span>(
+    <span class="string">"meta-llama/Llama-2-7b-hf"</span>,
+    <span class="function">quantization_config</span>=quant_config,
+    <span class="function">device_map</span>=<span class="string">"auto"</span>,
+)
+<span class="comment"># 7B model now fits in ~3.5 GB VRAM!</span></pre>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-lightbulb"></i> Analogy: JPEG Compression</h4>
+            <p>Quantization is like saving a photo as a JPEG instead of a raw BMP. The file is dramatically smaller and for most viewers, the image looks identical — only if you zoom to pixel level do you notice tiny differences.</p>
+        </div>
+    </div>
+
+    <!-- PART 3: RAG -->
+    <div class="section" id="rag">
+        <h2><i class="fas fa-book-open"></i> Part 3: Retrieval Augmented Generation</h2>
+        <p>LLMs have a knowledge cutoff and sometimes <strong>hallucinate</strong> facts. RAG solves this by fetching real documents at query time and stuffing them into the prompt so the model has reference material.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5: Open-Book vs Closed-Book Exam</h4>
+            <p>A <strong>closed-book exam</strong> forces you to rely on memory — you might mix things up. An <strong>open-book exam</strong> lets you flip to the right page and quote directly. RAG gives the LLM an open book!</p>
+        </div>
+
+        <h3>How RAG Works</h3>
+        <p>1) Embed your documents into vectors and store them. 2) At query time, embed the user's question. 3) Retrieve the top-K most similar chunks. 4) Inject those chunks into the prompt. 5) Let the LLM generate an answer grounded in real data.</p>
+
+        <div class="visual">
+            <h4><i class="fas fa-project-diagram"></i> Animated RAG Pipeline</h4>
+            <svg viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    .rag-flow { animation: ragPulse 3s ease-in-out infinite; }
+                    @keyframes ragPulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+                </style>
+                <rect x="10" y="70" width="140" height="70" rx="16" fill="#dbeafe" stroke="#3b82f6"/>
+                <text x="80" y="100" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#1e40af">User Query</text>
+                <text x="80" y="122" text-anchor="middle" font-family="Nunito" font-size="11" fill="#3b82f6">"What is RAG?"</text>
+                <line x1="150" y1="105" x2="195" y2="105" stroke="#06b6d4" stroke-width="3" class="rag-flow" marker-end="url(#arrowC)"/>
+                <rect x="195" y="55" width="130" height="90" rx="16" fill="#fef3c7" stroke="#f59e0b"/>
+                <text x="260" y="85" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#92400e">🔍 Retrieve</text>
+                <text x="260" y="107" text-anchor="middle" font-family="Nunito" font-size="10" fill="#b45309">Vector DB search</text>
+                <text x="260" y="125" text-anchor="middle" font-family="Nunito" font-size="10" fill="#b45309">Top-K chunks</text>
+                <line x1="325" y1="105" x2="370" y2="105" stroke="#06b6d4" stroke-width="3" class="rag-flow" style="animation-delay:.5s" marker-end="url(#arrowC)"/>
+                <rect x="370" y="55" width="150" height="90" rx="16" fill="#ecfeff" stroke="#06b6d4"/>
+                <text x="445" y="85" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#0e7490">📋 Stuff Prompt</text>
+                <text x="445" y="107" text-anchor="middle" font-family="Nunito" font-size="10" fill="#155e75">Context + Question</text>
+                <text x="445" y="125" text-anchor="middle" font-family="Nunito" font-size="10" fill="#155e75">→ system message</text>
+                <line x1="520" y1="105" x2="565" y2="105" stroke="#06b6d4" stroke-width="3" class="rag-flow" style="animation-delay:1s" marker-end="url(#arrowC)"/>
+                <rect x="565" y="55" width="160" height="90" rx="16" fill="#d1fae5" stroke="#34d399"/>
+                <text x="645" y="85" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#065f46">🤖 Generate</text>
+                <text x="645" y="107" text-anchor="middle" font-family="Nunito" font-size="10" fill="#047857">Grounded answer</text>
+                <text x="645" y="125" text-anchor="middle" font-family="Nunito" font-size="10" fill="#047857">with citations</text>
+                <defs><marker id="arrowC" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#06b6d4"/></marker></defs>
+                <text x="390" y="195" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#0e7490">The model answers from <tspan font-weight="900">real documents</tspan>, not just memory</text>
+            </svg>
+        </div>
+
+        <h3>Code: Simple RAG with LangChain</h3>
+        <div class="code-block">
+            <span class="label">Python</span>
+            <pre><span class="keyword">from</span> langchain_community.document_loaders <span class="keyword">import</span> TextLoader
+<span class="keyword">from</span> langchain.text_splitter <span class="keyword">import</span> RecursiveCharacterTextSplitter
+<span class="keyword">from</span> langchain_community.vectorstores <span class="keyword">import</span> FAISS
+<span class="keyword">from</span> langchain_community.embeddings <span class="keyword">import</span> HuggingFaceEmbeddings
+<span class="keyword">from</span> langchain_community.llms <span class="keyword">import</span> HuggingFacePipeline
+<span class="keyword">from</span> langchain.chains <span class="keyword">import</span> RetrievalQA
+
+<span class="comment"># 1. Load and chunk documents</span>
+docs = TextLoader(<span class="string">"knowledge_base.txt"</span>).<span class="function">load</span>()
+chunks = RecursiveCharacterTextSplitter(
+    <span class="function">chunk_size</span>=<span class="number">500</span>, <span class="function">chunk_overlap</span>=<span class="number">50</span>
+).<span class="function">split_documents</span>(docs)
+
+<span class="comment"># 2. Embed and store in vector DB</span>
+embeddings = HuggingFaceEmbeddings(<span class="function">model_name</span>=<span class="string">"all-MiniLM-L6-v2"</span>)
+vector_store = FAISS.<span class="function">from_documents</span>(chunks, embeddings)
+
+<span class="comment"># 3. Build retrieval chain</span>
+qa_chain = RetrievalQA.<span class="function">from_chain_type</span>(
+    <span class="function">llm</span>=HuggingFacePipeline.<span class="function">from_model_id</span>(<span class="string">"google/flan-t5-base"</span>),
+    <span class="function">retriever</span>=vector_store.<span class="function">as_retriever</span>(<span class="function">search_kwargs</span>={<span class="string">"k"</span>: <span class="number">3</span>}),
+)
+
+answer = qa_chain.<span class="function">run</span>(<span class="string">"What is retrieval augmented generation?"</span>)
+<span class="builtin">print</span>(answer)</pre>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> RAG Best Practices</h4>
+            <ul>
+                <li><strong>Chunk wisely</strong> — too big = noise, too small = missing context (300-500 tokens is a good start)</li>
+                <li><strong>Overlap chunks</strong> — so sentences aren't cut in half</li>
+                <li><strong>Re-rank</strong> — use a cross-encoder to reorder retrieved chunks by relevance</li>
+                <li><strong>Cite sources</strong> — always show the user which documents grounded the answer</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PART 4: Prompt Engineering -->
+    <div class="section" id="prompt">
+        <h2><i class="fas fa-magic"></i> Part 4: Prompt Engineering</h2>
+        <p>The <em>same</em> model can give wildly different answers depending on how you ask. Prompt engineering is the craft of structuring your input for the best output — no retraining required.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5: Asking for Directions</h4>
+            <p>Asking a stranger <em>"Where's the place?"</em> (zero-shot) gets a confused look. Saying <em>"I'm looking for the nearest coffee shop — last time I asked, someone said go past the park and turn left"</em> (few-shot with context) gets a precise answer!</p>
+        </div>
+
+        <h3>The Three Strategies</h3>
+        <p><strong>Zero-shot:</strong> Just ask the question directly. <strong>Few-shot:</strong> Provide examples of input → output pairs. <strong>Chain-of-thought (CoT):</strong> Ask the model to reason step by step before answering.</p>
+
+        <div class="playground" id="prompt-playground">
+            <h4><i class="fas fa-flask"></i> Interactive: Compare Prompt Strategies</h4>
+            <p>Click a strategy to see how the prompt and output change for the same question.</p>
+            <div class="toggle-group">
+                <button class="toggle-btn active" onclick="switchPrompt('zero')">Zero-Shot</button>
+                <button class="toggle-btn" onclick="switchPrompt('few')">Few-Shot</button>
+                <button class="toggle-btn" onclick="switchPrompt('cot')">Chain-of-Thought</button>
+            </div>
+            <div class="prompt-output" id="promptOutput">
+                <strong>Prompt:</strong><br>
+                <em>"Is 17 a prime number?"</em><br><br>
+                <strong>Model output:</strong><br>
+                "Yes."<br><br>
+                <span style="color:#94a3b8">⚠ Correct, but no reasoning — fragile for harder questions.</span>
+            </div>
+        </div>
+
+        <div class="visual">
+            <h4><i class="fas fa-layer-group"></i> Prompt Anatomy</h4>
+            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="10" width="660" height="180" rx="18" fill="#f8fafc" stroke="#cbd5e1"/>
+                <rect x="35" y="25" width="630" height="35" rx="10" fill="#dbeafe" stroke="#93c5fd"/>
+                <text x="350" y="48" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#1e40af">System Prompt — role, constraints, tone</text>
+                <rect x="35" y="70" width="300" height="35" rx="10" fill="#fef3c7" stroke="#fbbf24"/>
+                <text x="185" y="93" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#92400e">Few-Shot Examples (optional)</text>
+                <rect x="345" y="70" width="320" height="35" rx="10" fill="#ecfeff" stroke="#06b6d4"/>
+                <text x="505" y="93" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#0e7490">Context / Retrieved Docs (RAG)</text>
+                <rect x="35" y="115" width="630" height="35" rx="10" fill="#d1fae5" stroke="#34d399"/>
+                <text x="350" y="138" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="13" fill="#065f46">User Question — the actual task</text>
+                <text x="350" y="175" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="12" fill="#64748b">Each layer adds more grounding → better, more reliable answers</text>
+            </svg>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-exclamation-triangle"></i> Anti-Patterns to Avoid</h4>
+            <ul>
+                <li><strong>Vague instructions</strong> — "Be good at this" gives the model nothing to work with</li>
+                <li><strong>Conflicting constraints</strong> — "Be concise" + "Explain in detail" confuses the model</li>
+                <li><strong>Prompt injection</strong> — never let untrusted user input appear unsanitized in system prompts</li>
+                <li><strong>Over-engineering</strong> — if zero-shot works, don't add 50 examples</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PART 5: Safety & Ethics -->
+    <div class="section" id="safety">
+        <h2><i class="fas fa-shield-alt"></i> Part 5: Safety &amp; Ethics</h2>
+        <p>Deploying an LLM means putting a confident, fluent writer in front of your users. The problem? It can be <strong>confidently wrong</strong>, biased, or manipulated.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5: The Eager Student</h4>
+            <p>LLMs are like the student who <em>always</em> raises their hand — even when they don't know the answer. They'll give a beautifully-worded response that <strong>sounds right</strong> but might be completely made up. You need a teacher (guardrails) checking their work!</p>
+        </div>
+
+        <h3>Hallucinations</h3>
+        <p>The model generates plausible-sounding but factually incorrect text. Mitigation: RAG (ground in real data), temperature reduction, and asking the model to say "I don't know" when uncertain.</p>
+
+        <h3>Bias</h3>
+        <p>Models inherit biases from training data. A model trained on internet text absorbs stereotypes. Mitigation: evaluation benchmarks (e.g., BBQ, WinoBias), human review, and diverse training data.</p>
+
+        <h3>Jailbreaks</h3>
+        <p>Clever prompts can trick models into bypassing safety guidelines. Examples: "Pretend you're an evil AI…" or role-play scenarios. Mitigation: input/output filters, red-teaming, and RLHF alignment.</p>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> Production Safety Checklist</h4>
+            <ul>
+                <li><strong>Input filtering</strong> — block prompt injection patterns and malicious inputs</li>
+                <li><strong>Output filtering</strong> — scan for harmful, biased, or PII-leaking content</li>
+                <li><strong>Rate limiting</strong> — prevent abuse and runaway costs</li>
+                <li><strong>Human-in-the-loop</strong> — for high-stakes decisions, require human approval</li>
+                <li><strong>Logging &amp; monitoring</strong> — track model outputs for drift and failure patterns</li>
+                <li><strong>Graceful degradation</strong> — if the model fails, fall back to a safe default</li>
+            </ul>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-lightbulb"></i> Analogy: Self-Driving Car Analogy</h4>
+            <p>You wouldn't deploy a self-driving car without lane markers, speed limits, and emergency braking. LLMs need the same: guardrails that keep outputs within safe boundaries, even when the model is "driving" on its own.</p>
+        </div>
+    </div>
+
+    <!-- PART 6: Serving via API -->
+    <div class="section" id="api">
+        <h2><i class="fas fa-server"></i> Part 6: Serving via API</h2>
+        <p>The final step: wrap your model in a REST API so any application can call it. We'll use <strong>FastAPI</strong> (async, fast, auto-docs) + <strong>Hugging Face Transformers</strong>.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5: Vending Machine</h4>
+            <p>Your model is a chef locked in a kitchen. An API is the <strong>vending machine window</strong> — users press a button (send a request), and food (generated text) comes out. They never need to see the kitchen!</p>
+        </div>
+
+        <h3>Complete FastAPI Server</h3>
+        <div class="code-block">
+            <span class="label">Python — app.py</span>
+            <pre><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI, HTTPException
+<span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel
+<span class="keyword">from</span> transformers <span class="keyword">import</span> AutoTokenizer, AutoModelForCausalLM
+<span class="keyword">import</span> torch
+
+app = FastAPI(<span class="function">title</span>=<span class="string">"LLM API"</span>)
+
+tokenizer = AutoTokenizer.<span class="function">from_pretrained</span>(<span class="string">"gpt2"</span>)
+model = AutoModelForCausalLM.<span class="function">from_pretrained</span>(<span class="string">"gpt2"</span>)
+model.<span class="function">eval</span>()
+
+<span class="keyword">class</span> <span class="builtin">GenerateRequest</span>(BaseModel):
+    prompt: <span class="builtin">str</span>
+    max_tokens: <span class="builtin">int</span> = <span class="number">150</span>
+    temperature: <span class="builtin">float</span> = <span class="number">0.7</span>
+
+<span class="keyword">class</span> <span class="builtin">GenerateResponse</span>(BaseModel):
+    text: <span class="builtin">str</span>
+    tokens_generated: <span class="builtin">int</span>
+
+<span class="keyword">@app</span>.<span class="function">post</span>(<span class="string">"/generate"</span>, <span class="function">response_model</span>=GenerateResponse)
+<span class="keyword">async def</span> <span class="function">generate</span>(req: GenerateRequest):
+    <span class="keyword">if</span> <span class="keyword">not</span> req.prompt.strip():
+        <span class="keyword">raise</span> HTTPException(<span class="number">400</span>, <span class="string">"Prompt cannot be empty"</span>)
+
+    inputs = tokenizer(req.prompt, <span class="function">return_tensors</span>=<span class="string">"pt"</span>)
+    <span class="keyword">with</span> torch.<span class="function">no_grad</span>():
+        outputs = model.<span class="function">generate</span>(
+            **inputs,
+            <span class="function">max_new_tokens</span>=req.max_tokens,
+            <span class="function">temperature</span>=req.temperature,
+            <span class="function">do_sample</span>=<span class="builtin">True</span>,
+        )
+    text = tokenizer.<span class="function">decode</span>(outputs[<span class="number">0</span>], <span class="function">skip_special_tokens</span>=<span class="builtin">True</span>)
+    n_gen = outputs.shape[<span class="number">1</span>] - inputs[<span class="string">"input_ids"</span>].shape[<span class="number">1</span>]
+    <span class="keyword">return</span> GenerateResponse(<span class="function">text</span>=text, <span class="function">tokens_generated</span>=n_gen)
+
+<span class="keyword">@app</span>.<span class="function">get</span>(<span class="string">"/health"</span>)
+<span class="keyword">async def</span> <span class="function">health</span>():
+    <span class="keyword">return</span> {<span class="string">"status"</span>: <span class="string">"ok"</span>}</pre>
+        </div>
+
+        <h3>Testing It</h3>
+        <div class="code-block">
+            <span class="label">Bash</span>
+            <pre><span class="comment"># Start the server</span>
+uvicorn app:app --host 0.0.0.0 --port 8000
+
+<span class="comment"># In another terminal — send a request</span>
+curl -X POST http://localhost:8000/generate \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d <span class="string">'{"prompt": "The future of AI is", "max_tokens": 50}'</span></pre>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> Production Hardening</h4>
+            <ul>
+                <li><strong>Add authentication</strong> — API keys or OAuth to prevent unauthorized access</li>
+                <li><strong>Set rate limits</strong> — use something like SlowAPI to throttle per user</li>
+                <li><strong>Containerize</strong> — Docker image with pinned dependencies for reproducibility</li>
+                <li><strong>GPU inference</strong> — switch to <code>device_map="auto"</code> and serve behind a load balancer</li>
+                <li><strong>Streaming</strong> — use Server-Sent Events for token-by-token output to improve UX</li>
+            </ul>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-lightbulb"></i> Analogy: Production = Restaurant Opening</h4>
+            <p>Building the model is learning to cook. Serving via API is opening a restaurant: you need a menu (docs), a front door (endpoint), a health inspector (monitoring), and a fire exit (error handling). The cooking is the easy part!</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+        <a href="finetuning.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 7: Fine-Tuning</a>
+        <a href="capstone.html" class="nav-btn next">Module 9: Capstone <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div style="text-align:center;margin-top:40px;padding:20px;color:#94a3b8;font-size:0.9em;">
+        <p>Module 8 of the LLM Engineering Course | Built by Fakhruddin Khambaty</p>
+    </div>
+</div>
+
+<script>
+function updateQuant(val) {
+    const data = [
+        { label: 'FP32 — 8 GB', desc: 'Full precision. Maximum quality, maximum memory.', pct: 100 },
+        { label: 'FP16 — 4 GB', desc: 'Half precision. Virtually identical quality, half the memory.', pct: 50 },
+        { label: 'INT8 — 2 GB', desc: '8-bit integers. Slight quality dip, 4× smaller than FP32.', pct: 25 },
+        { label: 'INT4 — 1 GB', desc: '4-bit quantized. Tiny quality loss, 8× smaller. Fits on a laptop!', pct: 12.5 },
+    ];
+    const d = data[val];
+    document.getElementById('quantLabel').textContent = d.label;
+    document.getElementById('quantDesc').textContent = d.desc;
+    document.getElementById('quantBar').style.width = d.pct + '%';
+}
+
+function switchPrompt(type) {
+    const btns = document.querySelectorAll('.toggle-btn');
+    btns.forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const outputs = {
+        zero: `<strong>Prompt:</strong><br>
+            <em>"Is 17 a prime number?"</em><br><br>
+            <strong>Model output:</strong><br>
+            "Yes."<br><br>
+            <span style="color:#94a3b8">⚠ Correct, but no reasoning — fragile for harder questions.</span>`,
+        few: `<strong>Prompt:</strong><br>
+            <em>"Is 4 prime? → No, 4 = 2×2.<br>
+            Is 7 prime? → Yes, only divisible by 1 and 7.<br>
+            Is 17 prime? →"</em><br><br>
+            <strong>Model output:</strong><br>
+            "Yes, 17 is only divisible by 1 and 17."<br><br>
+            <span style="color:#059669">✅ Follows the pattern — gives reasoning automatically.</span>`,
+        cot: `<strong>Prompt:</strong><br>
+            <em>"Is 17 a prime number? Let's think step by step."</em><br><br>
+            <strong>Model output:</strong><br>
+            "Step 1: Check if 17 is divisible by 2 → 17/2 = 8.5, no.<br>
+            Step 2: Check 3 → 17/3 = 5.67, no.<br>
+            Step 3: Check 4 → skip (4 = 2×2, already checked).<br>
+            Step 4: √17 ≈ 4.1, so we only need to check up to 4.<br>
+            Conclusion: 17 is prime."<br><br>
+            <span style="color:#059669">✅ Full reasoning chain — most reliable for complex tasks.</span>`,
+    };
+    document.getElementById('promptOutput').innerHTML = outputs[type];
+}
+</script>
+</body>
+</html>

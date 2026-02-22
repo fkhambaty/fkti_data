@@ -672,6 +672,55 @@ plt.<span class="function">show</span>()</pre>
                 <figcaption>Figure: As K increases, inertia drops. The “elbow” (red dot) suggests a good K – here around 5.</figcaption>
             </div>
 
+            <!-- INTERACTIVE: See K-Means clustering with different K -->
+            <div style="background:rgba(255,255,255,0.7); backdrop-filter:blur(12px); border:2px solid #c7d2fe; border-radius:22px; padding:28px; margin:30px 0; text-align:center;">
+                <h4 style="color:#4338ca; margin-bottom:8px; font-size:1.15em;">🎮 Interactive: Change K and Watch the Clusters Form!</h4>
+                <p style="color:#334155; font-size:0.95em; margin-bottom:15px;">Drag the slider to change the number of clusters. See how the data gets grouped differently! ✕ marks are centroids.</p>
+                <svg id="clusterPlay" viewBox="0 0 500 360" xmlns="http://www.w3.org/2000/svg" style="background:white;border-radius:16px;border:1px solid #c7d2fe;max-width:100%;">
+                    <circle id="cZ1" cx="130" cy="110" r="95" fill="#dbeafe" opacity="0.35" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3"/>
+                    <circle id="cZ2" cx="380" cy="130" r="90" fill="#fed7aa" opacity="0.35" stroke="#f97316" stroke-width="1.5" stroke-dasharray="5,3"/>
+                    <circle id="cZ3" cx="220" cy="280" r="85" fill="#bbf7d0" opacity="0" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="5,3"/>
+                    <circle class="cp a1" cx="90" cy="70" r="8" fill="#3b82f6"/><circle class="cp a1" cx="130" cy="90" r="8" fill="#3b82f6"/>
+                    <circle class="cp a1" cx="110" cy="130" r="8" fill="#3b82f6"/><circle class="cp a1" cx="160" cy="80" r="8" fill="#3b82f6"/>
+                    <circle class="cp a1" cx="80" cy="120" r="8" fill="#3b82f6"/><circle class="cp a1" cx="150" cy="140" r="8" fill="#3b82f6"/>
+                    <circle class="cp a1" cx="170" cy="110" r="8" fill="#3b82f6"/><circle class="cp a1" cx="100" cy="160" r="8" fill="#3b82f6"/>
+                    <circle class="cp a2" cx="350" cy="80" r="8" fill="#f97316"/><circle class="cp a2" cx="390" cy="120" r="8" fill="#f97316"/>
+                    <circle class="cp a2" cx="410" cy="90" r="8" fill="#f97316"/><circle class="cp a2" cx="370" cy="150" r="8" fill="#f97316"/>
+                    <circle class="cp a2" cx="420" cy="160" r="8" fill="#f97316"/><circle class="cp a2" cx="340" cy="140" r="8" fill="#f97316"/>
+                    <circle class="cp a2" cx="400" cy="180" r="8" fill="#f97316"/><circle class="cp a2" cx="360" cy="170" r="8" fill="#f97316"/>
+                    <circle class="cp a3" cx="180" cy="260" r="8" fill="#22c55e"/><circle class="cp a3" cx="220" cy="280" r="8" fill="#22c55e"/>
+                    <circle class="cp a3" cx="250" cy="260" r="8" fill="#22c55e"/><circle class="cp a3" cx="200" cy="310" r="8" fill="#22c55e"/>
+                    <circle class="cp a3" cx="260" cy="300" r="8" fill="#22c55e"/><circle class="cp a3" cx="240" cy="330" r="8" fill="#22c55e"/>
+                    <circle class="cp a3" cx="170" cy="300" r="8" fill="#22c55e"/><circle class="cp a3" cx="280" cy="280" r="8" fill="#22c55e"/>
+                    <text id="ct1" x="130" y="115" text-anchor="middle" font-size="22" fill="#1d4ed8">✕</text>
+                    <text id="ct2" x="380" y="135" text-anchor="middle" font-size="22" fill="#c2410c">✕</text>
+                    <text id="ct3" x="220" y="285" text-anchor="middle" font-size="22" fill="#15803d" opacity="0">✕</text>
+                    <rect id="crBg" x="130" y="342" width="240" height="28" rx="10" fill="#ede9fe"/>
+                    <text id="crTx" x="250" y="362" text-anchor="middle" fill="#4338ca" font-size="12" font-weight="800" font-family="Nunito">K=2 — Two clusters</text>
+                </svg>
+                <div style="display:flex;align-items:center;gap:15px;justify-content:center;margin-top:15px;flex-wrap:wrap;">
+                    <label style="color:#312e81;font-weight:700;font-size:0.92em;">K = 2</label>
+                    <input type="range" id="ckSlider" min="2" max="5" value="2" oninput="updClust(this.value)" style="-webkit-appearance:none;width:200px;height:6px;background:#c7d2fe;border-radius:3px;outline:none;">
+                    <label style="color:#312e81;font-weight:700;font-size:0.92em;">K = 5</label>
+                    <span id="ckVal" style="background:#e0e7ff;color:#3730a3;padding:4px 14px;border-radius:8px;font-weight:700;font-family:'Fira Code',monospace;">K = 2</span>
+                </div>
+                <p style="font-size:0.85em;color:#475569;margin-top:8px;">K=3 is the sweet spot here (matches the 3 natural groups). Too few merges groups, too many splits them!</p>
+            </div>
+            <script>
+            (function(){
+                function updClust(k){
+                    k=parseInt(k); document.getElementById('ckVal').textContent='K = '+k;
+                    var z3=document.getElementById('cZ3'),ct3=document.getElementById('ct3'),tx=document.getElementById('crTx'),bg=document.getElementById('crBg');
+                    var a3=document.querySelectorAll('.a3'),a1=document.querySelectorAll('.a1'),a2=document.querySelectorAll('.a2');
+                    if(k===2){z3.setAttribute('opacity','0');ct3.setAttribute('opacity','0');a3.forEach(function(p){p.setAttribute('fill','#f97316')});a1.forEach(function(p){p.setAttribute('fill','#3b82f6')});a2.forEach(function(p){p.setAttribute('fill','#f97316')});tx.textContent='K=2 — Bottom group merged with right (not ideal!)';bg.setAttribute('fill','#ede9fe');tx.setAttribute('fill','#4338ca');}
+                    else if(k===3){z3.setAttribute('opacity','0.35');ct3.setAttribute('opacity','1');a3.forEach(function(p){p.setAttribute('fill','#22c55e')});a1.forEach(function(p){p.setAttribute('fill','#3b82f6')});a2.forEach(function(p){p.setAttribute('fill','#f97316')});tx.textContent='K=3 — Perfect! Each group = one cluster ✅';bg.setAttribute('fill','#dcfce7');tx.setAttribute('fill','#166534');}
+                    else if(k===4){z3.setAttribute('opacity','0.35');ct3.setAttribute('opacity','1');a3.forEach(function(p){p.setAttribute('fill','#22c55e')});a1.forEach(function(p,i){p.setAttribute('fill',i<4?'#3b82f6':'#8b5cf6')});a2.forEach(function(p){p.setAttribute('fill','#f97316')});tx.textContent='K=4 — Blue group split unnecessarily ⚠️';bg.setAttribute('fill','#fef9c3');tx.setAttribute('fill','#92400e');}
+                    else{z3.setAttribute('opacity','0.35');ct3.setAttribute('opacity','1');a3.forEach(function(p,i){p.setAttribute('fill',i<4?'#22c55e':'#06b6d4')});a1.forEach(function(p,i){p.setAttribute('fill',i<4?'#3b82f6':'#8b5cf6')});a2.forEach(function(p){p.setAttribute('fill','#f97316')});tx.textContent='K=5 — Over-splitting! Too many clusters ❌';bg.setAttribute('fill','#fee2e2');tx.setAttribute('fill','#b91c1c');}
+                }
+                window.updClust=updClust; updClust(2);
+            })();
+            </script>
+
             <div class="code-block">
 <pre><span class="comment"># Elbow Method</span>
 inertias = []

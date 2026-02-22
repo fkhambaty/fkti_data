@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Are LLMs? | LLM Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #f5f0ff 0%, #ede4ff 25%, #e8f4fd 50%, #fdf2f8 75%, #f0f9ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(139,92,246,0.12); padding: 15px 30px; border-radius: 18px;
+            margin-bottom: 30px; box-shadow: 0 4px 24px rgba(139,92,246,0.06);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #6d28d9; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #4c1d95 100%);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(109,40,217,0.25);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .badge { background: #f59e0b; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px);
+            border: 1px solid rgba(139,92,246,0.1); border-radius: 28px;
+            padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(139,92,246,0.05);
+        }
+        .section h2 { color: #6d28d9; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #ede9fe; }
+        .section h3 { color: #5b21b6; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #8b5cf6; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5 {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px dashed #f59e0b;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5 h4 { color: #92400e; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5 p { color: #78350f; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border-left: 5px solid #8b5cf6; border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy h4 { color: #5b21b6; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy p { color: #4c1d95; }
+        .key-point {
+            background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+            border-left: 5px solid #8b5cf6; border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #5b21b6; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #4c1d95; }
+        .key-point li { margin-bottom: 8px; }
+        .visual {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #e9d5ff; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .visual h4 { color: #6d28d9; margin-bottom: 15px; }
+        .visual svg { max-width: 100%; height: auto; }
+        .timeline {
+            position: relative; padding-left: 40px; margin: 25px 0;
+        }
+        .timeline::before {
+            content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
+            width: 3px; background: linear-gradient(to bottom, #8b5cf6, #3b82f6, #22c55e);
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 25px;
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
+            border: 1px solid #e9d5ff; border-radius: 16px; padding: 20px 22px;
+        }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -33px; top: 22px;
+            width: 14px; height: 14px; background: #8b5cf6;
+            border-radius: 50%; border: 3px solid white;
+        }
+        .timeline-item h5 { color: #6d28d9; margin-bottom: 6px; font-size: 1.05em; }
+        .timeline-item .year { color: #8b5cf6; font-weight: 800; font-size: 0.85em; }
+        .timeline-item p { color: #475569; margin: 0; font-size: 0.98em; }
+
+        .playground {
+            background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid #bfdbfe; border-radius: 22px; padding: 30px; margin: 30px 0; text-align: center;
+        }
+        .playground h4 { color: #1e40af; margin-bottom: 8px; font-size: 1.15em; }
+        .playground p { color: #334155; font-size: 0.95em; margin-bottom: 15px; }
+
+        .model-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px; margin: 20px 0;
+        }
+        .model-card {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);
+            border: 1px solid #e9d5ff; border-radius: 16px; padding: 20px; text-align: center;
+            transition: all .3s;
+        }
+        .model-card:hover { border-color: #a78bfa; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(139,92,246,0.1); }
+        .model-card .model-emoji { font-size: 2.2em; margin-bottom: 8px; }
+        .model-card h5 { color: #5b21b6; margin-bottom: 4px; }
+        .model-card p { color: #475569; font-size: 0.85em; margin: 0; }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 700; transition: all .3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; box-shadow: 0 4px 20px rgba(109,40,217,0.25); }
+        .nav-btn:hover { transform: translateY(-3px); }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 18px; }
+            .nav-buttons { flex-direction: column; }
+            .model-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+    </nav>
+
+    <div class="header">
+        <span class="badge">👶 START HERE — No Prerequisites!</span>
+        <h1>🧠 What Are Large Language Models?</h1>
+        <p>From zero understanding to "oh, THAT'S how ChatGPT works!" in one chapter. No math yet, just pure intuition.</p>
+    </div>
+
+    <!-- Part 1: What is a Language Model -->
+    <div class="section" id="what">
+        <h2><i class="fas fa-comment-dots"></i> Part 1: What is a Language Model?</h2>
+
+        <p>A <strong>language model</strong> is a computer program that has read so much text that it can <strong>predict what word comes next</strong> in a sentence. That's it. That's the whole idea.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Your phone keyboard does this! When you type "I am going to the", it suggests "store" or "park" or "gym." Your phone is a tiny language model. It learned from billions of text messages what words usually follow other words.</p>
+            <p>Now imagine that keyboard on <strong>steroids</strong> — trained on the entire internet, every book ever written, all of Wikipedia. That's an LLM. It got SO good at predicting the next word that it can write essays, answer questions, code, and have conversations!</p>
+        </div>
+
+        <div class="analogy">
+            <h4>🎰 The Slot Machine Analogy</h4>
+            <p>Think of an LLM as a slot machine. You pull the lever (give it a prompt: "The capital of France is"), and the wheels spin through every possible next word: "Paris" (99% chance), "London" (0.01%), "pizza" (0.001%). It picks the most likely one. Then uses "The capital of France is Paris" as input and predicts the NEXT word. And the next. And the next. That's <strong>autoregressive generation</strong> — one word at a time, each based on everything before it.</p>
+        </div>
+
+        <!-- Interactive: Next word prediction -->
+        <div class="playground">
+            <h4>🎮 Interactive: Play "Predict the Next Word"!</h4>
+            <p>Click any option to complete the sentence. This is exactly what an LLM does — but it considers thousands of options!</p>
+            <div style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #e9d5ff; text-align: left; margin-bottom: 15px;">
+                <p style="font-size: 1.2em; color: #1e293b; margin: 0;" id="promptText">
+                    <strong style="color: #6d28d9;">The cat sat on the</strong> <span id="predictionSpan" style="color: #22c55e; font-weight: 800;">___</span>
+                </p>
+            </div>
+            <div id="optionBtns" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                <button onclick="pickWord(this,'mat','95%')" style="background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;padding:12px 22px;border-radius:12px;cursor:pointer;font-family:Nunito;font-weight:700;font-size:1em;">mat (95%)</button>
+                <button onclick="pickWord(this,'table','3%')" style="background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;padding:12px 22px;border-radius:12px;cursor:pointer;font-family:Nunito;font-weight:700;font-size:1em;">table (3%)</button>
+                <button onclick="pickWord(this,'moon','1%')" style="background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;padding:12px 22px;border-radius:12px;cursor:pointer;font-family:Nunito;font-weight:700;font-size:1em;">moon (1%)</button>
+                <button onclick="pickWord(this,'dinosaur','0.01%')" style="background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;padding:12px 22px;border-radius:12px;cursor:pointer;font-family:Nunito;font-weight:700;font-size:1em;">dinosaur (0.01%)</button>
+            </div>
+            <p id="pickResult" style="margin-top:12px;font-weight:700;color:#166534;display:none;"></p>
+        </div>
+        <script>
+        function pickWord(btn, word, prob) {
+            document.getElementById('predictionSpan').textContent = word;
+            document.getElementById('pickResult').style.display = 'block';
+            document.getElementById('pickResult').textContent = 'You picked "' + word + '" (probability: ' + prob + '). An LLM computes these probabilities for EVERY word in its vocabulary (50,000+ words) and picks the best one!';
+            document.querySelectorAll('#optionBtns button').forEach(function(b){ b.style.opacity = '0.5'; b.style.pointerEvents = 'none'; });
+            btn.style.opacity = '1';
+            btn.style.background = '#dcfce7';
+            btn.style.borderColor = '#22c55e';
+            btn.style.color = '#166534';
+        }
+        </script>
+
+        <div class="key-point">
+            <h4>💡 The Key Insight</h4>
+            <ul>
+                <li><strong>LLM = next-word prediction machine.</strong> It predicts one word, then uses that to predict the next, over and over.</li>
+                <li>It doesn't "understand" the way humans do. It has learned <strong>statistical patterns</strong> from enormous amounts of text.</li>
+                <li>The "Large" in LLM means billions of parameters (knobs the model tunes during training).</li>
+                <li>GPT-4 has ~1.8 trillion parameters. GPT-3 had 175 billion. Your brain has ~100 trillion synapses.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Part 2: History -->
+    <div class="section" id="history">
+        <h2><i class="fas fa-history"></i> Part 2: How We Got Here (A Brief History)</h2>
+
+        <p>LLMs didn't appear overnight. Here's the journey from counting word pairs to ChatGPT:</p>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <span class="year">1950s-2000s</span>
+                <h5>N-grams: Count Word Pairs</h5>
+                <p>"After seeing 'ice' followed by 'cream' 10,000 times, the next word after 'ice' is probably 'cream'." Simple counting. Works for 2-3 words but fails for long sentences.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="year">2013</span>
+                <h5>Word2Vec: Words Become Numbers</h5>
+                <p>Breakthrough: represent words as vectors (lists of numbers) where similar words are close together. "King" - "Man" + "Woman" = "Queen". Words finally have mathematical meaning!</p>
+            </div>
+            <div class="timeline-item">
+                <span class="year">2014-2017</span>
+                <h5>RNNs &amp; LSTMs: Reading One Word at a Time</h5>
+                <p>Neural networks that process text sequentially (word by word). Good for short text, but they forget the beginning by the time they reach the end of a long document. Like reading a book one word at a time through a keyhole.</p>
+            </div>
+            <div class="timeline-item" style="border-color: #f59e0b;">
+                <span class="year">2017 ⚡</span>
+                <h5>"Attention Is All You Need" — The Transformer</h5>
+                <p>Google researchers published the paper that changed everything. The Transformer architecture can look at ALL words simultaneously (not one by one). Massively parallelizable. This is the foundation of every modern LLM.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="year">2018</span>
+                <h5>BERT &amp; GPT-1: Pre-training on Huge Text</h5>
+                <p>Google's BERT and OpenAI's GPT-1 showed that pre-training on massive text, then fine-tuning for specific tasks, works incredibly well. GPT-1 had 117 million parameters.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="year">2020</span>
+                <h5>GPT-3: 175 Billion Parameters</h5>
+                <p>OpenAI scaled up to 175B parameters. GPT-3 could write essays, code, translate, and answer questions without any task-specific training. The era of "few-shot learning" began.</p>
+            </div>
+            <div class="timeline-item" style="border-color: #22c55e;">
+                <span class="year">2022-Present</span>
+                <h5>ChatGPT, GPT-4, Claude, LLaMA, Gemini</h5>
+                <p>RLHF (learning from human feedback) made models helpful and conversational. Open-source models (LLaMA, Mistral) democratized access. Now anyone can fine-tune an LLM on their laptop!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Part 3: The LLM Landscape -->
+    <div class="section" id="landscape">
+        <h2><i class="fas fa-globe"></i> Part 3: The LLM Landscape Today</h2>
+
+        <p>Here are the major players. Think of it like the smartphone market — a few big companies, each with their own approach:</p>
+
+        <div class="model-grid">
+            <div class="model-card">
+                <div class="model-emoji">🟢</div>
+                <h5>GPT-4 / GPT-4o</h5>
+                <p>OpenAI. The one that started the revolution. Closed-source. Powers ChatGPT.</p>
+            </div>
+            <div class="model-card">
+                <div class="model-emoji">🟣</div>
+                <h5>Claude</h5>
+                <p>Anthropic. Known for being helpful and safe. Long context windows.</p>
+            </div>
+            <div class="model-card">
+                <div class="model-emoji">🔵</div>
+                <h5>Gemini</h5>
+                <p>Google DeepMind. Multimodal (text + images + video). Powers Google products.</p>
+            </div>
+            <div class="model-card">
+                <div class="model-emoji">🦙</div>
+                <h5>LLaMA</h5>
+                <p>Meta. Open-source! Anyone can download and use it. Community favorite.</p>
+            </div>
+            <div class="model-card">
+                <div class="model-emoji">🌊</div>
+                <h5>Mistral / Mixtral</h5>
+                <p>Mistral AI (France). Open-source. Amazingly efficient for its size.</p>
+            </div>
+            <div class="model-card">
+                <div class="model-emoji">🔶</div>
+                <h5>DeepSeek</h5>
+                <p>DeepSeek (China). Open-source. Great for code and reasoning. Very efficient.</p>
+            </div>
+        </div>
+
+        <div class="key-point">
+            <h4>Open Source vs Closed Source</h4>
+            <ul>
+                <li><strong>Closed-source</strong> (GPT-4, Claude, Gemini): You access via API. Can't see the code or weights. The company controls everything.</li>
+                <li><strong>Open-source</strong> (LLaMA, Mistral, DeepSeek): You can download the model, see the code, fine-tune it, run it on your own hardware. This is what we'll use in this course!</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Part 4: How Does ChatGPT Actually Work -->
+    <div class="section" id="how">
+        <h2><i class="fas fa-magic"></i> Part 4: How Does ChatGPT Actually Work? (ELI5)</h2>
+
+        <p>Let's walk through what happens from the moment you type a question to the moment you see an answer. No jargon, just plain English:</p>
+
+        <div class="visual">
+            <h4>The Journey of Your Prompt Through an LLM</h4>
+            <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+                <rect width="700" height="420" rx="16" fill="#faf5ff"/>
+
+                <!-- Step 1: You type -->
+                <rect x="20" y="30" width="130" height="70" rx="14" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                <text x="85" y="60" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="800" font-family="Nunito">YOU TYPE</text>
+                <text x="85" y="80" text-anchor="middle" fill="#1e40af" font-size="10" font-family="Nunito">"What is DNA?"</text>
+
+                <!-- Arrow -->
+                <path d="M155 65 L185 65" stroke="#6d28d9" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+                <defs><marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#6d28d9"/></marker></defs>
+
+                <!-- Step 2: Tokenize -->
+                <rect x="190" y="30" width="130" height="70" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="255" y="55" text-anchor="middle" fill="#92400e" font-size="11" font-weight="800" font-family="Nunito">TOKENIZE</text>
+                <text x="255" y="75" text-anchor="middle" fill="#92400e" font-size="9" font-family="Nunito">["What","is","D","NA","?"]</text>
+                <text x="255" y="90" text-anchor="middle" fill="#b45309" font-size="8" font-family="Nunito">→ [2061, 318, 35, 4535, 30]</text>
+
+                <path d="M325 65 L355 65" stroke="#6d28d9" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+
+                <!-- Step 3: Embed -->
+                <rect x="360" y="30" width="130" height="70" rx="14" fill="#f3e8ff" stroke="#8b5cf6" stroke-width="2"/>
+                <text x="425" y="55" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="800" font-family="Nunito">EMBED</text>
+                <text x="425" y="75" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">Numbers → Vectors</text>
+                <text x="425" y="90" text-anchor="middle" fill="#7c3aed" font-size="8" font-family="Nunito">[0.12, -0.34, 0.87, ...]</text>
+
+                <path d="M495 65 L525 65" stroke="#6d28d9" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+
+                <!-- Step 4: Transformer -->
+                <rect x="530" y="15" width="150" height="100" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="2.5"/>
+                <text x="605" y="42" text-anchor="middle" fill="#4c1d95" font-size="12" font-weight="900" font-family="Nunito">TRANSFORMER</text>
+                <text x="605" y="60" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">96 layers of</text>
+                <text x="605" y="75" text-anchor="middle" fill="#5b21b6" font-size="9" font-family="Nunito">Attention + FFN</text>
+                <text x="605" y="95" text-anchor="middle" fill="#7c3aed" font-size="8" font-family="Nunito">(This is where the magic happens!)</text>
+
+                <!-- Arrow down -->
+                <path d="M605 120 L605 160" stroke="#6d28d9" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+
+                <!-- Step 5: Predict -->
+                <rect x="530" y="165" width="150" height="70" rx="14" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+                <text x="605" y="195" text-anchor="middle" fill="#166534" font-size="11" font-weight="800" font-family="Nunito">PREDICT NEXT</text>
+                <text x="605" y="215" text-anchor="middle" fill="#166534" font-size="10" font-family="Nunito">"DNA" → "is" (97%)</text>
+
+                <!-- Arrow left -->
+                <path d="M525 200 L155 200" stroke="#22c55e" stroke-width="2" fill="none" stroke-dasharray="6,4"/>
+
+                <!-- Step 6: Loop -->
+                <rect x="20" y="170" width="130" height="60" rx="14" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+                <text x="85" y="195" text-anchor="middle" fill="#166534" font-size="10" font-weight="700" font-family="Nunito">REPEAT 100s of times</text>
+                <text x="85" y="215" text-anchor="middle" fill="#15803d" font-size="9" font-family="Nunito">one word at a time!</text>
+
+                <!-- Arrow down -->
+                <path d="M85 235 L85 270" stroke="#6d28d9" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+
+                <!-- Final output -->
+                <rect x="20" y="275" width="660" height="80" rx="14" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+                <text x="350" y="300" text-anchor="middle" fill="#5b21b6" font-size="12" font-weight="800" font-family="Nunito">FINAL OUTPUT (built word by word):</text>
+                <text x="350" y="325" text-anchor="middle" fill="#334155" font-size="11" font-family="Nunito">"DNA is a molecule that carries the genetic instructions for life. It stands for</text>
+                <text x="350" y="345" text-anchor="middle" fill="#334155" font-size="11" font-family="Nunito">deoxyribonucleic acid and is found in every cell of your body..."</text>
+
+                <!-- Loop arrow annotation -->
+                <text x="350" y="260" text-anchor="middle" fill="#6d28d9" font-size="9" font-weight="700" font-family="Nunito">Each predicted word becomes part of the input for the NEXT prediction</text>
+
+                <!-- Size annotation -->
+                <rect x="20" y="375" width="660" height="35" rx="10" fill="#fef9c3"/>
+                <text x="350" y="397" text-anchor="middle" fill="#92400e" font-size="10" font-weight="700" font-family="Nunito">GPT-4 does this across 96 Transformer layers, with 1.8 TRILLION parameters, in milliseconds. That's the "Large" in LLM!</text>
+            </svg>
+        </div>
+
+        <div class="eli5">
+            <h4>🧩 The 6-Step Summary</h4>
+            <p><strong>1. You type</strong> a question ("What is DNA?")</p>
+            <p><strong>2. Tokenize</strong> — Your text is split into tokens (small pieces) and converted to numbers</p>
+            <p><strong>3. Embed</strong> — Each number becomes a rich vector (a list of 4,096+ numbers capturing meaning)</p>
+            <p><strong>4. Transform</strong> — The vectors pass through dozens of Transformer layers. Each layer uses <strong>Attention</strong> to figure out how every word relates to every other word</p>
+            <p><strong>5. Predict</strong> — The model outputs a probability for every possible next word and picks the best one</p>
+            <p><strong>6. Repeat</strong> — The predicted word is added to the input, and steps 2-5 repeat until the answer is complete</p>
+        </div>
+
+        <div class="key-point">
+            <h4>🎓 What You'll Build in This Course</h4>
+            <ul>
+                <li><strong>Module 2:</strong> Build step 2 (Tokenizer) from scratch</li>
+                <li><strong>Module 3:</strong> Understand the neural network behind steps 3-5</li>
+                <li><strong>Module 4:</strong> Build the Attention mechanism (the core of step 4)</li>
+                <li><strong>Module 5:</strong> Build the complete Transformer architecture</li>
+                <li><strong>Module 6:</strong> Train it on real text and generate your own completions!</li>
+                <li><strong>Module 7-8:</strong> Fine-tune, optimize, and deploy</li>
+                <li><strong>Module 9:</strong> Combine everything into a working mini-ChatGPT!</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="index.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="text-to-numbers.html" class="nav-btn next">Next: Text to Numbers <i class="fas fa-arrow-right"></i></a>
+    </div>
+</div>
+</body>
+</html>

@@ -244,6 +244,64 @@ Output: 0 (No heart disease) or 1 (Yes)
                 <p>Output > 0.5 → Predict "Yes" (1)</p>
                 <p>Output ≤ 0.5 → Predict "No" (0)</p>
             </div>
+
+            <!-- INTERACTIVE: Sigmoid Curve & Threshold -->
+            <div style="background:rgba(255,255,255,0.7); backdrop-filter:blur(12px); border:2px solid #fecaca; border-radius:22px; padding:28px; margin:25px 0; text-align:center;">
+                <h4 style="color:#b91c1c; margin-bottom:8px; font-size:1.15em;">🎮 Interactive: The Sigmoid Curve &amp; Decision Threshold</h4>
+                <p style="color:#334155; font-size:0.95em; margin-bottom:15px;">The S-curve converts any number into a probability (0 to 1). Drag the <strong>threshold slider</strong> to see how changing the cutoff affects predictions!</p>
+                <svg id="sigmoidSvg" viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="background:white;border-radius:16px;border:1px solid #fecaca;max-width:100%;">
+                    <!-- Axes -->
+                    <line x1="50" y1="270" x2="470" y2="270" stroke="#94a3b8" stroke-width="1.5"/>
+                    <line x1="50" y1="270" x2="50" y2="20" stroke="#94a3b8" stroke-width="1.5"/>
+                    <text x="260" y="298" text-anchor="middle" fill="#334155" font-size="11" font-weight="700" font-family="Nunito">Input (z) →</text>
+                    <text x="20" y="145" text-anchor="middle" fill="#334155" font-size="11" font-weight="700" font-family="Nunito" transform="rotate(-90,20,145)">Probability →</text>
+                    <!-- Grid lines -->
+                    <line x1="50" y1="145" x2="470" y2="145" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+                    <text x="38" y="149" fill="#64748b" font-size="9" font-family="Nunito">0.5</text>
+                    <text x="38" y="24" fill="#64748b" font-size="9" font-family="Nunito">1.0</text>
+                    <text x="38" y="274" fill="#64748b" font-size="9" font-family="Nunito">0.0</text>
+                    <!-- Sigmoid curve -->
+                    <path d="M50,265 C80,265 100,262 130,258 C160,250 190,230 220,200 C240,175 255,150 260,145 C265,140 280,115 300,90 C330,60 360,40 390,30 C410,24 440,22 470,20" fill="none" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Threshold line -->
+                    <line id="threshLine" x1="50" y1="145" x2="470" y2="145" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6,4"/>
+                    <!-- Shaded regions -->
+                    <rect id="yesRegion" x="260" y="20" width="210" height="125" fill="#dcfce7" opacity="0.4" rx="4"/>
+                    <rect id="noRegion" x="50" y="145" width="210" height="125" fill="#fee2e2" opacity="0.4" rx="4"/>
+                    <!-- Labels -->
+                    <text x="365" y="80" text-anchor="middle" fill="#166534" font-size="13" font-weight="800" font-family="Nunito">Predict YES ✅</text>
+                    <text x="155" y="220" text-anchor="middle" fill="#b91c1c" font-size="13" font-weight="800" font-family="Nunito">Predict NO ❌</text>
+                    <!-- Threshold label -->
+                    <rect id="threshBg" x="170" y="128" width="160" height="24" rx="8" fill="#ede9fe"/>
+                    <text id="threshText" x="250" y="145" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="800" font-family="Nunito">Threshold = 0.50</text>
+                </svg>
+                <div style="display:flex;align-items:center;gap:15px;justify-content:center;margin-top:15px;flex-wrap:wrap;">
+                    <label style="color:#7f1d1d;font-weight:700;font-size:0.92em;">Low (0.2)</label>
+                    <input type="range" id="threshSlider" min="10" max="90" value="50" oninput="updateThresh(this.value)" style="-webkit-appearance:none;width:200px;height:6px;background:#fecaca;border-radius:3px;outline:none;">
+                    <label style="color:#7f1d1d;font-weight:700;font-size:0.92em;">High (0.9)</label>
+                    <span id="threshVal" style="background:#fee2e2;color:#991b1b;padding:4px 14px;border-radius:8px;font-weight:700;font-family:'Fira Code',monospace;">0.50</span>
+                </div>
+                <p style="font-size:0.85em;color:#475569;margin-top:8px;">Low threshold = more "Yes" predictions (catches more, but more false alarms). High threshold = fewer "Yes" predictions (misses some, but more precise).</p>
+            </div>
+            <script>
+            (function(){
+                function updateThresh(v) {
+                    var t = (parseInt(v) / 100).toFixed(2);
+                    document.getElementById('threshVal').textContent = t;
+                    document.getElementById('threshText').textContent = 'Threshold = ' + t;
+                    var yPos = 270 - (parseInt(v) / 100) * 250;
+                    document.getElementById('threshLine').setAttribute('y1', yPos);
+                    document.getElementById('threshLine').setAttribute('y2', yPos);
+                    document.getElementById('threshBg').setAttribute('y', yPos - 17);
+                    document.getElementById('threshText').setAttribute('y', yPos - 1);
+                    document.getElementById('yesRegion').setAttribute('y', 20);
+                    document.getElementById('yesRegion').setAttribute('height', yPos - 20);
+                    document.getElementById('noRegion').setAttribute('y', yPos);
+                    document.getElementById('noRegion').setAttribute('height', 270 - yPos);
+                }
+                window.updateThresh = updateThresh;
+                updateThresh(50);
+            })();
+            </script>
         </div>
 
         <!-- CHAPTER 2: THE DATASET -->

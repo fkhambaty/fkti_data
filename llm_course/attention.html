@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attention Mechanism | LLM Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #fff7ed 0%, #ffedd5 25%, #fef3c7 50%, #fff1f2 75%, #fff7ed 100%);
+            background-attachment: fixed;
+            min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(249,115,22,0.12); padding: 15px 30px; border-radius: 18px;
+            margin-bottom: 30px; box-shadow: 0 4px 24px rgba(249,115,22,0.06);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #c2410c; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #f97316, #ea580c, #c2410c);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(234,88,12,0.25);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .badge { background: #b45309; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px);
+            border: 1px solid rgba(249,115,22,0.1); border-radius: 28px;
+            padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(249,115,22,0.05);
+        }
+        .section h2 { color: #c2410c; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fed7aa; }
+        .section h3 { color: #9a3412; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #f97316; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5 {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px dashed #f59e0b;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5 h4 { color: #92400e; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5 p { color: #78350f; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy {
+            background: linear-gradient(135deg, #fff7ed, #ffedd5);
+            border-left: 5px solid #f97316; border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy h4 { color: #9a3412; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy p { color: #7c2d12; }
+        .key-point {
+            background: linear-gradient(135deg, #fff7ed, #ffedd5);
+            border-left: 5px solid #f97316; border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #9a3412; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #7c2d12; }
+        .key-point li { margin-bottom: 8px; }
+        .visual {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #fdba74; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .visual h4 { color: #c2410c; margin-bottom: 15px; }
+        .visual svg { max-width: 100%; height: auto; }
+        .code-block {
+            background: #1e293b; border-radius: 16px; padding: 25px; margin: 20px 0;
+            overflow-x: auto; position: relative;
+        }
+        .code-block pre {
+            font-family: 'Fira Code', monospace; font-size: 0.92em;
+            color: #e2e8f0; line-height: 1.8; margin: 0; white-space: pre;
+        }
+        .code-block .comment { color: #64748b; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .function { color: #7dd3fc; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .builtin { color: #f9a8d4; }
+        .code-block .label {
+            position: absolute; top: 10px; right: 14px;
+            background: rgba(255,255,255,0.08); color: #94a3b8;
+            padding: 2px 10px; border-radius: 8px; font-size: 0.78em;
+            font-family: 'Fira Code', monospace;
+        }
+        .playground {
+            background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid #fdba74; border-radius: 22px; padding: 30px; margin: 30px 0; text-align: center;
+        }
+        .playground h4 { color: #c2410c; margin-bottom: 8px; font-size: 1.15em; }
+        .playground p { color: #334155; font-size: 0.95em; margin-bottom: 15px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 700; transition: all .3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #f97316, #ea580c); color: white; box-shadow: 0 4px 20px rgba(234,88,12,0.25); }
+        .nav-btn:hover { transform: translateY(-3px); }
+        .formula { font-family: 'Fira Code', monospace; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; padding: 18px 24px; margin: 18px 0; font-size: 1.1em; color: #9a3412; text-align: center; font-weight: 600; }
+        .step-grid { display: grid; gap: 14px; margin: 20px 0; }
+        .step-card { background: #fff7ed; border-radius: 14px; padding: 18px; border-left: 4px solid #f97316; }
+        .step-card strong { color: #c2410c; }
+        .heatmap-word {
+            display: inline-block; padding: 6px 14px; margin: 4px; border-radius: 10px;
+            cursor: pointer; font-weight: 700; border: 2px solid #fed7aa; background: white;
+            transition: all 0.3s; user-select: none;
+        }
+        .heatmap-word:hover { border-color: #f97316; }
+        .heatmap-target { display: inline-block; padding: 6px 14px; margin: 4px; border-radius: 10px; font-weight: 600; transition: all 0.4s; background: #f1f5f9; }
+        .attn-bar { height: 6px; border-radius: 3px; background: #e2e8f0; margin-top: 4px; overflow: hidden; }
+        .attn-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #f97316, #ea580c); transition: width 0.5s; width: 0; }
+        .toggle-btn {
+            padding: 10px 22px; border-radius: 12px; border: 2px solid #f97316; background: white;
+            color: #c2410c; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-size: 0.95em; transition: all 0.3s;
+        }
+        .toggle-btn:hover, .toggle-btn.active { background: #f97316; color: white; }
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 18px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+    </nav>
+
+    <div class="header">
+        <span class="badge">Module 4 — Core Mechanism</span>
+        <h1><i class="fas fa-bullseye"></i> The Attention Mechanism</h1>
+        <p>The single most important idea behind modern LLMs. Learn how models decide what to focus on — with analogies, math, and code.</p>
+    </div>
+
+    <!-- ========== PART 1: Why Attention? ========== -->
+    <div class="section" id="why">
+        <h2><i class="fas fa-eye"></i> Why Attention?</h2>
+        <p>Before Attention was invented, sequence models (RNNs) had a serious flaw: they <strong>forgot things</strong>. The longer the sentence, the worse they performed.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>Imagine reading a whole book, but you can only remember the <strong>last sentence</strong> you read. That's an RNN. Now imagine you can flip back to <em>any page</em> whenever you need to — that's Attention!</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-lightbulb"></i> The Keyhole Analogy</h4>
+            <p>An RNN looks at a whole room through a <strong>tiny keyhole</strong> — it only sees what's directly in front. Attention gives you a <strong>wide-open door</strong>: you can see the entire room at once and choose where to look.</p>
+        </div>
+
+        <div class="visual">
+            <h4>RNN vs Attention — How Information Flows</h4>
+            <svg viewBox="0 0 780 200" xmlns="http://www.w3.org/2000/svg">
+                <text x="195" y="20" text-anchor="middle" font-size="14" font-weight="800" fill="#c2410c">RNN (Serial Bottleneck)</text>
+                <g transform="translate(30,40)">
+                    <rect x="0" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="30" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">The</text>
+                    <rect x="90" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="120" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">cat</text>
+                    <rect x="180" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="210" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">sat</text>
+                    <rect x="270" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="300" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">down</text>
+                    <line x1="60" y1="50" x2="90" y2="50" stroke="#ea580c" stroke-width="2" marker-end="url(#arrowO)"/>
+                    <line x1="150" y1="50" x2="180" y2="50" stroke="#ea580c" stroke-width="2" marker-end="url(#arrowO)"/>
+                    <line x1="240" y1="50" x2="270" y2="50" stroke="#ea580c" stroke-width="2" marker-end="url(#arrowO)"/>
+                    <text x="30" y="105" font-size="10" fill="#ea580c" font-weight="600">100%</text>
+                    <text x="120" y="105" font-size="10" fill="#ea580c" font-weight="600">70%</text>
+                    <text x="210" y="105" font-size="10" fill="#ea580c" font-weight="600">30%</text>
+                    <text x="300" y="105" font-size="10" fill="#ea580c" font-weight="600">10%</text>
+                    <rect x="10" y="112" width="50" height="6" rx="3" fill="#e2e8f0"/><rect x="10" y="112" width="50" height="6" rx="3" fill="#f97316"/>
+                    <rect x="100" y="112" width="50" height="6" rx="3" fill="#e2e8f0"/><rect x="100" y="112" width="35" height="6" rx="3" fill="#f97316"/>
+                    <rect x="190" y="112" width="50" height="6" rx="3" fill="#e2e8f0"/><rect x="190" y="112" width="15" height="6" rx="3" fill="#f97316"/>
+                    <rect x="280" y="112" width="50" height="6" rx="3" fill="#e2e8f0"/><rect x="280" y="112" width="5" height="6" rx="3" fill="#f97316"/>
+                    <text x="165" y="145" text-anchor="middle" font-size="11" fill="#78350f" font-style="italic">Memory fades over time →</text>
+                </g>
+                <line x1="395" y1="30" x2="395" y2="180" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6"/>
+                <text x="590" y="20" text-anchor="middle" font-size="14" font-weight="800" fill="#c2410c">Attention (Direct Access)</text>
+                <g transform="translate(420,40)">
+                    <rect x="0" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="30" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">The</text>
+                    <rect x="90" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="120" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">cat</text>
+                    <rect x="180" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="210" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">sat</text>
+                    <rect x="270" y="30" width="60" height="40" rx="8" fill="#fed7aa" stroke="#f97316" stroke-width="2"/><text x="300" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#9a3412">down</text>
+                    <rect x="135" y="100" width="60" height="35" rx="8" fill="#f97316" stroke="#c2410c" stroke-width="2"/><text x="165" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="white">Focus</text>
+                    <line x1="30" y1="70" x2="155" y2="100" stroke="#f97316" stroke-width="2" opacity="0.4"/>
+                    <line x1="120" y1="70" x2="160" y2="100" stroke="#f97316" stroke-width="3" opacity="0.9"/>
+                    <line x1="210" y1="70" x2="170" y2="100" stroke="#f97316" stroke-width="2" opacity="0.6"/>
+                    <line x1="300" y1="70" x2="175" y2="100" stroke="#f97316" stroke-width="1.5" opacity="0.3"/>
+                    <text x="165" y="155" text-anchor="middle" font-size="11" fill="#78350f" font-style="italic">Every word accessible at once!</text>
+                </g>
+                <defs><marker id="arrowO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/></marker></defs>
+            </svg>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> Key Takeaway</h4>
+            <ul>
+                <li>RNNs process words <strong>one-by-one</strong> — early words get "washed out"</li>
+                <li>Attention lets the model look at <strong>all words simultaneously</strong></li>
+                <li>This is why Transformers (which use Attention) dominate NLP</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 2: Query, Key, Value ========== -->
+    <div class="section" id="qkv">
+        <h2><i class="fas fa-key"></i> Query, Key, Value</h2>
+        <p>Attention works through three vectors for every word: a <strong>Query</strong>, a <strong>Key</strong>, and a <strong>Value</strong>. Together they answer: "How much should I pay attention to each other word?"</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>You walk into a library with a question (<strong>Query</strong>). Every book has a title (<strong>Key</strong>). You compare your question to each title — the better the match, the more you read that book's contents (<strong>Value</strong>).</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-book"></i> Library Analogy — Step by Step</h4>
+            <p><strong>Query</strong> = "I want to learn about cats" (your question)</p>
+            <p><strong>Keys</strong> = ["Animal Behavior", "Quantum Physics", "Cat Care Guide"] (book titles)</p>
+            <p><strong>Values</strong> = [actual content of each book]</p>
+            <p>Your query matches "Cat Care Guide" best → you read mostly <em>that</em> book's content.</p>
+        </div>
+
+        <div class="visual">
+            <h4>How Q, K, V Work Together</h4>
+            <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="80" width="100" height="50" rx="12" fill="#f97316"/><text x="70" y="110" text-anchor="middle" font-size="13" font-weight="800" fill="white">Query (Q)</text>
+                <text x="70" y="145" text-anchor="middle" font-size="10" fill="#9a3412">"What am I looking for?"</text>
+                <rect x="200" y="20" width="100" height="40" rx="10" fill="#fb923c"/><text x="250" y="45" text-anchor="middle" font-size="12" font-weight="700" fill="white">Key 1</text>
+                <rect x="200" y="75" width="100" height="40" rx="10" fill="#fb923c"/><text x="250" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="white">Key 2</text>
+                <rect x="200" y="130" width="100" height="40" rx="10" fill="#fb923c"/><text x="250" y="155" text-anchor="middle" font-size="12" font-weight="700" fill="white">Key 3</text>
+                <line x1="120" y1="100" x2="200" y2="40" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+                <line x1="120" y1="105" x2="200" y2="95" stroke="#f97316" stroke-width="3" opacity="1"/>
+                <line x1="120" y1="110" x2="200" y2="150" stroke="#f97316" stroke-width="1.5" opacity="0.4"/>
+                <g transform="translate(340,15)">
+                    <text x="30" y="12" font-size="11" font-weight="700" fill="#c2410c">Scores</text>
+                    <rect x="0" y="20" width="60" height="22" rx="6" fill="#fff7ed" stroke="#fed7aa"/><text x="30" y="35" text-anchor="middle" font-size="11" font-weight="600" fill="#9a3412">0.1</text>
+                    <rect x="0" y="55" width="60" height="22" rx="6" fill="#f97316"/><text x="30" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="white">0.7</text>
+                    <rect x="0" y="90" width="60" height="22" rx="6" fill="#fff7ed" stroke="#fed7aa"/><text x="30" y="105" text-anchor="middle" font-size="11" font-weight="600" fill="#9a3412">0.2</text>
+                    <text x="30" y="135" text-anchor="middle" font-size="10" fill="#78350f">softmax →</text>
+                </g>
+                <rect x="460" y="20" width="100" height="40" rx="10" fill="#fdba74"/><text x="510" y="45" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">Value 1</text>
+                <rect x="460" y="75" width="100" height="40" rx="10" fill="#fdba74"/><text x="510" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">Value 2</text>
+                <rect x="460" y="130" width="100" height="40" rx="10" fill="#fdba74"/><text x="510" y="155" text-anchor="middle" font-size="12" font-weight="700" fill="#7c2d12">Value 3</text>
+                <line x1="400" y1="67" x2="460" y2="40" stroke="#ea580c" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="400" y1="67" x2="460" y2="95" stroke="#ea580c" stroke-width="2.5"/>
+                <line x1="400" y1="67" x2="460" y2="150" stroke="#ea580c" stroke-width="1" stroke-dasharray="4"/>
+                <rect x="600" y="70" width="90" height="50" rx="12" fill="#c2410c"/><text x="645" y="92" text-anchor="middle" font-size="11" font-weight="800" fill="white">Weighted</text><text x="645" y="108" text-anchor="middle" font-size="11" font-weight="800" fill="white">Sum</text>
+                <line x1="560" y1="95" x2="600" y2="95" stroke="#c2410c" stroke-width="2" marker-end="url(#arrowO)"/>
+                <text x="350" y="210" text-anchor="middle" font-size="12" fill="#9a3412" font-weight="600">Q matches K → scores → weight V → output</text>
+            </svg>
+        </div>
+
+        <!-- Interactive: Attention Heatmap -->
+        <div class="playground" id="qkv-playground">
+            <h4><i class="fas fa-hand-pointer"></i> Interactive: Click a word to see its attention</h4>
+            <p>Click any word in the sentence to see which other words it attends to most.</p>
+            <div style="margin: 15px 0;">
+                <span class="heatmap-word" onclick="showAttn(0)">The</span>
+                <span class="heatmap-word" onclick="showAttn(1)">cat</span>
+                <span class="heatmap-word" onclick="showAttn(2)">sat</span>
+                <span class="heatmap-word" onclick="showAttn(3)">on</span>
+                <span class="heatmap-word" onclick="showAttn(4)">the</span>
+                <span class="heatmap-word" onclick="showAttn(5)">mat</span>
+            </div>
+            <div id="attn-result" style="margin-top: 15px; min-height: 90px;"></div>
+        </div>
+    </div>
+
+    <!-- ========== PART 3: Scaled Dot-Product ========== -->
+    <div class="section" id="scaled">
+        <h2><i class="fas fa-calculator"></i> Scaled Dot-Product Attention</h2>
+        <p>Now let's see the actual math. The formula is surprisingly elegant:</p>
+
+        <div class="formula">Attention(Q, K, V) = softmax( Q · K<sup>T</sup> / √d<sub>k</sub> ) × V</div>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>Multiply Q and K to get "how similar are these?" scores. Divide by √d<sub>k</sub> so numbers don't get too big. Run softmax to turn scores into percentages. Multiply by V to get the final answer.</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-thermometer-half"></i> Temperature Analogy</h4>
+            <p>The √d<sub>k</sub> division is like adjusting a thermostat. Without it, dot products get <strong>very large</strong> in high dimensions, making softmax "too confident" — it would pick one word and ignore everything else. Scaling keeps the temperature comfortable.</p>
+        </div>
+
+        <h3>Numerical Example (3×3)</h3>
+        <div class="step-grid">
+            <div class="step-card">
+                <strong>Step 1 — Compute Q · K<sup>T</sup></strong><br>
+                Q = [[1,0,1],[0,1,1],[1,1,0]], K = [[1,1,0],[0,1,1],[1,0,1]]<br>
+                Scores = [[2,1,2],[1,2,1],[1,2,1]]
+            </div>
+            <div class="step-card">
+                <strong>Step 2 — Scale by √d<sub>k</sub></strong> (d<sub>k</sub> = 3, √3 ≈ 1.73)<br>
+                Scaled = [[1.15, 0.58, 1.15],[0.58, 1.15, 0.58],[0.58, 1.15, 0.58]]
+            </div>
+            <div class="step-card">
+                <strong>Step 3 — Softmax (row-wise)</strong><br>
+                Row 1: [0.39, 0.22, 0.39] &nbsp; Row 2: [0.22, 0.39, 0.22] (sums ~1.0 ✓)
+            </div>
+            <div class="step-card">
+                <strong>Step 4 — Multiply by V</strong><br>
+                Output = softmax_weights × V → weighted combination of value vectors
+            </div>
+        </div>
+
+        <div class="visual">
+            <h4>Matrix Multiplication as Colored Grids</h4>
+            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+                <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="800" fill="#c2410c">Q</text>
+                <g transform="translate(20,25)">
+                    <rect x="0" y="0" width="33" height="25" fill="#fed7aa" stroke="#f97316" rx="3"/><text x="16" y="17" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="33" y="0" width="33" height="25" fill="#fff7ed" stroke="#f97316" rx="3"/><text x="49" y="17" text-anchor="middle" font-size="10" fill="#7c2d12">0</text>
+                    <rect x="66" y="0" width="33" height="25" fill="#fed7aa" stroke="#f97316" rx="3"/><text x="82" y="17" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="0" y="25" width="33" height="25" fill="#fff7ed" stroke="#f97316" rx="3"/><text x="16" y="42" text-anchor="middle" font-size="10" fill="#7c2d12">0</text>
+                    <rect x="33" y="25" width="33" height="25" fill="#fed7aa" stroke="#f97316" rx="3"/><text x="49" y="42" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="66" y="25" width="33" height="25" fill="#fed7aa" stroke="#f97316" rx="3"/><text x="82" y="42" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="0" y="50" width="33" height="25" fill="#fed7aa" stroke="#f97316" rx="3"/><text x="16" y="67" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="33" y="50" width="33" height="25" fill="#fed7aa" stroke="#f97316" rx="3"/><text x="49" y="67" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="66" y="50" width="33" height="25" fill="#fff7ed" stroke="#f97316" rx="3"/><text x="82" y="67" text-anchor="middle" font-size="10" fill="#7c2d12">0</text>
+                </g>
+                <text x="155" y="65" font-size="22" font-weight="800" fill="#c2410c">×</text>
+                <text x="245" y="20" text-anchor="middle" font-size="13" font-weight="800" fill="#c2410c">K<tspan baseline-shift="super" font-size="9">T</tspan></text>
+                <g transform="translate(195,25)">
+                    <rect x="0" y="0" width="33" height="25" fill="#ffedd5" stroke="#ea580c" rx="3"/><text x="16" y="17" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="33" y="0" width="33" height="25" fill="#fff7ed" stroke="#ea580c" rx="3"/><text x="49" y="17" text-anchor="middle" font-size="10" fill="#7c2d12">0</text>
+                    <rect x="66" y="0" width="33" height="25" fill="#ffedd5" stroke="#ea580c" rx="3"/><text x="82" y="17" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="0" y="25" width="33" height="25" fill="#ffedd5" stroke="#ea580c" rx="3"/><text x="16" y="42" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="33" y="25" width="33" height="25" fill="#ffedd5" stroke="#ea580c" rx="3"/><text x="49" y="42" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="66" y="25" width="33" height="25" fill="#fff7ed" stroke="#ea580c" rx="3"/><text x="82" y="42" text-anchor="middle" font-size="10" fill="#7c2d12">0</text>
+                    <rect x="0" y="50" width="33" height="25" fill="#fff7ed" stroke="#ea580c" rx="3"/><text x="16" y="67" text-anchor="middle" font-size="10" fill="#7c2d12">0</text>
+                    <rect x="33" y="50" width="33" height="25" fill="#ffedd5" stroke="#ea580c" rx="3"/><text x="49" y="67" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                    <rect x="66" y="50" width="33" height="25" fill="#ffedd5" stroke="#ea580c" rx="3"/><text x="82" y="67" text-anchor="middle" font-size="10" fill="#7c2d12">1</text>
+                </g>
+                <text x="335" y="65" font-size="22" font-weight="800" fill="#c2410c">=</text>
+                <text x="425" y="20" text-anchor="middle" font-size="13" font-weight="800" fill="#c2410c">Scores</text>
+                <g transform="translate(375,25)">
+                    <rect x="0" y="0" width="33" height="25" fill="#f97316" rx="3"/><text x="16" y="17" text-anchor="middle" font-size="10" font-weight="700" fill="white">2</text>
+                    <rect x="33" y="0" width="33" height="25" fill="#fdba74" rx="3"/><text x="49" y="17" text-anchor="middle" font-size="10" font-weight="700" fill="#7c2d12">1</text>
+                    <rect x="66" y="0" width="33" height="25" fill="#f97316" rx="3"/><text x="82" y="17" text-anchor="middle" font-size="10" font-weight="700" fill="white">2</text>
+                    <rect x="0" y="25" width="33" height="25" fill="#fdba74" rx="3"/><text x="16" y="42" text-anchor="middle" font-size="10" font-weight="700" fill="#7c2d12">1</text>
+                    <rect x="33" y="25" width="33" height="25" fill="#f97316" rx="3"/><text x="49" y="42" text-anchor="middle" font-size="10" font-weight="700" fill="white">2</text>
+                    <rect x="66" y="25" width="33" height="25" fill="#fdba74" rx="3"/><text x="82" y="42" text-anchor="middle" font-size="10" font-weight="700" fill="#7c2d12">1</text>
+                    <rect x="0" y="50" width="33" height="25" fill="#fdba74" rx="3"/><text x="16" y="67" text-anchor="middle" font-size="10" font-weight="700" fill="#7c2d12">1</text>
+                    <rect x="33" y="50" width="33" height="25" fill="#f97316" rx="3"/><text x="49" y="67" text-anchor="middle" font-size="10" font-weight="700" fill="white">2</text>
+                    <rect x="66" y="50" width="33" height="25" fill="#fdba74" rx="3"/><text x="82" y="67" text-anchor="middle" font-size="10" font-weight="700" fill="#7c2d12">1</text>
+                </g>
+                <text x="510" y="65" font-size="16" font-weight="800" fill="#c2410c">÷ √3</text>
+                <text x="510" y="85" font-size="16" font-weight="800" fill="#c2410c">→ softmax</text>
+                <text x="510" y="105" font-size="16" font-weight="800" fill="#c2410c">→ × V</text>
+                <text x="350" y="130" text-anchor="middle" font-size="11" fill="#78350f" font-style="italic">Higher scores (darker) = stronger attention</text>
+            </svg>
+        </div>
+
+        <!-- Interactive: Scale Factor Explorer -->
+        <div class="playground" id="scale-playground">
+            <h4><i class="fas fa-sliders-h"></i> Interactive: Why √d<sub>k</sub> Matters</h4>
+            <p>See how scaling affects the softmax distribution. Raw scores: [2, 1, 2]</p>
+            <div style="display:flex; align-items:center; gap:14px; justify-content:center; flex-wrap:wrap; margin:12px 0;">
+                <label style="font-weight:700; color:#9a3412;">d<sub>k</sub> =</label>
+                <input type="range" id="dk-slider" min="1" max="512" value="3" style="-webkit-appearance:none; width:200px; height:8px; border-radius:4px; background:linear-gradient(90deg,#fed7aa,#f97316); outline:none;" oninput="updateScale()">
+                <span id="dk-val" style="font-family:'Fira Code',monospace; font-weight:700; color:#c2410c; min-width:50px;">3</span>
+            </div>
+            <div id="scale-result" style="font-family:'Fira Code',monospace; color:#334155; font-size:0.95em;"></div>
+        </div>
+    </div>
+
+    <!-- ========== PART 4: Multi-Head Attention ========== -->
+    <div class="section" id="multi">
+        <h2><i class="fas fa-users"></i> Multi-Head Attention</h2>
+        <p>One attention head finds one type of pattern. But language has many patterns simultaneously — syntax, semantics, coreference. The solution? Run <strong>multiple attention heads in parallel</strong>.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>Instead of sending <strong>one detective</strong> to investigate a crime scene, you send <strong>8 detectives</strong> — each looking for something different. One checks fingerprints, another interviews witnesses, another studies the floor. Then they all share their findings.</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-search"></i> 8 Detectives Analogy</h4>
+            <p><strong>Head 1</strong> might learn "which words are grammatically related." <strong>Head 2</strong> might learn "which words refer to the same entity." <strong>Head 3</strong> might learn "which words are nearby." Each head has its own Q, K, V projections — its own way of asking questions.</p>
+        </div>
+
+        <div class="visual">
+            <h4>Multi-Head: Parallel Attention Heads → Merge</h4>
+            <svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="80" width="80" height="45" rx="10" fill="#f97316"/><text x="50" y="107" text-anchor="middle" font-size="12" font-weight="800" fill="white">Input</text>
+                <g id="heads">
+                    <rect x="140" y="5" width="95" height="32" rx="8" fill="#c2410c"/><text x="187" y="25" text-anchor="middle" font-size="10" font-weight="700" fill="white">Head 1 (syntax)</text>
+                    <rect x="140" y="45" width="95" height="32" rx="8" fill="#ea580c"/><text x="187" y="65" text-anchor="middle" font-size="10" font-weight="700" fill="white">Head 2 (coref)</text>
+                    <rect x="140" y="85" width="95" height="32" rx="8" fill="#f97316"/><text x="187" y="105" text-anchor="middle" font-size="10" font-weight="700" fill="white">Head 3 (local)</text>
+                    <rect x="140" y="125" width="95" height="32" rx="8" fill="#fb923c"/><text x="187" y="145" text-anchor="middle" font-size="10" font-weight="700" fill="white">Head 4 (sem.)</text>
+                    <rect x="140" y="165" width="95" height="32" rx="8" fill="#fdba74"/><text x="187" y="185" text-anchor="middle" font-size="10" font-weight="700" fill="#7c2d12">... Head 8</text>
+                </g>
+                <line x1="90" y1="102" x2="140" y2="21" stroke="#f97316" stroke-width="1.5"/>
+                <line x1="90" y1="102" x2="140" y2="61" stroke="#f97316" stroke-width="1.5"/>
+                <line x1="90" y1="102" x2="140" y2="101" stroke="#f97316" stroke-width="1.5"/>
+                <line x1="90" y1="102" x2="140" y2="141" stroke="#f97316" stroke-width="1.5"/>
+                <line x1="90" y1="102" x2="140" y2="181" stroke="#f97316" stroke-width="1.5"/>
+                <rect x="290" y="65" width="80" height="70" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="2"/><text x="330" y="97" text-anchor="middle" font-size="11" font-weight="800" fill="#c2410c">Concat</text><text x="330" y="115" text-anchor="middle" font-size="10" fill="#9a3412">all heads</text>
+                <line x1="235" y1="21" x2="290" y2="90" stroke="#ea580c" stroke-width="1.5"/>
+                <line x1="235" y1="61" x2="290" y2="93" stroke="#ea580c" stroke-width="1.5"/>
+                <line x1="235" y1="101" x2="290" y2="98" stroke="#ea580c" stroke-width="1.5"/>
+                <line x1="235" y1="141" x2="290" y2="105" stroke="#ea580c" stroke-width="1.5"/>
+                <line x1="235" y1="181" x2="290" y2="110" stroke="#ea580c" stroke-width="1.5"/>
+                <rect x="420" y="72" width="90" height="50" rx="12" fill="#ea580c"/><text x="465" y="95" text-anchor="middle" font-size="11" font-weight="800" fill="white">Linear</text><text x="465" y="112" text-anchor="middle" font-size="11" font-weight="700" fill="#fed7aa">W<tspan baseline-shift="super" font-size="8">O</tspan></text>
+                <line x1="370" y1="100" x2="420" y2="97" stroke="#c2410c" stroke-width="2" marker-end="url(#arrowO)"/>
+                <rect x="560" y="75" width="90" height="45" rx="10" fill="#c2410c"/><text x="605" y="102" text-anchor="middle" font-size="12" font-weight="800" fill="white">Output</text>
+                <line x1="510" y1="97" x2="560" y2="97" stroke="#c2410c" stroke-width="2" marker-end="url(#arrowO)"/>
+            </svg>
+        </div>
+
+        <h3>PyTorch Implementation</h3>
+        <div class="code-block">
+            <span class="label">Python</span>
+            <pre><span class="keyword">import</span> torch
+<span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+
+<span class="keyword">class</span> <span class="function">MultiHeadAttention</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, d_model=<span class="number">512</span>, n_heads=<span class="number">8</span>):
+        <span class="builtin">super</span>().__init__()
+        self.n_heads, self.d_k = n_heads, d_model // n_heads
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+        self.W_o = nn.Linear(d_model, d_model)
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, Q, K, V):
+        B, L, _ = Q.shape
+        <span class="comment"># Project &amp; reshape to (B, heads, L, d_k)</span>
+        q = self.W_q(Q).view(B, L, self.n_heads, self.d_k).transpose(<span class="number">1</span>,<span class="number">2</span>)
+        k = self.W_k(K).view(B, L, self.n_heads, self.d_k).transpose(<span class="number">1</span>,<span class="number">2</span>)
+        v = self.W_v(V).view(B, L, self.n_heads, self.d_k).transpose(<span class="number">1</span>,<span class="number">2</span>)
+        <span class="comment"># Scaled dot-product attention</span>
+        scores = (q @ k.transpose(-<span class="number">2</span>,-<span class="number">1</span>)) / self.d_k**<span class="number">0.5</span>
+        attn = torch.softmax(scores, dim=-<span class="number">1</span>)
+        out = (attn @ v).transpose(<span class="number">1</span>,<span class="number">2</span>).contiguous().view(B, L, -<span class="number">1</span>)
+        <span class="keyword">return</span> self.W_o(out)</pre>
+        </div>
+    </div>
+
+    <!-- ========== PART 5: Self vs Cross Attention ========== -->
+    <div class="section" id="self">
+        <h2><i class="fas fa-arrows-alt-h"></i> Self-Attention vs Cross-Attention</h2>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p><strong>Self-attention</strong> = talking to yourself, "which of my own words relate to each other?"<br>
+            <strong>Cross-attention</strong> = asking someone else, "which of YOUR words help ME understand?"</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-comments"></i> Conversation Analogy</h4>
+            <p><strong>Self-attention</strong> is like re-reading your own essay to find connections between paragraphs. <strong>Cross-attention</strong> is like reading someone else's notes while writing your essay — Q comes from you, but K and V come from them.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:20px 0;">
+            <div style="background:#fff7ed; border:2px solid #f97316; border-radius:16px; padding:20px; text-align:center;">
+                <h4 style="color:#c2410c; margin-bottom:10px;"><i class="fas fa-user"></i> Self-Attention</h4>
+                <p style="font-size:0.95em; color:#7c2d12;">Q, K, V all come from the <strong>same</strong> sequence</p>
+                <p style="font-size:0.85em; color:#9a3412; margin:0;">Used in: encoder, decoder (masked)</p>
+            </div>
+            <div style="background:#fff7ed; border:2px solid #ea580c; border-radius:16px; padding:20px; text-align:center;">
+                <h4 style="color:#c2410c; margin-bottom:10px;"><i class="fas fa-exchange-alt"></i> Cross-Attention</h4>
+                <p style="font-size:0.95em; color:#7c2d12;">Q from one sequence, K & V from <strong>another</strong></p>
+                <p style="font-size:0.85em; color:#9a3412; margin:0;">Used in: decoder attending to encoder</p>
+            </div>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> When Is Each Used?</h4>
+            <ul>
+                <li><strong>GPT</strong> (decoder-only): uses <em>masked self-attention</em> — each token can only see tokens before it</li>
+                <li><strong>BERT</strong> (encoder-only): uses <em>bidirectional self-attention</em> — sees all tokens</li>
+                <li><strong>T5 / translation models</strong>: uses <em>both</em> — self-attention in encoder & decoder, plus cross-attention between them</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 6: Complete Code ========== -->
+    <div class="section" id="code">
+        <h2><i class="fas fa-code"></i> Complete Code</h2>
+        <p>Here's a full working implementation of scaled dot-product attention with a test you can run.</p>
+
+        <div class="eli5">
+            <h4><i class="fas fa-child"></i> ELI5</h4>
+            <p>We're building the attention mechanism from scratch — first the basic function, then wrapping it in a class, then running it on fake data to see it actually work.</p>
+        </div>
+
+        <div class="analogy">
+            <h4><i class="fas fa-wrench"></i> Assembly Analogy</h4>
+            <p>Think of it like building a car engine: first we build one piston (single-head attention), then put 8 pistons together (multi-head), then start the engine (test with sample data).</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python — Full Implementation</span>
+            <pre><span class="keyword">import</span> torch, torch.nn <span class="keyword">as</span> nn, math
+
+<span class="keyword">def</span> <span class="function">scaled_dot_product_attention</span>(Q, K, V, mask=<span class="keyword">None</span>):
+    d_k = Q.size(-<span class="number">1</span>)
+    scores = (Q @ K.transpose(-<span class="number">2</span>, -<span class="number">1</span>)) / math.sqrt(d_k)
+    <span class="keyword">if</span> mask <span class="keyword">is not None</span>:
+        scores = scores.masked_fill(mask == <span class="number">0</span>, <span class="number">-1e9</span>)
+    weights = torch.softmax(scores, dim=-<span class="number">1</span>)
+    <span class="keyword">return</span> weights @ V, weights
+
+<span class="keyword">class</span> <span class="function">MultiHeadAttention</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, d_model=<span class="number">64</span>, n_heads=<span class="number">4</span>):
+        <span class="builtin">super</span>().__init__()
+        self.n_heads, self.d_k = n_heads, d_model // n_heads
+        self.qkv = nn.Linear(d_model, <span class="number">3</span> * d_model)
+        self.out = nn.Linear(d_model, d_model)
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x, mask=<span class="keyword">None</span>):
+        B, L, D = x.shape
+        qkv = self.qkv(x).view(B, L, <span class="number">3</span>, self.n_heads, self.d_k)
+        qkv = qkv.permute(<span class="number">2</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">4</span>)
+        Q, K, V = qkv[<span class="number">0</span>], qkv[<span class="number">1</span>], qkv[<span class="number">2</span>]
+        attn_out, weights = scaled_dot_product_attention(Q, K, V, mask)
+        out = attn_out.transpose(<span class="number">1</span>,<span class="number">2</span>).contiguous().view(B, L, D)
+        <span class="keyword">return</span> self.out(out), weights
+
+<span class="comment"># --- Test it! ---</span>
+x = torch.randn(<span class="number">1</span>, <span class="number">6</span>, <span class="number">64</span>)  <span class="comment"># batch=1, seq_len=6, d_model=64</span>
+mha = MultiHeadAttention(d_model=<span class="number">64</span>, n_heads=<span class="number">4</span>)
+output, attn_weights = mha(x)
+<span class="builtin">print</span>(<span class="string">f"Input:   {x.shape}"</span>)
+<span class="builtin">print</span>(<span class="string">f"Output:  {output.shape}"</span>)
+<span class="builtin">print</span>(<span class="string">f"Weights: {attn_weights.shape}"</span>)
+<span class="builtin">print</span>(<span class="string">f"Attn weights (head 0, first token):"</span>)
+<span class="builtin">print</span>(attn_weights[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>].data.numpy().round(<span class="number">3</span>))</pre>
+        </div>
+
+        <!-- Interactive: Run attention on custom sentence -->
+        <div class="playground" id="code-playground">
+            <h4><i class="fas fa-play"></i> Interactive: Explore Attention Patterns</h4>
+            <p>Select a sentence pattern to see how attention weights differ.</p>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:15px;">
+                <button class="toggle-btn active" onclick="showPattern(0,this)">Simple Subject-Verb</button>
+                <button class="toggle-btn" onclick="showPattern(1,this)">Pronoun Reference</button>
+                <button class="toggle-btn" onclick="showPattern(2,this)">Long-Range Dependency</button>
+            </div>
+            <div id="pattern-display" style="font-family:'Fira Code',monospace; color:#334155; font-size:0.9em; text-align:left; max-width:600px; margin:0 auto;"></div>
+        </div>
+
+        <div class="key-point">
+            <h4><i class="fas fa-star"></i> What You've Learned</h4>
+            <ul>
+                <li><strong>Why attention</strong> — RNNs forget, attention remembers everything</li>
+                <li><strong>Q, K, V</strong> — the query/key/value framework for computing relevance</li>
+                <li><strong>Scaled dot-product</strong> — the math: softmax(QK<sup>T</sup>/√d<sub>k</sub>)V</li>
+                <li><strong>Multi-head</strong> — parallel heads capture different patterns</li>
+                <li><strong>Self vs cross</strong> — same-sequence vs cross-sequence attention</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="nn-refresher.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 3: Neural Networks</a>
+        <a href="transformer.html" class="nav-btn next">Module 5: Transformer <i class="fas fa-arrow-right"></i></a>
+    </div>
+</div>
+
+<script>
+const attnData = {
+    words: ['The','cat','sat','on','the','mat'],
+    weights: [
+        [0.05, 0.35, 0.20, 0.10, 0.05, 0.25],
+        [0.10, 0.15, 0.30, 0.05, 0.10, 0.30],
+        [0.08, 0.40, 0.10, 0.12, 0.05, 0.25],
+        [0.10, 0.15, 0.30, 0.05, 0.15, 0.25],
+        [0.05, 0.10, 0.15, 0.20, 0.05, 0.45],
+        [0.05, 0.30, 0.25, 0.15, 0.05, 0.20]
+    ]
+};
+
+function showAttn(idx) {
+    document.querySelectorAll('.heatmap-word').forEach((w,i) => {
+        w.style.background = i === idx ? '#f97316' : 'white';
+        w.style.color = i === idx ? 'white' : '#1e293b';
+    });
+    const w = attnData.weights[idx];
+    let html = '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">';
+    attnData.words.forEach((word,i) => {
+        const op = 0.15 + w[i] * 1.8;
+        const bg = `rgba(249,115,22,${Math.min(op,1).toFixed(2)})`;
+        const c = w[i] > 0.25 ? 'white' : '#7c2d12';
+        html += `<div style="text-align:center;"><span class="heatmap-target" style="background:${bg};color:${c}">${word}</span>`;
+        html += `<div class="attn-bar"><div class="attn-fill" style="width:${w[i]*100}%"></div></div>`;
+        html += `<div style="font-size:0.75em;font-family:'Fira Code',monospace;color:#9a3412;margin-top:2px;">${w[i].toFixed(2)}</div></div>`;
+    });
+    html += '</div>';
+    html += `<p style="margin-top:12px;font-size:0.9em;color:#78350f;"><strong>"${attnData.words[idx]}"</strong> pays most attention to <strong>"${attnData.words[w.indexOf(Math.max(...w))]}"</strong></p>`;
+    document.getElementById('attn-result').innerHTML = html;
+}
+
+function updateScale() {
+    const dk = parseInt(document.getElementById('dk-slider').value);
+    document.getElementById('dk-val').textContent = dk;
+    const raw = [2, 1, 2];
+    const scaled = raw.map(v => v / Math.sqrt(dk));
+    const expSum = scaled.reduce((s,v) => s + Math.exp(v), 0);
+    const softmaxed = scaled.map(v => Math.exp(v) / expSum);
+    const maxProb = Math.max(...softmaxed);
+    let html = `<div style="margin-bottom:8px;"><strong>Scaled:</strong> [${scaled.map(v=>v.toFixed(3)).join(', ')}]</div>`;
+    html += `<div><strong>Softmax:</strong> [${softmaxed.map(v=>v.toFixed(3)).join(', ')}]</div>`;
+    html += `<div style="margin-top:8px;font-size:0.85em;color:#9a3412;">`;
+    if (dk < 5) html += '⚠️ Small d<sub>k</sub> → sharp distribution (model is "too sure")';
+    else if (dk < 50) html += '✅ Moderate d<sub>k</sub> → balanced distribution';
+    else html += '🌊 Large d<sub>k</sub> → very flat distribution (almost uniform)';
+    html += '</div>';
+    document.getElementById('scale-result').innerHTML = html;
+}
+
+const patterns = [
+    { sentence: 'The  dog  chased  the  ball', note: 'Strong attention: "chased" ↔ "dog" (subject-verb), "chased" ↔ "ball" (verb-object)',
+      grid: '          The   dog  chased  the  ball\n  The    [.30   .25   .20   .15  .10 ]\n  dog    [.10   .20   .45   .05  .20 ]\n  chased [.08   .40   .10   .07  .35 ]\n  the    [.15   .10   .20   .30  .25 ]\n  ball   [.05   .15   .50   .10  .20 ]' },
+    { sentence: 'Sarah  said  she  was  happy', note: 'Pronoun resolution: "she" attends strongly to "Sarah" — the model learns coreference!',
+      grid: '          Sarah  said  she   was  happy\n  Sarah  [.25   .20   .30  .10  .15 ]\n  said   [.35   .15   .15  .15  .20 ]\n  she    [.55   .10   .10  .10  .15 ]\n  was    [.10   .20   .25  .20  .25 ]\n  happy  [.20   .15   .20  .10  .35 ]' },
+    { sentence: 'The  cat  that  I  saw  ran', note: 'Long-range: "ran" attends strongly to "cat" (the true subject), skipping over the relative clause.',
+      grid: '          The  cat  that   I   saw   ran\n  The    [.25  .30  .15  .10  .10  .10]\n  cat    [.15  .25  .15  .10  .10  .25]\n  that   [.10  .40  .15  .15  .10  .10]\n  I      [.10  .10  .20  .25  .25  .10]\n  saw    [.10  .35  .10  .15  .20  .10]\n  ran    [.10  .45  .05  .05  .10  .25]' }
+];
+
+function showPattern(idx, btn) {
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const p = patterns[idx];
+    document.getElementById('pattern-display').innerHTML =
+        `<div style="margin-bottom:10px;"><strong>Sentence:</strong> "${p.sentence}"</div>` +
+        `<div style="background:#1e293b;color:#e2e8f0;padding:15px;border-radius:12px;white-space:pre;overflow-x:auto;font-size:0.82em;line-height:1.7;">${p.grid}</div>` +
+        `<div style="margin-top:10px;color:#9a3412;font-size:0.9em;">💡 ${p.note}</div>`;
+}
+
+updateScale();
+showPattern(0, document.querySelector('.toggle-btn'));
+showAttn(1);
+</script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Large Language Models (LLMs) Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .nav {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(139,92,246,0.2);
+        }
+        .nav a { color: #a78bfa; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #c4b5fd; }
+        .header {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(109,40,217,0.4));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139,92,246,0.3);
+            border-radius: 25px;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 60%);
+            animation: pulse 10s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+        .header h1 { font-size: 3em; margin-bottom: 15px; font-weight: 900; position: relative; }
+        .header p { font-size: 1.3em; opacity: 0.9; max-width: 750px; margin: 0 auto 20px; position: relative; }
+        .header-badge {
+            background: rgba(139,92,246,0.3);
+            color: #c4b5fd;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 1px solid rgba(139,92,246,0.4);
+            position: relative;
+        }
+        .roadmap-title {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: #c4b5fd;
+        }
+
+        /* Module cards */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .module-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(139,92,246,0.15);
+            transition: all 0.3s;
+            position: relative;
+            overflow: visible;
+        }
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, var(--module-color, #7c3aed) 0%, var(--module-color-2, #a78bfa) 100%);
+            border-radius: 20px 20px 0 0;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border-color: rgba(139,92,246,0.35);
+        }
+        .module-icon { font-size: 3em; margin-bottom: 15px; }
+        .module-card h3 { font-size: 1.4em; margin-bottom: 12px; color: white; }
+        .module-card p { color: #94a3b8; margin-bottom: 20px; line-height: 1.6; }
+        .module-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .status-ready { background: #22c55e; color: white; }
+        .status-coming { background: #f59e0b; color: #1e293b; }
+        .module-lessons { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(139,92,246,0.15); }
+        .lesson-link {
+            display: block;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: rgba(124,58,237,0.1);
+            border-radius: 10px;
+            color: #c4b5fd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .lesson-link:hover {
+            background: rgba(124,58,237,0.2);
+            transform: translateX(5px);
+        }
+        .lesson-link i { margin-right: 8px; }
+        .lesson-link.locked { opacity: 0.5; pointer-events: none; }
+
+        /* Journey visualization */
+        .journey {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139,92,246,0.15);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .journey h3 { color: #c4b5fd; text-align: center; font-size: 1.5em; margin-bottom: 30px; }
+        .journey-steps {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+        }
+        .j-step {
+            text-align: center;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+        .j-icon {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.5em;
+            color: white;
+        }
+        .j-step p { font-size: 0.8em; color: #94a3b8; font-weight: 600; }
+        .j-arrow { color: #4c1d95; font-size: 1.5em; align-self: center; flex-shrink: 0; margin-top: -20px; }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            border-top: 1px solid rgba(139,92,246,0.1);
+            margin-top: 40px;
+        }
+        .footer a { color: #a78bfa; text-decoration: none; font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .journey-steps { flex-direction: column; align-items: center; }
+            .j-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+            <span style="color: #c4b5fd; font-weight: 800;"><i class="fas fa-brain"></i> LLM Course</span>
+        </nav>
+
+        <div class="header">
+            <div class="header-badge"><i class="fas fa-brain"></i> Build a Working LLM From Scratch</div>
+            <h1>Large Language Models</h1>
+            <p>
+                From "What is a language model?" all the way to building a working GPT-like text generator.
+                Every concept explained like you're 5, then we code it for real.
+            </p>
+            <p style="font-size: 0.95em; color: rgba(255,255,255,0.7); position: relative;">
+                Curated by <a href="https://www.linkedin.com/in/fakhruddinkhambaty/" target="_blank" style="color: #c4b5fd; text-decoration: none; font-weight: 700; border-bottom: 2px solid #c4b5fd;">Fakhruddin Khambaty</a>
+            </p>
+        </div>
+
+        <!-- Learning Journey -->
+        <div class="journey">
+            <h3>Your LLM Journey: From Zero to a Working Model</h3>
+            <div class="journey-steps">
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">📖</div><p>What is<br>an LLM?</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">🔤</div><p>Text to<br>Numbers</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">🧠</div><p>Neural Net<br>Basics</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#f97316,#ea580c);">👁️</div><p>Attention<br>Mechanism</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);">🏗️</div><p>Transformer<br>Architecture</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#eab308,#ca8a04);">🔥</div><p>Train<br>Your LLM</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">🎯</div><p>Fine-Tune<br>& RLHF</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">🚀</div><p>Deploy<br>& Use</p></div>
+            </div>
+        </div>
+
+        <h2 class="roadmap-title">Course Modules</h2>
+
+        <div class="modules-grid">
+
+            <!-- Module 1: What Are LLMs? -->
+            <div class="module-card" style="--module-color:#3b82f6; --module-color-2:#60a5fa;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📖</div>
+                <h3>Module 1: What Are LLMs?</h3>
+                <p>The big picture. What is a language model, why is everyone talking about it, and how does ChatGPT actually work at a very high level?</p>
+                <div class="module-lessons">
+                    <a href="what-are-llms.html" class="lesson-link"><i class="fas fa-play-circle"></i> What is a Language Model?</a>
+                    <a href="what-are-llms.html#history" class="lesson-link"><i class="fas fa-play-circle"></i> Brief History: N-grams → RNNs → Transformers</a>
+                    <a href="what-are-llms.html#landscape" class="lesson-link"><i class="fas fa-play-circle"></i> The LLM Landscape (GPT, LLaMA, Claude, Gemini)</a>
+                    <a href="what-are-llms.html#how" class="lesson-link"><i class="fas fa-play-circle"></i> How Does ChatGPT Actually Work? (ELI5)</a>
+                </div>
+            </div>
+
+            <!-- Module 2: Text to Numbers -->
+            <div class="module-card" style="--module-color:#8b5cf6; --module-color-2:#a78bfa;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔤</div>
+                <h3>Module 2: Text to Numbers</h3>
+                <p>Computers only understand numbers. How do we convert words into math that a neural network can process? Tokenization, embeddings, and positional encoding.</p>
+                <div class="module-lessons">
+                    <a href="text-to-numbers.html" class="lesson-link"><i class="fas fa-play-circle"></i> Why Computers Can't Read Words</a>
+                    <a href="text-to-numbers.html#tokenization" class="lesson-link"><i class="fas fa-play-circle"></i> Tokenization (BPE, WordPiece, SentencePiece)</a>
+                    <a href="text-to-numbers.html#embeddings" class="lesson-link"><i class="fas fa-play-circle"></i> Word Embeddings (Word2Vec, GloVe)</a>
+                    <a href="text-to-numbers.html#positional" class="lesson-link"><i class="fas fa-play-circle"></i> Positional Encoding (How Order Matters)</a>
+                    <a href="text-to-numbers.html#code" class="lesson-link"><i class="fas fa-play-circle"></i> Code: Build a Tokenizer From Scratch</a>
+                </div>
+            </div>
+
+            <!-- Module 3: Neural Network Refresher -->
+            <div class="module-card" style="--module-color:#ec4899; --module-color-2:#f472b6;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🧠</div>
+                <h3>Module 3: Neural Network Refresher</h3>
+                <p>A fast-track refresher on the building blocks every LLM uses: neurons, layers, activation functions, backpropagation, and PyTorch basics.</p>
+                <div class="module-lessons">
+                    <a href="nn-refresher.html" class="lesson-link"><i class="fas fa-play-circle"></i> What is a Neural Network? (ELI5)</a>
+                    <a href="nn-refresher.html#forward" class="lesson-link"><i class="fas fa-play-circle"></i> Forward Pass &amp; Backpropagation</a>
+                    <a href="nn-refresher.html#pytorch" class="lesson-link"><i class="fas fa-play-circle"></i> PyTorch Crash Course (Tensors, Autograd)</a>
+                    <a href="nn-refresher.html#train" class="lesson-link"><i class="fas fa-play-circle"></i> Training Loop: Loss, Optimizer, Epochs</a>
+                    <a href="nn-refresher.html#code" class="lesson-link"><i class="fas fa-play-circle"></i> Code: Train a Simple Neural Net in PyTorch</a>
+                </div>
+            </div>
+
+            <!-- Module 4: Attention Mechanism -->
+            <div class="module-card" style="--module-color:#f97316; --module-color-2:#fb923c;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">👁️</div>
+                <h3>Module 4: The Attention Mechanism</h3>
+                <p>The breakthrough that made LLMs possible. "Attention Is All You Need" - we break it down piece by piece with visual examples and real math.</p>
+                <div class="module-lessons">
+                    <a href="attention.html" class="lesson-link"><i class="fas fa-play-circle"></i> Why Attention? (The Problem with RNNs)</a>
+                    <a href="attention.html#qkv" class="lesson-link"><i class="fas fa-play-circle"></i> Query, Key, Value - The Library Analogy</a>
+                    <a href="attention.html#scaled" class="lesson-link"><i class="fas fa-play-circle"></i> Scaled Dot-Product Attention (With Math)</a>
+                    <a href="attention.html#multi" class="lesson-link"><i class="fas fa-play-circle"></i> Multi-Head Attention (Parallel Understanding)</a>
+                    <a href="attention.html#self" class="lesson-link"><i class="fas fa-play-circle"></i> Self-Attention vs Cross-Attention</a>
+                    <a href="attention.html#code" class="lesson-link"><i class="fas fa-play-circle"></i> Code: Build Attention From Scratch in PyTorch</a>
+                </div>
+            </div>
+
+            <!-- Module 5: Transformer Architecture -->
+            <div class="module-card" style="--module-color:#22c55e; --module-color-2:#4ade80;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🏗️</div>
+                <h3>Module 5: The Transformer Architecture</h3>
+                <p>The full picture: encoder, decoder, layer normalization, feed-forward networks, residual connections. We build the entire Transformer block by block.</p>
+                <div class="module-lessons">
+                    <a href="transformer.html" class="lesson-link"><i class="fas fa-play-circle"></i> Encoder vs Decoder (BERT vs GPT)</a>
+                    <a href="transformer.html#block" class="lesson-link"><i class="fas fa-play-circle"></i> Inside a Transformer Block</a>
+                    <a href="transformer.html#layernorm" class="lesson-link"><i class="fas fa-play-circle"></i> Layer Normalization &amp; Residual Connections</a>
+                    <a href="transformer.html#ffn" class="lesson-link"><i class="fas fa-play-circle"></i> Feed-Forward Network (The "Thinking" Layer)</a>
+                    <a href="transformer.html#mask" class="lesson-link"><i class="fas fa-play-circle"></i> Masking (Why GPT Can't Peek Ahead)</a>
+                    <a href="transformer.html#code" class="lesson-link"><i class="fas fa-play-circle"></i> Code: Build a Full Transformer in PyTorch</a>
+                </div>
+            </div>
+
+            <!-- Module 6: Training Your Own LLM -->
+            <div class="module-card" style="--module-color:#eab308; --module-color-2:#fbbf24;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔥</div>
+                <h3>Module 6: Training Your Own LLM</h3>
+                <p>The main event! We train a GPT-style language model from scratch on real text data. Data preparation, training loop, loss curves, and text generation.</p>
+                <div class="module-lessons">
+                    <a href="training.html" class="lesson-link"><i class="fas fa-play-circle"></i> How LLMs Learn: Next-Token Prediction</a>
+                    <a href="training.html#data" class="lesson-link"><i class="fas fa-play-circle"></i> Data Preparation (Datasets &amp; DataLoaders)</a>
+                    <a href="training.html#config" class="lesson-link"><i class="fas fa-play-circle"></i> Model Config: Layers, Heads, Embedding Size</a>
+                    <a href="training.html#loop" class="lesson-link"><i class="fas fa-play-circle"></i> The Training Loop (Step by Step)</a>
+                    <a href="training.html#generate" class="lesson-link"><i class="fas fa-play-circle"></i> Text Generation: Temperature &amp; Top-K Sampling</a>
+                    <a href="training.html#project" class="lesson-link" style="background:rgba(234,179,8,0.2); color:#fbbf24; font-weight:700;"><i class="fas fa-star"></i> PROJECT: Build &amp; Train a Mini-GPT!</a>
+                </div>
+            </div>
+
+            <!-- Module 7: Fine-Tuning & RLHF -->
+            <div class="module-card" style="--module-color:#ef4444; --module-color-2:#f87171;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🎯</div>
+                <h3>Module 7: Fine-Tuning &amp; RLHF</h3>
+                <p>How ChatGPT went from "raw text predictor" to "helpful assistant." Supervised fine-tuning, LoRA, and Reinforcement Learning from Human Feedback.</p>
+                <div class="module-lessons">
+                    <a href="finetuning.html" class="lesson-link"><i class="fas fa-play-circle"></i> Pre-training vs Fine-tuning (The Two Phases)</a>
+                    <a href="finetuning.html#sft" class="lesson-link"><i class="fas fa-play-circle"></i> Supervised Fine-Tuning (SFT)</a>
+                    <a href="finetuning.html#lora" class="lesson-link"><i class="fas fa-play-circle"></i> LoRA &amp; QLoRA (Fine-tune with Little Memory)</a>
+                    <a href="finetuning.html#rlhf" class="lesson-link"><i class="fas fa-play-circle"></i> RLHF: How Models Learn to Be Helpful</a>
+                    <a href="finetuning.html#dpo" class="lesson-link"><i class="fas fa-play-circle"></i> DPO: Direct Preference Optimization</a>
+                    <a href="finetuning.html#code" class="lesson-link"><i class="fas fa-play-circle"></i> Code: Fine-Tune a Model with LoRA</a>
+                </div>
+            </div>
+
+            <!-- Module 8: Deployment & Real-World Use -->
+            <div class="module-card" style="--module-color:#06b6d4; --module-color-2:#22d3ee;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🚀</div>
+                <h3>Module 8: Deployment &amp; Real-World Use</h3>
+                <p>Take your model from a notebook to production. Inference optimization, quantization, APIs, RAG, prompt engineering, and safety.</p>
+                <div class="module-lessons">
+                    <a href="deployment.html" class="lesson-link"><i class="fas fa-play-circle"></i> Inference: Making the Model Fast</a>
+                    <a href="deployment.html#quant" class="lesson-link"><i class="fas fa-play-circle"></i> Quantization (4-bit, 8-bit Models)</a>
+                    <a href="deployment.html#rag" class="lesson-link"><i class="fas fa-play-circle"></i> RAG: Retrieval Augmented Generation</a>
+                    <a href="deployment.html#prompt" class="lesson-link"><i class="fas fa-play-circle"></i> Prompt Engineering (Getting Great Outputs)</a>
+                    <a href="deployment.html#safety" class="lesson-link"><i class="fas fa-play-circle"></i> Safety, Ethics &amp; Hallucinations</a>
+                    <a href="deployment.html#api" class="lesson-link"><i class="fas fa-play-circle"></i> Serving via API (FastAPI + HuggingFace)</a>
+                </div>
+            </div>
+
+            <!-- Module 9: The Full Project -->
+            <div class="module-card" style="--module-color:#7c3aed; --module-color-2:#a78bfa; border: 2px solid rgba(139,92,246,0.4);">
+                <span class="module-status" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white;">🏆 CAPSTONE</span>
+                <div class="module-icon">🏆</div>
+                <h3>Module 9: Capstone Project</h3>
+                <p>Put it all together! Build a complete, working text-generating LLM from scratch: tokenizer, transformer, training, fine-tuning, and a simple web interface.</p>
+                <div class="module-lessons">
+                    <a href="capstone.html" class="lesson-link" style="background:rgba(124,58,237,0.2); color:#c4b5fd; font-weight:700;"><i class="fas fa-star"></i> Full Project: Your Own Mini-ChatGPT</a>
+                    <a href="capstone.html#plan" class="lesson-link"><i class="fas fa-play-circle"></i> Project Plan &amp; Architecture</a>
+                    <a href="capstone.html#data" class="lesson-link"><i class="fas fa-play-circle"></i> Step 1: Dataset &amp; Tokenizer</a>
+                    <a href="capstone.html#model" class="lesson-link"><i class="fas fa-play-circle"></i> Step 2: Build the GPT Model</a>
+                    <a href="capstone.html#train" class="lesson-link"><i class="fas fa-play-circle"></i> Step 3: Train on Your Data</a>
+                    <a href="capstone.html#generate" class="lesson-link"><i class="fas fa-play-circle"></i> Step 4: Generate Text</a>
+                    <a href="capstone.html#ui" class="lesson-link"><i class="fas fa-play-circle"></i> Step 5: Simple Chat Web Interface</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="journey" style="margin-top: 20px;">
+            <h3>Technologies You'll Use</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px;">
+                <span style="background:rgba(59,130,246,0.15); color:#93c5fd; padding:10px 20px; border-radius:12px; font-weight:700; border:1px solid rgba(59,130,246,0.3);">🐍 Python</span>
+                <span style="background:rgba(239,68,68,0.15); color:#fca5a5; padding:10px 20px; border-radius:12px; font-weight:700; border:1px solid rgba(239,68,68,0.3);">🔥 PyTorch</span>
+                <span style="background:rgba(234,179,8,0.15); color:#fde68a; padding:10px 20px; border-radius:12px; font-weight:700; border:1px solid rgba(234,179,8,0.3);">🤗 HuggingFace</span>
+                <span style="background:rgba(34,197,94,0.15); color:#86efac; padding:10px 20px; border-radius:12px; font-weight:700; border:1px solid rgba(34,197,94,0.3);">📊 NumPy</span>
+                <span style="background:rgba(139,92,246,0.15); color:#c4b5fd; padding:10px 20px; border-radius:12px; font-weight:700; border:1px solid rgba(139,92,246,0.3);">⚡ Transformers</span>
+                <span style="background:rgba(236,72,153,0.15); color:#f9a8d4; padding:10px 20px; border-radius:12px; font-weight:700; border:1px solid rgba(236,72,153,0.3);">🚀 FastAPI</span>
+                <span style="background:rgba(6,182,212,0.15); color:#67e8f9; padding:10px 20px; border-radius:12px; font-weight:700; border:1px solid rgba(6,182,212,0.3);">📝 Tokenizers</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Part of <a href="../index.html">Fakhruddin Khambaty's Learning Hub</a></p>
+        </div>
+    </div>
+</body>
+</html>

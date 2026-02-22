@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Transformer Architecture | LLM Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 25%, #e8f4fd 50%, #f0fdf4 75%, #ecfdf5 100%);
+            background-attachment: fixed;
+            min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(34,197,94,0.12); padding: 15px 30px; border-radius: 18px;
+            margin-bottom: 30px; box-shadow: 0 4px 24px rgba(34,197,94,0.06);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #15803d; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(22,163,74,0.25);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .badge { background: #f59e0b; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px);
+            border: 1px solid rgba(34,197,94,0.1); border-radius: 28px;
+            padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(34,197,94,0.05);
+        }
+        .section h2 { color: #15803d; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #dcfce7; }
+        .section h3 { color: #166534; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #22c55e; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5 {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px dashed #f59e0b;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5 h4 { color: #92400e; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5 p { color: #78350f; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-left: 5px solid #22c55e; border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy h4 { color: #166534; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy p { color: #14532d; }
+        .key-point {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-left: 5px solid #22c55e; border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #166534; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #14532d; }
+        .key-point li { margin-bottom: 8px; }
+        .visual {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #bbf7d0; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .visual h4 { color: #15803d; margin-bottom: 15px; }
+        .visual svg { max-width: 100%; height: auto; }
+        .code-block {
+            background: #1e293b; border-radius: 16px; padding: 25px; margin: 20px 0;
+            overflow-x: auto; position: relative;
+        }
+        .code-block pre {
+            font-family: 'Fira Code', monospace; font-size: 0.92em;
+            color: #e2e8f0; line-height: 1.8; margin: 0; white-space: pre;
+        }
+        .code-block .comment { color: #64748b; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .function { color: #7dd3fc; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .builtin { color: #f9a8d4; }
+        .code-block .decorator { color: #fb923c; }
+        .code-block .label {
+            position: absolute; top: 10px; right: 14px;
+            background: rgba(255,255,255,0.08); color: #94a3b8;
+            padding: 2px 10px; border-radius: 8px; font-size: 0.78em;
+            font-family: 'Fira Code', monospace;
+        }
+        .playground {
+            background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid #86efac; border-radius: 22px; padding: 30px; margin: 30px 0; text-align: center;
+        }
+        .playground h4 { color: #15803d; margin-bottom: 8px; font-size: 1.15em; }
+        .playground p { color: #334155; font-size: 0.95em; margin-bottom: 15px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 700; transition: all .3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; box-shadow: 0 4px 20px rgba(22,163,74,0.25); }
+        .nav-btn:hover { transform: translateY(-3px); }
+
+        .toggle-group { display: flex; gap: 0; justify-content: center; margin: 20px 0; }
+        .toggle-btn {
+            padding: 12px 28px; border: 2px solid #22c55e; background: white; color: #15803d;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 1em; cursor: pointer;
+            transition: all .3s;
+        }
+        .toggle-btn:first-child { border-radius: 14px 0 0 14px; }
+        .toggle-btn:last-child { border-radius: 0 14px 14px 0; }
+        .toggle-btn.active { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+
+        .mask-word {
+            display: inline-block; padding: 6px 14px; margin: 4px; border-radius: 10px;
+            font-weight: 700; cursor: pointer; transition: all .3s; font-size: 1em;
+            border: 2px solid #bbf7d0; background: white; color: #334155;
+        }
+        .mask-word.selected { background: #22c55e; color: white; border-color: #16a34a; transform: scale(1.08); }
+        .mask-word.visible { background: #dcfce7; border-color: #86efac; }
+        .mask-word.masked { background: #f1f5f9; border-color: #e2e8f0; color: #cbd5e1; }
+
+        @keyframes flowRight {
+            0% { opacity: 0; transform: translateX(-20px); }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(20px); }
+        }
+        @keyframes pulseGreen {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); }
+            50% { box-shadow: 0 0 0 12px rgba(34,197,94,0); }
+        }
+        @keyframes blockLight {
+            0% { fill-opacity: 0.15; }
+            50% { fill-opacity: 0.6; }
+            100% { fill-opacity: 0.15; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 18px; }
+            .nav-buttons { flex-direction: column; }
+            .toggle-btn { padding: 10px 18px; font-size: 0.9em; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+    </nav>
+
+    <div class="header">
+        <span class="badge">Module 5 — Core Architecture</span>
+        <h1>🏗️ The Transformer Architecture</h1>
+        <p>Build the complete architecture block by block — the engine that powers every modern LLM from GPT to Llama.</p>
+    </div>
+
+    <!-- ========== PART 1: Encoder vs Decoder ========== -->
+    <div class="section" id="encoder">
+        <h2><i class="fas fa-columns"></i> Part 1: Encoder vs Decoder</h2>
+
+        <p>The original 2017 "Attention Is All You Need" paper introduced the Transformer with <strong>two halves</strong>: an <strong>encoder</strong> (understands input) and a <strong>decoder</strong> (generates output). But modern LLMs pick and choose which half they need.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Think of the <strong>encoder</strong> as a <strong>reader</strong> — it reads the whole sentence and understands it. The <strong>decoder</strong> is a <strong>writer</strong> — it creates new text one word at a time. Some models only read (BERT), some only write (GPT), and some do both (T5).</p>
+        </div>
+
+        <div class="key-point">
+            <h4>💡 The Three Families</h4>
+            <ul>
+                <li><strong>Encoder-Only (BERT)</strong> — reads the entire input at once. Great for classification, sentiment analysis, search. Sees all words simultaneously.</li>
+                <li><strong>Decoder-Only (GPT, Llama)</strong> — generates text left-to-right, one token at a time. This is what ChatGPT uses. Can only look at past tokens.</li>
+                <li><strong>Encoder-Decoder (T5, BART)</strong> — encoder reads input, decoder generates output. Great for translation, summarization.</li>
+            </ul>
+        </div>
+
+        <div class="visual">
+            <h4>🔀 Encoder vs Decoder — Side by Side</h4>
+            <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" id="encDecSvg">
+                <rect width="760" height="420" rx="16" fill="#f0fdf4" fill-opacity="0.3"/>
+
+                <!-- Encoder Stack -->
+                <g id="encoderStack">
+                    <rect x="40" y="50" width="220" height="320" rx="18" fill="#dbeafe" fill-opacity="0.4" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,4"/>
+                    <text x="150" y="38" text-anchor="middle" fill="#1e40af" font-size="16" font-weight="900" font-family="Nunito">ENCODER</text>
+
+                    <rect x="65" y="80" width="170" height="45" rx="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+                    <text x="150" y="107" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="700" font-family="Nunito">Self-Attention (Bi-dir)</text>
+
+                    <rect x="65" y="140" width="170" height="35" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+                    <text x="150" y="162" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="600" font-family="Nunito">Add & Norm</text>
+
+                    <rect x="65" y="190" width="170" height="45" rx="10" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+                    <text x="150" y="217" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="700" font-family="Nunito">Feed-Forward</text>
+
+                    <rect x="65" y="250" width="170" height="35" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+                    <text x="150" y="272" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="600" font-family="Nunito">Add & Norm</text>
+
+                    <text x="150" y="310" text-anchor="middle" fill="#6b7280" font-size="10" font-style="italic" font-family="Nunito">× N layers</text>
+
+                    <text x="150" y="350" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="700" font-family="Nunito">👀 Sees ALL tokens</text>
+
+                    <rect x="55" y="378" width="190" height="30" rx="8" fill="#eff6ff"/>
+                    <text x="150" y="398" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="800" font-family="Nunito">BERT • RoBERTa • ELECTRA</text>
+                </g>
+
+                <!-- Arrow between -->
+                <text x="380" y="210" text-anchor="middle" fill="#6b7280" font-size="30" font-family="Nunito">⟷</text>
+
+                <!-- Decoder Stack -->
+                <g id="decoderStack">
+                    <rect x="500" y="50" width="220" height="320" rx="18" fill="#dcfce7" fill-opacity="0.4" stroke="#22c55e" stroke-width="2" stroke-dasharray="6,4"/>
+                    <text x="610" y="38" text-anchor="middle" fill="#166534" font-size="16" font-weight="900" font-family="Nunito">DECODER</text>
+
+                    <rect x="525" y="80" width="170" height="45" rx="10" fill="#bbf7d0" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="610" y="100" text-anchor="middle" fill="#166534" font-size="11" font-weight="700" font-family="Nunito">Masked Self-Attn</text>
+                    <text x="610" y="115" text-anchor="middle" fill="#166534" font-size="9" font-family="Nunito">(causal — left only)</text>
+
+                    <rect x="525" y="140" width="170" height="35" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+                    <text x="610" y="162" text-anchor="middle" fill="#166534" font-size="10" font-weight="600" font-family="Nunito">Add & Norm</text>
+
+                    <rect x="525" y="190" width="170" height="45" rx="10" fill="#bbf7d0" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="610" y="217" text-anchor="middle" fill="#166534" font-size="11" font-weight="700" font-family="Nunito">Feed-Forward</text>
+
+                    <rect x="525" y="250" width="170" height="35" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+                    <text x="610" y="272" text-anchor="middle" fill="#166534" font-size="10" font-weight="600" font-family="Nunito">Add & Norm</text>
+
+                    <text x="610" y="310" text-anchor="middle" fill="#6b7280" font-size="10" font-style="italic" font-family="Nunito">× N layers</text>
+
+                    <text x="610" y="350" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="700" font-family="Nunito">➡️ Sees only PAST tokens</text>
+
+                    <rect x="515" y="378" width="190" height="30" rx="8" fill="#f0fdf4"/>
+                    <text x="610" y="398" text-anchor="middle" fill="#166534" font-size="10" font-weight="800" font-family="Nunito">GPT • Llama • Mistral</text>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Interactive: Highlight which models use which -->
+        <div class="playground">
+            <h4><i class="fas fa-hand-pointer"></i> Interactive: Which Architecture Does Each Model Use?</h4>
+            <p>Click a button to highlight the architecture each model family uses.</p>
+            <div class="toggle-group">
+                <button class="toggle-btn" onclick="highlightArch('encoder')">Encoder (BERT)</button>
+                <button class="toggle-btn" onclick="highlightArch('decoder')">Decoder (GPT)</button>
+                <button class="toggle-btn" onclick="highlightArch('both')">Both (T5)</button>
+            </div>
+            <div id="archDescription" style="margin-top:15px;font-size:1em;font-weight:600;color:#334155;min-height:50px;"></div>
+        </div>
+
+        <div class="analogy">
+            <h4>🎭 The Theater Analogy</h4>
+            <p><strong>Encoder</strong> = the audience. They watch the entire play and form an understanding of the whole story. <strong>Decoder</strong> = an improv actor. They can only react to what has happened so far — no peeking at the script! <strong>Encoder-Decoder</strong> = a translator at the UN. They listen to the full speech (encoder), then translate it sentence by sentence (decoder).</p>
+        </div>
+    </div>
+
+    <!-- ========== PART 2: Inside a Transformer Block ========== -->
+    <div class="section" id="block">
+        <h2><i class="fas fa-cubes"></i> Part 2: Inside a Transformer Block</h2>
+
+        <p>A Transformer is built by stacking identical <strong>blocks</strong> on top of each other. GPT-3 has 96 blocks. GPT-2 Small has 12. But every single block has the same internal structure:</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Think of a <strong>factory assembly line</strong> with 4 stations. Every piece of text goes through:<br>
+            <strong>Station 1</strong> (Attention): "Look around — what context matters?"<br>
+            <strong>Station 2</strong> (Add & Norm): "Stabilize and remember the original input."<br>
+            <strong>Station 3</strong> (Feed-Forward): "Think deeply — process and transform."<br>
+            <strong>Station 4</strong> (Add & Norm): "Stabilize again."<br>
+            Then the output goes into the next identical factory. GPT stacks <strong>96</strong> of these factories!</p>
+        </div>
+
+        <div class="key-point">
+            <h4>💡 The Four Components (in order)</h4>
+            <ul>
+                <li><strong>Multi-Head Attention</strong> — each token looks at every other token to gather context</li>
+                <li><strong>Add & LayerNorm</strong> — add the input back (residual) and normalize values</li>
+                <li><strong>Feed-Forward Network</strong> — two linear layers that do the "thinking"</li>
+                <li><strong>Add & LayerNorm</strong> — another residual connection and normalization</li>
+            </ul>
+        </div>
+
+        <!-- Animated SVG: Data flowing through a block -->
+        <div class="visual">
+            <h4>🎬 Data Flowing Through a Single Transformer Block</h4>
+            <p style="font-size:0.9em;color:#6b7280;margin-bottom:10px;">Watch each component light up as data passes through</p>
+            <svg viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg" id="blockFlowSvg">
+                <rect width="700" height="460" rx="16" fill="#f0fdf4" fill-opacity="0.2"/>
+                <defs>
+                    <marker id="arrG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#22c55e"/></marker>
+                </defs>
+
+                <!-- Input -->
+                <rect x="250" y="15" width="200" height="40" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="350" y="40" text-anchor="middle" fill="#92400e" font-size="13" font-weight="800" font-family="Nunito">Input Embeddings</text>
+
+                <!-- Arrow down -->
+                <line x1="350" y1="55" x2="350" y2="80" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG)"/>
+
+                <!-- Multi-Head Attention -->
+                <rect x="200" y="85" width="300" height="55" rx="14" fill="#bbf7d0" stroke="#22c55e" stroke-width="2.5" id="blockAttn">
+                    <animate attributeName="fill-opacity" values="0.3;1;0.3;0.3;0.3;0.3;0.3;0.3" dur="6s" repeatCount="indefinite"/>
+                </rect>
+                <text x="350" y="117" text-anchor="middle" fill="#166534" font-size="14" font-weight="800" font-family="Nunito">🔍 Multi-Head Attention</text>
+
+                <!-- Skip connection arrow (left side) -->
+                <path d="M195,55 L140,55 L140,200 L195,200" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrG)"/>
+                <text x="105" y="130" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="700" font-family="Nunito" transform="rotate(-90,105,130)">Residual</text>
+
+                <!-- Arrow down -->
+                <line x1="350" y1="140" x2="350" y2="170" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG)"/>
+
+                <!-- Add & Norm 1 -->
+                <rect x="200" y="175" width="300" height="45" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" id="blockNorm1">
+                    <animate attributeName="fill-opacity" values="0.3;0.3;1;0.3;0.3;0.3;0.3;0.3" dur="6s" repeatCount="indefinite"/>
+                </rect>
+                <text x="350" y="203" text-anchor="middle" fill="#92400e" font-size="13" font-weight="700" font-family="Nunito">➕ Add & LayerNorm</text>
+
+                <!-- Arrow down -->
+                <line x1="350" y1="220" x2="350" y2="255" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG)"/>
+
+                <!-- Feed-Forward Network -->
+                <rect x="200" y="260" width="300" height="55" rx="14" fill="#bbf7d0" stroke="#22c55e" stroke-width="2.5" id="blockFFN">
+                    <animate attributeName="fill-opacity" values="0.3;0.3;0.3;0.3;1;0.3;0.3;0.3" dur="6s" repeatCount="indefinite"/>
+                </rect>
+                <text x="350" y="292" text-anchor="middle" fill="#166534" font-size="14" font-weight="800" font-family="Nunito">🧠 Feed-Forward Network</text>
+
+                <!-- Skip connection arrow (right side) -->
+                <path d="M505,225 L560,225 L560,375 L505,375" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrG)"/>
+                <text x="595" y="305" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="700" font-family="Nunito" transform="rotate(90,595,305)">Residual</text>
+
+                <!-- Arrow down -->
+                <line x1="350" y1="315" x2="350" y2="350" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG)"/>
+
+                <!-- Add & Norm 2 -->
+                <rect x="200" y="355" width="300" height="45" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" id="blockNorm2">
+                    <animate attributeName="fill-opacity" values="0.3;0.3;0.3;0.3;0.3;0.3;1;0.3" dur="6s" repeatCount="indefinite"/>
+                </rect>
+                <text x="350" y="383" text-anchor="middle" fill="#92400e" font-size="13" font-weight="700" font-family="Nunito">➕ Add & LayerNorm</text>
+
+                <!-- Arrow down to output -->
+                <line x1="350" y1="400" x2="350" y2="430" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG)"/>
+                <text x="350" y="452" text-anchor="middle" fill="#15803d" font-size="12" font-weight="800" font-family="Nunito">→ Next Block (or Output)</text>
+
+                <!-- Animated data dot -->
+                <circle r="7" fill="#22c55e">
+                    <animateMotion dur="6s" repeatCount="indefinite" path="M350,30 L350,112 L350,197 L350,290 L350,380 L350,440"/>
+                    <animate attributeName="opacity" values="0;1;1;1;1;1;0" dur="6s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+
+        <div class="analogy">
+            <h4>🏢 The Office Building</h4>
+            <p>Each Transformer block is like a <strong>floor</strong> in an office building. On every floor, you first have a <strong>meeting room</strong> (attention — everyone shares info), then a <strong>quiet desk</strong> (feed-forward — individual deep thinking). The elevator (residual connections) lets you carry information from earlier floors. GPT-3 is a 96-story building!</p>
+        </div>
+    </div>
+
+    <!-- ========== PART 3: Layer Normalization & Residual Connections ========== -->
+    <div class="section" id="layernorm">
+        <h2><i class="fas fa-balance-scale"></i> Part 3: Layer Normalization & Residuals</h2>
+
+        <p>These two techniques seem simple, but they're absolutely <strong>critical</strong> for training deep networks. Without them, stacking 96 layers would be impossible — values would explode or vanish to zero.</p>
+
+        <h3>Layer Normalization</h3>
+        <p>LayerNorm takes the outputs of a layer and <strong>re-centers</strong> them to have mean = 0 and standard deviation = 1. Then it applies learnable scale (γ) and shift (β) parameters.</p>
+
+        <div class="analogy">
+            <h4>🌡️ The Thermostat</h4>
+            <p>Imagine 96 rooms in a building. Without a thermostat, room 1 might be 70°F, room 50 might be 500°F, and room 96 might be 10,000°F — things keep getting hotter as you go deeper. <strong>LayerNorm is the thermostat</strong> that resets each room to a comfortable range. It keeps values stable no matter how deep you go.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / LayerNorm</span>
+<pre><span class="keyword">import</span> torch
+<span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+
+<span class="comment"># LayerNorm in 3 lines</span>
+x = torch.<span class="function">randn</span>(<span class="number">2</span>, <span class="number">5</span>)      <span class="comment"># batch of 2, dim 5</span>
+norm = nn.<span class="function">LayerNorm</span>(<span class="number">5</span>)      <span class="comment"># normalize over last dim</span>
+out = <span class="function">norm</span>(x)                <span class="comment"># mean≈0, std≈1 per sample</span>
+
+<span class="builtin">print</span>(<span class="string">"Before:"</span>, x[<span class="number">0</span>])
+<span class="builtin">print</span>(<span class="string">"After: "</span>, out[<span class="number">0</span>])
+<span class="builtin">print</span>(<span class="string">"Mean:  "</span>, out[<span class="number">0</span>].<span class="function">mean</span>().<span class="function">item</span>())   <span class="comment"># ≈ 0.0</span>
+<span class="builtin">print</span>(<span class="string">"Std:   "</span>, out[<span class="number">0</span>].<span class="function">std</span>().<span class="function">item</span>())    <span class="comment"># ≈ 1.0</span></pre>
+        </div>
+
+        <h3>Residual Connections (Skip Connections)</h3>
+        <p>A residual connection simply <strong>adds the input of a layer back to its output</strong>: <code>output = layer(x) + x</code>. That's it. One line of code, but it's revolutionary.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Imagine you're learning to draw a cat. A <strong>residual connection</strong> is like having a photocopy of your original drawing at every step. If step 5 accidentally makes the drawing worse, you still have the original to fall back on. The network learns: "What should I <strong>add</strong> to improve this?" rather than "What should the whole answer be?" — a much easier question!</p>
+        </div>
+
+        <div class="visual">
+            <h4>↗️ The Skip Connection — Bypassing a Layer</h4>
+            <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+                <rect width="600" height="280" rx="16" fill="#f0fdf4" fill-opacity="0.2"/>
+                <defs>
+                    <marker id="arrG2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#22c55e"/></marker>
+                    <marker id="arrO" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f59e0b"/></marker>
+                </defs>
+
+                <!-- Input -->
+                <rect x="220" y="20" width="160" height="40" rx="12" fill="#e0f2fe" stroke="#3b82f6" stroke-width="2"/>
+                <text x="300" y="45" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="800" font-family="Nunito">x (input)</text>
+
+                <!-- Arrow to layer -->
+                <line x1="300" y1="60" x2="300" y2="95" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG2)"/>
+
+                <!-- Layer box -->
+                <rect x="200" y="100" width="200" height="55" rx="14" fill="#bbf7d0" stroke="#22c55e" stroke-width="2.5"/>
+                <text x="300" y="132" text-anchor="middle" fill="#166534" font-size="13" font-weight="800" font-family="Nunito">Layer (Attn or FFN)</text>
+
+                <!-- Arrow from layer to add -->
+                <line x1="300" y1="155" x2="300" y2="195" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG2)"/>
+
+                <!-- Skip connection -->
+                <path d="M215,45 L120,45 L120,210 L215,210" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#arrO)"/>
+                <text x="82" y="125" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="800" font-family="Nunito" transform="rotate(-90,82,125)">SKIP (+ x)</text>
+
+                <!-- Add circle -->
+                <circle cx="300" cy="210" r="22" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5"/>
+                <text x="300" y="216" text-anchor="middle" fill="#92400e" font-size="18" font-weight="900" font-family="Nunito">+</text>
+
+                <!-- Arrow to output -->
+                <line x1="300" y1="232" x2="300" y2="255" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG2)"/>
+                <text x="300" y="275" text-anchor="middle" fill="#15803d" font-size="12" font-weight="800" font-family="Nunito">Layer(x) + x</text>
+
+                <!-- Annotation -->
+                <rect x="420" y="85" width="160" height="80" rx="12" fill="#fffbeb" stroke="#fbbf24" stroke-width="1.5"/>
+                <text x="500" y="108" text-anchor="middle" fill="#92400e" font-size="10" font-weight="700" font-family="Nunito">💡 Safety net!</text>
+                <text x="500" y="126" text-anchor="middle" fill="#78350f" font-size="9" font-family="Nunito">If the layer learns</text>
+                <text x="500" y="142" text-anchor="middle" fill="#78350f" font-size="9" font-family="Nunito">nothing useful, the</text>
+                <text x="500" y="158" text-anchor="middle" fill="#78350f" font-size="9" font-family="Nunito">original x passes through</text>
+            </svg>
+        </div>
+
+        <div class="key-point">
+            <h4>💡 Why These Matter</h4>
+            <ul>
+                <li><strong>LayerNorm</strong> prevents values from exploding/vanishing across 96+ layers</li>
+                <li><strong>Residual connections</strong> let gradients flow directly backward, making deep training possible</li>
+                <li>Together they allow you to stack blocks essentially <strong>infinitely</strong> — the network depth becomes a choice, not a limitation</li>
+                <li>Without residuals, training a 96-layer network would be like whispering a message through 96 people — it gets garbled. With residuals, each person also gets the original message.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 4: Feed-Forward Network ========== -->
+    <div class="section" id="ffn">
+        <h2><i class="fas fa-brain"></i> Part 4: The Feed-Forward Network</h2>
+
+        <p>After attention has gathered context from other tokens, each token passes through a <strong>feed-forward network (FFN)</strong> independently. This is where the "thinking" and "knowledge storage" happens.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Attention is the <strong>group meeting</strong> where everyone shares information. The FFN is the <strong>quiet desk work</strong> afterward where each person processes what they heard and forms their own conclusions. Every token does this step completely alone — no looking at other tokens.</p>
+        </div>
+
+        <h3>The Architecture: Expand → Activate → Compress</h3>
+        <p>The FFN is just two linear layers with an activation in between. The key trick: the <strong>inner dimension is 4× bigger</strong> than the model dimension. It's like taking a deep breath — inhale (expand), process (activate), exhale (compress back).</p>
+
+        <div class="analogy">
+            <h4>🫁 The Breathing Analogy</h4>
+            <p><strong>Inhale</strong> (Linear 1): expand from 768 dims to 3,072 dims — create room to think in a bigger space.<br>
+            <strong>Hold</strong> (GELU activation): apply non-linearity — decide which neurons fire.<br>
+            <strong>Exhale</strong> (Linear 2): compress back from 3,072 to 768 dims — distill the essential information.</p>
+            <p>This expand-compress pattern lets the network temporarily work in a higher-dimensional space where patterns are easier to separate, then project the insights back down.</p>
+        </div>
+
+        <!-- SVG: FFN expand/compress -->
+        <div class="visual">
+            <h4>🫁 Expand → Activate → Compress</h4>
+            <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg">
+                <rect width="700" height="250" rx="16" fill="#f0fdf4" fill-opacity="0.2"/>
+                <defs>
+                    <marker id="arrG3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#22c55e"/></marker>
+                </defs>
+
+                <!-- Input bar -->
+                <rect x="40" y="85" width="25" height="80" rx="6" fill="#bbf7d0" stroke="#22c55e" stroke-width="2"/>
+                <text x="52" y="195" text-anchor="middle" fill="#166534" font-size="10" font-weight="700" font-family="Nunito">768</text>
+                <text x="52" y="75" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700" font-family="Nunito">Input</text>
+
+                <!-- Arrow -->
+                <line x1="70" y1="125" x2="130" y2="125" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG3)"/>
+                <text x="100" y="115" text-anchor="middle" fill="#6b7280" font-size="9" font-family="Nunito">Linear</text>
+
+                <!-- Expanded bar -->
+                <rect x="135" y="35" width="50" height="180" rx="8" fill="#86efac" stroke="#22c55e" stroke-width="2.5">
+                    <animate attributeName="fill-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+                </rect>
+                <text x="160" y="230" text-anchor="middle" fill="#166534" font-size="11" font-weight="800" font-family="Nunito">3,072</text>
+                <text x="160" y="25" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700" font-family="Nunito">Expanded</text>
+
+                <!-- Arrow -->
+                <line x1="190" y1="125" x2="260" y2="125" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG3)"/>
+
+                <!-- GELU box -->
+                <rect x="265" y="90" width="120" height="70" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="325" y="122" text-anchor="middle" fill="#92400e" font-size="14" font-weight="800" font-family="Nunito">GELU ⚡</text>
+                <text x="325" y="145" text-anchor="middle" fill="#92400e" font-size="9" font-family="Nunito">non-linearity</text>
+
+                <!-- Arrow -->
+                <line x1="390" y1="125" x2="450" y2="125" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrG3)"/>
+                <text x="420" y="115" text-anchor="middle" fill="#6b7280" font-size="9" font-family="Nunito">Linear</text>
+
+                <!-- Compressed bar -->
+                <rect x="455" y="85" width="25" height="80" rx="6" fill="#bbf7d0" stroke="#22c55e" stroke-width="2"/>
+                <text x="467" y="195" text-anchor="middle" fill="#166534" font-size="10" font-weight="700" font-family="Nunito">768</text>
+                <text x="467" y="75" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700" font-family="Nunito">Output</text>
+
+                <!-- Breathing annotation -->
+                <text x="100" y="240" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="800" font-family="Nunito">🫁 Inhale</text>
+                <text x="325" y="240" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="800" font-family="Nunito">💨 Hold</text>
+                <text x="520" y="240" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="800" font-family="Nunito">🫁 Exhale</text>
+
+                <!-- Big bracket showing 4x -->
+                <text x="600" y="80" text-anchor="middle" fill="#6b7280" font-size="10" font-weight="700" font-family="Nunito">inner dim</text>
+                <text x="600" y="100" text-anchor="middle" fill="#15803d" font-size="14" font-weight="900" font-family="Nunito">= 4 × d_model</text>
+                <text x="600" y="120" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Nunito">3072 = 4 × 768</text>
+            </svg>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / FFN</span>
+<pre><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+
+<span class="keyword">class</span> <span class="function">FeedForward</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, d_model, d_ff=<span class="keyword">None</span>):
+        <span class="builtin">super</span>().<span class="function">__init__</span>()
+        d_ff = d_ff <span class="keyword">or</span> d_model * <span class="number">4</span>
+        self.net = nn.<span class="function">Sequential</span>(
+            nn.<span class="function">Linear</span>(d_model, d_ff),   <span class="comment"># expand: 768 → 3072</span>
+            nn.<span class="function">GELU</span>(),                   <span class="comment"># activate</span>
+            nn.<span class="function">Linear</span>(d_ff, d_model),   <span class="comment"># compress: 3072 → 768</span>
+        )
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x):
+        <span class="keyword">return</span> self.<span class="function">net</span>(x)
+
+ffn = <span class="function">FeedForward</span>(<span class="number">768</span>)
+x = torch.<span class="function">randn</span>(<span class="number">1</span>, <span class="number">10</span>, <span class="number">768</span>)   <span class="comment"># (batch, seq_len, d_model)</span>
+out = <span class="function">ffn</span>(x)                     <span class="comment"># same shape: (1, 10, 768)</span>
+<span class="builtin">print</span>(out.shape)                 <span class="comment"># torch.Size([1, 10, 768])</span></pre>
+        </div>
+
+        <div class="key-point">
+            <h4>💡 Where Knowledge Lives</h4>
+            <ul>
+                <li>Research shows that <strong>factual knowledge</strong> (Paris is the capital of France) is stored primarily in FFN weights</li>
+                <li>Attention decides <strong>what to focus on</strong>; FFN decides <strong>what to do with it</strong></li>
+                <li>The 4× expansion ratio is a design choice — some models use 8/3× with gated variants (SwiGLU)</li>
+                <li>FFN parameters make up ~⅔ of a Transformer's total parameter count</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 5: Masking ========== -->
+    <div class="section" id="mask">
+        <h2><i class="fas fa-eye-slash"></i> Part 5: Causal Masking</h2>
+
+        <p>In a decoder-only model like GPT, there's one critical rule: <strong>a token can only attend to tokens that came before it</strong> (and itself). It cannot peek at future tokens. This is enforced by a <strong>causal mask</strong>.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Imagine reading a mystery novel. You can re-read earlier pages to find clues, but <strong>you're not allowed to flip ahead</strong>. Causal masking is like putting a physical blocker on the book that only lets you see pages you've already read. Each word can only look at words to its left — never to its right.</p>
+        </div>
+
+        <h3>Why Masking is Essential</h3>
+        <p>During training, GPT sees the entire sentence at once (for efficiency). But to learn to <strong>predict</strong> the next word, it must pretend it hasn't seen the future. The mask fills future positions with <code>-∞</code> before softmax, which converts to attention weight = 0.</p>
+
+        <!-- Interactive: Click words to see attention mask -->
+        <div class="playground" id="maskPlayground">
+            <h4><i class="fas fa-hand-pointer"></i> Interactive: Click a Word to See What It Can Attend To</h4>
+            <p>Click any word below. Green = can see, grey = masked (can't peek!)</p>
+            <div id="maskSentence" style="margin:15px 0;"></div>
+            <div id="maskExplain" style="font-size:0.95em;color:#334155;font-weight:600;min-height:30px;margin-top:10px;"></div>
+        </div>
+
+        <!-- SVG: Attention matrix with causal mask -->
+        <div class="visual">
+            <h4>🔲 The Causal Mask — Lower Triangular Matrix</h4>
+            <p style="font-size:0.9em;color:#6b7280;margin-bottom:10px;">Green = allowed attention, Grey = masked (-∞)</p>
+            <svg viewBox="0 0 500 480" xmlns="http://www.w3.org/2000/svg">
+                <rect width="500" height="480" rx="16" fill="#f0fdf4" fill-opacity="0.2"/>
+
+                <!-- Labels -->
+                <text x="295" y="30" text-anchor="middle" fill="#166534" font-size="13" font-weight="900" font-family="Nunito">Keys (what you're looking at) →</text>
+                <text x="55" y="265" text-anchor="middle" fill="#166534" font-size="13" font-weight="900" font-family="Nunito" transform="rotate(-90,55,265)">Queries (who's looking) →</text>
+
+                <!-- Column headers -->
+                <text x="150" y="60" text-anchor="middle" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">The</text>
+                <text x="210" y="60" text-anchor="middle" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">cat</text>
+                <text x="270" y="60" text-anchor="middle" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">sat</text>
+                <text x="330" y="60" text-anchor="middle" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">on</text>
+                <text x="390" y="60" text-anchor="middle" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">the</text>
+
+                <!-- Row headers -->
+                <text x="100" y="100" text-anchor="end" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">The</text>
+                <text x="100" y="160" text-anchor="end" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">cat</text>
+                <text x="100" y="220" text-anchor="end" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">sat</text>
+                <text x="100" y="280" text-anchor="end" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">on</text>
+                <text x="100" y="340" text-anchor="end" fill="#334155" font-size="10" font-weight="700" font-family="Nunito">the</text>
+
+                <!-- Row 1: The -->
+                <rect x="120" y="75" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="145" y="105" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="180" y="75" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="205" y="105" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+                <rect x="240" y="75" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="265" y="105" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+                <rect x="300" y="75" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="325" y="105" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+                <rect x="360" y="75" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="385" y="105" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+
+                <!-- Row 2: cat -->
+                <rect x="120" y="135" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="145" y="165" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="180" y="135" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="205" y="165" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="240" y="135" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="265" y="165" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+                <rect x="300" y="135" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="325" y="165" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+                <rect x="360" y="135" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="385" y="165" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+
+                <!-- Row 3: sat -->
+                <rect x="120" y="195" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="145" y="225" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="180" y="195" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="205" y="225" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="240" y="195" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="265" y="225" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="300" y="195" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="325" y="225" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+                <rect x="360" y="195" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="385" y="225" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+
+                <!-- Row 4: on -->
+                <rect x="120" y="255" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="145" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="180" y="255" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="205" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="240" y="255" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="265" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="300" y="255" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="325" y="285" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="360" y="255" width="50" height="50" rx="6" fill="#e2e8f0"/><text x="385" y="285" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700" font-family="Nunito">-∞</text>
+
+                <!-- Row 5: the -->
+                <rect x="120" y="315" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="145" y="345" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="180" y="315" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="205" y="345" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="240" y="315" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="265" y="345" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="300" y="315" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="325" y="345" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+                <rect x="360" y="315" width="50" height="50" rx="6" fill="#22c55e" fill-opacity="0.6"/><text x="385" y="345" text-anchor="middle" fill="white" font-size="12" font-weight="800" font-family="Nunito">✓</text>
+
+                <!-- Diagonal annotation -->
+                <line x1="115" y1="70" x2="415" y2="370" stroke="#15803d" stroke-width="2" stroke-dasharray="4,3" opacity="0.5"/>
+
+                <!-- Legend -->
+                <rect x="120" y="395" width="280" height="65" rx="12" fill="white" stroke="#bbf7d0" stroke-width="1.5"/>
+                <rect x="135" y="412" width="18" height="18" rx="4" fill="#22c55e" fill-opacity="0.6"/>
+                <text x="162" y="426" fill="#166534" font-size="10" font-weight="700" font-family="Nunito">= Can attend (score computed)</text>
+                <rect x="135" y="437" width="18" height="18" rx="4" fill="#e2e8f0"/>
+                <text x="162" y="451" fill="#94a3b8" font-size="10" font-weight="700" font-family="Nunito">= Masked with -∞ (becomes 0 after softmax)</text>
+            </svg>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / Causal Mask</span>
+<pre><span class="keyword">import</span> torch
+
+<span class="keyword">def</span> <span class="function">create_causal_mask</span>(seq_len):
+    <span class="string">"""Lower-triangular mask: 1 = attend, 0 = block"""</span>
+    mask = torch.<span class="function">tril</span>(torch.<span class="function">ones</span>(seq_len, seq_len))
+    <span class="comment"># Convert 0s to -inf for attention scores</span>
+    mask = mask.<span class="function">masked_fill</span>(mask == <span class="number">0</span>, <span class="builtin">float</span>(<span class="string">'-inf'</span>))
+    mask = mask.<span class="function">masked_fill</span>(mask == <span class="number">1</span>, <span class="number">0.0</span>)
+    <span class="keyword">return</span> mask
+
+mask = <span class="function">create_causal_mask</span>(<span class="number">5</span>)
+<span class="builtin">print</span>(mask)
+<span class="comment"># tensor([[  0., -inf, -inf, -inf, -inf],</span>
+<span class="comment">#         [  0.,   0., -inf, -inf, -inf],</span>
+<span class="comment">#         [  0.,   0.,   0., -inf, -inf],</span>
+<span class="comment">#         [  0.,   0.,   0.,   0., -inf],</span>
+<span class="comment">#         [  0.,   0.,   0.,   0.,   0.]])</span></pre>
+        </div>
+
+        <div class="key-point">
+            <h4>💡 Masking Takeaways</h4>
+            <ul>
+                <li>Causal mask = lower triangular matrix of 0s with -∞ above the diagonal</li>
+                <li>After adding the mask to attention scores, softmax turns -∞ → 0 attention weight</li>
+                <li>This forces autoregressive behavior: predict next token using only previous tokens</li>
+                <li>BERT doesn't use causal masking (it sees everything) — that's why BERT can't generate text</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 6: Code - Full Transformer ========== -->
+    <div class="section" id="code">
+        <h2><i class="fas fa-code"></i> Part 6: Build a Full GPT-Style Transformer</h2>
+
+        <p>Time to put it all together. Below is a complete, working GPT-style decoder-only Transformer in PyTorch. Every component from this module — attention, FFN, LayerNorm, residuals, masking — assembled into one model.</p>
+
+        <div class="eli5">
+            <h4>👶 What We're Building</h4>
+            <p>We're assembling all the LEGO pieces from this course into the full robot. Input text → token embeddings + position encoding → N transformer blocks (each: masked attention → norm → FFN → norm) → project to vocabulary → output probability for next word. This is <strong>the architecture</strong> behind ChatGPT.</p>
+        </div>
+
+        <h3>Step 1: Configuration</h3>
+        <div class="code-block">
+            <span class="label">Python / Config</span>
+<pre><span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass
+
+<span class="decorator">@dataclass</span>
+<span class="keyword">class</span> <span class="function">GPTConfig</span>:
+    vocab_size:  <span class="builtin">int</span> = <span class="number">50257</span>   <span class="comment"># GPT-2 vocabulary size</span>
+    max_seq_len: <span class="builtin">int</span> = <span class="number">1024</span>    <span class="comment"># max context window</span>
+    d_model:     <span class="builtin">int</span> = <span class="number">768</span>     <span class="comment"># embedding dimension</span>
+    n_heads:     <span class="builtin">int</span> = <span class="number">12</span>      <span class="comment"># attention heads</span>
+    n_layers:    <span class="builtin">int</span> = <span class="number">12</span>      <span class="comment"># transformer blocks</span>
+    d_ff:        <span class="builtin">int</span> = <span class="number">3072</span>    <span class="comment"># FFN inner dimension (4 × 768)</span>
+    dropout:     <span class="builtin">float</span> = <span class="number">0.1</span></pre>
+        </div>
+
+        <h3>Step 2: The Transformer Block</h3>
+        <div class="code-block">
+            <span class="label">Python / Transformer Block</span>
+<pre><span class="keyword">import</span> torch
+<span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+<span class="keyword">import</span> math
+
+<span class="keyword">class</span> <span class="function">MultiHeadAttention</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, cfg):
+        <span class="builtin">super</span>().<span class="function">__init__</span>()
+        self.n_heads = cfg.n_heads
+        self.head_dim = cfg.d_model // cfg.n_heads
+        self.qkv = nn.<span class="function">Linear</span>(cfg.d_model, <span class="number">3</span> * cfg.d_model)
+        self.proj = nn.<span class="function">Linear</span>(cfg.d_model, cfg.d_model)
+        self.dropout = nn.<span class="function">Dropout</span>(cfg.dropout)
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x, mask=<span class="keyword">None</span>):
+        B, T, C = x.shape
+        qkv = self.<span class="function">qkv</span>(x).<span class="function">reshape</span>(B, T, <span class="number">3</span>, self.n_heads, self.head_dim)
+        qkv = qkv.<span class="function">permute</span>(<span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>)
+        q, k, v = qkv[<span class="number">0</span>], qkv[<span class="number">1</span>], qkv[<span class="number">2</span>]
+
+        scores = (q @ k.<span class="function">transpose</span>(-<span class="number">2</span>, -<span class="number">1</span>)) / math.<span class="function">sqrt</span>(self.head_dim)
+        <span class="keyword">if</span> mask <span class="keyword">is not</span> <span class="keyword">None</span>:
+            scores = scores + mask[:T, :T]
+        attn = scores.<span class="function">softmax</span>(dim=-<span class="number">1</span>)
+        attn = self.<span class="function">dropout</span>(attn)
+
+        out = (attn @ v).<span class="function">transpose</span>(<span class="number">1</span>, <span class="number">2</span>).<span class="function">reshape</span>(B, T, C)
+        <span class="keyword">return</span> self.<span class="function">proj</span>(out)
+
+<span class="keyword">class</span> <span class="function">FeedForward</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, cfg):
+        <span class="builtin">super</span>().<span class="function">__init__</span>()
+        self.net = nn.<span class="function">Sequential</span>(
+            nn.<span class="function">Linear</span>(cfg.d_model, cfg.d_ff),
+            nn.<span class="function">GELU</span>(),
+            nn.<span class="function">Linear</span>(cfg.d_ff, cfg.d_model),
+            nn.<span class="function">Dropout</span>(cfg.dropout),
+        )
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x):
+        <span class="keyword">return</span> self.<span class="function">net</span>(x)
+
+<span class="keyword">class</span> <span class="function">TransformerBlock</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, cfg):
+        <span class="builtin">super</span>().<span class="function">__init__</span>()
+        self.attn = <span class="function">MultiHeadAttention</span>(cfg)
+        self.ffn  = <span class="function">FeedForward</span>(cfg)
+        self.ln1  = nn.<span class="function">LayerNorm</span>(cfg.d_model)
+        self.ln2  = nn.<span class="function">LayerNorm</span>(cfg.d_model)
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x, mask=<span class="keyword">None</span>):
+        <span class="comment"># Pre-norm variant (used by GPT-2 and later)</span>
+        x = x + self.<span class="function">attn</span>(self.<span class="function">ln1</span>(x), mask)   <span class="comment"># residual + attention</span>
+        x = x + self.<span class="function">ffn</span>(self.<span class="function">ln2</span>(x))          <span class="comment"># residual + FFN</span>
+        <span class="keyword">return</span> x</pre>
+        </div>
+
+        <h3>Step 3: The Full GPT Model</h3>
+        <div class="code-block">
+            <span class="label">Python / Full GPT</span>
+<pre><span class="keyword">class</span> <span class="function">GPT</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, cfg):
+        <span class="builtin">super</span>().<span class="function">__init__</span>()
+        self.cfg = cfg
+
+        <span class="comment"># Token + positional embeddings</span>
+        self.tok_emb = nn.<span class="function">Embedding</span>(cfg.vocab_size, cfg.d_model)
+        self.pos_emb = nn.<span class="function">Embedding</span>(cfg.max_seq_len, cfg.d_model)
+        self.drop = nn.<span class="function">Dropout</span>(cfg.dropout)
+
+        <span class="comment"># Stack of N transformer blocks</span>
+        self.blocks = nn.<span class="function">ModuleList</span>([
+            <span class="function">TransformerBlock</span>(cfg) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="builtin">range</span>(cfg.n_layers)
+        ])
+
+        <span class="comment"># Final layer norm + projection to vocab</span>
+        self.ln_f = nn.<span class="function">LayerNorm</span>(cfg.d_model)
+        self.head = nn.<span class="function">Linear</span>(cfg.d_model, cfg.vocab_size, bias=<span class="keyword">False</span>)
+
+        <span class="comment"># Causal mask (registered as buffer — not a parameter)</span>
+        mask = torch.<span class="function">triu</span>(
+            torch.<span class="function">full</span>((cfg.max_seq_len, cfg.max_seq_len), <span class="builtin">float</span>(<span class="string">'-inf'</span>)),
+            diagonal=<span class="number">1</span>
+        )
+        self.<span class="function">register_buffer</span>(<span class="string">'mask'</span>, mask)
+
+    <span class="keyword">def</span> <span class="function">forward</span>(self, idx):
+        B, T = idx.shape
+        tok = self.<span class="function">tok_emb</span>(idx)                              <span class="comment"># (B, T, d_model)</span>
+        pos = self.<span class="function">pos_emb</span>(torch.<span class="function">arange</span>(T, device=idx.device)) <span class="comment"># (T, d_model)</span>
+        x = self.<span class="function">drop</span>(tok + pos)                             <span class="comment"># combine embeddings</span>
+
+        <span class="keyword">for</span> block <span class="keyword">in</span> self.blocks:
+            x = <span class="function">block</span>(x, self.mask)                          <span class="comment"># pass through each block</span>
+
+        x = self.<span class="function">ln_f</span>(x)                                      <span class="comment"># final layer norm</span>
+        logits = self.<span class="function">head</span>(x)                                 <span class="comment"># project to vocab size</span>
+        <span class="keyword">return</span> logits                                          <span class="comment"># (B, T, vocab_size)</span></pre>
+        </div>
+
+        <h3>Step 4: Instantiate and Count Parameters</h3>
+        <div class="code-block">
+            <span class="label">Python / Parameter Count</span>
+<pre>cfg = <span class="function">GPTConfig</span>()
+model = <span class="function">GPT</span>(cfg)
+
+n_params = <span class="builtin">sum</span>(p.<span class="function">numel</span>() <span class="keyword">for</span> p <span class="keyword">in</span> model.<span class="function">parameters</span>())
+<span class="builtin">print</span>(<span class="string">f"Model parameters: {n_params:,}"</span>)
+<span class="comment"># → Model parameters: 124,439,808  (~124M — this is GPT-2 Small!)</span>
+
+<span class="comment"># Quick test: feed random token IDs</span>
+idx = torch.<span class="function">randint</span>(<span class="number">0</span>, cfg.vocab_size, (<span class="number">2</span>, <span class="number">64</span>))  <span class="comment"># batch=2, seq_len=64</span>
+logits = <span class="function">model</span>(idx)
+<span class="builtin">print</span>(<span class="string">f"Output shape: {logits.shape}"</span>)
+<span class="comment"># → Output shape: torch.Size([2, 64, 50257])</span>
+<span class="comment"># For each token position → probability over 50,257 possible next tokens</span></pre>
+        </div>
+
+        <!-- Interactive: Parameter Calculator -->
+        <div class="playground" id="paramCalc">
+            <h4><i class="fas fa-calculator"></i> Interactive: Transformer Parameter Calculator</h4>
+            <p>Adjust the hyperparameters and see how the parameter count changes!</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;text-align:left;max-width:500px;margin:0 auto 20px;">
+                <div>
+                    <label style="font-weight:700;color:#166534;font-size:0.9em;">d_model:</label>
+                    <select id="calcDmodel" onchange="calcParams()" style="width:100%;padding:8px;border-radius:10px;border:2px solid #bbf7d0;font-family:Nunito;font-weight:600;">
+                        <option value="256">256 (tiny)</option>
+                        <option value="768" selected>768 (GPT-2 Small)</option>
+                        <option value="1024">1024 (GPT-2 Medium)</option>
+                        <option value="1280">1280 (GPT-2 Large)</option>
+                        <option value="1600">1600 (GPT-2 XL)</option>
+                        <option value="4096">4096 (GPT-3 scale)</option>
+                        <option value="12288">12288 (GPT-3 175B)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight:700;color:#166534;font-size:0.9em;">n_layers:</label>
+                    <select id="calcLayers" onchange="calcParams()" style="width:100%;padding:8px;border-radius:10px;border:2px solid #bbf7d0;font-family:Nunito;font-weight:600;">
+                        <option value="4">4</option>
+                        <option value="12" selected>12 (GPT-2 Small)</option>
+                        <option value="24">24 (GPT-2 Medium)</option>
+                        <option value="36">36 (GPT-2 Large)</option>
+                        <option value="48">48 (GPT-2 XL)</option>
+                        <option value="96">96 (GPT-3 175B)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight:700;color:#166534;font-size:0.9em;">n_heads:</label>
+                    <select id="calcHeads" onchange="calcParams()" style="width:100%;padding:8px;border-radius:10px;border:2px solid #bbf7d0;font-family:Nunito;font-weight:600;">
+                        <option value="4">4</option>
+                        <option value="12" selected>12</option>
+                        <option value="16">16</option>
+                        <option value="96">96</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight:700;color:#166534;font-size:0.9em;">vocab_size:</label>
+                    <select id="calcVocab" onchange="calcParams()" style="width:100%;padding:8px;border-radius:10px;border:2px solid #bbf7d0;font-family:Nunito;font-weight:600;">
+                        <option value="32000">32,000 (Llama)</option>
+                        <option value="50257" selected>50,257 (GPT-2)</option>
+                        <option value="100256">100,256 (GPT-4)</option>
+                    </select>
+                </div>
+            </div>
+            <div style="background:white;border-radius:16px;padding:20px;border:2px solid #22c55e;display:inline-block;min-width:300px;">
+                <div style="font-size:0.85em;color:#6b7280;">Total Parameters</div>
+                <div style="font-size:2.2em;font-weight:900;color:#15803d;" id="paramCount">124,439,808</div>
+                <div style="font-size:0.9em;color:#334155;font-weight:600;" id="paramLabel">≈ 124M (GPT-2 Small)</div>
+            </div>
+        </div>
+
+        <!-- Full architecture SVG -->
+        <div class="visual">
+            <h4>🏗️ The Full GPT Architecture — Top to Bottom</h4>
+            <svg viewBox="0 0 500 620" xmlns="http://www.w3.org/2000/svg">
+                <rect width="500" height="620" rx="16" fill="#f0fdf4" fill-opacity="0.2"/>
+                <defs>
+                    <marker id="arrG4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#22c55e"/></marker>
+                </defs>
+
+                <!-- Input tokens -->
+                <rect x="130" y="15" width="240" height="40" rx="12" fill="#e0f2fe" stroke="#3b82f6" stroke-width="2"/>
+                <text x="250" y="40" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="800" font-family="Nunito">Input Token IDs [3, 412, 87, ...]</text>
+
+                <line x1="250" y1="55" x2="250" y2="75" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG4)"/>
+
+                <!-- Token + Pos Embedding -->
+                <rect x="100" y="80" width="300" height="45" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="250" y="107" text-anchor="middle" fill="#92400e" font-size="12" font-weight="800" font-family="Nunito">Token Embedding + Positional Encoding</text>
+
+                <line x1="250" y1="125" x2="250" y2="150" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG4)"/>
+
+                <!-- Transformer Block 1 -->
+                <rect x="120" y="155" width="260" height="90" rx="16" fill="#bbf7d0" stroke="#22c55e" stroke-width="2.5"/>
+                <text x="250" y="180" text-anchor="middle" fill="#166534" font-size="12" font-weight="800" font-family="Nunito">Transformer Block 1</text>
+                <text x="250" y="200" text-anchor="middle" fill="#166534" font-size="9" font-family="Nunito">Masked Attn → Add&Norm → FFN → Add&Norm</text>
+                <text x="250" y="218" text-anchor="middle" fill="#6b7280" font-size="8" font-family="Nunito">(with residual connections)</text>
+
+                <line x1="250" y1="245" x2="250" y2="265" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG4)"/>
+
+                <!-- Transformer Block 2 -->
+                <rect x="120" y="270" width="260" height="50" rx="16" fill="#bbf7d0" stroke="#22c55e" stroke-width="2" opacity="0.8"/>
+                <text x="250" y="300" text-anchor="middle" fill="#166534" font-size="12" font-weight="800" font-family="Nunito">Transformer Block 2</text>
+
+                <line x1="250" y1="320" x2="250" y2="340" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG4)"/>
+
+                <!-- Dots -->
+                <text x="250" y="365" text-anchor="middle" fill="#6b7280" font-size="22" font-weight="900" font-family="Nunito">⋮</text>
+                <text x="330" y="368" fill="#6b7280" font-size="10" font-style="italic" font-family="Nunito">× N layers</text>
+
+                <line x1="250" y1="380" x2="250" y2="400" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG4)"/>
+
+                <!-- Block N -->
+                <rect x="120" y="405" width="260" height="50" rx="16" fill="#bbf7d0" stroke="#22c55e" stroke-width="2" opacity="0.8"/>
+                <text x="250" y="435" text-anchor="middle" fill="#166534" font-size="12" font-weight="800" font-family="Nunito">Transformer Block N</text>
+
+                <line x1="250" y1="455" x2="250" y2="478" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG4)"/>
+
+                <!-- Final LayerNorm -->
+                <rect x="160" y="482" width="180" height="35" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="250" y="504" text-anchor="middle" fill="#92400e" font-size="11" font-weight="700" font-family="Nunito">Final LayerNorm</text>
+
+                <line x1="250" y1="517" x2="250" y2="540" stroke="#22c55e" stroke-width="2" marker-end="url(#arrG4)"/>
+
+                <!-- Linear projection -->
+                <rect x="120" y="545" width="260" height="45" rx="14" fill="#dcfce7" stroke="#22c55e" stroke-width="2.5"/>
+                <text x="250" y="572" text-anchor="middle" fill="#166534" font-size="12" font-weight="800" font-family="Nunito">Linear → Softmax → Next Token Probs</text>
+
+                <!-- Output label -->
+                <text x="250" y="610" text-anchor="middle" fill="#15803d" font-size="11" font-weight="800" font-family="Nunito">P("the") = 0.02, P("cat") = 0.35, P("dog") = 0.12 ...</text>
+
+                <!-- Animated dot flowing through -->
+                <circle r="6" fill="#22c55e">
+                    <animateMotion dur="5s" repeatCount="indefinite" path="M250,35 L250,100 L250,200 L250,295 L250,365 L250,430 L250,500 L250,570"/>
+                    <animate attributeName="opacity" values="0;1;1;1;1;1;1;0" dur="5s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+
+        <div class="key-point">
+            <h4>🎓 What You Just Built</h4>
+            <ul>
+                <li>A complete <strong>GPT-style decoder-only Transformer</strong> — the same architecture behind ChatGPT</li>
+                <li>Token + positional embeddings → N transformer blocks → final projection to vocabulary</li>
+                <li>Each block: masked multi-head attention → add & norm → FFN → add & norm</li>
+                <li>With default config: ~124M parameters (GPT-2 Small). Scale to 175B parameters by increasing d_model, n_layers, and n_heads.</li>
+                <li>The only missing piece: <strong>training data and compute</strong>. The architecture itself is surprisingly compact!</li>
+            </ul>
+        </div>
+
+        <div class="eli5">
+            <h4>🔗 What's Next?</h4>
+            <p>We have the architecture — but a randomly initialized GPT produces gibberish. In the next module, we'll cover <strong>training</strong>: how to feed it billions of tokens, compute the loss (cross-entropy), and iteratively update all 124M+ parameters until the model can write coherent text. The training loop is the same 5 steps from Module 3 — just scaled to hundreds of GPUs!</p>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="attention.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Prev: Attention</a>
+        <a href="training.html" class="nav-btn next">Next: Training <i class="fas fa-arrow-right"></i></a>
+    </div>
+</div>
+
+<script>
+// ========== Encoder/Decoder Highlight ==========
+function highlightArch(type) {
+    var btns = document.querySelectorAll('.toggle-btn');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    var enc = document.getElementById('encoderStack');
+    var dec = document.getElementById('decoderStack');
+    var desc = document.getElementById('archDescription');
+
+    enc.style.opacity = '0.25';
+    dec.style.opacity = '0.25';
+
+    if (type === 'encoder') {
+        enc.style.opacity = '1';
+        btns[0].classList.add('active');
+        desc.innerHTML = '🔵 <strong>Encoder-Only (BERT):</strong> Reads ALL tokens at once (bidirectional). Can\'t generate text — used for classification, NER, search, and embeddings.';
+    } else if (type === 'decoder') {
+        dec.style.opacity = '1';
+        btns[1].classList.add('active');
+        desc.innerHTML = '🟢 <strong>Decoder-Only (GPT):</strong> Reads tokens left-to-right only (causal). This is what generates text — the architecture behind ChatGPT, Llama, and Mistral.';
+    } else {
+        enc.style.opacity = '1';
+        dec.style.opacity = '1';
+        btns[2].classList.add('active');
+        desc.innerHTML = '🔵🟢 <strong>Encoder-Decoder (T5, BART):</strong> Encoder reads full input, decoder generates output. Used for translation, summarization, and text-to-text tasks.';
+    }
+}
+
+// ========== Masking Interactive ==========
+var maskWords = ['The', 'cat', 'sat', 'on', 'the', 'mat'];
+var maskContainer = document.getElementById('maskSentence');
+var maskExplain = document.getElementById('maskExplain');
+
+function initMask() {
+    maskContainer.innerHTML = '';
+    for (var i = 0; i < maskWords.length; i++) {
+        var span = document.createElement('span');
+        span.className = 'mask-word';
+        span.textContent = maskWords[i];
+        span.dataset.idx = i;
+        span.addEventListener('click', function() { selectMaskWord(parseInt(this.dataset.idx)); });
+        maskContainer.appendChild(span);
+    }
+}
+
+function selectMaskWord(idx) {
+    var spans = maskContainer.querySelectorAll('.mask-word');
+    spans.forEach(function(s, i) {
+        s.classList.remove('selected', 'visible', 'masked');
+        if (i === idx) {
+            s.classList.add('selected');
+        } else if (i < idx) {
+            s.classList.add('visible');
+        } else {
+            s.classList.add('masked');
+        }
+    });
+    var visible = maskWords.slice(0, idx + 1).join(', ');
+    var maskedW = maskWords.slice(idx + 1);
+    var maskedStr = maskedW.length > 0 ? maskedW.join(', ') : 'none';
+    maskExplain.innerHTML = '👁️ "<strong>' + maskWords[idx] + '</strong>" can see: [' + visible + ']<br>🚫 Masked (hidden): [' + maskedStr + ']';
+}
+
+initMask();
+
+// ========== Parameter Calculator ==========
+function calcParams() {
+    var d = parseInt(document.getElementById('calcDmodel').value);
+    var L = parseInt(document.getElementById('calcLayers').value);
+    var V = parseInt(document.getElementById('calcVocab').value);
+    var dff = d * 4;
+
+    var tokEmb = V * d;
+    var posEmb = 1024 * d;
+    var attnQKV = d * (3 * d) + (3 * d);
+    var attnProj = d * d + d;
+    var ln = 2 * d;
+    var ffn1 = d * dff + dff;
+    var ffn2 = dff * d + d;
+    var blockParams = attnQKV + attnProj + (2 * ln) + ffn1 + ffn2;
+    var finalLN = 2 * d;
+    var lmHead = d * V;
+
+    var total = tokEmb + posEmb + (L * blockParams) + finalLN + lmHead;
+
+    document.getElementById('paramCount').textContent = total.toLocaleString();
+
+    var label = '';
+    if (total < 1e6) label = '≈ ' + (total / 1e3).toFixed(0) + 'K';
+    else if (total < 1e9) label = '≈ ' + (total / 1e6).toFixed(0) + 'M';
+    else label = '≈ ' + (total / 1e9).toFixed(1) + 'B';
+
+    if (d === 768 && L === 12) label += ' (GPT-2 Small)';
+    else if (d === 1024 && L === 24) label += ' (GPT-2 Medium)';
+    else if (d === 1280 && L === 36) label += ' (GPT-2 Large)';
+    else if (d === 1600 && L === 48) label += ' (GPT-2 XL)';
+    else if (d === 12288 && L === 96) label += ' (GPT-3 175B scale)';
+
+    document.getElementById('paramLabel').textContent = label;
+}
+calcParams();
+</script>
+</body>
+</html>

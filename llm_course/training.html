@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training LLMs | LLM Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #fefce8 0%, #fef9c3 25%, #fff7ed 50%, #fefce8 75%, #fffbeb 100%);
+            background-attachment: fixed;
+            min-height: 100vh; padding: 20px; color: #1e293b; line-height: 2; font-size: 18px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav {
+            background: rgba(255,255,255,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(234,179,8,0.12); padding: 15px 30px; border-radius: 18px;
+            margin-bottom: 30px; box-shadow: 0 4px 24px rgba(234,179,8,0.06);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .nav a { color: #a16207; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header {
+            text-align: center; padding: 55px 40px;
+            background: linear-gradient(135deg, #eab308, #ca8a04, #a16207);
+            border-radius: 28px; color: white; margin-bottom: 40px;
+            box-shadow: 0 12px 40px rgba(202,138,4,0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; }
+        .header p { font-size: 1.15em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .badge { background: #dc2626; color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .section {
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(18px);
+            border: 1px solid rgba(234,179,8,0.1); border-radius: 28px;
+            padding: 45px; margin-bottom: 35px;
+            box-shadow: 0 4px 30px rgba(234,179,8,0.05);
+        }
+        .section h2 { color: #a16207; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #fef3c7; }
+        .section h3 { color: #854d0e; font-size: 1.35em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #eab308; }
+        .section p { font-size: 1.08em; color: #334155; margin-bottom: 18px; }
+        .eli5 {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px dashed #eab308;
+            border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .eli5 h4 { color: #92400e; font-size: 1.25em; margin-bottom: 15px; }
+        .eli5 p { color: #78350f; font-size: 1.1em; margin-bottom: 10px; }
+        .analogy {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border-left: 5px solid #eab308; border-radius: 20px; padding: 28px; margin: 25px 0;
+        }
+        .analogy h4 { color: #854d0e; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy p { color: #713f12; }
+        .key-point {
+            background: linear-gradient(135deg, #fffbeb, #fef9c3);
+            border-left: 5px solid #eab308; border-radius: 20px; padding: 25px; margin: 25px 0;
+        }
+        .key-point h4 { color: #854d0e; margin-bottom: 12px; }
+        .key-point ul { margin-left: 22px; color: #713f12; }
+        .key-point li { margin-bottom: 8px; }
+        .visual {
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+            border: 1px solid #fde68a; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center;
+        }
+        .visual h4 { color: #a16207; margin-bottom: 15px; }
+        .visual svg { max-width: 100%; height: auto; }
+        .code-block {
+            background: #1e293b; border-radius: 16px; padding: 25px; margin: 20px 0;
+            overflow-x: auto; position: relative;
+        }
+        .code-block pre {
+            font-family: 'Fira Code', monospace; font-size: 0.92em;
+            color: #e2e8f0; line-height: 1.8; margin: 0; white-space: pre;
+        }
+        .code-block .comment { color: #64748b; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .function { color: #7dd3fc; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .builtin { color: #f9a8d4; }
+        .code-block .decorator { color: #fb923c; }
+        .code-block .label {
+            position: absolute; top: 10px; right: 14px;
+            background: rgba(255,255,255,0.08); color: #94a3b8;
+            padding: 2px 10px; border-radius: 8px; font-size: 0.78em;
+            font-family: 'Fira Code', monospace;
+        }
+        .playground {
+            background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid #fde68a; border-radius: 22px; padding: 30px; margin: 30px 0; text-align: center;
+        }
+        .playground h4 { color: #a16207; margin-bottom: 8px; font-size: 1.15em; }
+        .playground p { color: #334155; font-size: 0.95em; margin-bottom: 15px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 700; transition: all .3s;
+        }
+        .nav-btn.prev { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: #475569; border: 1px solid #e2e8f0; }
+        .nav-btn.next { background: linear-gradient(135deg, #eab308, #ca8a04); color: white; box-shadow: 0 4px 20px rgba(202,138,4,0.25); }
+        .nav-btn:hover { transform: translateY(-3px); }
+        .slider-group { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; }
+        .slider-group label { font-weight: 700; color: #854d0e; font-size: 0.9em; }
+        .slider-group input[type=range] { width: 100%; accent-color: #eab308; }
+        .train-btn {
+            padding: 14px 36px; border: none; border-radius: 14px; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 1.05em; cursor: pointer; transition: all .3s;
+            background: linear-gradient(135deg, #eab308, #ca8a04); color: white;
+            box-shadow: 0 4px 16px rgba(202,138,4,0.3);
+        }
+        .train-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(202,138,4,0.4); }
+        .train-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        @keyframes pulseGold { 0%,100%{box-shadow:0 0 0 0 rgba(234,179,8,0.3);}50%{box-shadow:0 0 0 12px rgba(234,179,8,0);} }
+        @media (max-width: 768px) {
+            body { padding: 10px; font-size: 16px; }
+            .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 18px; }
+            .nav-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+    </nav>
+
+    <div class="header">
+        <span class="badge">Module 6 — Training</span>
+        <h1>🏋️ Training LLMs</h1>
+        <p>From random noise to Shakespeare — how a model learns to write by predicting one token at a time, billions of times.</p>
+    </div>
+
+    <!-- ========== PART 1: Next-Token Prediction ========== -->
+    <div class="section" id="prediction">
+        <h2><i class="fas fa-bullseye"></i> Part 1: How LLMs Learn — Next-Token Prediction</h2>
+
+        <p>The entire secret behind GPT, Llama, and every modern LLM is shockingly simple: <strong>given some words, predict the next one</strong>. That's the only training objective. No human labeling, no special rules — just predict the next token, trillions of times.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>It's a <strong>fill-in-the-blank game</strong>. Someone says "The cat sat on the ___" and you guess "mat." The model plays this game on every sentence in the entire internet, billions of times. After enough practice, it gets really good at guessing — and that "guessing" is what we call intelligence.</p>
+        </div>
+
+        <div class="visual">
+            <h4>🎯 Next-Token Prediction — The Core Objective</h4>
+            <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+                <rect width="700" height="220" rx="16" fill="#fefce8" fill-opacity="0.3"/>
+                <defs><marker id="aG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ca8a04"/></marker></defs>
+                <text x="350" y="28" text-anchor="middle" fill="#854d0e" font-size="13" font-weight="800" font-family="Nunito">Input tokens → Model → Predict next</text>
+                <rect x="30" y="50" width="70" height="40" rx="10" fill="#fde68a" stroke="#eab308" stroke-width="2"/><text x="65" y="75" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="700" font-family="Nunito">The</text>
+                <rect x="115" y="50" width="70" height="40" rx="10" fill="#fde68a" stroke="#eab308" stroke-width="2"/><text x="150" y="75" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="700" font-family="Nunito">cat</text>
+                <rect x="200" y="50" width="70" height="40" rx="10" fill="#fde68a" stroke="#eab308" stroke-width="2"/><text x="235" y="75" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="700" font-family="Nunito">sat</text>
+                <rect x="285" y="50" width="70" height="40" rx="10" fill="#fde68a" stroke="#eab308" stroke-width="2"/><text x="320" y="75" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="700" font-family="Nunito">on</text>
+                <rect x="370" y="50" width="70" height="40" rx="10" fill="#fde68a" stroke="#eab308" stroke-width="2"/><text x="405" y="75" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="700" font-family="Nunito">the</text>
+                <rect x="455" y="50" width="70" height="40" rx="10" fill="#fef3c7" stroke="#eab308" stroke-width="2" stroke-dasharray="6,4"><animate attributeName="fill" values="#fef3c7;#fbbf24;#fef3c7" dur="2s" repeatCount="indefinite"/></rect>
+                <text x="490" y="75" text-anchor="middle" fill="#92400e" font-size="12" font-weight="900" font-family="Nunito">???</text>
+                <line x1="350" y1="100" x2="350" y2="125" stroke="#ca8a04" stroke-width="2.5" marker-end="url(#aG)"/>
+                <rect x="200" y="130" width="300" height="45" rx="14" fill="#eab308" fill-opacity="0.15" stroke="#eab308" stroke-width="2"/>
+                <text x="350" y="158" text-anchor="middle" fill="#854d0e" font-size="13" font-weight="800" font-family="Nunito">🧠 Transformer Model</text>
+                <line x1="350" y1="175" x2="350" y2="195" stroke="#ca8a04" stroke-width="2.5" marker-end="url(#aG)"/>
+                <text x="350" y="215" text-anchor="middle" fill="#a16207" font-size="14" font-weight="900" font-family="Nunito">Prediction: "mat" (P=0.73) ✓</text>
+            </svg>
+        </div>
+
+        <div class="analogy">
+            <h4>📖 The Autocomplete Analogy</h4>
+            <p>Your phone keyboard's autocomplete is a tiny version of this. It predicts the next word based on what you've typed. An LLM is the same idea, but trained on the entire internet with a 124M+ parameter brain instead of a simple lookup table.</p>
+        </div>
+
+        <div class="key-point">
+            <h4>💡 Why This Works So Well</h4>
+            <ul>
+                <li><strong>Self-supervised</strong> — no human labels needed, just raw text</li>
+                <li>To predict well, the model must learn grammar, facts, reasoning, even code</li>
+                <li>The internet has trillions of tokens — essentially unlimited free training data</li>
+                <li>Cross-entropy loss measures how surprised the model is by the real next token</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 2: Data Preparation ========== -->
+    <div class="section" id="data">
+        <h2><i class="fas fa-database"></i> Part 2: Data Preparation</h2>
+
+        <p>Before training, we need to turn raw text into batches of input-target pairs. For our mini project we'll use <strong>TinyShakespeare</strong> (~1MB of Shakespeare plays). Real LLMs train on <strong>Common Crawl</strong> (petabytes of web text).</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Imagine cutting a really long book into <strong>flashcards</strong>. Each flashcard shows a chunk of text and the answer is the next character/word. We slide a window across the entire book, creating millions of flashcards. Then we shuffle them into batches and feed them to the model.</p>
+        </div>
+
+        <h3>Sliding Window Over Text</h3>
+        <p>We pick a <code>context_length</code> (say 64 tokens), then slide across the text: tokens [0:64] → predict [1:65], tokens [1:65] → predict [2:66], and so on. Each window gives us 64 training examples at once thanks to causal masking.</p>
+
+        <div class="visual">
+            <h4>📏 Sliding Window — Creating Training Pairs</h4>
+            <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+                <rect width="700" height="180" rx="16" fill="#fefce8" fill-opacity="0.3"/>
+                <text x="350" y="24" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="800" font-family="Nunito">Full text: "First Citizen: Before we proceed any further hear me speak..."</text>
+                <rect x="30" y="40" width="640" height="25" rx="6" fill="#fef3c7" stroke="#eab308" stroke-width="1.5"/>
+                <text x="350" y="57" text-anchor="middle" fill="#92400e" font-size="10" font-family="Fira Code">F i r s t _ C i t i z e n : _ B e f o r e _ w e _ p r o c e e d ...</text>
+                <rect x="30" y="78" width="250" height="30" rx="8" fill="#eab308" fill-opacity="0.25" stroke="#eab308" stroke-width="2">
+                    <animate attributeName="x" values="30;100;170;240;310;380;30" dur="6s" repeatCount="indefinite"/>
+                </rect>
+                <text x="155" y="98" text-anchor="middle" fill="#854d0e" font-size="10" font-weight="700" font-family="Nunito">context_length = 8</text>
+                <text x="80" y="135" text-anchor="middle" fill="#a16207" font-size="10" font-weight="700" font-family="Nunito">Input: [F,i,r,s,t,_,C,i]</text>
+                <text x="80" y="155" text-anchor="middle" fill="#a16207" font-size="10" font-weight="700" font-family="Nunito">Target: [i,r,s,t,_,C,i,t]</text>
+                <text x="350" y="145" text-anchor="middle" fill="#6b7280" font-size="10" font-style="italic" font-family="Nunito">Target is just the input shifted by 1 position</text>
+                <text x="600" y="135" text-anchor="middle" fill="#854d0e" font-size="10" font-weight="700" font-family="Nunito">→ Millions of pairs</text>
+                <text x="600" y="155" text-anchor="middle" fill="#854d0e" font-size="10" font-weight="700" font-family="Nunito">from one book!</text>
+            </svg>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / Data Prep</span>
+<pre><span class="keyword">import</span> torch
+<span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset, DataLoader
+
+<span class="keyword">class</span> <span class="function">TextDataset</span>(Dataset):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, text, tokenizer, ctx_len):
+        self.tokens = tokenizer.<span class="function">encode</span>(text)
+        self.ctx_len = ctx_len
+
+    <span class="keyword">def</span> <span class="function">__len__</span>(self):
+        <span class="keyword">return</span> <span class="builtin">len</span>(self.tokens) - self.ctx_len
+
+    <span class="keyword">def</span> <span class="function">__getitem__</span>(self, i):
+        chunk = self.tokens[i : i + self.ctx_len + <span class="number">1</span>]
+        x = torch.<span class="function">tensor</span>(chunk[:-<span class="number">1</span>])   <span class="comment"># input</span>
+        y = torch.<span class="function">tensor</span>(chunk[<span class="number">1</span>:])    <span class="comment"># target (shifted by 1)</span>
+        <span class="keyword">return</span> x, y
+
+<span class="comment"># Load TinyShakespeare</span>
+<span class="keyword">with</span> <span class="builtin">open</span>(<span class="string">"tiny_shakespeare.txt"</span>) <span class="keyword">as</span> f:
+    text = f.<span class="function">read</span>()
+<span class="builtin">print</span>(<span class="string">f"Dataset: {len(text):,} characters"</span>)
+<span class="comment"># → Dataset: 1,115,394 characters</span></pre>
+        </div>
+
+        <div class="analogy">
+            <h4>🍕 The Pizza Slice Analogy</h4>
+            <p>Your text is one giant pizza. The sliding window is like cutting overlapping slices — each slice (batch) is a manageable piece, but every part of the pizza gets eaten. The DataLoader is the waiter who brings slices to the model in random order so it doesn't get bored eating the same corner repeatedly.</p>
+        </div>
+    </div>
+
+    <!-- ========== PART 3: Model Config ========== -->
+    <div class="section" id="config">
+        <h2><i class="fas fa-sliders-h"></i> Part 3: Model Configuration</h2>
+
+        <p>Before training, you set the model's <strong>hyperparameters</strong> — these define the size and capacity of your Transformer. Bigger values = more parameters = smarter but more expensive.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>It's like customizing a robot before building it. How many brain layers? (<code>n_layers</code>) How many eyes to look around? (<code>n_heads</code>) How wide is each thought? (<code>d_model</code>) How many words does it know? (<code>vocab_size</code>) How far back can it remember? (<code>context_length</code>). Bigger numbers = smarter robot but takes longer to build.</p>
+        </div>
+
+        <div class="playground" id="configPlayground">
+            <h4><i class="fas fa-sliders-h"></i> Interactive: Configure Your Model</h4>
+            <p>Drag the sliders to set hyperparameters and watch the parameter count update live!</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;text-align:left;max-width:560px;margin:0 auto 20px;">
+                <div class="slider-group">
+                    <label>n_layers: <span id="valLayers">4</span></label>
+                    <input type="range" id="sLayers" min="1" max="24" value="4" oninput="updateConfig()">
+                </div>
+                <div class="slider-group">
+                    <label>n_heads: <span id="valHeads">4</span></label>
+                    <input type="range" id="sHeads" min="1" max="16" value="4" oninput="updateConfig()">
+                </div>
+                <div class="slider-group">
+                    <label>d_model: <span id="valDmodel">128</span></label>
+                    <input type="range" id="sDmodel" min="64" max="1024" value="128" step="64" oninput="updateConfig()">
+                </div>
+                <div class="slider-group">
+                    <label>vocab_size: <span id="valVocab">256</span></label>
+                    <input type="range" id="sVocab" min="64" max="50257" value="256" step="64" oninput="updateConfig()">
+                </div>
+                <div class="slider-group" style="grid-column:1/-1;">
+                    <label>context_length: <span id="valCtx">64</span></label>
+                    <input type="range" id="sCtx" min="16" max="512" value="64" step="16" oninput="updateConfig()">
+                </div>
+            </div>
+            <div style="background:white;border-radius:16px;padding:20px;border:2px solid #eab308;display:inline-block;min-width:300px;">
+                <div style="font-size:0.85em;color:#6b7280;">Total Parameters</div>
+                <div style="font-size:2.2em;font-weight:900;color:#a16207;" id="cfgParamCount">—</div>
+                <div style="font-size:0.9em;color:#334155;font-weight:600;" id="cfgParamLabel">Adjust sliders above</div>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / Config</span>
+<pre><span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass
+
+<span class="decorator">@dataclass</span>
+<span class="keyword">class</span> <span class="function">MiniGPTConfig</span>:
+    vocab_size:     <span class="builtin">int</span> = <span class="number">256</span>     <span class="comment"># character-level (ASCII)</span>
+    context_length: <span class="builtin">int</span> = <span class="number">64</span>      <span class="comment"># how far the model can "see"</span>
+    d_model:        <span class="builtin">int</span> = <span class="number">128</span>     <span class="comment"># embedding dimension</span>
+    n_heads:        <span class="builtin">int</span> = <span class="number">4</span>       <span class="comment"># attention heads</span>
+    n_layers:       <span class="builtin">int</span> = <span class="number">4</span>       <span class="comment"># transformer blocks</span>
+    dropout:        <span class="builtin">float</span> = <span class="number">0.1</span></pre>
+        </div>
+
+        <div class="analogy">
+            <h4>🎛️ The Mixing Board Analogy</h4>
+            <p>Configuring a model is like a sound engineer adjusting a mixing board before recording. Each slider (d_model, n_layers, n_heads) changes the richness, depth, and detail of the output. Turn everything to max and you get a symphony — but you need a massive studio (GPU) to run it.</p>
+        </div>
+    </div>
+
+    <!-- ========== PART 4: Training Loop ========== -->
+    <div class="section" id="loop">
+        <h2><i class="fas fa-sync-alt"></i> Part 4: The Training Loop</h2>
+
+        <p>Training is a loop of 5 steps repeated thousands of times. Each iteration, the model sees a batch, makes predictions, checks how wrong it was, and adjusts its weights to be less wrong next time.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>Imagine practicing spelling quizzes. Each round: (1) Teacher reads a word, (2) You write your guess, (3) Teacher marks it right or wrong, (4) You look at what you got wrong and try to remember, (5) You write down your score. After 1,000 quizzes, you're a great speller! That's training.</p>
+        </div>
+
+        <div class="visual">
+            <h4>🔄 The 5-Step Training Loop</h4>
+            <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg" id="loopSvg">
+                <rect width="700" height="340" rx="16" fill="#fefce8" fill-opacity="0.3"/>
+                <defs><marker id="aL" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#ca8a04"/></marker></defs>
+                <!-- Step 1 -->
+                <rect x="260" y="15" width="180" height="42" rx="12" id="ls1" fill="#fde68a" stroke="#eab308" stroke-width="2.5"><animate attributeName="fill-opacity" values="1;0.3;0.3;0.3;0.3;0.3;1" dur="5s" repeatCount="indefinite"/></rect>
+                <text x="350" y="41" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="800" font-family="Nunito">① Forward Pass</text>
+                <!-- Arrow -->
+                <line x1="440" y1="36" x2="490" y2="60" stroke="#ca8a04" stroke-width="2" marker-end="url(#aL)"/>
+                <!-- Step 2 -->
+                <rect x="490" y="60" width="180" height="42" rx="12" id="ls2" fill="#fde68a" stroke="#eab308" stroke-width="2.5"><animate attributeName="fill-opacity" values="0.3;1;0.3;0.3;0.3;0.3;0.3" dur="5s" repeatCount="indefinite"/></rect>
+                <text x="580" y="86" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="800" font-family="Nunito">② Compute Loss</text>
+                <!-- Arrow -->
+                <line x1="580" y1="102" x2="580" y2="140" stroke="#ca8a04" stroke-width="2" marker-end="url(#aL)"/>
+                <!-- Step 3 -->
+                <rect x="490" y="145" width="180" height="42" rx="12" id="ls3" fill="#fde68a" stroke="#eab308" stroke-width="2.5"><animate attributeName="fill-opacity" values="0.3;0.3;1;0.3;0.3;0.3;0.3" dur="5s" repeatCount="indefinite"/></rect>
+                <text x="580" y="171" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="800" font-family="Nunito">③ Backward Pass</text>
+                <!-- Arrow -->
+                <line x1="490" y1="185" x2="440" y2="215" stroke="#ca8a04" stroke-width="2" marker-end="url(#aL)"/>
+                <!-- Step 4 -->
+                <rect x="260" y="210" width="180" height="42" rx="12" id="ls4" fill="#fde68a" stroke="#eab308" stroke-width="2.5"><animate attributeName="fill-opacity" values="0.3;0.3;0.3;1;0.3;0.3;0.3" dur="5s" repeatCount="indefinite"/></rect>
+                <text x="350" y="236" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="800" font-family="Nunito">④ Optimizer Step</text>
+                <!-- Arrow -->
+                <line x1="260" y1="215" x2="210" y2="185" stroke="#ca8a04" stroke-width="2" marker-end="url(#aL)"/>
+                <!-- Step 5 -->
+                <rect x="30" y="145" width="180" height="42" rx="12" id="ls5" fill="#fde68a" stroke="#eab308" stroke-width="2.5"><animate attributeName="fill-opacity" values="0.3;0.3;0.3;0.3;1;0.3;0.3" dur="5s" repeatCount="indefinite"/></rect>
+                <text x="120" y="171" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="800" font-family="Nunito">⑤ Log Metrics</text>
+                <!-- Arrow back to top -->
+                <line x1="120" y1="145" x2="260" y2="40" stroke="#ca8a04" stroke-width="2" marker-end="url(#aL)" stroke-dasharray="6,4"/>
+                <!-- Center label -->
+                <text x="350" y="155" text-anchor="middle" fill="#a16207" font-size="14" font-weight="900" font-family="Nunito">🔁 Repeat</text>
+                <!-- Annotations below -->
+                <text x="350" y="285" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="700" font-family="Nunito">① Feed batch through model → ② Cross-entropy loss</text>
+                <text x="350" y="305" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="700" font-family="Nunito">③ Compute gradients → ④ Update weights (AdamW)</text>
+                <text x="350" y="325" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="700" font-family="Nunito">⑤ Print loss — repeat for thousands of steps</text>
+            </svg>
+        </div>
+
+        <div class="playground" id="trainPlayground">
+            <h4><i class="fas fa-play-circle"></i> Interactive: Train for 1 Epoch</h4>
+            <p>Click the button to simulate training — watch the loss decrease!</p>
+            <button class="train-btn" id="trainBtn" onclick="simulateTrain()"><i class="fas fa-bolt"></i> Train 1 Epoch</button>
+            <div style="margin-top:20px;">
+                <canvas id="lossChart" width="520" height="180" style="max-width:100%;border-radius:12px;background:#fffbeb;border:1px solid #fde68a;"></canvas>
+            </div>
+            <div style="margin-top:10px;font-weight:700;color:#854d0e;" id="trainStatus">Loss: — | Epoch: 0</div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / Training Loop</span>
+<pre><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn
+
+model = <span class="function">MiniGPT</span>(config)
+optimizer = torch.optim.<span class="function">AdamW</span>(model.<span class="function">parameters</span>(), lr=<span class="number">3e-4</span>)
+criterion = nn.<span class="function">CrossEntropyLoss</span>()
+
+<span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="builtin">range</span>(<span class="number">10</span>):
+    <span class="keyword">for</span> batch_idx, (x, y) <span class="keyword">in</span> <span class="builtin">enumerate</span>(dataloader):
+        <span class="comment"># ① Forward pass</span>
+        logits = <span class="function">model</span>(x)                  <span class="comment"># (B, T, vocab_size)</span>
+
+        <span class="comment"># ② Compute loss</span>
+        loss = <span class="function">criterion</span>(
+            logits.<span class="function">view</span>(-<span class="number">1</span>, config.vocab_size),
+            y.<span class="function">view</span>(-<span class="number">1</span>)
+        )
+
+        <span class="comment"># ③ Backward pass</span>
+        optimizer.<span class="function">zero_grad</span>()
+        loss.<span class="function">backward</span>()
+
+        <span class="comment"># ④ Optimizer step</span>
+        optimizer.<span class="function">step</span>()
+
+        <span class="comment"># ⑤ Log metrics</span>
+        <span class="keyword">if</span> batch_idx % <span class="number">100</span> == <span class="number">0</span>:
+            <span class="builtin">print</span>(<span class="string">f"Epoch {epoch} | Step {batch_idx} | Loss: {loss.item():.4f}"</span>)</pre>
+        </div>
+
+        <div class="analogy">
+            <h4>🏔️ The Mountain Descent</h4>
+            <p>Training is like being blindfolded on a mountain and trying to reach the valley (lowest loss). Each step: you feel the slope (gradients), take a step downhill (optimizer), and check your altitude (loss). After thousands of steps, you reach the bottom — your model has learned!</p>
+        </div>
+    </div>
+
+    <!-- ========== PART 5: Text Generation ========== -->
+    <div class="section" id="generate">
+        <h2><i class="fas fa-magic"></i> Part 5: Text Generation</h2>
+
+        <p>Once trained, the model generates text by repeatedly predicting the next token and appending it. But <strong>how</strong> we pick from the probability distribution matters a lot — that's where <strong>temperature</strong> and <strong>top-k sampling</strong> come in.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p><strong>Temperature</strong> is like a creativity dial. Turn it low (0.1) and the model always picks the safest, most obvious word — boring but correct. Turn it to 1.0 and it gets creative. Crank it to 2.0 and it goes crazy, picking random weird words. <strong>Top-K</strong> means "only consider the K best options" — like only letting yourself choose from the top 10 flavors at an ice cream shop instead of all 500.</p>
+        </div>
+
+        <div class="visual">
+            <h4>🌡️ Temperature Effect on Probabilities</h4>
+            <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" id="tempSvg">
+                <rect width="700" height="260" rx="16" fill="#fefce8" fill-opacity="0.3"/>
+                <text x="120" y="25" text-anchor="middle" fill="#a16207" font-size="12" font-weight="800" font-family="Nunito">T = 0.1 (Safe)</text>
+                <text x="350" y="25" text-anchor="middle" fill="#a16207" font-size="12" font-weight="800" font-family="Nunito">T = 1.0 (Balanced)</text>
+                <text x="580" y="25" text-anchor="middle" fill="#a16207" font-size="12" font-weight="800" font-family="Nunito">T = 2.0 (Wild)</text>
+                <!-- Low temp bars -->
+                <rect x="70" y="40" width="40" height="170" rx="6" fill="#eab308"/><text x="90" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-weight="700" font-family="Nunito">mat</text>
+                <rect x="115" y="185" width="40" height="25" rx="6" fill="#fde68a"/><text x="135" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-family="Nunito">rug</text>
+                <rect x="160" y="195" width="40" height="15" rx="6" fill="#fef9c3"/><text x="180" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-family="Nunito">floor</text>
+                <!-- Mid temp bars -->
+                <rect x="300" y="70" width="40" height="140" rx="6" fill="#eab308"/><text x="320" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-weight="700" font-family="Nunito">mat</text>
+                <rect x="345" y="120" width="40" height="90" rx="6" fill="#fde68a"/><text x="365" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-family="Nunito">rug</text>
+                <rect x="390" y="150" width="40" height="60" rx="6" fill="#fef9c3"/><text x="410" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-family="Nunito">floor</text>
+                <!-- High temp bars -->
+                <rect x="530" y="110" width="40" height="100" rx="6" fill="#eab308"/><text x="550" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-weight="700" font-family="Nunito">mat</text>
+                <rect x="575" y="125" width="40" height="85" rx="6" fill="#fde68a"/><text x="595" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-family="Nunito">rug</text>
+                <rect x="620" y="135" width="40" height="75" rx="6" fill="#fef9c3"/><text x="640" y="230" text-anchor="middle" fill="#854d0e" font-size="9" font-family="Nunito">floor</text>
+                <text x="120" y="250" text-anchor="middle" fill="#6b7280" font-size="9" font-family="Nunito">Almost always "mat"</text>
+                <text x="350" y="250" text-anchor="middle" fill="#6b7280" font-size="9" font-family="Nunito">Usually "mat", sometimes others</text>
+                <text x="580" y="250" text-anchor="middle" fill="#6b7280" font-size="9" font-family="Nunito">Could be anything!</text>
+            </svg>
+        </div>
+
+        <div class="playground" id="tempPlayground">
+            <h4><i class="fas fa-thermometer-half"></i> Interactive: Temperature Slider</h4>
+            <p>Drag to see how temperature changes the output style:</p>
+            <div style="max-width:400px;margin:0 auto;">
+                <input type="range" id="tempSlider" min="1" max="30" value="10" style="width:100%;accent-color:#eab308;" oninput="updateTemp()">
+                <div style="display:flex;justify-content:space-between;font-size:0.8em;color:#6b7280;"><span>0.1 (Boring)</span><span>1.0</span><span>3.0 (Chaos)</span></div>
+            </div>
+            <div style="margin-top:15px;font-size:1.3em;font-weight:900;color:#a16207;" id="tempValue">Temperature: 1.0</div>
+            <div style="margin-top:8px;padding:15px 25px;background:white;border-radius:14px;border:2px solid #fde68a;display:inline-block;max-width:500px;" id="tempOutput">
+                <span style="color:#854d0e;font-weight:700;">Model says:</span> <span id="tempText" style="color:#334155;">Balanced and coherent text with some variety.</span>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / Generate</span>
+<pre><span class="decorator">@torch.no_grad()</span>
+<span class="keyword">def</span> <span class="function">generate</span>(model, idx, max_new, temperature=<span class="number">1.0</span>, top_k=<span class="number">None</span>):
+    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="builtin">range</span>(max_new):
+        context = idx[:, -config.context_length:]
+        logits = <span class="function">model</span>(context)[:, -<span class="number">1</span>, :]   <span class="comment"># last position</span>
+        logits = logits / temperature            <span class="comment"># scale by temperature</span>
+        <span class="keyword">if</span> top_k:
+            v, _ = logits.<span class="function">topk</span>(top_k)
+            logits[logits &lt; v[:, [-<span class="number">1</span>]]] = <span class="builtin">float</span>(<span class="string">'-inf'</span>)
+        probs = logits.<span class="function">softmax</span>(dim=-<span class="number">1</span>)
+        next_tok = torch.<span class="function">multinomial</span>(probs, <span class="number">1</span>)
+        idx = torch.<span class="function">cat</span>([idx, next_tok], dim=-<span class="number">1</span>)
+    <span class="keyword">return</span> idx</pre>
+        </div>
+
+        <div class="key-point">
+            <h4>💡 Generation Strategies</h4>
+            <ul>
+                <li><strong>Greedy</strong> (T→0): always pick highest probability — deterministic but repetitive</li>
+                <li><strong>Sampling</strong> (T=1.0): sample from the full distribution — natural variety</li>
+                <li><strong>Top-K</strong>: only sample from the K most likely tokens — avoids nonsense</li>
+                <li><strong>Top-P (Nucleus)</strong>: sample from tokens whose cumulative probability ≥ P — adaptive K</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PART 6: PROJECT ========== -->
+    <div class="section" id="project">
+        <h2><i class="fas fa-rocket"></i> Part 6: PROJECT — Build & Train Mini-GPT</h2>
+
+        <p>Time to put <strong>everything together</strong>. Below is a complete, working script that combines all modules: Config → Tokenizer → Model → DataLoader → Training → Generation. Run this and watch your model go from gibberish to Shakespeare-ish in minutes.</p>
+
+        <div class="eli5">
+            <h4>👶 Like You're 5</h4>
+            <p>We're assembling the whole robot and turning it on. It starts babbling random letters. After training on Shakespeare for a few minutes, it starts writing things that <em>look</em> like Shakespeare — not perfect, but recognizably English with "thee" and "thou" and dramatic speeches. That's learning!</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Python / Complete Mini-GPT (~60 lines)</span>
+<pre><span class="keyword">import</span> torch, torch.nn <span class="keyword">as</span> nn
+<span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass
+
+<span class="decorator">@dataclass</span>
+<span class="keyword">class</span> <span class="function">Cfg</span>:
+    V=<span class="number">256</span>; T=<span class="number">64</span>; D=<span class="number">128</span>; H=<span class="number">4</span>; L=<span class="number">4</span>; drop=<span class="number">0.1</span>
+
+<span class="keyword">class</span> <span class="function">Block</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, c):
+        <span class="builtin">super</span>().<span class="function">__init__</span>()
+        self.ln1, self.ln2 = nn.<span class="function">LayerNorm</span>(c.D), nn.<span class="function">LayerNorm</span>(c.D)
+        self.attn = nn.<span class="function">MultiheadAttention</span>(c.D, c.H, dropout=c.drop, batch_first=<span class="keyword">True</span>)
+        self.ffn = nn.<span class="function">Sequential</span>(nn.<span class="function">Linear</span>(c.D, c.D*<span class="number">4</span>), nn.<span class="function">GELU</span>(), nn.<span class="function">Linear</span>(c.D*<span class="number">4</span>, c.D))
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x, mask):
+        h = self.<span class="function">ln1</span>(x)
+        x = x + self.attn(h, h, h, attn_mask=mask, is_causal=<span class="keyword">False</span>)[<span class="number">0</span>]
+        <span class="keyword">return</span> x + self.<span class="function">ffn</span>(self.<span class="function">ln2</span>(x))
+
+<span class="keyword">class</span> <span class="function">MiniGPT</span>(nn.Module):
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, c):
+        <span class="builtin">super</span>().<span class="function">__init__</span>()
+        self.c = c
+        self.tok = nn.<span class="function">Embedding</span>(c.V, c.D)
+        self.pos = nn.<span class="function">Embedding</span>(c.T, c.D)
+        self.blocks = nn.<span class="function">ModuleList</span>([<span class="function">Block</span>(c) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="builtin">range</span>(c.L)])
+        self.ln = nn.<span class="function">LayerNorm</span>(c.D)
+        self.head = nn.<span class="function">Linear</span>(c.D, c.V, bias=<span class="keyword">False</span>)
+        mask = torch.<span class="function">triu</span>(torch.<span class="function">full</span>((c.T, c.T), <span class="builtin">float</span>(<span class="string">'-inf'</span>)), <span class="number">1</span>)
+        self.<span class="function">register_buffer</span>(<span class="string">'mask'</span>, mask)
+    <span class="keyword">def</span> <span class="function">forward</span>(self, x):
+        B, T = x.shape
+        x = self.<span class="function">tok</span>(x) + self.<span class="function">pos</span>(torch.<span class="function">arange</span>(T, device=x.device))
+        <span class="keyword">for</span> b <span class="keyword">in</span> self.blocks: x = <span class="function">b</span>(x, self.mask[:T,:T])
+        <span class="keyword">return</span> self.<span class="function">head</span>(self.<span class="function">ln</span>(x))
+
+<span class="comment"># --- Load data & train ---</span>
+text = <span class="builtin">open</span>(<span class="string">"tiny_shakespeare.txt"</span>).<span class="function">read</span>()
+data = torch.<span class="function">tensor</span>([<span class="builtin">ord</span>(c) <span class="keyword">for</span> c <span class="keyword">in</span> text], dtype=torch.long)
+cfg = <span class="function">Cfg</span>()
+model = <span class="function">MiniGPT</span>(cfg)
+opt = torch.optim.<span class="function">AdamW</span>(model.<span class="function">parameters</span>(), lr=<span class="number">3e-4</span>)
+
+<span class="keyword">for</span> step <span class="keyword">in</span> <span class="builtin">range</span>(<span class="number">3000</span>):
+    ix = torch.<span class="function">randint</span>(<span class="builtin">len</span>(data)-cfg.T-<span class="number">1</span>, (<span class="number">32</span>,))
+    x = torch.<span class="function">stack</span>([data[i:i+cfg.T] <span class="keyword">for</span> i <span class="keyword">in</span> ix])
+    y = torch.<span class="function">stack</span>([data[i+<span class="number">1</span>:i+cfg.T+<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> ix])
+    loss = nn.<span class="function">functional</span>.<span class="function">cross_entropy</span>(model(x).<span class="function">view</span>(-<span class="number">1</span>,cfg.V), y.<span class="function">view</span>(-<span class="number">1</span>))
+    opt.<span class="function">zero_grad</span>(); loss.<span class="function">backward</span>(); opt.<span class="function">step</span>()
+    <span class="keyword">if</span> step % <span class="number">500</span> == <span class="number">0</span>: <span class="builtin">print</span>(<span class="string">f"Step {step}: loss={loss.item():.3f}"</span>)
+
+<span class="comment"># --- Generate ---</span>
+prompt = torch.<span class="function">tensor</span>([[<span class="builtin">ord</span>(c) <span class="keyword">for</span> c <span class="keyword">in</span> <span class="string">"ROMEO:"</span>]])
+<span class="keyword">with</span> torch.<span class="function">no_grad</span>():
+    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="builtin">range</span>(<span class="number">200</span>):
+        logits = model(prompt[:, -cfg.T:])[:, -<span class="number">1</span>] / <span class="number">0.8</span>
+        prompt = torch.<span class="function">cat</span>([prompt, torch.<span class="function">multinomial</span>(logits.<span class="function">softmax</span>(-<span class="number">1</span>),<span class="number">1</span>)], <span class="number">1</span>)
+<span class="builtin">print</span>(<span class="string">""</span>.<span class="function">join</span>(<span class="builtin">chr</span>(t) <span class="keyword">for</span> t <span class="keyword">in</span> prompt[<span class="number">0</span>]))</pre>
+        </div>
+
+        <div class="key-point">
+            <h4>📊 Expected Output After Training</h4>
+            <ul>
+                <li><strong>Step 0</strong> — Loss: ~5.5 (random guessing across 256 chars = ln(256) ≈ 5.5)</li>
+                <li><strong>Step 1000</strong> — Loss: ~2.0 (learning common letters and spaces)</li>
+                <li><strong>Step 3000</strong> — Loss: ~1.4 (forming words and basic structure)</li>
+            </ul>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Sample Generated Output</span>
+<pre><span class="string">ROMEO:</span>
+<span class="string">What is the matter with the world, that thou</span>
+<span class="string">Art so bestow'd upon thy gentle heart?</span>
+<span class="string">I prithee, tell me, what dost thou depart</span>
+<span class="string">From all the grace of heaven's sweet light?</span></pre>
+        </div>
+
+        <div class="analogy">
+            <h4>🎭 The Shakespeare Parrot</h4>
+            <p>Your Mini-GPT is like a parrot that listened to every Shakespeare play on loop. At first it just squawks random letters. After training, it speaks in iambic pentameter with "thee" and "thou" — it <em>sounds</em> like Shakespeare even though it doesn't truly understand the meaning. That's the power (and limitation) of next-token prediction.</p>
+        </div>
+
+        <div class="eli5">
+            <h4>🎓 What You've Accomplished</h4>
+            <p>You built a language model <strong>from scratch</strong>. The same architecture (just bigger) powers ChatGPT. You understand: tokenization, embeddings, attention, transformers, training loops, and generation. The next step? <strong>Fine-tuning</strong> — teaching a pre-trained model to follow instructions.</p>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="transformer.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Prev: Transformer</a>
+        <a href="finetuning.html" class="nav-btn next">Next: Fine-Tuning <i class="fas fa-arrow-right"></i></a>
+    </div>
+</div>
+
+<script>
+// ========== Config Playground ==========
+function updateConfig() {
+    var L = parseInt(document.getElementById('sLayers').value);
+    var H = parseInt(document.getElementById('sHeads').value);
+    var D = parseInt(document.getElementById('sDmodel').value);
+    var V = parseInt(document.getElementById('sVocab').value);
+    var T = parseInt(document.getElementById('sCtx').value);
+    document.getElementById('valLayers').textContent = L;
+    document.getElementById('valHeads').textContent = H;
+    document.getElementById('valDmodel').textContent = D;
+    document.getElementById('valVocab').textContent = V;
+    document.getElementById('valCtx').textContent = T;
+
+    var dff = D * 4;
+    var tokEmb = V * D;
+    var posEmb = T * D;
+    var attnQKV = D * 3 * D + 3 * D;
+    var attnProj = D * D + D;
+    var ln = 2 * D;
+    var ffn1 = D * dff + dff;
+    var ffn2 = dff * D + D;
+    var block = attnQKV + attnProj + 2 * ln + ffn1 + ffn2;
+    var total = tokEmb + posEmb + L * block + 2 * D + D * V;
+
+    document.getElementById('cfgParamCount').textContent = total.toLocaleString();
+    var lbl = total < 1e6 ? (total / 1e3).toFixed(0) + 'K' : (total / 1e6).toFixed(1) + 'M';
+    document.getElementById('cfgParamLabel').textContent = '≈ ' + lbl + ' parameters';
+}
+updateConfig();
+
+// ========== Training Simulation ==========
+var trainEpoch = 0;
+var lossHistory = [];
+function simulateTrain() {
+    var btn = document.getElementById('trainBtn');
+    btn.disabled = true;
+    trainEpoch++;
+    var steps = 20;
+    var i = 0;
+    var baseLoss = lossHistory.length > 0 ? lossHistory[lossHistory.length - 1] : 5.5;
+    function tick() {
+        if (i >= steps) {
+            btn.disabled = false;
+            document.getElementById('trainStatus').textContent = 'Loss: ' + lossHistory[lossHistory.length-1].toFixed(3) + ' | Epoch: ' + trainEpoch;
+            return;
+        }
+        var decay = Math.exp(-0.08 * (lossHistory.length + 1));
+        var noise = (Math.random() - 0.5) * 0.15;
+        var newLoss = Math.max(0.8, baseLoss * (0.92 + 0.08 * decay) + noise * decay);
+        baseLoss = newLoss;
+        lossHistory.push(newLoss);
+        drawChart();
+        document.getElementById('trainStatus').textContent = 'Loss: ' + newLoss.toFixed(3) + ' | Epoch: ' + trainEpoch + ' | Step: ' + (i+1) + '/' + steps;
+        i++;
+        setTimeout(tick, 120);
+    }
+    tick();
+}
+
+function drawChart() {
+    var canvas = document.getElementById('lossChart');
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    if (lossHistory.length < 2) return;
+    var maxL = Math.max(5.5, Math.max.apply(null, lossHistory));
+    var minL = Math.max(0, Math.min.apply(null, lossHistory) - 0.3);
+
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    for (var g = 0; g < 5; g++) {
+        var gy = 15 + g * (H - 30) / 4;
+        ctx.beginPath(); ctx.moveTo(40, gy); ctx.lineTo(W - 10, gy); ctx.stroke();
+        var val = maxL - g * (maxL - minL) / 4;
+        ctx.fillStyle = '#94a3b8'; ctx.font = '10px Nunito'; ctx.fillText(val.toFixed(1), 5, gy + 4);
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#eab308';
+    ctx.lineWidth = 2.5;
+    for (var j = 0; j < lossHistory.length; j++) {
+        var px = 40 + j * (W - 50) / Math.max(lossHistory.length - 1, 1);
+        var py = 15 + (maxL - lossHistory[j]) / (maxL - minL) * (H - 30);
+        if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    var last = lossHistory[lossHistory.length - 1];
+    var lx = 40 + (lossHistory.length - 1) * (W - 50) / Math.max(lossHistory.length - 1, 1);
+    var ly = 15 + (maxL - last) / (maxL - minL) * (H - 30);
+    ctx.beginPath(); ctx.arc(lx, ly, 5, 0, Math.PI * 2); ctx.fillStyle = '#ca8a04'; ctx.fill();
+}
+
+// ========== Temperature Playground ==========
+var tempTexts = [
+    {t: 0.1, text: "The the the the the the the the... (stuck in a loop)", style: "Repetitive & safe"},
+    {t: 0.3, text: "The king said to his servant, bring me the crown.", style: "Very predictable"},
+    {t: 0.5, text: "The king rode through the forest on a winter morning.", style: "Coherent & focused"},
+    {t: 0.8, text: "The king whispered ancient secrets to the silver moon.", style: "Creative & flowing"},
+    {t: 1.0, text: "Balanced and coherent text with some variety.", style: "Natural balance"},
+    {t: 1.2, text: "Stars wove tapestries through cathedral dreams at dusk.", style: "Imaginative"},
+    {t: 1.5, text: "Velvet thunder dances on crystallized whisper-songs!", style: "Very creative"},
+    {t: 2.0, text: "Gzorp! Flamingo calculus under the neon potato river.", style: "Near-random chaos"},
+    {t: 3.0, text: "xK7!! plm## brrzt — @fnord quasar!!1 🫠", style: "Complete nonsense"}
+];
+
+function updateTemp() {
+    var val = parseInt(document.getElementById('tempSlider').value) / 10;
+    document.getElementById('tempValue').textContent = 'Temperature: ' + val.toFixed(1);
+    var best = tempTexts[0];
+    for (var i = 0; i < tempTexts.length; i++) {
+        if (val >= tempTexts[i].t) best = tempTexts[i];
+    }
+    document.getElementById('tempText').textContent = best.text;
+    document.getElementById('tempOutput').querySelector('span:first-child').textContent = best.style + ':';
+}
+updateTemp();
+</script>
+</body>
+</html>
