@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why ClickHouse? | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%); min-height: 100vh; padding: 20px; color: #1e293b; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #b45309; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .nav a:hover { color: #92400e; transform: translateX(-3px); }
+        .intro-section { margin: 40px 0; padding: 50px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%); border-radius: 25px; color: #1e293b; box-shadow: 0 10px 40px rgba(234, 179, 8, 0.2); border: 2px solid #eab308; }
+        .intro-section h2 { font-size: 3em; text-align: center; margin-bottom: 30px; font-weight: 800; color: #92400e; text-shadow: 0 2px 4px rgba(234, 179, 8, 0.3); }
+        .intro-content { max-width: 900px; margin: 0 auto; }
+        .intro-section p { font-size: 1.4em; text-align: center; margin-bottom: 40px; line-height: 1.8; color: #78350f; font-weight: 600; }
+        .info-box { background: #ffffff; padding: 30px; border-radius: 20px; margin: 30px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 2px solid #eab308; }
+        .info-box h3 { font-size: 2em; margin-bottom: 20px; text-align: center; color: #b45309; }
+        .info-box p { font-size: 1.2em; line-height: 1.8; margin-bottom: 20px; color: #334155; text-align: left; }
+        .example-box { margin: 25px 0; padding: 20px; background: #fffbeb; border-radius: 15px; border-left: 5px solid #eab308; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .example-box h4 { font-size: 1.5em; margin-bottom: 15px; color: #92400e; }
+        .example-box p { font-size: 1.1em; line-height: 1.8; color: #334155; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+        .benefit-card { padding: 20px; background: #fffbeb; border-radius: 15px; border: 2px solid #fde68a; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; }
+        .benefit-card .icon { font-size: 3em; margin-bottom: 10px; }
+        .benefit-card h4 { font-size: 1.3em; margin-bottom: 10px; color: #b45309; }
+        .benefit-card p { font-size: 1em; color: #334155; }
+        .cta-section { text-align: center; margin-top: 40px; padding: 30px; background: #ffffff; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 2px solid #eab308; }
+        .cta-section p { font-size: 1.5em; margin-bottom: 30px; font-weight: 700; color: #92400e; }
+        .begin-button { display: inline-block; padding: 20px 50px; background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #1e293b; text-decoration: none; border-radius: 50px; font-size: 1.3em; font-weight: 700; box-shadow: 0 4px 0 #a16207, 0 8px 20px rgba(234, 179, 8, 0.4); transition: all 0.3s ease; border: none; cursor: pointer; }
+        .begin-button:hover { transform: translateY(-3px); box-shadow: 0 6px 0 #a16207, 0 12px 30px rgba(234, 179, 8, 0.5); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: linear-gradient(180deg, #eab308 0%, #ca8a04 100%); color: #1e293b; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; z-index: 10000; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4); transition: all 0.3s; opacity: 0; visibility: hidden; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        .back-to-top:hover { transform: translateY(-3px); }
+        @media (max-width: 768px) { .intro-section { padding: 25px 15px; } .intro-section h2 { font-size: 1.8em; } .intro-section p { font-size: 1.1em; } .begin-button { padding: 15px 30px; font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-home"></i><span>Back to FKTI Hub</span></a>
+        </nav>
+
+        <div class="intro-section">
+            <h2>Why ClickHouse? What Can It Do?</h2>
+            <div class="intro-content">
+                <p><strong>ClickHouse is like a super-fast calculator for billions of rows—so you can answer "how much?", "how many?", and "what changed?" in milliseconds.</strong></p>
+
+                <div class="info-box">
+                    <h3>What is ClickHouse?</h3>
+                    <p>ClickHouse is a <strong>columnar analytics database</strong>. Instead of storing data row-by-row (like a spreadsheet), it stores each column separately. So when you ask "what's the total revenue?", it only reads the revenue column—not every column of every row. That's why it can crunch billions of rows in the blink of an eye.</p>
+                    <p>Think of it this way: <strong>Row database</strong> = one folder per customer with everything inside. <strong>ClickHouse</strong> = one big drawer of "revenue numbers," one drawer of "dates," etc. To sum revenue, you open just one drawer!</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>Real-Life Examples: What ClickHouse Can Do</h3>
+                    <div class="example-box">
+                        <h4>Example 1: Uber / Lyft – Trip Analytics</h4>
+                        <p><strong>Problem:</strong> Millions of rides every day. How do you know "revenue by city last week" or "average trip length by hour"?<br>
+                        <strong>ClickHouse:</strong> Store every ride as a row (time, city, distance, fare). Query with SUM(fare), AVG(distance), GROUP BY city. Answers in milliseconds.<br>
+                        <strong>Result:</strong> Dashboards and reports that stay fast even as data grows to billions of rows.</p>
+                    </div>
+                    <div class="example-box">
+                        <h4>Example 2: Cloudflare – Web Traffic & Security</h4>
+                        <p><strong>Problem:</strong> Trillions of HTTP requests. Who's attacking? What's the 99th percentile latency?<br>
+                        <strong>ClickHouse:</strong> Ingest logs at scale, run aggregations (count by IP, percentile by path). Filter by time range and skip irrelevant data thanks to columnar storage.<br>
+                        <strong>Result:</strong> Real-time security dashboards and instant answers for "top attacking countries" or "slowest endpoints."</p>
+                    </div>
+                    <div class="example-box">
+                        <h4>Example 3: Spotify / Netflix – Event Analytics</h4>
+                        <p><strong>Problem:</strong> Every play, pause, skip, and search is an event. How do you analyze "most played genres" or "drop-off by minute"?<br>
+                        <strong>ClickHouse:</strong> Stream events into ClickHouse. Query with GROUP BY, window functions, and time-based filters. Use materialized views for pre-aggregated dashboards.<br>
+                        <strong>Result:</strong> Product and growth teams get instant insights without waiting for overnight batch jobs.</p>
+                    </div>
+                    <div class="example-box">
+                        <h4>Example 4: E‑commerce – Orders & Revenue</h4>
+                        <p><strong>Problem:</strong> Millions of orders. "Revenue by day," "top products by region," "cohort retention."<br>
+                        <strong>ClickHouse:</strong> Store orders (date, product_id, region, revenue). Run SUM(revenue), GROUP BY toDate(date), region. Use ReplacingMergeTree for "latest state" if you need updates.<br>
+                        <strong>Result:</strong> Finance and marketing get fast reports; no more slow queries on the main transaction database.</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>Why Learn ClickHouse?</h3>
+                    <div class="benefits-grid">
+                        <div class="benefit-card">
+                            <div class="icon">⚡</div>
+                            <h4>Blazing Fast</h4>
+                            <p>Sub-second queries on billions of rows. Columnar + vectorized execution = analytics at speed.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="icon">📊</div>
+                            <h4>Industry Standard</h4>
+                            <p>Used by Cloudflare, Uber, Spotify, Bloomberg. Data warehousing and real-time analytics.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="icon">🔌</div>
+                            <h4>SQL + Integrations</h4>
+                            <p>Standard SQL, Kafka, S3, Grafana, dbt. Fits right into your existing data stack.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="icon">🎓</div>
+                            <h4>Free Learning</h4>
+                            <p>Open source. Official <a href="https://github.com/ClickHouse/clickhouse-academy" target="_blank" rel="noopener" style="color: #b45309;">ClickHouse Academy</a> labs + our course = master it from zero.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <p>Ready to run analytics at speed?</p>
+                    <a href="clickhouse_course/hub.html" class="begin-button">Begin ClickHouse Course</a>
+                    <p style="margin-top: 20px; font-size: 0.95em; color: #64748b;">Same "explain like you're 5" style—with labs from the official <a href="https://github.com/ClickHouse/clickhouse-academy/tree/main/data-warehousing" target="_blank" rel="noopener" style="color: #b45309;">data-warehousing</a> repo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+    <script>
+        var btn = document.getElementById('backToTop');
+        if (btn) {
+            window.addEventListener('scroll', function() { btn.classList.toggle('show', window.pageYOffset > 300); });
+            btn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        }
+    </script>
+</body>
+</html>

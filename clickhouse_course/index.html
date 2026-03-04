@@ -40,6 +40,14 @@
         .img-placeholder .img-title { font-weight: 700; color: #a16207; margin-bottom: 8px; }
         .img-placeholder .img-desc { font-size: 0.95em; line-height: 1.5; }
         .source-cite { font-size: 0.9em; color: #64748b; margin-top: 12px; font-style: italic; }
+        .line-explanation { list-style: none; margin: 16px 0; padding-left: 0; }
+        .line-explanation li { margin: 10px 0; padding-left: 20px; position: relative; line-height: 1.6; }
+        .line-explanation li::before { content: '→'; position: absolute; left: 0; color: #ca8a04; font-weight: 700; }
+        /* Data Science-style: light gradient body + section cards */
+        body { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%) !important; color: #1e293b; }
+        .content-section { background: #ffffff; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #fde68a; }
+        .content-section h2 { color: #b45309; font-size: 1.8em; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #fef3c7; }
+        .content-section h3 { color: #92400e; font-size: 1.4em; margin: 28px 0 16px 0; padding-left: 16px; border-left: 5px solid #eab308; }
         /* Nav: high contrast + all buttons visible (no fixed height clip) */
         #navbar { background: #1e293b !important; padding: 12px 0 !important; }
         #navbar .container { height: auto !important; min-height: 48px !important; flex-wrap: wrap !important; padding: 12px 20px !important; align-content: center !important; }
@@ -74,6 +82,8 @@
             <button class="nav-btn" onclick="showSection('aggregations')">📊 Aggregations</button>
             <button class="nav-btn" onclick="showSection('window-functions')">🪟 Window Functions</button>
             <button class="nav-btn" onclick="showSection('realtime-integrations')">🔌 Real-time</button>
+            <button class="nav-btn" onclick="showSection('academy-labs')">🧪 Academy Labs</button>
+            <button class="nav-btn" onclick="showSection('dw-01')">📚 Data Warehousing</button>
         </div>
     </nav>
 
@@ -419,6 +429,10 @@ ORDER BY time;</pre>
 
             <h3>ORDER BY – the “primary key” for sorting</h3>
             <p><code>ORDER BY</code> is required for MergeTree. It defines the order of rows on disk. Queries that filter or sort by a <strong>prefix</strong> of this key are very efficient (e.g. <code>ORDER BY (date, user_id)</code> makes <code>WHERE date = today()</code> and <code>ORDER BY date, user_id</code> fast). You can use a single column or a tuple, e.g.:</p>
+            <div class="eli5-box">
+                <h4>Layman analogy</h4>
+                <p>ORDER BY is like sorting a deck of cards: you might sort by suit first, then by number. Once sorted, finding "all hearts" is easy – you jump to the hearts section. Finding "all aces" is harder if the deck is sorted by suit. So pick the order that matches the questions you ask most.</p>
+            </div>
             <div class="code-block">
                 <pre>ORDER BY (toDate(time), name)
 -- Good for: WHERE toDate(time) = '2024-01-15' or GROUP BY toDate(time), name</pre>
@@ -496,6 +510,10 @@ ALTER TABLE events DROP COLUMN source;</pre>
 
             <h3>SELECT and FROM</h3>
             <p><code>SELECT</code> lists the columns (or expressions) you want. <code>FROM</code> is the table name. The simplest query returns all columns and all rows:</p>
+            <div class="eli5-box">
+                <h4>Layman analogy</h4>
+                <p>SELECT is like telling a librarian what you want: “I want the title and the author” (two columns) or “I want everything about that book” (<code>*</code>). FROM is which shelf: “from the events table” or “from the sales table.”</p>
+            </div>
             <div class="code-block">
                 <pre>SELECT * FROM events;</pre>
             </div>
@@ -575,6 +593,10 @@ LIMIT 10;</pre>
 
             <h3>What is aggregation?</h3>
             <p>An <strong>aggregate function</strong> takes many values and returns one: <code>sum(revenue)</code> → total, <code>count()</code> → number of rows, <code>avg(value)</code> → average. If you use an aggregate without <code>GROUP BY</code>, you get one row for the whole table. With <code>GROUP BY column</code>, you get one row per distinct value of <code>column</code>.</p>
+            <div class="eli5-box">
+                <h4>Layman analogy</h4>
+                <p>Aggregation is like a teacher collecting test papers and saying “average score” (one number from many) or “how many students passed” (count). GROUP BY is like first splitting the pile by class: “average score per class” or “count per class” – one result row per class.</p>
+            </div>
 
             <h3>GROUP BY</h3>
             <p><code>GROUP BY</code> splits rows into groups (e.g. by date, by product). Every column in <code>SELECT</code> must either be in <code>GROUP BY</code> or inside an aggregate function. Example:</p>
@@ -757,6 +779,261 @@ ORDER BY time;</pre>
             <h3>What’s next?</h3>
             <p>You now have a full path: install → create tables → query with SQL → aggregate and use windows → plug into dashboards and pipelines. Practice by building a small project: e.g. a table of events (time, name, value), insert some rows, then write queries for “totals per day,” “top 10 event types,” and a running sum. Use the official <a href="https://clickhouse.com/docs" target="_blank" rel="noopener">ClickHouse docs</a> for reference and advanced features (replication, clusters, more table engines). Have fun with it.</p>
         </section>
+
+        <!-- Academy Labs (from ClickHouse Academy GitHub) -->
+        <section id="academy-labs" class="content-section">
+            <h2>🧪 ClickHouse Academy Labs</h2>
+            <p>This section uses <strong>official lab solutions</strong> from the <a href="https://github.com/ClickHouse/clickhouse-academy" target="_blank" rel="noopener">ClickHouse Academy</a> repo. The courses on <a href="https://learn.clickhouse.com/user_dashboard" target="_blank" rel="noopener">learn.clickhouse.com</a> are organized into <strong>Enrolled</strong> and <strong>Completed</strong> tabs—you can log in there to track your progress. Here we take the same labs and explain <em>every line</em> so it clicks.</p>
+            <div class="eli5-box">
+                <h4>Layman idea</h4>
+                <p>Think of these labs like recipes: the Academy gives you the dish (the SQL). We walk you through each ingredient (each keyword and clause) and why it's there, so you can cook your own queries later.</p>
+            </div>
+
+            <h3>Lab: Fundamentals 1.2 – Querying Parquet from S3</h3>
+            <p>ClickHouse can read files <strong>directly from S3</strong> without loading them into a table first. That's like opening a spreadsheet from Google Drive without downloading it—you just point at the URL. Here's the lab code with a line-by-line breakdown.</p>
+            <div class="code-block">
+                <pre>-- Step 1: Peek at the data (first 100 rows)
+SELECT *
+FROM s3('https://learnclickhouse.s3.us-east-2.amazonaws.com/datasets/crypto_prices.parquet')
+LIMIT 100;</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>SELECT *</code> – "Give me all columns." The star means "everything."</li>
+                <li><code>FROM s3('...')</code> – "From this file in the cloud." <code>s3(...)</code> is a <strong>table function</strong>: it makes a remote file look like a table. No CREATE TABLE needed.</li>
+                <li><code>LIMIT 100</code> – "Only 100 rows." So you don't pull millions of rows while exploring.</li>
+            </ul>
+            <div class="code-block">
+                <pre>-- Step 2: How many rows total?
+SELECT count()
+FROM s3('https://learnclickhouse.s3.us-east-2.amazonaws.com/datasets/crypto_prices.parquet');</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>count()</code> – Counts rows. No column inside = count every row. ClickHouse can do this very fast over Parquet because it only needs row count, not the data.</li>
+            </ul>
+            <div class="code-block">
+                <pre>-- Step 3: Average volume for Bitcoin only
+SELECT avg(volume)
+FROM s3('...crypto_prices.parquet')
+WHERE crypto_name = 'Bitcoin';</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>avg(volume)</code> – "Average of the <code>volume</code> column."</li>
+                <li><code>WHERE crypto_name = 'Bitcoin'</code> – "Only rows where the crypto is Bitcoin." So you get one number: average trading volume for Bitcoin.</li>
+            </ul>
+            <div class="code-block">
+                <pre>-- Step 4: Per-crypto row counts, sorted by name
+SELECT crypto_name, count() AS count
+FROM s3('...crypto_prices.parquet')
+GROUP BY crypto_name
+ORDER BY crypto_name;</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>GROUP BY crypto_name</code> – "One result row per distinct crypto name."</li>
+                <li><code>count() AS count</code> – "How many rows in each group," with the result column named <code>count</code>.</li>
+                <li><code>ORDER BY crypto_name</code> – Sort the result alphabetically by crypto name.</li>
+            </ul>
+            <div class="key-takeaway">
+                <h4>Takeaway</h4>
+                <p>You can <code>SELECT ... FROM s3('url')</code> to query Parquet (or CSV) in the cloud without creating a table. Use <code>LIMIT</code> when exploring; use <code>WHERE</code> and <code>GROUP BY</code> to get aggregates.</p>
+            </div>
+
+            <h3>Lab: Fundamentals 2.1 – Load CSV from S3 into a MergeTree Table</h3>
+            <p>Here we read a <strong>CSV from S3</strong>, handle format hints and errors, then <strong>create a table</strong> and <strong>insert</strong> the data. After that, we run real analytics queries on the table.</p>
+            <div class="code-block">
+                <pre>-- Step 1: Peek at CSV (first 100 rows, with header)
+SELECT * FROM s3(
+  'https://learn-clickhouse.s3.us-east-2.amazonaws.com/crypto_raw.csv.gz',
+  'CSVWithNames'
+) LIMIT 100;</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>s3('url', 'CSVWithNames')</code> – Second argument tells ClickHouse: "This is CSV and the first row is column names." So you get proper column headers instead of generic names.</li>
+            </ul>
+            <div class="code-block">
+                <pre>-- Step 4: Help ClickHouse infer types for tricky columns
+SELECT * FROM s3(...'crypto_raw.csv.gz', 'CSVWithNames')
+LIMIT 50000
+SETTINGS schema_inference_hints='volume Float32, market_cap Float32';</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>SETTINGS schema_inference_hints='...'</code> – "For these columns, use these types." Sometimes CSV has ambiguous numbers; hints avoid wrong inference.</li>
+            </ul>
+            <div class="code-block">
+                <pre>-- Step 5: Create the table (MergeTree, primary key = crypto + date)
+CREATE TABLE crypto_raw (
+  trade_date Date, volume Float32, price_usd Float32, price_btc Float32,
+  market_cap Float32, crypto_name LowCardinality(String), crypto_type UInt8,
+  ticker LowCardinality(String), platform_name LowCardinality(String), industry_name LowCardinality(String)
+)
+ENGINE = MergeTree
+PRIMARY KEY (crypto_name, trade_date);</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>trade_date Date</code> – Date only (no time). Good for daily OHLC-style data.</li>
+                <li><code>Float32</code> – 32-bit float. Saves space and can be faster than Float64.</li>
+                <li><code>LowCardinality(String)</code> – "This column has few distinct values" (e.g. crypto names). ClickHouse stores a dictionary; great for GROUP BY.</li>
+                <li><code>PRIMARY KEY (crypto_name, trade_date)</code> – Rows sorted by this key. Queries that filter by crypto_name and/or trade_date can skip data efficiently.</li>
+            </ul>
+            <div class="code-block">
+                <pre>-- Step 6: Insert from S3 into our table
+INSERT INTO crypto_raw SELECT * FROM s3('...crypto_raw.csv.gz', 'CSVWithNames')
+SETTINGS schema_inference_hints='volume Float32, market_cap Float32';</pre>
+            </div>
+            <div class="code-block">
+                <pre>-- Steps 7–9: Row count per crypto; max price; distinct cryptos per platform
+SELECT crypto_name, count() AS count FROM crypto_raw GROUP BY crypto_name ORDER BY crypto_name;
+SELECT crypto_name, max(price_usd) AS m FROM crypto_raw GROUP BY crypto_name ORDER BY m DESC;
+SELECT platform_name, uniq(crypto_name) AS count FROM crypto_raw WHERE platform_name != ''
+GROUP BY platform_name ORDER BY count DESC;</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>uniq(crypto_name)</code> – Approximate count of distinct values. Very fast; use <code>uniqExact</code> for exact count.</li>
+            </ul>
+            <div class="key-takeaway">
+                <h4>Takeaway</h4>
+                <p>Use <code>s3(..., 'CSVWithNames')</code> for CSV with headers; use <code>SETTINGS schema_inference_hints</code> when types are ambiguous. Create a MergeTree table with a primary key that matches your common filters, then <code>INSERT INTO ... SELECT * FROM s3(...)</code>.</p>
+            </div>
+
+            <h3>Lab: Working with Data – Table Functions (S3, DESCRIBE, INSERT)</h3>
+            <p>This lab uses a <strong>Parquet file</strong> from the PyPI downloads dataset. You'll see how to inspect schema, count rows, filter, then create a table and load the data.</p>
+            <div class="code-block">
+                <pre>DESCRIBE s3('https://datasets-documentation.s3.../pypi_0_7_34.snappy.parquet');
+SELECT count() FROM s3('...');
+SELECT * FROM s3('...') LIMIT 10;
+SELECT * FROM s3('...') LIMIT 1 FORMAT VERTICAL;</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>DESCRIBE s3('...')</code> – "What's the structure of this file?" Column names and types. Like reading the header of a spreadsheet.</li>
+                <li><code>FORMAT VERTICAL</code> – One column per line (name: value). Handy when you have many columns.</li>
+            </ul>
+            <div class="code-block">
+                <pre>CREATE TABLE pypi (TIMESTAMP DateTime, COUNTRY_CODE String, URL String, PROJECT String)
+ENGINE = MergeTree PRIMARY KEY TIMESTAMP;
+INSERT INTO pypi SELECT TIMESTAMP, COUNTRY_CODE, URL, PROJECT FROM s3('...pypi_0_7_34.snappy.parquet');</pre>
+            </div>
+            <div class="key-takeaway">
+                <h4>Takeaway</h4>
+                <p>Use <code>DESCRIBE s3('url')</code> to see schema; <code>INSERT INTO table SELECT ... FROM s3('url')</code> to load. <code>PRIMARY KEY</code> on time is natural for event/download data.</p>
+            </div>
+
+            <h3>Lab: Working with Data – Primary Key Choice</h3>
+            <p>Same data, different <strong>primary key</strong>. The key decides how rows are sorted on disk. Queries that filter by the <strong>left part</strong> of the key are much faster. This lab compares <code>(TIMESTAMP, PROJECT)</code> vs <code>(PROJECT, TIMESTAMP)</code>.</p>
+            <div class="code-block">
+                <pre>SELECT PROJECT, count() AS c FROM pypi WHERE PROJECT LIKE 'boto%' GROUP BY PROJECT ORDER BY c DESC;</pre>
+            </div>
+            <p>If the primary key is <code>(TIMESTAMP, PROJECT)</code>, <code>WHERE PROJECT LIKE 'boto%'</code> cannot use the key to skip data (PROJECT is second). If the key is <code>(PROJECT, TIMESTAMP)</code>, ClickHouse can skip to the "boto…" part of the index. The lab creates two tables and runs the same query to show the difference.</p>
+            <div class="eli5-box">
+                <h4>Layman analogy</h4>
+                <p>Imagine a phone book sorted by (Last name, First name). Finding "everyone named Smith" is easy. Finding "everyone whose first name starts with J" is hard—you scan the whole book. Primary key order is the same: put the column you filter on first.</p>
+            </div>
+            <div class="key-takeaway">
+                <h4>Takeaway</h4>
+                <p>Choose <code>PRIMARY KEY</code> so that columns you often filter or group by appear first. For "filter by PROJECT," <code>(PROJECT, TIMESTAMP)</code> is better. Compare table sizes in <code>system.parts</code>.</p>
+            </div>
+
+            <h3>Lab: Working with Data – Nullable and LowCardinality</h3>
+            <p>Nullable columns allow <code>NULL</code>; they use extra storage. LowCardinality is for columns with few distinct values—smaller and faster.</p>
+            <div class="code-block">
+                <pre>CREATE OR REPLACE TABLE null_test (c1 String, c2 Int16, c3_nullable Nullable(Int16)) ORDER BY c1;
+INSERT INTO null_test VALUES ('A',0,0),('B',10,10),('C',20,20);
+INSERT INTO null_test(c1) VALUES ('D');
+SELECT avg(c2), avg(c3_nullable) FROM null_test;
+SELECT count(c2), count(c3_nullable) FROM null_test;</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>Nullable(Int16)</code> – Values can be a number or NULL. ClickHouse stores an extra null mask.</li>
+                <li><code>LowCardinality(String)</code> – Good for columns like country code where the same string repeats. Saves space and speeds up GROUP BY.</li>
+            </ul>
+            <div class="key-takeaway">
+                <h4>Takeaway</h4>
+                <p>Use <code>Nullable(...)</code> only when you need NULLs. Use <code>LowCardinality(String)</code> for columns with few unique values. Check <code>system.parts</code> to compare sizes.</p>
+            </div>
+
+            <h3>Lab: Explore Architecture – system.tables, columns, parts</h3>
+            <p>ClickHouse exposes metadata in <code>system</code> tables. You can see tables, columns, and parts (the actual data files) without leaving SQL.</p>
+            <div class="code-block">
+                <pre>SELECT * FROM system.tables WHERE database = currentDatabase() AND name = 'pypi' FORMAT VERTICAL;
+SELECT table, name, type, is_in_primary_key FROM system.columns WHERE table = 'pypi';
+SELECT table, name, rows, formatReadableSize(data_compressed_bytes) AS compressed_size
+FROM system.parts WHERE active = 1 AND table = 'pypi';</pre>
+            </div>
+            <ul class="line-explanation">
+                <li><code>system.tables</code> – One row per table (engine, create query).</li>
+                <li><code>system.columns</code> – One row per column; <code>is_in_primary_key</code> tells you if it's in the sort key.</li>
+                <li><code>system.parts</code> – One row per active data part. <code>formatReadableSize(...)</code> turns bytes into "1.23 GiB".</li>
+            </ul>
+            <div class="key-takeaway">
+                <h4>Takeaway</h4>
+                <p>Use <code>system.tables</code>, <code>system.columns</code>, and <code>system.parts</code> to inspect your database. <code>system.parts_columns</code> gives per-column sizes within each part.</p>
+            </div>
+
+            <p style="margin-top: 2em;">All lab code is adapted from the <a href="https://github.com/ClickHouse/clickhouse-academy" target="_blank" rel="noopener">ClickHouse/clickhouse-academy</a> repository. For the full course catalog and to track Enrolled/Completed courses, visit <a href="https://learn.clickhouse.com/visitor_class_catalog/" target="_blank" rel="noopener">learn.clickhouse.com</a>.</p>
+        </section>
+
+        <!-- Data Warehousing Path (ClickHouse Academy 01-10) -->
+        <section id="dw-01" class="content-section">
+            <h2>01 – Introduction to ClickHouse</h2>
+            <p>You already saw this in <a href="#what-is-ch">What is ClickHouse?</a> and <a href="#welcome">Welcome</a>. In one sentence: ClickHouse is a <strong>columnar analytics database</strong> that answers &quot;how many?&quot; and &quot;how much?&quot; over billions of rows in milliseconds. Use it for events, logs, and metrics—not for updating single rows like an app database.</p>
+            <div class="eli5-box"><h4>Like you're 5</h4><p>It's a giant calculator that only looks at the columns it needs, so it's super fast. Row databases read whole rows; ClickHouse reads only the &quot;revenue&quot; column when you sum revenue.</p></div>
+        </section>
+        <section id="dw-02" class="content-section">
+            <h2>02 – ClickHouse Architecture</h2>
+            <p>Covered in <a href="#why-fast">Why Is It So Fast?</a> and <a href="#academy-labs">Academy Labs → Explore Architecture</a>. Key ideas: <strong>columnar storage</strong> (read only needed columns), <strong>primary key / ORDER BY</strong> (data sorted so range queries skip blocks), <strong>parts and merges</strong> (writes go to new parts, background merges), and <strong>vectorized execution</strong> (SIMD). Inspect with <code>system.tables</code>, <code>system.columns</code>, <code>system.parts</code>.</p>
+        </section>
+        <section id="dw-03" class="content-section">
+            <h2>03 – ClickHouse as a Query Engine</h2>
+            <p>ClickHouse can query <strong>external data</strong> without loading it: <code>SELECT ... FROM s3('url')</code>, <code>FROM url(...)</code>, <code>FROM mysql(...)</code>. Table functions make a remote source look like a table. See <a href="#academy-labs">Academy Labs</a> (Fundamentals 1.2, Table Functions) and <a href="#sql-basics">SQL Basics</a>. Use <code>DESCRIBE s3('...')</code> to see schema before loading.</p>
+        </section>
+        <section id="dw-04" class="content-section">
+            <h2>04 – Data Ingestion &amp; Processing</h2>
+            <p>Load data from <strong>S3 (Parquet, CSV)</strong>, <strong>Iceberg</strong>, and other sources into MergeTree tables. Lab 4.1 (data-warehousing repo) uses Stack Exchange data: posts, users, votes from Parquet/Iceberg/CSV.</p>
+            <div class="code-block"><pre>-- Peek at sources (table function = no table yet)
+SELECT * FROM s3('https://.../posts.parquet', 'Parquet') LIMIT 10;
+SELECT * FROM icebergS3('https://.../votes/', NOSIGN) LIMIT 10;
+
+-- Create tables, then INSERT ... SELECT from table functions
+CREATE OR REPLACE TABLE posts (...) ENGINE = MergeTree PRIMARY KEY (creation_date, id);
+INSERT INTO posts SELECT id, post_type_id, ... FROM s3('https://.../posts.parquet', 'Parquet');</pre></div>
+            <ul class="line-explanation">
+                <li><code>s3('url', 'Parquet')</code> – Read Parquet directly from S3. Second arg is format.</li>
+                <li><code>icebergS3('url/', NOSIGN)</code> – Read Iceberg table from S3 (no signing).</li>
+                <li><code>INSERT INTO table SELECT ... FROM s3(...)</code> – Load into your MergeTree table. Column order must match.</li>
+            </ul>
+            <div class="key-takeaway"><h4>Takeaway</h4><p>Use table functions to explore; create MergeTree tables with a good primary key; <code>INSERT INTO ... SELECT ... FROM s3(...)</code> or <code>icebergS3(...)</code> to ingest. Use <code>DESCRIBE s3('...')</code> to get column types.</p></div>
+        </section>
+        <section id="dw-05" class="content-section">
+            <h2>05 – Updating &amp; Deleting Data</h2>
+            <p>ClickHouse is optimized for <strong>append</strong>. For &quot;update&quot; and &quot;delete&quot; you have options: (1) <strong>ReplacingMergeTree</strong> – keep only the latest row per key (merge happens in background). (2) <strong>Mutations</strong> – <code>ALTER TABLE ... UPDATE/DELETE WHERE ...</code> (heavy, use sparingly). (3) <strong>Lightweight deletes</strong> – <code>DELETE FROM ... WHERE ...</code> in newer versions. For most analytics, append + ReplacingMergeTree or materialized views is enough.</p>
+            <div class="eli5-box"><h4>Layman idea</h4><p>Think of it like a ledger: you mostly add new lines. To &quot;fix&quot; something you either add a new line that replaces the old one (ReplacingMergeTree) or run a one-time cleanup (mutation).</p></div>
+        </section>
+        <section id="dw-06" class="content-section">
+            <h2>06 – Medallion Architecture</h2>
+            <p><strong>Bronze → Silver → Gold</strong>: raw data in bronze, cleaned/joined in silver, business-level aggregates in gold. In ClickHouse you use <strong>databases</strong> or <strong>tables</strong> per layer. Lab 6.1 creates <code>bronze</code>, <code>silver</code>, <code>gold</code> databases and bronze tables with <code>ReplacingMergeTree</code> and <code>load_timestamp</code>.</p>
+            <div class="code-block"><pre>CREATE DATABASE IF NOT EXISTS bronze;
+CREATE OR REPLACE TABLE bronze.stg_posts (...) ENGINE = ReplacingMergeTree ORDER BY (post_id) PARTITION BY toYYYYMM(post_created_at);
+INSERT INTO bronze.stg_posts SELECT id as post_id, ..., now() as load_timestamp FROM s3('...posts.parquet', 'Parquet');</pre></div>
+            <ul class="line-explanation">
+                <li><code>ReplacingMergeTree</code> – When parts merge, keeps one row per ordering key (e.g. post_id). Good for &quot;latest state&quot; from multiple inserts.</li>
+                <li><code>load_timestamp</code> – Helps track when data was loaded; useful for incremental pipelines.</li>
+            </ul>
+            <div class="key-takeaway"><h4>Takeaway</h4><p>Bronze = raw ingest; silver = cleaned/joined; gold = analytics-ready. Use ReplacingMergeTree in bronze/silver when you need deduplication by key. Dictionaries (<code>CREATE DICTIONARY ... SOURCE(HTTP(...))</code>) can reference lookup data (e.g. post_types, vote_types) without loading into tables.</p></div>
+        </section>
+        <section id="dw-07" class="content-section">
+            <h2>07 – Data Quality &amp; Governance</h2>
+            <p>Ensure data is valid and documented: use <strong>appropriate types</strong> (e.g. <code>LowCardinality(String)</code> for enums), <strong>NOT NULL</strong> or <strong>Nullable</strong> where it matters, and <strong>constraints</strong> where supported. Monitor with <code>system.parts</code> (size, row counts) and run spot checks (e.g. <code>SELECT count(), uniq(column) FROM table</code>). Document schema and ownership; use a single source of truth (e.g. dbt) for transformations.</p>
+        </section>
+        <section id="dw-08" class="content-section">
+            <h2>08 – Analyzing Data</h2>
+            <p>Full coverage in <a href="#sql-basics">SQL Basics</a>, <a href="#aggregations">Aggregations</a>, and <a href="#window-functions">Window Functions</a>. Use <code>GROUP BY</code>, <code>SUM</code>, <code>COUNT</code>, <code>avg</code>, <code>uniq</code>, <code>quantile</code>; filter with <code>WHERE</code> on the primary key when possible; use window functions for rankings and running totals. Filter by the left part of the primary key for best performance.</p>
+        </section>
+        <section id="dw-09" class="content-section">
+            <h2>09 – Building Dashboards</h2>
+            <p>Covered in <a href="#realtime-integrations">Real-time and Integrations</a>. Connect <strong>Grafana</strong>, <strong>Metabase</strong>, or <strong>Superset</strong> to ClickHouse (HTTP or native). Write SQL in the panel editor; use pre-aggregated tables or materialized views for fast dashboards. Keep queries simple: filter by time and key columns, use aggregations.</p>
+        </section>
+        <section id="dw-10" class="content-section">
+            <h2>10 – MCP Servers</h2>
+            <p><strong>Model Context Protocol (MCP)</strong> lets AI tools and IDEs connect to ClickHouse (and other backends) in a standard way. You can run queries, list tables, and get schema via MCP. See the <a href="https://github.com/ClickHouse/clickhouse-academy/tree/main/data-warehousing/10_MCP_Servers" target="_blank" rel="noopener">Academy repo</a> for lab material. Useful for AI-assisted SQL and data exploration.</p>
+        </section>
     </main>
 
     <script>
@@ -765,7 +1042,23 @@ ORDER BY time;</pre>
             var el = document.getElementById(id);
             if (el) el.classList.add('active');
         }
+        if (window.location.hash) {
+            var id = window.location.hash.replace('#', '');
+            var el = document.getElementById(id);
+            if (el && el.classList.contains('content-section')) showSection(id);
+        }
     </script>
     <script src="../js/code-copy.js"></script>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;background:linear-gradient(135deg,#eab308,#ca8a04);color:#1e293b;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;z-index:1000;opacity:0;visibility:hidden;transition:all 0.3s;box-shadow:0 4px 12px rgba(234,179,8,0.4);">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <script>
+        (function(){
+            var btn = document.getElementById('backToTop');
+            if (!btn) return;
+            window.addEventListener('scroll', function(){ btn.style.opacity = window.pageYOffset > 300 ? '1' : '0'; btn.style.visibility = window.pageYOffset > 300 ? 'visible' : 'hidden'; });
+            btn.addEventListener('click', function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        })();
+    </script>
 </body>
 </html>
