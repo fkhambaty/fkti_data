@@ -151,8 +151,9 @@
         <div class="download-box">
             <strong><i class="fas fa-download"></i> Use these with this lesson:</strong>
             <a href="datasets/wine_data.csv" download="wine_data.csv">wine_data.csv</a> &nbsp;|&nbsp;
-            <a href="datasets/Dimension_Reduction_PCA.pdf" download="Dimension_Reduction_PCA.pdf">Dimension_Reduction_PCA.pdf</a> (slides) &nbsp;|&nbsp;
-            Session notebook: <strong>pca.ipynb</strong> (in Downloads → Dimensionality Reduction - PCA). Save the CSV in the same folder as your notebook so <code>pd.read_csv("wine_data.csv")</code> works.
+            <a href="datasets/Iris.csv" download="Iris.csv">Iris.csv</a> &nbsp;|&nbsp;
+            <a href="notebooks/PCA_with_IRIS_dataset.ipynb" download="PCA_with_IRIS_dataset.ipynb">PCA with IRIS dataset.ipynb</a> &nbsp;|&nbsp;
+            Session notebook: <strong>pca.ipynb</strong> (in Downloads → Dimensionality Reduction - PCA). Save the CSVs in the same folder as your notebook so <code>pd.read_csv("wine_data.csv")</code> and <code>pd.read_csv("Iris.csv")</code> work.
         </div>
 
         <!-- Part 1: What is Dimensionality Reduction & PCA? -->
@@ -432,8 +433,206 @@ plt.<span class="function">show</span>()</pre>
             </div>
             <div class="example-box">
                 <h4>What you get</h4>
-                <p>A 2D scatter plot: each point is a wine sample. The x-axis is PC1, the y-axis is PC2. Colors = Customer_Segment (1, 2, 3). You can often see clusters by segment—so PCA gave us a 2D “summary” that still keeps a lot of the structure. All of this matches the <strong>pca.ipynb</strong> notebook and the <strong>Dimension Reduction.pdf</strong> slides in the Dimensionality Reduction - PCA folder.</p>
+                <p>A 2D scatter plot: each point is a wine sample. The x-axis is PC1, the y-axis is PC2. Colors = Customer_Segment (1, 2, 3). You can often see clusters by segment—so PCA gave us a 2D “summary” that still keeps a lot of the structure. All of this matches the <strong>pca.ipynb</strong> notebook; the full slide content is included in the section below.</p>
             </div>
+        </div>
+
+        <!-- Part 6b: Full Example – Iris Data (PCA with IRIS dataset) -->
+        <div class="section">
+            <h2><i class="fas fa-seedling"></i> Part 6b: Full Example – Iris Data (PCA with IRIS dataset)</h2>
+            <p>This section walks through the <strong>PCA with IRIS dataset</strong> notebook step by step. The <strong>Iris</strong> dataset has 4 numeric features (SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm) and a <strong>Species</strong> label (Iris-setosa, Iris-versicolor, Iris-virginica). We reduce 4 columns to 2 principal components, then use those 2 components to train a classifier and visualize the data. Every line explained like you're 5.</p>
+
+            <div class="step-badge">PROBLEM</div>
+            <p><strong>Reduce 4 flower measurements to 2 “summary” directions (PC1, PC2), then classify species and plot in 2D.</strong> We can’t easily see 4 dimensions—PCA gives us 2 numbers per flower that keep most of the variation, and we can still get good accuracy with a simple model on top.</p>
+
+            <h3>Step 1: Imports</h3>
+            <div class="code-block">
+                <pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this does</h4>
+                <ul>
+                    <li><code>pandas</code> – load the CSV. <code>train_test_split</code> – split data so we train on one part and test on another. <code>StandardScaler</code> – put all features on the same scale before PCA. <code>PCA</code> – do the dimensionality reduction. <code>LogisticRegression</code> – a simple classifier we’ll train on the 2 PCA columns. <code>accuracy_score</code> – measure how well the model predicts species.</li>
+                </ul>
+            </div>
+
+            <h3>Step 2: Load the data and separate features from target</h3>
+            <div class="code-block">
+                <pre><span class="comment"># 1. Load the data</span>
+df = pd.<span class="function">read_csv</span>(<span class="string">'Iris.csv'</span>)
+X = df.<span class="function">drop</span>([<span class="string">'Id'</span>, <span class="string">'Species'</span>], axis=<span class="number">1</span>)   <span class="comment"># Features (4 columns)</span>
+y = df[<span class="string">'Species'</span>]                              <span class="comment"># Target labels</span></pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this does</h4>
+                <ul>
+                    <li><code>read_csv('Iris.csv')</code> loads the Iris table. Put <strong>Iris.csv</strong> in the same folder as your notebook (or use the path to it).</li>
+                    <li><code>drop(['Id', 'Species'], axis=1)</code> keeps only the 4 numeric columns: SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm. We drop <strong>Id</strong> (just a row number) and <strong>Species</strong> (the label we want to predict). So <strong>X</strong> = 4 features.</li>
+                    <li><code>y = df['Species']</code> is the target: the flower type (Iris-setosa, Iris-versicolor, Iris-virginica). We’ll use this for training the classifier and for coloring the plot.</li>
+                </ul>
+            </div>
+
+            <h3>Step 3: Split into training and testing sets</h3>
+            <div class="code-block">
+                <pre><span class="comment"># 2. Split into Training and Testing sets</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this does</h4>
+                <ul>
+                    <li><code>test_size=0.2</code> means 20% of the rows are held out for testing (about 30 flowers) and 80% for training (about 120 flowers). <code>random_state=42</code> makes the split reproducible so you get the same split every time.</li>
+                </ul>
+            </div>
+
+            <h3>Step 4: Standardize the features (crucial for PCA)</h3>
+            <div class="code-block">
+                <pre><span class="comment"># 3. Standardize the features (Crucial for PCA)</span>
+scaler = <span class="function">StandardScaler</span>()
+X_train_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="function">transform</span>(X_test)</pre>
+            </div>
+            <div class="eli5-note">
+                <h4>👶 Why scale?</h4>
+                <p>Petal length might be in cm (e.g. 1–7) and sepal width in cm too but on a different range. PCA cares about variance: if one column has bigger numbers, it can dominate. <strong>StandardScaler</strong> makes each column have mean 0 and standard deviation 1, so all four features contribute fairly to the principal components.</p>
+            </div>
+            <p>We <strong>fit</strong> the scaler on the training set only (so we don’t “peek” at the test set), then <strong>transform</strong> both train and test using that same scaling.</p>
+
+            <h3>Step 5: Apply PCA – reduce 4 dimensions to 2</h3>
+            <div class="code-block">
+                <pre><span class="comment"># 4. Apply PCA to reduce from 4 dimensions to 2</span>
+pca = <span class="function">PCA</span>(n_components=<span class="number">2</span>)
+X_train_pca = pca.<span class="function">fit_transform</span>(X_train_scaled)
+X_test_pca = pca.<span class="function">transform</span>(X_test_scaled)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this does</h4>
+                <ul>
+                    <li><code>PCA(n_components=2)</code> means “find 2 principal components.” So we go from 4 columns (sepal length, sepal width, petal length, petal width) to 2 columns (PC1, PC2).</li>
+                    <li><code>fit_transform(X_train_scaled)</code> learns the 2 directions from the training data and projects the training data onto them. <code>transform(X_test_scaled)</code> projects the test data using the same directions (no refitting—we use what we learned from the training set).</li>
+                </ul>
+            </div>
+
+            <h3>Step 6: Train a classifier on the 2 PCA components and measure accuracy</h3>
+            <div class="code-block">
+                <pre>model = <span class="function">LogisticRegression</span>()
+model.<span class="function">fit</span>(X_train_pca, y_train)
+
+predictions = model.<span class="function">predict</span>(X_test_pca)
+<span class="function">print</span>(<span class="string">f"Accuracy using 2 PCA components: {accuracy_score(y_test, predictions) * 100:.2f}%"</span>)
+<span class="function">print</span>(<span class="string">f"Variance explained by these 2 components: {pca.explained_variance_ratio_.sum():.2f}"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this does</h4>
+                <ul>
+                    <li>We train <strong>LogisticRegression</strong> on <strong>X_train_pca</strong> (2 columns) and <strong>y_train</strong> (species). So the model only sees PC1 and PC2, not the original 4 features.</li>
+                    <li><code>predict(X_test_pca)</code> predicts the species for the test flowers using their PC1 and PC2 values. <code>accuracy_score(y_test, predictions)</code> tells us what fraction of test predictions are correct. In the notebook you typically see around <strong>90% accuracy</strong>—so 2 numbers per flower are enough to classify most flowers correctly!</li>
+                    <li><code>pca.explained_variance_ratio_.sum()</code> is the total fraction of variance captured by PC1 and PC2 together. For Iris you often get about <strong>0.96</strong> (96%)—meaning almost all the “information” in the 4 original columns is preserved in just 2.</li>
+                </ul>
+            </div>
+
+            <h3>Step 7: Visualize in 2D – scatter plot colored by species</h3>
+            <div class="code-block">
+                <pre><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+
+pca_df = pd.<span class="function">DataFrame</span>(data=X_train_pca, columns=[<span class="string">'PC1'</span>, <span class="string">'PC2'</span>])
+pca_df[<span class="string">'Species'</span>] = y_train.<span class="function">values</span>
+
+sns.<span class="function">set_style</span>(<span class="string">"whitegrid"</span>)
+plt.<span class="function">figure</span>(figsize=(<span class="number">10</span>, <span class="number">6</span>))
+scatter = sns.<span class="function">scatterplot</span>(
+    x=<span class="string">'PC1'</span>, y=<span class="string">'PC2'</span>, hue=<span class="string">'Species'</span>, data=pca_df,
+    palette=<span class="string">'bright'</span>, s=<span class="number">100</span>, alpha=<span class="number">0.8</span>
+)
+plt.<span class="function">title</span>(<span class="string">'Iris: PCA with 2 components'</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+            <div class="example-box">
+                <h4>What you get</h4>
+                <p>A 2D scatter plot: each point is one training flower. The x-axis is PC1, the y-axis is PC2. Colors = Species (setosa, versicolor, virginica). You’ll usually see <strong>setosa</strong> well separated from the other two, and versicolor/virginica partly overlapping—which matches why we get about 90% accuracy, not 100%. This is the same flow as in <strong>PCA with IRIS dataset.ipynb</strong> (download from the green box at the top or from the <a href="datasets.html">datasets page</a>).</p>
+            </div>
+
+            <div class="key-point">
+                <h4>Wine vs Iris</h4>
+                <p><strong>Wine</strong> (Part 6): 13 features → PCA → 2D plot colored by segment; we only visualize, we don’t train a classifier on the PCs. <strong>Iris</strong> (here): 4 features → PCA → 2D plot and we <strong>also</strong> train LogisticRegression on PC1 and PC2 and report accuracy. So Iris shows how PCA can be used both for visualization and as a preprocessing step before a simple model.</p>
+            </div>
+        </div>
+
+        <!-- Slide deck content: Dimension Reduction – PCA (full content, no PDF link) -->
+        <div class="section">
+            <h2><i class="fas fa-presentation-screen"></i> Slide deck content: Dimension Reduction – PCA</h2>
+            <p>Everything you would see in the Dimension Reduction – PCA slides is included here on the page. No separate PDF download—read it all below.</p>
+
+            <h3>Slide 1: Title &amp; overview</h3>
+            <p><strong>Dimension Reduction – Principal Component Analysis (PCA).</strong> Goal: reduce many columns to a few “summary” directions that keep most of the variation in the data.</p>
+
+            <h3>Slide 2: What is dimensionality reduction?</h3>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li><strong>Dimensionality</strong> = number of features (columns) in your data.</li>
+                <li><strong>Dimensionality reduction</strong> = transforming the data so it has fewer columns while retaining as much useful information as possible.</li>
+                <li>We do not randomly drop columns; we combine them in a smart way (e.g. PCA).</li>
+            </ul>
+
+            <h3>Slide 3: Why reduce dimensions?</h3>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li><strong>Visualization</strong> – We can only easily plot 2D or 3D. With 50 columns, we need a way to “squash” them into 2 or 3 for plotting.</li>
+                <li><strong>Curse of dimensionality</strong> – More features can mean slower models, more data needed, and overfitting. Fewer (meaningful) features can help.</li>
+                <li><strong>Noise &amp; redundancy</strong> – Many columns may be noisy or repeat the same information. Reduction can keep the signal and drop redundancy.</li>
+            </ul>
+
+            <h3>Slide 4: What is PCA?</h3>
+            <p><strong>Principal Component Analysis (PCA)</strong> finds new axes (principal components) such that:</p>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li>The <strong>first</strong> principal component (PC1) is the direction of <strong>maximum variance</strong> in the data.</li>
+                <li>The <strong>second</strong> (PC2) is the direction of maximum variance <strong>perpendicular</strong> to PC1, and so on.</li>
+                <li>Data is then <strong>projected</strong> onto these axes to get new columns (PC1, PC2, …).</li>
+            </ul>
+
+            <h3>Slide 5: Steps of PCA (high level)</h3>
+            <ol style="margin-left: 20px; color: #334155;">
+                <li><strong>Center the data</strong> – Subtract the mean of each column so the data is centered at zero.</li>
+                <li><strong>Scale (optional but recommended)</strong> – Use StandardScaler so features are on comparable scales.</li>
+                <li><strong>Compute covariance matrix</strong> – Captures how features vary together.</li>
+                <li><strong>Eigenvectors &amp; eigenvalues</strong> – Eigenvectors are the principal directions; eigenvalues give the variance along each direction.</li>
+                <li><strong>Project</strong> – Multiply centered (and scaled) data by the eigenvectors to get principal component scores (PC1, PC2, …).</li>
+            </ol>
+
+            <h3>Slide 6: Variance explained &amp; scree plot</h3>
+            <p>Each principal component explains a fraction of the total variance. <strong>Explained variance ratio</strong> = variance of that PC / total variance. We often:</p>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li>Plot <strong>number of components</strong> vs <strong>cumulative variance explained</strong> (or per-component variance) – the “scree plot.”</li>
+                <li>Choose the number of components by a <strong>threshold</strong> (e.g. keep enough to explain 90% or 95% of variance) or by a “knee” in the plot.</li>
+            </ul>
+
+            <h3>Slide 7: When to use PCA</h3>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li>When you have <strong>many features</strong> and want to <strong>visualize</strong> (2D/3D) or <strong>speed up / simplify</strong> models.</li>
+                <li>When features are <strong>highly correlated</strong> (multicollinearity); PCA gives uncorrelated components.</li>
+                <li>When you want to <strong>reduce noise</strong> by keeping only high-variance directions.</li>
+            </ul>
+
+            <h3>Slide 8: When not to use PCA</h3>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li>When you need to <strong>interpret original features</strong> (e.g. “which variable matters?”). PCA components are linear combinations of all features and are not directly interpretable as single columns.</li>
+                <li>When you have <strong>very few samples</strong> or <strong>missing values</strong> that are not handled; PCA typically expects complete numeric data (after scaling).</li>
+            </ul>
+
+            <h3>Slide 9: Scaling before PCA</h3>
+            <p>PCA is sensitive to the <strong>scale</strong> of features. If one column is in thousands and another in decimals, the larger-scale column will dominate. Always <strong>scale</strong> (e.g. <code>StandardScaler</code>) before fitting PCA so each feature contributes fairly.</p>
+
+            <h3>Slide 10: Code outline (Python)</h3>
+            <p>Load data → select numeric columns → <code>StandardScaler().fit_transform(X)</code> → <code>PCA(n_components=2)</code> (or <code>n_components=0.95</code>) → <code>fit_transform(X_scaled)</code> → use <code>explained_variance_ratio_</code> to see how much each PC captures. Plot PC1 vs PC2 for 2D visualization.</p>
+
+            <h3>Slide 11: Wine example summary</h3>
+            <p>Wine dataset: 13 chemical features + Customer_Segment. Steps: load <strong>wine_data.csv</strong> → drop Customer_Segment for PCA → scale → fit PCA (e.g. 5 components first to inspect variance) → plot explained variance vs number of components → refit with 2 components for 2D plot → scatter PC1 vs PC2 colored by Customer_Segment. This is the same flow as in <strong>pca.ipynb</strong> and the walkthrough above.</p>
+
+            <h3>Slide 12: Summary</h3>
+            <p>Dimensionality reduction reduces the number of columns while keeping most of the information. PCA finds principal components (directions of maximum variance), projects data onto them, and we keep the first few components for visualization or modeling. Always scale before PCA; use <code>explained_variance_ratio_</code> to decide how many components to keep.</p>
         </div>
 
         <!-- Part 7: Summary -->
@@ -447,8 +646,8 @@ plt.<span class="function">show</span>()</pre>
                 <li>Check <code>explained_variance_ratio_</code> to see how much each component captures; use <code>n_components=0.95</code> to keep 95% variance automatically.</li>
             </ul>
             <div class="key-point">
-                <h4>Session materials (all three used in this course)</h4>
-                <p><strong>1) wine_data.csv</strong> – Download from the <a href="datasets.html">datasets page</a>; used in the walkthrough above. <strong>2) Dimension_Reduction_PCA.pdf</strong> – Slide deck; download from <a href="datasets/Dimension_Reduction_PCA.pdf" download>here</a>. <strong>3) pca.ipynb</strong> – Notebook in Downloads → <strong>Dimensionality Reduction - PCA</strong>. Use all three together with this page for the full lesson in the same philosophy as the entire website.</p>
+                <h4>Session materials (used in this course)</h4>
+                <p><strong>1) wine_data.csv</strong> – Download from the <a href="datasets.html">datasets page</a>; used in the Wine walkthrough (Part 6). <strong>2) Iris.csv</strong> – Download from the <a href="datasets.html">datasets page</a>; used in the Iris walkthrough (Part 6b). <strong>3) PCA with IRIS dataset.ipynb</strong> – Download <a href="notebooks/PCA_with_IRIS_dataset.ipynb" download>here</a>; same steps as Part 6b. <strong>4) pca.ipynb</strong> – Notebook in Downloads → <strong>Dimensionality Reduction - PCA</strong>. The full slide-deck content is included on this page in the section above. Use the CSVs and notebooks together with this page for the full lesson in the same philosophy as the entire website.</p>
             </div>
         </div>
 

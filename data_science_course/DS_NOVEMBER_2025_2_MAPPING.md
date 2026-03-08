@@ -33,17 +33,17 @@ This document maps every folder and dataset in **Downloads → DS November 2025 
 | **Assignment 5** | ✅ **Statistics / Regression** – Housing.csv. |
 | **Assignment 6** | ✅ **Statistics / ML** – Hotel Reservations. |
 | **Assignment 7** | ✅ **ML / Regression** – insurance.csv. |
-| **Maths - Varun** | ✅ **Module 2** → [math-foundations.html](math-foundations.html). PDF = slides. |
-| **Statistics - Varun** | ✅ **Module 3** → [statistics-foundations.html](statistics-foundations.html), [missing-values-outliers.html](missing-values-outliers.html). Data: titanic3.xlsx, Housing.csv, Practice.xlsx. |
-| **Hypothesis Testing - Varun** | ✅ **Module 3** → [hypothesis-testing.html](hypothesis-testing.html). Hotel Reservations. |
-| **Linear Regression - Varun** | ✅ **Module 4** → [linear-regression.html](linear-regression.html). Housing.csv. |
-| **Logistic Regression - Varun** | ✅ **Module 4** → [logistic-regression.html](logistic-regression.html). dataset.csv; Classification Metrics doc = practice. |
-| **Regularization - Varun** | ✅ **Module 4** → [bias-variance.html](bias-variance.html). auto-mpg.csv. |
-| **KNN - Varun** | ✅ **Module 4** → [k-nearest-neighbors.html](k-nearest-neighbors.html). Iris.csv, insurance. |
-| **SVM - Varun** | ✅ **Module 4** → [support-vector-machines.html](support-vector-machines.html), [svm-code-walkthrough.html](svm-code-walkthrough.html). BankChurnersData.csv. |
-| **Clustering - Varun** | ✅ **Module 6** → [clustering.html](clustering.html), [kmeans-code-walkthrough.html](kmeans-code-walkthrough.html). Hotel Reservations. |
-| **Dimensionality Reduction - PCA - Varun** | ✅ **Module 6** → [pca-dimensionality-reduction.html](pca-dimensionality-reduction.html). Uses **wine_data.csv**, **Dimension Reduction.pdf**, and **pca.ipynb** from Downloads → Dimensionality Reduction - PCA. |
-| **A-B Testing and Market Basket Analysis - Varun** | ✅ **Module 9** → [ab-testing.html](ab-testing.html), [market-basket-analysis.html](market-basket-analysis.html). AB_testing_data.csv, market_baskets_data.csv, Apriori_Algorithm.xlsx. |
+| **Maths** | ✅ **Module 2** → [math-foundations.html](math-foundations.html). PDF = slides. |
+| **Statistics** | ✅ **Module 3** → [statistics-foundations.html](statistics-foundations.html), [missing-values-outliers.html](missing-values-outliers.html). Data: titanic3.xlsx, Housing.csv, Practice.xlsx. |
+| **Hypothesis Testing** | ✅ **Module 3** → [hypothesis-testing.html](hypothesis-testing.html). Hotel Reservations. |
+| **Linear Regression** | ✅ **Module 4** → [linear-regression.html](linear-regression.html). Housing.csv. |
+| **Logistic Regression** | ✅ **Module 4** → [logistic-regression.html](logistic-regression.html). dataset.csv; Classification Metrics doc = practice. |
+| **Regularization** | ✅ **Module 4** → [bias-variance.html](bias-variance.html). auto-mpg.csv. |
+| **KNN** | ✅ **Module 4** → [k-nearest-neighbors.html](k-nearest-neighbors.html). Iris.csv, insurance. |
+| **SVM** | ✅ **Module 4** → [support-vector-machines.html](support-vector-machines.html), [svm-code-walkthrough.html](svm-code-walkthrough.html). BankChurnersData.csv. |
+| **Clustering** | ✅ **Module 6** → [clustering.html](clustering.html), [kmeans-code-walkthrough.html](kmeans-code-walkthrough.html). Hotel Reservations. |
+| **Dimensionality Reduction - PCA** | ✅ **Module 6** → [pca-dimensionality-reduction.html](pca-dimensionality-reduction.html). Uses **wine_data.csv** and **pca.ipynb** from Downloads → Dimensionality Reduction - PCA; slide content is on the lesson page. |
+| **A-B Testing and Market Basket Analysis** | ✅ **Module 9** → [ab-testing.html](ab-testing.html), [market-basket-analysis.html](market-basket-analysis.html). AB_testing_data.csv, market_baskets_data.csv, Apriori_Algorithm.xlsx. |
 
 ---
 
