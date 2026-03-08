@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dimensionality Reduction – PCA | Data Science Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #6366f1; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .nav a:hover { color: #4338ca; }
+        .header {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+        }
+        .header h1 { font-size: 2.8em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #6366f1;
+        }
+        .section h2 { color: #6366f1; font-size: 2em; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .section h3 { color: #4f46e5; font-size: 1.5em; margin: 30px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #e0e7ff; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 15px; }
+        .analogy-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        .analogy-box h4 { color: #92400e; font-size: 1.2em; margin-bottom: 10px; }
+        .analogy-box p, .analogy-box li { color: #78350f; }
+        .example-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .example-box h4 { color: #065f46; font-size: 1.2em; margin-bottom: 10px; }
+        .example-box p, .example-box li { color: #064e3b; }
+        .key-point {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #6366f1;
+        }
+        .key-point h4 { color: #4338ca; margin-bottom: 10px; }
+        .key-point p { color: #3730a3; }
+        .code-block {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.6; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .data-table th { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+        .data-table tr:nth-child(even) { background: #f0f5ff; }
+        .graph-figure { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 24px; margin: 25px 0; text-align: center; overflow: visible; min-height: 200px; }
+        .graph-figure figcaption { font-weight: 600; color: #475569; margin-top: 12px; font-size: 1em; }
+        /* PCA diagram animation – flow from many to few */
+        .pca-diagram-wrap { overflow: visible; margin: 25px 0; }
+        .pca-diagram-wrap .pca-step { opacity: 0; animation: pca-reveal 0.8s ease forwards; }
+        .pca-diagram-wrap .pca-step:nth-child(1) { animation-delay: 0.2s; }
+        .pca-diagram-wrap .pca-step:nth-child(2) { animation-delay: 0.6s; }
+        .pca-diagram-wrap .pca-step:nth-child(3) { animation-delay: 1s; }
+        .pca-diagram-wrap .pca-step:nth-child(4) { animation-delay: 1.4s; }
+        @keyframes pca-reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes arrow-flow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .pca-diagram-wrap .pca-arrow { animation: arrow-flow 2s ease-in-out infinite; }
+        @keyframes box-glow { 0%, 100% { filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.3)); } 50% { filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.5)); } }
+        .pca-diagram-wrap .pca-box-many { animation: box-glow 2.5s ease-in-out infinite; }
+        .pca-diagram-wrap .pca-box-few { animation: box-glow 2.5s ease-in-out infinite 0.5s; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        .step-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 20px 0; border: 2px solid #3b82f6; }
+        .step-box h4 { color: #1e40af; margin-bottom: 15px; }
+        .step { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; background: white; padding: 18px; border-radius: 12px; }
+        .step-num { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+        .step p { margin: 0; color: #334155; }
+        .download-box { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-radius: 12px; padding: 18px 22px; margin: 0 0 28px 0; border-left: 4px solid #22c55e; }
+        .download-box a { color: #166534; font-weight: 700; text-decoration: none; }
+        .download-box a:hover { text-decoration: underline; }
+        .line-explain { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; padding: 18px 22px; margin: 12px 0; border-left: 4px solid #3b82f6; }
+        .line-explain h4 { color: #1e40af; font-size: 1.05em; margin-bottom: 10px; }
+        .line-explain ul { margin: 0; padding-left: 22px; color: #1e3a8a; }
+        .line-explain li { margin-bottom: 6px; }
+        .eli5-note { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 18px 22px; margin: 12px 0; border-left: 4px solid #f59e0b; }
+        .eli5-note h4 { color: #92400e; font-size: 1.05em; margin-bottom: 8px; }
+        .eli5-note p { color: #78350f; margin: 0; }
+        .step-badge { display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 4px 14px; border-radius: 20px; font-size: 0.8em; font-weight: 700; margin-bottom: 12px; }
+        @media (max-width: 768px) { .header h1 { font-size: 2em; } .section { padding: 25px 20px; } .nav-buttons { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="kmeans-code-walkthrough.html"><i class="fas fa-arrow-left"></i><span>Previous: K-Means Walkthrough</span></a>
+            <a href="index.html"><i class="fas fa-th-large"></i><span>Course Hub</span></a>
+        </nav>
+
+        <div class="header">
+            <h1>📐 Dimensionality Reduction – PCA</h1>
+            <p>Turn many columns into a few “summary” directions. Principal Component Analysis explained like you're 5!</p>
+        </div>
+
+        <div class="download-box">
+            <strong><i class="fas fa-download"></i> Use these with this lesson:</strong>
+            <a href="datasets/wine_data.csv" download="wine_data.csv">wine_data.csv</a> &nbsp;|&nbsp;
+            <a href="datasets/Dimension_Reduction_PCA.pdf" download="Dimension_Reduction_PCA.pdf">Dimension_Reduction_PCA.pdf</a> (slides) &nbsp;|&nbsp;
+            Session notebook: <strong>pca.ipynb</strong> (in Downloads → Dimensionality Reduction - PCA). Save the CSV in the same folder as your notebook so <code>pd.read_csv("wine_data.csv")</code> works.
+        </div>
+
+        <!-- Part 1: What is Dimensionality Reduction & PCA? -->
+        <div class="section">
+            <h2><i class="fas fa-compress-arrows-alt"></i> Part 1: What is Dimensionality Reduction?</h2>
+            <p><strong>Dimensionality</strong> = how many columns (features) your data has. <strong>Dimensionality reduction</strong> = making fewer columns while keeping as much useful information as possible.</p>
+
+            <h3>👶 In One Sentence (Like You're 5)</h3>
+            <p><strong>PCA (Principal Component Analysis)</strong> finds a small set of new “summary” directions (called principal components) that capture most of the variation in your data—so you can reduce 100 columns to a few for visualization or faster modeling, with minimal information loss.</p>
+
+            <div class="analogy-box">
+                <h4>📺 The TV Summary Analogy</h4>
+                <p>Imagine a 3-hour movie. You can’t show the whole thing in 30 seconds—but you can show the <strong>trailer</strong>: the most important scenes that give you the gist. PCA does the same for your data: it finds the “trailer” directions that summarize most of what’s going on, so you need fewer numbers to understand the story.</p>
+            </div>
+
+            <div class="key-point">
+                <h4>Why “Principal Components”?</h4>
+                <p><strong>Principal</strong> = main, most important. <strong>Component</strong> = one direction or axis. So PCA finds the “main directions” in your data—the directions along which the data varies the most. The first principal component is the single direction with the most spread; the second is the next best (and perpendicular to the first), and so on.</p>
+            </div>
+        </div>
+
+        <!-- Part 2: Why Do We Need PCA? -->
+        <div class="section">
+            <h2><i class="fas fa-question-circle"></i> Part 2: Why Do We Need PCA?</h2>
+            <p>When you have <strong>too many columns</strong>, three big problems show up. PCA helps with all of them.</p>
+
+            <div class="key-point">
+                <h4>🔀 The “Overlapping” Problem PCA Fixes</h4>
+                <p>Many columns often <strong>say the same thing</strong> in different ways. For example: “height in cm,” “height in inches,” and “tall / not tall” all describe one idea. That’s <strong>overlapping information</strong>—like telling the same story three times. PCA finds the main “summary” directions and merges that overlap into a few uncorrelated components, so you don’t count the same signal twice and your data is easier to visualize and model.</p>
+            </div>
+
+            <table class="data-table">
+                <tr>
+                    <th>Problem</th>
+                    <th>How PCA Helps</th>
+                </tr>
+                <tr>
+                    <td><strong>Visualization</strong></td>
+                    <td>Humans can only easily see 2D or 3D. If you have 50 columns, you can’t plot them all. PCA lets you squash 50 columns into 2 or 3 “summary” columns and plot those.</td>
+                </tr>
+                <tr>
+                    <td><strong>Speed & overfitting</strong></td>
+                    <td>More columns = slower models and higher risk of overfitting. Fewer columns (after PCA) = faster training and often better generalization.</td>
+                </tr>
+                <tr>
+                    <td><strong>Noise</strong></td>
+                    <td>Some columns are mostly noise or repeat what others say. PCA keeps the directions with the most signal and drops the rest.</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>🍎 Layman Example 1: The Apple</h4>
+                <p>You describe an apple by 100 measurements: weight, color in 10 wavelengths, 20 shape stats, 30 texture numbers, etc. Most of that is redundant or noise. PCA might find that “size + redness + roundness” (3 numbers) capture 95% of what makes apples different. Now you can work with 3 numbers instead of 100.</p>
+            </div>
+
+            <div class="analogy-box">
+                <h4>📷 Layman Example 2: Photo Compression</h4>
+                <p>A photo has millions of pixels—way too many to “see” at once. Compression (like JPEG) finds a few patterns that summarize the image: “mostly blue here,” “edge there.” PCA does the same for tables: it finds a few “patterns” (principal components) that summarize your columns, so you keep the gist without keeping every number.</p>
+            </div>
+
+            <div class="analogy-box">
+                <h4>🍳 Layman Example 3: Recipe in 3 Lines</h4>
+                <p>A recipe has 50 ingredients and 20 steps. You can’t tell a friend all of that in one breath. So you say: “It’s <strong>sweet, spicy, and creamy</strong>.” Those three “summary directions” capture most of what the dish is. PCA finds the data version of “sweet, spicy, creamy” for your columns—a few summary directions that capture most of what’s going on.</p>
+            </div>
+        </div>
+
+        <!-- Part 3: How Does PCA Work? -->
+        <div class="section">
+            <h2><i class="fas fa-cogs"></i> Part 3: How Does PCA Work? (Simple Idea)</h2>
+            <p>You don’t need the math to get the idea. Here’s the intuition.</p>
+
+            <div class="step-box">
+                <h4>Steps (in plain English)</h4>
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <p><strong>Center the data</strong> – Subtract the mean from each column so the data is centered around zero.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <p><strong>Find the direction of maximum spread</strong> – PCA finds the line (in 2D) or hyperplane direction along which the data varies the most. That’s the first principal component (PC1).</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <p><strong>Find the next best direction</strong> – The second principal component (PC2) is the direction with the next most variation, and it’s perpendicular to PC1. Same for PC3, PC4, …</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <p><strong>Project your data</strong> – Each row is then “projected” onto these new directions. You get new columns: PC1, PC2, … If you keep only PC1 and PC2, you’ve reduced many columns to 2.</p>
+                </div>
+            </div>
+
+            <div class="analogy-box">
+                <h4>🖼️ Shadow Analogy</h4>
+                <p>Think of your data as a cloud of points in 3D. You shine a light from one direction and look at the <strong>shadow</strong> on a wall. PCA chooses the light direction so that the shadow is as “spread out” as possible—that shadow is like your first principal component. Then it finds the next light direction (perpendicular to the first) that spreads the data the most, and so on.</p>
+            </div>
+
+            <div class="graph-figure pca-diagram-wrap">
+                <p style="margin-bottom: 14px; font-weight: 600; color: #334155;">Idea: Many columns → a few “summary” directions</p>
+                <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; display: block;">
+                    <defs><marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#475569"/></marker></defs>
+                    <g class="pca-step">
+                        <text x="25" y="32" fill="#334155" font-size="14" font-weight="600">Many columns</text>
+                        <rect class="pca-box-many" x="20" y="50" width="120" height="55" fill="#c7d2fe" stroke="#6366f1" stroke-width="2" rx="6"/>
+                        <text x="38" y="85" fill="#4338ca" font-size="12">Feature 1, 2, 3 … 100</text>
+                    </g>
+                    <g class="pca-step pca-arrow">
+                        <path d="M 150 77 L 290 77" stroke="#6366f1" stroke-width="2.5" marker-end="url(#arr)" stroke-dasharray="6 4"/>
+                        <text x="200" y="64" fill="#6366f1" font-size="13" font-weight="700">PCA</text>
+                    </g>
+                    <g class="pca-step">
+                        <text x="305" y="32" fill="#334155" font-size="14" font-weight="600">Few columns</text>
+                        <rect class="pca-box-few" x="300" y="50" width="140" height="55" fill="#bbf7d0" stroke="#22c55e" stroke-width="2" rx="6"/>
+                        <text x="318" y="85" fill="#166534" font-size="12">PC1, PC2, (PC3…)</text>
+                    </g>
+                </svg>
+                <figcaption>PCA: many features → few principal components (PC1, PC2, …) that keep most of the variation.</figcaption>
+            </div>
+
+            <h3>Variance Explained</h3>
+            <p>After fitting PCA, you can see how much “variance” each component captures. For example: PC1 = 60%, PC2 = 25%, PC3 = 10% … So with 2 components you might explain 85% of the variation—often that’s enough for visualization or a simpler model.</p>
+        </div>
+
+        <!-- Part 4: When to Use PCA -->
+        <div class="section">
+            <h2><i class="fas fa-check-double"></i> Part 4: When to Use PCA</h2>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li><strong>Visualization</strong> – You have many features and want a 2D or 3D plot (e.g. after clustering).</li>
+                <li><strong>Too many features</strong> – Models are slow or overfit; reducing dimensions can help.</li>
+                <li><strong>Multicollinearity</strong> – Many columns are highly correlated; PCA gives you uncorrelated components.</li>
+                <li><strong>Noise</strong> – You believe many dimensions are noise; PCA keeps high-variance (signal) directions.</li>
+            </ul>
+            <div class="key-point">
+                <h4>When NOT to use PCA</h4>
+                <p>Don’t use PCA if you need to <strong>interpret original features</strong> (e.g. “which gene matters?”). PCA components are mixes of all columns and don’t map back to single features. For interpretation, use feature selection or other methods. Also, always <strong>scale your data</strong> (e.g. StandardScaler) before PCA, since it’s sensitive to units.</p>
+            </div>
+        </div>
+
+        <!-- Part 5: PCA in Python -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Part 5: PCA in Python (sklearn)</h2>
+            <p>Use <code>sklearn.decomposition.PCA</code>. Steps: load data → scale → fit PCA → transform (or fit_transform).</p>
+
+            <div class="code-block">
+                <pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA
+
+<span class="comment"># 1) Load your data (example: many numeric columns)</span>
+df = pd.<span class="function">read_csv</span>(<span class="string">'your_data.csv'</span>)
+X = df.<span class="function">select_dtypes</span>(include=[<span class="string">'number'</span>]).<span class="function">dropna</span>(axis=1)
+
+<span class="comment"># 2) Scale features (important for PCA!)</span>
+scaler = <span class="function">StandardScaler</span>()
+X_scaled = scaler.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># 3) Fit PCA (e.g. keep 2 components for plotting)</span>
+pca = <span class="function">PCA</span>(n_components=<span class="number">2</span>)
+X_pca = pca.<span class="function">fit_transform</span>(X_scaled)
+
+<span class="comment"># 4) See how much variance each component explains</span>
+<span class="function">print</span>(<span class="string">"Variance explained:"</span>, pca.explained_variance_ratio_)
+<span class="function">print</span>(<span class="string">"Total (2 components):"</span>, pca.explained_variance_ratio_.<span class="function">sum</span>())</pre>
+            </div>
+
+            <p>Now <code>X_pca</code> has 2 columns (PC1, PC2). You can plot them, feed them to clustering, or use more components for modeling.</p>
+
+            <h3>How many components?</h3>
+            <ul style="margin-left: 20px; color: #334155;">
+                <li><strong>For visualization:</strong> use <code>n_components=2</code> or <code>3</code>.</li>
+                <li><strong>For “keep 95% variance”:</strong> use <code>PCA(n_components=0.95)</code> and sklearn picks the number of components that explain 95% of the variance.</li>
+            </ul>
+
+            <div class="code-block">
+                <pre><span class="comment"># Optional: keep enough components to explain 95% of variance</span>
+pca95 = <span class="function">PCA</span>(n_components=<span class="number">0.95</span>)
+X_pca95 = pca95.<span class="function">fit_transform</span>(X_scaled)
+<span class="function">print</span>(<span class="string">"Number of components:"</span>, pca95.n_components_)</pre>
+            </div>
+        </div>
+
+        <!-- Part 6: Full Example – Wine Data (Line by Line) -->
+        <div class="section">
+            <h2><i class="fas fa-wine-glass-alt"></i> Part 6: Full Example – Wine Data (Line by Line)</h2>
+            <p>We use the <strong>Wine dataset</strong>: 13 chemical features (Alcohol, Malic_Acid, Ash, …) and a <strong>Customer_Segment</strong> (1, 2, or 3). The goal is to <strong>visualize the data in 2D</strong> by reducing 13 columns to 2 principal components and coloring points by segment. Same philosophy as the rest of the site: every step explained like you're 5.</p>
+
+            <div class="step-badge">PROBLEM</div>
+            <p><strong>Visualize the data in a 2D plot based on customer segment.</strong> We can't plot 13 axes—so we use PCA to get 2 “summary” directions (PC1, PC2) and plot those. Customer_Segment is only for coloring; we are not predicting it.</p>
+
+            <h3>Step 1: Load and understand the data</h3>
+            <div class="code-block">
+                <pre>data = pd.<span class="function">read_csv</span>(<span class="string">"wine_data.csv"</span>)
+data.<span class="function">head</span>(<span class="number">10</span>)
+data[<span class="string">"Customer_Segment"</span>].<span class="function">value_counts</span>()</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What this does</h4>
+                <ul>
+                    <li><code>read_csv("wine_data.csv")</code> loads the table. Put <strong>wine_data.csv</strong> in the same folder as your notebook.</li>
+                    <li><code>head(10)</code> shows the first 10 rows: 13 numeric columns (Alcohol, Malic_Acid, …) plus Customer_Segment (1, 2, or 3).</li>
+                    <li><code>value_counts()</code> shows how many rows per segment (e.g. 2→71, 1→59, 3→48). We use this only for coloring the 2D plot later.</li>
+                </ul>
+            </div>
+
+            <h3>Step 2: Train–test split and scale</h3>
+            <p>We split data and <strong>scale</strong> features so no single column (e.g. Proline) dominates just because of its units. PCA is sensitive to scale!</p>
+            <div class="code-block">
+                <pre><span class="keyword">def</span> <span class="function">train_test_split_and_scale</span>(data):
+    y = data[<span class="string">"Customer_Segment"</span>]   <span class="comment"># only for coloring, not for prediction</span>
+    x = data.<span class="function">drop</span>(<span class="string">'Customer_Segment'</span>, axis=<span class="number">1</span>)
+    x_train, x_test, y_train, y_test = <span class="function">train_test_split</span>(x, y, test_size=<span class="number">0.20</span>, random_state=<span class="number">0</span>)
+    scaler = <span class="function">StandardScaler</span>()
+    x_train = scaler.<span class="function">fit_transform</span>(x_train)
+    x_test = scaler.<span class="function">transform</span>(x_test)
+    <span class="keyword">return</span> x_train, x_test, y_train, y_test
+
+x_train, x_test, y_train, y_test, features = <span class="function">train_test_split_and_scale</span>(data)</pre>
+            </div>
+            <div class="eli5-note">
+                <h4>👶 Why scale?</h4>
+                <p>If one column is in thousands (e.g. Proline) and another in single digits, PCA would think the big column “matters more.” Scaling puts everyone on the same playing field so we find directions of real variation, not just units.</p>
+            </div>
+
+            <h3>Step 3: Apply PCA and see variance explained</h3>
+            <div class="code-block">
+                <pre><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA
+
+pca = <span class="function">PCA</span>(n_components=<span class="number">5</span>)
+x_train_pca = pca.<span class="function">fit_transform</span>(x_train)
+x_test_pca = pca.<span class="function">transform</span>(x_test)
+
+<span class="function">print</span>(<span class="string">"Explained Variance Ratio:"</span>, pca.explained_variance_ratio_)</pre>
+            </div>
+            <p>You might see something like: <strong>[0.37, 0.19, 0.11, 0.07, 0.06]</strong>. So the first component captures 37% of the variance, the second 19%, etc. The first two together capture about <strong>56%</strong>—enough for a rough 2D picture.</p>
+
+            <h3>Step 4: How many components? (Variance curve)</h3>
+            <p>To choose how many components to keep, we often plot <strong>number of components</strong> vs <strong>total variance explained</strong>. For modeling, many people keep enough components to explain at least 90% variance.</p>
+            <div class="code-block">
+                <pre>explained_variance = []
+components = []
+<span class="keyword">for</span> z <span class="keyword">in</span> <span class="function">range</span>(<span class="number">2</span>, <span class="number">14</span>):
+    pca = <span class="function">PCA</span>(n_components=z)
+    x_train_pca = pca.<span class="function">fit_transform</span>(x_train)
+    exp_variance = pca.explained_variance_ratio_.<span class="function">sum</span>()
+    components.<span class="function">append</span>(z)
+    explained_variance.<span class="function">append</span>(exp_variance)
+    <span class="function">print</span>(<span class="string">"Components:"</span>, z, <span class="string">"| Variance explained:"</span>, <span class="function">round</span>(exp_variance, <span class="number">4</span>))
+
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+plt.<span class="function">plot</span>(components, explained_variance, <span class="string">'bx-'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Number of PCA components'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Explained Variance Ratio'</span>)
+plt.<span class="function">title</span>(<span class="string">'PCA and Explained Variance'</span>)
+plt.<span class="function">show</span>()</pre>
+            </div>
+            <div class="key-point">
+                <h4>Rule of thumb</h4>
+                <p>For <strong>visualization</strong>, use 2 (or 3) components. For <strong>building models on top of PCA</strong>, choose the number of components that explain at least 90% of the variance (e.g. 8–9 in this dataset).</p>
+            </div>
+
+            <h3>Step 5: Visualize in 2D (PC1 vs PC2, colored by segment)</h3>
+            <div class="code-block">
+                <pre>pca = <span class="function">PCA</span>(n_components=<span class="number">2</span>)
+x_train_pca = pca.<span class="function">fit_transform</span>(x_train)
+
+y_train = y_train.<span class="function">reset_index</span>(drop=<span class="keyword">True</span>)
+pca_dataframe = pd.<span class="function">DataFrame</span>(x_train_pca)
+pca_dataframe[<span class="string">'Customer_Segment'</span>] = y_train
+pca_dataframe.<span class="function">columns</span> = [<span class="string">'Principal Component 1'</span>, <span class="string">'Principal Component 2'</span>, <span class="string">'Customer_Segment'</span>]
+
+<span class="keyword">import</span> seaborn <span class="keyword">as</span> sns
+sns.<span class="function">scatterplot</span>(data=pca_dataframe, x=<span class="string">'Principal Component 1'</span>, y=<span class="string">'Principal Component 2'</span>, hue=<span class="string">'Customer_Segment'</span>, palette=<span class="string">"deep"</span>)
+plt.<span class="function">title</span>(<span class="string">'PCA with 2 components'</span>)
+plt.<span class="function">xlabel</span>(<span class="string">'Principal Component 1'</span>)
+plt.<span class="function">ylabel</span>(<span class="string">'Principal Component 2'</span>)
+plt.<span class="function">legend</span>()
+plt.<span class="function">show</span>()</pre>
+            </div>
+            <div class="example-box">
+                <h4>What you get</h4>
+                <p>A 2D scatter plot: each point is a wine sample. The x-axis is PC1, the y-axis is PC2. Colors = Customer_Segment (1, 2, 3). You can often see clusters by segment—so PCA gave us a 2D “summary” that still keeps a lot of the structure. All of this matches the <strong>pca.ipynb</strong> notebook and the <strong>Dimension Reduction.pdf</strong> slides in the Dimensionality Reduction - PCA folder.</p>
+            </div>
+        </div>
+
+        <!-- Part 7: Summary -->
+        <div class="section">
+            <h2><i class="fas fa-list-check"></i> Part 7: Summary</h2>
+            <ul style="margin-left: 20px; color: #334155; font-size: 1.05em;">
+                <li><strong>Dimensionality reduction</strong> = fewer columns while keeping most of the information.</li>
+                <li><strong>PCA</strong> finds “principal components”—the directions of maximum variance—and projects your data onto them.</li>
+                <li>Use PCA for <strong>visualization</strong> (2D/3D), <strong>speed</strong>, and <strong>noise reduction</strong>; avoid it when you need to interpret original features.</li>
+                <li>Always <strong>scale</strong> your data before PCA. In Python: <code>StandardScaler</code> → <code>PCA</code> → <code>fit_transform</code>.</li>
+                <li>Check <code>explained_variance_ratio_</code> to see how much each component captures; use <code>n_components=0.95</code> to keep 95% variance automatically.</li>
+            </ul>
+            <div class="key-point">
+                <h4>Session materials (all three used in this course)</h4>
+                <p><strong>1) wine_data.csv</strong> – Download from the <a href="datasets.html">datasets page</a>; used in the walkthrough above. <strong>2) Dimension_Reduction_PCA.pdf</strong> – Slide deck; download from <a href="datasets/Dimension_Reduction_PCA.pdf" download>here</a>. <strong>3) pca.ipynb</strong> – Notebook in Downloads → <strong>Dimensionality Reduction - PCA</strong>. Use all three together with this page for the full lesson in the same philosophy as the entire website.</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="kmeans-code-walkthrough.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Previous: K-Means Walkthrough</a>
+            <a href="index.html" class="nav-btn next"><i class="fas fa-th-large"></i> Course Hub</a>
+        </div>
+    </div>
+    <script src="../js/code-copy.js"></script>
+</body>
+</html>
