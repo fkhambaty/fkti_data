@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Learning Path | Data For Dummies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/fkti-light-theme.css">
+    <link rel="stylesheet" href="css/hub-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html" class="logo-link home-icon-btn" title="Home">
+                    <i class="fas fa-house-chimney"></i>
+                </a>
+            </div>
+            <div class="nav-ticker" id="navTicker"><span class="ticker-icon">💡</span><span class="ticker-text" id="tickerText"></span></div>
+            <div class="nav-links">
+                <a href="learning-path.html" class="nav-link" style="font-weight: 700;">Courses</a>
+                <a href="data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:modalIn .3s ease;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:800;font-size:1.05rem;">📧 Contact</span>
+                <button onclick="document.getElementById('contactModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8faff;border-radius:12px;margin-bottom:10px;">
+                    <span style="font-size:1.5rem;">📩</span>
+                    <div><strong style="font-size:.85rem;display:block;">General Inquiries</strong><a href="mailto:fktiindia@gmail.com" style="font-size:.82rem;color:#4f46e5;text-decoration:none;">fktiindia@gmail.com</a></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#fdf2f8;border-radius:12px;margin-bottom:10px;">
+                    <span style="font-size:1.5rem;">👨‍💼</span>
+                    <div><strong style="font-size:.85rem;display:block;">Founder</strong><a href="mailto:fakhruddinkhambaty@gmail.com" style="font-size:.82rem;color:#7c3aed;text-decoration:none;">fakhruddinkhambaty@gmail.com</a></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#ecfeff;border-radius:12px;">
+                    <span style="font-size:1.5rem;">📞</span>
+                    <div><strong style="font-size:.85rem;display:block;">Phone</strong><a href="tel:+919833565272" style="font-size:.82rem;color:#0891b2;text-decoration:none;">+91 98335 65272</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}</style>
+    <script>
+    function showContact(){document.getElementById('contactModal').style.display='flex';}
+    document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});
+    </script>
+
+    <style>
+    .lp-hero{text-align:center;padding:24px 20px 12px;}
+    .lp-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+    .lp-hero p{color:#64748b;font-size:.95rem;max-width:480px;margin:0 auto}
+    .lp-grid{max-width:1100px;margin:0 auto;padding:20px 20px 48px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    .lp-card{
+        position:relative;background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);
+        border:1px solid rgba(255,255,255,0.5);border-radius:16px;padding:24px 22px 20px;
+        cursor:pointer;overflow:hidden;
+        transition:all .3s cubic-bezier(.4,0,.2,1);
+        display:flex;flex-direction:column;gap:12px;
+    }
+    .lp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;opacity:0;transition:opacity .3s}
+    .lp-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.15)}
+    .lp-card:hover::before{opacity:1}
+    .lp-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#fff;flex-shrink:0;transition:transform .3s}
+    .lp-card:hover .lp-icon{transform:scale(1.1) rotate(-4deg)}
+    .lp-card h3{font-size:1rem;font-weight:800;color:#1e293b;line-height:1.3}
+    .lp-card p{font-size:.82rem;color:#64748b;line-height:1.6;margin:0}
+    .lp-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:auto}
+    .lp-meta span{font-size:.7rem;font-weight:600;color:#94a3b8;display:flex;align-items:center;gap:4px}
+    .lp-meta i{font-size:.6rem}
+    .lp-go{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--c);border:none;background:none;cursor:pointer;padding:0;margin-top:4px;transition:all .2s;font-family:inherit}
+    .lp-go:hover{gap:10px}
+    .lp-go i{font-size:.65rem;transition:transform .2s}
+    .lp-go:hover i{transform:translateX(3px)}
+
+    /* Path visualisation */
+    .lp-path{max-width:1100px;margin:0 auto 40px;padding:0 20px}
+    .lp-path h3{text-align:center;font-size:1rem;font-weight:700;color:#475569;margin-bottom:16px}
+    .lp-steps{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
+    .lp-step{display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.5);border-radius:12px}
+    .lp-step-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+    .lp-step-text h4{font-size:.78rem;font-weight:700;color:#1e293b}
+    .lp-step-text p{font-size:.68rem;color:#94a3b8;margin:0}
+    .lp-arrow{color:#cbd5e1;font-size:.85rem;padding:0 8px}
+    @media(max-width:768px){.lp-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px} .lp-steps{flex-direction:column;gap:8px} .lp-arrow{transform:rotate(90deg)}}
+    </style>
+
+    <section class="top-offset-for-nav">
+        <div class="lp-hero">
+            <h1>Choose Your Learning Path</h1>
+            <p>Free, professional-grade courses. Pick one and start building real skills today.</p>
+        </div>
+        <div class="lp-grid">
+            <div class="lp-card" onclick="enterCourse('python')" style="--c:#3b82f6">
+                <style>.lp-card[style*="3b82f6"]::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#3776ab,#ffd43b)"><i class="fab fa-python"></i></div>
+                <h3>Python for Data Science</h3>
+                <p>Master Python, NumPy, Pandas and Matplotlib. Build real data analysis projects from day one.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 12 Weeks</span><span><i class="fas fa-book"></i> 25+ Lessons</span></div>
+                <span class="lp-go" style="color:#3b82f6">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('datascience')" style="--c:#7c3aed">
+                <style>.lp-card[style*="7c3aed"]::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)"><i class="fas fa-chart-line"></i></div>
+                <h3>Data Science Fundamentals</h3>
+                <p>Probability, vectors, matrices, derivatives — the math behind ML, explained like you're five.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> Self-Paced</span><span><i class="fas fa-book"></i> 8 Topics</span></div>
+                <span class="lp-go" style="color:#7c3aed">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('airflow')" style="--c:#0891b2">
+                <style>.lp-card[style*="0891b2"]::before{background:linear-gradient(90deg,#0891b2,#22d3ee)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#017cee,#00c7d4)"><i class="fas fa-project-diagram"></i></div>
+                <h3>Apache Airflow</h3>
+                <p>Build production DAGs, master operators and sensors, deploy enterprise-grade pipelines.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 15 Weeks</span><span><i class="fas fa-book"></i> 30+ Lessons</span></div>
+                <span class="lp-go" style="color:#0891b2">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('clickhouse')" style="--c:#ca8a04">
+                <style>.lp-card[style*="ca8a04"]::before{background:linear-gradient(90deg,#ca8a04,#facc15)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#ca8a04,#eab308)"><i class="fas fa-bolt"></i></div>
+                <h3>ClickHouse</h3>
+                <p>Query billions of rows in milliseconds. Install with Docker, learn columnar OLAP from scratch.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 10 Weeks</span><span><i class="fas fa-book"></i> 18+ Lessons</span></div>
+                <span class="lp-go" style="color:#ca8a04">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('redshift')" style="--c:#ea580c">
+                <style>.lp-card[style*="ea580c"]::before{background:linear-gradient(90deg,#ea580c,#fb923c)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#ff9900,#ffb84d)"><i class="fab fa-aws"></i></div>
+                <h3>AWS Redshift</h3>
+                <p>Petabyte-scale data warehousing. Distribution keys, sort keys, COPY, Spectrum and more.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 16 Weeks</span><span><i class="fas fa-book"></i> 35+ Lessons</span></div>
+                <span class="lp-go" style="color:#ea580c">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('mssql')" style="--c:#dc2626">
+                <style>.lp-card[style*="dc2626"]::before{background:linear-gradient(90deg,#dc2626,#f87171)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#cc2927,#e74c3c)"><i class="fas fa-database"></i></div>
+                <h3>Microsoft SQL Server</h3>
+                <p>T-SQL mastery, stored procedures, index tuning, backup/recovery — full enterprise DBA path.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 18 Weeks</span><span><i class="fas fa-book"></i> 40+ Lessons</span></div>
+                <span class="lp-go" style="color:#dc2626">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('dbt')" style="--c:#d97706">
+                <style>.lp-card[style*="d97706"]::before{background:linear-gradient(90deg,#d97706,#fbbf24)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#ff694b,#ff8a65)"><i class="fas fa-random"></i></div>
+                <h3>DBT Transformation</h3>
+                <p>Modern analytics engineering with SQL. Models, tests, docs, Jinja macros and dbt Cloud.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 12 Weeks</span><span><i class="fas fa-book"></i> 28+ Lessons</span></div>
+                <span class="lp-go" style="color:#d97706">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('metabase')" style="--c:#2563eb">
+                <style>.lp-card[style*="2563eb"]::before{background:linear-gradient(90deg,#2563eb,#60a5fa)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#509ee3,#42a5f5)"><i class="fas fa-chart-bar"></i></div>
+                <h3>Metabase BI</h3>
+                <p>Drag-and-drop dashboards, scheduled reports, embedded analytics. No SQL required to start.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 10 Weeks</span><span><i class="fas fa-book"></i> 22+ Lessons</span></div>
+                <span class="lp-go" style="color:#2563eb">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('postgres')" style="--c:#059669">
+                <style>.lp-card[style*="059669"]::before{background:linear-gradient(90deg,#059669,#34d399)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#336791,#4a90c7)"><i class="fas fa-database"></i></div>
+                <h3>PostgreSQL + DBeaver</h3>
+                <p>The world's best open-source database. Learn SQL from SELECT to JOINs with a visual explorer.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> 14 Weeks</span><span><i class="fas fa-book"></i> 35+ Lessons</span></div>
+                <span class="lp-go" style="color:#059669">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="lp-card" onclick="enterCourse('llm')" style="--c:#7c3aed">
+                <style>.lp-card[onclick*="llm"]::before{background:linear-gradient(90deg,#7c3aed,#a855f7)}</style>
+                <div class="lp-icon" style="background:linear-gradient(135deg,#6d28d9,#7c3aed)"><i class="fas fa-brain"></i></div>
+                <h3>Large Language Models</h3>
+                <p>Build a working LLM from scratch. Tokenization, attention, transformers, fine-tuning and deployment.</p>
+                <div class="lp-meta"><span><i class="fas fa-clock"></i> Self-Paced</span><span><i class="fas fa-book"></i> 15+ Chapters</span></div>
+                <span class="lp-go" style="color:#7c3aed">Start Course <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </div>
+
+        <div class="lp-path">
+            <h3>Recommended Path</h3>
+            <div class="lp-steps">
+                <div class="lp-step"><div class="lp-step-num">1</div><div class="lp-step-text"><h4>Foundation</h4><p>Python, SQL, PostgreSQL</p></div></div>
+                <span class="lp-arrow">→</span>
+                <div class="lp-step"><div class="lp-step-num">2</div><div class="lp-step-text"><h4>Infrastructure</h4><p>Redshift, ClickHouse</p></div></div>
+                <span class="lp-arrow">→</span>
+                <div class="lp-step"><div class="lp-step-num">3</div><div class="lp-step-text"><h4>Engineering</h4><p>Airflow, DBT</p></div></div>
+                <span class="lp-arrow">→</span>
+                <div class="lp-step"><div class="lp-step-num">4</div><div class="lp-step-text"><h4>Analytics & AI</h4><p>Metabase, Data Science, LLMs</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" style="margin-top: 48px;">
+        <div class="footer-bottom">
+            <p>&copy; 2025 Data For Dummies. Free learning notes for everyone.</p>
+        </div>
+    </footer>
+    <script src="js/hub-script.js"></script>
+    <script src="js/nav-ticker.js"></script>
+</body>
+</html>

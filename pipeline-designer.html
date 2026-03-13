@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Architect | Data For Dummies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+    --bg:#f8faff;--bg2:#f0f4ff;--bg3:#eef2ff;--surface:rgba(255,255,255,0.75);
+    --border:rgba(99,102,241,0.12);--border-hover:rgba(99,102,241,0.3);
+    --text:#1e293b;--text2:#475569;--text3:#94a3b8;
+    --indigo:#6366f1;--cyan:#0891b2;--pink:#ec4899;--amber:#d97706;
+    --emerald:#059669;--blue:#3b82f6;--red:#ef4444;--purple:#7c3aed;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;min-height:100vh}
+
+/* ── Ambient background ── */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.ambient .g{position:absolute;border-radius:50%;filter:blur(140px);opacity:0.12;animation:glow 25s ease-in-out infinite}
+.ambient .g:nth-child(1){width:600px;height:600px;background:#818cf8;top:-10%;left:-5%;animation-delay:0s}
+.ambient .g:nth-child(2){width:500px;height:500px;background:#67e8f9;top:40%;right:-10%;animation-delay:-8s}
+.ambient .g:nth-child(3){width:450px;height:450px;background:#f9a8d4;bottom:-15%;left:30%;animation-delay:-16s}
+@keyframes glow{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.06)}66%{transform:translate(-25px,35px) scale(0.94)}}
+.grain{display:none}
+
+/* ── Page shell ── */
+.page{position:relative;z-index:2}
+
+/* ── Nav ── */
+.top-nav{
+    position:sticky;top:10px;z-index:100;max-width:1000px;margin:0 auto;
+    background:rgba(255,255,255,0.65);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+    border:1px solid rgba(255,255,255,0.5);border-radius:999px;
+    box-shadow:0 4px 32px rgba(0,0,0,0.06);
+    animation:slideDown .7s cubic-bezier(.16,1,.3,1) both;
+    transition:background .3s,box-shadow .3s;
+}
+.top-nav:hover{background:rgba(255,255,255,0.8);box-shadow:0 8px 40px rgba(0,0,0,0.08)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.nav-c{display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 8px 0 16px;gap:8px}
+.nav-brand a{display:flex;align-items:center;text-decoration:none}
+.nav-logo{width:28px;height:28px;border-radius:8px;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.nav-brand a:hover .nav-logo{transform:rotate(-8deg) scale(1.1)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-link{color:#475569;text-decoration:none;font-weight:600;font-size:.75rem;padding:5px 10px;border-radius:999px;transition:all .25s cubic-bezier(.4,0,.2,1);white-space:nowrap}
+.nav-link:hover{color:var(--indigo);background:rgba(99,102,241,0.08);transform:translateY(-1px)}
+.nav-link.active{color:var(--indigo);background:rgba(99,102,241,0.1)}
+
+/* ── Hero ── */
+.hero{text-align:center;padding:56px 24px 40px;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);color:var(--indigo);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;animation:fadeUp .6s .2s both}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;animation:fadeUp .6s .3s both}
+.hero h1{color:#1e293b}
+.hero h1 span{background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--text2);font-size:1.05rem;max-width:580px;margin:0 auto;line-height:1.7;animation:fadeUp .6s .4s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Main layout: side-by-side config + diagram ── */
+.main{max-width:1260px;margin:0 auto;padding:0 20px 60px;display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start}
+@media(max-width:960px){.main{grid-template-columns:1fr;gap:20px}}
+
+/* ── Config panel (left) ── */
+.config{position:sticky;top:72px;display:flex;flex-direction:column;gap:16px;animation:fadeUp .6s .5s both}
+@media(max-width:960px){.config{position:static}}
+.cfg-card{
+    background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);
+    border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+    transition:border-color .3s,box-shadow .3s;
+}
+.cfg-card:hover{border-color:rgba(99,102,241,0.2);box-shadow:0 4px 20px rgba(99,102,241,0.06)}
+.cfg-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cfg-title i{color:var(--indigo);font-size:.8rem}
+
+/* Option buttons (source, dest, scenario) */
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt-btn{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    padding:14px 8px;border-radius:12px;border:1px solid rgba(0,0,0,0.08);
+    background:rgba(255,255,255,0.6);color:var(--text2);cursor:pointer;
+    font:inherit;font-size:.78rem;font-weight:600;
+    transition:all .25s cubic-bezier(.4,0,.2,1);
+    position:relative;overflow:hidden;
+}
+.opt-btn::before{content:'';position:absolute;inset:0;border-radius:12px;background:linear-gradient(135deg,#eef2ff,#e0e7ff);opacity:0;transition:opacity .3s}
+.opt-btn i{font-size:1.2rem;position:relative;z-index:1;transition:transform .3s;color:var(--text3)}
+.opt-btn span{position:relative;z-index:1}
+.opt-btn:hover{border-color:rgba(99,102,241,0.25);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.04)}
+.opt-btn:hover i{transform:scale(1.15)}
+.opt-btn.selected{border-color:var(--indigo);color:var(--indigo);background:#eef2ff;box-shadow:0 2px 12px rgba(99,102,241,0.1)}
+.opt-btn.selected::before{opacity:0.6}
+.opt-btn.selected i{color:var(--indigo)}
+
+/* Medallion toggle */
+.medal-row{display:flex;gap:6px}
+.medal-btn{
+    flex:1;padding:10px 6px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);
+    background:rgba(255,255,255,0.6);color:var(--text2);cursor:pointer;
+    font:inherit;font-size:.72rem;font-weight:600;text-align:center;
+    transition:all .25s;
+}
+.medal-btn:hover{border-color:rgba(217,119,6,0.25)}
+.medal-btn.selected{border-color:var(--amber);color:var(--amber);background:#fffbeb}
+
+/* Table chips */
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+    display:flex;align-items:center;gap:6px;padding:8px 14px;
+    border-radius:999px;border:1px solid rgba(0,0,0,0.08);
+    background:rgba(255,255,255,0.6);color:var(--text2);cursor:pointer;
+    font:inherit;font-size:.78rem;font-weight:600;
+    transition:all .25s cubic-bezier(.4,0,.2,1);user-select:none;
+}
+.chip:hover{border-color:rgba(5,150,105,0.25);transform:translateY(-1px)}
+.chip.on{border-color:var(--emerald);color:var(--emerald);background:#ecfdf5}
+.chip i{font-size:.65rem;opacity:.5;transition:all .2s}
+.chip.on i{opacity:1;color:var(--emerald)}
+
+/* ── Right: diagram + info ── */
+.canvas-area{display:flex;flex-direction:column;gap:20px;animation:fadeUp .6s .6s both}
+
+/* Diagram card */
+.diagram-card{
+    background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);
+    border:1px solid rgba(0,0,0,0.06);border-radius:20px;
+    padding:32px 28px;position:relative;overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,0.04);
+    transition:border-color .3s,box-shadow .3s;
+}
+.diagram-card:hover{border-color:rgba(99,102,241,0.2);box-shadow:0 8px 32px rgba(99,102,241,0.06)}
+.diagram-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(99,102,241,0.15),transparent);
+}
+#pipelineSvg{width:100%;height:auto;display:block}
+
+/* Info panels row */
+.info-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.info-row{grid-template-columns:1fr}}
+.info-card{
+    background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);
+    border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+    transition:border-color .3s,box-shadow .3s;
+}
+.info-card:hover{border-color:rgba(99,102,241,0.2);box-shadow:0 4px 20px rgba(99,102,241,0.06)}
+.info-card h3{font-size:.8rem;font-weight:700;color:var(--indigo);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.info-card h3 i{font-size:.75rem}
+.info-card p,.info-card ul{font-size:.88rem;color:var(--text2);line-height:1.7}
+.info-card ul{padding-left:16px}
+.info-card li{margin-bottom:4px}
+.info-card .metric{font-size:1.6rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.info-card .metric-label{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+
+/* Node tooltip */
+.node-tooltip{
+    position:absolute;z-index:20;pointer-events:auto;
+    width:290px;padding:18px 20px;
+    background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(99,102,241,0.12);border-radius:16px;
+    box-shadow:0 16px 48px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.06);
+    opacity:0;transform:translateY(8px);
+    transition:opacity .25s ease,transform .25s ease;
+    font-family:'Inter',sans-serif;
+    visibility:hidden;
+}
+.node-tooltip.visible{opacity:1;transform:translateY(0);visibility:visible}
+.node-tooltip .tt-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.node-tooltip .tt-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.node-tooltip .tt-name{font-size:.85rem;font-weight:800;color:#1e293b}
+.node-tooltip .tt-role{font-size:.68rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em}
+.node-tooltip .tt-desc{font-size:.8rem;color:#475569;line-height:1.6;margin-bottom:10px}
+.node-tooltip .tt-detail{display:flex;flex-direction:column;gap:6px}
+.node-tooltip .tt-row{display:flex;align-items:flex-start;gap:8px;font-size:.75rem;color:#64748b;line-height:1.5}
+.node-tooltip .tt-row i{color:var(--indigo);font-size:.65rem;margin-top:3px;flex-shrink:0}
+.node-tooltip .tt-row strong{color:#334155}
+
+/* Download bar */
+.dl-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.dl-bar .dl-label{font-size:.78rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.dl-btn{
+    display:inline-flex;align-items:center;gap:8px;padding:10px 20px;
+    border-radius:12px;border:1px solid rgba(0,0,0,0.08);background:rgba(255,255,255,0.7);
+    color:var(--text);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;
+    transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+.dl-btn i{font-size:.9rem}
+.dl-btn:hover{border-color:var(--indigo);background:rgba(99,102,241,0.08);transform:translateY(-2px);box-shadow:0 4px 20px rgba(99,102,241,0.12)}
+.dl-btn.png-btn:hover{border-color:var(--blue);background:rgba(59,130,246,0.08);box-shadow:0 4px 20px rgba(59,130,246,0.12)}
+.dl-btn.svg-btn:hover{border-color:var(--emerald);background:rgba(16,185,129,0.08);box-shadow:0 4px 20px rgba(16,185,129,0.12)}
+.dl-btn.pdf-btn:hover{border-color:var(--red);background:rgba(239,68,68,0.08);box-shadow:0 4px 20px rgba(239,68,68,0.12)}
+
+/* ── SVG Diagram styles ── */
+.pipe-node{cursor:default;transition:filter .3s}
+.pipe-node:hover{filter:brightness(1.08) drop-shadow(0 4px 8px rgba(0,0,0,0.1))}
+.flow-line{fill:none;stroke:url(#flowGrad);stroke-width:2;stroke-dasharray:10 5;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-30}}
+.node-glow{animation:pulseGlow 3s ease-in-out infinite}
+@keyframes pulseGlow{0%,100%{opacity:.3}50%{opacity:.7}}
+
+/* ── Particle canvas overlay ── */
+#particleCanvas{position:absolute;inset:0;pointer-events:none;z-index:1;border-radius:20px}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+    .hero h1{font-size:1.8rem}
+    .main{padding:0 12px 40px}
+    .diagram-card{padding:20px 16px}
+    .info-row{grid-template-columns:1fr}
+    .opt-grid{grid-template-columns:1fr 1fr}
+}
+    </style>
+</head>
+<body>
+<div class="ambient"><div class="g"></div><div class="g"></div><div class="g"></div></div>
+<div class="grain"></div>
+
+<div class="page">
+    <nav class="top-nav">
+        <div class="nav-c">
+            <div class="nav-brand"><a href="index.html" class="home-icon-btn" title="Home" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:0.95rem;text-decoration:none;box-shadow:0 2px 10px rgba(99,102,241,0.25);transition:all .3s cubic-bezier(.4,0,.2,1);overflow:hidden;"><i class="fas fa-house-chimney" style="position:relative;z-index:1;"></i></a></div>
+            <div class="nav-links">
+                <a href="learning-path.html" class="nav-link">Courses</a>
+                <a href="data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="pipeline-designer.html" class="nav-link active">Pipeline Designer</a>
+                <a href="founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+            </div>
+        </div>
+    </nav>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:modalIn .3s ease;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:800;font-size:1.05rem;">📧 Contact</span><button onclick="document.getElementById('contactModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;">&times;</button></div>
+            <div style="padding:24px;">
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8faff;border-radius:12px;margin-bottom:10px;"><span style="font-size:1.5rem;">📩</span><div><strong style="font-size:.85rem;display:block;">General Inquiries</strong><a href="mailto:fktiindia@gmail.com" style="font-size:.82rem;color:#4f46e5;text-decoration:none;">fktiindia@gmail.com</a></div></div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#fdf2f8;border-radius:12px;margin-bottom:10px;"><span style="font-size:1.5rem;">👨‍💼</span><div><strong style="font-size:.85rem;display:block;">Founder</strong><a href="mailto:fakhruddinkhambaty@gmail.com" style="font-size:.82rem;color:#7c3aed;text-decoration:none;">fakhruddinkhambaty@gmail.com</a></div></div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#ecfeff;border-radius:12px;"><span style="font-size:1.5rem;">📞</span><div><strong style="font-size:.85rem;display:block;">Phone</strong><a href="tel:+919833565272" style="font-size:.82rem;color:#0891b2;text-decoration:none;">+91 98335 65272</a></div></div>
+            </div>
+        </div>
+    </div>
+    <style>@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}</style>
+    <script>function showContact(){document.getElementById('contactModal').style.display='flex';}document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+
+    <section class="hero">
+        <div class="hero-badge"><i class="fas fa-bolt"></i> Interactive Architecture Tool</div>
+        <h1>Design Your <span>Reporting Pipeline</span></h1>
+        <p class="hero-sub">Configure source, destination, compute strategy and medallion layers. Watch the architecture render in real time. Download and share with your team.</p>
+    </section>
+
+    <div class="main">
+        <!-- LEFT: Config Panel -->
+        <div class="config">
+            <!-- Source -->
+            <div class="cfg-card">
+                <div class="cfg-title"><i class="fas fa-database"></i> Data Source</div>
+                <div class="opt-grid" id="srcGrid">
+                    <button class="opt-btn selected" data-val="postgres"><i class="fas fa-database"></i><span>PostgreSQL</span></button>
+                    <button class="opt-btn" data-val="s3"><i class="fab fa-aws"></i><span>AWS S3</span></button>
+                    <button class="opt-btn" data-val="mysql"><i class="fas fa-server"></i><span>MySQL</span></button>
+                    <button class="opt-btn" data-val="api"><i class="fas fa-plug"></i><span>API / REST</span></button>
+                    <button class="opt-btn" data-val="kafka"><i class="fas fa-stream"></i><span>Kafka</span></button>
+                    <button class="opt-btn" data-val="mongo"><i class="fas fa-leaf"></i><span>MongoDB</span></button>
+                </div>
+            </div>
+            <!-- Destination -->
+            <div class="cfg-card">
+                <div class="cfg-title"><i class="fas fa-bullseye"></i> Destination</div>
+                <div class="opt-grid" id="destGrid">
+                    <button class="opt-btn selected" data-val="redshift"><i class="fas fa-warehouse"></i><span>Redshift</span></button>
+                    <button class="opt-btn" data-val="postgres"><i class="fas fa-database"></i><span>PostgreSQL</span></button>
+                    <button class="opt-btn" data-val="s3"><i class="fab fa-aws"></i><span>S3 Lake</span></button>
+                    <button class="opt-btn" data-val="snowflake"><i class="far fa-snowflake"></i><span>Snowflake</span></button>
+                    <button class="opt-btn" data-val="bigquery"><i class="fas fa-chart-bar"></i><span>BigQuery</span></button>
+                    <button class="opt-btn" data-val="clickhouse"><i class="fas fa-bolt"></i><span>ClickHouse</span></button>
+                </div>
+            </div>
+            <!-- Scenario -->
+            <div class="cfg-card">
+                <div class="cfg-title"><i class="fas fa-microchip"></i> Compute Strategy</div>
+                <div class="opt-grid" id="scenarioGrid">
+                    <button class="opt-btn selected" data-val="batch"><i class="fas fa-clock"></i><span>Batch</span></button>
+                    <button class="opt-btn" data-val="realtime"><i class="fas fa-satellite-dish"></i><span>Real-time</span></button>
+                    <button class="opt-btn" data-val="hybrid"><i class="fas fa-code-branch"></i><span>Hybrid</span></button>
+                    <button class="opt-btn" data-val="serverless"><i class="fas fa-cloud"></i><span>Serverless</span></button>
+                </div>
+            </div>
+            <!-- Medallion -->
+            <div class="cfg-card">
+                <div class="cfg-title"><i class="fas fa-layer-group"></i> Medallion Architecture</div>
+                <div class="medal-row" id="medalRow">
+                    <button class="medal-btn selected" data-val="full">Bronze &rarr; Silver &rarr; Gold</button>
+                    <button class="medal-btn" data-val="silver-gold">Silver &rarr; Gold</button>
+                    <button class="medal-btn" data-val="single">Single Layer</button>
+                </div>
+            </div>
+            <!-- Tables -->
+            <div class="cfg-card">
+                <div class="cfg-title"><i class="fas fa-table"></i> Sample Tables</div>
+                <div class="chip-row" id="chipRow">
+                    <button class="chip on" data-val="orders"><i class="fas fa-check"></i> Orders</button>
+                    <button class="chip on" data-val="customers"><i class="fas fa-check"></i> Customers</button>
+                    <button class="chip" data-val="products"><i class="fas fa-check"></i> Products</button>
+                    <button class="chip" data-val="events"><i class="fas fa-check"></i> Events</button>
+                    <button class="chip" data-val="payments"><i class="fas fa-check"></i> Payments</button>
+                    <button class="chip" data-val="inventory"><i class="fas fa-check"></i> Inventory</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Diagram + Info -->
+        <div class="canvas-area">
+            <div class="diagram-card" id="diagramCard">
+                <canvas id="particleCanvas"></canvas>
+                <svg id="pipelineSvg" viewBox="0 0 960 320" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="node-tooltip" id="nodeTooltip"></div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-card" id="whyCard">
+                    <h3><i class="fas fa-lightbulb"></i> Why This Architecture</h3>
+                    <p id="whyText"></p>
+                </div>
+                <div class="info-card" id="specCard">
+                    <h3><i class="fas fa-chart-pie"></i> Specs at a Glance</h3>
+                    <div id="specContent"></div>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-card" id="stackCard">
+                    <h3><i class="fas fa-cubes"></i> Tech Stack Details</h3>
+                    <ul id="stackList"></ul>
+                </div>
+                <div class="info-card" id="costCard">
+                    <h3><i class="fas fa-dollar-sign"></i> Estimated Monthly Cost</h3>
+                    <div id="costContent"></div>
+                </div>
+            </div>
+
+            <div class="dl-bar">
+                <span class="dl-label">Export:</span>
+                <button class="dl-btn png-btn" id="dlPng"><i class="fas fa-image"></i> PNG</button>
+                <button class="dl-btn svg-btn" id="dlSvg"><i class="fas fa-code"></i> SVG</button>
+                <button class="dl-btn pdf-btn" id="dlPdf"><i class="fas fa-file-pdf"></i> PDF</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+
+/* ── State ── */
+const state = {
+    source:'postgres', dest:'redshift', scenario:'batch', medallion:'full',
+    tables:['orders','customers']
+};
+
+/* ── Option grids ── */
+function initGrid(id, stateKey) {
+    const grid = document.getElementById(id);
+    grid.querySelectorAll('.opt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            grid.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            state[stateKey] = btn.dataset.val;
+            render();
+        });
+    });
+}
+initGrid('srcGrid','source');
+initGrid('destGrid','dest');
+initGrid('scenarioGrid','scenario');
+
+document.getElementById('medalRow').querySelectorAll('.medal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.medal-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        state.medallion = btn.dataset.val;
+        render();
+    });
+});
+
+document.getElementById('chipRow').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        chip.classList.toggle('on');
+        state.tables = Array.from(document.querySelectorAll('.chip.on')).map(c => c.dataset.val);
+        render();
+    });
+});
+
+/* ── Data maps ── */
+const SRC = {postgres:'PostgreSQL',s3:'AWS S3',mysql:'MySQL',api:'API/REST',kafka:'Kafka',mongo:'MongoDB'};
+const DST = {redshift:'Redshift',postgres:'PostgreSQL',s3:'S3 Data Lake',snowflake:'Snowflake',bigquery:'BigQuery',clickhouse:'ClickHouse'};
+const COMPUTE = {batch:'ECS Fargate',realtime:'EKS',hybrid:'EKS + Lambda',serverless:'Lambda'};
+const COMPUTE_SHORT = {batch:'ECS',realtime:'EKS',hybrid:'EKS+λ',serverless:'Lambda'};
+
+const COLORS = {
+    source:'#3b82f6', airflow:'#017cee', compute:'#8b5cf6',
+    dbt:'#ff694b', bronze:'#78716c', silver:'#94a3b8', gold:'#eab308',
+    dest:'#10b981', metabase:'#509ee3'
+};
+
+const WHY = {
+    batch:'<strong>Batch processing</strong> is ideal for scheduled, heavy-lift workloads — nightly data refreshes, daily DBT builds, or hourly aggregations. <strong>ECS Fargate</strong> runs your containers without managing servers: Airflow triggers a Fargate task, it pulls data, transforms via DBT, and shuts down. You pay only for compute time. This is the go-to pattern for 80% of analytics pipelines in production today.',
+    realtime:'<strong>Real-time streaming</strong> demands always-on ingestion and sub-second processing. <strong>EKS (Kubernetes)</strong> orchestrates Kafka consumers, Flink/Spark Streaming jobs, and auto-scales pods based on consumer lag. The medallion layers become streaming stages: raw events hit Bronze, enriched data flows to Silver, and business-ready aggregates land in Gold — all within seconds.',
+    hybrid:'<strong>Hybrid architecture</strong> combines the best of both worlds: <strong>EKS</strong> handles scheduled batch workloads (Airflow + DBT), while <strong>Lambda</strong> catches real-time events (webhooks, CDC streams, SQS triggers). Lambda can kick off EKS jobs via API, giving you event-driven batch processing. This pattern is common in e-commerce (real-time orders + nightly analytics).',
+    serverless:'<strong>Fully serverless</strong> eliminates cluster management entirely. <strong>AWS Lambda</strong> + Step Functions orchestrate the pipeline; DBT runs via Lambda layers or DBT Cloud. Perfect for variable workloads, startups, or teams without dedicated DevOps. Trade-off: less control over execution environment, 15-min Lambda timeout, but zero infrastructure to maintain.'
+};
+
+const STACK = {
+    batch:['<strong>Airflow on ECS</strong> — DAG-based orchestration with Fargate tasks','<strong>ECS Fargate</strong> — Serverless containers, auto-scaling per task','<strong>DBT</strong> — SQL-first transformations with lineage tracking','<strong>Metabase</strong> — Self-service BI with live dashboard refresh','<strong>S3</strong> — Intermediate storage for medallion layers'],
+    realtime:['<strong>Airflow on EKS</strong> — Kubernetes-native orchestration','<strong>EKS</strong> — Managed Kubernetes for stream processors','<strong>Apache Kafka / MSK</strong> — Distributed event streaming','<strong>Flink / Spark Streaming</strong> — Real-time transformations','<strong>Metabase</strong> — Live dashboards with auto-refresh'],
+    hybrid:['<strong>Airflow on EKS</strong> — Batch scheduling + event triggers','<strong>EKS</strong> — Batch compute & Kafka consumers','<strong>Lambda</strong> — Event handlers (webhooks, CDC, SQS)','<strong>DBT</strong> — Batch transforms on schedule','<strong>SQS / EventBridge</strong> — Event routing between Lambda and EKS'],
+    serverless:['<strong>Step Functions</strong> — Visual workflow orchestration','<strong>Lambda</strong> — Stateless compute, pay-per-invocation','<strong>DBT Cloud</strong> — Managed transformation runs','<strong>S3</strong> — Data lake storage between stages','<strong>Metabase</strong> — Analytics layer connecting to warehouse']
+};
+
+const COST = {
+    batch:{range:'$400 – $1,200',level:'Low-Medium',note:'Fargate tasks run on-demand; you pay per second of compute. Most cost-effective for predictable scheduled loads.'},
+    realtime:{range:'$1,500 – $5,000+',level:'Medium-High',note:'Always-on EKS nodes + Kafka brokers. Costs scale with throughput. Consider reserved instances for steady baseline.'},
+    hybrid:{range:'$800 – $3,000',level:'Medium',note:'EKS base cost + Lambda per-invocation. Lambda handles bursty events cheaply; EKS handles heavy lifting.'},
+    serverless:{range:'$200 – $800',level:'Low',note:'Pure pay-per-use. Best economics for variable or low-volume workloads. Costs spike if volume is consistently high.'}
+};
+
+/* ── Node tooltip data ── */
+function getTips(source, dest, scenario) {
+    const computeLabel = COMPUTE[scenario] || 'ECS Fargate';
+    return {
+        source: {
+            desc: `Your primary data source. Raw data is extracted from here on every pipeline run.`,
+            details: [
+                `<strong>Protocol:</strong> ${source === 'kafka' ? 'Event stream (pub/sub)' : source === 'api' ? 'HTTP REST calls' : source === 's3' ? 'S3 object reads' : 'JDBC / SQL connection'}`,
+                `<strong>Extraction:</strong> ${source === 'kafka' ? 'Continuous consumer reads' : source === 'api' ? 'Scheduled API polling' : 'Full or incremental load via change tracking'}`,
+                `<strong>Tip:</strong> ${source === 'kafka' ? 'Use consumer groups for parallel reads' : source === 'api' ? 'Implement pagination and rate-limit handling' : 'Use CDC (Change Data Capture) for large tables'}`
+            ]
+        },
+        airflow: {
+            desc: `The orchestrator — schedules, monitors, and retries every step of the pipeline. Think of it as the conductor of an orchestra.`,
+            details: [
+                `<strong>Role:</strong> DAG-based workflow scheduling and dependency management`,
+                `<strong>Runs on:</strong> ${scenario === 'serverless' ? 'Managed (MWAA or Cloud Composer)' : computeLabel}`,
+                `<strong>Key feature:</strong> Automatic retries, SLA alerts, and full execution logs`
+            ]
+        },
+        compute: {
+            desc: `The engine that runs your data jobs. ${computeLabel} was chosen because it matches your "${scenario}" workload pattern.`,
+            details: [
+                `<strong>Service:</strong> ${computeLabel}`,
+                `<strong>Why:</strong> ${scenario === 'batch' ? 'Spin up containers on demand, pay per second, auto-shutdown' : scenario === 'realtime' ? 'Always-on pods, auto-scale on consumer lag, sub-second latency' : scenario === 'hybrid' ? 'EKS for heavy batch + Lambda for bursty events' : 'Zero infra management, pay per invocation, 15-min max'}`,
+                `<strong>Scaling:</strong> ${scenario === 'batch' ? 'Horizontal — more Fargate tasks in parallel' : scenario === 'realtime' ? 'Pod auto-scaler based on CPU / queue depth' : scenario === 'hybrid' ? 'EKS node auto-scaler + Lambda concurrency' : 'Automatic — AWS manages everything'}`
+            ]
+        },
+        dbt: {
+            desc: `Transforms raw data into clean, business-ready tables using pure SQL. Adds testing, documentation, and data lineage automatically.`,
+            details: [
+                `<strong>What it does:</strong> SELECT-based transforms — no Python needed`,
+                `<strong>Key features:</strong> Built-in tests, auto-generated docs, column-level lineage`,
+                `<strong>Runs:</strong> ${scenario === 'serverless' ? 'DBT Cloud (managed)' : 'dbt-core triggered by Airflow'}`
+            ]
+        },
+        bronze: {
+            desc: `The raw landing zone — data arrives here exactly as it was in the source. No cleaning, no transforms. Like a warehouse receiving dock.`,
+            details: [
+                `<strong>Contents:</strong> Raw, unmodified source data with load timestamps`,
+                `<strong>Format:</strong> Typically Parquet on S3 or raw tables in the warehouse`,
+                `<strong>Why keep it:</strong> Enables full reprocessing if transform logic changes`
+            ]
+        },
+        silver: {
+            desc: `Cleansed and standardised data. Duplicates removed, data types fixed, nulls handled. Ready for analysts to query.`,
+            details: [
+                `<strong>Transforms:</strong> Dedup, type casting, null handling, column renaming`,
+                `<strong>Quality:</strong> Schema-validated with dbt tests (unique, not_null, accepted_values)`,
+                `<strong>Who uses it:</strong> Data analysts, ad-hoc queries, exploratory analysis`
+            ]
+        },
+        gold: {
+            desc: `Business-ready aggregates and KPIs. Pre-joined, pre-calculated tables optimised for dashboards and reports.`,
+            details: [
+                `<strong>Examples:</strong> daily_revenue, customer_lifetime_value, product_performance`,
+                `<strong>Optimised for:</strong> Fast dashboard queries — pre-aggregated, indexed, partitioned`,
+                `<strong>Who uses it:</strong> Executives, Metabase dashboards, automated reports`
+            ]
+        },
+        dest: {
+            desc: `The final warehouse where Gold-layer data lives. Dashboards and reports read from here.`,
+            details: [
+                `<strong>Engine:</strong> ${DST[dest] || dest}`,
+                `<strong>Strength:</strong> ${dest === 'redshift' ? 'Columnar storage, massive parallel processing, deep AWS integration' : dest === 'snowflake' ? 'Elastic compute, zero-copy cloning, cross-cloud' : dest === 'bigquery' ? 'Serverless, slot-based pricing, nested/repeated columns' : dest === 'clickhouse' ? 'Blazing fast OLAP, real-time inserts, column compression' : dest === 's3' ? 'Unlimited cheap storage, query via Athena/Presto' : 'ACID transactions, full SQL, great for <1TB'}`,
+                `<strong>Cost model:</strong> ${dest === 'redshift' ? 'Per-node-hour (reserved or on-demand)' : dest === 'snowflake' ? 'Per-credit consumed (auto-suspend saves money)' : dest === 'bigquery' ? 'Per-TB scanned (or flat-rate slots)' : 'Storage + compute (varies by engine)'}`
+            ]
+        },
+        metabase: {
+            desc: `Self-service BI layer — connects directly to your warehouse and lets anyone build dashboards without writing SQL.`,
+            details: [
+                `<strong>Connects to:</strong> ${DST[dest] || dest} (Gold layer tables)`,
+                `<strong>Features:</strong> Drag-and-drop charts, scheduled email reports, embedded analytics`,
+                `<strong>Who uses it:</strong> Business users, product managers, executives`
+            ]
+        }
+    };
+}
+
+const tooltip = document.getElementById('nodeTooltip');
+let hideTimer = null;
+let currentNode = null;
+
+function keepTooltip() {
+    clearTimeout(hideTimer);
+}
+
+function scheduleHide() {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+        tooltip.classList.remove('visible');
+        currentNode = null;
+    }, 300);
+}
+
+function showTooltip(nodeId, color, label, role, x, y) {
+    clearTimeout(hideTimer);
+    if (currentNode === nodeId) return;
+    currentNode = nodeId;
+
+    const tips = getTips(state.source, state.dest, state.scenario);
+    const t = tips[nodeId];
+    if (!t) return;
+    tooltip.innerHTML = `
+        <div class="tt-header">
+            <div class="tt-dot" style="background:${color}"></div>
+            <div><div class="tt-name">${label}</div><div class="tt-role">${role}</div></div>
+        </div>
+        <div class="tt-desc">${t.desc}</div>
+        <div class="tt-detail">
+            ${t.details.map(d => `<div class="tt-row"><i class="fas fa-chevron-right"></i><span>${d}</span></div>`).join('')}
+        </div>`;
+
+    const card = document.getElementById('diagramCard');
+    const cardRect = card.getBoundingClientRect();
+    let left = x - 145;
+    let top = y + 14;
+    if (left < 8) left = 8;
+    if (left + 290 > cardRect.width - 8) left = cardRect.width - 298;
+    if (top + 280 > cardRect.height) top = y - 240;
+
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+    tooltip.classList.add('visible');
+}
+
+tooltip.addEventListener('mouseenter', keepTooltip);
+tooltip.addEventListener('mouseleave', scheduleHide);
+
+/* ── Render SVG diagram ── */
+const svg = document.getElementById('pipelineSvg');
+
+function render() {
+    const {source, dest, scenario, medallion, tables} = state;
+    const nodes = [];
+    const W = 100, H = 64, R = 14;
+
+    nodes.push({id:'source',label:SRC[source]||source,sub:'Source',color:COLORS.source,icon:'\uf1c0'});
+    nodes.push({id:'airflow',label:'Airflow',sub:'Orchestrator',color:COLORS.airflow,icon:'\uf021'});
+    nodes.push({id:'compute',label:COMPUTE_SHORT[scenario],sub:COMPUTE[scenario],color:COLORS.compute,icon:'\uf2db'});
+    nodes.push({id:'dbt',label:'DBT',sub:'Transform',color:COLORS.dbt,icon:'\uf0e7'});
+
+    if (medallion !== 'single') {
+        if (medallion === 'full') nodes.push({id:'bronze',label:'Bronze',sub:'Raw Layer',color:COLORS.bronze,icon:'\uf5fd'});
+        nodes.push({id:'silver',label:'Silver',sub:'Cleansed',color:COLORS.silver,icon:'\uf5fd'});
+        nodes.push({id:'gold',label:'Gold',sub:'Business',color:COLORS.gold,icon:'\uf5fd'});
+    }
+
+    nodes.push({id:'dest',label:DST[dest]||dest,sub:'Warehouse',color:COLORS.dest,icon:'\uf1c0'});
+    nodes.push({id:'metabase',label:'Metabase',sub:'Analytics',color:COLORS.metabase,icon:'\uf080'});
+
+    const count = nodes.length;
+    const gap = 12;
+    const totalW = count * W + (count - 1) * gap;
+    const svgW = totalW + 60;
+    const svgH = 320;
+    svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+    const startX = 30;
+    const cy = 100;
+
+    let html = `<defs>
+        <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="${COLORS.source}" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="${COLORS.metabase}" stop-opacity="0.35"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="softShadow"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-opacity="0.12"/></filter>
+    </defs>`;
+
+    const positions = [];
+    nodes.forEach((n, i) => {
+        const x = startX + i * (W + gap);
+        positions.push({x, y: cy, w: W, h: H});
+    });
+
+    for (let i = 0; i < count - 1; i++) {
+        const p1 = positions[i], p2 = positions[i + 1];
+        const x1 = p1.x + W + 2, x2 = p2.x - 2, my = cy + H / 2;
+        const mx = (x1 + x2) / 2;
+        html += `<path class="flow-line" d="M${x1} ${my} C${mx} ${my} ${mx} ${my} ${x2} ${my}"/>`;
+        html += `<polygon points="${x2-6},${my-4} ${x2},${my} ${x2-6},${my+4}" fill="rgba(99,102,241,0.3)"/>`;
+    }
+
+    nodes.forEach((n, i) => {
+        const x = positions[i].x, y = cy;
+        const pad = 8;
+        const isCompute = n.id === 'compute';
+        html += `<g class="pipe-node" style="cursor:pointer" data-node="${n.id}" data-color="${n.color}" data-label="${n.label}" data-role="${n.sub}" ${isCompute ? 'filter="url(#glow)"' : ''}>`;
+        html += `<rect x="${x-pad}" y="${y-pad}" width="${W+pad*2}" height="${H+pad*2}" rx="${R+pad}" fill="transparent"/>`;
+        html += `<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="${R}" fill="${n.color}" filter="url(#softShadow)"/>`;
+        html += `<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="${R}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
+        html += `<text x="${x+W/2}" y="${y+H/2-4}" text-anchor="middle" fill="#fff" font-size="12.5" font-weight="800" font-family="Inter,sans-serif" pointer-events="none">${n.label}</text>`;
+        html += `<text x="${x+W/2}" y="${y+H/2+12}" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="9" font-weight="600" font-family="Inter,sans-serif" pointer-events="none">${n.sub}</text>`;
+        html += `</g>`;
+    });
+
+    const tablesStr = tables.length ? tables.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ') : 'None selected';
+    html += `<text x="${svgW/2}" y="${cy + H + 28}" text-anchor="middle" fill="#475569" font-size="10.5" font-family="Inter,sans-serif" font-weight="600">Tables: ${tablesStr}</text>`;
+
+    const flowLabel = medallion === 'full' ? 'Full Medallion (Bronze → Silver → Gold)' : medallion === 'silver-gold' ? 'Two-Layer (Silver → Gold)' : 'Direct Load (Single Layer)';
+    html += `<text x="${svgW/2}" y="${cy + H + 46}" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="Inter,sans-serif" font-weight="500">${flowLabel}</text>`;
+
+    const title = `${SRC[source]}  →  ${COMPUTE_SHORT[scenario]}  →  ${DST[dest]}`;
+    html += `<text x="${svgW/2}" y="30" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800" font-family="Inter,sans-serif" letter-spacing="-0.02em">${title}</text>`;
+    html += `<text x="${svgW/2}" y="48" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="500" font-family="Inter,sans-serif">Orchestrated by Airflow · Transformed by DBT · Visualised in Metabase</text>`;
+
+    html += `<text x="${svgW/2}" y="${svgH - 10}" text-anchor="middle" fill="#cbd5e1" font-size="8" font-weight="600" font-family="Inter,sans-serif" letter-spacing="0.1em">DATA FLOW DIRECTION →</text>`;
+
+    svg.innerHTML = html;
+
+    // Wire up hover tooltips on each node
+    const card = document.getElementById('diagramCard');
+    svg.querySelectorAll('.pipe-node[data-node]').forEach(g => {
+        g.addEventListener('mouseenter', function() {
+            const rect = card.getBoundingClientRect();
+            const gBox = g.getBoundingClientRect();
+            const relX = gBox.left + gBox.width / 2 - rect.left;
+            const relY = gBox.bottom - rect.top;
+            showTooltip(g.dataset.node, g.dataset.color, g.dataset.label, g.dataset.role, relX, relY);
+        });
+        g.addEventListener('mouseleave', scheduleHide);
+    });
+
+    document.getElementById('whyText').innerHTML = WHY[scenario];
+
+    const cost = COST[scenario];
+    document.getElementById('costContent').innerHTML = `
+        <div class="metric">${cost.range}</div>
+        <div class="metric-label">per month (${cost.level})</div>
+        <p style="margin-top:10px">${cost.note}</p>`;
+
+    document.getElementById('specContent').innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div><div class="metric">${count}</div><div class="metric-label">Components</div></div>
+            <div><div class="metric">${tables.length}</div><div class="metric-label">Tables</div></div>
+            <div><div class="metric">${medallion === 'full' ? 3 : medallion === 'silver-gold' ? 2 : 1}</div><div class="metric-label">Data Layers</div></div>
+            <div><div class="metric">${scenario === 'realtime' ? '<1s' : scenario === 'batch' ? '~1h' : scenario === 'hybrid' ? '~5m' : '~15m'}</div><div class="metric-label">Latency</div></div>
+        </div>`;
+
+    document.getElementById('stackList').innerHTML = (STACK[scenario] || STACK.batch).map(s => `<li>${s}</li>`).join('');
+
+    resizeParticles();
+}
+
+/* ── Particle animation ── */
+const pCanvas = document.getElementById('particleCanvas');
+const pCtx = pCanvas.getContext('2d');
+let particles = [];
+let particleFrame;
+
+function resizeParticles() {
+    const card = document.getElementById('diagramCard');
+    pCanvas.width = card.offsetWidth;
+    pCanvas.height = card.offsetHeight;
+    particles = [];
+    for (let i = 0; i < 30; i++) {
+        particles.push({
+            x: Math.random() * pCanvas.width,
+            y: Math.random() * pCanvas.height,
+            vx: 0.2 + Math.random() * 0.5,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: 1 + Math.random() * 2,
+            a: 0.06 + Math.random() * 0.12,
+            color: ['99,102,241','6,182,212','124,58,237','5,150,105'][Math.floor(Math.random()*4)]
+        });
+    }
+}
+
+function animateParticles() {
+    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x > pCanvas.width + 10) { p.x = -10; p.y = Math.random() * pCanvas.height; }
+        if (p.y < -10 || p.y > pCanvas.height + 10) p.vy *= -1;
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        pCtx.fillStyle = `rgba(${p.color},${p.a})`;
+        pCtx.fill();
+    });
+    particleFrame = requestAnimationFrame(animateParticles);
+}
+animateParticles();
+window.addEventListener('resize', resizeParticles);
+
+/* ── Downloads ── */
+function getSvgBlob() {
+    const clone = svg.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.querySelectorAll('.flow-line').forEach(p => p.style.animation = 'none');
+    const bg = `<rect width="100%" height="100%" fill="#f8faff" rx="20"/>`;
+    clone.innerHTML = bg + clone.innerHTML;
+    return new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(clone)], {type:'image/svg+xml;charset=utf-8'});
+}
+function downloadBlob(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+document.getElementById('dlSvg').addEventListener('click', () => downloadBlob(getSvgBlob(), 'pipeline-architecture.svg'));
+document.getElementById('dlPng').addEventListener('click', () => {
+    html2canvas(document.getElementById('diagramCard'), {useCORS:true, scale:2, backgroundColor:'#f8faff'}).then(c => {
+        c.toBlob(b => downloadBlob(b, 'pipeline-architecture.png'), 'image/png');
+    });
+});
+document.getElementById('dlPdf').addEventListener('click', () => {
+    html2canvas(document.getElementById('diagramCard'), {useCORS:true, scale:2, backgroundColor:'#f8faff'}).then(c => {
+        const {jsPDF} = window.jspdf;
+        const pdf = new jsPDF('l','mm','a4');
+        const w = pdf.internal.pageSize.getWidth();
+        pdf.addImage(c.toDataURL('image/png'), 'PNG', 10, 10, w-20, (w-20)*c.height/c.width);
+        pdf.save('pipeline-architecture.pdf');
+    });
+});
+
+/* ── Initial render ── */
+render();
+
+})();
+</script>
+</body>
+</html>

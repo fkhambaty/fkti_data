@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Bus Matrix Builder | Fakhruddin Khambaty's Learning Hub</title>
+    <title>Enterprise Bus Matrix Builder | Data For Dummies</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- SheetJS for Excel export -->
@@ -15,23 +15,23 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #1e293b;
-            --bg-input: #0f172a;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            --bg-primary: #f8faff;
+            --bg-secondary: #f0f4ff;
+            --bg-card: rgba(255,255,255,0.75);
+            --bg-input: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
             --accent-blue: #3b82f6;
-            --accent-purple: #8b5cf6;
-            --accent-green: #22c55e;
-            --accent-orange: #f97316;
-            --accent-pink: #ec4899;
-            --accent-cyan: #06b6d4;
-            --accent-yellow: #eab308;
-            --accent-red: #ef4444;
-            --border-color: #334155;
-            --border-light: #475569;
+            --accent-purple: #7c3aed;
+            --accent-green: #059669;
+            --accent-orange: #ea580c;
+            --accent-pink: #db2777;
+            --accent-cyan: #0891b2;
+            --accent-yellow: #d97706;
+            --accent-red: #dc2626;
+            --border-color: rgba(0,0,0,0.08);
+            --border-light: rgba(0,0,0,0.06);
         }
 
         body {
@@ -49,12 +49,12 @@
         }
         .bg-anim .orb {
             position: absolute; border-radius: 50%;
-            filter: blur(100px); opacity: 0.12;
+            filter: blur(120px); opacity: 0.12;
             animation: drift 22s ease-in-out infinite;
         }
-        .bg-anim .orb:nth-child(1) { width: 420px; height: 420px; background: var(--accent-blue); top: 5%; left: 8%; }
-        .bg-anim .orb:nth-child(2) { width: 350px; height: 350px; background: var(--accent-purple); bottom: 10%; right: 5%; animation-delay: -8s; }
-        .bg-anim .orb:nth-child(3) { width: 300px; height: 300px; background: var(--accent-pink); top: 50%; left: 50%; animation-delay: -15s; }
+        .bg-anim .orb:nth-child(1) { width: 420px; height: 420px; background: #818cf8; top: 5%; left: 8%; }
+        .bg-anim .orb:nth-child(2) { width: 350px; height: 350px; background: #c084fc; bottom: 10%; right: 5%; animation-delay: -8s; }
+        .bg-anim .orb:nth-child(3) { width: 300px; height: 300px; background: #f9a8d4; top: 50%; left: 50%; animation-delay: -15s; }
         @keyframes drift {
             0%,100% { transform: translate(0,0) scale(1); }
             33% { transform: translate(40px,-30px) scale(1.08); }
@@ -63,22 +63,36 @@
 
         .page { position: relative; z-index: 1; }
 
-        /* ── Top Nav ── */
+        /* ── Top Nav (floating glass, light) ── */
         .top-nav {
-            background: rgba(15,23,42,0.92);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 14px 28px;
-            position: sticky; top: 0; z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.65);
+            backdrop-filter: blur(24px) saturate(1.5); -webkit-backdrop-filter: blur(24px) saturate(1.5);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 999px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.06);
+            padding: 0; position: sticky; top: 8px; z-index: 100;
+            max-width: 1100px; margin: 0 auto;
+            animation: navSlideIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
         }
-        .top-nav a {
-            color: var(--accent-blue); text-decoration: none;
-            font-weight: 700; display: flex; align-items: center; gap: 8px;
-            transition: all .25s;
+        @keyframes navSlideIn { from { opacity:0; transform: translateY(-16px); } to { opacity:1; transform: translateY(0); } }
+        .top-nav:hover { background: rgba(255,255,255,0.8); box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
+        .top-nav .nav-container {
+            width: 100%; max-width: 1100px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 44px; padding: 0 6px 0 14px;
         }
-        .top-nav a:hover { color: var(--accent-cyan); transform: translateX(-3px); }
-        .nav-title { font-size: 1.1em; color: var(--text-primary); font-weight: 800; }
+        .top-nav .nav-brand a {
+            color: inherit; text-decoration: none;
+            display: flex; align-items: center; gap: 10px; transition: all .25s;
+        }
+        .top-nav .nav-brand a:hover { opacity: .9; }
+        .top-nav .nav-logo { width: 30px; height: 30px; border-radius: 8px; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+        .top-nav .nav-brand a:hover .nav-logo { transform: rotate(-8deg) scale(1.1); }
+        .top-nav .nav-links { display: flex; align-items: center; gap: 2px; }
+        .top-nav .nav-link {
+            color: #475569; text-decoration: none; font-weight: 600; font-size: .78rem;
+            padding: 5px 11px; border-radius: 999px; transition: all .25s cubic-bezier(0.4,0,0.2,1); white-space: nowrap;
+        }
+        .top-nav .nav-link:hover { color: #6366f1; background: rgba(99,102,241,0.08); transform: translateY(-1px); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
@@ -412,11 +426,36 @@
 <div class="bg-anim"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
 
 <div class="page">
-    <!-- Nav -->
+    <!-- Nav (standard hub UI) -->
     <nav class="top-nav">
-        <a href="data-modelling.html"><i class="fas fa-arrow-left"></i> Back to Data Modelling</a>
-        <span class="nav-title"><i class="fas fa-th"></i> Bus Matrix Builder</span>
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html" class="home-icon-btn" title="Home" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:0.95rem;text-decoration:none;box-shadow:0 2px 10px rgba(99,102,241,0.25);transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;">
+                    <i class="fas fa-house-chimney" style="position:relative;z-index:1;"></i>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="learning-path.html" class="nav-link">Courses</a>
+                <a href="data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+            </div>
+        </div>
     </nav>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:modalIn .3s ease;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:800;font-size:1.05rem;">📧 Contact</span><button onclick="document.getElementById('contactModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;">&times;</button></div>
+            <div style="padding:24px;">
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8faff;border-radius:12px;margin-bottom:10px;"><span style="font-size:1.5rem;">📩</span><div><strong style="font-size:.85rem;display:block;">General Inquiries</strong><a href="mailto:fktiindia@gmail.com" style="font-size:.82rem;color:#4f46e5;text-decoration:none;">fktiindia@gmail.com</a></div></div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#fdf2f8;border-radius:12px;margin-bottom:10px;"><span style="font-size:1.5rem;">👨‍💼</span><div><strong style="font-size:.85rem;display:block;">Founder</strong><a href="mailto:fakhruddinkhambaty@gmail.com" style="font-size:.82rem;color:#7c3aed;text-decoration:none;">fakhruddinkhambaty@gmail.com</a></div></div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#ecfeff;border-radius:12px;"><span style="font-size:1.5rem;">📞</span><div><strong style="font-size:.85rem;display:block;">Phone</strong><a href="tel:+919833565272" style="font-size:.82rem;color:#0891b2;text-decoration:none;">+91 98335 65272</a></div></div>
+            </div>
+        </div>
+    </div>
+    <style>@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}</style>
+    <script>function showContact(){document.getElementById('contactModal').style.display='flex';}document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
 
     <!-- Hero -->
     <section class="hero">
@@ -496,7 +535,7 @@
     </div>
 
     <div class="page-footer">
-        <p>Part of the <a href="data-modelling.html">Data Modelling Guide</a> | <a href="index.html">FKTI Learning Hub</a></p>
+        <p>Part of the <a href="data-modelling.html">Data Modelling Guide</a> | <a href="index.html">Data For Dummies</a></p>
     </div>
 </div>
 

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Data Adventure | Data For Dummies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/fkti-light-theme.css">
+    <link rel="stylesheet" href="css/hub-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html" class="logo-link home-icon-btn" title="Home">
+                    <i class="fas fa-house-chimney"></i>
+                </a>
+            </div>
+            <div class="nav-ticker" id="navTicker"><span class="ticker-icon">💡</span><span class="ticker-text" id="tickerText"></span></div>
+            <div class="nav-links">
+                <a href="learning-path.html" class="nav-link">Courses</a>
+                <a href="data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="data-adventure.html" class="nav-link" style="font-weight: 700;">Data Adventure</a>
+                <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:modalIn .3s ease;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:800;font-size:1.05rem;">📧 Contact</span>
+                <button onclick="document.getElementById('contactModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8faff;border-radius:12px;margin-bottom:10px;">
+                    <span style="font-size:1.5rem;">📩</span>
+                    <div><strong style="font-size:.85rem;display:block;">General Inquiries</strong><a href="mailto:fktiindia@gmail.com" style="font-size:.82rem;color:#4f46e5;text-decoration:none;">fktiindia@gmail.com</a></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#fdf2f8;border-radius:12px;margin-bottom:10px;">
+                    <span style="font-size:1.5rem;">👨‍💼</span>
+                    <div><strong style="font-size:.85rem;display:block;">Founder</strong><a href="mailto:fakhruddinkhambaty@gmail.com" style="font-size:.82rem;color:#7c3aed;text-decoration:none;">fakhruddinkhambaty@gmail.com</a></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#ecfeff;border-radius:12px;">
+                    <span style="font-size:1.5rem;">📞</span>
+                    <div><strong style="font-size:.85rem;display:block;">Phone</strong><a href="tel:+919833565272" style="font-size:.82rem;color:#0891b2;text-decoration:none;">+91 98335 65272</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}</style>
+    <script>
+    function showContact(){document.getElementById('contactModal').style.display='flex';}
+    document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});
+    </script>
+
+    <section class="story-selector top-offset-for-nav">
+        <div class="selector-container">
+            <div class="selector-header">
+                <h2 class="section-title">📖 Choose Your Data Adventure!</h2>
+                <p class="section-subtitle">Pick an industry and watch DataBot show you how data engineering transforms that world!</p>
+            </div>
+            <div class="theme-cards">
+                <button class="theme-card active" data-theme="walmart" onclick="selectStoryTheme('walmart')">
+                    <div class="theme-icon">🛒</div>
+                    <div class="theme-name">Retail Giant</div>
+                    <div class="theme-subtitle">Walmart-style</div>
+                </button>
+                <button class="theme-card" data-theme="cinema" onclick="selectStoryTheme('cinema')">
+                    <div class="theme-icon">🎬</div>
+                    <div class="theme-name">Movie Theatre</div>
+                    <div class="theme-subtitle">Blockbuster Analytics</div>
+                </button>
+                <button class="theme-card" data-theme="airline" onclick="selectStoryTheme('airline')">
+                    <div class="theme-icon">✈️</div>
+                    <div class="theme-name">Airlines</div>
+                    <div class="theme-subtitle">Sky-High Data</div>
+                </button>
+                <button class="theme-card" data-theme="oilrig" onclick="selectStoryTheme('oilrig')">
+                    <div class="theme-icon">🛢️</div>
+                    <div class="theme-name">Oil & Gas</div>
+                    <div class="theme-subtitle">Energy Analytics</div>
+                </button>
+                <button class="theme-card" data-theme="procurement" onclick="selectStoryTheme('procurement')">
+                    <div class="theme-icon">📦</div>
+                    <div class="theme-name">Procurement</div>
+                    <div class="theme-subtitle">Supply Chain</div>
+                </button>
+                <button class="theme-card" data-theme="hospital" onclick="selectStoryTheme('hospital')">
+                    <div class="theme-icon">🏥</div>
+                    <div class="theme-name">Healthcare</div>
+                    <div class="theme-subtitle">Medical Data</div>
+                </button>
+                <button class="theme-card" data-theme="automotive" onclick="selectStoryTheme('automotive')">
+                    <div class="theme-icon">🚗</div>
+                    <div class="theme-name">Automotive</div>
+                    <div class="theme-subtitle">Manufacturing</div>
+                </button>
+                <button class="theme-card" data-theme="banking" onclick="selectStoryTheme('banking')">
+                    <div class="theme-icon">🏦</div>
+                    <div class="theme-name">Banking</div>
+                    <div class="theme-subtitle">Financial Analytics</div>
+                </button>
+                <button class="theme-card" data-theme="ecommerce" onclick="selectStoryTheme('ecommerce')">
+                    <div class="theme-icon">🛍️</div>
+                    <div class="theme-name">E-Commerce</div>
+                    <div class="theme-subtitle">Online Shopping</div>
+                </button>
+                <button class="theme-card" data-theme="datascience" onclick="selectStoryTheme('datascience')">
+                    <div class="theme-icon">📊</div>
+                    <div class="theme-name">Data Science</div>
+                    <div class="theme-subtitle">AI & Analytics</div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="data-journey" id="data-journey">
+        <div class="journey-container">
+            <div class="journey-header-row">
+                <div class="section-header">
+                    <h2 class="section-title" id="journey-title">Meet DataBot 🤖 - Your Retail Data Guide!</h2>
+                    <p class="section-subtitle" id="journey-subtitle">Follow DataBot as he transforms messy store data into sales insights using our 9 essential tools!</p>
+                </div>
+                <div class="databot-container">
+                    <div class="databot-robot" id="databot">
+                        <div class="robot-antenna"><div class="antenna-ball"></div></div>
+                        <div class="robot-head">
+                            <div class="robot-screen"><span class="robot-hat-icon" id="databot-hat">🛒</span></div>
+                            <div class="robot-eyes"><div class="robot-eye left"></div><div class="robot-eye right"></div></div>
+                            <div class="robot-mouth"></div>
+                        </div>
+                        <div class="robot-neck"></div>
+                        <div class="robot-body">
+                            <div class="robot-chest-icon"><i class="fas fa-database"></i></div>
+                            <div class="robot-badge" id="databot-badge">RETAIL</div>
+                        </div>
+                        <div class="robot-arms"><div class="robot-arm left-arm"></div><div class="robot-arm right-arm"></div></div>
+                    </div>
+                    <div class="databot-speech" id="databot-speech">Welcome! Let me show you how data transforms businesses! 🚀</div>
+                </div>
+            </div>
+            <div class="journey-story">
+                <div class="journey-steps" id="journey-steps">
+                    <div class="journey-step" data-step="1" onclick="enterCourse('postgres')" style="cursor: pointer;">
+                        <div class="step-number">1</div>
+                        <div class="step-icon mssql-icon"><i class="fas fa-database"></i></div>
+                        <div class="step-content">
+                            <h3 id="step1-title">SQL Database - Where Data Lives</h3>
+                            <p class="step-description" id="step1-desc">"Imagine thousands of cash registers across 5,000 stores! 🏪 Every beep, every scan creates data. Whether you use PostgreSQL, MSSQL, or MySQL - they all store your business data."</p>
+                            <div class="step-example" id="step1-example"><strong>Real Scenario:</strong> "Customer Sarah bought diapers, beer, and chips at Store #4521. This data lives in your SQL database!"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="2" onclick="enterCourse('python')" style="cursor: pointer;">
+                        <div class="step-number">2</div>
+                        <div class="step-icon python-icon"><i class="fab fa-python"></i></div>
+                        <div class="step-content">
+                            <h3 id="step2-title">Python - The Smart Assistant</h3>
+                            <p class="step-description" id="step2-desc">"Python is that super-smart employee who memorizes EVERYTHING! 🧠 It reads millions of records, spots patterns humans miss."</p>
+                            <div class="step-example" id="step2-example"><strong>Python discovers:</strong> "Analyzed 50 million transactions! Found that putting bananas near cereal increases banana sales by 23%! 🍌"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="3" onclick="enterCourse('clickhouse')" style="cursor: pointer;">
+                        <div class="step-number">3</div>
+                        <div class="step-icon clickhouse-icon" style="background: linear-gradient(135deg, #ffcc00 0%, #e6a800 100%);"><i class="fas fa-bolt"></i></div>
+                        <div class="step-content">
+                            <h3 id="step3-title">ClickHouse - The Speed Reader</h3>
+                            <p class="step-description" id="step3-desc">"ClickHouse is the database that reads billions of rows in a blink! ⚡ Perfect for analytics, logs, and real-time dashboards."</p>
+                            <div class="step-example" id="step3-example"><strong>ClickHouse answers:</strong> "10 billion events, filter by region and date... Done in 0.3 seconds! 📊"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="4" onclick="enterCourse('redshift')" style="cursor: pointer;">
+                        <div class="step-number">4</div>
+                        <div class="step-icon redshift-icon"><i class="fab fa-aws"></i></div>
+                        <div class="step-content">
+                            <h3 id="step4-title">Redshift - The Super Organized Warehouse</h3>
+                            <p class="step-description" id="step4-desc">"Redshift is like having a warehouse where EVERYTHING is perfectly organized! 📦 5 billion rows of data, but finding answers takes 2 seconds!"</p>
+                            <div class="step-example" id="step4-example"><strong>Redshift answers:</strong> "'Which stores sold out of toilet paper last March?' Searching 10 years of data... Found 847 stores in 0.8 seconds! 🚀"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="5" onclick="enterCourse('airflow')" style="cursor: pointer;">
+                        <div class="step-number">5</div>
+                        <div class="step-icon airflow-icon"><i class="fas fa-project-diagram"></i></div>
+                        <div class="step-content">
+                            <h3 id="step5-title">Airflow - The Never-Sleeping Manager</h3>
+                            <p class="step-description" id="step5-desc">"Airflow is that manager who NEVER sleeps! ⏰ Every night at midnight: 'Collect all store data! Clean it up! Load it to warehouse!'"</p>
+                            <div class="step-example" id="step5-example"><strong>Airflow's schedule:</strong> "12:00 AM - Extract sales data ✓, 12:30 AM - Clean data ✓, 1:00 AM - Load to Redshift ✓ ☕"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="6" onclick="enterCourse('dbt')" style="cursor: pointer;">
+                        <div class="step-number">6</div>
+                        <div class="step-icon dbt-icon"><i class="fas fa-magic"></i></div>
+                        <div class="step-content">
+                            <h3 id="step6-title">DBT - The Business Translator</h3>
+                            <p class="step-description" id="step6-desc">"DBT is your translator from 'tech speak' to 'business speak'! 🎭 It takes raw data and transforms it into business-ready insights."</p>
+                            <div class="step-example" id="step6-example"><strong>DBT creates:</strong> "Customer Lifetime Value model ready! Sarah = $12,847 over 3 years. Top 5% customer! 👑"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="7" onclick="enterCourse('metabase')" style="cursor: pointer;">
+                        <div class="step-number">7</div>
+                        <div class="step-icon metabase-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="step-content">
+                            <h3 id="step7-title">Metabase - The Beautiful Storyteller</h3>
+                            <p class="step-description" id="step7-desc">"Metabase turns numbers into stories that even your grandma would understand! 📊 Beautiful charts, interactive maps, and dashboards."</p>
+                            <div class="step-example" id="step7-example"><strong>Metabase shows:</strong> "Live dashboard: Sales up 12% today! Store #4521 is the MVP! Hot product: Organic avocados! 🥚"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="8" onclick="enterCourse('datascience')" style="cursor: pointer;">
+                        <div class="step-number">8</div>
+                        <div class="step-icon datascience-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);"><i class="fas fa-brain"></i></div>
+                        <div class="step-content">
+                            <h3 id="step8-title">Data Science - The Pattern Detective</h3>
+                            <p class="step-description" id="step8-desc">"Data Science is like having a super detective who finds hidden patterns in millions of numbers! 🔍 Turn chaos into insights."</p>
+                            <div class="step-example" id="step8-example"><strong>Data Science predicts:</strong> "Customers who buy organic milk on Tuesdays will buy avocados on Fridays (87% accuracy)! 🥑"</div>
+                        </div>
+                    </div>
+                    <div class="journey-step" data-step="9" onclick="enterCourse('llm')" style="cursor: pointer;">
+                        <div class="step-number">9</div>
+                        <div class="step-icon llm-icon" style="background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);"><i class="fas fa-brain"></i></div>
+                        <div class="step-content">
+                            <h3 id="step9-title">LLMs - The AI Brain</h3>
+                            <p class="step-description" id="step9-desc">"Large Language Models are like having a genius intern who read every document in the company! 🧠 Ask it anything in plain English."</p>
+                            <div class="step-example" id="step9-example"><strong>LLM powers:</strong> "Built a chatbot for Store Managers! They ask 'Why did Store #42 sales drop?' and the LLM analyzes data and gives a clear answer! 🤖"</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="journey-result">
+                    <div class="result-card" id="result-card">
+                        <div class="result-icon">🏆</div>
+                        <div class="result-content">
+                            <h3 id="result-title">The Retail Magic! ✨</h3>
+                            <p id="result-desc">From chaotic stores to one command center! Real-time sales, inventory alerts, and customer trends - all 9 tools working together!</p>
+                            <div class="final-example" id="final-example">
+                                <strong>Before:</strong> "How did we do?" → *2 weeks of work* 😵 &nbsp;|&nbsp; <strong>After:</strong> *Real-time dashboard* → "$2.3B, up 15%!" 🎉
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" style="margin-top: 48px;">
+        <div class="footer-bottom">
+            <p>&copy; 2025 Data For Dummies. Free learning notes for everyone.</p>
+        </div>
+    </footer>
+
+    <script src="js/hub-script.js"></script>
+    <script src="js/nav-ticker.js"></script>
+    <script>
+        // On this page we don't scroll to journey after theme change (we're already there); optional: scroll to top of journey
+        const _originalSelectStoryTheme = window.selectStoryTheme;
+        if (_originalSelectStoryTheme) {
+            window.selectStoryTheme = function(themeName) {
+                _originalSelectStoryTheme(themeName);
+                var j = document.getElementById('data-journey');
+                if (j) j.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+        }
+    </script>
+</body>
+</html>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fakhruddin Khambaty's Learning Hub | Fakhruddin Khambaty Training Institute</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&family=Fredoka+One:wght@400&family=Bungee:wght@400&family=Righteous:wght@400&display=swap" rel="stylesheet">
+    <title>Data For Dummies | Free Data & Analytics Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/fkti-light-theme.css">
     <link rel="stylesheet" href="css/hub-styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -41,33 +41,90 @@
         }
     </script>
     <style>
-        /* Android App Download Link Styles - Elegant & Subtle */
-        .app-download-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.95);
-            color: #1a73e8 !important;
-            padding: 8px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 600;
+        .hero-logo-block { margin: 12px 0 20px; perspective: 800px; }
+        .hero-logo-frame {
+            position: relative;
+            width: 520px;
+            max-width: 92vw;
+            margin: 0 auto;
+            border-radius: 28px;
+            padding: 32px 32px 18px;
+            background: rgba(255,255,255,0.45);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow:
+                0 8px 32px rgba(99,102,241,0.1),
+                0 2px 8px rgba(0,0,0,0.04),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), box-shadow 0.5s ease;
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+        .hero-logo-frame:hover {
+            transform: rotateY(-4deg) rotateX(3deg) scale(1.03);
+            box-shadow:
+                0 20px 48px rgba(99,102,241,0.16),
+                0 4px 12px rgba(0,0,0,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+        .hero-logo-frame::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 32px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.1), rgba(6,182,212,0.1));
+            z-index: -1;
+            filter: blur(12px);
+            opacity: 0.6;
+            transition: opacity 0.4s;
+        }
+        .hero-logo-frame:hover::before { opacity: 1; }
+        .hero-logo-frame::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 50%;
+            border-radius: 28px 28px 0 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        @keyframes logoFloat {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .hero-logo-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
+        }
+        .hero-tagline {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin: 10px 0 0;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0,0,0,0.05);
             font-family: 'Nunito', sans-serif;
-            font-size: 13px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(26, 115, 232, 0.2);
-            margin-bottom: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-style: italic;
+            letter-spacing: 0.02em;
+            background: linear-gradient(135deg, #6366f1, #7c3aed, #db2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .app-download-link:hover {
-            background: #1a73e8;
-            color: white !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3);
-        }
-        .app-download-link .download-icon {
-            font-size: 16px;
-        }
+        .hero-description { margin: 0 auto 1rem; max-width: 520px; }
+        /* Data-modelling-style subtle orb animation */
+        .hero-orb-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .hero-orb-bg .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.12; animation: heroOrbFloat 20s ease-in-out infinite; }
+        .hero-orb-bg .orb:nth-child(1) { width: 380px; height: 380px; background: linear-gradient(135deg, #818cf8, #6366f1); top: -5%; left: -5%; animation-delay: 0s; }
+        .hero-orb-bg .orb:nth-child(2) { width: 340px; height: 340px; background: linear-gradient(135deg, #f9a8d4, #ec4899); top: 40%; right: -5%; animation-delay: -6s; }
+        .hero-orb-bg .orb:nth-child(3) { width: 300px; height: 300px; background: linear-gradient(135deg, #67e8f9, #06b6d4); bottom: -10%; left: 30%; animation-delay: -12s; }
+        @keyframes heroOrbFloat { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-20px) scale(1.05); } 66% { transform: translate(-15px,25px) scale(0.95); } }
     </style>
 </head>
 <body>
@@ -75,44 +132,25 @@
     <nav class="main-nav">
         <div class="nav-container">
             <div class="nav-brand">
-                <a href="#" onclick="scrollToTop()" class="logo-link">
-                <img src="assets/fkti.png" alt="FKTI Logo" class="nav-logo">
-                <span class="nav-title">Fakhruddin Khambaty's Learning Hub</span>
+                <a href="#" onclick="scrollToTop()" class="logo-link home-icon-btn" title="Home">
+                    <i class="fas fa-house-chimney"></i>
                 </a>
             </div>
+            <div class="nav-ticker" id="navTicker">
+                <span class="ticker-icon">💡</span>
+                <span class="ticker-text" id="tickerText"></span>
+            </div>
             <div class="nav-links">
-                <a href="#courses" class="nav-link">Courses</a>
+                <a href="learning-path.html" class="nav-link">Courses</a>
                 <a href="data-modelling.html" class="nav-link">Data Modelling</a>
-                <a href="#about" class="nav-link">About</a>
+                <a href="data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="founder.html" class="nav-link">Founder</a>
                 <a href="#" class="nav-link" onclick="showContactInfo(); return false;">Contact</a>
-                <div class="theme-selector">
-                    <button class="theme-toggle" onclick="toggleThemeSelector()">
-                        <i class="fas fa-palette"></i>
-                    </button>
-                    <div class="theme-dropdown" id="themeDropdown">
-                        <div class="theme-option" onclick="setTheme('blue')" data-theme="blue">
-                            <div class="theme-preview theme-blue"></div>
-                            <span>Ocean Blue</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('green')" data-theme="green">
-                            <div class="theme-preview theme-green"></div>
-                            <span>Forest Green</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('purple')" data-theme="purple">
-                            <div class="theme-preview theme-purple"></div>
-                            <span>Royal Purple</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('orange')" data-theme="orange">
-                            <div class="theme-preview theme-orange"></div>
-                            <span>Sunset Orange</span>
-                        </div>
-                        <div class="theme-option" onclick="setTheme('dark')" data-theme="dark">
-                            <div class="theme-preview theme-dark"></div>
-                            <span>Midnight Dark</span>
-                        </div>
-                    </div>
-                </div>
-                <button class="nav-cta" onclick="scrollToCourses()">Start Learning</button>
+                <a href="apk/FK-Learning-Hub.apk" class="app-download-nav" id="apkDownloadLink" download title="Get Free Android App">
+                    <span class="app-download-nav-icon">📱</span>
+                    <span class="app-download-nav-text">Get Free Android App</span>
+                </a>
             </div>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                 <i class="fas fa-bars"></i>
@@ -122,34 +160,26 @@
 
     <!-- Modern Hero Section -->
     <section class="hero-modern">
+        <div class="hero-orb-bg" aria-hidden="true">
+            <div class="orb"></div>
+            <div class="orb"></div>
+            <div class="orb"></div>
+        </div>
         <div class="hero-container">
             <div class="hero-content">
-                <!-- Static Android App Download Link -->
-                <a href="apk/FK-Learning-Hub.apk" class="app-download-link" id="apkDownloadLink" download>
-                    <span class="download-icon">📱</span>
-                    <span>Get Free Android App</span>
-                </a>
-                
-                <div class="hero-badge">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Master the Complete Data Stack: From Science to Cloud</span>
-                </div>
-                <h1 class="hero-title">Data Adventures for Dummies</h1>
-                <div class="free-learning-banner">
-                    <p>
-                        🎓 <strong>100% FREE</strong> - This entire website is completely free for anyone who wants to learn!
-                    </p>
+                <div class="hero-logo-block">
+                    <div class="hero-logo-frame">
+                        <img src="logo.png" alt="Data For Dummies" class="hero-logo-img">
+                        <p class="hero-tagline">The best way to learn is to teach.</p>
+                    </div>
                 </div>
                 <p class="hero-description">
                     Learn industry-standard tools and techniques from basic concepts to advanced implementations. 
                     Build real-world projects and advance your career with comprehensive, hands-on courses.
                 </p>
-                <p style="text-align: center; color: var(--text-medium, #6b7280); font-style: italic; margin-top: -10px; margin-bottom: 20px;">
-                    📚 Learnings and notes curated by <a href="https://www.linkedin.com/in/fakhruddinkhambaty/" target="_blank" rel="noopener noreferrer" style="color: var(--primary-blue, #3b82f6); text-decoration: none; font-weight: 700; border-bottom: 2px solid var(--primary-blue, #3b82f6); transition: all 0.2s;">Fakhruddin Khambaty</a>
-                </p>
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <div class="stat-number">11</div>
+                        <div class="stat-number">10</div>
                         <div class="stat-label">Comprehensive Courses</div>
                     </div>
                     <div class="stat-item">
@@ -160,16 +190,6 @@
                         <div class="stat-number">50+</div>
                         <div class="stat-label">Real-World Projects</div>
                     </div>
-                </div>
-                <div class="hero-cta" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="scrollToCourses()">
-                        <span>Explore Courses</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                    <button class="btn btn-primary" onclick="window.location.href='data-modelling.html'" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);">
-                        <span><i class="fas fa-cubes" style="margin-right: 6px;"></i>Data Modelling</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
                 </div>
             </div>
             <div class="hero-visual">
@@ -187,47 +207,39 @@
                     </div>
                     
                     <!-- Floating tech icons - scattered layout -->
-                    <div class="tech-float tech-1" onclick="scrollToCourseCard('python')" style="cursor: pointer;">
+                    <div class="tech-float tech-1" onclick="enterCourse('python')" style="cursor: pointer;">
                         <img src="assets/python-logo.svg" alt="Python">
                         <span class="tech-label">Python</span>
                     </div>
-                    <div class="tech-float tech-2" onclick="scrollToCourseCard('airflow')" style="cursor: pointer;">
+                    <div class="tech-float tech-2" onclick="enterCourse('airflow')" style="cursor: pointer;">
                         <img src="assets/airflow-logo.svg" alt="Airflow">
                         <span class="tech-label">Airflow</span>
                     </div>
-                    <div class="tech-float tech-3" onclick="scrollToCourseCard('terraform')" style="cursor: pointer;">
-                        <img src="assets/terraform-logo.svg" alt="Terraform">
-                        <span class="tech-label">Terraform</span>
-                    </div>
-                    <div class="tech-float tech-4" onclick="scrollToCourseCard('redshift')" style="cursor: pointer;">
+                    <div class="tech-float tech-4" onclick="enterCourse('redshift')" style="cursor: pointer;">
                         <img src="assets/redshift-logo.svg" alt="Redshift">
                         <span class="tech-label">Redshift</span>
                     </div>
-                    <div class="tech-float tech-5" onclick="scrollToCourseCard('mssql')" style="cursor: pointer;">
+                    <div class="tech-float tech-5" onclick="enterCourse('mssql')" style="cursor: pointer;">
                         <img src="assets/mssql-logo.svg" alt="SQL">
                         <span class="tech-label">SQL</span>
                     </div>
-                    <div class="tech-float tech-6" onclick="scrollToCourseCard('dbt')" style="cursor: pointer;">
+                    <div class="tech-float tech-6" onclick="enterCourse('dbt')" style="cursor: pointer;">
                         <img src="assets/dbt-logo.svg" alt="DBT">
                         <span class="tech-label">DBT</span>
                     </div>
-                    <div class="tech-float tech-7" onclick="scrollToCourseCard('metabase')" style="cursor: pointer;">
+                    <div class="tech-float tech-7" onclick="enterCourse('metabase')" style="cursor: pointer;">
                         <img src="assets/metabase-logo.svg" alt="Metabase">
                         <span class="tech-label">Analytics</span>
                     </div>
-                    <div class="tech-float tech-8" onclick="scrollToCourseCard('postgres')" style="cursor: pointer;">
+                    <div class="tech-float tech-8" onclick="enterCourse('postgres')" style="cursor: pointer;">
                         <i class="fas fa-database" style="font-size: 32px; color: #22c55e;"></i>
                         <span class="tech-label">PostgreSQL</span>
                     </div>
-                    <div class="tech-float tech-9" onclick="scrollToCourseCard('dms')" style="cursor: pointer;">
-                        <i class="fas fa-truck-loading" style="font-size: 32px; color: #ec4899;"></i>
-                        <span class="tech-label">DMS</span>
-                    </div>
-                    <div class="tech-float tech-10" onclick="scrollToCourseCard('datascience')" style="cursor: pointer;">
+                    <div class="tech-float tech-9" onclick="enterCourse('datascience')" style="cursor: pointer;">
                         <i class="fas fa-chart-line" style="font-size: 32px; color: #667eea;"></i>
                         <span class="tech-label">Data Science</span>
                     </div>
-                    <div class="tech-float tech-11" onclick="scrollToCourseCard('llm')" style="cursor: pointer;">
+                    <div class="tech-float tech-10" onclick="enterCourse('llm')" style="cursor: pointer;">
                         <i class="fas fa-brain" style="font-size: 32px; color: #a855f7;"></i>
                         <span class="tech-label">LLMs</span>
                     </div>
@@ -257,1183 +269,11 @@
         </div>
     </section>
 
-    <!-- Story Theme Selector -->
-    <section class="story-selector">
-        <div class="selector-container">
-            <div class="selector-header">
-                <h2 class="section-title">📖 Choose Your Data Adventure!</h2>
-                <p class="section-subtitle">Pick an industry and watch DataBot show you how data engineering transforms that world!</p>
-            </div>
-            
-            <div class="theme-cards">
-                <button class="theme-card active" data-theme="walmart" onclick="selectStoryTheme('walmart')">
-                    <div class="theme-icon">🛒</div>
-                    <div class="theme-name">Retail Giant</div>
-                    <div class="theme-subtitle">Walmart-style</div>
-                </button>
-                <button class="theme-card" data-theme="cinema" onclick="selectStoryTheme('cinema')">
-                    <div class="theme-icon">🎬</div>
-                    <div class="theme-name">Movie Theatre</div>
-                    <div class="theme-subtitle">Blockbuster Analytics</div>
-                </button>
-                <button class="theme-card" data-theme="airline" onclick="selectStoryTheme('airline')">
-                    <div class="theme-icon">✈️</div>
-                    <div class="theme-name">Airlines</div>
-                    <div class="theme-subtitle">Sky-High Data</div>
-                </button>
-                <button class="theme-card" data-theme="oilrig" onclick="selectStoryTheme('oilrig')">
-                    <div class="theme-icon">🛢️</div>
-                    <div class="theme-name">Oil & Gas</div>
-                    <div class="theme-subtitle">Energy Analytics</div>
-                </button>
-                <button class="theme-card" data-theme="procurement" onclick="selectStoryTheme('procurement')">
-                    <div class="theme-icon">📦</div>
-                    <div class="theme-name">Procurement</div>
-                    <div class="theme-subtitle">Supply Chain</div>
-                </button>
-                <button class="theme-card" data-theme="hospital" onclick="selectStoryTheme('hospital')">
-                    <div class="theme-icon">🏥</div>
-                    <div class="theme-name">Healthcare</div>
-                    <div class="theme-subtitle">Medical Data</div>
-                </button>
-                <button class="theme-card" data-theme="automotive" onclick="selectStoryTheme('automotive')">
-                    <div class="theme-icon">🚗</div>
-                    <div class="theme-name">Automotive</div>
-                    <div class="theme-subtitle">Manufacturing</div>
-                </button>
-                <button class="theme-card" data-theme="banking" onclick="selectStoryTheme('banking')">
-                    <div class="theme-icon">🏦</div>
-                    <div class="theme-name">Banking</div>
-                    <div class="theme-subtitle">Financial Analytics</div>
-                </button>
-                <button class="theme-card" data-theme="ecommerce" onclick="selectStoryTheme('ecommerce')">
-                    <div class="theme-icon">🛍️</div>
-                    <div class="theme-name">E-Commerce</div>
-                    <div class="theme-subtitle">Online Shopping</div>
-                </button>
-                <button class="theme-card" data-theme="datascience" onclick="selectStoryTheme('datascience')">
-                    <div class="theme-icon">📊</div>
-                    <div class="theme-name">Data Science</div>
-                    <div class="theme-subtitle">AI & Analytics</div>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Data Journey Section -->
-    <section class="data-journey" id="data-journey">
-        <div class="journey-container">
-            <div class="journey-header-row">
-                <div class="section-header">
-                    <h2 class="section-title" id="journey-title">Meet DataBot 🤖 - Your Retail Data Guide!</h2>
-                    <p class="section-subtitle" id="journey-subtitle">
-                        Follow DataBot as he transforms messy store data into sales insights using our 12 essential tools!
-                    </p>
-                </div>
-
-                <!-- DataBot Character - Compact Robot Design -->
-                <div class="databot-container">
-                    <div class="databot-robot" id="databot">
-                        <div class="robot-antenna">
-                            <div class="antenna-ball"></div>
-                        </div>
-                        <div class="robot-head">
-                            <div class="robot-screen">
-                                <span class="robot-hat-icon" id="databot-hat">🛒</span>
-                            </div>
-                            <div class="robot-eyes">
-                                <div class="robot-eye left"></div>
-                                <div class="robot-eye right"></div>
-                            </div>
-                            <div class="robot-mouth"></div>
-                        </div>
-                        <div class="robot-neck"></div>
-                        <div class="robot-body">
-                            <div class="robot-chest-icon">
-                                <i class="fas fa-database"></i>
-                            </div>
-                            <div class="robot-badge" id="databot-badge">RETAIL</div>
-                        </div>
-                        <div class="robot-arms">
-                            <div class="robot-arm left-arm"></div>
-                            <div class="robot-arm right-arm"></div>
-                        </div>
-                    </div>
-                    <div class="databot-speech" id="databot-speech">
-                        Welcome! Let me show you how data transforms businesses! 🚀
-                    </div>
-                </div>
-            </div>
-
-            <div class="journey-story">
-
-                <div class="journey-steps" id="journey-steps">
-                    <!-- Step 1: SQL Database -->
-                    <div class="journey-step" data-step="1" onclick="scrollToCourseCard('postgres')" style="cursor: pointer;">
-                        <div class="step-number">1</div>
-                        <div class="step-icon mssql-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step1-title">SQL Database - Where Data Lives</h3>
-                            <p class="step-description" id="step1-desc">
-                                "Imagine thousands of cash registers across 5,000 stores! 🏪 Every beep, every scan creates data. Whether you use PostgreSQL, MSSQL, or MySQL - they all store your business data. We teach courses for multiple databases, so pick what works for you!"
-                            </p>
-                            <div class="step-example" id="step1-example">
-                                <strong>Real Scenario:</strong> "Customer Sarah bought diapers, beer, and chips at Store #4521. This data lives in your SQL database - use DBeaver to explore it visually! 🔍"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Python -->
-                    <div class="journey-step" data-step="2" onclick="scrollToCourseCard('python')" style="cursor: pointer;">
-                        <div class="step-number">2</div>
-                        <div class="step-icon python-icon">
-                            <i class="fab fa-python"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step2-title">Python - The Smart Assistant</h3>
-                            <p class="step-description" id="step2-desc">
-                                "Python is that super-smart employee who memorizes EVERYTHING! 🧠 It reads millions of records, spots patterns humans miss, and says 'People who buy diapers also buy beer!' Mind = Blown!"
-                            </p>
-                            <div class="step-example" id="step2-example">
-                                <strong>Python discovers:</strong> "Analyzed 50 million transactions! Found that putting bananas near cereal increases banana sales by 23%! 🍌"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: AWS DMS -->
-                    <div class="journey-step" data-step="3" onclick="scrollToCourseCard('dms')" style="cursor: pointer;">
-                        <div class="step-number">3</div>
-                        <div class="step-icon dms-icon">
-                            <i class="fas fa-truck-loading"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step3-title">AWS DMS - The Data Mover</h3>
-                            <p class="step-description" id="step3-desc">
-                                "DMS is like a magical moving truck! 🚚 It moves data from your old system to the cloud - WITHOUT downtime! Customers keep shopping while data syncs. Zero stress!"
-                            </p>
-                            <div class="step-example" id="step3-example">
-                                <strong>DMS in action:</strong> "Moving 500GB to AWS... Customers still shopping... Done! Not a single record lost! 🎉"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Terraform -->
-                    <div class="journey-step" data-step="4" onclick="scrollToCourseCard('terraform')" style="cursor: pointer;">
-                        <div class="step-number">4</div>
-                        <div class="step-icon terraform-icon">
-                            <i class="fas fa-cubes"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step4-title">Terraform - Cloud Builder</h3>
-                            <p class="step-description" id="step4-desc">
-                                "Need cloud infrastructure? Terraform builds it in minutes! 🏗️ Like LEGO for the cloud - 'I need 1 data warehouse, 5 servers!' Click. Done."
-                            </p>
-                            <div class="step-example" id="step4-example">
-                                <strong>Terraform builds:</strong> "Creating analytics infrastructure... Scaling for Black Friday... Ready for 1M transactions/hour! 💪"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 5: Kubernetes -->
-                    <div class="journey-step" data-step="5" onclick="scrollToCourseCard('kubernetes')" style="cursor: pointer;">
-                        <div class="step-number">5</div>
-                        <div class="step-icon kubernetes-icon" style="background: linear-gradient(135deg, #326ce5 0%, #1a365d 100%);">
-                            <i class="fas fa-ship"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step5-title">Kubernetes - The Container Captain</h3>
-                            <p class="step-description" id="step5-desc">
-                                "Kubernetes is like a captain that runs thousands of little boats (containers)! 🚢 Your data pipelines, APIs, and apps all run in containers—Kubernetes makes sure they stay up, scale when busy, and heal when something breaks. No more 'it works on my machine'!"
-                            </p>
-                            <div class="step-example" id="step5-example">
-                                <strong>Kubernetes runs:</strong> "Airflow, Metabase, and our APIs—all in containers. Traffic spiked? Kubernetes added 5 more copies. One crashed? Replaced in 10 seconds! ⚓"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 6: ClickHouse -->
-                    <div class="journey-step" data-step="6" onclick="scrollToCourseCard('clickhouse')" style="cursor: pointer;">
-                        <div class="step-number">6</div>
-                        <div class="step-icon clickhouse-icon" style="background: linear-gradient(135deg, #ffcc00 0%, #e6a800 100%);">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step6-title">ClickHouse - The Speed Reader</h3>
-                            <p class="step-description" id="step6-desc">
-                                "ClickHouse is the database that reads billions of rows in a blink! ⚡ Need 'sales by second for the last year'? Other databases sweat—ClickHouse answers in milliseconds. Perfect for analytics, logs, and real-time dashboards."
-                            </p>
-                            <div class="step-example" id="step6-example">
-                                <strong>ClickHouse answers:</strong> "10 billion events, filter by region and date... Done in 0.3 seconds! Your dashboards stay real-time without breaking a sweat. 📊"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 7: Redshift -->
-                    <div class="journey-step" data-step="7" onclick="scrollToCourseCard('redshift')" style="cursor: pointer;">
-                        <div class="step-number">7</div>
-                        <div class="step-icon redshift-icon">
-                            <i class="fab fa-aws"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step7-title">Redshift - The Super Organized Warehouse</h3>
-                            <p class="step-description" id="step7-desc">
-                                "Redshift is like having a warehouse where EVERYTHING is perfectly organized! 📦 
-                                5 billion rows of data, but finding 'all customers who bought organic milk on Tuesdays' 
-                                takes 2 seconds! It's the Marie Kondo of data storage!"
-                            </p>
-                            <div class="step-example" id="step7-example">
-                                <strong>Redshift answers:</strong> "'Which stores sold out of toilet paper last March?' 
-                                Searching 10 years of data... Found 847 stores in 0.8 seconds! 🚀"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 8: Airflow -->
-                    <div class="journey-step" data-step="8" onclick="scrollToCourseCard('airflow')" style="cursor: pointer;">
-                        <div class="step-number">8</div>
-                        <div class="step-icon airflow-icon">
-                            <i class="fas fa-project-diagram"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step8-title">Airflow - The Never-Sleeping Manager</h3>
-                            <p class="step-description" id="step8-desc">
-                                "Airflow is that manager who NEVER sleeps! ⏰ Every night at midnight: 'Collect all store data! 
-                                Clean it up! Load it to warehouse! Update inventory counts! Send alerts if something's wrong!' 
-                                365 days a year, never takes vacation!"
-                            </p>
-                            <div class="step-example" id="step8-example">
-                                <strong>Airflow's schedule:</strong> "12:00 AM - Extract sales data ✓, 12:30 AM - Clean data ✓, 
-                                1:00 AM - Load to Redshift ✓, 1:30 AM - Update dashboards ✓, Ready for morning meetings! ☕"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 9: DBT -->
-                    <div class="journey-step" data-step="9" onclick="scrollToCourseCard('dbt')" style="cursor: pointer;">
-                        <div class="step-number">9</div>
-                        <div class="step-icon dbt-icon">
-                            <i class="fas fa-magic"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step9-title">DBT - The Business Translator</h3>
-                            <p class="step-description" id="step9-desc">
-                                "DBT is your translator from 'tech speak' to 'business speak'! 🎭 It takes raw data like 
-                                'txn_id: 847291, prod_sku: 001847' and transforms it into 'Sarah bought 2 gallons of milk 
-                                worth $6.98 and has been a loyal customer for 3 years!'"
-                            </p>
-                            <div class="step-example" id="step9-example">
-                                <strong>DBT creates:</strong> "Customer Lifetime Value model ready! Sarah = $12,847 over 3 years. 
-                                She's in the top 5% of customers! Time to send her a VIP coupon! 👑"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 10: Metabase -->
-                    <div class="journey-step" data-step="10" onclick="scrollToCourseCard('metabase')" style="cursor: pointer;">
-                        <div class="step-number">10</div>
-                        <div class="step-icon metabase-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step10-title">Metabase - The Beautiful Storyteller</h3>
-                            <p class="step-description" id="step10-desc">
-                                "Metabase turns numbers into stories that even your grandma would understand! 📊 
-                                No more spreadsheets with 10,000 rows. Instead: beautiful charts, interactive maps, 
-                                and dashboards that make the CEO say 'WOW, show me more!'"
-                            </p>
-                            <div class="step-example" id="step10-example">
-                                <strong>Metabase shows:</strong> "Live dashboard: Sales up 12% today! Store #4521 is the MVP! 
-                                Hot product: Organic avocados! Alert: Store #2847 running low on eggs! 🥚"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 11: Data Science -->
-                    <div class="journey-step" data-step="11" onclick="scrollToCourseCard('datascience')" style="cursor: pointer;">
-                        <div class="step-number">11</div>
-                        <div class="step-icon datascience-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step11-title">Data Science - The Pattern Detective</h3>
-                            <p class="step-description" id="step11-desc">
-                                "Data Science is like having a super detective who finds hidden patterns in millions of numbers! 🔍 
-                                It uses math, statistics, and machine learning to predict what customers will buy, when sales will spike, 
-                                and which products will be hits. Turn chaos into insights, data into dollars!"
-                            </p>
-                            <div class="step-example" id="step11-example">
-                                <strong>Data Science predicts:</strong> "Analyzed 10 million customer behaviors! Predicted: Customers who buy 
-                                organic milk on Tuesdays will buy avocados on Fridays (87% accuracy)! Stock up avocados on Thursdays! 🥑"
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 12: LLMs -->
-                    <div class="journey-step" data-step="12" onclick="scrollToCourseCard('llm')" style="cursor: pointer;">
-                        <div class="step-number">12</div>
-                        <div class="step-icon llm-icon" style="background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="step-content">
-                            <h3 id="step12-title">LLMs - The AI Brain</h3>
-                            <p class="step-description" id="step12-desc">
-                                "Large Language Models are like having a genius intern who read every document in the company! 🧠 
-                                Ask it anything in plain English: 'Summarize last quarter's sales trends', 'Write a SQL query for top customers', 
-                                'Draft an email to vendors about delayed shipments.' It understands context and generates human-quality responses!"
-                            </p>
-                            <div class="step-example" id="step12-example">
-                                <strong>LLM powers:</strong> "Built a chatbot for Store Managers! They ask 'Why did Store #42 sales drop last week?' 
-                                and the LLM analyzes data, checks weather, promotions, and says: 'Road construction near the store reduced foot traffic by 40%. 
-                                Recommend boosting online delivery ads for that area.' 🤖"
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="journey-result">
-                    <div class="result-card" id="result-card">
-                        <div class="result-icon">🏆</div>
-                        <div class="result-content">
-                            <h3 id="result-title">The Retail Magic! ✨</h3>
-                            <p id="result-desc">From chaotic stores to one command center! Real-time sales, inventory alerts, and customer trends - all tools working together!</p>
-                            <div class="final-example" id="final-example">
-                                <strong>Before:</strong> "How did we do?" → *2 weeks of work* 😵 &nbsp;|&nbsp; <strong>After:</strong> *Real-time dashboard* → "$2.3B, up 15%!" 🎉
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Courses Section -->
-    <section id="courses" class="courses">
-        <div class="courses-container">
-            <div class="section-header">
-                <h2 class="section-title">Choose Your Learning Path</h2>
-                <p class="section-subtitle">
-                    Professional-grade courses designed for university students and industry professionals
-                </p>
-            </div>
-
-            <div class="courses-grid">
-                <!-- Python Course Card -->
-                <div class="course-card python-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #3b82f6;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fab fa-python"></i>
-                        </div>
-                        <div class="course-badge beginner">Beginner to Advanced</div>
-                    </div>
-                    <h3 class="course-title">Python for Data Science</h3>
-                    <p class="course-description">
-                        Master Python fundamentals, data structures, and powerful libraries like NumPy, 
-                        Pandas, and Matplotlib. Build real-world data analysis projects.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>12-Week Timeline</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>25+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-code"></i>
-                            <span>Hands-on Projects</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-certificate"></i>
-                            <span>FKTI Certificate</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>Python fundamentals and syntax</li>
-                            <li>Data structures and algorithms</li>
-                            <li>NumPy for numerical computing</li>
-                            <li>Pandas for data analysis</li>
-                            <li>Matplotlib for visualization</li>
-                            <li>Machine learning basics</li>
-                        </ul>
-                    </div>
-
-                    <div class="course-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">95%</span>
-                            <span class="stat-label">Completion Rate</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">4.9/5</span>
-                            <span class="stat-label">Student Rating</span>
-                        </div>
-                    </div>
-
-                    <button class="course-cta python-cta" onclick="enterCourse('python')">
-                        <i class="fas fa-play"></i>
-                        Start Python Course
-                    </button>
-                </div>
-
-                <!-- Data Science Basics Course Card -->
-                <div class="course-card datascience-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
-                    <div class="course-header">
-                        <div class="course-icon" style="background: rgba(255,255,255,0.2);">
-                            <i class="fas fa-chart-line" style="color: white;"></i>
-                        </div>
-                        <div class="course-badge" style="background: rgba(255,255,255,0.3); color: white; border: 1px solid rgba(255,255,255,0.5);">Beginner Friendly</div>
-                    </div>
-                    <h3 class="course-title" style="color: white;">Data Science Fundamentals</h3>
-                    <p class="course-description" style="color: rgba(255,255,255,0.9);">
-                        Master the essential math concepts for data science made super simple! Learn probability, 
-                        vectors, matrices, derivatives, and more with real-world examples. Perfect for beginners!
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature" style="color: rgba(255,255,255,0.9);">
-                            <i class="fas fa-clock"></i>
-                            <span>Self-Paced</span>
-                        </div>
-                        <div class="feature" style="color: rgba(255,255,255,0.9);">
-                            <i class="fas fa-book"></i>
-                            <span>6 Core Topics</span>
-                        </div>
-                        <div class="feature" style="color: rgba(255,255,255,0.9);">
-                            <i class="fas fa-lightbulb"></i>
-                            <span>Real Examples</span>
-                        </div>
-                        <div class="feature" style="color: rgba(255,255,255,0.9);">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Beginner Focus</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4 style="color: white;">What You'll Learn:</h4>
-                        <ul style="color: rgba(255,255,255,0.9);">
-                            <li>Probability with everyday examples</li>
-                            <li>Scalars and Vectors explained simply</li>
-                            <li>Distance metrics (Euclidean, Manhattan)</li>
-                            <li>Matrix operations made easy</li>
-                            <li>Linear vs Non-linear functions</li>
-                            <li>Derivatives for data science</li>
-                        </ul>
-                    </div>
-
-                    <div class="course-stats">
-                        <div class="stat-item" style="background: rgba(255,255,255,0.95); border-radius: 8px; padding: 12px;">
-                            <span class="stat-value" style="color: #667eea; font-weight: 700; font-size: 1.3em;">100%</span>
-                            <span class="stat-label" style="color: #1d1d1f; font-weight: 600;">Beginner Friendly</span>
-                        </div>
-                        <div class="stat-item" style="background: rgba(255,255,255,0.95); border-radius: 8px; padding: 12px;">
-                            <span class="stat-value" style="color: #667eea; font-weight: 700; font-size: 1.3em;">8</span>
-                            <span class="stat-label" style="color: #1d1d1f; font-weight: 600;">Core Topics</span>
-                        </div>
-                    </div>
-
-                    <button class="course-cta datascience-cta" onclick="enterCourse('datascience')">
-                        <i class="fas fa-graduation-cap"></i>
-                        Start Data Science Course
-                    </button>
-                </div>
-
-                <!-- Airflow Course Card -->
-                <div class="course-card airflow-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border: 2px solid #06b6d4;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-project-diagram"></i>
-                        </div>
-                        <div class="course-badge advanced">University Level</div>
-                    </div>
-                    <h3 class="course-title">Apache Airflow Mastery</h3>
-                    <p class="course-description">
-                        Build production-ready data pipelines with Apache Airflow. Learn workflow orchestration, 
-                        scheduling, monitoring, and enterprise deployment patterns.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>15-Week Semester</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>30+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-server"></i>
-                            <span>Production Systems</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-award"></i>
-                            <span>Expert Certification</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>Workflow management theory</li>
-                            <li>DAG design and implementation</li>
-                            <li>Operators, sensors, and hooks</li>
-                            <li>Advanced scheduling patterns</li>
-                            <li>Production deployment</li>
-                            <li>Monitoring and optimization</li>
-                        </ul>
-                    </div>
-
-                    <div class="course-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">88%</span>
-                            <span class="stat-label">Industry Ready</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">4.8/5</span>
-                            <span class="stat-label">Expert Rating</span>
-                        </div>
-                    </div>
-
-                    <button class="course-cta airflow-cta" onclick="enterCourse('airflow')">
-                        <i class="fas fa-rocket"></i>
-                        Start Airflow Course
-                    </button>
-                </div>
-
-                <!-- Terraform Course Card -->
-                <div class="course-card terraform-card" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border: 2px solid #8b5cf6;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-cube"></i>
-                        </div>
-                        <div class="course-badge intermediate">Infrastructure</div>
-                    </div>
-                    <h3 class="course-title">Terraform Infrastructure as Code</h3>
-                    <p class="course-description">
-                        Master infrastructure provisioning with Terraform. Build, change, and version 
-                        infrastructure safely across AWS, Azure, and Google Cloud.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>14-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>25+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-cloud"></i>
-                            <span>Multi-Cloud Projects</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-certificate"></i>
-                            <span>IaC Certification</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>HCL syntax and Terraform basics</li>
-                            <li>Providers, resources, and modules</li>
-                            <li>State management and backends</li>
-                            <li>AWS, Azure, GCP provisioning</li>
-                            <li>CI/CD pipeline integration</li>
-                            <li>Best practices and security</li>
-                        </ul>
-                    </div>
-
-                    <button class="course-cta terraform-cta" onclick="enterCourse('terraform')">
-                        <i class="fas fa-cube"></i>
-                        Start Terraform Course
-                    </button>
-                </div>
-
-                <!-- Kubernetes Course Card -->
-                <div class="course-card kubernetes-card" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border: 2px solid #4f46e5;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-ship"></i>
-                        </div>
-                        <div class="course-badge intermediate">Containers & Orchestration</div>
-                    </div>
-                    <h3 class="course-title">Kubernetes - Container Orchestration</h3>
-                    <p class="course-description">
-                        Learn Kubernetes from zero: pods, deployments, services, and how to run your data apps at scale. 
-                        Step-by-step installation on Docker Desktop for Mac, explained like you're five!
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>12-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>20+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-docker"></i>
-                            <span>Docker Desktop (Mac)</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-layer-group"></i>
-                            <span>Pods, Deployments, Services</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>What is Kubernetes? (ELI5)</li>
-                            <li>Install Kubernetes on Docker Desktop (Mac) - step by step</li>
-                            <li>Pods, Deployments, ReplicaSets</li>
-                            <li>Services, ConfigMaps, Secrets</li>
-                            <li>kubectl and cluster basics</li>
-                            <li>Running real data apps on K8s</li>
-                        </ul>
-                    </div>
-
-                    <button class="course-cta kubernetes-cta" onclick="enterCourse('kubernetes')" style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);">
-                        <i class="fas fa-ship"></i>
-                        Start Kubernetes Course
-                    </button>
-                </div>
-
-                <!-- ClickHouse Course Card -->
-                <div class="course-card clickhouse-card" style="background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%); border: 2px solid #eab308;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="course-badge advanced">Analytics Database</div>
-                    </div>
-                    <h3 class="course-title">ClickHouse - Analytics at Speed</h3>
-                    <p class="course-description">
-                        Master ClickHouse: the columnar database that queries billions of rows in milliseconds. 
-                        Super detailed course with Docker on Mac installation and real-world analytics.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>10-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>18+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-docker"></i>
-                            <span>Docker (Mac)</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>OLAP & Real-Time</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>What is ClickHouse? (ELI5)</li>
-                            <li>Install ClickHouse with Docker on Mac - step by step</li>
-                            <li>Columnar storage and why it's fast</li>
-                            <li>SQL, tables, and data types</li>
-                            <li>Aggregations and window functions</li>
-                            <li>Realtime dashboards and integrations</li>
-                        </ul>
-                    </div>
-
-                    <button class="course-cta clickhouse-cta" onclick="enterCourse('clickhouse')" style="background: linear-gradient(135deg, #ca8a04 0%, #eab308 100%);">
-                        <i class="fas fa-bolt"></i>
-                        Start ClickHouse Course
-                    </button>
-                </div>
-
-                <!-- AWS Redshift Course Card -->
-                <div class="course-card redshift-card" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 2px solid #f97316;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fab fa-aws"></i>
-                        </div>
-                        <div class="course-badge advanced">Data Warehouse</div>
-                    </div>
-                    <h3 class="course-title">AWS Redshift Data Warehousing</h3>
-                    <p class="course-description">
-                        Build petabyte-scale data warehouses with AWS Redshift. Learn columnar storage, 
-                        MPP architecture, and enterprise analytics optimization.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>16-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>35+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-database"></i>
-                            <span>Enterprise Projects</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-award"></i>
-                            <span>AWS Certification</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>Redshift architecture and setup</li>
-                            <li>Columnar storage optimization</li>
-                            <li>Distribution and sort keys</li>
-                            <li>Query performance tuning</li>
-                            <li>Data loading with COPY</li>
-                            <li>Redshift Spectrum and ML</li>
-                        </ul>
-                    </div>
-                    
-                    <button class="course-cta redshift-cta" onclick="enterCourse('redshift')">
-                        <i class="fab fa-aws"></i>
-                        Start Redshift Course
-                    </button>
-                </div>
-
-                <!-- MSSQL Course Card -->
-                <div class="course-card mssql-card" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border: 2px solid #ef4444;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <div class="course-badge intermediate">Database</div>
-                    </div>
-                    <h3 class="course-title">Microsoft SQL Server Mastery</h3>
-                    <p class="course-description">
-                        Master SQL Server from installation to enterprise administration. Learn T-SQL, 
-                        performance tuning, and production database management.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>18-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>40+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-server"></i>
-                            <span>Enterprise Systems</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-certificate"></i>
-                            <span>MCSA Preparation</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>SQL Server installation & config</li>
-                            <li>T-SQL programming mastery</li>
-                            <li>Stored procedures & functions</li>
-                            <li>Index optimization strategies</li>
-                            <li>Backup, recovery & security</li>
-                            <li>SSIS, SSRS, and SSAS basics</li>
-                        </ul>
-                    </div>
-
-                    <button class="course-cta mssql-cta" onclick="enterCourse('mssql')">
-                        <i class="fas fa-database"></i>
-                        Start MSSQL Course
-                    </button>
-                </div>
-
-                <!-- DBT Course Card -->
-                <div class="course-card dbt-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-transform"></i>
-                        </div>
-                        <div class="course-badge advanced">Data Transformation</div>
-                    </div>
-                    <h3 class="course-title">DBT Data Transformation</h3>
-                    <p class="course-description">
-                        Transform data with DBT (Data Build Tool). Learn modern analytics engineering 
-                        from basics to enterprise deployment patterns.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>12-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>28+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-code"></i>
-                            <span>SQL Transformations</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-award"></i>
-                            <span>Analytics Certification</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>DBT project setup & structure</li>
-                            <li>Models, refs, and sources</li>
-                            <li>Testing and documentation</li>
-                            <li>Jinja macros & packages</li>
-                            <li>Incremental models & snapshots</li>
-                            <li>dbt Cloud deployment</li>
-                        </ul>
-                    </div>
-
-                    <button class="course-cta dbt-cta" onclick="enterCourse('dbt')">
-                        <i class="fas fa-transform"></i>
-                        Start DBT Course
-                    </button>
-                </div>
-
-                <!-- Metabase Course Card -->
-                <div class="course-card metabase-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #3b82f6;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="course-badge beginner">Business Intelligence</div>
-                    </div>
-                    <h3 class="course-title">Metabase Business Intelligence</h3>
-                    <p class="course-description">
-                        Create stunning dashboards and reports with Metabase. Build self-service analytics 
-                        and beautiful visualizations for business insights.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>10-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>22+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Dashboard Projects</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-certificate"></i>
-                            <span>BI Certification</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>Metabase setup & data sources</li>
-                            <li>Questions and custom queries</li>
-                            <li>Dashboard design principles</li>
-                            <li>Filters, drill-downs & interactivity</li>
-                            <li>Embedding & sharing reports</li>
-                            <li>Admin settings & permissions</li>
-                        </ul>
-                    </div>
-
-                    <button class="course-cta metabase-cta" onclick="enterCourse('metabase')">
-                        <i class="fas fa-chart-bar"></i>
-                        Start Metabase Course
-                    </button>
-                </div>
-
-                <!-- PostgreSQL/DBeaver Course Card - NEW -->
-                <div class="course-card postgres-card" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-elephant"></i>
-                        </div>
-                        <div class="course-badge beginner">Database Fundamentals</div>
-                    </div>
-                    <h3 class="course-title">PostgreSQL with DBeaver</h3>
-                    <p class="course-description">
-                        Master the world's most advanced open-source database! Learn PostgreSQL from scratch using 
-                        DBeaver - your friendly database explorer. Perfect for beginners who want to understand databases.
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>14-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>35+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-eye"></i>
-                            <span>Visual Learning</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-certificate"></i>
-                            <span>Database Certification</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>Database concepts explained simply</li>
-                            <li>DBeaver installation & navigation</li>
-                            <li>SQL from SELECT to complex JOINs</li>
-                            <li>Creating tables & relationships</li>
-                            <li>Indexes and query optimization</li>
-                            <li>Real-world database design</li>
-                        </ul>
-                    </div>
-
-                    <div class="course-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">100%</span>
-                            <span class="stat-label">Beginner Friendly</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">4.9/5</span>
-                            <span class="stat-label">Student Rating</span>
-                        </div>
-                    </div>
-
-                    <button class="course-cta postgres-cta" onclick="enterCourse('postgres')">
-                        <i class="fas fa-database"></i>
-                        Start PostgreSQL Course
-                    </button>
-                </div>
-
-                <!-- AWS DMS Course Card - NEW -->
-                <div class="course-card dms-card" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border: 2px solid #ec4899;">
-                    <div class="course-header">
-                        <div class="course-icon">
-                            <i class="fas fa-truck-loading"></i>
-                        </div>
-                        <div class="course-badge intermediate">Data Migration</div>
-                    </div>
-                    <h3 class="course-title">AWS Database Migration Service</h3>
-                    <p class="course-description">
-                        Learn to move data between databases without downtime! AWS DMS is like a magical moving truck 
-                        for your data - it copies everything while your applications keep running. Zero stress migrations!
-                    </p>
-                    
-                    <div class="course-features">
-                        <div class="feature">
-                            <i class="fas fa-clock"></i>
-                            <span>10-Week Course</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-tasks"></i>
-                            <span>28+ Lessons</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-sync"></i>
-                            <span>Live Migrations</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-award"></i>
-                            <span>AWS Certification</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum">
-                        <h4>What You'll Learn:</h4>
-                        <ul>
-                            <li>Migration concepts simplified</li>
-                            <li>Source & target endpoints setup</li>
-                            <li>Full load vs CDC (Change Data Capture)</li>
-                            <li>Schema conversion made easy</li>
-                            <li>Troubleshooting common issues</li>
-                            <li>Real migration projects</li>
-                        </ul>
-                    </div>
-
-                    <div class="course-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">Zero</span>
-                            <span class="stat-label">Downtime Migrations</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">4.8/5</span>
-                            <span class="stat-label">Expert Rating</span>
-                        </div>
-                    </div>
-
-                    <button class="course-cta dms-cta" onclick="enterCourse('dms')">
-                        <i class="fas fa-rocket"></i>
-                        Start DMS Course
-                    </button>
-                </div>
-            </div>
-
-                <!-- LLM Course Card -->
-                <div class="course-card llm-card" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); border: none; position: relative; overflow: hidden;">
-                    <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 70% 30%, rgba(139,92,246,0.15), transparent 60%);pointer-events:none;"></div>
-                    <div class="course-header" style="position:relative;">
-                        <div class="course-icon" style="background: rgba(139,92,246,0.25);">
-                            <i class="fas fa-brain" style="color: #c084fc;"></i>
-                        </div>
-                        <div class="course-badge" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border: none;">Build From Scratch</div>
-                    </div>
-                    <h3 class="course-title" style="color: white; position:relative;">Large Language Models (LLMs)</h3>
-                    <p class="course-description" style="color: rgba(255,255,255,0.85); position:relative;">
-                        Understand how ChatGPT-like models work from the ground up. Learn the theory, 
-                        the math, the architecture, and build a working LLM from scratch with real code.
-                    </p>
-                    
-                    <div class="course-features" style="position:relative;">
-                        <div class="feature" style="color: rgba(255,255,255,0.85);">
-                            <i class="fas fa-clock"></i>
-                            <span>Self-Paced</span>
-                        </div>
-                        <div class="feature" style="color: rgba(255,255,255,0.85);">
-                            <i class="fas fa-tasks"></i>
-                            <span>15+ Chapters</span>
-                        </div>
-                        <div class="feature" style="color: rgba(255,255,255,0.85);">
-                            <i class="fas fa-code"></i>
-                            <span>Build a Working LLM</span>
-                        </div>
-                        <div class="feature" style="color: rgba(255,255,255,0.85);">
-                            <i class="fas fa-fire"></i>
-                            <span>PyTorch + Transformers</span>
-                        </div>
-                    </div>
-
-                    <div class="course-curriculum" style="position:relative;">
-                        <h4 style="color: white;">What You'll Build:</h4>
-                        <ul style="color: rgba(255,255,255,0.85);">
-                            <li>What are LLMs and how they actually work</li>
-                            <li>Tokenization, Embeddings, Attention</li>
-                            <li>Transformer architecture from scratch</li>
-                            <li>Training your own mini-GPT model</li>
-                            <li>Fine-tuning, RLHF, and deployment</li>
-                            <li>Full working project: text generator</li>
-                        </ul>
-                    </div>
-
-                    <div class="course-stats" style="position:relative;">
-                        <div class="stat-item" style="background: rgba(255,255,255,0.95); border-radius: 8px; padding: 12px;">
-                            <span class="stat-value" style="color: #7c3aed; font-weight: 700; font-size: 1.3em;">100%</span>
-                            <span class="stat-label" style="color: #1d1d1f; font-weight: 600;">Hands-On</span>
-                        </div>
-                        <div class="stat-item" style="background: rgba(255,255,255,0.95); border-radius: 8px; padding: 12px;">
-                            <span class="stat-value" style="color: #7c3aed; font-weight: 700; font-size: 1.3em;">1</span>
-                            <span class="stat-label" style="color: #1d1d1f; font-weight: 600;">Working LLM</span>
-                        </div>
-                    </div>
-
-                    <button class="course-cta" onclick="enterCourse('llm')" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); position:relative;">
-                        <i class="fas fa-brain"></i>
-                        Start LLM Course
-                    </button>
-                </div>
-
-            <!-- Learning Path Visualization -->
-            <div class="learning-path">
-                <h3 class="path-title">Recommended Learning Path</h3>
-                <div class="path-flow">
-                    <div class="path-step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h4>Foundation</h4>
-                            <p>Python programming and database fundamentals (Python, MSSQL)</p>
-                        </div>
-                    </div>
-                    <div class="path-arrow">→</div>
-                    <div class="path-step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h4>Infrastructure</h4>
-                            <p>Cloud infrastructure and data warehousing (Terraform, AWS Redshift)</p>
-                        </div>
-                    </div>
-                    <div class="path-arrow">→</div>
-                    <div class="path-step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h4>Data Engineering</h4>
-                            <p>Orchestration and transformation (Airflow, DBT)</p>
-                        </div>
-                    </div>
-                    <div class="path-arrow">→</div>
-                    <div class="path-step">
-                        <div class="step-number">4</div>
-                        <div class="step-content">
-                            <h4>Analytics & BI</h4>
-                            <p>Visualization and business intelligence (Metabase)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="about-container">
-            <div class="about-content">
-                <h2 class="section-title">Why This Website Exists</h2>
-                <p class="about-text">
-                    <strong>This website is completely free.</strong> In a world where AI has created massive confusion &mdash; 
-                    hundreds of institutes, thousands of courses, everyone claiming to be the best &mdash; I wanted to cut through the noise 
-                    and create something genuinely useful. No paywalls, no upsells, no "buy the premium tier."
-                </p>
-                <p class="about-text" style="margin-top: 16px;">
-                    <strong>These are my own learning notes, turned into a website.</strong> I curated these notes during my own journey 
-                    learning data engineering, data science, and the tools around them. I do not claim to know every bit of every topic &mdash; 
-                    but because of this website, I can always go back to my learnings, refresh my memory, and also teach others. 
-                    After all, <em>the best way to learn is to teach.</em>
-                </p>
-                <p class="about-text" style="margin-top: 16px;">
-                    Every concept is explained in the simplest way I know how: databases become filing cabinets, APIs become restaurant waiters, 
-                    and SQL queries become conversations with your data. If I struggled to understand something, I made sure to explain it here 
-                    the way I wish someone had explained it to me.
-                </p>
-                <p class="about-text" style="margin-top: 16px;">
-                    Whether you're switching careers, a student, or just curious about data &mdash; I hope these notes help you 
-                    the way they helped me. One simple explanation at a time.
-                </p>
-                <p class="about-text" style="margin-top: 20px; font-style: italic; color: #64748b;">
-                    &mdash; Fakhruddin Khambaty
-                </p>
-            </div>
-            <div class="about-visual">
-                <div class="about-image-placeholder">
-                    <i class="fas fa-heart"></i>
-                    <p>Free forever. Learn, teach, repeat.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <img src="assets/fkti.png" alt="FKTI Logo" class="footer-logo">
+                <img src="logo.png" alt="Data For Dummies" class="footer-logo">
                 <p class="footer-tagline">Empowering the next generation of data professionals</p>
             </div>
             <div class="footer-links">
@@ -1448,27 +288,23 @@
                     <h4>Data Engineering</h4>
                     <a href="airflow_course/index.html">Apache Airflow</a>
                     <a href="#" onclick="enterCourse('dbt'); return false;">DBT Transformation</a>
-                    <a href="#" onclick="enterCourse('dms'); return false;">AWS DMS</a>
                 </div>
                 <div class="footer-column">
                     <h4>Cloud & Analytics</h4>
-                    <a href="#" onclick="enterCourse('terraform'); return false;">Terraform IaC</a>
-                    <a href="#" onclick="enterCourse('kubernetes'); return false;">Kubernetes</a>
                     <a href="#" onclick="enterCourse('clickhouse'); return false;">ClickHouse</a>
-                    <a href="clickhouse.html" style="font-size:0.9em;">Why ClickHouse?</a>
                     <a href="#" onclick="enterCourse('redshift'); return false;">AWS Redshift</a>
                     <a href="#" onclick="enterCourse('metabase'); return false;">Metabase BI</a>
                 </div>
                 <div class="footer-column">
                     <h4>Connect</h4>
-                    <a href="#about">About This Site</a>
-                    <a href="#" onclick="openChatbot(); return false;">💬 Chat Support</a>
-                    <a href="#" onclick="showContactInfo(); return false;">📧 Contact Us</a>
+                    <a href="founder.html">Founder</a>
+                    <a href="#" onclick="openChatbot(); return false;">Chat Support</a>
+                    <a href="#" onclick="showContactInfo(); return false;">Contact</a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Fakhruddin Khambaty. Free learning notes for everyone.</p>
+            <p>&copy; 2025 Data For Dummies. Free learning notes for everyone.</p>
             <p>The best way to learn is to teach.</p>
         </div>
     </footer>
@@ -1774,6 +610,8 @@
     </script>
 
     <script src="js/hub-script.js"></script>
+
+    <script src="js/nav-ticker.js"></script>
 
     <!-- Admin Key Icon -->
     <div class="admin-key-btn" onclick="showAdminModal()" title="Admin Access">
