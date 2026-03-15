@@ -37,7 +37,9 @@
                 ? (user.user_metadata.country_code || '') + (user.user_metadata.phone || '')
                 : '';
 
-            var callbackUrl = window.location.origin + '/auth/profile.html?subscription=success';
+            var origin = window.location.origin || '';
+            var isSecure = origin.indexOf('https://') === 0;
+            var callbackUrl = isSecure ? origin + '/auth/profile.html?subscription=success' : 'https://datafordummies.in/auth/profile.html?subscription=success';
 
             if (supabaseUrl && supabaseUrl.indexOf('supabase') !== -1) {
                 fetch(supabaseUrl + '/functions/v1/create-subscription', {
@@ -53,14 +55,14 @@
                         if (data.subscription_id) {
                             openRazorpay(keyId, data.subscription_id, name, email, contact, callbackUrl, userId);
                         } else {
-                            fallbackToPaymentLink();
+                            showSubscriptionError(data.error || 'Could not start subscription.');
                         }
                     })
-                    .catch(function () {
-                        fallbackToPaymentLink();
+                    .catch(function (err) {
+                        showSubscriptionError(err && err.message ? err.message : 'Could not start subscription. Please try again.');
                     });
             } else {
-                fallbackToPaymentLink();
+                showSubscriptionError('Subscription service not configured.');
             }
         });
     }
@@ -72,6 +74,13 @@
         } else {
             window.location.href = 'auth/profile.html';
         }
+    }
+
+    function showSubscriptionError(message) {
+        var goProfile = 'auth/profile.html?error=subscription_unavailable';
+        if (window.location.pathname.indexOf('/auth/') !== -1) goProfile = 'profile.html?error=subscription_unavailable';
+        if (window.location.pathname.indexOf('/auth/') === -1 && window.location.pathname.indexOf('pricing') !== -1) goProfile = 'auth/profile.html?error=subscription_unavailable';
+        window.location.href = goProfile + (message ? '&msg=' + encodeURIComponent(message) : '');
     }
 
     function openRazorpay(keyId, subscriptionId, name, email, contact, callbackUrl, userId) {

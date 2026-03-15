@@ -62,6 +62,7 @@
         }
         .admin-signin-modal input:focus { border-color: #6366f1; }
         .admin-signin-modal .signin-error { color: #ef4444; font-size: 0.85rem; margin-bottom: 12px; min-height: 20px; }
+        .admin-signin-modal code { font-size: 0.8em; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
         .admin-signin-modal button {
             width: 100%; padding: 12px; background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
@@ -205,23 +206,11 @@
     <div class="auth-card">
         <div class="icon">🔐</div>
         <h2>Admin Analytics</h2>
-        <p>Enter the passcode to view your dashboard</p>
-        <input type="password" id="passcode" placeholder="••••••••" autofocus
+        <p>Enter the passcode to view your dashboard.</p>
+        <input type="password" id="passcode" placeholder="Passcode" autofocus
                onkeypress="if(event.key==='Enter')verify()">
         <button onclick="verify()">Access Dashboard</button>
         <div class="auth-error" id="authError"></div>
-    </div>
-</div>
-
-<!-- Supabase admin sign-in modal (masked password, no prompt) -->
-<div class="admin-signin-overlay" id="adminSigninOverlay">
-    <div class="admin-signin-modal">
-        <h3>Supabase admin sign-in</h3>
-        <p>Sign in with your Supabase account to load analytics data.</p>
-        <input type="email" id="adminSigninEmail" placeholder="Admin email" autocomplete="email">
-        <input type="password" id="adminSigninPassword" placeholder="Password" autocomplete="current-password">
-        <p class="signin-error" id="adminSigninError"></p>
-        <button type="button" onclick="submitAdminSignin()">Sign in</button>
     </div>
 </div>
 
@@ -321,15 +310,13 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function () {
     'use strict';
 
     var SUPABASE_URL = 'https://gfskxboxvzuwozknfulo.supabase.co';
-    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdmc2t4Ym94dnp1d296a25mdWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NTM2NjgsImV4cCI6MjA4OTEyOTY2OH0.K01uHrgxIeXKYhr_-Wy-CLEtIqDOb_sxPniZaJBGLy4';
-    var sb = null;
     var currentRange = '7d';
+    var verifiedPasscode = '';
 
     function getPasscode() {
         var now = new Date();
@@ -343,72 +330,14 @@
     window.verify = function () {
         var input = document.getElementById('passcode').value.trim();
         if (input === getPasscode()) {
+            verifiedPasscode = input;
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('dashboard').classList.add('visible');
-            initSupabase();
-        } else {
-            document.getElementById('authError').textContent = 'Wrong passcode. Hint: today\'s date as ddmmyyyy (IST).';
-        }
-    };
-
-    function initSupabase() {
-        if (window.supabase && window.supabase.createClient) {
-            sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
-        if (!sb) {
-            document.getElementById('kpiGrid').innerHTML = '<p style="color:#ef4444;">Supabase failed to load.</p>';
-            return;
-        }
-        sb.auth.getSession().then(function (res) {
-            var session = res.data && res.data.session;
-            if (!session) {
-                signInAdmin();
-            } else {
-                loadDashboard();
-            }
-        });
-    }
-
-    function signInAdmin() {
-        var overlay = document.getElementById('adminSigninOverlay');
-        var emailEl = document.getElementById('adminSigninEmail');
-        var passEl = document.getElementById('adminSigninPassword');
-        var errEl = document.getElementById('adminSigninError');
-        if (overlay && emailEl && passEl) {
-            emailEl.value = '';
-            passEl.value = '';
-            if (errEl) errEl.textContent = '';
-            overlay.classList.add('visible');
-            emailEl.focus();
-        }
-    }
-
-    window.submitAdminSignin = function () {
-        var email = (document.getElementById('adminSigninEmail') || {}).value.trim();
-        var password = (document.getElementById('adminSigninPassword') || {}).value;
-        var errEl = document.getElementById('adminSigninError');
-        var overlay = document.getElementById('adminSigninOverlay');
-        if (!email || !password) {
-            if (errEl) errEl.textContent = 'Please enter both email and password.';
-            return;
-        }
-        if (errEl) errEl.textContent = '';
-        sb.auth.signInWithPassword({ email: email, password: password }).then(function (res) {
-            if (res.error) {
-                if (errEl) errEl.textContent = 'Login failed: ' + (res.error.message || 'Invalid credentials');
-                return;
-            }
-            if (overlay) overlay.classList.remove('visible');
             loadDashboard();
-        });
+        } else {
+            document.getElementById('authError').textContent = 'Invalid passcode. Try again.';
+        }
     };
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var passEl = document.getElementById('adminSigninPassword');
-        if (passEl) passEl.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') submitAdminSignin();
-        });
-    });
 
     function getRangeDate() {
         var now = new Date();
@@ -426,31 +355,44 @@
     };
 
     window.loadDashboard = function () {
-        if (!sb) return;
+        if (!verifiedPasscode) return;
         var since = getRangeDate();
         document.getElementById('lastUpdated').textContent = 'Data since: ' + new Date(since).toLocaleDateString('en-IN') + ' | Refreshed: ' + new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
-        Promise.all([
-            sb.from('page_views').select('*').gte('created_at', since).order('created_at', { ascending: false }).limit(5000),
-            sb.from('analytics_events').select('*').gte('created_at', since).order('created_at', { ascending: false }).limit(3000),
-            sb.from('site_visitors').select('*').order('last_seen', { ascending: false }).limit(1000)
-        ]).then(function (results) {
-            var pvData = (results[0].data || []);
-            var evData = (results[1].data || []);
-            var visData = (results[2].data || []);
-            renderKPIs(pvData, evData, visData);
-            renderTopPages(pvData);
-            renderCountries(pvData);
-            renderDevices(pvData);
-            renderBrowsers(pvData);
-            renderFunnel(pvData, evData);
-            renderCourseClicks(evData);
-            renderDailyChart(pvData);
-            renderVisitorList(visData);
-            renderRecentActivity(pvData);
-        }).catch(function (err) {
-            console.error('Dashboard load error:', err);
-        });
+        fetch(SUPABASE_URL + '/functions/v1/get-analytics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ passcode: verifiedPasscode, since: since })
+        })
+            .then(function (r) {
+                if (!r.ok) return r.json().then(function (j) { throw new Error(j.error || 'Failed to load'); });
+                return r.json();
+            })
+            .then(function (data) {
+                var pvData = data.page_views || [];
+                var evData = data.analytics_events || [];
+                var visData = data.site_visitors || [];
+                renderKPIs(pvData, evData, visData);
+                renderTopPages(pvData);
+                renderCountries(pvData);
+                renderDevices(pvData);
+                renderBrowsers(pvData);
+                renderFunnel(pvData, evData);
+                renderCourseClicks(evData);
+                renderDailyChart(pvData);
+                renderVisitorList(visData);
+                renderRecentActivity(pvData);
+            })
+            .catch(function (err) {
+                var msg = err && err.message ? err.message : 'Failed to load analytics.';
+                if (String(msg).indexOf('Invalid passcode') !== -1) {
+                    document.getElementById('authGate').style.display = 'flex';
+                    document.getElementById('dashboard').classList.remove('visible');
+                    document.getElementById('authError').textContent = 'Session expired. Enter the passcode again.';
+                } else {
+                    document.getElementById('kpiGrid').innerHTML = '<p style="color:#ef4444;">' + msg + '</p>';
+                }
+            });
     };
 
     function renderKPIs(pv, ev, vis) {
