@@ -17,6 +17,10 @@
     <div class="auth-card auth-profile-card ds-animate-in">
         <p class="auth-subtitle auth-profile-sub">Manage your profile and subscription.</p>
         <div id="profileError" class="auth-error" style="display:none;margin-bottom:12px;"></div>
+        <div id="profileErrorPayLink" style="display:none;margin-top:12px;">
+            <p class="auth-profile-block-text" style="margin-bottom:8px;">You can still upgrade by paying directly:</p>
+            <a id="payWithRazorpayBtn" href="#" class="ds-btn ds-btn-primary auth-upgrade-btn" style="display:inline-block;text-decoration:none;">Pay with Razorpay — ₹499/mo</a>
+        </div>
         <div id="profileContent" style="display:none;">
             <div class="auth-profile-row">
                 <div class="auth-profile-avatar" id="avatarLetter">?</div>
@@ -116,16 +120,26 @@
         }
 
         var profileErrorEl = document.getElementById('profileError');
+        var profileErrorPayLink = document.getElementById('profileErrorPayLink');
+        var payWithRazorpayBtn = document.getElementById('payWithRazorpayBtn');
         var params = new URLSearchParams(window.location.search);
         if (params.get('error') === 'subscription_unavailable') {
             if (profileErrorEl) {
-                profileErrorEl.textContent = params.get('msg') || 'Could not start subscription. Please try again from the Pricing page or contact support.';
+                profileErrorEl.textContent = params.get('msg') || 'Could not start subscription. Please try again or pay directly below.';
                 profileErrorEl.style.display = 'block';
             }
+            var payLink = window.RAZORPAY_SUBSCRIPTION_LINK || 'https://razorpay.me/@datafordummies';
+            if (payWithRazorpayBtn) {
+                payWithRazorpayBtn.href = payLink;
+                payWithRazorpayBtn.target = '_blank';
+                payWithRazorpayBtn.rel = 'noopener';
+            }
+            if (profileErrorPayLink) profileErrorPayLink.style.display = 'block';
             if (window.history && window.history.replaceState) window.history.replaceState({}, '', window.location.pathname);
         }
         if (params.get('subscription') === 'success' && profileErrorEl) {
             profileErrorEl.style.display = 'none';
+            if (profileErrorPayLink) profileErrorPayLink.style.display = 'none';
             if (window.history && window.history.replaceState) window.history.replaceState({}, '', window.location.pathname);
         }
 

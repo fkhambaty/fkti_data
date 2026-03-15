@@ -26,6 +26,14 @@
         .auth-card .icon { font-size: 48px; margin-bottom: 16px; }
         .auth-card h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
         .auth-card p { color: #6e6e73; margin-bottom: 24px; font-size: 0.95rem; }
+        .passcode-hint { font-size: 0.8rem; margin-bottom: 12px !important; color: #6b7280 !important; }
+        .fill-date-btn {
+            margin-top: 12px; width: 100%; padding: 10px 14px;
+            background: #f3f4f6; color: #4f46e5; border: 2px solid #e5e7eb;
+            border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .fill-date-btn:hover { background: #eef2ff; border-color: #c7d2fe; }
         .auth-card input {
             width: 100%; padding: 14px 18px; border: 2px solid #e5e7eb;
             border-radius: 12px; font-size: 1rem; font-family: inherit;
@@ -207,8 +215,10 @@
         <div class="icon">🔐</div>
         <h2>Admin Analytics</h2>
         <p>Enter the passcode to view your dashboard.</p>
-        <input type="password" id="passcode" placeholder="Passcode" autofocus
+        <p class="passcode-hint">Passcode is today's date in <strong>DDMMYYYY</strong> (e.g. 15032025 for 15 Mar 2025), using Indian Standard Time.</p>
+        <input type="password" id="passcode" placeholder="e.g. 15032025" autofocus
                onkeypress="if(event.key==='Enter')verify()">
+        <button type="button" class="fill-date-btn" onclick="fillTodaysPasscode()">Use today's date (IST)</button>
         <button onclick="verify()">Access Dashboard</button>
         <div class="auth-error" id="authError"></div>
     </div>
@@ -326,6 +336,11 @@
         var yyyy = ist.getFullYear();
         return dd + mm + yyyy;
     }
+
+    window.fillTodaysPasscode = function () {
+        document.getElementById('passcode').value = getPasscode();
+        document.getElementById('authError').textContent = '';
+    };
 
     window.verify = function () {
         var input = document.getElementById('passcode').value.trim();

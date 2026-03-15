@@ -22,6 +22,12 @@
         return base ? base + '/' + relative.replace(/^\//, '') : relative;
     }
 
+    function authPageUrl(page) {
+        var base = getBasePath();
+        var path = base ? base + '/auth/' + page : '/auth/' + page;
+        return window.location.origin + path;
+    }
+
     function openProCheckout() {
         var keyId = window.RAZORPAY_KEY_ID;
         var supabaseUrl = (window.SUPABASE_URL || '').replace(/\/$/, '');
@@ -33,14 +39,14 @@
         }
 
         if (!auth || !auth.getSession) {
-            window.location.href = resolveUrl('auth/login.html') + '?returnTo=' + encodeURIComponent(window.location.href);
+            window.location.href = authPageUrl('login.html') + '?returnTo=' + encodeURIComponent(window.location.href);
             return;
         }
 
         auth.getSession().then(function (res) {
             var session = res.data && res.data.session;
             if (!session) {
-                window.location.href = resolveUrl('auth/login.html') + '?returnTo=' + encodeURIComponent(window.location.href);
+                window.location.href = authPageUrl('login.html') + '?returnTo=' + encodeURIComponent(window.location.href);
                 return;
             }
 
@@ -52,11 +58,7 @@
                 ? (user.user_metadata.country_code || '') + (user.user_metadata.phone || '')
                 : '';
 
-            var origin = window.location.origin || '';
-            var isSecure = origin.indexOf('https://') === 0;
-            var profilePath = resolveUrl('auth/profile.html');
-            var absProfile = (profilePath.indexOf('/') === 0 ? profilePath : '/' + profilePath);
-            var callbackUrl = isSecure ? (origin + absProfile + '?subscription=success') : ('https://datafordummies.in' + absProfile + '?subscription=success');
+            var callbackUrl = authPageUrl('profile.html') + '?subscription=success';
 
             if (supabaseUrl && supabaseUrl.indexOf('supabase') !== -1) {
                 fetch(supabaseUrl + '/functions/v1/create-subscription', {
@@ -79,15 +81,15 @@
                         if (result.ok && data.subscription_id) {
                             openRazorpay(keyId, data.subscription_id, name, email, contact, callbackUrl, userId);
                         } else {
-                            var msg = (data && data.error) ? data.error : 'Could not start subscription. Please try again later or contact support.';
-                            showSubscriptionError(msg);
+                            var msg = (data && data.error) ? data.error : 'Could not start subscription. Please try again or pay directly from your profile.';
+                            redirectToProfileWithError(msg);
                         }
                     })
                     .catch(function (err) {
-                        showSubscriptionError(err && err.message ? err.message : 'Could not start subscription. Please check your connection and try again.');
+                        redirectToProfileWithError(err && err.message ? err.message : 'Could not start subscription. Please check your connection or pay directly from your profile.');
                     });
             } else {
-                showSubscriptionError('Subscription service not configured. Please try again later.');
+                redirectToProfileWithError('Subscription service not configured. Please try the direct payment link below.');
             }
         });
     }
@@ -97,13 +99,13 @@
         if (link) {
             window.location.href = link;
         } else {
-            window.location.href = resolveUrl('auth/profile.html');
+            redirectToProfileWithError('Payment link not configured. Please contact support.');
         }
     }
 
-    function showSubscriptionError(message) {
-        var goProfile = resolveUrl('auth/profile.html') + '?error=subscription_unavailable' + (message ? '&msg=' + encodeURIComponent(message) : '');
-        window.location.href = goProfile;
+    function redirectToProfileWithError(message) {
+        var q = '?error=subscription_unavailable' + (message ? '&msg=' + encodeURIComponent(message) : '');
+        window.location.href = authPageUrl('profile.html') + q;
     }
 
     function openRazorpay(keyId, subscriptionId, name, email, contact, callbackUrl, userId) {
@@ -120,12 +122,14 @@
         }
 
         function doOpen() {
+            var base = getBasePath();
+            var logoPath = base ? base + '/logo.png' : '/logo.png';
             var options = {
                 key: keyId,
                 subscription_id: subscriptionId,
                 name: 'Data For Dummies',
                 description: 'Pro — ₹499/month',
-                image: window.location.origin + '/logo.png',
+                image: window.location.origin + logoPath,
                 callback_url: callbackUrl,
                 prefill: {
                     name: name,
