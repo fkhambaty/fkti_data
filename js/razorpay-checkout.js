@@ -50,19 +50,27 @@
                     },
                     body: JSON.stringify({ user_id: userId })
                 })
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        if (data.subscription_id) {
+                    .then(function (r) {
+                        return r.text().then(function (text) {
+                            var data;
+                            try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
+                            return { ok: r.ok, status: r.status, data: data, text: text };
+                        });
+                    })
+                    .then(function (result) {
+                        var data = result.data;
+                        if (result.ok && data.subscription_id) {
                             openRazorpay(keyId, data.subscription_id, name, email, contact, callbackUrl, userId);
                         } else {
-                            showSubscriptionError(data.error || 'Could not start subscription.');
+                            var msg = (data && data.error) ? data.error : 'Could not start subscription. Please try again later or contact support.';
+                            showSubscriptionError(msg);
                         }
                     })
                     .catch(function (err) {
-                        showSubscriptionError(err && err.message ? err.message : 'Could not start subscription. Please try again.');
+                        showSubscriptionError(err && err.message ? err.message : 'Could not start subscription. Please check your connection and try again.');
                     });
             } else {
-                showSubscriptionError('Subscription service not configured.');
+                showSubscriptionError('Subscription service not configured. Please try again later.');
             }
         });
     }

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum | Data For Dummies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 40px 24px 60px;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .curriculum-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .curriculum-header img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 16px;
+        }
+        .curriculum-header h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        .curriculum-header p {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+        .curriculum-section {
+            margin-bottom: 28px;
+        }
+        .curriculum-section h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #4f46e5;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e0e7ff;
+        }
+        .course-list {
+            list-style: none;
+        }
+        .course-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .course-list li span:first-child { font-weight: 600; color: #1e293b; }
+        .course-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .course-badge.free { background: #d1fae5; color: #065f46; }
+        .course-badge.pro { background: #e0e7ff; color: #4338ca; }
+        .course-badge.partial { background: #fef3c7; color: #92400e; }
+        .print-actions {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 24px;
+        }
+        .btn-print {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+        }
+        .btn-print:hover { opacity: 0.95; transform: translateY(-1px); }
+        .back-link {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: #6366f1;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        @media print {
+            body { background: #fff; padding: 24px; }
+            .print-actions, .back-link { display: none !important; }
+            .curriculum-header { margin-bottom: 24px; }
+            .curriculum-header img { max-width: 160px; }
+            .course-list li { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="curriculum-header">
+        <img src="logo.png" alt="Data For Dummies">
+        <h1>Data For Dummies — Course Curriculum</h1>
+        <p>India's simplest data learning platform. Start free, go Pro when ready.</p>
+    </div>
+
+    <div class="curriculum-section">
+        <h2>Programming &amp; Data Science</h2>
+        <ul class="course-list">
+            <li><span>Python for Data Science</span><span class="course-badge partial">Free + Pro</span></li>
+            <li><span>Data Science Fundamentals</span><span class="course-badge partial">Free + Pro</span></li>
+            <li><span>PostgreSQL + DBeaver</span><span class="course-badge free">Free</span></li>
+            <li><span>Large Language Models (LLMs)</span><span class="course-badge pro">Pro</span></li>
+        </ul>
+    </div>
+
+    <div class="curriculum-section">
+        <h2>Data Engineering</h2>
+        <ul class="course-list">
+            <li><span>Apache Airflow</span><span class="course-badge pro">Pro</span></li>
+            <li><span>DBT Transformation</span><span class="course-badge pro">Pro</span></li>
+            <li><span>AWS Redshift</span><span class="course-badge pro">Pro</span></li>
+            <li><span>Microsoft SQL Server</span><span class="course-badge pro">Pro</span></li>
+            <li><span>ClickHouse</span><span class="course-badge pro">Pro</span></li>
+        </ul>
+    </div>
+
+    <div class="curriculum-section">
+        <h2>Analytics &amp; BI</h2>
+        <ul class="course-list">
+            <li><span>Metabase BI</span><span class="course-badge pro">Pro</span></li>
+        </ul>
+    </div>
+
+    <div class="curriculum-section">
+        <h2>Tools &amp; Resources</h2>
+        <ul class="course-list">
+            <li><span>Data Modelling &amp; Bus Matrix</span><span class="course-badge free">Free</span></li>
+            <li><span>Pipeline Designer</span><span class="course-badge partial">Free + Pro</span></li>
+            <li><span>Data Adventure &amp; Learning Path</span><span class="course-badge free">Free</span></li>
+            <li><span>Real-World Projects (50+)</span><span class="course-badge pro">Pro</span></li>
+        </ul>
+    </div>
+
+    <div class="print-actions">
+        <button type="button" class="btn-print" onclick="window.print();">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Save as PDF
+        </button>
+        <p style="margin-top:12px;font-size:0.85rem;color:#64748b;">Use your browser’s print dialog and choose “Save as PDF” or “Print to PDF”.</p>
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+        document.querySelector('.btn-print').addEventListener('click', function () {
+            window.print();
+        });
+    </script>
+</body>
+</html>

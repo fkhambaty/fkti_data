@@ -329,14 +329,39 @@
 
     window.verify = function () {
         var input = document.getElementById('passcode').value.trim();
-        if (input === getPasscode()) {
-            verifiedPasscode = input;
-            document.getElementById('authGate').style.display = 'none';
-            document.getElementById('dashboard').classList.add('visible');
-            loadDashboard();
-        } else {
-            document.getElementById('authError').textContent = 'Invalid passcode. Try again.';
+        if (!input) {
+            document.getElementById('authError').textContent = 'Enter the passcode.';
+            return;
         }
+        document.getElementById('authError').textContent = '';
+        var since = getRangeDate();
+        fetch(SUPABASE_URL + '/functions/v1/get-analytics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ passcode: input, since: since })
+        })
+            .then(function (r) { return r.text().then(function (text) {
+                var data;
+                try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
+                return { ok: r.ok, status: r.status, data: data, text: text };
+            }); })
+            .then(function (result) {
+                if (result.ok && result.data && result.data.page_views !== undefined) {
+                    verifiedPasscode = input;
+                    document.getElementById('authGate').style.display = 'none';
+                    document.getElementById('dashboard').classList.add('visible');
+                    var pv = result.data.page_views || [];
+                    var ev = result.data.analytics_events || [];
+                    var vis = result.data.site_visitors || [];
+                    renderAll(pv, ev, vis);
+                } else {
+                    var errMsg = (result.data && result.data.error) ? result.data.error : 'Invalid passcode. Try again.';
+                    document.getElementById('authError').textContent = errMsg;
+                }
+            })
+            .catch(function (err) {
+                document.getElementById('authError').textContent = err && err.message ? err.message : 'Could not connect. Check your connection and try again.';
+            });
     };
 
     function getRangeDate() {
@@ -365,23 +390,21 @@
             body: JSON.stringify({ passcode: verifiedPasscode, since: since })
         })
             .then(function (r) {
-                if (!r.ok) return r.json().then(function (j) { throw new Error(j.error || 'Failed to load'); });
-                return r.json();
+                return r.text().then(function (text) {
+                    var data;
+                    try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
+                    return { ok: r.ok, status: r.status, data: data };
+                });
             })
-            .then(function (data) {
-                var pvData = data.page_views || [];
-                var evData = data.analytics_events || [];
-                var visData = data.site_visitors || [];
-                renderKPIs(pvData, evData, visData);
-                renderTopPages(pvData);
-                renderCountries(pvData);
-                renderDevices(pvData);
-                renderBrowsers(pvData);
-                renderFunnel(pvData, evData);
-                renderCourseClicks(evData);
-                renderDailyChart(pvData);
-                renderVisitorList(visData);
-                renderRecentActivity(pvData);
+            .then(function (result) {
+                if (!result.ok) {
+                    var errMsg = (result.data && result.data.error) ? result.data.error : 'Failed to load.';
+                    throw new Error(errMsg);
+                }
+                var pvData = result.data.page_views || [];
+                var evData = result.data.analytics_events || [];
+                var visData = result.data.site_visitors || [];
+                renderAll(pvData, evData, visData);
             })
             .catch(function (err) {
                 var msg = err && err.message ? err.message : 'Failed to load analytics.';
@@ -391,9 +414,31 @@
                     document.getElementById('authError').textContent = 'Session expired. Enter the passcode again.';
                 } else {
                     document.getElementById('kpiGrid').innerHTML = '<p style="color:#ef4444;">' + msg + '</p>';
+                    clearLoadingPanels();
                 }
             });
     };
+
+    function renderAll(pvData, evData, visData) {
+        renderKPIs(pvData, evData, visData);
+        renderTopPages(pvData);
+        renderCountries(pvData);
+        renderDevices(pvData);
+        renderBrowsers(pvData);
+        renderFunnel(pvData, evData);
+        renderCourseClicks(evData);
+        renderDailyChart(pvData);
+        renderVisitorList(visData);
+        renderRecentActivity(pvData);
+    }
+
+    function clearLoadingPanels() {
+        var ids = ['topPages', 'countries', 'devices', 'browsers', 'funnel', 'courseClicks', 'dailyChart', 'visitorList', 'recentActivity'];
+        ids.forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.innerHTML = '<p style="color:#6e6e73;font-size:0.85rem;">No data</p>';
+        });
+    }
 
     function renderKPIs(pv, ev, vis) {
         document.getElementById('kpiPageViews').textContent = pv.length.toLocaleString();

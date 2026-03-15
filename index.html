@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data For Dummies | Data & Analytics Learning</title>
-    <meta name="description" content="Learn SQL, Python, Airflow, DBT, Redshift, PostgreSQL, Data Science, and LLMs. Start learning for free. Advanced courses and premium projects are available with a subscription.">
+    <meta name="description" content="India's simplest data learning platform. Learn Excel, SQL, Python, Power BI &amp; data analytics the simple way. Real projects for beginners. Start free, go Pro when ready.">
     <meta name="keywords" content="data engineering, python, sql, airflow, dbt, data science, learn data, data for dummies, pro courses">
     <meta property="og:title" content="Data For Dummies — Data & Analytics Learning">
     <meta property="og:description" content="Master data engineering tools from basic SQL to building LLMs. Start for free; unlock advanced courses and projects with Pro.">
@@ -53,7 +53,7 @@
         }
     </script>
     <style>
-        .hero-logo-block { margin: 12px 0 20px; perspective: 800px; }
+        .hero-logo-block { margin: 0; perspective: 900px; }
         .hero-logo-frame {
             position: relative;
             width: 520px;
@@ -61,48 +61,57 @@
             margin: 0 auto;
             border-radius: 28px;
             padding: 32px 32px 18px;
-            background: rgba(255,255,255,0.45);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(20px) saturate(1.2);
+            -webkit-backdrop-filter: blur(20px) saturate(1.2);
+            border: 1px solid rgba(255,255,255,0.7);
             box-shadow:
-                0 8px 32px rgba(99,102,241,0.1),
+                0 8px 32px rgba(99,102,241,0.12),
                 0 2px 8px rgba(0,0,0,0.04),
-                inset 0 1px 0 rgba(255,255,255,0.8);
+                inset 0 1px 0 rgba(255,255,255,0.9),
+                inset 0 -1px 0 rgba(255,255,255,0.3);
             transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), box-shadow 0.5s ease;
             animation: logoFloat 6s ease-in-out infinite;
+            overflow: hidden;
         }
         .hero-logo-frame:hover {
-            transform: rotateY(-4deg) rotateX(3deg) scale(1.03);
+            transform: rotateY(-6deg) rotateX(4deg) scale(1.02);
             box-shadow:
-                0 20px 48px rgba(99,102,241,0.16),
+                0 24px 56px rgba(99,102,241,0.18),
                 0 4px 12px rgba(0,0,0,0.06),
-                inset 0 1px 0 rgba(255,255,255,0.9);
+                inset 0 1px 0 rgba(255,255,255,0.95),
+                inset 0 -1px 0 rgba(255,255,255,0.4);
         }
         .hero-logo-frame::before {
             content: '';
             position: absolute;
             inset: -4px;
-            border-radius: 32px;
-            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.1), rgba(6,182,212,0.1));
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(236,72,153,0.12), rgba(6,182,212,0.12));
             z-index: -1;
-            filter: blur(12px);
-            opacity: 0.6;
+            filter: blur(14px);
+            opacity: 0.7;
             transition: opacity 0.4s;
         }
         .hero-logo-frame:hover::before { opacity: 1; }
         .hero-logo-frame::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 50%;
-            border-radius: 28px 28px 0 0;
-            background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+            top: 0; left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(105deg, transparent, rgba(255,255,255,0.4), transparent);
             pointer-events: none;
+            animation: logoGlassShine 4s ease-in-out infinite;
+            border-radius: 28px 0 0 28px;
+        }
+        @keyframes logoGlassShine {
+            0%, 100% { left: -100%; opacity: 0.5; }
+            50% { left: 100%; opacity: 0.8; }
         }
         @keyframes logoFloat {
             0%,100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
         .hero-logo-img {
             width: 100%;
@@ -129,7 +138,15 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .hero-description { margin: 0 auto 1rem; max-width: 520px; }
+        .hero-brand-badge { display: inline-block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6366f1; margin-bottom: 0.5rem; padding: 4px 12px; background: rgba(99,102,241,0.1); border-radius: 999px; }
+        .hero-headline { font-size: clamp(1.75rem, 4vw, 2.35rem); font-weight: 800; color: #1e293b; margin: 0 auto 0.5rem; line-height: 1.2; letter-spacing: -0.02em; }
+        .hero-description { margin: 0 auto 1rem; max-width: 520px; font-size: 1.1rem; color: #475569; }
+        .hero-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .hero-cta-primary, .hero-cta-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+        .hero-cta-primary { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; box-shadow: 0 4px 16px rgba(99,102,241,0.35); }
+        .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.4); }
+        .hero-cta-secondary { background: rgba(255,255,255,0.8); color: #4f46e5; border: 1px solid rgba(99,102,241,0.25); backdrop-filter: blur(8px); }
+        .hero-cta-secondary:hover { transform: translateY(-2px); background: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
         /* Data-modelling-style subtle orb animation */
         .hero-orb-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
         .hero-orb-bg .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.12; animation: heroOrbFloat 20s ease-in-out infinite; }
@@ -137,6 +154,14 @@
         .hero-orb-bg .orb:nth-child(2) { width: 340px; height: 340px; background: linear-gradient(135deg, #f9a8d4, #ec4899); top: 40%; right: -5%; animation-delay: -6s; }
         .hero-orb-bg .orb:nth-child(3) { width: 300px; height: 300px; background: linear-gradient(135deg, #67e8f9, #06b6d4); bottom: -10%; left: 30%; animation-delay: -12s; }
         @keyframes heroOrbFloat { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-20px) scale(1.05); } 66% { transform: translate(-15px,25px) scale(0.95); } }
+        .hero-modern { padding: 12px 0 20px !important; }
+        /* Row 1: logo left, animation right (side by side). Row 2: badge + headline + text centered full width. No blank space. */
+        .hero-container { grid-template-columns: 1fr 1fr; gap: 0 1rem; align-items: stretch; padding: 0 1rem; }
+        .hero-content { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 280px; padding: 0.5rem 0; }
+        .hero-visual { display: flex; align-items: stretch; justify-content: center; min-width: 0; min-height: 280px; padding: 0; }
+        .hero-visual .tech-powerhouse { width: 100%; height: 100%; min-height: 280px; max-width: 100%; }
+        .hero-copy { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 0.5rem; }
+        .hero-stats { grid-template-columns: repeat(3, 1fr); justify-content: center; gap: 0.5rem; max-width: 480px; }
     </style>
 </head>
 <body>
@@ -147,6 +172,11 @@
                 <a href="#" onclick="scrollToTop()" class="logo-link home-icon-btn" title="Home">
                     <i class="fas fa-house-chimney"></i>
                 </a>
+            </div>
+            <div class="nav-middle" aria-hidden="true">
+                <span class="nav-dot"></span>
+                <span class="nav-dot"></span>
+                <span class="nav-dot"></span>
             </div>
             <div class="nav-links">
                 <a href="learning-path.html" class="nav-link">Courses</a>
@@ -186,24 +216,6 @@
                     <div class="hero-logo-frame">
                         <img src="logo.png" alt="Data For Dummies" class="hero-logo-img" loading="lazy">
                         <p class="hero-tagline">The best way to learn is to teach.</p>
-                </div>
-                </div>
-                <p class="hero-description">
-                    Learn industry-standard tools and techniques from basic concepts to advanced implementations. 
-                    Build real-world projects and advance your career with comprehensive, hands-on courses.
-                </p>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">10</div>
-                        <div class="stat-label">Comprehensive Courses</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">100+</div>
-                        <div class="stat-label">Hours of Content</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Real-World Projects</div>
                     </div>
                 </div>
             </div>
@@ -281,18 +293,58 @@
                     </svg>
                 </div>
             </div>
+            <div class="hero-copy">
+                <span class="hero-brand-badge">India's simplest data learning platform</span>
+                <h1 class="hero-headline">Learn Data Analytics The Simple Way</h1>
+                <p class="hero-description">Simplify the complex. Master the essential. Build what matters.</p>
+                <div class="hero-cta-row">
+                    <a href="learning-path.html" class="hero-cta-primary"><i class="fas fa-play"></i> Start Learning</a>
+                    <a href="curriculum.html" class="hero-cta-secondary" target="_blank" rel="noopener"><i class="fas fa-file-lines"></i> Download Curriculum</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item"><div class="stat-number">500+</div><div class="stat-label">Learners trained</div></div>
+                    <div class="stat-item"><div class="stat-number">100+</div><div class="stat-label">Hours of content</div></div>
+                    <div class="stat-item"><div class="stat-number">50+</div><div class="stat-label">Real-world projects</div></div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- ═══ Homepage sections (rebuilt per plan) ═══ -->
+    <!-- Trust strip: Our learners work at (company logos) -->
+    <section class="ux-logos-section" aria-label="Our learners work at">
+        <p class="ux-logos-label">Our learners work at</p>
+        <div class="ux-logos-track">
+            <a href="https://www.tcs.com" target="_blank" rel="noopener noreferrer" class="ux-logo-item" title="TCS">
+                <img src="https://logo.clearbit.com/tcs.com" alt="TCS" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+                <span class="ux-logo-fallback">TCS</span>
+            </a>
+            <a href="https://www.infosys.com" target="_blank" rel="noopener noreferrer" class="ux-logo-item" title="Infosys">
+                <img src="https://logo.clearbit.com/infosys.com" alt="Infosys" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+                <span class="ux-logo-fallback">Infosys</span>
+            </a>
+            <a href="https://www.accenture.com" target="_blank" rel="noopener noreferrer" class="ux-logo-item" title="Accenture">
+                <img src="https://logo.clearbit.com/accenture.com" alt="Accenture" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+                <span class="ux-logo-fallback">Accenture</span>
+            </a>
+            <a href="https://www.deloitte.com" target="_blank" rel="noopener noreferrer" class="ux-logo-item" title="Deloitte">
+                <img src="https://logo.clearbit.com/deloitte.com" alt="Deloitte" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+                <span class="ux-logo-fallback">Deloitte</span>
+            </a>
+            <a href="https://www.wipro.com" target="_blank" rel="noopener noreferrer" class="ux-logo-item" title="Wipro">
+                <img src="https://logo.clearbit.com/wipro.com" alt="Wipro" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+                <span class="ux-logo-fallback">Wipro</span>
+            </a>
+        </div>
+    </section>
 
-    <!-- SECTION 1: Hero -->
+    <!-- SECTION 1: Hero (secondary) -->
     <section class="ux-hero">
         <h2>Master Data Engineering by <span>Building Real Pipelines</span></h2>
         <p>Learn SQL, Python, Airflow, DBT, and modern analytics engineering through real projects. Start free; unlock advanced courses and projects with Pro.</p>
         <div class="ux-hero-btns">
             <a href="learning-path.html" class="ux-btn ux-btn-primary"><i class="fas fa-play"></i> Start Learning</a>
             <a href="learning-path.html#courses" class="ux-btn ux-btn-secondary"><i class="fas fa-compass"></i> Explore Courses</a>
+            <a href="pricing.html" class="ux-btn ux-btn-secondary"><i class="fas fa-tag"></i> View Pricing</a>
         </div>
     </section>
 
@@ -437,6 +489,61 @@
                 <p>Build real pipelines and dashboards, not just watch tutorials</p>
             </div>
         </div>
+        <div class="ux-hero-btns" style="margin-top:var(--ux-4);">
+            <a href="learning-path.html" class="ux-btn ux-btn-primary"><i class="fas fa-rocket"></i> Join Now</a>
+            <a href="pricing.html" class="ux-btn ux-btn-secondary"><i class="fas fa-tag"></i> View Pricing</a>
+        </div>
+    </div>
+
+    <!-- SECTION: Testimonials -->
+    <div class="ux-section ux-section-alt">
+        <h2 class="ux-section-title">What Learners Say</h2>
+        <div class="ux-divider"></div>
+        <div class="ux-testimonial-card">
+            <blockquote class="ux-testimonial-quote">“Best beginner analytics course I've taken. Everything is explained step by step — no jargon, just clarity.”</blockquote>
+            <div class="ux-testimonial-author">
+                <span class="ux-testimonial-name">— Rohit S., Data Analyst</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: About the Instructor -->
+    <div class="ux-section">
+        <h2 class="ux-section-title">About the Instructor</h2>
+        <div class="ux-divider"></div>
+        <div class="ux-instructor-card">
+            <p class="ux-instructor-text">Fakhruddin Khambaty brings years of hands-on experience in data engineering and analytics. Real projects, real pipelines — learn from someone who has built systems at scale.</p>
+            <ul class="ux-instructor-list">
+                <li><i class="fas fa-briefcase"></i> Industry experience across data & analytics</li>
+                <li><i class="fas fa-code"></i> Practical, project-based teaching</li>
+                <li><i class="fas fa-link"></i> Connect on LinkedIn for more</li>
+            </ul>
+            <a href="founder.html" class="ux-btn ux-btn-primary"><i class="fas fa-user"></i> Meet the Founder</a>
+        </div>
+    </div>
+
+    <!-- SECTION: FAQ -->
+    <div class="ux-section ux-section-alt">
+        <h2 class="ux-section-title">Frequently Asked Questions</h2>
+        <div class="ux-divider"></div>
+        <div class="ux-faq-list">
+            <div class="ux-faq-item">
+                <h4 class="ux-faq-q">Do I need coding knowledge?</h4>
+                <p class="ux-faq-a">No. We start from zero. Python basics and SQL are taught from scratch. If you can use Excel, you can start here.</p>
+            </div>
+            <div class="ux-faq-item">
+                <h4 class="ux-faq-q">How long is the course?</h4>
+                <p class="ux-faq-a">Self-paced. Free content gets you started in days. Pro gives you 100+ hours of courses and 50+ projects — complete at your own speed.</p>
+            </div>
+            <div class="ux-faq-item">
+                <h4 class="ux-faq-q">Are projects included?</h4>
+                <p class="ux-faq-a">Yes. Real-world projects (e.g. data warehouse, dashboards, pipelines) are part of the curriculum. Pro includes all project walkthroughs and datasets.</p>
+            </div>
+            <div class="ux-faq-item">
+                <h4 class="ux-faq-q">Is placement help available?</h4>
+                <p class="ux-faq-a">We focus on building skills and portfolios that employers value. Resume tips and interview prep are covered; we recommend pairing the course with active job applications.</p>
+            </div>
+        </div>
     </div>
 
     <!-- SECTION 6: CTA — Start Building Your First Data Pipeline Today -->
@@ -470,7 +577,7 @@
                 </div>
                 <div class="footer-column">
                     <h4>Data Engineering</h4>
-                    <a href="airflow_course/index.html" class="footer-link-pro"><i class="fas fa-lock"></i> Apache Airflow <span class="pro-badge">Pro</span></a>
+                    <a href="airflow_course/index.html">Apache Airflow</a>
                     <a href="#" onclick="enterCourse('dbt'); return false;">DBT Transformation</a>
                 </div>
                 <div class="footer-column">

@@ -31,10 +31,15 @@ serve(async (req) => {
   }
 
   if (!RAZORPAY_KEY_SECRET || !RAZORPAY_PLAN_ID) {
-    return new Response(JSON.stringify({ error: 'Server config missing' }), {
-      status: 500,
-      headers: { ...cors, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Subscription is not available right now. Please try again later or contact support.',
+      }),
+      {
+        status: 503,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   let body: { user_id?: string } = {};
@@ -72,7 +77,11 @@ serve(async (req) => {
 
   const data = await createRes.json();
   if (!createRes.ok) {
-    return new Response(JSON.stringify({ error: data.error?.description || 'Razorpay error' }), {
+    const msg =
+      data.error?.description ||
+      (typeof data.error === 'string' ? data.error : null) ||
+      'Payment provider error. Please try again.';
+    return new Response(JSON.stringify({ error: msg }), {
       status: 400,
       headers: { ...cors, 'Content-Type': 'application/json' },
     });

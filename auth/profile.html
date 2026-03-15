@@ -29,7 +29,7 @@
             <div class="auth-profile-block">
                 <h3 class="auth-profile-block-title">Subscription</h3>
                 <p class="auth-profile-block-text" id="subscriptionText">You’re on the Free plan. Unlock all courses and projects with Pro.</p>
-                <a href="../pricing.html" class="ds-btn ds-btn-primary auth-upgrade-btn" id="upgradeBtn">Upgrade to Pro — ₹499/mo</a>
+                <button type="button" class="ds-btn ds-btn-primary auth-upgrade-btn" id="upgradeBtn">Upgrade to Pro — ₹499/mo</button>
             </div>
             <div class="auth-profile-block" id="progressSection">
                 <h3 class="auth-profile-block-title">Continue learning</h3>
@@ -70,6 +70,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase-config.js"></script>
     <script src="../js/supabase-auth.js"></script>
+    <script src="../js/razorpay-checkout.js"></script>
     <script src="../js/progress.js"></script>
     <script>
         var courseUrls = {
@@ -118,7 +119,7 @@
         var params = new URLSearchParams(window.location.search);
         if (params.get('error') === 'subscription_unavailable') {
             if (profileErrorEl) {
-                profileErrorEl.textContent = params.get('msg') || 'Could not start subscription. Please try again from the Pricing page.';
+                profileErrorEl.textContent = params.get('msg') || 'Could not start subscription. Please try again from the Pricing page or contact support.';
                 profileErrorEl.style.display = 'block';
             }
             if (window.history && window.history.replaceState) window.history.replaceState({}, '', window.location.pathname);
@@ -132,6 +133,16 @@
             profileLoading.style.display = 'none';
             profileLogin.style.display = 'none';
             profileContent.style.display = 'block';
+            var upgradeBtn = document.getElementById('upgradeBtn');
+            if (upgradeBtn) {
+                upgradeBtn.addEventListener('click', function () {
+                    if (window.FKTI_RazorpayCheckout && window.FKTI_RazorpayCheckout.openProCheckout) {
+                        window.FKTI_RazorpayCheckout.openProCheckout();
+                    } else {
+                        window.location.href = '../pricing.html';
+                    }
+                });
+            }
             var user = session.user;
             var email = user.email || '';
             var name = (user.user_metadata && user.user_metadata.full_name) || email.split('@')[0] || 'User';
