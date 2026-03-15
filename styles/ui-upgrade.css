@@ -1,0 +1,353 @@
+/* ═══════════════════════════════════════════════════════════
+   UI UPGRADE — Additive stylesheet. Does NOT modify existing CSS.
+   Loaded AFTER hub-styles.css. All selectors scoped to .ux-* prefix.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Spacing system (8px grid) ── */
+:root {
+    --ux-1: 8px; --ux-2: 16px; --ux-3: 24px; --ux-4: 32px;
+    --ux-5: 40px; --ux-6: 48px; --ux-8: 64px; --ux-10: 80px;
+    --ux-radius: 16px;
+    --ux-radius-lg: 24px;
+    --ux-text: #1e293b;
+    --ux-text2: #475569;
+    --ux-text3: #94a3b8;
+    --ux-surface: rgba(255,255,255,0.7);
+    --ux-border: rgba(0,0,0,0.06);
+}
+
+/* ── Section wrapper ── */
+.ux-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--ux-8) var(--ux-3);
+}
+.ux-section-title {
+    text-align: center;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--ux-1);
+}
+.ux-section-sub {
+    text-align: center;
+    color: var(--ux-text2);
+    font-size: 0.95rem;
+    max-width: 540px;
+    margin: 0 auto var(--ux-5);
+    line-height: 1.7;
+}
+.ux-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #ec4899);
+    border-radius: 99px;
+    margin: var(--ux-2) auto var(--ux-3);
+}
+
+/* ── Enhanced Hero ── */
+.ux-hero {
+    text-align: center;
+    padding: var(--ux-6) var(--ux-3) var(--ux-5);
+    max-width: 720px;
+    margin: 0 auto;
+    animation: uxFadeUp .7s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes uxFadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.ux-hero h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 900;
+    color: var(--ux-text);
+    line-height: 1.15;
+    margin-bottom: var(--ux-2);
+    letter-spacing: -0.02em;
+}
+.ux-hero h2 span {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.ux-hero p {
+    color: var(--ux-text2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: var(--ux-4);
+}
+.ux-hero-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.ux-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+}
+.ux-btn-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+}
+.ux-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99,102,241,0.35);
+}
+.ux-btn-secondary {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(8px);
+    color: #4f46e5;
+    border: 1px solid rgba(99,102,241,0.15);
+}
+.ux-btn-secondary:hover {
+    background: rgba(255,255,255,0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* ── Learning Paths (3 cards) ── */
+.ux-paths-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--ux-3);
+}
+.ux-path-card {
+    background: var(--ux-surface);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--ux-border);
+    border-radius: var(--ux-radius-lg);
+    padding: var(--ux-4) var(--ux-3);
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    overflow: hidden;
+}
+.ux-path-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: var(--ux-radius-lg) var(--ux-radius-lg) 0 0;
+    transition: opacity .3s;
+}
+.ux-path-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.15);
+}
+.ux-path-card:hover::before { opacity: 1; }
+.ux-path-card.beginner::before { background: linear-gradient(90deg, #10b981, #34d399); opacity: 0.6; }
+.ux-path-card.intermediate::before { background: linear-gradient(90deg, #6366f1, #818cf8); opacity: 0.6; }
+.ux-path-card.advanced::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); opacity: 0.6; }
+.ux-path-badge {
+    display: inline-flex;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--ux-2);
+}
+.beginner .ux-path-badge { background: #ecfdf5; color: #059669; }
+.intermediate .ux-path-badge { background: #eef2ff; color: #4f46e5; }
+.advanced .ux-path-badge { background: #fffbeb; color: #d97706; }
+.ux-path-card h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--ux-text);
+    margin-bottom: var(--ux-2);
+}
+.ux-path-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.ux-path-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: var(--ux-text2);
+    font-weight: 500;
+}
+.ux-path-list li i {
+    color: var(--ux-text3);
+    font-size: 0.7rem;
+    width: 16px;
+    text-align: center;
+}
+
+/* ── Tools Showcase ── */
+.ux-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--ux-2);
+}
+.ux-tool {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: var(--ux-3) var(--ux-2);
+    background: var(--ux-surface);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--ux-border);
+    border-radius: var(--ux-radius);
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+}
+.ux-tool:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.15);
+}
+.ux-tool-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+    transition: transform .3s;
+}
+.ux-tool:hover .ux-tool-icon { transform: scale(1.1) rotate(-4deg); }
+.ux-tool span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ux-text);
+}
+
+/* ── Project Previews ── */
+.ux-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--ux-3);
+}
+.ux-project {
+    background: var(--ux-surface);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--ux-border);
+    border-radius: var(--ux-radius-lg);
+    padding: var(--ux-3);
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ux-2);
+}
+.ux-project:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.15);
+}
+.ux-project-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #fff;
+}
+.ux-project h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--ux-text);
+}
+.ux-project p {
+    font-size: 0.85rem;
+    color: var(--ux-text2);
+    line-height: 1.6;
+    margin: 0;
+}
+.ux-project-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+.ux-project-tags span {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+/* ── CTA Banner ── */
+.ux-cta-banner {
+    text-align: center;
+    padding: var(--ux-8) var(--ux-3);
+    max-width: 700px;
+    margin: 0 auto;
+}
+.ux-cta-banner h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 900;
+    color: var(--ux-text);
+    margin-bottom: var(--ux-1);
+}
+.ux-cta-banner p {
+    color: var(--ux-text2);
+    font-size: 0.95rem;
+    margin-bottom: var(--ux-4);
+    line-height: 1.7;
+}
+
+/* ── Trust Signals ── */
+.ux-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--ux-3);
+    text-align: center;
+}
+.ux-trust-item {
+    padding: var(--ux-4) var(--ux-2);
+    background: var(--ux-surface);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--ux-border);
+    border-radius: var(--ux-radius);
+}
+.ux-trust-item .icon {
+    font-size: 2rem;
+    margin-bottom: var(--ux-2);
+}
+.ux-trust-item h4 {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--ux-text);
+    margin-bottom: 6px;
+}
+.ux-trust-item p {
+    font-size: 0.8rem;
+    color: var(--ux-text3);
+    font-style: italic;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .ux-section { padding: var(--ux-5) var(--ux-2); }
+    .ux-paths-grid, .ux-projects-grid { grid-template-columns: 1fr; }
+    .ux-tools-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+    .ux-trust-grid { grid-template-columns: 1fr; gap: var(--ux-2); }
+    .ux-hero { padding: var(--ux-4) var(--ux-2) var(--ux-3); }
+}
