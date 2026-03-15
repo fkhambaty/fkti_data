@@ -1,15 +1,16 @@
 // Create Razorpay subscription and return subscription_id for Checkout.
-// Set secrets: RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_PLAN_ID
+// Required secrets (exact names, case-sensitive): RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_PLAN_ID
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-
-const RAZORPAY_KEY_ID = Deno.env.get('RAZORPAY_KEY_ID') || '';
-const RAZORPAY_KEY_SECRET = Deno.env.get('RAZORPAY_KEY_SECRET') || '';
-const RAZORPAY_PLAN_ID = Deno.env.get('RAZORPAY_PLAN_ID') || '';
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+function getSecret(name: string): string {
+  const v = Deno.env.get(name);
+  return (typeof v === 'string' ? v.trim() : '') || '';
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -30,10 +31,19 @@ serve(async (req) => {
     });
   }
 
-  if (!RAZORPAY_KEY_SECRET || !RAZORPAY_PLAN_ID) {
+  // Read secrets per request so the latest values are used after redeploy
+  const RAZORPAY_KEY_ID = getSecret('RAZORPAY_KEY_ID');
+  const RAZORPAY_KEY_SECRET = getSecret('RAZORPAY_KEY_SECRET');
+  const RAZORPAY_PLAN_ID = getSecret('RAZORPAY_PLAN_ID');
+
+  const missing: string[] = [];
+  if (!RAZORPAY_KEY_ID) missing.push('RAZORPAY_KEY_ID');
+  if (!RAZORPAY_KEY_SECRET) missing.push('RAZORPAY_KEY_SECRET');
+  if (!RAZORPAY_PLAN_ID) missing.push('RAZORPAY_PLAN_ID');
+  if (missing.length > 0) {
     return new Response(
       JSON.stringify({
-        error: 'Subscription is not available right now. Please try again later or contact support.',
+        error: `Subscription not configured: missing secret(s) [${missing.join(', ')}]. Set them in Supabase Dashboard → Project Settings → Edge Functions → Secrets.`,
       }),
       {
         status: 503,
