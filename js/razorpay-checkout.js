@@ -11,6 +11,8 @@
         if (window.FKTI_BASE_URL) return window.FKTI_BASE_URL.replace(/\/$/, '');
         var path = window.location.pathname || '';
         var parts = path.split('/').filter(Boolean);
+        var reserved = ['auth', 'css', 'js', 'api'];
+        if (parts.length === 0 || reserved.indexOf(parts[0]) !== -1) return '';
         if (parts.length > 1) return '/' + parts[0];
         return '';
     }
