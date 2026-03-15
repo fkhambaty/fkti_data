@@ -44,6 +44,21 @@
         return supabase.auth.signInWithPassword({ email: email, password: password });
     }
 
+    function signUp(email, password, options) {
+        if (!supabase) return Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
+        var redirectTo = (typeof window !== 'undefined' && window.location && window.location.origin)
+            ? window.location.origin + '/auth/confirm.html'
+            : '';
+        return supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                emailRedirectTo: redirectTo,
+                data: (options && options.data) || {}
+            }
+        });
+    }
+
     function signInWithOtp(email) {
         if (!supabase) return Promise.resolve({ data: null, error: { message: 'Supabase not configured' } });
         return supabase.auth.signInWithOtp({
@@ -94,6 +109,7 @@
         getSession: getSession,
         getUser: getUser,
         onAuthStateChange: onAuthStateChange,
+        signUp: signUp,
         signInWithPassword: signInWithPassword,
         signInWithOtp: signInWithOtp,
         verifyOtp: verifyOtp,

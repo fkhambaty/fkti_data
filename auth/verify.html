@@ -11,107 +11,32 @@
     <a href="../index.html" class="auth-back-home"><span aria-hidden="true">←</span> Back to home</a>
     <div class="auth-card ds-animate-in">
         <h1>Check your email</h1>
-        <p class="auth-subtitle" id="emailHint">Enter the 6-digit code we sent to your email.</p>
+        <p class="auth-subtitle" id="emailHint">We sent you a verification link. Click the link in the email to verify your account.</p>
         <div id="authError" class="auth-error" style="display:none;"></div>
-        <form class="auth-form" id="verifyForm">
-            <div class="auth-otp-wrap">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" id="d1" aria-label="Digit 1" autocomplete="one-time-code">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" id="d2" aria-label="Digit 2">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" id="d3" aria-label="Digit 3">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" id="d4" aria-label="Digit 4">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" id="d5" aria-label="Digit 5">
-                <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" id="d6" aria-label="Digit 6">
-            </div>
-            <button type="submit" class="ds-btn ds-btn-primary auth-submit" id="submitBtn">Verify</button>
-        </form>
+        <div class="auth-verify-link-box" style="margin:1.5rem 0;padding:1rem;background:var(--ds-surface-secondary,#f3f4f6);border-radius:12px;font-size:0.9rem;">
+            <p style="margin:0 0 0.5rem;font-weight:600;">What to do next</p>
+            <ol style="margin:0;padding-left:1.25rem;color:var(--ds-text-secondary,#6b7280);">
+                <li>Open your email inbox (check spam if you don’t see it)</li>
+                <li>Click the <strong>verification link</strong> in the email we sent</li>
+                <li>You’ll be signed in and taken to your account</li>
+            </ol>
+        </div>
         <p class="auth-links">
-            <a href="signup.html">Use a different email</a>
+            <a href="login.html">Back to login</a> · <a href="signup.html">Use a different email</a>
         </p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabase-config.js"></script>
     <script src="../js/supabase-auth.js"></script>
     <script>
-        var params = new URLSearchParams(window.location.search);
-        var email = params.get('email') || (function () {
-            try {
-                var p = JSON.parse(sessionStorage.getItem('fkti_pending_signup') || '{}');
-                return p.email || '';
-            } catch (e) { return ''; }
-        })();
-
-        var hint = document.getElementById('emailHint');
-        if (email) hint.textContent = 'Enter the 6-digit code we sent to ' + email;
-
-        var d1 = document.getElementById('d1'), d2 = document.getElementById('d2'), d3 = document.getElementById('d3');
-        var d4 = document.getElementById('d4'), d5 = document.getElementById('d5'), d6 = document.getElementById('d6');
-        var inputs = [d1, d2, d3, d4, d5, d6];
-
-        inputs.forEach(function (inp, i) {
-            inp.addEventListener('input', function () {
-                var v = this.value.replace(/\D/g, '');
-                this.value = v.slice(-1);
-                if (v && inputs[i + 1]) inputs[i + 1].focus();
-            });
-            inp.addEventListener('keydown', function (e) {
-                if (e.key === 'Backspace' && !this.value && inputs[i - 1]) inputs[i - 1].focus();
-            });
-        });
-
-        var form = document.getElementById('verifyForm');
-        var errEl = document.getElementById('authError');
-        var submitBtn = document.getElementById('submitBtn');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            var token = inputs.map(function (i) { return i.value; }).join('');
-            if (token.length !== 6) {
-                errEl.textContent = 'Please enter all 6 digits.';
-                errEl.style.display = 'block';
-                return;
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var email = params.get('email') || '';
+            var hint = document.getElementById('emailHint');
+            if (email) {
+                hint.textContent = 'We sent a verification link to ' + email + '. Click the link in that email to verify your account.';
             }
-            errEl.style.display = 'none';
-            submitBtn.disabled = true;
-
-            window.FKTI_Auth.verifyOtp(email, token).then(function (res) {
-                if (res.error) {
-                    errEl.textContent = res.error.message || 'Invalid or expired code.';
-                    errEl.style.display = 'block';
-                    submitBtn.disabled = false;
-                    return;
-                }
-                var pending = null;
-                try {
-                    var raw = sessionStorage.getItem('fkti_pending_signup');
-                    if (raw) pending = JSON.parse(raw);
-                } catch (err) {}
-                if (pending && res.data && res.data.user) {
-                    var auth = window.FKTI_Auth;
-                    var uid = res.data.user.id;
-                    auth.updateUserPassword(pending.password).catch(function () {});
-                    auth.updateUserMetadata({
-                        full_name: pending.fullName,
-                        phone: pending.phone,
-                        country_code: pending.countryCode
-                    }).then(function () {
-                        return auth.upsertProfile({
-                            id: uid,
-                            full_name: pending.fullName,
-                            email: pending.email,
-                            phone: pending.phone,
-                            country_code: pending.countryCode || '+91',
-                            subscription_status: 'free'
-                        });
-                    }).catch(function () {});
-                    try { sessionStorage.removeItem('fkti_pending_signup'); } catch (e) {}
-                }
-                window.location.href = 'profile.html';
-            }).catch(function () {
-                errEl.textContent = 'Something went wrong. Try again.';
-                errEl.style.display = 'block';
-                submitBtn.disabled = false;
-            });
-        });
+        })();
     </script>
 </body>
 </html>

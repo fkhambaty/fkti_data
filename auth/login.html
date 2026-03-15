@@ -13,6 +13,7 @@
         <h1>Log in</h1>
         <p class="auth-subtitle">Welcome back. Sign in to continue learning.</p>
         <div id="authError" class="auth-error" style="display:none;"></div>
+        <div id="authSuccess" class="auth-success" style="display:none;"></div>
         <form class="auth-form" id="loginForm">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required placeholder="you@example.com" autocomplete="email">
@@ -31,27 +32,55 @@
     <script>
         var form = document.getElementById('loginForm');
         var errEl = document.getElementById('authError');
+        var successEl = document.getElementById('authSuccess');
         var submitBtn = document.getElementById('submitBtn');
-        var returnTo = new URLSearchParams(window.location.search).get('returnTo') || '../auth/profile.html';
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('reset') === 'success') {
+            successEl.textContent = 'Password updated. You can log in with your new password.';
+            successEl.style.display = 'block';
+        }
+        var returnTo = params.get('returnTo') || 'profile.html';
+        if (returnTo.indexOf('/') === -1) returnTo = returnTo.replace(/^auth\//, '');
 
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             errEl.style.display = 'none';
+            successEl.style.display = 'none';
             errEl.textContent = '';
             submitBtn.disabled = true;
             var email = document.getElementById('email').value.trim();
             var password = document.getElementById('password').value;
 
+            if (!email || !password) {
+                errEl.textContent = 'Please enter email and password.';
+                errEl.style.display = 'block';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            if (!window.FKTI_Auth || !window.FKTI_Auth.signInWithPassword) {
+                errEl.textContent = 'Auth not loaded. Refresh the page and try again.';
+                errEl.style.display = 'block';
+                submitBtn.disabled = false;
+                return;
+            }
+
             window.FKTI_Auth.signInWithPassword(email, password).then(function (res) {
                 if (res.error) {
-                    errEl.textContent = res.error.message || 'Login failed.';
+                    var msg = res.error.message || 'Login failed.';
+                    if (msg.indexOf('Invalid login') !== -1 || msg.indexOf('invalid_credentials') !== -1) {
+                        msg = 'Invalid email or password. Try again or reset your password.';
+                    } else if (msg.indexOf('Email not confirmed') !== -1) {
+                        msg = 'Please confirm your email first. Check your inbox for the verification link.';
+                    }
+                    errEl.textContent = msg;
                     errEl.style.display = 'block';
                     submitBtn.disabled = false;
                     return;
                 }
                 window.location.href = returnTo;
-            }).catch(function () {
-                errEl.textContent = 'Something went wrong. Try again.';
+            }).catch(function (err) {
+                errEl.textContent = (err && err.message) || 'Something went wrong. Try again.';
                 errEl.style.display = 'block';
                 submitBtn.disabled = false;
             });

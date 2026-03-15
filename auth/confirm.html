@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email confirmed | Data For Dummies</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <link rel="stylesheet" href="../styles/auth.css">
+</head>
+<body class="auth-page ds-root">
+    <a href="../index.html" class="auth-back-home"><span aria-hidden="true">←</span> Back to home</a>
+    <div class="auth-card ds-animate-in">
+        <div id="confirming" style="text-align:center;padding:2rem 0;">
+            <p class="auth-subtitle">Confirming your email…</p>
+        </div>
+        <div id="confirmed" style="display:none;text-align:center;padding:2rem 0;">
+            <h2 style="color:var(--ds-success,#10b981);margin-bottom:0.5rem;">✓ Email verified</h2>
+            <p class="auth-subtitle">Taking you to your account.</p>
+        </div>
+        <div id="authError" class="auth-error" style="display:none;"></div>
+        <p class="auth-links" id="linksRow" style="display:none;">
+            <a href="login.html">Log in</a> · <a href="../index.html">Home</a>
+        </p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script>
+        (function () {
+            var confirming = document.getElementById('confirming');
+            var confirmed = document.getElementById('confirmed');
+            var errEl = document.getElementById('authError');
+            var linksRow = document.getElementById('linksRow');
+
+            function showError(msg) {
+                confirming.style.display = 'none';
+                confirmed.style.display = 'none';
+                errEl.textContent = msg;
+                errEl.style.display = 'block';
+                linksRow.style.display = 'block';
+            }
+
+            function goToProfile() {
+                confirming.style.display = 'none';
+                confirmed.style.display = 'block';
+                setTimeout(function () {
+                    window.location.replace('profile.html');
+                }, 800);
+            }
+
+            if (!window.FKTI_Auth || !window.FKTI_Auth.getSession) {
+                showError('Auth not loaded. Try opening the link again or go to Log in.');
+                return;
+            }
+
+            window.FKTI_Auth.getSession().then(function (res) {
+                var session = res.data && res.data.session;
+                if (!session || !session.user) {
+                    showError('Invalid or expired link. Please request a new verification link from sign up.');
+                    return;
+                }
+                var user = session.user;
+                var meta = user.user_metadata || {};
+                window.FKTI_Auth.upsertProfile({
+                    id: user.id,
+                    full_name: meta.full_name || meta.fullName || user.email || '',
+                    email: user.email || '',
+                    phone: meta.phone || '',
+                    country_code: meta.country_code || meta.countryCode || '+91',
+                    subscription_status: 'free'
+                }).then(function () { goToProfile(); }).catch(function () { goToProfile(); });
+            }).catch(function () {
+                showError('Something went wrong. Try the link again or go to Log in.');
+            });
+        })();
+    </script>
+</body>
+</html>

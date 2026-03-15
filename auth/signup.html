@@ -12,7 +12,7 @@
     <a href="../index.html" class="auth-back-home"><span aria-hidden="true">←</span> Back to home</a>
     <div class="auth-card ds-animate-in">
         <h1>Create account</h1>
-        <p class="auth-subtitle">We’ll send a verification code to your email.</p>
+        <p class="auth-subtitle">We’ll send a verification link to your email to confirm your account.</p>
         <div id="authError" class="auth-error" style="display:none;"></div>
         <form class="auth-form" id="signupForm">
             <label for="fullName">Full name</label>
@@ -25,7 +25,7 @@
             <div class="auth-phone-wrap">
                 <input type="tel" id="phone" name="phone" placeholder="Phone number" autocomplete="tel">
             </div>
-            <button type="submit" class="ds-btn ds-btn-primary auth-submit" id="submitBtn">Send verification code</button>
+            <button type="submit" class="ds-btn ds-btn-primary auth-submit" id="submitBtn">Create account</button>
         </form>
         <p class="auth-links">
             Already have an account? <a href="login.html">Log in</a>
@@ -61,25 +61,24 @@
             var countryData = window.iti ? window.iti.getSelectedCountryData() : {};
             var countryCode = (countryData.dialCode ? '+' + countryData.dialCode : '');
 
-            window.FKTI_Auth.signInWithOtp(email).then(function (res) {
+            window.FKTI_Auth.signUp(email, password, {
+                data: {
+                    full_name: fullName,
+                    fullName: fullName,
+                    phone: phone,
+                    country_code: countryCode,
+                    countryCode: countryCode
+                }
+            }).then(function (res) {
                 if (res.error) {
-                    errEl.textContent = res.error.message || 'Could not send code.';
+                    errEl.textContent = res.error.message || 'Could not create account.';
                     errEl.style.display = 'block';
                     submitBtn.disabled = false;
                     return;
                 }
-                try {
-                    sessionStorage.setItem('fkti_pending_signup', JSON.stringify({
-                        fullName: fullName,
-                        email: email,
-                        password: password,
-                        phone: phone,
-                        countryCode: countryCode
-                    }));
-                } catch (err) {}
                 window.location.href = 'verify.html?email=' + encodeURIComponent(email);
-            }).catch(function () {
-                errEl.textContent = 'Something went wrong. Try again.';
+            }).catch(function (err) {
+                errEl.textContent = (err && err.message) || 'Something went wrong. Try again.';
                 errEl.style.display = 'block';
                 submitBtn.disabled = false;
             });
