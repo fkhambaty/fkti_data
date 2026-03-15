@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Data Warehouse Project | Data For Dummies</title>
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="../css/hub-styles.css">
+    <link rel="stylesheet" href="../css/project-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand"><a href="../index.html" class="logo-link home-icon-btn" title="Home"><i class="fas fa-house-chimney"></i></a></div>
+            <div class="nav-links">
+                <a href="../learning-path.html" class="nav-link">Courses</a>
+                <a href="../data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="../data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="../pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="../projects.html" class="nav-link">Projects</a>
+                <a href="../pricing.html" class="nav-link">Pricing</a>
+                <a href="../founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="top-offset-for-nav">
+        <main class="project-detail">
+
+            <!-- ========== HERO ========== -->
+            <div class="project-hero">
+                <div class="project-badges">
+                    <span class="project-badge">Beginner</span>
+                    <span class="project-badge">Free</span>
+                </div>
+                <h1><i class="fas fa-warehouse"></i> E-Commerce Data Warehouse</h1>
+                <p>Build a medallion architecture (Bronze → Silver → Gold) for orders, customers, and products. Learn how raw data becomes analytics-ready tables.</p>
+                <div class="project-tools">
+                    <span>Redshift / PostgreSQL</span><span>DBT</span><span>Airflow</span><span>SQL</span>
+                </div>
+            </div>
+
+            <!-- ========== TABS ========== -->
+            <div class="project-tabs">
+                <button class="project-tab active" data-tab="overview"><i class="fas fa-binoculars"></i> Overview</button>
+                <button class="project-tab" data-tab="build"><i class="fas fa-hammer"></i> Build It <span class="lock-icon"><i class="fas fa-lock"></i></span></button>
+            </div>
+
+            <!-- ============================================================
+                 TAB 1 — OVERVIEW (FREE)
+                 ============================================================ -->
+            <div class="project-panel active" id="panel-overview">
+
+                <!-- The Scenario -->
+                <section class="project-section">
+                    <h2><i class="fas fa-theater-masks"></i> The Scenario</h2>
+                    <div class="project-scenario">
+                        <h4>Imagine this…</h4>
+                        <p>You just got hired as a <strong>junior data engineer</strong> at "ShopEasy", a small e-commerce company. They sell electronics, clothing, and home goods online. Every day, thousands of orders come in. Customer data lives in one system, product info in another, and order records in a third. Your boss asks: <em>"How much did we sell last month by region?"</em> and nobody can answer quickly because the data is scattered and messy.</p>
+                        <p>Your job: build a <strong>data warehouse</strong> — one central place where all this data is cleaned, organized, and ready for dashboards and reports. That's exactly what we're going to build together, step by step.</p>
+                    </div>
+                </section>
+
+                <!-- What You'll Build -->
+                <section class="project-section">
+                    <h2><i class="fas fa-bullseye"></i> What You'll Build</h2>
+                    <div class="anim-flow-wrap">
+                        <span class="anim-step bronze"><i class="fas fa-database"></i> Bronze (Raw)</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step silver"><i class="fas fa-broom"></i> Silver (Clean)</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step gold"><i class="fas fa-crown"></i> Gold (Business)</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step tool"><i class="fas fa-chart-pie"></i> Dashboards</span>
+                    </div>
+                    <ul style="margin: 20px 0 0 22px; color:#475569; line-height:1.9;">
+                        <li><strong>Bronze layer:</strong> Raw tables for orders, customers, and products — data exactly as it comes from source systems (CSV files).</li>
+                        <li><strong>Silver layer:</strong> Cleaned versions — correct data types, no duplicates, validated foreign keys.</li>
+                        <li><strong>Gold layer:</strong> Business aggregates like <code>sales_by_region</code>, <code>top_products</code>, <code>customer_lifetime_value</code>.</li>
+                        <li><strong>DBT models:</strong> SQL transformations with documentation and tests (uniqueness, not-null).</li>
+                        <li><strong>Airflow DAG:</strong> Orchestration that runs the pipeline daily on autopilot.</li>
+                    </ul>
+                    <div class="project-layman">
+                        <h4>In plain English</h4>
+                        <p>Think of it like a kitchen. <strong>Bronze</strong> = raw groceries straight from the store (uncut, unwashed). <strong>Silver</strong> = washed, chopped, prepped ingredients. <strong>Gold</strong> = finished dishes ready to serve. The "warehouse" is the kitchen where this all happens, DBT is the recipe book, and Airflow is the timer that tells you when to cook.</p>
+                    </div>
+                </section>
+
+                <!-- Prerequisites -->
+                <section class="project-section">
+                    <h2><i class="fas fa-book-open"></i> Prerequisites</h2>
+                    <p>Before you start, make sure you're comfortable with these. If not, we link to the exact courses below — finish those first, then come back.</p>
+                    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;width:30%;">Basic SQL</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">SELECT, WHERE, JOIN, GROUP BY, ORDER BY. You should be able to write a query that joins two tables and counts rows.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../postgres_course/index.html" style="color:#4f46e5;font-weight:600;">PostgreSQL Course</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Command line basics</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">Open a terminal, navigate folders (cd), run commands. Nothing fancy.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">—</td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">DBT intro</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">What DBT is, how to run <code>dbt run</code> and <code>dbt test</code>. You'll learn the rest here.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../dbt_course/index.html" style="color:#4f46e5;font-weight:600;">DBT Course</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Airflow intro</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">What a DAG is, how to define tasks. You don't need to be an expert — we'll walk through it.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../airflow_course/index.html" style="color:#4f46e5;font-weight:600;">Airflow Course</a></td>
+                        </tr>
+                    </table>
+                </section>
+
+                <!-- Step-by-step Plan (overview) -->
+                <section class="project-section">
+                    <h2><i class="fas fa-list-ol"></i> Step-by-Step Plan</h2>
+                    <p>Here's the high-level road-map. The <strong>Build It</strong> tab walks you through every single step with copy-paste code, screenshots, and explanations.</p>
+                    <ol class="project-steps">
+                        <li>
+                            <span class="step-num">1</span>
+                            <div class="step-body"><strong>Set up the warehouse.</strong> Install PostgreSQL (or connect to Redshift), create schemas for bronze, silver, and gold.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">2</span>
+                            <div class="step-body"><strong>Load raw data (Bronze).</strong> Download sample CSVs (orders, customers, products) and load them into bronze tables using SQL COPY or a Python script.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">3</span>
+                            <div class="step-body"><strong>Initialize DBT.</strong> Create a new DBT project, configure the connection to your database, and verify it works.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">4</span>
+                            <div class="step-body"><strong>Build Silver models.</strong> Write DBT SQL models that clean, deduplicate, and type-cast each bronze table into silver.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">5</span>
+                            <div class="step-body"><strong>Build Gold models.</strong> Create business-level aggregates (sales_by_region, customer_lifetime_value) from silver tables.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">6</span>
+                            <div class="step-body"><strong>Add DBT tests.</strong> Write schema tests (unique, not_null) and a custom test to ensure referential integrity.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">7</span>
+                            <div class="step-body"><strong>Orchestrate with Airflow.</strong> Create a DAG that runs <code>dbt run</code> then <code>dbt test</code> on a daily schedule.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">8</span>
+                            <div class="step-body"><strong>Verify & celebrate.</strong> Query your Gold tables, check the pipeline ran, and admire what you built!</div>
+                        </li>
+                    </ol>
+                </section>
+            </div><!-- /panel-overview -->
+
+            <!-- ============================================================
+                 TAB 2 — BUILD IT (PRO / PAID)
+                 ============================================================ -->
+            <div class="project-panel" id="panel-build">
+                <div class="pro-locked-wrapper is-locked">
+                    <div class="pro-locked-content">
+
+                        <!-- Progress bar -->
+                        <div class="build-progress"><div class="build-progress-fill" style="width:0%" id="buildProgress"></div></div>
+
+                        <!-- ===== STEP 1 ===== -->
+                        <div class="build-step" data-step="1">
+                            <div class="build-step-header">
+                                <div class="build-step-num">1</div>
+                                <div><h3>Set Up the Warehouse</h3><p>Install PostgreSQL and create schemas</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>A warehouse needs rooms. We create three "schemas" (think: rooms) inside one database: <strong>bronze</strong> (raw data dump), <strong>silver</strong> (cleaned data), and <strong>gold</strong> (business-ready tables). This separation keeps things organized so you always know what's raw and what's ready.</p>
+                            </div>
+
+                            <h4>1a. Install PostgreSQL</h4>
+                            <p>If you already have Postgres, skip ahead. Otherwise:</p>
+                            <ul>
+                                <li><strong>Mac:</strong> Open terminal and run <code>brew install postgresql@15</code> then <code>brew services start postgresql@15</code>.</li>
+                                <li><strong>Windows:</strong> Download the installer from <a href="https://www.postgresql.org/download/windows/" target="_blank" class="ext-link-card" style="display:inline;padding:2px 8px;border-radius:6px;"><i class="fas fa-external-link-alt"></i> <span>postgresql.org/download</span></a> and follow the wizard. Use default port 5432 and remember your password.</li>
+                                <li><strong>Linux:</strong> <code>sudo apt install postgresql postgresql-contrib</code>.</li>
+                            </ul>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip</h4>
+                                <p>Don't have admin access? Use a free cloud database like <a href="https://neon.tech" target="_blank">Neon</a> or <a href="https://supabase.com" target="_blank">Supabase</a> — both give you a Postgres database in seconds with zero install.</p>
+                            </div>
+
+                            <h4>1b. Create the database and schemas</h4>
+                            <p>Open a terminal (or pgAdmin, DBeaver, etc.) and connect to Postgres. Then run:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+-- Create a dedicated database for our project
+CREATE DATABASE shopeasy_warehouse;
+
+-- Connect to it (in psql: \c shopeasy_warehouse)
+
+-- Create three schemas: one per layer
+CREATE SCHEMA bronze;
+CREATE SCHEMA silver;
+CREATE SCHEMA gold;
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What just happened</h4>
+                                <p>We made a new database called <code>shopeasy_warehouse</code>. Inside it, we made three "folders" (schemas). <strong>bronze</strong> will hold raw CSVs. <strong>silver</strong> will hold cleaned versions. <strong>gold</strong> will hold the final aggregated tables that dashboards read from. This is the medallion pattern used at companies like Netflix and Airbnb.</p>
+                            </div>
+
+                            <h4>1c. Verify</h4>
+                            <p>Run this to see your schemas:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT schema_name
+FROM information_schema.schemata
+WHERE schema_name IN ('bronze', 'silver', 'gold');
+</pre>
+                            </div>
+                            <p>You should see three rows: bronze, silver, gold. If yes — step 1 is done!</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 1 complete!</h4>
+                                <ul>
+                                    <li>PostgreSQL installed and running</li>
+                                    <li>Database <code>shopeasy_warehouse</code> created</li>
+                                    <li>Three schemas: bronze, silver, gold</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 2 ===== -->
+                        <div class="build-step" data-step="2">
+                            <div class="build-step-header">
+                                <div class="build-step-num">2</div>
+                                <div><h3>Load Raw Data (Bronze Layer)</h3><p>Download sample CSVs and load into bronze tables</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>We need data to work with! In real life, data comes from apps, APIs, or file drops. For this project, we'll use three sample CSV files that mimic an e-commerce system: orders, customers, and products. We load them "as-is" into bronze — no cleaning yet. Bronze = raw groceries.</p>
+                            </div>
+
+                            <h4>2a. Download the sample CSVs</h4>
+                            <p>Create a folder on your computer (e.g. <code>~/shopeasy_data/</code>) and save these three files there. You can create them yourself or copy-paste the content below.</p>
+
+                            <p><strong>customers.csv</strong></p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">CSV</span></div>
+<pre>
+customer_id,name,email,region,created_at
+1,Alice Johnson,alice@email.com,North,2024-01-15
+2,Bob Smith,bob@email.com,South,2024-02-20
+3,Charlie Davis,charlie@email.com,East,2024-01-10
+4,Diana Lee,diana@email.com,West,2024-03-05
+5,Eve Martinez,eve@email.com,North,2024-04-12
+6,Frank Brown,frank@email.com,South,2024-05-01
+7,Grace Wilson,grace@email.com,East,2024-02-28
+8,Hank Taylor,hank@email.com,West,2024-06-15
+9,Ivy Chen,ivy@email.com,North,2024-07-20
+10,Jack White,jack@email.com,South,2024-08-01
+</pre>
+                            </div>
+
+                            <p><strong>products.csv</strong></p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">CSV</span></div>
+<pre>
+product_id,product_name,category,price
+101,Wireless Mouse,Electronics,29.99
+102,USB-C Hub,Electronics,49.99
+103,Cotton T-Shirt,Clothing,19.99
+104,Running Shoes,Clothing,89.99
+105,Desk Lamp,Home,34.99
+106,Coffee Maker,Home,79.99
+107,Bluetooth Speaker,Electronics,59.99
+108,Yoga Mat,Home,24.99
+</pre>
+                            </div>
+
+                            <p><strong>orders.csv</strong></p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">CSV</span></div>
+<pre>
+order_id,customer_id,product_id,quantity,amount,order_date,status
+1001,1,101,2,59.98,2024-06-01,completed
+1002,2,103,1,19.99,2024-06-02,completed
+1003,3,106,1,79.99,2024-06-03,completed
+1004,1,105,1,34.99,2024-06-05,completed
+1005,4,102,3,149.97,2024-06-07,pending
+1006,5,107,1,59.99,2024-06-10,completed
+1007,6,104,2,179.98,2024-06-12,completed
+1008,7,108,1,24.99,2024-06-15,returned
+1009,8,101,1,29.99,2024-06-18,completed
+1010,9,103,4,79.96,2024-06-20,completed
+1011,10,106,1,79.99,2024-06-22,completed
+1012,1,107,1,59.99,2024-06-25,completed
+1013,3,102,2,99.98,2024-06-28,pending
+1014,5,105,1,34.99,2024-07-01,completed
+1015,2,104,1,89.99,2024-07-03,completed
+</pre>
+                            </div>
+
+                            <h4>2b. Create bronze tables</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+-- Bronze tables: store raw data exactly as it comes
+CREATE TABLE bronze.customers (
+    customer_id   INTEGER,
+    name          TEXT,
+    email         TEXT,
+    region        TEXT,
+    created_at    TEXT   -- text on purpose: raw = no type assumptions
+);
+
+CREATE TABLE bronze.products (
+    product_id    INTEGER,
+    product_name  TEXT,
+    category      TEXT,
+    price         TEXT   -- raw price as text
+);
+
+CREATE TABLE bronze.orders (
+    order_id      INTEGER,
+    customer_id   INTEGER,
+    product_id    INTEGER,
+    quantity       INTEGER,
+    amount        TEXT,   -- raw amount as text
+    order_date    TEXT,   -- raw date as text
+    status        TEXT
+);
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Why TEXT for everything?</h4>
+                                <p>In the bronze layer we keep data as raw as possible — even numbers like price come in as text. Why? Because source systems can send weird stuff: "$29.99" with a dollar sign, "N/A" instead of a number, dates in different formats. By storing as TEXT first, nothing breaks on load. We fix types later in silver. This is a best practice used in production pipelines.</p>
+                            </div>
+
+                            <h4>2c. Load CSV files into bronze</h4>
+                            <p>Using psql (replace the path with where you saved your CSVs):</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (psql)</span></div>
+<pre>
+\COPY bronze.customers FROM '/path/to/customers.csv' WITH (FORMAT csv, HEADER true);
+\COPY bronze.products  FROM '/path/to/products.csv'  WITH (FORMAT csv, HEADER true);
+\COPY bronze.orders    FROM '/path/to/orders.csv'    WITH (FORMAT csv, HEADER true);
+</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip: Using DBeaver or pgAdmin?</h4>
+                                <p>Right-click the table → Import Data → pick your CSV. Make sure "Header" is checked. Same result, just with a GUI instead of commands.</p>
+                            </div>
+
+                            <h4>2d. Verify the load</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT 'customers' AS table_name, COUNT(*) AS rows FROM bronze.customers
+UNION ALL
+SELECT 'products',  COUNT(*) FROM bronze.products
+UNION ALL
+SELECT 'orders',    COUNT(*) FROM bronze.orders;
+</pre>
+                            </div>
+                            <p>Expected: customers = 10, products = 8, orders = 15. If your counts match — bronze layer is done!</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 2 complete!</h4>
+                                <ul>
+                                    <li>Three CSV files created / downloaded</li>
+                                    <li>Bronze tables created with TEXT columns</li>
+                                    <li>Data loaded and verified (10 + 8 + 15 rows)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 3 ===== -->
+                        <div class="build-step" data-step="3">
+                            <div class="build-step-header">
+                                <div class="build-step-num">3</div>
+                                <div><h3>Initialize DBT Project</h3><p>Set up DBT and connect it to your database</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What is DBT?</h4>
+                                <p>DBT (Data Build Tool) lets you write SQL files, and it runs them in the right order against your database. Think of it as a <strong>recipe book for your data</strong>: each SQL file is a recipe that says "take this table, transform it, and save the result as a new table." DBT also lets you add tests (e.g. "order_id must be unique") and documentation.</p>
+                            </div>
+
+                            <h4>3a. Install DBT</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+pip install dbt-postgres
+</pre>
+                            </div>
+                            <p>This installs DBT with the Postgres adapter. If using Redshift, run <code>pip install dbt-redshift</code> instead.</p>
+
+                            <h4>3b. Create a new DBT project</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+dbt init shopeasy_dbt
+cd shopeasy_dbt
+</pre>
+                            </div>
+                            <p>DBT will ask you which database you want to use — pick <strong>postgres</strong>. It creates a folder structure like this:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Folder structure</span></div>
+<pre>
+shopeasy_dbt/
+├── dbt_project.yml       &lt;-- project config
+├── models/               &lt;-- your SQL files go here
+│   └── example/
+├── tests/
+├── macros/
+└── profiles.yml          &lt;-- database connection (in ~/.dbt/)
+</pre>
+                            </div>
+
+                            <h4>3c. Configure the connection</h4>
+                            <p>Open <code>~/.dbt/profiles.yml</code> (DBT creates it during init) and make sure it looks like this:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">YAML (~/.dbt/profiles.yml)</span></div>
+<pre>
+shopeasy_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: your_username
+      password: your_password
+      dbname: shopeasy_warehouse
+      schema: silver        # DBT writes to silver by default
+      threads: 4
+</pre>
+                            </div>
+
+                            <div class="project-warning">
+                                <h4><i class="fas fa-exclamation-triangle"></i> Common mistake</h4>
+                                <p>If you get "connection refused", make sure PostgreSQL is running (<code>brew services list</code> on Mac, <code>sudo systemctl status postgresql</code> on Linux). Also double-check the username and password.</p>
+                            </div>
+
+                            <h4>3d. Verify the connection</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+dbt debug
+</pre>
+                            </div>
+                            <p>If everything is green (all checks passed), your DBT project is connected to the database!</p>
+
+                            <h4>3e. Set up the models folder</h4>
+                            <p>Delete the example folder and create our structure:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+rm -rf models/example
+mkdir -p models/silver
+mkdir -p models/gold
+</pre>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 3 complete!</h4>
+                                <ul>
+                                    <li>DBT installed (<code>dbt-postgres</code>)</li>
+                                    <li>Project initialized (<code>shopeasy_dbt</code>)</li>
+                                    <li>Connection verified with <code>dbt debug</code></li>
+                                    <li>Folder structure ready: models/silver, models/gold</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 4 ===== -->
+                        <div class="build-step" data-step="4">
+                            <div class="build-step-header">
+                                <div class="build-step-num">4</div>
+                                <div><h3>Build Silver Models (Clean Layer)</h3><p>Write DBT models to clean and type-cast bronze data</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What's a "model" in DBT?</h4>
+                                <p>A model is just a <code>.sql</code> file. When you run <code>dbt run</code>, DBT executes each file and saves the result as a table (or view) in your database. The file name becomes the table name. So <code>silver_customers.sql</code> creates a table called <code>silver_customers</code>.</p>
+                            </div>
+
+                            <h4>4a. silver_customers.sql</h4>
+                            <p>Create the file <code>models/silver/silver_customers.sql</code>:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/silver/silver_customers.sql)</span></div>
+<pre>
+{{ config(materialized='table', schema='silver') }}
+
+SELECT
+    customer_id,
+    TRIM(name)                    AS customer_name,
+    LOWER(TRIM(email))            AS email,
+    INITCAP(TRIM(region))         AS region,
+    CAST(created_at AS DATE)      AS created_at
+FROM {{ source('bronze', 'customers') }}
+WHERE customer_id IS NOT NULL
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>Line-by-line explanation</h4>
+                                <p><strong>config(materialized='table'):</strong> Tells DBT to save the result as a real table (not just a view). <strong>schema='silver':</strong> Save it in the silver schema.</p>
+                                <p><strong>TRIM(name):</strong> Removes spaces from the start and end (e.g. " Alice " → "Alice"). <strong>LOWER(email):</strong> Makes email lowercase (e.g. "Bob@Email.COM" → "bob@email.com"). <strong>INITCAP(region):</strong> Capitalizes first letter (e.g. "north" → "North"). <strong>CAST(… AS DATE):</strong> Converts the text date to a proper DATE type.</p>
+                                <p><strong>WHERE customer_id IS NOT NULL:</strong> Drops any rows where customer_id is missing — bad data shouldn't reach silver.</p>
+                            </div>
+
+                            <h4>4b. silver_products.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/silver/silver_products.sql)</span></div>
+<pre>
+{{ config(materialized='table', schema='silver') }}
+
+SELECT
+    product_id,
+    TRIM(product_name)                AS product_name,
+    INITCAP(TRIM(category))           AS category,
+    CAST(price AS DECIMAL(10,2))      AS price
+FROM {{ source('bronze', 'products') }}
+WHERE product_id IS NOT NULL
+  AND price IS NOT NULL
+</pre>
+                            </div>
+
+                            <h4>4c. silver_orders.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/silver/silver_orders.sql)</span></div>
+<pre>
+{{ config(materialized='table', schema='silver') }}
+
+SELECT
+    order_id,
+    customer_id,
+    product_id,
+    quantity,
+    CAST(amount AS DECIMAL(10,2))     AS amount,
+    CAST(order_date AS DATE)          AS order_date,
+    LOWER(TRIM(status))               AS status
+FROM {{ source('bronze', 'orders') }}
+WHERE order_id IS NOT NULL
+</pre>
+                            </div>
+
+                            <h4>4d. Define the bronze source</h4>
+                            <p>DBT needs to know where bronze tables live. Create <code>models/silver/sources.yml</code>:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">YAML (models/silver/sources.yml)</span></div>
+<pre>
+version: 2
+
+sources:
+  - name: bronze
+    schema: bronze
+    tables:
+      - name: customers
+      - name: products
+      - name: orders
+</pre>
+                            </div>
+
+                            <h4>4e. Run the Silver models</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+dbt run --select silver
+</pre>
+                            </div>
+                            <p>You should see three models pass. Check in psql:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT * FROM silver.silver_customers LIMIT 5;
+SELECT * FROM silver.silver_orders LIMIT 5;
+</pre>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 4 complete!</h4>
+                                <ul>
+                                    <li>Three silver models created and executed</li>
+                                    <li>Data types are now correct (DATE, DECIMAL)</li>
+                                    <li>Whitespace trimmed, emails lowercased, regions capitalized</li>
+                                    <li>Null key rows filtered out</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 5 ===== -->
+                        <div class="build-step" data-step="5">
+                            <div class="build-step-header">
+                                <div class="build-step-num">5</div>
+                                <div><h3>Build Gold Models (Business Layer)</h3><p>Create aggregated tables for dashboards and reports</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What are Gold models?</h4>
+                                <p>Gold tables answer business questions directly. Instead of "give me all orders and I'll figure it out", Gold gives you "here's total revenue by region, already calculated." Dashboards and analysts read from Gold — they never touch Bronze or Silver.</p>
+                            </div>
+
+                            <h4>5a. gold_sales_by_region.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/gold/gold_sales_by_region.sql)</span></div>
+<pre>
+{{ config(materialized='table', schema='gold') }}
+
+SELECT
+    c.region,
+    COUNT(DISTINCT o.order_id)        AS total_orders,
+    COUNT(DISTINCT o.customer_id)     AS unique_customers,
+    SUM(o.amount)                     AS total_revenue,
+    ROUND(AVG(o.amount), 2)           AS avg_order_value
+FROM {{ ref('silver_orders') }} o
+JOIN {{ ref('silver_customers') }} c
+    ON o.customer_id = c.customer_id
+WHERE o.status = 'completed'
+GROUP BY c.region
+ORDER BY total_revenue DESC
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What this gives you</h4>
+                                <p>One row per region (North, South, East, West) with: how many orders, how many unique customers, total revenue, and average order value. This is exactly what a "Sales by Region" dashboard card would read from.</p>
+                            </div>
+
+                            <h4>5b. gold_top_products.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/gold/gold_top_products.sql)</span></div>
+<pre>
+{{ config(materialized='table', schema='gold') }}
+
+SELECT
+    p.product_id,
+    p.product_name,
+    p.category,
+    COUNT(o.order_id)                  AS times_ordered,
+    SUM(o.quantity)                    AS total_units_sold,
+    SUM(o.amount)                      AS total_revenue
+FROM {{ ref('silver_orders') }} o
+JOIN {{ ref('silver_products') }} p
+    ON o.product_id = p.product_id
+WHERE o.status = 'completed'
+GROUP BY p.product_id, p.product_name, p.category
+ORDER BY total_revenue DESC
+</pre>
+                            </div>
+
+                            <h4>5c. gold_customer_lifetime_value.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/gold/gold_customer_lifetime_value.sql)</span></div>
+<pre>
+{{ config(materialized='table', schema='gold') }}
+
+SELECT
+    c.customer_id,
+    c.customer_name,
+    c.region,
+    COUNT(o.order_id)                   AS total_orders,
+    SUM(o.amount)                       AS lifetime_value,
+    MIN(o.order_date)                   AS first_order,
+    MAX(o.order_date)                   AS last_order
+FROM {{ ref('silver_customers') }} c
+LEFT JOIN {{ ref('silver_orders') }} o
+    ON c.customer_id = o.customer_id
+    AND o.status = 'completed'
+GROUP BY c.customer_id, c.customer_name, c.region
+ORDER BY lifetime_value DESC NULLS LAST
+</pre>
+                            </div>
+
+                            <h4>5d. Run Gold models</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+dbt run --select gold
+</pre>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 5 complete!</h4>
+                                <ul>
+                                    <li><code>gold.gold_sales_by_region</code> — revenue, orders, avg order value by region</li>
+                                    <li><code>gold.gold_top_products</code> — best-selling products by revenue</li>
+                                    <li><code>gold.gold_customer_lifetime_value</code> — each customer's total spend</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 6 ===== -->
+                        <div class="build-step" data-step="6">
+                            <div class="build-step-header">
+                                <div class="build-step-num">6</div>
+                                <div><h3>Add DBT Tests</h3><p>Make sure your data is correct with automated tests</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Why test data?</h4>
+                                <p>Imagine you shipped a dashboard and the CEO sees duplicate orders inflating revenue. Embarrassing! Tests catch that before it happens. DBT tests run SQL checks: "is order_id unique?", "is customer_id never null?", etc. If a test fails, the pipeline stops and alerts you.</p>
+                            </div>
+
+                            <h4>6a. Schema tests</h4>
+                            <p>Create <code>models/silver/schema.yml</code>:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">YAML (models/silver/schema.yml)</span></div>
+<pre>
+version: 2
+
+models:
+  - name: silver_customers
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: email
+        tests:
+          - unique
+          - not_null
+
+  - name: silver_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('silver_customers')
+              field: customer_id
+
+  - name: silver_products
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+</pre>
+                            </div>
+
+                            <h4>6b. Run the tests</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+dbt test
+</pre>
+                            </div>
+                            <p>All tests should pass. If one fails, DBT tells you exactly which test and which rows failed — fix the data or the model and re-run.</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 6 complete!</h4>
+                                <ul>
+                                    <li>Uniqueness tests on primary keys</li>
+                                    <li>Not-null tests on critical columns</li>
+                                    <li>Referential integrity test (orders → customers)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 7 ===== -->
+                        <div class="build-step" data-step="7">
+                            <div class="build-step-header">
+                                <div class="build-step-num">7</div>
+                                <div><h3>Orchestrate with Airflow</h3><p>Automate the pipeline to run daily</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Why Airflow?</h4>
+                                <p>Right now you run <code>dbt run</code> by hand. In production, the pipeline should run automatically every day at 6 AM (before anyone checks dashboards). Airflow is the tool that schedules and monitors these runs. If something fails, it retries and sends you an alert.</p>
+                            </div>
+
+                            <h4>7a. Create the DAG file</h4>
+                            <p>Save this as <code>dags/shopeasy_pipeline.py</code> in your Airflow home:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python (dags/shopeasy_pipeline.py)</span></div>
+<pre>
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import datetime
+
+with DAG(
+    dag_id='shopeasy_warehouse',
+    start_date=datetime(2024, 1, 1),
+    schedule_interval='@daily',
+    catchup=False,
+    tags=['dbt', 'warehouse'],
+) as dag:
+
+    dbt_run = BashOperator(
+        task_id='dbt_run',
+        bash_command='cd /path/to/shopeasy_dbt && dbt run',
+    )
+
+    dbt_test = BashOperator(
+        task_id='dbt_test',
+        bash_command='cd /path/to/shopeasy_dbt && dbt test',
+    )
+
+    dbt_run >> dbt_test
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What this DAG does</h4>
+                                <p><strong>schedule_interval='@daily':</strong> Runs once per day. <strong>dbt_run:</strong> Executes all your models (silver + gold). <strong>dbt_test:</strong> Runs all tests after the models finish. The <code>>></code> means "run dbt_test only after dbt_run succeeds." If dbt_run fails, dbt_test doesn't run.</p>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Don't have Airflow installed?</h4>
+                                <p>For learning purposes, you can skip this step and run <code>dbt run && dbt test</code> manually. When you're ready, check our <a href="../airflow_course/index.html">Airflow course</a> for full setup instructions.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 7 complete!</h4>
+                                <ul>
+                                    <li>Airflow DAG created with two tasks</li>
+                                    <li>dbt_run → dbt_test (sequential)</li>
+                                    <li>Runs daily automatically</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 8 ===== -->
+                        <div class="build-step" data-step="8">
+                            <div class="build-step-header">
+                                <div class="build-step-num">8</div>
+                                <div><h3>Verify & Celebrate!</h3><p>Query your Gold tables and see the finished product</p></div>
+                            </div>
+
+                            <p>Let's query the Gold tables and see what we built:</p>
+
+                            <h4>Sales by region</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT * FROM gold.gold_sales_by_region;
+</pre>
+                            </div>
+
+                            <h4>Top products</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT * FROM gold.gold_top_products;
+</pre>
+                            </div>
+
+                            <h4>Customer lifetime value</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT * FROM gold.gold_customer_lifetime_value;
+</pre>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-trophy"></i> Project complete!</h4>
+                                <p>You just built a full data warehouse with the medallion pattern! Here's what you can put on your resume:</p>
+                                <ul>
+                                    <li>Designed and implemented a 3-layer medallion data warehouse (Bronze/Silver/Gold)</li>
+                                    <li>Built DBT models with automated tests for data quality</li>
+                                    <li>Created an Airflow DAG for daily pipeline orchestration</li>
+                                    <li>Produced business-ready analytics tables (sales by region, CLV, top products)</li>
+                                </ul>
+                            </div>
+
+                            <div class="project-section" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; margin-top: 28px;">
+                                <h2 style="color: #065f46;"><i class="fas fa-rocket"></i> What's next?</h2>
+                                <ul style="color: #064e3b; line-height: 1.9; margin-left: 20px;">
+                                    <li>Connect <a href="../metabase_course/index.html" style="color:#059669;font-weight:700;">Metabase</a> to your Gold schema and build a dashboard</li>
+                                    <li>Add more source tables (e.g. website clicks, inventory)</li>
+                                    <li>Try the <a href="real-time-sales-dashboard.html" style="color:#059669;font-weight:700;">Real-Time Sales Dashboard</a> project next</li>
+                                    <li>Add incremental models in DBT (process only new rows each day)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div><!-- /.pro-locked-content -->
+
+                    <!-- Lock overlay (shown when locked) -->
+                    <div class="pro-lock-overlay">
+                        <div class="lock-icon-big"><i class="fas fa-lock"></i></div>
+                        <h3>Unlock the Full Build Guide</h3>
+                        <p>Get the complete step-by-step implementation: copy-paste code, line-by-line explanations, tips, warnings, and verification queries. Build this project from zero to production.</p>
+                        <a href="../pricing.html" class="unlock-btn"><i class="fas fa-crown"></i> Upgrade to Pro</a>
+                    </div>
+                </div><!-- /.pro-locked-wrapper -->
+            </div><!-- /panel-build -->
+
+            <a href="../projects.html" class="project-back"><i class="fas fa-arrow-left"></i> Back to all projects</a>
+        </main>
+    </div>
+
+    <footer class="footer" style="margin-top:48px;">
+        <div class="footer-bottom"><p>&copy; 2025 Data For Dummies. Learning notes for everyone.</p></div>
+    </footer>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:24px;">
+            <p><a href="mailto:fktiindia@gmail.com">fktiindia@gmail.com</a></p>
+            <p><a href="tel:+919833565272">+91 98335 65272</a></p>
+        </div>
+    </div>
+    <script>function showContact(){document.getElementById('contactModal').style.display='flex';} document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+    <script src="../js/hub-script.js"></script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/project-paywall.js"></script>
+    <script>
+    /* Tab switching */
+    document.querySelectorAll('.project-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.project-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.project-panel').forEach(function(p) { p.classList.remove('active'); });
+            tab.classList.add('active');
+            document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+    </script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

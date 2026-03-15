@@ -3,85 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Session 13: Data Visualization | 🐍 Python Mastery</title>
+  <title>Session 8: Object-Oriented Programming | 🐍 Python Mastery</title>
   <link rel="stylesheet" href="light-theme.css">
-  <style>
-    .viz-hero {
-      background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 50%, #f5d0fe 100%);
-      border-radius: 20px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      text-align: center;
-      border: 2px solid #e879f9;
-    }
-    .viz-hero h2 { color: #a21caf; margin-bottom: 0.5rem; }
-    .chart-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    .chart-item {
-      background: white;
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1rem;
-      text-align: center;
-      transition: all 0.2s;
-    }
-    .chart-item:hover {
-      border-color: var(--accent-purple);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
-    }
-    .chart-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    .chart-name { font-weight: 700; color: var(--text-primary); font-size: 0.9rem; }
-    .matplotlib-vs-seaborn {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin: 1.5rem 0;
-    }
-    .lib-card {
-      background: white;
-      border: 2px solid var(--border-color);
-      border-radius: 16px;
-      padding: 1.5rem;
-    }
-    .lib-card.matplotlib { border-color: #3b82f6; }
-    .lib-card.seaborn { border-color: #8b5cf6; }
-    .lib-card h4 { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-    .analogy-card {
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      border: 2px solid #fbbf24;
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-    }
-    .analogy-card h4 { color: #b45309; margin-bottom: 0.75rem; }
-    .visual-example {
-      background: #f8fafc;
-      border: 2px dashed var(--border-color);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-      text-align: center;
-    }
-    .visual-example img {
-      max-width: 100%;
-      border-radius: 8px;
-      margin: 1rem 0;
-    }
-    @media (max-width: 600px) {
-      .matplotlib-vs-seaborn { grid-template-columns: 1fr; }
-    }
-  </style>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
+<body data-access="pro">
   <nav class="main-nav">
     <div class="nav-content">
-      <a href="../index.html" class="nav-hub" title="Main website" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%); border: 1px solid #d1d5db; border-radius: 10px; color: #1d1d1f; font-size: 13px; font-weight: 600; text-decoration: none; box-shadow: 0 3px 0 #d1d5db, 0 4px 8px rgba(0,0,0,0.1); margin-right: 8px;">
+            <a href="../index.html" class="nav-hub" title="Main website" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%); border: 1px solid #d1d5db; border-radius: 10px; color: #1d1d1f; font-size: 13px; font-weight: 600; text-decoration: none; box-shadow: 0 3px 0 #d1d5db, 0 4px 8px rgba(0,0,0,0.1); margin-right: 8px;">
         <i class="fas fa-home"></i>
         <span>Home</span>
       </a>
@@ -90,866 +19,936 @@
       </a>
       <a href="complete-course.html" class="logo">🐍 Python Mastery</a>
       <div class="session-nav">
-        <a href="s11-pandas2.html" class="nav-link">S11</a>
-        <a href="s12-api-sql.html" class="nav-link">S12</a>
-        <a href="s13-dataviz.html" class="nav-link active">S13</a>
+        <a href="s1-intro.html" class="nav-link">1</a>
+        <a href="s2-datatypes.html" class="nav-link">2</a>
+        <a href="s3-loops.html" class="nav-link">3</a>
+        <a href="s4-lists.html" class="nav-link">4</a>
+        <a href="s5-datastructures.html" class="nav-link">5</a>
+        <a href="s6-functions1.html" class="nav-link">6</a>
+        <a href="s7-functions2.html" class="nav-link">7</a>
+        <a href="s8-oop.html" class="nav-link active">8</a>
+        <a href="s9-numpy.html" class="nav-link">9</a>
+        <a href="s10-pandas1.html" class="nav-link">10</a>
+        <a href="s11-pandas2.html" class="nav-link">11</a>
+        <a href="s12-api-sql.html" class="nav-link">12</a>
+        <a href="assignments.html" class="nav-link assignment">📝</a>
       </div>
     </div>
   </nav>
 
   <main>
     <header class="session-header">
-      <div class="session-badge">Session 13</div>
-      <h1>📊 Data Visualization Part I</h1>
-      <p class="session-subtitle">Transform numbers into beautiful, insightful charts!</p>
+      <div class="session-badge">Session 8</div>
+      <h1>🏗️ Object-Oriented Programming</h1>
+      <p class="session-subtitle">Building with classes and objects</p>
       <div class="progress-info">
-        <span>🎨 Matplotlib & Seaborn</span>
-        <span>📈 Charts & Plots</span>
-        <span>⏱️ 60 min</span>
+        <span>📚 8 Topics</span>
+        <span>⏱️ 55 min read</span>
+        <span>🎯 Intermediate Level</span>
       </div>
     </header>
 
-    <!-- Why Data Viz? -->
-    <div class="viz-hero">
-      <h2>🎯 Why Data Visualization?</h2>
-      <p style="color: #6b21a8; font-size: 1.1rem;">A picture is worth a thousand numbers!</p>
-      <p style="color: var(--text-secondary); margin-top: 0.5rem;">Data analysis with pandas takes time to understand. Data visualization takes <strong>seconds</strong> to grasp!</p>
-    </div>
-
-    <!-- Learning Objectives -->
-    <div class="objectives-card">
-      <h2>🎯 What You'll Learn</h2>
-      <div class="objectives-grid">
-        <div class="objective-item">
-          <div class="objective-icon">📈</div>
-          <h4>Line Charts</h4>
-          <p>Show trends over time</p>
+    <!-- OVERVIEW -->
+    <section class="overview-card">
+      <h2>🗺️ What You'll Learn</h2>
+      <div class="overview-grid">
+        <div class="overview-item">
+          <span class="overview-icon">🏗️</span>
+          <span>What is OOP?</span>
         </div>
-        <div class="objective-item">
-          <div class="objective-icon">📊</div>
-          <h4>Bar Charts</h4>
-          <p>Compare categories</p>
+        <div class="overview-item">
+          <span class="overview-icon">📦</span>
+          <span>Classes & Objects</span>
         </div>
-        <div class="objective-item">
-          <div class="objective-icon">🔥</div>
-          <h4>Heatmaps</h4>
-          <p>Visualize patterns</p>
+        <div class="overview-item">
+          <span class="overview-icon">🎭</span>
+          <span>The self Parameter</span>
         </div>
-        <div class="objective-item">
-          <div class="objective-icon">📉</div>
-          <h4>Histograms</h4>
-          <p>Show distributions</p>
+        <div class="overview-item">
+          <span class="overview-icon">🔧</span>
+          <span>__init__ Constructor</span>
+        </div>
+        <div class="overview-item">
+          <span class="overview-icon">📝</span>
+          <span>Instance Methods</span>
+        </div>
+        <div class="overview-item">
+          <span class="overview-icon">🎯</span>
+          <span>__repr__ Method</span>
         </div>
       </div>
-    </div>
+    </section>
 
     <div class="key-concept" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 12px; margin: 1.5rem 0;">
       <h4 style="color: #1e40af;">📘 Same topic in the course notebook</h4>
-      <p style="color: #1e3a8a; margin: 0;">Session_13 <strong>Data Viz Part I</strong> notebook has Matplotlib and basic charts—same ideas. Run the notebook to plot along.</p>
+      <p style="color: #1e3a8a; margin: 0;">Session_8 <strong>OOPs in Python</strong> covers classes, __init__, self, inheritance—same as this lesson. Use the OOPs notebook to code along.</p>
     </div>
 
-    <!-- Chart Types Gallery -->
-    <section class="content-section">
-      <h2>📊 Types of Charts We'll Cover</h2>
-      
-      <div class="chart-gallery">
-        <div class="chart-item">
-          <div class="chart-icon">📈</div>
-          <div class="chart-name">Line Chart</div>
-        </div>
-        <div class="chart-item">
-          <div class="chart-icon">📊</div>
-          <div class="chart-name">Bar Graph</div>
-        </div>
-        <div class="chart-item">
-          <div class="chart-icon">🥧</div>
-          <div class="chart-name">Pie Chart</div>
-        </div>
-        <div class="chart-item">
-          <div class="chart-icon">🔥</div>
-          <div class="chart-name">Heatmap</div>
-        </div>
-        <div class="chart-item">
-          <div class="chart-icon">📉</div>
-          <div class="chart-name">Histogram</div>
-        </div>
-        <div class="chart-item">
-          <div class="chart-icon">🎻</div>
-          <div class="chart-name">Violin Plot</div>
-        </div>
-        <div class="chart-item">
-          <div class="chart-icon">📦</div>
-          <div class="chart-name">Box Plot</div>
-        </div>
-        <div class="chart-item">
-          <div class="chart-icon">🔵</div>
-          <div class="chart-name">Scatter Plot</div>
-        </div>
+    <!-- ANALOGY -->
+    <section class="analogy-card">
+      <div class="analogy-header">
+        <span class="analogy-icon">🏠</span>
+        <h3>Classes are Like Blueprints!</h3>
       </div>
-
-      <div class="code-block"><pre><code># Types of charts we'll learn:
-# 1. Line graph, subplots, bar graph
-# 2. Pie chart, grouped chart, donut chart
-# 3. Box plot, histogram, violin plot
-# 4. KDE, scatter graph, pair plot
-# 5. Distribution plot, heatmap</code></pre></div>
-    </section>
-
-    <!-- Matplotlib vs Seaborn -->
-    <section class="content-section">
-      <h2>🎨 Two Visualization Libraries</h2>
-      
-      <div class="analogy-card">
-        <h4>🎬 Movie Analogy</h4>
-        <p>Think of <strong>Matplotlib</strong> as a professional camera where you control EVERY setting manually (exposure, focus, lighting). Think of <strong>Seaborn</strong> as a smartphone camera with "Auto" mode - it makes everything look great automatically!</p>
-      </div>
-
-      <div class="matplotlib-vs-seaborn">
-        <div class="lib-card matplotlib">
-          <h4>📐 Matplotlib</h4>
-          <ul style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary);">
-            <li>Low-level control</li>
-            <li>More customization</li>
-            <li>Manual styling</li>
-            <li>Foundation library</li>
-          </ul>
+      <div class="analogy-content">
+        <div class="visual-box">
+          <pre style="text-align: center; font-size: 1.1rem;">
+    📐 BLUEPRINT (Class)          🏠 HOUSES (Objects)
+    ─────────────────           ─────────────────────
+    
+    class House:                house1 = House("Blue")
+      color                     house2 = House("Red")
+      rooms                     house3 = House("Green")
+      door_count
+                               Each house is a UNIQUE OBJECT
+    Defines the structure       created from the SAME BLUEPRINT
+    
+    One blueprint → Many houses! 🏘️
+          </pre>
         </div>
-        <div class="lib-card seaborn">
-          <h4>✨ Seaborn</h4>
-          <ul style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary);">
-            <li>Built on Matplotlib</li>
-            <li>Beautiful defaults</li>
-            <li>Automatic styling</li>
-            <li>Statistical focus</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="code-block"><pre><code># Data Visualization Libraries
-# 1. Matplotlib - Mathematical plotting library
-#    - Manual control over every element
-#    - Need to guide each command
-#
-# 2. Seaborn - Built on top of Matplotlib
-#    - Automated, beautiful visualizations
-#    - Less code, more beauty!</code></pre></div>
-
-      <h3>📦 Installing & Importing</h3>
-      <div class="code-block"><pre><code># Install matplotlib (usually pre-installed)
-! pip install matplotlib
-
-# Import the libraries
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
-import pandas as pd</code></pre></div>
-    </section>
-
-    <!-- Heatmap Introduction -->
-    <section class="content-section">
-      <h2>🔥 Starting with a Bang: Heatmaps!</h2>
-      
-      <div class="story-box">
-        <div class="story-title">🌡️ Real-World Analogy: Weather Maps</div>
-        <p>You've seen weather maps on TV showing temperature - red for hot, blue for cold. That's a heatmap! It uses colors to represent values, making patterns instantly visible.</p>
-        <p class="story-moral">Heatmaps turn boring number grids into colorful insights!</p>
-      </div>
-
-      <h3>Creating Random Data for Heatmap</h3>
-      <div class="code-block"><pre><code>import numpy as np
-import matplotlib.pyplot as plt
-
-# Create a 12x12 grid of random numbers (like a spreadsheet)
-data = np.random.randint(15, 95, (12, 12))
-print("Shape:", data.shape)
-print(data)</code></pre></div>
-      <div class="output-block"><div class="output-header">Output</div><pre>Shape: (12, 12)
-[[52 78 34 ... 67 89 23]
- [45 91 56 ... 82 37 64]
- ...
- [73 28 95 ... 41 58 86]]</pre></div>
-
-      <div class="tip-box">
-        <strong>💡 What's happening?</strong> <code>np.random.randint(15, 95, (12, 12))</code> creates a 12×12 grid with random numbers between 15 and 95. Think of it as a spreadsheet with 144 cells!
-      </div>
-
-      <h3>Visualizing with Seaborn Heatmap</h3>
-      <div class="code-block"><pre><code>import seaborn as sns
-
-# Create the heatmap
-sns.heatmap(data, annot=True, cmap="viridis")
-plt.show()</code></pre></div>
-
-      <div class="visual-example">
-        <p>🎨 <strong>Output: A Beautiful Heatmap!</strong></p>
-        <p style="font-size: 3rem;">🟨🟩🟦🟪🟫</p>
-        <p style="color: var(--text-secondary);">Colors range from dark (low values) to bright (high values)</p>
-      </div>
-
-      <div class="key-concept">
-        <h4>🔑 Heatmap Parameters Explained</h4>
-        <ul style="margin: 0; padding-left: 1.5rem;">
-          <li><code>data</code> - The 2D array of numbers</li>
-          <li><code>annot=True</code> - Show numbers inside each cell</li>
-          <li><code>cmap="viridis"</code> - Color scheme (try "coolwarm", "Blues", "YlOrRd")</li>
-        </ul>
+        <p class="analogy-moral">A Class is a template, Objects are the actual things built from that template!</p>
       </div>
     </section>
 
-    <!-- Line Charts -->
+    <!-- WHAT IS OOP -->
     <section class="content-section">
-      <h2>📈 Line Charts: Showing Trends</h2>
+      <h2>❓ What is OOP?</h2>
 
-      <div class="story-box">
-        <div class="story-title">📱 Real-World Example: Stock Prices</div>
-        <p>Ever watched a stock price chart? That's a line chart! It shows how something changes over time - whether your investment is going up 📈 or down 📉</p>
-        <p class="story-moral">Line charts answer: "How does Y change as X increases?"</p>
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.1</span>
+          <h3>🎯 Why Object-Oriented Programming?</h3>
+        </div>
+
+        <div class="visual-box">
+          <h4>🔄 Programming Paradigms</h4>
+          <pre style="text-align: center; font-size: 1rem;">
+    PROCEDURAL                      OBJECT-ORIENTED
+    ────────────                    ────────────────
+    Step-by-step instructions       Objects with data + behavior
+    
+    Functions work on data          Data and functions bundled together
+    
+    # Procedural                    # OOP
+    name = "Alice"                  class Person:
+    age = 25                            def __init__(self, name, age):
+    def greet(name):                        self.name = name
+        print(f"Hi {name}")                 self.age = age
+                                        def greet(self):
+                                            print(f"Hi {self.name}")
+          </pre>
+        </div>
+
+        <div class="info-box tip">
+          <div class="info-header">
+            <span class="info-icon">💡</span>
+            <span>Benefits of OOP</span>
+          </div>
+          <div class="info-content">
+            <ul>
+              <li><strong>Organization:</strong> Group related data and functions together</li>
+              <li><strong>Reusability:</strong> Create objects from the same class</li>
+              <li><strong>Modularity:</strong> Changes in one class don't affect others</li>
+              <li><strong>Real-world modeling:</strong> Model real things as objects</li>
+            </ul>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <h3>Basic Line Chart</h3>
-      <div class="code-block"><pre><code>import numpy as np
-import matplotlib.pyplot as plt
+    <!-- CLASSES AND OBJECTS -->
+    <section class="content-section">
+      <h2>📦 Classes & Objects</h2>
 
-# Create data points
-x = np.arange(0, 10, 1)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-y = 2*x + 3              # Linear equation: y = 2x + 3
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.2</span>
+          <h3>🏗️ Creating Your First Class</h3>
+        </div>
 
-# Plot the line
-plt.plot(x, y)
-plt.show()</code></pre></div>
+        <div class="explanation">
+          <p>A <strong>class</strong> defines the structure. An <strong>object</strong> (instance) is created from that class.</p>
+        </div>
 
-      <div class="visual-example">
-        <p>📈 <strong>A Simple Rising Line!</strong></p>
-        <p style="font-size: 2rem;">↗️↗️↗️</p>
-        <p style="color: var(--text-secondary);">Points: (0,3), (1,5), (2,7)... going upward</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span>Python</span>
+            <span class="code-badge">From Source</span>
+          </div>
+          <pre><code><span class="comment"># Creating a simple class from Session 8</span>
+<span class="keyword">class</span> <span class="class-name">Dog</span>:
+    <span class="string">"""A simple Dog class"""</span>
+    <span class="keyword">pass</span>  <span class="comment"># Empty class for now</span>
+
+<span class="comment"># Create objects (instances) of the class</span>
+<span class="variable">dog1</span> = Dog()
+<span class="variable">dog2</span> = Dog()
+
+<span class="function">print</span>(<span class="string">"dog1:"</span>, dog1)
+<span class="function">print</span>(<span class="string">"dog2:"</span>, dog2)
+<span class="function">print</span>(<span class="string">"Same object?"</span>, dog1 == dog2)  <span class="comment"># False - different objects!</span>
+<span class="function">print</span>(<span class="string">"Type:"</span>, <span class="function">type</span>(dog1))</code></pre>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">Output</div>
+          <pre>dog1: &lt;__main__.Dog object at 0x...&gt;
+dog2: &lt;__main__.Dog object at 0x...&gt;
+Same object? False
+Type: &lt;class '__main__.Dog'&gt;</pre>
+        </div>
       </div>
+    </section>
 
-      <div class="tip-box">
-        <strong>🧮 Math Refresher:</strong> <code>y = 2x + 3</code> means "start at 3, then go up by 2 for each step". When x=0, y=3. When x=5, y=13.
+    <!-- __INIT__ METHOD -->
+    <section class="content-section">
+      <h2>🔧 The __init__ Constructor</h2>
+
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.3</span>
+          <h3>🎬 Initializing Objects</h3>
+        </div>
+
+        <div class="explanation">
+          <p><code>__init__</code> is a special method that runs automatically when you create a new object. It's called the <strong>constructor</strong>!</p>
+        </div>
+
+        <div class="visual-box">
+          <h4>🎬 __init__ = The Birth of an Object</h4>
+          <pre style="text-align: center; font-size: 1rem;">
+    dog1 = Dog("Buddy", 3)
+              │
+              ▼
+    ┌─────────────────────────────────┐
+    │  __init__(self, name, age)      │
+    │                                 │
+    │  1. Creates empty object (self) │
+    │  2. Sets self.name = "Buddy"    │
+    │  3. Sets self.age = 3           │
+    │  4. Returns the object          │
+    └─────────────────────────────────┘
+              │
+              ▼
+    dog1 is now ready to use! 🐕
+          </pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Python</span>
+            <span class="code-badge">From Source</span>
+          </div>
+          <pre><code><span class="comment"># __init__ method from Session 8</span>
+<span class="keyword">class</span> <span class="class-name">Dog</span>:
+    <span class="string">"""A Dog class with attributes"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age, breed):
+        <span class="string">"""Initialize a new Dog object"""</span>
+        self.name = name      <span class="comment"># Instance attribute</span>
+        self.age = age        <span class="comment"># Instance attribute</span>
+        self.breed = breed    <span class="comment"># Instance attribute</span>
+        <span class="function">print</span>(<span class="string">f"A new dog '{name}' has been created! 🐕"</span>)
+
+<span class="comment"># Create dog objects</span>
+<span class="variable">buddy</span> = Dog(<span class="string">"Buddy"</span>, <span class="number">3</span>, <span class="string">"Golden Retriever"</span>)
+<span class="variable">max</span> = Dog(<span class="string">"Max"</span>, <span class="number">5</span>, <span class="string">"German Shepherd"</span>)
+
+<span class="comment"># Access attributes</span>
+<span class="function">print</span>(<span class="string">f"\\n{buddy.name} is a {buddy.age}-year-old {buddy.breed}"</span>)
+<span class="function">print</span>(<span class="string">f"{max.name} is a {max.age}-year-old {max.breed}"</span>)</code></pre>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">Output</div>
+          <pre>A new dog 'Buddy' has been created! 🐕
+A new dog 'Max' has been created! 🐕
+
+Buddy is a 3-year-old Golden Retriever
+Max is a 5-year-old German Shepherd</pre>
+        </div>
       </div>
+    </section>
 
-      <h3>✨ Customized Line Chart (The Pro Way!)</h3>
-      <div class="code-block"><pre><code>import numpy as np
-import matplotlib.pyplot as plt
+    <!-- THE SELF PARAMETER -->
+    <section class="content-section">
+      <h2>🎭 The self Parameter</h2>
 
-# Create two datasets
-x = np.arange(0, 10, 1)
-y = 2*x + 3
-z = 3*x + 2
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.4</span>
+          <h3>🪞 What is self?</h3>
+        </div>
 
-# Create a larger figure
-fig = plt.figure(figsize=(9, 8))
+        <div class="explanation">
+          <p><code>self</code> refers to the current object instance. It's how the object refers to itself!</p>
+        </div>
 
-# Plot first line with customizations
-plt.plot(x, y, 
-         linestyle='-.', 
-         marker="^",      # Triangle markers
-         markersize=14,   # Big markers
-         color="m",       # Magenta color
-         alpha=0.9)       # Slight transparency
+        <div class="visual-box">
+          <h4>🪞 self = "Me, Myself"</h4>
+          <pre style="text-align: center; font-size: 1rem;">
+    When you call: buddy.bark()
+    
+    Python secretly does: Dog.bark(buddy)
+                                    │
+                                    └── This becomes 'self'
+    
+    Inside the method:
+        self.name = buddy's name
+        self.age = buddy's age
+    
+    'self' is a reference to the object calling the method!
+          </pre>
+        </div>
 
-# Plot second line
-plt.plot(x, z, 
-         linestyle='-', 
-         marker="8",      # Octagon markers
-         markersize=10, 
-         color="r",       # Red color
-         alpha=0.3)       # More transparent
+        <div class="code-block">
+          <div class="code-header">
+            <span>Python</span>
+            <span class="code-badge">From Source</span>
+          </div>
+          <pre><code><span class="comment"># Understanding self from Session 8</span>
+<span class="keyword">class</span> <span class="class-name">Person</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name):
+        <span class="function">print</span>(<span class="string">f"self is: {self}"</span>)
+        self.name = name
+    
+    <span class="keyword">def</span> <span class="function">introduce</span>(self):
+        <span class="function">print</span>(<span class="string">f"Hi, I'm {self.name}!"</span>)
+        <span class="function">print</span>(<span class="string">f"self inside method: {self}"</span>)
 
-# Add labels to each point
-for i in range(len(x)):
-    plt.annotate(f"({x[i]},{y[i]})",  # Text to display
-                 (x[i], y[i]),         # Point to annotate
-                 textcoords="offset points",
-                 xytext=(0, 10),       # Offset above marker
-                 ha="center")
+<span class="comment"># Create objects</span>
+<span class="variable">alice</span> = Person(<span class="string">"Alice"</span>)
+<span class="function">print</span>(<span class="string">f"alice variable: {alice}"</span>)
+<span class="function">print</span>()
+alice.introduce()
 
-# Add labels and title
-plt.xlabel("price")
-plt.ylabel("area")
-plt.title("Line Chart")
-plt.grid(True)
-plt.legend(["xy", "xz"], loc="best")
+<span class="function">print</span>(<span class="string">"\\n--- Another person ---"</span>)
+<span class="variable">bob</span> = Person(<span class="string">"Bob"</span>)
+bob.introduce()</code></pre>
+        </div>
 
-# Save the figure
-plt.savefig("line_chart.jpg")
-plt.show()</code></pre></div>
+        <div class="output-block">
+          <div class="output-header">Output</div>
+          <pre>self is: &lt;__main__.Person object at 0x...&gt;
+alice variable: &lt;__main__.Person object at 0x...&gt;
 
-      <div class="key-concept">
-        <h4>🎨 Line Chart Customization Options</h4>
-        <table class="data-table">
-          <tr><th>Parameter</th><th>Options</th><th>Example</th></tr>
-          <tr><td><code>linestyle</code></td><td>'-', '--', '-.', ':'</td><td>Solid, dashed, dash-dot, dotted</td></tr>
-          <tr><td><code>marker</code></td><td>'o', '^', 's', '*', '8'</td><td>Circle, triangle, square, star, octagon</td></tr>
-          <tr><td><code>color</code></td><td>'r', 'g', 'b', 'm', 'c'</td><td>Red, green, blue, magenta, cyan</td></tr>
-          <tr><td><code>alpha</code></td><td>0.0 to 1.0</td><td>0=invisible, 1=solid</td></tr>
+Hi, I'm Alice!
+self inside method: &lt;__main__.Person object at 0x...&gt;
+
+--- Another person ---
+self is: &lt;__main__.Person object at 0x...&gt;
+Hi, I'm Bob!</pre>
+        </div>
+
+        <div class="info-box tip">
+          <div class="info-header">
+            <span class="info-icon">💡</span>
+            <span>Key Point</span>
+          </div>
+          <div class="info-content">
+            <p><code>self</code> is just a convention - you could use any name, but <strong>always use self</strong> for readability!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTANCE METHODS -->
+    <section class="content-section">
+      <h2>📝 Instance Methods</h2>
+
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.5</span>
+          <h3>🎬 Methods = Object Actions</h3>
+        </div>
+
+        <div class="explanation">
+          <p>Methods are functions that belong to a class. They define what objects can <strong>do</strong>!</p>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Python</span>
+            <span class="code-badge">From Source</span>
+          </div>
+          <pre><code><span class="comment"># Instance methods from Session 8</span>
+<span class="keyword">class</span> <span class="class-name">Dog</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age):
+        self.name = name
+        self.age = age
+        self.energy = <span class="number">100</span>
+    
+    <span class="keyword">def</span> <span class="function">bark</span>(self):
+        <span class="string">"""Make the dog bark"""</span>
+        <span class="function">print</span>(<span class="string">f"{self.name} says: Woof! Woof! 🐕"</span>)
+    
+    <span class="keyword">def</span> <span class="function">sleep</span>(self):
+        <span class="string">"""Make the dog sleep"""</span>
+        self.energy = <span class="number">100</span>
+        <span class="function">print</span>(<span class="string">f"{self.name} is sleeping... 💤"</span>)
+        <span class="function">print</span>(<span class="string">f"Energy restored to {self.energy}!"</span>)
+    
+    <span class="keyword">def</span> <span class="function">play</span>(self, minutes):
+        <span class="string">"""Play and use energy"""</span>
+        <span class="variable">energy_used</span> = minutes * <span class="number">2</span>
+        <span class="keyword">if</span> energy_used <= self.energy:
+            self.energy -= energy_used
+            <span class="function">print</span>(<span class="string">f"{self.name} played for {minutes} minutes! 🎾"</span>)
+            <span class="function">print</span>(<span class="string">f"Energy left: {self.energy}"</span>)
+        <span class="keyword">else</span>:
+            <span class="function">print</span>(<span class="string">f"{self.name} is too tired to play! 😴"</span>)
+    
+    <span class="keyword">def</span> <span class="function">birthday</span>(self):
+        <span class="string">"""Increase dog's age by 1"""</span>
+        self.age += <span class="number">1</span>
+        <span class="function">print</span>(<span class="string">f"🎂 Happy Birthday {self.name}! Now {self.age} years old!"</span>)
+
+<span class="comment"># Create a dog and use methods</span>
+<span class="variable">buddy</span> = Dog(<span class="string">"Buddy"</span>, <span class="number">3</span>)
+buddy.bark()
+buddy.play(<span class="number">30</span>)
+buddy.play(<span class="number">20</span>)
+buddy.sleep()
+buddy.birthday()</code></pre>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">Output</div>
+          <pre>Buddy says: Woof! Woof! 🐕
+Buddy played for 30 minutes! 🎾
+Energy left: 40
+Buddy played for 20 minutes! 🎾
+Energy left: 0
+Buddy is sleeping... 💤
+Energy restored to 100!
+🎂 Happy Birthday Buddy! Now 4 years old!</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- __REPR__ METHOD -->
+    <section class="content-section">
+      <h2>🎯 The __repr__ Method</h2>
+
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.6</span>
+          <h3>📋 String Representation</h3>
+        </div>
+
+        <div class="explanation">
+          <p><code>__repr__</code> defines how an object is displayed when printed. Without it, you get something like <code>&lt;Dog object at 0x...&gt;</code>!</p>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Python</span>
+            <span class="code-badge">From Source</span>
+          </div>
+          <pre><code><span class="comment"># __repr__ method from Session 8</span>
+<span class="keyword">class</span> <span class="class-name">Dog</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, name, age, breed):
+        self.name = name
+        self.age = age
+        self.breed = breed
+    
+    <span class="keyword">def</span> <span class="function">__repr__</span>(self):
+        <span class="string">"""Return a nice string representation"""</span>
+        <span class="keyword">return</span> <span class="string">f"Dog(name='{self.name}', age={self.age}, breed='{self.breed}')"</span>
+
+<span class="comment"># Without __repr__: &lt;Dog object at 0x...&gt;</span>
+<span class="comment"># With __repr__: Dog(name='Buddy', age=3, breed='Golden Retriever')</span>
+
+<span class="variable">buddy</span> = Dog(<span class="string">"Buddy"</span>, <span class="number">3</span>, <span class="string">"Golden Retriever"</span>)
+<span class="function">print</span>(buddy)
+
+<span class="comment"># Also works in lists!</span>
+<span class="variable">dogs</span> = [
+    Dog(<span class="string">"Max"</span>, <span class="number">5</span>, <span class="string">"German Shepherd"</span>),
+    Dog(<span class="string">"Luna"</span>, <span class="number">2</span>, <span class="string">"Labrador"</span>)
+]
+<span class="function">print</span>(<span class="string">"\\nList of dogs:"</span>, dogs)</code></pre>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">Output</div>
+          <pre>Dog(name='Buddy', age=3, breed='Golden Retriever')
+
+List of dogs: [Dog(name='Max', age=5, breed='German Shepherd'), Dog(name='Luna', age=2, breed='Labrador')]</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRACTICAL EXAMPLE -->
+    <section class="content-section">
+      <h2>🎯 Practical Example: Bank Account</h2>
+
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.7</span>
+          <h3>🏦 Building a Bank Account Class</h3>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Python</span>
+            <span class="code-badge">From Source</span>
+          </div>
+          <pre><code><span class="comment"># Bank Account class from Session 8</span>
+<span class="keyword">class</span> <span class="class-name">BankAccount</span>:
+    <span class="string">"""A simple bank account"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, owner, balance=<span class="number">0</span>):
+        self.owner = owner
+        self.balance = balance
+        <span class="function">print</span>(<span class="string">f"Account created for {owner} with ${balance:.2f}"</span>)
+    
+    <span class="keyword">def</span> <span class="function">deposit</span>(self, amount):
+        <span class="string">"""Add money to account"""</span>
+        <span class="keyword">if</span> amount > <span class="number">0</span>:
+            self.balance += amount
+            <span class="function">print</span>(<span class="string">f"✅ Deposited ${amount:.2f}. New balance: ${self.balance:.2f}"</span>)
+        <span class="keyword">else</span>:
+            <span class="function">print</span>(<span class="string">"❌ Deposit amount must be positive!"</span>)
+    
+    <span class="keyword">def</span> <span class="function">withdraw</span>(self, amount):
+        <span class="string">"""Remove money from account"""</span>
+        <span class="keyword">if</span> amount > self.balance:
+            <span class="function">print</span>(<span class="string">f"❌ Insufficient funds! Balance: ${self.balance:.2f}"</span>)
+        <span class="keyword">elif</span> amount <= <span class="number">0</span>:
+            <span class="function">print</span>(<span class="string">"❌ Withdrawal amount must be positive!"</span>)
+        <span class="keyword">else</span>:
+            self.balance -= amount
+            <span class="function">print</span>(<span class="string">f"✅ Withdrew ${amount:.2f}. New balance: ${self.balance:.2f}"</span>)
+    
+    <span class="keyword">def</span> <span class="function">get_balance</span>(self):
+        <span class="string">"""Return current balance"""</span>
+        <span class="keyword">return</span> self.balance
+    
+    <span class="keyword">def</span> <span class="function">__repr__</span>(self):
+        <span class="keyword">return</span> <span class="string">f"BankAccount(owner='{self.owner}', balance=${self.balance:.2f})"</span>
+
+<span class="comment"># Test the bank account</span>
+<span class="variable">account</span> = BankAccount(<span class="string">"Alice"</span>, <span class="number">1000</span>)
+<span class="function">print</span>()
+account.deposit(<span class="number">500</span>)
+account.withdraw(<span class="number">200</span>)
+account.withdraw(<span class="number">2000</span>)  <span class="comment"># Insufficient funds</span>
+<span class="function">print</span>(<span class="string">f"\\nCurrent balance: ${account.get_balance():.2f}"</span>)
+<span class="function">print</span>(account)</code></pre>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">Output</div>
+          <pre>Account created for Alice with $1000.00
+
+✅ Deposited $500.00. New balance: $1500.00
+✅ Withdrew $200.00. New balance: $1300.00
+❌ Insufficient funds! Balance: $1300.00
+
+Current balance: $1300.00
+BankAccount(owner='Alice', balance=$1300.00)</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CIRCLE CLASS -->
+    <section class="content-section">
+      <h2>⭕ Another Example: Circle Class</h2>
+
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-number">8.8</span>
+          <h3>📐 Geometric Calculations</h3>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Python</span>
+            <span class="code-badge">From Source</span>
+          </div>
+          <pre><code><span class="comment"># Circle class from Session 8</span>
+<span class="keyword">import</span> math
+
+<span class="keyword">class</span> <span class="class-name">Circle</span>:
+    <span class="string">"""A class to represent a circle"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, radius):
+        self.radius = radius
+    
+    <span class="keyword">def</span> <span class="function">area</span>(self):
+        <span class="string">"""Calculate the area of the circle"""</span>
+        <span class="keyword">return</span> math.pi * self.radius ** <span class="number">2</span>
+    
+    <span class="keyword">def</span> <span class="function">circumference</span>(self):
+        <span class="string">"""Calculate the circumference"""</span>
+        <span class="keyword">return</span> <span class="number">2</span> * math.pi * self.radius
+    
+    <span class="keyword">def</span> <span class="function">diameter</span>(self):
+        <span class="string">"""Return the diameter"""</span>
+        <span class="keyword">return</span> self.radius * <span class="number">2</span>
+    
+    <span class="keyword">def</span> <span class="function">__repr__</span>(self):
+        <span class="keyword">return</span> <span class="string">f"Circle(radius={self.radius})"</span>
+
+<span class="comment"># Create circles and calculate</span>
+<span class="variable">circle1</span> = Circle(<span class="number">5</span>)
+<span class="variable">circle2</span> = Circle(<span class="number">10</span>)
+
+<span class="function">print</span>(<span class="string">f"Circle 1: {circle1}"</span>)
+<span class="function">print</span>(<span class="string">f"  Area: {circle1.area():.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"  Circumference: {circle1.circumference():.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"  Diameter: {circle1.diameter()}"</span>)
+
+<span class="function">print</span>(<span class="string">f"\\nCircle 2: {circle2}"</span>)
+<span class="function">print</span>(<span class="string">f"  Area: {circle2.area():.2f}"</span>)</code></pre>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">Output</div>
+          <pre>Circle 1: Circle(radius=5)
+  Area: 78.54
+  Circumference: 31.42
+  Diameter: 10
+
+Circle 2: Circle(radius=10)
+  Area: 314.16</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUICK REFERENCE -->
+    <section class="content-section">
+      <h2>📋 Quick Reference</h2>
+      
+      <div class="reference-card">
+        <table class="reference-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>Syntax</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Define Class</td>
+              <td><code>class MyClass:</code></td>
+              <td>Create a new class (blueprint)</td>
+            </tr>
+            <tr>
+              <td>Create Object</td>
+              <td><code>obj = MyClass()</code></td>
+              <td>Instantiate an object</td>
+            </tr>
+            <tr>
+              <td>Constructor</td>
+              <td><code>def __init__(self):</code></td>
+              <td>Initialize new objects</td>
+            </tr>
+            <tr>
+              <td>self</td>
+              <td><code>self.attribute</code></td>
+              <td>Reference to current object</td>
+            </tr>
+            <tr>
+              <td>Method</td>
+              <td><code>def method(self):</code></td>
+              <td>Function inside a class</td>
+            </tr>
+            <tr>
+              <td>String Rep</td>
+              <td><code>def __repr__(self):</code></td>
+              <td>How object displays</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </section>
 
-    <!-- Working with Real Data -->
-    <section class="content-section">
-      <h2>📂 Working with Real Data</h2>
-
-      <div class="analogy-card">
-        <h4>🎯 Real Dataset: Loan Approval</h4>
-        <p>We'll use a loan approval dataset - imagine you're a bank analyst deciding who gets loans! The data includes income, CIBIL score (credit score in India), loan amount, and whether the loan was approved.</p>
-        <p style="margin-top: 12px;"><strong>📥 Download the dataset:</strong> <a href="datasets/loan_approval_dataset.csv" download="loan_approval_dataset.csv">loan_approval_dataset.csv</a> — save it in the same folder as your notebook so <code>pd.read_csv("loan_approval_dataset.csv")</code> works.</p>
-      </div>
-
-      <h3>Loading the Data</h3>
-      <div class="code-block"><pre><code>import pandas as pd
-
-# Read the loan dataset
-df = pd.read_csv("loan_approval_dataset.csv")
-
-# View first few rows
-df.head()</code></pre></div>
-      <div class="tip-box" style="margin-top: 1rem;">
-        <strong>📖 Line-by-line (layman):</strong><br>
-        • <code>import pandas as pd</code> — Load the "pandas" toolbox and call it "pd" so we can read tables (like Excel) in Python.<br>
-        • <code>df = pd.read_csv("loan_approval_dataset.csv")</code> — Read the CSV file from disk into a table variable named <code>df</code> (short for DataFrame).<br>
-        • <code>df.head()</code> — Show the first 5 rows of the table so we can peek at the data.
-      </div>
-
-      <div class="code-block"><pre><code># Check the columns
-df.columns</code></pre></div>
-      <div class="output-block"><div class="output-header">Output</div><pre>Index(['loan_id', 'no_of_dependents', 'education', 'self_employed',
-       'income_annum', 'loan_amount', 'loan_term', 'cibil_score',
-       'residential_assets_value', 'commercial_assets_value',
-       'luxury_assets_value', 'bank_asset_value', 'loan_status'], dtype='object')</pre></div>
-
-      <h3>Multiple Line Plots in One Figure</h3>
-      <div class="code-block"><pre><code>import matplotlib.pyplot as plt
-import seaborn as sns
-
-plt.figure(figsize=(8, 4))
-
-# Line plot 1 - Income over applicants
-sns.lineplot(x=df.index, y=df['income_annum'], label="Income")
-
-# Line plot 2 - Loan Amount
-sns.lineplot(x=df.index, y=df['loan_amount'], label="Loan Amount")
-
-# Line plot 3 - CIBIL Score
-sns.lineplot(x=df.index, y=df['cibil_score'], label="CIBIL Score")
-
-plt.title("Line Plots in One Figure")
-plt.legend()
-plt.tight_layout()
-plt.show()</code></pre></div>
-      <div class="tip-box" style="margin-top: 1rem;">
-        <strong>📖 Line-by-line (layman):</strong><br>
-        • <code>plt.figure(figsize=(8, 4))</code> — Create a blank canvas 8 units wide and 4 tall.<br>
-        • <code>sns.lineplot(x=..., y=..., label=...)</code> — Draw a line: x = row index, y = values from that column; <code>label</code> is the name in the legend.<br>
-        • <code>plt.title(...)</code> — Put a title on the chart. <code>plt.legend()</code> — Show which line is which. <code>plt.tight_layout()</code> — Avoid overlapping labels. <code>plt.show()</code> — Display the chart.
-      </div>
-
-      <div class="tip-box">
-        <strong>💡 Pro Tip:</strong> <code>plt.tight_layout()</code> automatically adjusts spacing so labels don't overlap. Always use it!
-      </div>
-    </section>
-
-    <!-- Bar Charts -->
-    <section class="content-section">
-      <h2>📊 Bar Charts: Comparing Categories</h2>
-
-      <div class="story-box">
-        <div class="story-title">🏆 Real-World Example: Election Results</div>
-        <p>Bar charts are like podiums at the Olympics! Each bar represents a category (candidate, product, team), and the height shows the value (votes, sales, score). Taller bar = better performance!</p>
-        <p class="story-moral">Bar charts answer: "Which category is bigger/smaller?"</p>
-      </div>
-
-      <div class="key-concept">
-        <h4>📐 Bar Chart Anatomy</h4>
-        <ul style="margin: 0; padding-left: 1.5rem;">
-          <li><strong>X-axis:</strong> Categories (education, loan status, etc.)</li>
-          <li><strong>Y-axis:</strong> Values (counts, amounts, percentages)</li>
-          <li><strong>Bars:</strong> Height represents magnitude</li>
-          <li><strong>Colors:</strong> Can show sub-categories</li>
-        </ul>
-      </div>
-
-      <h3>Simple Bar Chart - Loan Status Count</h3>
-      <div class="code-block"><pre><code># Count how many approved vs rejected
-counts = df["loan_status"].value_counts()
-print(counts)</code></pre></div>
-      <div class="tip-box" style="margin-top: 0.75rem;">
-        <strong>📖 Line-by-line:</strong> <code>df["loan_status"]</code> — the column of approved/rejected. <code>.value_counts()</code> — count how many of each (e.g. 2656 Approved, 1610 Rejected). <code>counts</code> is a small table we use for the bar heights.
-      </div>
-      <div class="output-block"><div class="output-header">Output</div><pre>Approved    2656
-Rejected    1610
-Name: loan_status, dtype: int64</pre></div>
-
-      <div class="code-block"><pre><code># Method 1: Using matplotlib directly
-plt.bar(counts.index, counts.values)
-plt.title("Loan Status Count")
-plt.show()</code></pre></div>
-      <div class="tip-box" style="margin-top: 0.75rem;">
-        <strong>📖 Line-by-line:</strong> <code>plt.bar(counts.index, counts.values)</code> — x = category names (Approved, Rejected), y = heights (2656, 1610). <code>plt.title(...)</code> — chart title. <code>plt.show()</code> — display the chart.
-      </div>
-
-      <div class="code-block"><pre><code># Method 2: Using pandas plot (even easier!)
-df["loan_status"].value_counts().plot(kind="bar")
-plt.show()</code></pre></div>
-
-      <h3>Grouped Bar Chart - Self-Employed vs Loan Status</h3>
-      <div class="code-block"><pre><code># Create a cross-tabulation (like a pivot table)
-group_data = pd.crosstab(df['self_employed'], df['loan_status'])
-print(group_data)</code></pre></div>
-      <div class="output-block"><div class="output-header">Output</div><pre>loan_status   Approved   Rejected
-self_employed                     
-No               1950       1180
-Yes               706        430</pre></div>
-
-      <div class="code-block"><pre><code># Create grouped bar chart
-ax = group_data.plot(kind="bar", figsize=(12, 8))
-
-plt.xlabel("Self Employed")
-plt.ylabel("No of Applicants")
-plt.title("Loan Status by Self Employed")
-
-# Add data labels on each bar
-for container in ax.containers:
-    ax.bar_label(container, label_type='edge', 
-                 fontsize=10, color='black', padding=7)
-
-plt.show()</code></pre></div>
-      <div class="tip-box" style="margin-top: 0.75rem;">
-        <strong>📖 Line-by-line:</strong> <code>group_data.plot(kind="bar", ...)</code> — turn the crosstab into grouped bars (No/Yes on x, Approved/Rejected as bar groups). <code>ax</code> is the chart object. <code>plt.xlabel/ylabel/title</code> — label axes and title. <code>for container in ax.containers</code> — each set of bars (e.g. Approved); <code>ax.bar_label(container, ...)</code> — put the number on top of each bar.
-      </div>
-
-      <div class="visual-example">
-        <p>📊 <strong>Grouped Bar Chart Result</strong></p>
-        <p style="color: var(--text-secondary);">Shows Approved (green) vs Rejected (red) for both "No" and "Yes" self-employed groups</p>
-        <p style="font-size: 1.5rem;">🟩🟩🟥 | 🟩🟥</p>
-        <p style="font-size: 0.9rem; color: var(--text-muted);">Not Self-Employed | Self-Employed</p>
-      </div>
-
-      <div class="tip-box">
-        <strong>💡 Key Insight:</strong> <code>pd.crosstab()</code> creates a frequency table showing how two categorical variables relate. It's like asking: "For each employment type, how many got approved vs rejected?"
-      </div>
-    </section>
-
-    <!-- Subplots -->
-    <section class="content-section">
-      <h2>📱 Subplots: Multiple Charts in One Figure</h2>
-
-      <div class="analogy-card">
-        <h4>📺 TV Analogy: Split Screen</h4>
-        <p>Subplots are like a split-screen on your TV! Instead of switching between channels, you see multiple shows at once. Data scientists use this to compare different aspects of data side-by-side.</p>
-      </div>
-
-      <div class="key-concept">
-        <h4>🔢 Understanding subplot(rows, cols, position)</h4>
-        <ul style="margin: 0; padding-left: 1.5rem;">
-          <li><code>subplot(2, 2, 1)</code> = 2 rows, 2 cols, position 1 (top-left)</li>
-          <li><code>subplot(2, 2, 2)</code> = 2 rows, 2 cols, position 2 (top-right)</li>
-          <li><code>subplot(2, 2, 3)</code> = 2 rows, 2 cols, position 3 (bottom-left)</li>
-          <li><code>subplot(2, 2, 4)</code> = 2 rows, 2 cols, position 4 (bottom-right)</li>
-        </ul>
-      </div>
-
-      <div class="visual-example">
-        <p><strong>Subplot Layout (2×2 Grid)</strong></p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 300px; margin: 1rem auto;">
-          <div style="background: #dbeafe; padding: 1rem; border-radius: 8px; text-align: center;">1️⃣</div>
-          <div style="background: #dcfce7; padding: 1rem; border-radius: 8px; text-align: center;">2️⃣</div>
-          <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; text-align: center;">3️⃣</div>
-          <div style="background: #fce7f3; padding: 1rem; border-radius: 8px; text-align: center;">4️⃣</div>
-        </div>
-      </div>
-
-      <h3>Creating 4 Distribution Plots</h3>
-      <div class="code-block"><pre><code>import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set a nice style
-sns.set(style="whitegrid")
-
-# Create figure with specific size
-plt.figure(figsize=(10, 8))
-
-# Subplot 1: Income Distribution (top-left)
-plt.subplot(2, 2, 1)
-sns.histplot(df['income_annum'], kde=True)
-plt.title("Income Distribution")
-
-# Subplot 2: CIBIL Score Distribution (top-right)
-plt.subplot(2, 2, 2)
-sns.histplot(df['cibil_score'], kde=True)
-plt.title("CIBIL Score Distribution")
-
-# Subplot 3: Loan Amount Distribution (bottom-left)
-plt.subplot(2, 2, 3)
-sns.histplot(df['loan_amount'], kde=True)
-plt.title("Loan Amount Distribution")
-
-# Subplot 4: Loan Term Distribution (bottom-right)
-plt.subplot(2, 2, 4)
-sns.histplot(df['loan_term'], kde=True)
-plt.title("Loan Term Distribution")
-
-# Adjust spacing
-plt.tight_layout()
-plt.show()</code></pre></div>
-
-      <div class="key-concept">
-        <h4>📊 What's a Histogram with KDE?</h4>
-        <ul style="margin: 0; padding-left: 1.5rem;">
-          <li><strong>Histogram:</strong> Bars showing how many values fall in each range</li>
-          <li><strong>KDE (Kernel Density Estimate):</strong> The smooth curve overlaid showing the distribution shape</li>
-          <li>Together they answer: "What's the typical value? Are there outliers?"</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Quick Reference -->
-    <section class="content-section">
-      <h2>🎁 Quick Reference Cheat Sheet</h2>
-
-      <div class="concept-card" style="background: #f0fdf4; border: 2px solid var(--accent-green); border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem;">
-        <h3 style="color: var(--accent-green);">📈 Matplotlib Essentials</h3>
-        <div class="code-block"><pre><code>import matplotlib.pyplot as plt
-
-# Basic plot
-plt.plot(x, y)
-plt.show()
-
-# Customizations
-plt.figure(figsize=(10, 6))   # Set figure size
-plt.xlabel("X Label")          # X-axis label
-plt.ylabel("Y Label")          # Y-axis label
-plt.title("My Chart")          # Chart title
-plt.legend(["Line 1"])         # Legend
-plt.grid(True)                 # Show grid
-plt.savefig("chart.png")       # Save to file
-
-# Multiple plots
-plt.subplot(rows, cols, position)</code></pre></div>
-      </div>
-
-      <div class="concept-card" style="background: #faf5ff; border: 2px solid var(--accent-purple); border-radius: 16px; padding: 1.5rem;">
-        <h3 style="color: var(--accent-purple);">✨ Seaborn Essentials</h3>
-        <div class="code-block"><pre><code>import seaborn as sns
-
-# Set style
-sns.set(style="whitegrid")
-
-# Common plots
-sns.lineplot(x=x, y=y)              # Line plot
-sns.barplot(x=cats, y=vals)         # Bar plot
-sns.histplot(data, kde=True)        # Histogram
-sns.heatmap(matrix, annot=True)     # Heatmap
-sns.scatterplot(x=x, y=y)           # Scatter plot
-sns.violinplot(x=x, y=y, hue=x, legend=False)  # Violin plot
-
-# Color palettes
-cmap="viridis"     # Yellow-green-blue
-cmap="coolwarm"    # Blue-red
-cmap="Blues"       # Shades of blue</code></pre></div>
-      </div>
-
-      <!-- Important Warning Section -->
-      <div class="concept-card" style="background: #fff7ed; border: 2px solid #f97316; border-radius: 16px; padding: 1.5rem; margin-top: 1.5rem;">
-        <h3 style="color: #ea580c;">⚠️ Seaborn v0.14+ FutureWarning Fix</h3>
-        <p style="margin-bottom: 1rem;">Starting from Seaborn v0.14, passing <code>palette</code> without <code>hue</code> is deprecated. Here's how to fix it:</p>
-        
-        <div style="display: grid; gap: 1rem;">
-          <div style="background: #fef2f2; padding: 1rem; border-radius: 8px; border-left: 4px solid #ef4444;">
-            <strong style="color: #dc2626;">❌ OLD (Deprecated - will show warning):</strong>
-            <div class="code-block" style="margin-top: 0.5rem;"><pre><code># This will show FutureWarning in Seaborn v0.14+
-sns.violinplot(x='loan_status', y='cibil_score', data=df, palette='muted')
-sns.boxplot(x='category', y='value', data=df, palette='Set2')
-sns.barplot(x='group', y='score', data=df, palette='viridis')</code></pre></div>
-          </div>
-          
-          <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border-left: 4px solid #22c55e;">
-            <strong style="color: #16a34a;">✅ NEW (Correct way):</strong>
-            <div class="code-block" style="margin-top: 0.5rem;"><pre><code># Assign the x variable to hue and set legend=False
-sns.violinplot(x='loan_status', y='cibil_score', data=df, hue='loan_status', palette='muted', legend=False)
-sns.boxplot(x='category', y='value', data=df, hue='category', palette='Set2', legend=False)
-sns.barplot(x='group', y='score', data=df, hue='group', palette='viridis', legend=False)</code></pre></div>
-          </div>
-        </div>
-        
-        <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
-          <strong>💡 Why this change?</strong>
-          <p style="margin: 0.5rem 0 0 0;">Seaborn wants to be explicit about which variable controls the colors. By assigning <code>hue</code> to the same variable as <code>x</code>, you're explicitly saying "color by this variable". The <code>legend=False</code> prevents a redundant legend since x-axis already shows the categories.</p>
-        </div>
-      </div>
-    </section>
-
     <div class="important-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ef4444;">
-      <h4 style="color: #b91c1c;">🚫 Common Mistakes (Data Viz)</h4>
+      <h4 style="color: #b91c1c;">🚫 Common Mistakes (OOP)</h4>
       <ul style="margin-left: 20px; color: #7f1d1d;">
-        <li><strong>Wrong chart for the question</strong> — Use line for trends over time, bar for comparing categories; pie only for few parts of a whole.</li>
-        <li><strong>Missing labels or title</strong> — Always add <code>xlabel</code>, <code>ylabel</code>, and a title so the reader knows what they're looking at.</li>
-        <li><strong>Plotting raw data without aggregation</strong> — For many points, aggregate (e.g. mean by group) or use a plot that handles density (e.g. hexbin, kde).</li>
+        <li><strong>Forgetting self</strong> — Instance methods must have <code>self</code> as the first parameter; and call attributes as <code>self.attr</code>.</li>
+        <li><strong>Forgetting to call __init__</strong> — When you define <code>__init__</code>, make sure you're not overwriting it by mistake; create objects with <code>ClassName()</code> so __init__ runs.</li>
+        <li><strong>Using class attributes when you mean instance</strong> — If every object should have its own value, set it in <code>__init__</code> as <code>self.x = ...</code>, not on the class.</li>
       </ul>
     </div>
 
-    <div class="reflection-prompt" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #f59e0b;">
-      <h4 style="color: #92400e;">💭 Short reflection</h4>
-      <p style="color: #78350f;">In one sentence: when would you choose a line chart over a bar chart to show data over time?</p>
+    <div class="reflection-prompt" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #ec4899;">
+      <h4 style="color: #9d174d;">💭 Short reflection</h4>
+      <p style="color: #831843;">In one sentence: why do we use <code>self</code> as the first parameter in every instance method?</p>
     </div>
     <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0;">
       <h4 style="color: #166534;">✅ CORE (Must know)</h4>
       <ul style="margin-left: 20px;">
-        <li><strong>Matplotlib</strong>: <code>plt.figure()</code>, <code>plt.plot()</code>, <code>plt.xlabel()</code>, <code>plt.show()</code>; subplots.</li>
-        <li><strong>Seaborn</strong>: <code>sns.lineplot()</code>, <code>sns.barplot()</code>, <code>sns.heatmap()</code>; tidy data.</li>
-        <li>Choose chart type by goal: trend (line), compare (bar), correlation (heatmap).</li>
+        <li><strong>Class</strong>: blueprint; <code>__init__(self)</code> constructor; instance attributes.</li>
+        <li>Methods take <code>self</code>; create object with <code>ClassName()</code>.</li>
+        <li>Encapsulation: keep data and behavior together; <code>__str__</code> / <code>__repr__</code> for display.</li>
       </ul>
     </div>
     <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0;">
       <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
       <ul style="margin-left: 20px;">
-        <li>Styling, legends, saving figures; seaborn themes.</li>
-      </ul>
-    </div>
-
-    <!-- Summary -->
-    <div class="summary-section">
-      <h2>🎉 Session 13 Summary</h2>
-      <div class="summary-grid">
-        <div class="summary-item">
-          <h4>📊 Matplotlib</h4>
-          <p>Low-level control, manual customization</p>
-        </div>
-        <div class="summary-item">
-          <h4>✨ Seaborn</h4>
-          <p>Beautiful defaults, statistical focus</p>
-        </div>
-        <div class="summary-item">
-          <h4>📈 Line Charts</h4>
-          <p>Show trends and changes over time</p>
-        </div>
-        <div class="summary-item">
-          <h4>📊 Bar Charts</h4>
-          <p>Compare categories and groups</p>
-        </div>
-        <div class="summary-item">
-          <h4>🔥 Heatmaps</h4>
-          <p>Color-coded value matrices</p>
-        </div>
-        <div class="summary-item">
-          <h4>📱 Subplots</h4>
-          <p>Multiple charts in one figure</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice -->
-    <div class="quiz-box">
-      <h4>✍️ Practice Challenge</h4>
-      <p>Try creating these visualizations with any dataset:</p>
-      <ul class="quiz-list">
-        <li>1️⃣ A line chart showing sales over 12 months</li>
-        <li>2️⃣ A bar chart comparing product categories</li>
-        <li>3️⃣ A heatmap of correlation between numeric columns</li>
-        <li>4️⃣ A 2×2 subplot with different chart types</li>
+        <li>Inheritance, super(); private by convention (_name).</li>
       </ul>
     </div>
 
 
     <section class="content-section" style="margin-top: 2rem;">
-      <h2>Complete code from course notebook: Data_Viz_part_I_(2).ipynb</h2>
+      <h2>Complete code from course notebook: OOPs.ipynb</h2>
       <p>Every line of code from the course notebook (verbatim).</p>
       <div class="code-block" style="max-height: 500px; overflow: auto; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px;">
-        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 1 ---
-# pandas---data analysis
-# groupby and filtering loc and iloc
-# reading the data via API
-# reading the data vis SQLite
-
-# --- Code cell 2 ---
-# data viz---for any data analysis required time to understand
-# for data viz takes a minimal time to understand
+        <pre style="white-space: pre; font-size: 0.85em;"># --- Code cell 2 ---
+# python language----intrepreted,high-level language and object oriented programming language
 
 # --- Code cell 3 ---
-import numpy as np
-import matplotlib.pyplot as plt
-
-data=np.random.randint(15,95,(12,12))
-data
+# oops---- object oriented programming language
+# oops---  classes and objects
 
 # --- Code cell 4 ---
-import seaborn as sns
-sns.heatmap(data,annot=True,cmap="viridis")
-plt.show()
+# classes and objects are bascially used in other programming like java,c++----organized and reusable code
 
 # --- Code cell 5 ---
-# Data visualization
-1@ matplotlib----mathematical ploting lib---used for data viz---each perform every operation we need guide this commands for this matplotlib
-2@ seaborn---top of matplotlib---which is automized viz
+# class--is a blue print for creating objects
+# it has a set of attributes(variables) and methods(functions)  that are instances(created objects) of a classes
 
 # --- Code cell 6 ---
-! pip install matplotlib
+# object----is an instance of a class
+# when you create an object,you use the class as a templete
+# attributes(variables) and methods(functions)  that are instances(created objects) of a classes
 
 # --- Code cell 7 ---
-import matplotlib.pyplot as plt
+#syntax
+
+class class_name:
+  attributes=34
+  def function_name(self):
+    print("my name is aravind")
 
 # --- Code cell 8 ---
-# line graph,sub plots,bar graph,pie chart and grouped chart,donut chart
-# box plot,histogram,violin plot,kde,scatter graph,pair,dist plot,heat map
+object=class_name() # instance of a class
+object.attributes
+object.function_name()
+
+# --- Code cell 9 ---
+# basic program
+# define a class
+#feature="mammel"
+class dog:
+  # attributes
+  species="carlies"
+
+  # methods
+  def bark(self):
+    return "wolf"
 
 # --- Code cell 10 ---
-import numpy as np
-x=np.arange(0,10,1)
-y=2*x+3
-plt.plot(x,y)
-plt.show()
+dog1=dog() # instance of a class
 
 # --- Code cell 11 ---
-# customized line chart
-import numpy as np
-x=np.arange(0,10,1)
-y=2*x+3
-z=3*x+2
-fig=plt.figure(figsize=(9,8))
-plt.plot(x,y,linestyle='-.',marker="^",markersize=14,color="m",alpha=0.9)
-plt.plot(x,z,linestyle='-',marker="8",markersize=10,color="r",alpha=0.3)
-# annotating each point with coordinates
-for i in range(len(x)):
-  plt.annotate(f"({x[i]},{y[i]})", # text to display
-               (x[i],y[i]),       # points to annotate
-               textcoords="offset points",  # offset text slighlty above the marker
-               xytext=(0,10),
-               ha="center")
-
-plt.xlabel("price")
-plt.ylabel("area")
-plt.title("line chart")
-plt.grid(True)
-plt.legend(["xy","xz"],loc="best")
-plt.savefig("line_chart.jpg")
-plt.show()
+dog1.species
 
 # --- Code cell 12 ---
-import pandas as pd
-df=pd.read_csv("/content/loan_approval_dataset.csv")
+dog1.bark()
 
 # --- Code cell 13 ---
-df
+def bark():
+    return "wolf"
+
+bark()
 
 # --- Code cell 14 ---
-import kagglehub
-path = kagglehub.dataset_download("architsharma01/loan-approval-prediction-dataset")
+# basic program
+# define a class
+#feature="mammel"
+class dog:
+  # attributes
+  species="carlies"
+
+  # methods
+  def bark(aravind,ryujj,fhhj):
+    return "wolf"
 
 # --- Code cell 15 ---
-import os
-print(os.listdir(path))
+yellow=dog()
 
 # --- Code cell 16 ---
-df=pd.read_csv(os.path.join(path,"loan_approval_dataset.csv"))
+yellow.species
 
 # --- Code cell 17 ---
-df
+yellow.bark()
 
 # --- Code cell 18 ---
-import pandas as pd
-df=pd.read_csv("/content/loan_approval_dataset.csv")
-df.head()
+class dog1:
+  species="carlies"
+  def bark(self):
+    return "wolf"
 
 # --- Code cell 19 ---
-df.columns
+dog2=dog1()
 
 # --- Code cell 20 ---
-#multiple line plots in one single figure
+
+dog2.bark()
 
 # --- Code cell 21 ---
-import matplotlib.pyplot as plt
-import seaborn as sns
+# self----refrence to the current instance of a class and also used to acess variables in a class
 
-plt.figure(figsize=(8,4))
+# --- Code cell 22 ---
+#__init__----constructor to intialize a attributes --
+#    is a special method in oops
 
-# Line plot 1
-sns.lineplot(x=df.index, y=df['income_annum'], label="Income")
+# --- Code cell 23 ---
+class student:
+  def __init__(priya,name,age):
+    # initalizing the attributes
+    priya.name=name
+    priya.age=age
 
-# Line plot 2
-sns.lineplot(x=df.index, y=df['loan_amount'], label="Loan Amount")
-
-# Line plot 3
-sns.lineplot(x=df.index, y=df['cibil_score'], label="CIBIL Score")
-
-plt.title("Line Plots in One Figure")
-plt.legend()
-plt.tight_layout()
-plt.show()
+  # methods
+  def introduce(priya):
+    return f"my name is{priya.name} and i am {priya.age} years old"
 
 # --- Code cell 24 ---
-counts=df[" loan_status"].value_counts()
-counts
+student1=student("rahul",33)
 
 # --- Code cell 25 ---
-plt.bar(counts.index, counts.values)
-plt.title("Loan Status Count")
-plt.show()
+student1.name
 
 # --- Code cell 26 ---
-df[" loan_status"].value_counts().plot(kind="bar")
+student1.age
 
 # --- Code cell 27 ---
-group_data=pd.crosstab(df[' self_employed'],df[' loan_status'])
-group_data
+student1.introduce()
 
 # --- Code cell 28 ---
-ax=group_data.plot(kind="bar",figsize=(12,8))
-plt.xlabel("self employed")
-plt.ylabel("no of applicants")
-plt.title("loan status by self employed")
-# Add data labels on each bar
-for container in ax.containers:
-    ax.bar_label(container, label_type='edge', fontsize=10, color='black', padding=7)
-plt.show()
+student2=student("aravind",33)
+
+# --- Code cell 29 ---
+student2.introduce1()
 
 # --- Code cell 30 ---
-import matplotlib.pyplot as plt
-import seaborn as sns
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
 
-sns.set(style="whitegrid")
+    def __repr__(self):
+            return f"I'm {self.name}, and I'm {self.age} years old."
 
-plt.figure(figsize=(10, 8))
+# --- Code cell 31 ---
+person1=Person("tarun",33)
+print(person1)
 
-# 1. Income
-plt.subplot(2, 2, 1)
-sns.histplot(df['income_annum'], kde=True)
-plt.title("Income Distribution")
+# --- Code cell 32 ---
+person2=Person("rahul",36)
+person2
 
-# 2. CIBIL Score
-plt.subplot(2, 2, 2)
-sns.histplot(df['cibil_score'], kde=True)
-plt.title("CIBIL Score Distribution")
+# --- Code cell 33 ---
+class person:
+  def __init__(goor,name,age=30):
+    goor.name=name
+    goor.age=age
+  def introduce(goor):
+    return f"Hi I'm {goor.name}and my {goor.age}"
 
-# 3. Loan Amount
-plt.subplot(2, 2, 3)
-sns.histplot(df['loan_amount'], kde=True)
-plt.title("Loan Amount Distribution")
+door=person("aravind")
+door.introduce()
 
-# 4. Loan Term
-plt.subplot(2, 2, 4)
-sns.histplot(df['loan_term'], kde=True)
-plt.title("Loan Term Distribution")
+# --- Code cell 35 ---
+class Book:
+    def __init__(self, title, author, copies):
+        self.title = title
+        self.author = author
+        self.copies = copies
 
-plt.tight_layout()
-plt.show()
+    def display_details(self):
+        print(f"Title: {self.title}, Author: {self.author}, Available Copies: {self.copies}")
+
+    def borrow(self):
+        if self.copies &gt; 0:
+            self.copies -= 1
+            print(f"You borrowed '{self.title}'. Remaining copies: {self.copies}")
+        else:
+            print(f"Sorry, '{self.title}' is not available right now.")
+
+    def return_book(self):
+        self.copies += 1
+        print(f"You returned '{self.title}'. Available copies: {self.copies}")
+
+
+class Library:
+    def __init__(self):
+        self.books = []
+
+    # add new book
+    def add_book(self, book):
+        self.books.append(book)
+        print(f"Book '{book.title}' added to the library.")
+
+    # search for a book
+    def search_book(self, title):
+        for book in self.books:
+            if book.title.lower() == title.lower():
+                print("Book found:")
+                book.display_details()
+                return book
+        print("Book not found in the library.")
+        return None
+
+    # display all books
+    def display_all_books(self):
+        print("\n--- Library Books ---")
+        if not self.books:
+            print("No books available.")
+        else:
+            for book in self.books:
+                book.display_details()
+
+# --- Code cell 36 ---
+# ---------------- Real-time usage ----------------
+library = Library()
+
+# Adding books to library
+book1 = Book("The Alchemist", "Paulo Coelho", 3)
+book2 = Book("Python Programming", "Guido van Rossum", 2)
+book3 = Book("Clean Code", "Robert C. Martin", 4)
+
+library.add_book(book1)
+library.add_book(book2)
+library.add_book(book3)
+
+# --- Code cell 37 ---
+# Display all books
+library.display_all_books()
+
+# --- Code cell 38 ---
+library.search_book("The Alchemist")
+
+# --- Code cell 39 ---
+# Search and borrow
+found_book = library.search_book("The Alchemist")
+if found_book:
+    found_book.return_book()
 </pre>
       </div>
     </section>
 
-        <nav class="page-navigation">
-      <a href="s12-api-sql.html" class="nav-prev">
+        <!-- NAVIGATION -->
+    <nav class="page-navigation">
+      <a href="s7-functions2.html" class="nav-prev">
         <span class="nav-arrow">←</span>
         <span class="nav-text">
           <span class="nav-label">Previous</span>
-          <span class="nav-title">APIs & SQL</span>
+          <span class="nav-title">Functions Part II</span>
         </span>
       </a>
       <a href="complete-course.html" class="nav-home">🏠</a>
-      <a href="s14-enhanced-viz.html" class="nav-next">
+      <a href="s9-numpy.html" class="nav-next">
         <span class="nav-text">
           <span class="nav-label">Next</span>
-          <span class="nav-title">Enhanced Viz</span>
+          <span class="nav-title">NumPy & Comprehensions</span>
         </span>
         <span class="nav-arrow">→</span>
       </a>
@@ -957,7 +956,7 @@ plt.show()
   </main>
 
   <footer>
-    <p>🐍 Python Mastery | Learn. Code. Visualize!</p>
+    <p>🐍 Python Mastery | Learn. Code. Create.</p>
   </footer>
 
   <!-- Back to Top Button -->
@@ -971,6 +970,7 @@ plt.show()
     });
   </script>
     <script src="../js/code-copy.js"></script>
+    <script src="../js/analytics-tracker.js"></script>
 </body>
 </html>
 

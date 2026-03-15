@@ -34,7 +34,7 @@ function initializeHub() {
     
     // Initialize theme system
     initializeThemes();
-    
+
     console.log('FKTI Learning Hub initialized');
 }
 

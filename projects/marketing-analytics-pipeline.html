@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Analytics Pipeline Project | Data For Dummies</title>
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="../css/hub-styles.css">
+    <link rel="stylesheet" href="../css/project-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand"><a href="../index.html" class="logo-link home-icon-btn" title="Home"><i class="fas fa-house-chimney"></i></a></div>
+            <div class="nav-links">
+                <a href="../learning-path.html" class="nav-link">Courses</a>
+                <a href="../data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="../data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="../pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="../projects.html" class="nav-link">Projects</a>
+                <a href="../pricing.html" class="nav-link">Pricing</a>
+                <a href="../founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="top-offset-for-nav">
+        <main class="project-detail">
+
+            <!-- ========== HERO ========== -->
+            <div class="project-hero">
+                <div class="project-badges">
+                    <span class="project-badge">Intermediate</span>
+                    <span class="project-badge pro">Pro</span>
+                </div>
+                <h1><i class="fas fa-bullseye"></i> Marketing Analytics Pipeline</h1>
+                <p>Automate daily ingestion from marketing platforms, transform with DBT, and surface campaign ROI in Metabase. Build an end-to-end pipeline from raw data to dashboard — perfect for portfolios and interviews.</p>
+                <div class="project-tools">
+                    <span>Airflow</span><span>DBT</span><span>Python</span><span>Metabase</span>
+                </div>
+            </div>
+
+            <!-- ========== TABS ========== -->
+            <div class="project-tabs">
+                <button class="project-tab active" data-tab="overview"><i class="fas fa-binoculars"></i> Overview</button>
+                <button class="project-tab" data-tab="build"><i class="fas fa-hammer"></i> Build It <span class="lock-icon"><i class="fas fa-lock"></i></span></button>
+            </div>
+
+            <!-- ============================================================
+                 TAB 1 — OVERVIEW (FREE)
+                 ============================================================ -->
+            <div class="project-panel active" id="panel-overview">
+
+                <!-- The Scenario -->
+                <section class="project-section">
+                    <h2><i class="fas fa-theater-masks"></i> The Scenario</h2>
+                    <div class="project-scenario">
+                        <h4>Imagine this…</h4>
+                        <p>Marketing runs campaigns on <strong>Google Ads</strong>, <strong>Facebook Ads</strong>, and <strong>Email</strong>. Every day they need to know: how much did we spend, how many impressions and clicks did we get, and what was the return? Did we make or lose money on each campaign?</p>
+                        <p>Right now, someone manually downloads CSV reports from each platform, pastes them into a spreadsheet, and tries to calculate ROI. It's tedious, error-prone, and doesn't scale. You'll automate this entire process: build a pipeline that pulls data, cleans it, computes ROI, and surfaces it in a daily dashboard. Tomorrow it runs again — with zero manual work.</p>
+                    </div>
+                </section>
+
+                <!-- What You'll Build -->
+                <section class="project-section">
+                    <h2><i class="fas fa-bullseye"></i> What You'll Build</h2>
+                    <div class="anim-flow-wrap">
+                        <span class="anim-step bronze"><i class="fas fa-plug"></i> APIs / Files</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step silver"><i class="fas fa-python"></i> Python</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step gold"><i class="fas fa-database"></i> Warehouse</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step tool"><i class="fas fa-broom"></i> DBT</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step tool"><i class="fas fa-chart-pie"></i> Metabase</span>
+                    </div>
+                    <ul style="margin: 20px 0 0 22px; color:#475569; line-height:1.9;">
+                        <li><strong>Data ingestion:</strong> Python script (or Airflow task) that pulls campaign spend, impressions, clicks from APIs or staged CSV files into a data warehouse staging table.</li>
+                        <li><strong>Staging DBT models:</strong> Clean and type-cast raw campaign and conversion data (stg_campaigns, stg_conversions).</li>
+                        <li><strong>ROI mart model:</strong> Join spend + revenue and compute ROI = revenue / cost by campaign and channel.</li>
+                        <li><strong>Airflow DAG:</strong> Orchestrates ingest → dbt run → dbt test on a daily schedule. Runs automatically every morning.</li>
+                        <li><strong>Metabase dashboard:</strong> Questions for Spend by Channel, ROI by Campaign, Daily Spend Trend. Marketing can self-serve insights.</li>
+                        <li><strong>Alerts:</strong> Metabase alert when ROI drops below a threshold so you catch problems early.</li>
+                    </ul>
+                </section>
+
+                <!-- Prerequisites -->
+                <section class="project-section">
+                    <h2><i class="fas fa-book-open"></i> Prerequisites</h2>
+                    <p>Before you start, make sure you're comfortable with these. If not, we link to the exact courses below — finish those first, then come back.</p>
+                    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;width:30%;">SQL</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">SELECT, WHERE, JOIN, GROUP BY, aggregate functions (SUM, COUNT, AVG). You should be able to join two tables and compute totals.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../postgres_course/index.html" style="color:#4f46e5;font-weight:600;">PostgreSQL Course</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Python basics</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">Variables, loops, functions, reading/writing files. You'll write a script to generate or load campaign data.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../python_course/index.html" style="color:#4f46e5;font-weight:600;">Python Course</a></td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Airflow intro</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">What a DAG is, how to define tasks and dependencies. You don't need to be an expert — we'll walk through it.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../airflow_course/index.html" style="color:#4f46e5;font-weight:600;">Airflow Course</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">DBT intro</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">What DBT is, how to run <code>dbt run</code> and <code>dbt test</code>. You'll learn sources, refs, and models here.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../dbt_course/index.html" style="color:#4f46e5;font-weight:600;">DBT Course</a></td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Metabase intro</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">Connecting to a database, creating a question (query), and adding it to a dashboard.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../metabase_course/index.html" style="color:#4f46e5;font-weight:600;">Metabase Course</a></td>
+                        </tr>
+                    </table>
+                </section>
+
+                <!-- Step-by-step Plan (overview) -->
+                <section class="project-section">
+                    <h2><i class="fas fa-list-ol"></i> Step-by-Step Plan</h2>
+                    <p>Here's the high-level road-map. The <strong>Build It</strong> tab walks you through every single step with copy-paste code, full explanations, and verification queries.</p>
+                    <ol class="project-steps">
+                        <li>
+                            <span class="step-num">1</span>
+                            <div class="step-body"><strong>Design the data model.</strong> Draw the schema: campaigns table (campaign_id, channel, date, cost, impressions, clicks) and conversions table (campaign_id, date, revenue, conversions). Write CREATE TABLE SQL.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">2</span>
+                            <div class="step-body"><strong>Create sample campaign data.</strong> Python script that generates realistic campaign data for Google Ads, Facebook Ads, and Email channels — ~200 rows. Output as INSERT statements or CSV.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">3</span>
+                            <div class="step-body"><strong>Build staging DBT models.</strong> stg_campaigns.sql and stg_conversions.sql with cleaning and type casting. Define sources.yml.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">4</span>
+                            <div class="step-body"><strong>Build the ROI mart model.</strong> mart_campaign_roi.sql: join spend + revenue, compute ROI = revenue / cost. Full SQL with CTE pattern.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">5</span>
+                            <div class="step-body"><strong>Create the Airflow DAG.</strong> Python DAG file: ingest task → dbt_run → dbt_test. Schedule daily.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">6</span>
+                            <div class="step-body"><strong>Build Metabase dashboard.</strong> Connect to warehouse, create questions (Spend by Channel, ROI by Campaign, Daily Spend Trend). Add them to a dashboard.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">7</span>
+                            <div class="step-body"><strong>Add alerts.</strong> Set up Metabase alerts for ROI dropping below a threshold.</div>
+                        </li>
+                    </ol>
+                </section>
+            </div><!-- /panel-overview -->
+
+            <!-- ============================================================
+                 TAB 2 — BUILD IT (PRO / PAID)
+                 ============================================================ -->
+            <div class="project-panel" id="panel-build">
+                <div class="pro-locked-wrapper is-locked">
+                    <div class="pro-locked-content">
+
+                        <!-- Progress bar -->
+                        <div class="build-progress"><div class="build-progress-fill" style="width:0%" id="buildProgress"></div></div>
+
+                        <!-- ===== STEP 1 ===== -->
+                        <div class="build-step" data-step="1">
+                            <div class="build-step-header">
+                                <div class="build-step-num">1</div>
+                                <div><h3>Design the Data Model</h3><p>Draw the schema and write CREATE TABLE SQL</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Before writing any code, we need to know what tables we're building. Marketing data has two main pieces: (1) <strong>spend</strong> — how much we paid for ads (cost, impressions, clicks by campaign and date), and (2) <strong>conversions</strong> — what we got back (revenue, conversions by campaign and date). We'll store these in two staging tables. Drawing the schema first prevents confusion later.</p>
+                            </div>
+
+                            <h4>1a. Schema diagram</h4>
+                            <div class="project-diagram">
+                                <p style="margin:0; color:#64748b; font-weight:700;">campaigns</p>
+                                <p style="margin:8px 0; font-family:'Fira Code', monospace; font-size:0.9rem; text-align:left; max-width:400px; margin-left:auto; margin-right:auto;">
+                                    campaign_id (PK)<br>
+                                    channel (Google/Facebook/Email)<br>
+                                    date<br>
+                                    cost<br>
+                                    impressions<br>
+                                    clicks
+                                </p>
+                                <p style="margin:16px 0; color:#64748b;">↕ join on campaign_id, date</p>
+                                <p style="margin:0; color:#64748b; font-weight:700;">conversions</p>
+                                <p style="margin:8px 0; font-family:'Fira Code', monospace; font-size:0.9rem; text-align:left; max-width:400px; margin-left:auto; margin-right:auto;">
+                                    campaign_id (FK)<br>
+                                    date<br>
+                                    revenue<br>
+                                    conversions
+                                </p>
+                            </div>
+
+                            <h4>1b. CREATE TABLE SQL</h4>
+                            <p>Run this against your warehouse (PostgreSQL, Redshift, or similar). We use a <code>marketing</code> schema to keep our project tables separate.</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+-- Create a schema for marketing data (if it doesn't exist)
+CREATE SCHEMA IF NOT EXISTS marketing;
+
+-- campaigns: ad spend, impressions, clicks by campaign, channel, and date
+CREATE TABLE marketing.campaigns (
+    campaign_id     VARCHAR(50)  NOT NULL,
+    channel         VARCHAR(50)  NOT NULL,
+    date            DATE         NOT NULL,
+    cost            DECIMAL(12,2),
+    impressions     INTEGER,
+    clicks          INTEGER,
+    PRIMARY KEY (campaign_id, channel, date)
+);
+
+-- conversions: revenue and conversion count by campaign and date
+CREATE TABLE marketing.conversions (
+    campaign_id     VARCHAR(50)  NOT NULL,
+    date            DATE         NOT NULL,
+    revenue         DECIMAL(12,2),
+    conversions     INTEGER,
+    PRIMARY KEY (campaign_id, date)
+);
+
+-- Optional: Add foreign key for data integrity
+-- ALTER TABLE marketing.conversions
+-- ADD CONSTRAINT fk_campaigns
+-- FOREIGN KEY (campaign_id) REFERENCES marketing.campaigns(campaign_id);
+</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Why these columns?</h4>
+                                <p><strong>campaign_id:</strong> Unique identifier for each campaign (e.g. "google_summer_2024"). <strong>channel:</strong> Where the ad ran — Google Ads, Facebook Ads, Email. <strong>cost:</strong> How much we spent. <strong>impressions/clicks:</strong> Reach and engagement. <strong>revenue:</strong> Money earned from that campaign. ROI = revenue / cost.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 1 complete!</h4>
+                                <ul>
+                                    <li>Schema designed: campaigns + conversions</li>
+                                    <li>Tables created in <code>marketing</code> schema</li>
+                                    <li>Primary keys defined for data integrity</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 2 ===== -->
+                        <div class="build-step" data-step="2">
+                            <div class="build-step-header">
+                                <div class="build-step-num">2</div>
+                                <div><h3>Create Sample Campaign Data</h3><p>Python script to generate realistic campaign data (~200 rows)</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>In production, data comes from APIs (Google Ads API, Facebook Marketing API). For this project, we'll simulate that with a Python script that generates realistic data for Google Ads, Facebook Ads, and Email. We'll output ~200 rows that look like real campaign data. You can run this once to populate your tables, or use it as a template for real API integrations.</p>
+                            </div>
+
+                            <h4>2a. Python script: generate_campaign_data.py</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+"""
+Generate realistic marketing campaign data for Google Ads, Facebook Ads, and Email.
+Outputs CSV files and optionally SQL INSERT statements.
+Run: python generate_campaign_data.py
+"""
+
+import random
+from datetime import datetime, timedelta
+import csv
+
+# Campaign IDs and channels
+CAMPAIGNS = [
+    ("google_summer_sale", "Google Ads"),
+    ("google_brand_awareness", "Google Ads"),
+    ("fb_retargeting", "Facebook Ads"),
+    ("fb_lead_gen", "Facebook Ads"),
+    ("email_newsletter", "Email"),
+    ("email_promo", "Email"),
+]
+
+def random_date(start: datetime, end: datetime) -> datetime:
+    delta = end - start
+    return start + timedelta(days=random.randint(0, delta.days))
+
+def generate_campaigns_data(num_days: int = 60) -> list:
+    """Generate campaign spend, impressions, clicks."""
+    rows = []
+    start = datetime.now() - timedelta(days=num_days)
+    end = datetime.now()
+
+    for campaign_id, channel in CAMPAIGNS:
+        base_cost = random.uniform(50, 500)
+        base_imp = random.randint(1000, 50000)
+
+        for _ in range(num_days):
+            d = random_date(start, end)
+            cost = round(base_cost * random.uniform(0.7, 1.3), 2)
+            impressions = int(base_imp * random.uniform(0.8, 1.2))
+            ctr = random.uniform(0.01, 0.05)
+            clicks = int(impressions * ctr)
+            rows.append({
+                "campaign_id": campaign_id,
+                "channel": channel,
+                "date": d.strftime("%Y-%m-%d"),
+                "cost": cost,
+                "impressions": impressions,
+                "clicks": clicks,
+            })
+
+    return rows[:200]  # Cap at ~200 rows
+
+def generate_conversions_data(campaigns_rows: list) -> list:
+    """Generate revenue and conversions (subset of campaigns)."""
+    seen = set()
+    rows = []
+    for r in campaigns_rows:
+        key = (r["campaign_id"], r["date"])
+        if key in seen:
+            continue
+        seen.add(key)
+        if random.random() < 0.6:
+            revenue = round(r["cost"] * random.uniform(0.5, 3.0), 2)
+            conversions = random.randint(0, int(r["clicks"] * 0.1) + 1)
+            rows.append({
+                "campaign_id": r["campaign_id"],
+                "date": r["date"],
+                "revenue": revenue,
+                "conversions": conversions,
+            })
+    return rows
+
+def main():
+    campaigns = generate_campaigns_data()
+    conversions = generate_conversions_data(campaigns)
+
+    with open("campaigns.csv", "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["campaign_id", "channel", "date", "cost", "impressions", "clicks"])
+        w.writeheader()
+        w.writerows(campaigns)
+
+    with open("conversions.csv", "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["campaign_id", "date", "revenue", "conversions"])
+        w.writeheader()
+        w.writerows(conversions)
+
+    print(f"Generated {len(campaigns)} campaign rows -> campaigns.csv")
+    print(f"Generated {len(conversions)} conversion rows -> conversions.csv")
+
+if __name__ == "__main__":
+    main()
+</pre>
+                            </div>
+
+                            <h4>2b. Load the CSV into the warehouse</h4>
+                            <p>After running the script, load the CSVs. In PostgreSQL (psql):</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (psql)</span></div>
+<pre>
+\COPY marketing.campaigns FROM '/path/to/campaigns.csv' WITH (FORMAT csv, HEADER true);
+\COPY marketing.conversions FROM '/path/to/conversions.csv' WITH (FORMAT csv, HEADER true);
+</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Using DBeaver or pgAdmin?</h4>
+                                <p>Right-click the table → Import Data → select your CSV. Ensure "Header" is checked. The script outputs campaigns.csv and conversions.csv in the current directory.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 2 complete!</h4>
+                                <ul>
+                                    <li>Python script creates realistic campaign data for Google, Facebook, Email</li>
+                                    <li>~200 rows in campaigns, matching conversions</li>
+                                    <li>CSVs loaded into marketing.campaigns and marketing.conversions</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 3 ===== -->
+                        <div class="build-step" data-step="3">
+                            <div class="build-step-header">
+                                <div class="build-step-num">3</div>
+                                <div><h3>Build Staging DBT Models</h3><p>stg_campaigns.sql and stg_conversions.sql with cleaning and type casting</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Raw tables often have messy data: extra spaces, wrong types, nulls where we don't want them. DBT staging models clean and standardize the data before we use it in business logic. <strong>stg_campaigns</strong> and <strong>stg_conversions</strong> are our "cleaned versions" of the raw tables. We'll use DBT's <code>source()</code> to read from the raw tables and <code>ref()</code> when other models depend on us.</p>
+                            </div>
+
+                            <h4>3a. Define sources: sources.yml</h4>
+                            <p>Create <code>models/staging/sources.yml</code> so DBT knows where our raw tables live:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">YAML (models/staging/sources.yml)</span></div>
+<pre>
+version: 2
+
+sources:
+  - name: marketing_raw
+    description: "Raw marketing data loaded from APIs or CSV files"
+    schema: marketing
+    tables:
+      - name: campaigns
+        description: "Ad spend, impressions, clicks by campaign and date"
+      - name: conversions
+        description: "Revenue and conversion counts by campaign and date"
+</pre>
+                            </div>
+
+                            <h4>3b. stg_campaigns.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/staging/stg_campaigns.sql)</span></div>
+<pre>
+{{ config(
+    materialized='view',
+    schema='staging'
+) }}
+
+SELECT
+    TRIM(campaign_id)::VARCHAR(50)     AS campaign_id,
+    TRIM(channel)::VARCHAR(50)         AS channel,
+    date::DATE                         AS date,
+    COALESCE(cost, 0)::DECIMAL(12,2)   AS cost,
+    COALESCE(impressions, 0)::INTEGER  AS impressions,
+    COALESCE(clicks, 0)::INTEGER       AS clicks
+FROM {{ source('marketing_raw', 'campaigns') }}
+WHERE campaign_id IS NOT NULL
+  AND date IS NOT NULL
+  AND cost >= 0
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Line-by-line</h4>
+                                <p><strong>TRIM(campaign_id):</strong> Removes leading/trailing spaces. <strong>COALESCE(cost, 0):</strong> Replaces NULL cost with 0. <strong>WHERE cost >= 0:</strong> Drops invalid negative costs. We keep only rows with non-null campaign_id and date.</p>
+                            </div>
+
+                            <h4>3c. stg_conversions.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/staging/stg_conversions.sql)</span></div>
+<pre>
+{{ config(
+    materialized='view',
+    schema='staging'
+) }}
+
+SELECT
+    TRIM(campaign_id)::VARCHAR(50)     AS campaign_id,
+    date::DATE                         AS date,
+    COALESCE(revenue, 0)::DECIMAL(12,2) AS revenue,
+    COALESCE(conversions, 0)::INTEGER   AS conversions
+FROM {{ source('marketing_raw', 'conversions') }}
+WHERE campaign_id IS NOT NULL
+  AND date IS NOT NULL
+  AND revenue >= 0
+</pre>
+                            </div>
+
+                            <h4>3d. Run the staging models</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+dbt run --select stg_campaigns stg_conversions
+</pre>
+                            </div>
+
+                            <p>Verify in your database:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT * FROM staging.stg_campaigns LIMIT 5;
+SELECT * FROM staging.stg_conversions LIMIT 5;
+</pre>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 3 complete!</h4>
+                                <ul>
+                                    <li>sources.yml defines marketing_raw.campaigns and .conversions</li>
+                                    <li>stg_campaigns: trimmed, type-cast, nulls handled</li>
+                                    <li>stg_conversions: same cleaning for revenue and conversions</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 4 ===== -->
+                        <div class="build-step" data-step="4">
+                            <div class="build-step-header">
+                                <div class="build-step-num">4</div>
+                                <div><h3>Build the ROI Mart Model</h3><p>mart_campaign_roi.sql — join spend + revenue, compute ROI</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>ROI (Return on Investment) = revenue / cost. If you spent $100 and made $300, ROI = 3 (or 300%). Marketing needs this by campaign and channel. We'll use CTEs (Common Table Expressions) to (1) sum cost by campaign/channel/date, (2) sum revenue by campaign/date, then (3) join them and compute ROI. This mart table is what Metabase will read.</p>
+                            </div>
+
+                            <h4>4a. mart_campaign_roi.sql</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (models/marts/mart_campaign_roi.sql)</span></div>
+<pre>
+{{ config(
+    materialized='table',
+    schema='marts'
+) }}
+
+WITH spend AS (
+    SELECT
+        campaign_id,
+        channel,
+        date,
+        SUM(cost)         AS total_cost,
+        SUM(impressions)  AS total_impressions,
+        SUM(clicks)       AS total_clicks
+    FROM {{ ref('stg_campaigns') }}
+    GROUP BY campaign_id, channel, date
+),
+
+revenue AS (
+    SELECT
+        campaign_id,
+        date,
+        SUM(revenue)      AS total_revenue,
+        SUM(conversions)  AS total_conversions
+    FROM {{ ref('stg_conversions') }}
+    GROUP BY campaign_id, date
+)
+
+SELECT
+    s.campaign_id,
+    s.channel,
+    s.date,
+    s.total_cost,
+    s.total_impressions,
+    s.total_clicks,
+    COALESCE(r.total_revenue, 0)      AS total_revenue,
+    COALESCE(r.total_conversions, 0)  AS total_conversions,
+    CASE
+        WHEN s.total_cost > 0
+        THEN ROUND(COALESCE(r.total_revenue, 0) / s.total_cost, 2)
+        ELSE NULL
+    END AS roi
+FROM spend s
+LEFT JOIN revenue r
+    ON s.campaign_id = r.campaign_id
+    AND s.date = r.date
+ORDER BY s.date DESC, s.channel, s.campaign_id
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>In plain English</h4>
+                                <p><strong>spend CTE:</strong> Sums cost, impressions, clicks per campaign/channel/date. <strong>revenue CTE:</strong> Sums revenue and conversions per campaign/date. <strong>Main SELECT:</strong> Joins spend and revenue on campaign_id + date. ROI = total_revenue / total_cost. We use LEFT JOIN so campaigns with no conversions still appear (revenue = 0, ROI = 0). We avoid division by zero with <code>WHEN total_cost > 0</code>.</p>
+                            </div>
+
+                            <h4>4b. Run the mart</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+dbt run --select mart_campaign_roi
+</pre>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 4 complete!</h4>
+                                <ul>
+                                    <li>mart_campaign_roi joins spend and revenue</li>
+                                    <li>ROI = revenue / cost (with divide-by-zero protection)</li>
+                                    <li>Table created in marts schema — ready for Metabase</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 5 ===== -->
+                        <div class="build-step" data-step="5">
+                            <div class="build-step-header">
+                                <div class="build-step-num">5</div>
+                                <div><h3>Create the Airflow DAG</h3><p>Orchestrate ingest → dbt_run → dbt_test daily</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Without Airflow, you'd run ingestion and DBT manually. With Airflow, the pipeline runs on a schedule (e.g. every day at 6 AM). The DAG has three tasks: (1) ingest — run our Python script or load files, (2) dbt_run — run DBT models, (3) dbt_test — run DBT tests. If ingest fails, dbt_run doesn't run. If dbt_run fails, dbt_test doesn't run. Airflow handles retries and alerts.</p>
+                            </div>
+
+                            <h4>5a. DAG file: marketing_pipeline_dag.py</h4>
+                            <p>Save this in your Airflow <code>dags/</code> folder:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python (dags/marketing_pipeline_dag.py)</span></div>
+<pre>
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+from datetime import datetime, timedelta
+
+# Paths — customize these for your environment
+DBT_PROJECT_PATH = "/path/to/your/marketing_dbt"
+INGEST_SCRIPT_PATH = "/path/to/generate_campaign_data.py"
+
+def run_ingest():
+    """Run the Python script to generate/ingest campaign data."""
+    import subprocess
+    subprocess.run(["python", INGEST_SCRIPT_PATH], check=True)
+    # In production you might load CSVs into DB here, or call an API
+
+with DAG(
+    dag_id='marketing_analytics_pipeline',
+    start_date=datetime(2024, 1, 1),
+    schedule_interval='@daily',
+    catchup=False,
+    default_args={
+        'retries': 2,
+        'retry_delay': timedelta(minutes=5),
+    },
+    tags=['marketing', 'dbt'],
+) as dag:
+
+    ingest = PythonOperator(
+        task_id='ingest_campaign_data',
+        python_callable=run_ingest,
+    )
+
+    dbt_run = BashOperator(
+        task_id='dbt_run',
+        bash_command=f'cd {DBT_PROJECT_PATH} && dbt run',
+    )
+
+    dbt_test = BashOperator(
+        task_id='dbt_test',
+        bash_command=f'cd {DBT_PROJECT_PATH} && dbt test',
+    )
+
+    ingest >> dbt_run >> dbt_test
+</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Simpler version (no Python ingest)</h4>
+                                <p>If you already have data loaded, replace the ingest task with a BashOperator that runs a SQL COPY or a simpler Python script. Or use a <code>EmptyOperator</code> as a placeholder until you add real API ingestion.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 5 complete!</h4>
+                                <ul>
+                                    <li>DAG runs daily (<code>schedule_interval='@daily'</code>)</li>
+                                    <li>Tasks: ingest → dbt_run → dbt_test</li>
+                                    <li>Retries on failure (2 retries, 5 min delay)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 6 ===== -->
+                        <div class="build-step" data-step="6">
+                            <div class="build-step-header">
+                                <div class="build-step-num">6</div>
+                                <div><h3>Build Metabase Dashboard</h3><p>Connect, create questions, add to dashboard</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Metabase is a BI tool that connects to your database and lets non-technical users run queries (as "questions") and view dashboards. We'll connect Metabase to our warehouse, create three questions: (1) Spend by Channel, (2) ROI by Campaign, (3) Daily Spend Trend. Then we'll add them to a "Marketing ROI" dashboard.</p>
+                            </div>
+
+                            <h4>6a. Connect Metabase to your warehouse</h4>
+                            <p>In Metabase: Admin → Databases → Add database. Choose PostgreSQL (or Redshift). Enter host, port, database name, username, password. Test the connection.</p>
+
+                            <h4>6b. Create Question 1: Spend by Channel</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (Metabase Question)</span></div>
+<pre>
+SELECT
+    channel,
+    SUM(total_cost)        AS total_spend,
+    SUM(total_impressions) AS total_impressions,
+    SUM(total_clicks)      AS total_clicks
+FROM marts.mart_campaign_roi
+GROUP BY channel
+ORDER BY total_spend DESC
+</pre>
+                            </div>
+                            <p>Save as "Spend by Channel". Visualization: Bar chart (channel on X, total_spend on Y).</p>
+
+                            <h4>6c. Create Question 2: ROI by Campaign</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (Metabase Question)</span></div>
+<pre>
+SELECT
+    campaign_id,
+    channel,
+    SUM(total_cost)   AS total_cost,
+    SUM(total_revenue) AS total_revenue,
+    ROUND(AVG(roi), 2) AS avg_roi
+FROM marts.mart_campaign_roi
+GROUP BY campaign_id, channel
+HAVING SUM(total_cost) > 0
+ORDER BY avg_roi DESC
+</pre>
+                            </div>
+                            <p>Save as "ROI by Campaign". Visualization: Table.</p>
+
+                            <h4>6d. Create Question 3: Daily Spend Trend</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (Metabase Question)</span></div>
+<pre>
+SELECT
+    date,
+    channel,
+    SUM(total_cost) AS daily_spend
+FROM marts.mart_campaign_roi
+GROUP BY date, channel
+ORDER BY date, channel
+</pre>
+                            </div>
+                            <p>Save as "Daily Spend Trend". Visualization: Line chart (date on X, daily_spend on Y, channel as series).</p>
+
+                            <h4>6e. Create the dashboard</h4>
+                            <p>Dashboards → New dashboard → name it "Marketing ROI". Add the three questions. Arrange them: Spend by Channel (top), ROI by Campaign (middle), Daily Spend Trend (bottom). Set a filter for date range if needed.</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 6 complete!</h4>
+                                <ul>
+                                    <li>Metabase connected to warehouse</li>
+                                    <li>Three questions: Spend by Channel, ROI by Campaign, Daily Spend Trend</li>
+                                    <li>Dashboard "Marketing ROI" created with all three</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 7 ===== -->
+                        <div class="build-step" data-step="7">
+                            <div class="build-step-header">
+                                <div class="build-step-num">7</div>
+                                <div><h3>Add Alerts</h3><p>Metabase alerts when ROI drops below threshold</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>You don't want to check dashboards every day. Metabase can send an email (or Slack) when a question's result meets a condition — e.g. "alert me if any campaign's ROI is below 1.0 (losing money)". That way you catch problems without manual monitoring.</p>
+                            </div>
+
+                            <h4>7a. Create an ROI threshold question</h4>
+                            <p>New question: campaigns with ROI below 1.0 (or another threshold):</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL (Metabase Question)</span></div>
+<pre>
+SELECT
+    campaign_id,
+    channel,
+    SUM(total_cost)   AS total_cost,
+    SUM(total_revenue) AS total_revenue,
+    ROUND(AVG(roi), 2) AS roi
+FROM marts.mart_campaign_roi
+GROUP BY campaign_id, channel
+HAVING AVG(roi) < 1.0
+   AND SUM(total_cost) > 100
+ORDER BY roi ASC
+</pre>
+                            </div>
+                            <p>Save as "Low ROI Campaigns". <code>HAVING AVG(roi) < 1.0</code> filters to campaigns losing money. <code>SUM(total_cost) > 100</code> ignores tiny test campaigns.</p>
+
+                            <h4>7b. Set up the alert</h4>
+                            <p>Open the question → Click the bell icon (Alerts) → Create alert → "When results exist" (so you get alerted when any row is returned). Add your email. Metabase will run this question on a schedule (e.g. daily) and email you if there are rows.</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 7 complete!</h4>
+                                <ul>
+                                    <li>Question "Low ROI Campaigns" created</li>
+                                    <li>Alert set: email when results exist (ROI &lt; 1.0)</li>
+                                    <li>Marketing team gets notified automatically when campaigns underperform</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Project complete -->
+                        <div class="what-happened" style="margin-top:36px;">
+                            <h4><i class="fas fa-trophy"></i> Project complete!</h4>
+                            <p>You built a full marketing analytics pipeline from raw data to ROI dashboard. Here's what you can put on your resume:</p>
+                            <ul>
+                                <li>Designed data model for campaigns and conversions</li>
+                                <li>Built Python script for campaign data generation/ingestion</li>
+                                <li>Created DBT staging and mart models with ROI calculation</li>
+                                <li>Orchestrated pipeline with Airflow (ingest → dbt run → dbt test)</li>
+                                <li>Built Metabase dashboard with Spend by Channel, ROI by Campaign, Daily Spend Trend</li>
+                                <li>Configured Metabase alerts for low-ROI campaigns</li>
+                            </ul>
+                        </div>
+
+                        <div class="project-section" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; margin-top: 28px;">
+                            <h2 style="color: #065f46;"><i class="fas fa-rocket"></i> What's next?</h2>
+                            <ul style="color: #064e3b; line-height: 1.9; margin-left: 20px;">
+                                <li>Connect real APIs — Google Ads API, Facebook Marketing API — instead of generated data</li>
+                                <li>Add incremental DBT models to process only new data each day</li>
+                                <li>Try the <a href="ecommerce-data-warehouse.html" style="color:#059669;font-weight:700;">E-Commerce Data Warehouse</a> project for medallion architecture</li>
+                                <li>Add more marts: conversion funnel, attribution by channel</li>
+                            </ul>
+                        </div>
+
+                    </div><!-- /.pro-locked-content -->
+
+                    <!-- Lock overlay (shown when locked) -->
+                    <div class="pro-lock-overlay">
+                        <div class="lock-icon-big"><i class="fas fa-lock"></i></div>
+                        <h3>Unlock the Full Build Guide</h3>
+                        <p>Get the complete step-by-step implementation: copy-paste code, line-by-line explanations, tips, warnings, and verification queries. Build this project from zero to production.</p>
+                        <a href="../pricing.html" class="unlock-btn"><i class="fas fa-crown"></i> Upgrade to Pro</a>
+                    </div>
+                </div><!-- /.pro-locked-wrapper -->
+            </div><!-- /panel-build -->
+
+            <a href="../projects.html" class="project-back"><i class="fas fa-arrow-left"></i> Back to all projects</a>
+        </main>
+    </div>
+
+    <footer class="footer" style="margin-top:48px;">
+        <div class="footer-bottom"><p>&copy; 2025 Data For Dummies. Learning notes for everyone.</p></div>
+    </footer>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:24px;">
+            <p><a href="mailto:fktiindia@gmail.com">fktiindia@gmail.com</a></p>
+            <p><a href="tel:+919833565272">+91 98335 65272</a></p>
+        </div>
+    </div>
+    <script>function showContact(){document.getElementById('contactModal').style.display='flex';} document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+    <script src="../js/hub-script.js"></script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/project-paywall.js"></script>
+    <script>
+    /* Tab switching */
+    document.querySelectorAll('.project-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.project-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.project-panel').forEach(function(p) { p.classList.remove('active'); });
+            tab.classList.add('active');
+            document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+    </script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

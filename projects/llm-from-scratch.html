@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM from Scratch Project | Data For Dummies</title>
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="../css/hub-styles.css">
+    <link rel="stylesheet" href="../css/project-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand"><a href="../index.html" class="logo-link home-icon-btn" title="Home"><i class="fas fa-house-chimney"></i></a></div>
+            <div class="nav-links">
+                <a href="../learning-path.html" class="nav-link">Courses</a>
+                <a href="../data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="../data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="../pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="../projects.html" class="nav-link">Projects</a>
+                <a href="../pricing.html" class="nav-link">Pricing</a>
+                <a href="../founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="top-offset-for-nav">
+        <main class="project-detail">
+
+            <div class="project-hero">
+                <div class="project-badges">
+                    <span class="project-badge">Advanced</span>
+                    <span class="project-badge pro">Pro</span>
+                </div>
+                <h1><i class="fas fa-robot"></i> LLM from Scratch</h1>
+                <p>Build a tiny language model with PyTorch: tokenization, embeddings, transformer blocks, next-token prediction. Understand how GPT-style models work under the hood.</p>
+                <div class="project-tools">
+                    <span>Python</span><span>PyTorch</span><span>LLM</span>
+                </div>
+            </div>
+
+            <div class="project-tabs">
+                <button class="project-tab active" data-tab="overview"><i class="fas fa-binoculars"></i> Overview</button>
+                <button class="project-tab" data-tab="build"><i class="fas fa-hammer"></i> Build It <span class="lock-icon"><i class="fas fa-lock"></i></span></button>
+            </div>
+
+            <!-- ========== OVERVIEW (FREE) ========== -->
+            <div class="project-panel active" id="panel-overview">
+
+                <section class="project-section">
+                    <h2><i class="fas fa-theater-masks"></i> The Scenario</h2>
+                    <div class="project-scenario">
+                        <h4>Imagine this…</h4>
+                        <p>ChatGPT, Claude, Gemini — they all feel like magic. You type a question and a human-sounding answer appears. But what's actually happening? At the core, every LLM does one thing: <strong>predict the next word</strong> given the previous words. Repeat that thousands of times and you get paragraphs. In this project, you strip away the scale and build a <strong>tiny language model from scratch</strong>. It won't write essays, but you'll see exactly how attention, embeddings, and layers combine to model language. Perfect for interviews and for saying "I understand how transformers work."</p>
+                    </div>
+                </section>
+
+                <section class="project-section">
+                    <h2><i class="fas fa-bullseye"></i> What You'll Build</h2>
+                    <div class="anim-flow-wrap">
+                        <span class="anim-step" style="background:#3b82f6;color:#fff;animation-delay:0s;">Text</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step" style="background:#8b5cf6;color:#fff;animation-delay:0.3s;">Tokenize</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step" style="background:#6366f1;color:#fff;animation-delay:0.6s;">Embed</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step" style="background:#4f46e5;color:#fff;animation-delay:0.9s;">Transformer</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step" style="background:#059669;color:#fff;animation-delay:1.2s;">Next Token</span>
+                    </div>
+                    <ul style="margin:20px 0 0 22px;color:#475569;line-height:1.9;">
+                        <li><strong>Tokenizer:</strong> Character-level encoder/decoder (text → numbers → text).</li>
+                        <li><strong>Dataset:</strong> A PyTorch Dataset that creates context-window + target pairs.</li>
+                        <li><strong>Model:</strong> Embedding → N transformer blocks (self-attention + FFN + LayerNorm) → linear head.</li>
+                        <li><strong>Training:</strong> Cross-entropy loss, AdamW optimizer, loss logging.</li>
+                        <li><strong>Generation:</strong> Feed a prompt, sample next token, repeat.</li>
+                    </ul>
+                </section>
+
+                <section class="project-section">
+                    <h2><i class="fas fa-book-open"></i> Prerequisites</h2>
+                    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;width:30%;">Python</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">Classes, functions, list comprehensions. Comfortable writing 50+ line scripts.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../python_course/index.html" style="color:#4f46e5;font-weight:600;">Python Course</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">PyTorch basics</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">Tensors, autograd, nn.Module, DataLoader. You should know how to define a simple neural network.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../data_science_course/deep-learning.html" style="color:#4f46e5;font-weight:600;">Deep Learning</a></td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Transformer concept</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">What attention is, why positional encoding exists. We'll build it step by step, but having read about it helps.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../data_science_course/gen-ai-intro.html" style="color:#4f46e5;font-weight:600;">Gen AI Intro</a></td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section class="project-section">
+                    <h2><i class="fas fa-list-ol"></i> Step-by-Step Plan</h2>
+                    <ol class="project-steps">
+                        <li><span class="step-num">1</span><div class="step-body"><strong>Get text data.</strong> Download a small corpus (e.g. Tiny Shakespeare, ~1 MB).</div></li>
+                        <li><span class="step-num">2</span><div class="step-body"><strong>Build a tokenizer.</strong> Character-level: map each unique character to an integer and back.</div></li>
+                        <li><span class="step-num">3</span><div class="step-body"><strong>Create a Dataset.</strong> Sliding window: input = context_length chars, target = next char for each position.</div></li>
+                        <li><span class="step-num">4</span><div class="step-body"><strong>Embedding + positional encoding.</strong> Turn token IDs into vectors and add position information.</div></li>
+                        <li><span class="step-num">5</span><div class="step-body"><strong>Build self-attention.</strong> Scaled dot-product attention with a causal mask (can't see the future).</div></li>
+                        <li><span class="step-num">6</span><div class="step-body"><strong>Build a transformer block.</strong> Combine attention + feed-forward + layer norm + residual connections.</div></li>
+                        <li><span class="step-num">7</span><div class="step-body"><strong>Full model + training loop.</strong> Stack blocks, add a linear head, train with cross-entropy and AdamW.</div></li>
+                        <li><span class="step-num">8</span><div class="step-body"><strong>Generate text.</strong> Given a prompt, autoregressively sample tokens to produce new text.</div></li>
+                    </ol>
+                </section>
+            </div>
+
+            <!-- ========== BUILD IT (PRO) ========== -->
+            <div class="project-panel" id="panel-build">
+                <div class="pro-locked-wrapper is-locked">
+                    <div class="pro-locked-content">
+
+                        <div class="build-progress"><div class="build-progress-fill" style="width:0%" id="buildProgress"></div></div>
+
+                        <!-- STEP 1 -->
+                        <div class="build-step" data-step="1">
+                            <div class="build-step-header">
+                                <div class="build-step-num">1</div>
+                                <div><h3>Get Text Data</h3><p>Download a small corpus to train on</p></div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What and why</h4>
+                                <p>A language model learns from text. We need a file with enough text to learn patterns (word order, punctuation, style) but small enough to train on a laptop. Tiny Shakespeare (~1 MB, 40,000 lines) is the classic choice — it's all of Shakespeare's plays in one text file.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+import urllib.request
+
+url = 'https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt'
+urllib.request.urlretrieve(url, 'input.txt')
+
+with open('input.txt', 'r') as f:
+    text = f.read()
+
+print(f"Total characters: {len(text):,}")
+print(f"First 200 chars:\n{text[:200]}")
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What just happened</h4>
+                                <p>We downloaded the Tiny Shakespeare dataset (~1.1 million characters) and loaded it into a Python string. We printed the length and a preview. This text is what the model will learn from — it will try to predict the next character given previous characters.</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 1 complete!</h4>
+                                <ul><li>Downloaded ~1.1M characters of Shakespeare text</li><li>Loaded into a Python string variable</li></ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 2 -->
+                        <div class="build-step" data-step="2">
+                            <div class="build-step-header">
+                                <div class="build-step-num">2</div>
+                                <div><h3>Build a Character-Level Tokenizer</h3><p>Convert characters to numbers and back</p></div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>Why tokenize?</h4>
+                                <p>Neural networks work with numbers, not letters. We need to convert every character (a, b, c, space, newline, etc.) to a unique integer. "Hello" becomes [20, 17, 24, 24, 27]. Character-level is the simplest tokenizer — real LLMs use subword tokenizers (BPE), but the concept is identical.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+chars = sorted(set(text))
+vocab_size = len(chars)
+print(f"Vocabulary size: {vocab_size}")
+print(f"Characters: {''.join(chars)}")
+
+# Character to integer and back
+char_to_idx = {ch: i for i, ch in enumerate(chars)}
+idx_to_char = {i: ch for i, ch in enumerate(chars)}
+
+def encode(s):
+    return [char_to_idx[c] for c in s]
+
+def decode(ids):
+    return ''.join(idx_to_char[i] for i in ids)
+
+# Test it
+print(encode("Hello"))
+print(decode(encode("Hello")))
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>Line by line</h4>
+                                <p><strong>sorted(set(text)):</strong> Get every unique character in the text, sorted. That's our vocabulary (~65 characters: letters, digits, punctuation, spaces, newlines).</p>
+                                <p><strong>char_to_idx:</strong> Dictionary mapping each character to a number. E.g. 'a' → 0, 'b' → 1, etc.</p>
+                                <p><strong>idx_to_char:</strong> Reverse dictionary: number → character.</p>
+                                <p><strong>encode/decode:</strong> Convert a string to a list of ints and vice versa. The model works in integer-land; we decode back to text for humans.</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 2 complete!</h4>
+                                <ul><li>Vocabulary of ~65 unique characters</li><li>encode() and decode() functions working</li></ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 3 -->
+                        <div class="build-step" data-step="3">
+                            <div class="build-step-header">
+                                <div class="build-step-num">3</div>
+                                <div><h3>Create a PyTorch Dataset</h3><p>Sliding window of context → next token pairs</p></div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What's a "context window"?</h4>
+                                <p>The model looks at the last N characters (the context) and predicts the next one. If context_length=8 and the text is "Hello World", one training example is: input = "Hello Wo", target = "ello Wor". For every position in the input, the target is the next character. We slide this window across the entire text to create thousands of training examples.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+import torch
+from torch.utils.data import Dataset, DataLoader
+
+CONTEXT_LENGTH = 64
+
+class CharDataset(Dataset):
+    def __init__(self, text, context_length):
+        self.data = torch.tensor(encode(text), dtype=torch.long)
+        self.context_length = context_length
+
+    def __len__(self):
+        return len(self.data) - self.context_length
+
+    def __getitem__(self, idx):
+        chunk = self.data[idx : idx + self.context_length + 1]
+        x = chunk[:-1]   # input: first N tokens
+        y = chunk[1:]     # target: shifted by 1
+        return x, y
+
+# Split: 90% train, 10% val
+split = int(0.9 * len(text))
+train_ds = CharDataset(text[:split], CONTEXT_LENGTH)
+val_ds   = CharDataset(text[split:], CONTEXT_LENGTH)
+
+train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
+val_loader   = DataLoader(val_ds,   batch_size=64, shuffle=False)
+
+print(f"Train examples: {len(train_ds):,}")
+print(f"Val examples:   {len(val_ds):,}")
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What each part does</h4>
+                                <p><strong>CharDataset:</strong> Stores the entire text as a tensor of integers. Each __getitem__ returns a window of 64 characters (input) and the same window shifted by 1 (target). So for every position, the target is "what comes next".</p>
+                                <p><strong>DataLoader:</strong> Feeds batches of 64 examples at a time to the model. shuffle=True randomizes the order each epoch so the model doesn't memorize the sequence.</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 3 complete!</h4>
+                                <ul><li>Dataset class with sliding context windows</li><li>90/10 train/val split</li><li>DataLoaders ready (batch_size=64)</li></ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 4 -->
+                        <div class="build-step" data-step="4">
+                            <div class="build-step-header">
+                                <div class="build-step-num">4</div>
+                                <div><h3>Embedding + Positional Encoding</h3><p>Turn token IDs into vectors and add position info</p></div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>Why embeddings?</h4>
+                                <p>The number 42 doesn't tell the model anything about the character it represents. An <strong>embedding</strong> maps each token ID to a learned vector (e.g. 128 numbers). Similar characters end up with similar vectors after training. <strong>Positional encoding</strong> tells the model where each token is in the sequence — without it, "cat sat" and "sat cat" look the same.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+import torch.nn as nn
+
+D_MODEL = 128  # embedding dimension
+
+class TokenAndPositionEmbedding(nn.Module):
+    def __init__(self, vocab_size, d_model, max_len):
+        super().__init__()
+        self.token_emb = nn.Embedding(vocab_size, d_model)
+        self.pos_emb   = nn.Embedding(max_len, d_model)
+
+    def forward(self, x):
+        # x shape: (batch, seq_len)
+        seq_len = x.size(1)
+        positions = torch.arange(seq_len, device=x.device)
+        tok = self.token_emb(x)        # (B, T, d_model)
+        pos = self.pos_emb(positions)   # (T, d_model)
+        return tok + pos               # add them together
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What this does</h4>
+                                <p><strong>token_emb:</strong> Lookup table: token ID → 128-dimensional vector. Learned during training.</p>
+                                <p><strong>pos_emb:</strong> Lookup table: position (0, 1, 2, …) → 128-dimensional vector. Also learned.</p>
+                                <p><strong>tok + pos:</strong> We add them element-wise. Now each token vector encodes both "what character am I" and "where am I in the sequence".</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 4 complete!</h4>
+                                <ul><li>Token embedding (vocab_size → d_model)</li><li>Positional embedding (max_len → d_model)</li><li>Combined by addition</li></ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 5 -->
+                        <div class="build-step" data-step="5">
+                            <div class="build-step-header">
+                                <div class="build-step-num">5</div>
+                                <div><h3>Build Self-Attention</h3><p>The core mechanism that lets tokens "look at" each other</p></div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What is attention?</h4>
+                                <p>Each token asks: "Which other tokens in the sequence should I pay attention to?" For example, in "The cat sat on the mat", when processing "sat", the model might attend strongly to "cat" (who sat?) and "on" (where?). Attention computes a weighted average of all token vectors, where the weights are learned. <strong>Causal mask</strong> means a token can only look at tokens before it — not the future. That's how GPT works: left to right.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+import math
+
+class CausalSelfAttention(nn.Module):
+    def __init__(self, d_model, n_heads):
+        super().__init__()
+        assert d_model % n_heads == 0
+        self.n_heads = n_heads
+        self.head_dim = d_model // n_heads
+
+        self.qkv = nn.Linear(d_model, 3 * d_model)
+        self.out_proj = nn.Linear(d_model, d_model)
+
+    def forward(self, x):
+        B, T, C = x.shape
+        qkv = self.qkv(x)  # (B, T, 3*C)
+        q, k, v = qkv.chunk(3, dim=-1)
+
+        # Reshape for multi-head: (B, n_heads, T, head_dim)
+        q = q.view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
+        k = k.view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
+        v = v.view(B, T, self.n_heads, self.head_dim).transpose(1, 2)
+
+        # Scaled dot-product attention
+        scores = (q @ k.transpose(-2, -1)) / math.sqrt(self.head_dim)
+
+        # Causal mask: prevent attending to future tokens
+        mask = torch.triu(torch.ones(T, T, device=x.device), diagonal=1).bool()
+        scores = scores.masked_fill(mask, float('-inf'))
+
+        weights = torch.softmax(scores, dim=-1)
+        out = weights @ v  # (B, n_heads, T, head_dim)
+
+        # Concatenate heads and project
+        out = out.transpose(1, 2).contiguous().view(B, T, C)
+        return self.out_proj(out)
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>Breaking it down</h4>
+                                <p><strong>Q, K, V:</strong> Every token produces three vectors: Query ("what am I looking for?"), Key ("what do I contain?"), Value ("what info do I give?"). We compute all three at once with one linear layer.</p>
+                                <p><strong>Multi-head:</strong> Instead of one big attention, we split into 4 smaller "heads" (128/4=32 each). Each head learns different patterns (one might learn grammar, another semantics).</p>
+                                <p><strong>scores = Q @ K^T / sqrt(d):</strong> Dot product tells how similar Q and K are. Divide by sqrt to prevent numbers from getting too large.</p>
+                                <p><strong>Causal mask:</strong> Upper triangular matrix of -infinity. After softmax, -inf becomes 0 weight — so future tokens contribute nothing.</p>
+                                <p><strong>weights @ V:</strong> Weighted average of Values. Each token gets a mix of information from tokens it attended to.</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 5 complete!</h4>
+                                <ul><li>Multi-head self-attention with causal mask</li><li>Q, K, V projections + output projection</li><li>Scaled dot-product with softmax</li></ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 6 -->
+                        <div class="build-step" data-step="6">
+                            <div class="build-step-header">
+                                <div class="build-step-num">6</div>
+                                <div><h3>Build a Transformer Block</h3><p>Attention + Feed-Forward + LayerNorm + Residuals</p></div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What's a "block"?</h4>
+                                <p>A transformer block is one "layer" of processing. It has two sub-layers: (1) self-attention (mix information across positions) and (2) feed-forward network (process each position independently). We add <strong>residual connections</strong> (shortcuts) and <strong>layer normalization</strong> to help training. Then we stack multiple blocks — more blocks = more capacity to learn patterns.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+class TransformerBlock(nn.Module):
+    def __init__(self, d_model, n_heads):
+        super().__init__()
+        self.ln1  = nn.LayerNorm(d_model)
+        self.attn = CausalSelfAttention(d_model, n_heads)
+        self.ln2  = nn.LayerNorm(d_model)
+        self.ff   = nn.Sequential(
+            nn.Linear(d_model, 4 * d_model),
+            nn.GELU(),
+            nn.Linear(4 * d_model, d_model),
+        )
+
+    def forward(self, x):
+        x = x + self.attn(self.ln1(x))   # attention + residual
+        x = x + self.ff(self.ln2(x))     # feed-forward + residual
+        return x
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>Line by line</h4>
+                                <p><strong>ln1, ln2 (LayerNorm):</strong> Normalize the values so they don't explode or vanish. Applied before each sub-layer (pre-norm style, like GPT-2).</p>
+                                <p><strong>attn:</strong> Our causal self-attention from Step 5.</p>
+                                <p><strong>ff:</strong> Two linear layers with GELU activation in between. Expands to 4x the dimension then compresses back. This adds non-linearity and capacity.</p>
+                                <p><strong>x = x + ...:</strong> The "+" is the residual connection. The original input flows through unchanged and the block's output is added on top. This helps gradients flow during training (prevents vanishing gradients).</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 6 complete!</h4>
+                                <ul><li>TransformerBlock: attention + FFN</li><li>Pre-norm LayerNorm</li><li>Residual connections on both sub-layers</li></ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 7 -->
+                        <div class="build-step" data-step="7">
+                            <div class="build-step-header">
+                                <div class="build-step-num">7</div>
+                                <div><h3>Full Model + Training Loop</h3><p>Stack blocks, add head, train with cross-entropy</p></div>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+N_LAYERS = 4
+N_HEADS  = 4
+
+class MiniGPT(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.embed = TokenAndPositionEmbedding(vocab_size, D_MODEL, CONTEXT_LENGTH)
+        self.blocks = nn.Sequential(*[
+            TransformerBlock(D_MODEL, N_HEADS) for _ in range(N_LAYERS)
+        ])
+        self.ln_f = nn.LayerNorm(D_MODEL)
+        self.head = nn.Linear(D_MODEL, vocab_size)
+
+    def forward(self, x, targets=None):
+        x = self.embed(x)
+        x = self.blocks(x)
+        x = self.ln_f(x)
+        logits = self.head(x)   # (B, T, vocab_size)
+
+        loss = None
+        if targets is not None:
+            loss = nn.functional.cross_entropy(
+                logits.view(-1, vocab_size),
+                targets.view(-1)
+            )
+        return logits, loss
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+model = MiniGPT().to(device)
+optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
+
+print(f"Parameters: {sum(p.numel() for p in model.parameters()):,}")
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>What's happening</h4>
+                                <p><strong>MiniGPT:</strong> Our full model. Embedding → 4 transformer blocks → final LayerNorm → linear head that predicts a score for every possible next character (vocab_size scores).</p>
+                                <p><strong>cross_entropy:</strong> The loss function. It measures how far our predictions are from the actual next character. Lower = better.</p>
+                                <p><strong>AdamW:</strong> The optimizer that updates model weights to reduce the loss. lr=3e-4 is a common learning rate for small transformers.</p>
+                            </div>
+                            <h4>Training loop</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+EPOCHS = 5
+
+for epoch in range(EPOCHS):
+    model.train()
+    total_loss = 0
+    for batch_idx, (xb, yb) in enumerate(train_loader):
+        xb, yb = xb.to(device), yb.to(device)
+        logits, loss = model(xb, yb)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+
+    avg_loss = total_loss / len(train_loader)
+
+    # Validation
+    model.eval()
+    val_loss = 0
+    with torch.no_grad():
+        for xb, yb in val_loader:
+            xb, yb = xb.to(device), yb.to(device)
+            _, loss = model(xb, yb)
+            val_loss += loss.item()
+    val_loss /= len(val_loader)
+
+    print(f"Epoch {epoch+1}/{EPOCHS} | Train loss: {avg_loss:.4f} | Val loss: {val_loss:.4f}")
+</pre>
+                            </div>
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Expected behavior</h4>
+                                <p>Loss starts around 4.0 (random guessing among ~65 chars) and should drop to ~1.5–2.0 after 5 epochs. On a CPU this takes 10-30 minutes. On a GPU it's much faster. If loss doesn't decrease, double-check the learning rate and data loading.</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 7 complete!</h4>
+                                <ul><li>MiniGPT model with ~500K parameters</li><li>Training loop with train + validation loss</li><li>Loss decreasing from ~4.0 toward ~1.5</li></ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 8 -->
+                        <div class="build-step" data-step="8">
+                            <div class="build-step-header">
+                                <div class="build-step-num">8</div>
+                                <div><h3>Generate Text!</h3><p>Feed a prompt and watch your model write</p></div>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+@torch.no_grad()
+def generate(model, prompt, max_new_tokens=200, temperature=0.8):
+    model.eval()
+    tokens = torch.tensor(encode(prompt), dtype=torch.long, device=device).unsqueeze(0)
+
+    for _ in range(max_new_tokens):
+        # Crop to context length
+        context = tokens[:, -CONTEXT_LENGTH:]
+        logits, _ = model(context)
+        logits = logits[:, -1, :] / temperature
+        probs = torch.softmax(logits, dim=-1)
+        next_token = torch.multinomial(probs, num_samples=1)
+        tokens = torch.cat([tokens, next_token], dim=1)
+
+    return decode(tokens[0].tolist())
+
+# Try it!
+print(generate(model, "ROMEO:\n", max_new_tokens=300))
+</pre>
+                            </div>
+                            <div class="project-layman">
+                                <h4>How generation works</h4>
+                                <p><strong>Autoregressive:</strong> Feed the prompt tokens to the model. Take the last position's logits (predictions for what comes next). Divide by temperature (lower = more confident/repetitive, higher = more random/creative). Convert to probabilities with softmax. Sample one token. Append it. Repeat.</p>
+                                <p>The output won't be perfect Shakespeare, but you'll see it learned basic patterns: character names, line breaks, iambic-ish phrasing. That's a language model working!</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4><i class="fas fa-trophy"></i> Project complete!</h4>
+                                <p>You built a GPT-style language model from scratch. Here's what you can put on your resume:</p>
+                                <ul>
+                                    <li>Implemented a character-level transformer language model in PyTorch</li>
+                                    <li>Built custom tokenizer, dataset pipeline, multi-head causal attention, and transformer blocks</li>
+                                    <li>Trained on Shakespeare corpus; achieved text generation with learned linguistic patterns</li>
+                                    <li>Deep understanding of attention mechanism, positional encoding, and autoregressive decoding</li>
+                                </ul>
+                            </div>
+                            <div class="project-section" style="background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);border:2px solid #10b981;margin-top:28px;">
+                                <h2 style="color:#065f46;"><i class="fas fa-rocket"></i> What's next?</h2>
+                                <ul style="color:#064e3b;line-height:1.9;margin-left:20px;">
+                                    <li>Try a subword tokenizer (BPE) instead of character-level</li>
+                                    <li>Increase model size (more layers, bigger d_model) and train longer</li>
+                                    <li>Add dropout for regularization</li>
+                                    <li>Fine-tune on your own text (emails, code, song lyrics)</li>
+                                    <li>Read the original <a href="https://arxiv.org/abs/1706.03762" target="_blank" style="color:#059669;font-weight:700;">"Attention Is All You Need"</a> paper</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div><!-- /.pro-locked-content -->
+
+                    <div class="pro-lock-overlay">
+                        <div class="lock-icon-big"><i class="fas fa-lock"></i></div>
+                        <h3>Unlock the Full Build Guide</h3>
+                        <p>Get every line of PyTorch code with detailed explanations — from tokenizer to text generation. Build a working LLM on your laptop.</p>
+                        <a href="../pricing.html" class="unlock-btn"><i class="fas fa-crown"></i> Upgrade to Pro</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="../projects.html" class="project-back"><i class="fas fa-arrow-left"></i> Back to all projects</a>
+        </main>
+    </div>
+
+    <footer class="footer" style="margin-top:48px;">
+        <div class="footer-bottom"><p>&copy; 2025 Data For Dummies. Learning notes for everyone.</p></div>
+    </footer>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:24px;">
+            <p><a href="mailto:fktiindia@gmail.com">fktiindia@gmail.com</a></p>
+            <p><a href="tel:+919833565272">+91 98335 65272</a></p>
+        </div>
+    </div>
+    <script>function showContact(){document.getElementById('contactModal').style.display='flex';} document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+    <script src="../js/hub-script.js"></script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/project-paywall.js"></script>
+    <script>
+    document.querySelectorAll('.project-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.project-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.project-panel').forEach(function(p) { p.classList.remove('active'); });
+            tab.classList.add('active');
+            document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+    </script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

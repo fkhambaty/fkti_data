@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Forest – Ultra-Detailed Guide & Car Evaluation | Data Science Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.85; }
+        .container { max-width: 920px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap; border: 2px solid #a7f3d0; }
+        .nav a { color: #059669; text-decoration: none; font-weight: 600; }
+        .nav a:hover { color: #047857; }
+        .header { text-align: center; padding: 40px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 20px; margin-bottom: 30px; color: white; box-shadow: 0 10px 40px rgba(16,185,129,0.3); }
+        .header h1 { font-size: 1.9em; margin-bottom: 12px; }
+        .header p { font-size: 1.08em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .section { background: white; border-radius: 16px; padding: 30px; margin-bottom: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-left: 5px solid #10b981; }
+        .section h2 { color: #059669; font-size: 1.4em; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .section h3 { color: #047857; font-size: 1.15em; margin: 22px 0 12px 0; padding-left: 14px; border-left: 4px solid #6ee7b7; }
+        .section p { color: #334155; margin-bottom: 14px; font-size: 1.02em; }
+        .download-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 20px 24px; margin: 18px 0; border-left: 4px solid #f59e0b; }
+        .download-box a { color: #92400e; font-weight: 700; text-decoration: none; }
+        .download-box a:hover { text-decoration: underline; }
+        .eli5-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 22px 24px; margin: 18px 0; border-left: 4px solid #3b82f6; }
+        .eli5-box h4 { color: #1e40af; font-size: 1.1em; margin-bottom: 12px; }
+        .eli5-box p, .eli5-box ul, .eli5-box ol { color: #1e3a8a; margin-bottom: 10px; font-size: 1em; padding-left: 18px; }
+        .eli5-box li { margin-bottom: 6px; }
+        .code-block { background: #1e293b; border-radius: 12px; padding: 22px; margin: 18px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9em; color: #e2e8f0; line-height: 1.6; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+        .line-explain { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 20px 24px; margin: 14px 0; border-left: 4px solid #10b981; }
+        .line-explain h4 { color: #065f46; font-size: 1.08em; margin-bottom: 12px; }
+        .line-explain ul, .line-explain ol { margin: 0; padding-left: 24px; color: #064e3b; }
+        .line-explain li { margin-bottom: 8px; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 18px 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .data-table th { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 14px 12px; text-align: left; }
+        .data-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdf4; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 44px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+
+        /* ----- Animations ----- */
+        .anim-block { margin: 24px 0; }
+        .anim-flow-wrap { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; padding: 24px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 16px; border: 2px solid #86efac; }
+        .anim-step { padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 0.95em; display: flex; align-items: center; gap: 8px; }
+        .anim-step.data { background: #3b82f6; color: white; animation: pulse-box 2s ease-in-out infinite; }
+        .anim-step.tree { background: #059669; color: white; animation: pulse-box 2s ease-in-out 0.4s infinite; }
+        .anim-step.vote { background: #7c3aed; color: white; animation: pulse-box 2s ease-in-out 0.8s infinite; }
+        .anim-step.pred { background: #dc2626; color: white; animation: pulse-box 2s ease-in-out 1.2s infinite; }
+        .anim-arrow { font-size: 1.5em; color: #64748b; animation: arrow-blink 1.5s ease-in-out infinite; }
+        @keyframes pulse-box { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.9; } }
+        @keyframes arrow-blink { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        .anim-vote-demo { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; padding: 20px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; border: 2px dashed #f59e0b; margin: 20px 0; }
+        .anim-vote-demo .tree-vote { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1em; color: #1e293b; animation: vote-pop 2s ease-in-out infinite; }
+        .anim-vote-demo .tree-vote:nth-child(1) { background: #86efac; animation-delay: 0s; }
+        .anim-vote-demo .tree-vote:nth-child(2) { background: #93c5fd; animation-delay: 0.2s; }
+        .anim-vote-demo .tree-vote:nth-child(3) { background: #c4b5fd; animation-delay: 0.4s; }
+        .anim-vote-demo .tree-vote:nth-child(4) { background: #f9a8d4; animation-delay: 0.6s; }
+        .anim-vote-demo .tree-vote:nth-child(5) { background: #fcd34d; animation-delay: 0.8s; }
+        .anim-vote-demo .result { padding: 12px 24px; background: #059669; color: white; border-radius: 12px; font-weight: 800; animation: result-glow 2.5s ease-in-out infinite; }
+        @keyframes vote-pop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 4px 20px rgba(0,0,0,0.2); } }
+        @keyframes result-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(5,150,105,0.4); } 50% { box-shadow: 0 0 0 12px rgba(5,150,105,0); } }
+
+        .anim-bootstrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 20px; background: #f8fafc; border-radius: 16px; border: 2px solid #e2e8f0; margin: 20px 0; }
+        .anim-bootstrap .sample-dot { width: 36px; height: 36px; border-radius: 8px; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75em; font-weight: 700; animation: bootstrap-pick 3s ease-in-out infinite; }
+        .anim-bootstrap .sample-dot:nth-child(1) { animation-delay: 0s; }
+        .anim-bootstrap .sample-dot:nth-child(2) { animation-delay: 0.3s; }
+        .anim-bootstrap .sample-dot:nth-child(3) { animation-delay: 0.6s; }
+        .anim-bootstrap .sample-dot:nth-child(4) { animation-delay: 0.9s; }
+        .anim-bootstrap .sample-dot:nth-child(5) { animation-delay: 1.2s; }
+        .anim-bootstrap .sample-dot:nth-child(6) { animation-delay: 1.5s; }
+        @keyframes bootstrap-pick { 0%, 100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); background: #059669; } }
+
+        .glossary-box { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 12px; padding: 20px 24px; margin: 18px 0; border-left: 4px solid #7c3aed; }
+        .glossary-box h4 { color: #5b21b6; margin-bottom: 12px; }
+        .glossary-box dl { margin: 0; }
+        .glossary-box dt { font-weight: 700; color: #6b21a8; margin-top: 10px; }
+        .glossary-box dd { margin-left: 0; padding-left: 18px; color: #5b21b6; margin-bottom: 6px; }
+        @media (max-width: 768px) { body { padding: 10px; } .section { padding: 22px; } .nav-buttons { flex-direction: column; } .anim-flow-wrap { flex-direction: column; } }
+    </style>
+</head>
+<body data-access="pro">
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="decision-trees.html"><i class="fas fa-arrow-left"></i> Decision Trees & Random Forests</a>
+        </nav>
+        <div class="header">
+            <h1>🌲 Random Forest – Ultra-Detailed Guide & Car Evaluation</h1>
+            <p>From zero to hero: what Random Forest is, why we use it, every idea explained like you know nothing, plus a full code walkthrough with the car dataset. With animations!</p>
+        </div>
+
+        <div class="download-box">
+            <strong>📥 Download the dataset first:</strong> <a href="datasets/cars_data.csv" download="cars_data.csv"><i class="fas fa-download"></i> cars_data.csv</a> — Save it in the same folder as your script so <code>pd.read_csv("cars_data.csv")</code> works.
+        </div>
+
+        <!-- ========== PART 0: What we're building ========== -->
+        <div class="section">
+            <h2><i class="fas fa-bullseye"></i> What are we building?</h2>
+            <div class="eli5-box">
+                <h4>👶 In plain English (assume you know nothing)</h4>
+                <p>Imagine you run a <strong>used-car website</strong>. For every car you have a form: buying price (very high / high / medium / low), maintenance cost, number of doors, how many people it fits, luggage size, and safety rating. You want the computer to <strong>predict the class</strong>: is this car <strong>unacc</strong> (unacceptable), <strong>acc</strong> (acceptable), <strong>good</strong>, or <strong>vgood</strong> (very good)?</p>
+                <p><strong>Random Forest</strong> = many <strong>decision trees</strong> voting together. Each tree is like a small quiz: “Is safety high?” → Yes. “Does it fit 4+ people?” → Yes. … At the end each tree says one class. We count votes: if 70 trees say “acc” and 30 say “good”, we pick “acc”. That’s it!</p>
+                <p>We’ll also see <strong>which columns matter most</strong> (e.g. safety, number of persons) and how to measure how good the model is (confusion matrix, accuracy, precision, recall).</p>
+            </div>
+        </div>
+
+        <!-- ========== PART 1: Full theory (like a topics PDF) ========== -->
+        <div class="section">
+            <h2><i class="fas fa-book"></i> Part 1: Random Forest theory (ultra detail)</h2>
+
+            <h3>1.1 What is a decision tree (quick recap)</h3>
+            <p>A <strong>decision tree</strong> is a flowchart of yes/no questions. You start at the top (root), answer each question, follow the branch, and when you reach a leaf you get a prediction (e.g. “unacc” or “acc”). The algorithm learns which questions to ask and in what order from the data by choosing splits that make each group as “pure” as possible (e.g. measured by Gini impurity or entropy).</p>
+            <div class="eli5-box">
+                <h4>👶 Layman example</h4>
+                <p>“Is safety = high?” → Yes. “persons ≥ 4?” → Yes. “buying = low?” → No. → Predict <strong>acc</strong>. So the tree is just a bunch of rules you can follow by hand.</p>
+            </div>
+
+            <h3>1.2 Why not use just one tree?</h3>
+            <p>One deep tree often <strong>overfits</strong>: it memorizes the training data (including noise) and does worse on new data. Small changes in the data can change the tree a lot (high <strong>variance</strong>). So we want many trees that each see slightly different data and different features; when they vote, their individual mistakes tend to cancel out.</p>
+            <div class="eli5-box">
+                <h4>👶 Layman example</h4>
+                <p>Asking one strict friend “should I buy this car?” might be biased. Asking 100 friends and taking the majority vote is usually more reliable. Random Forest is that: many “tree friends” voting.</p>
+            </div>
+
+            <h3>1.3 Bagging (Bootstrap Aggregating)</h3>
+            <p><strong>Bagging</strong> = build many models each on a <strong>random sample of the training data</strong>, then combine their predictions (e.g. by voting). Random Forest is bagging applied to decision trees, with one extra twist: at each split inside a tree we only consider a <strong>random subset of features</strong>.</p>
+            <ul style="margin-left: 22px; color: #334155;">
+                <li><strong>Bootstrap sample:</strong> For each tree we draw a random sample <strong>with replacement</strong> from the training set (same size as the training set). “With replacement” means the same row can be picked more than once—so each tree sees a slightly different set of rows.</li>
+                <li><strong>Aggregating:</strong> For classification we take the <strong>majority vote</strong> over the trees; for regression we take the <strong>average</strong> of their predictions.</li>
+            </ul>
+            <div class="eli5-box">
+                <h4>👶 What “with replacement” means</h4>
+                <p>Imagine 5 rows: A, B, C, D, E. We pick 5 at random, but after each pick we put the row back. So we might get A, A, C, D, E—row A twice, B never. That’s one bootstrap sample. Another tree might get B, B, C, D, D. So each tree trains on a different “view” of the data.</p>
+            </div>
+
+            <div class="anim-block">
+                <p style="margin-bottom: 10px; font-weight: 700; color: #047857;">Animation: Bootstrap sampling (dots = rows; they light up when “picked”)</p>
+                <div class="anim-bootstrap">
+                    <span class="sample-dot">1</span><span class="sample-dot">2</span><span class="sample-dot">3</span><span class="sample-dot">4</span><span class="sample-dot">5</span><span class="sample-dot">6</span>
+                </div>
+                <p style="font-size: 0.95em; color: #64748b; margin-top: 10px;">Each tree gets a random subset of rows (with replacement). The animation suggests different rows being picked for different trees.</p>
+            </div>
+
+            <h3>1.4 The “random” in Random Forest</h3>
+            <p>Two sources of randomness:</p>
+            <ol style="margin-left: 24px; color: #334155;">
+                <li><strong>Random data (bootstrap):</strong> Each tree is trained on a bootstrap sample of the training set.</li>
+                <li><strong>Random features:</strong> At every split, the algorithm only considers a random subset of the features (e.g. 80% or √p). So Tree 1 might split first on “safety”, Tree 2 on “persons”, etc. That makes trees more diverse and reduces overfitting.</li>
+            </ol>
+
+            <h3>1.5 How voting works</h3>
+            <p>For a new car, each tree in the forest outputs one class (e.g. unacc, acc, good, vgood). We count the votes; the class with the most votes wins. (For regression we average the numeric predictions.)</p>
+            <div class="anim-block">
+                <p style="margin-bottom: 10px; font-weight: 700; color: #047857;">Animation: Five trees voting (e.g. acc, acc, good, acc, acc → majority = acc)</p>
+                <div class="anim-vote-demo">
+                    <span class="tree-vote">acc</span><span class="tree-vote">acc</span><span class="tree-vote">good</span><span class="tree-vote">acc</span><span class="tree-vote">acc</span>
+                    <span class="anim-arrow">→</span>
+                    <span class="result">acc (majority)</span>
+                </div>
+            </div>
+
+            <h3>1.6 High-level flow (animated)</h3>
+            <div class="anim-flow-wrap">
+                <span class="anim-step data">📊 Data</span>
+                <span class="anim-arrow">→</span>
+                <span class="anim-step tree">🌲 Tree 1</span>
+                <span class="anim-step tree">🌲 Tree 2</span>
+                <span class="anim-step tree">🌲 …</span>
+                <span class="anim-arrow">→</span>
+                <span class="anim-step vote">🗳️ Vote</span>
+                <span class="anim-arrow">→</span>
+                <span class="anim-step pred">✅ Prediction</span>
+            </div>
+
+            <h3>1.7 Glossary (every term in one place)</h3>
+            <div class="glossary-box">
+                <h4>📖 Terms you must know</h4>
+                <dl>
+                    <dt>Root node</dt>
+                    <dd>The top of the tree; the first question.</dd>
+                    <dt>Split</dt>
+                    <dd>Using one feature (e.g. safety = high?) to divide data into two groups.</dd>
+                    <dt>Leaf</dt>
+                    <dd>End of the tree; no more splits; the prediction for that path.</dd>
+                    <dt>Bootstrap</dt>
+                    <dd>Drawing a random sample with replacement from the training set.</dd>
+                    <dt>Bagging</dt>
+                    <dd>Training many models on bootstrap samples and combining their predictions (e.g. voting).</dd>
+                    <dt>max_depth</dt>
+                    <dd>Maximum number of levels in each tree. Deeper = more complex, risk of overfitting.</dd>
+                    <dt>max_features</dt>
+                    <dd>How many (or what fraction of) features to consider at each split. Smaller = more randomness, more diversity.</dd>
+                    <dt>max_samples</dt>
+                    <dd>Fraction (or count) of rows each tree uses. Less than 1.0 = each tree sees a subset (bootstrap).</dd>
+                    <dt>n_estimators</dt>
+                    <dd>Number of trees in the forest. More = often better accuracy but slower.</dd>
+                    <dt>Confusion matrix</dt>
+                    <dd>Table: rows = true class, columns = predicted. Diagonal = correct; off-diagonal = errors.</dd>
+                    <dt>Precision</dt>
+                    <dd>Of all we predicted as class X, how many were really X? (Correct X / Predicted X)</dd>
+                    <dt>Recall</dt>
+                    <dd>Of all real X, how many did we predict as X? (Correct X / Actual X)</dd>
+                    <dt>F1 score</dt>
+                    <dd>Harmonic mean of precision and recall; one number for “how good” for that class.</dd>
+                    <dt>Feature importance</dt>
+                    <dd>How much each feature helped when splitting (e.g. total Gini decrease); higher = more important.</dd>
+                </dl>
+            </div>
+        </div>
+
+        <!-- ========== PART 2: The car dataset in depth ========== -->
+        <div class="section">
+            <h2><i class="fas fa-table"></i> Part 2: The car evaluation dataset – every column explained</h2>
+            <p>The dataset has <strong>1728 rows</strong> (cars) and <strong>7 columns</strong>. Every column is categorical (text). There are no missing values. Here is what each column means and what values it can take.</p>
+            <table class="data-table">
+                <tr><th>Column</th><th>Meaning</th><th>Possible values</th></tr>
+                <tr><td><strong>buying</strong></td><td>Buying price (initial cost)</td><td>vhigh, high, med, low</td></tr>
+                <tr><td><strong>maint</strong></td><td>Maintenance cost (yearly)</td><td>vhigh, high, med, low</td></tr>
+                <tr><td><strong>doors</strong></td><td>Number of doors</td><td>2, 3, 4, 5more</td></tr>
+                <tr><td><strong>persons</strong></td><td>Capacity (how many people)</td><td>2, 4, more</td></tr>
+                <tr><td><strong>lug_boot</strong></td><td>Luggage boot size</td><td>small, med, big</td></tr>
+                <tr><td><strong>safety</strong></td><td>Estimated safety level</td><td>low, med, high</td></tr>
+                <tr><td><strong>class</strong></td><td>Target: acceptability</td><td>unacc, acc, good, vgood</td></tr>
+            </table>
+            <div class="eli5-box">
+                <h4>👶 Why we need to encode (turn text into numbers)</h4>
+                <p>The model can’t do math on words like “vhigh” or “high”. So we turn each category into <strong>dummy columns</strong>: one column per value, with 0 or 1. For example, <code>buying</code> becomes <code>buying_vhigh</code>, <code>buying_high</code>, <code>buying_med</code>, <code>buying_low</code>. For a row with buying = high we put 0, 1, 0, 0. That’s what <strong>get_dummies</strong> does.</p>
+            </div>
+        </div>
+
+        <!-- ========== STEP 1: Imports ========== -->
+        <div class="section">
+            <h2><i class="fas fa-box-open"></i> Step 1: Imports – what every line is for</h2>
+            <p>We load the libraries we need: one for data (pandas), one for splitting and the model (sklearn), one for evaluation metrics, and we hide warnings so the output is clean.</p>
+            <div class="code-block">
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix, accuracy_score, classification_report
+<span class="keyword">import</span> warnings
+warnings.filterwarnings(<span class="string">"ignore"</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>Line-by-line (assume you know nothing)</h4>
+                <ul>
+                    <li><strong>import pandas as pd</strong> — Pandas is the library for tables (DataFrames). We use it to read CSV files and work with rows/columns. <code>pd</code> is just a short name.</li>
+                    <li><strong>train_test_split</strong> — A function that splits our data into two parts: one for training the model (e.g. 80%) and one for testing it (e.g. 20%). We never train on the test set so we can measure real performance.</li>
+                    <li><strong>RandomForestClassifier</strong> — The actual model: many decision trees that vote. We’ll create it with parameters like max_depth and n_estimators.</li>
+                    <li><strong>confusion_matrix</strong> — Builds a table: true class vs predicted class. Rows = true, columns = predicted. Diagonal = correct predictions.</li>
+                    <li><strong>accuracy_score</strong> — (Number of correct predictions) ÷ (Total predictions). One number, e.g. 0.97 = 97%.</li>
+                    <li><strong>classification_report</strong> — For each class it prints precision, recall, F1, and support (how many samples in that class).</li>
+                    <li><strong>warnings.filterwarnings("ignore")</strong> — Stops Python from printing warning messages so we can focus on our own prints. Optional.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== STEP 2: Load and explore ========== -->
+        <div class="section">
+            <h2><i class="fas fa-database"></i> Step 2: Load and explore the data</h2>
+            <p>We read the CSV into a DataFrame, then look at the first rows and the shape of the data. We also count how many cars fall in each class so we know if the dataset is balanced or not.</p>
+            <div class="code-block">
+<pre><span class="comment"># Predict car class: unacc / acc / good / vgood</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"cars_data.csv"</span>)
+data.<span class="function">head</span>(<span class="number">10</span>)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each line does</h4>
+                <ul>
+                    <li><strong>pd.read_csv("cars_data.csv")</strong> — Opens the file and builds a table. Column names come from the first row. Make sure the file is in the same folder as your script (or use the full path).</li>
+                    <li><strong>data.head(10)</strong> — Shows the first 10 rows. You’ll see values like vhigh, high, 4, more, big, high, unacc. This helps you check that the file loaded correctly and see the format.</li>
+                </ul>
+            </div>
+            <p style="margin-top: 16px;">Next we check how many rows and columns we have, and how many cars are in each class:</p>
+            <div class="code-block">
+<pre>data.<span class="function">info</span>()
+data[<span class="string">'class'</span>].<span class="function">value_counts</span>()</pre>
+            </div>
+            <div class="line-explain">
+                <h4>👶 In simple terms</h4>
+                <ul>
+                    <li><strong>data.info()</strong> — Prints: 1728 rows, 7 columns, all columns are “object” (text). It also shows if there are missing values (here there are none).</li>
+                    <li><strong>data['class'].value_counts()</strong> — Counts how many cars are in each class. Typical output: unacc 1210, acc 384, good 69, vgood 65. So most cars are “unacceptable”; the dataset is <strong>imbalanced</strong>. The model might be better at predicting unacc than vgood because there are fewer vgood examples.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== STEP 3: Encode and split ========== -->
+        <div class="section">
+            <h2><i class="fas fa-puzzle-piece"></i> Step 3: Encode categories and split into train/test</h2>
+            <p>We set <strong>y</strong> = the column we want to predict (class), and <strong>X</strong> = all other columns. Then we turn X from text into numbers with <strong>get_dummies</strong>. After that we split X and y into train and test sets (e.g. 80% / 20%) so we can train on one part and evaluate on the other.</p>
+            <div class="code-block">
+<pre>y = data[<span class="string">"class"</span>]
+X = data.<span class="function">drop</span>(<span class="string">'class'</span>, axis=<span class="number">1</span>)
+X = pd.<span class="function">get_dummies</span>(X)
+
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=<span class="number">0.20</span>, random_state=<span class="number">0</span>
+)
+<span class="function">print</span>(<span class="string">"Train size:"</span>, <span class="function">len</span>(X_train), <span class="string">"Test size:"</span>, <span class="function">len</span>(X_test))</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each part does</h4>
+                <ul>
+                    <li><strong>y = data["class"]</strong> — Our target: the label we want to predict (unacc, acc, good, vgood).</li>
+                    <li><strong>X = data.drop('class', axis=1)</strong> — All columns except <code>class</code>. <code>axis=1</code> means “drop a column”. So X has buying, maint, doors, persons, lug_boot, safety.</li>
+                    <li><strong>pd.get_dummies(X)</strong> — Converts every categorical column into 0/1 columns. Example: <code>safety</code> becomes <code>safety_low</code>, <code>safety_med</code>, <code>safety_high</code>. For a row with safety = high we get 0, 0, 1. After this, X has only numbers; the number of columns increases (one per category value).</li>
+                    <li><strong>train_test_split(X, y, test_size=0.20, random_state=0)</strong> — Randomly splits rows: 80% go to X_train and y_train, 20% to X_test and y_test. <code>random_state=0</code> makes the split reproducible (same every run). We use the train part to fit the model and the test part only to evaluate.</li>
+                    <li><strong>len(X_train)</strong> — Number of training rows (e.g. 1382). <strong>len(X_test)</strong> — number of test rows (e.g. 346).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== STEP 4: Build and train ========== -->
+        <div class="section">
+            <h2><i class="fas fa-tree"></i> Step 4: Build and train the Random Forest – every parameter explained</h2>
+            <p>We create a <strong>RandomForestClassifier</strong> and set its hyperparameters. Then we call <strong>fit</strong> so it learns from the training data. Below we explain every parameter in plain English and what happens if you change it.</p>
+            <div class="code-block">
+<pre>model = <span class="function">RandomForestClassifier</span>(
+    random_state=<span class="number">0</span>,
+    n_estimators=<span class="number">100</span>,       <span class="comment"># 100 trees (default)</span>
+    max_depth=<span class="number">5</span>,           <span class="comment"># Each tree max 5 levels deep</span>
+    min_samples_split=<span class="number">0.01</span>, <span class="comment"># Min fraction of samples to split a node</span>
+    max_features=<span class="number">0.8</span>,      <span class="comment"># Use 80% of features per split</span>
+    max_samples=<span class="number">0.8</span>        <span class="comment"># Each tree sees 80% of rows (bootstrap)</span>
+)
+model.<span class="function">fit</span>(X_train, y_train)</pre>
+            </div>
+            <div class="line-explain">
+                <h4>Parameter guide (ultra detail)</h4>
+                <ul>
+                    <li><strong>random_state=0</strong> — Seeds the random number generator so bootstrap samples and feature subsets are the same every run. Good for reproducibility.</li>
+                    <li><strong>n_estimators=100</strong> — Number of trees. More trees usually improve accuracy up to a point, then plateau. More = slower to train and predict. 100 is a safe default.</li>
+                    <li><strong>max_depth=5</strong> — No tree can grow deeper than 5 levels. Shallow trees underfit; very deep trees overfit. 5 is a reasonable balance. If you don’t set it, trees can grow until pure (high overfitting risk).</li>
+                    <li><strong>min_samples_split=0.01</strong> — A node is only split if it has at least 1% of the (training) samples. So we don’t split tiny groups. Can be an integer (e.g. 2) or a float (fraction).</li>
+                    <li><strong>max_features=0.8</strong> — At each split we only consider 80% of the features (chosen at random). So each tree gets different “views” and we add diversity. Smaller = more randomness, often better generalization.</li>
+                    <li><strong>max_samples=0.8</strong> — Each tree is trained on 80% of the training rows (drawn with replacement). So each tree sees a different bootstrap sample. This is the “bagging” part.</li>
+                    <li><strong>model.fit(X_train, y_train)</strong> — Trains all trees on the training data. After this, the model can predict the class for any new row (e.g. from X_test).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== STEP 5: Evaluate ========== -->
+        <div class="section">
+            <h2><i class="fas fa-chart-bar"></i> Step 5: Evaluate – confusion matrix, accuracy, precision, recall</h2>
+            <p>We predict on the test set, then compare predictions to the true labels. We use a confusion matrix to see where we’re right and wrong, and we use accuracy and the classification report (precision, recall, F1) to summarize performance.</p>
+            <div class="code-block">
+<pre>y_pred = model.<span class="function">predict</span>(X_test)
+
+<span class="function">print</span>(<span class="string">"Confusion matrix:"</span>)
+<span class="function">print</span>(<span class="function">confusion_matrix</span>(y_test, y_pred))
+
+<span class="function">print</span>(<span class="string">"\nAccuracy:"</span>, <span class="function">accuracy_score</span>(y_test, y_pred))
+
+<span class="function">print</span>(<span class="string">"\nClassification report:"</span>)
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred))</pre>
+            </div>
+            <div class="line-explain">
+                <h4>What each part does</h4>
+                <ul>
+                    <li><strong>model.predict(X_test)</strong> — For each row in X_test, every tree votes; we take the majority class. Result is a list of predicted classes (one per test row).</li>
+                    <li><strong>confusion_matrix(y_test, y_pred)</strong> — Rows = true class, columns = predicted class. So cell (i, j) = “how many true class i were predicted as class j”. Diagonal = correct (true i, predicted i). Off-diagonal = errors. Example: (unacc, acc) = “how many truly unacc were predicted as acc”.</li>
+                    <li><strong>accuracy_score(y_test, y_pred)</strong> — (Total correct) ÷ (Total test rows). Single number, e.g. 0.97. Easy to understand but can be misleading if classes are imbalanced (e.g. predicting “unacc” for everyone can still give high accuracy).</li>
+                    <li><strong>classification_report(y_test, y_pred)</strong> — For each class it computes:
+                        <ul style="margin-top: 8px;">
+                            <li><strong>Precision</strong>: Of all we predicted as that class, how many were correct? (e.g. “When we said acc, we were right 90% of the time.”)</li>
+                            <li><strong>Recall</strong>: Of all that are truly that class, how many did we predict? (e.g. “We found 85% of all acc cars.”)</li>
+                            <li><strong>F1-score</strong>: Harmonic mean of precision and recall; balances both.</li>
+                            <li><strong>Support</strong>: Number of test samples in that class.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== STEP 6: Feature importance ========== -->
+        <div class="section">
+            <h2><i class="fas fa-star"></i> Step 6: Which features matter most? (Feature importance)</h2>
+            <p>Random Forest gives us <strong>feature_importances_</strong>: a number per feature saying how much that feature was used to make splits (e.g. total decrease in Gini impurity). Higher = more important. We put these in a table and sort so we can see which columns (e.g. safety_high, persons_4) drive the prediction most.</p>
+            <div class="code-block">
+<pre>importance = pd.<span class="function">DataFrame</span>({
+    <span class="string">'feature'</span>: X_train.columns,
+    <span class="string">'importance'</span>: model.feature_importances_
+}).<span class="function">sort_values</span>(<span class="string">'importance'</span>, ascending=<span class="keyword">False</span>)
+<span class="function">print</span>(importance.<span class="function">head</span>(<span class="number">10</span>))</pre>
+            </div>
+            <div class="line-explain">
+                <h4>👶 In simple terms</h4>
+                <ul>
+                    <li><strong>model.feature_importances_</strong> — After training, the model has one number per feature. Bigger number = that feature was chosen more often for splits and reduced impurity more. So “safety_high” might be 0.25, “persons_4” 0.18, etc.</li>
+                    <li>We build a small table (feature name + importance), sort by importance descending, and print the top 10. That tells you “what the model really uses” to decide unacc/acc/good/vgood. Useful for explaining the model to others and for feature selection.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== Optional: GridSearchCV ========== -->
+        <div class="section" style="border-left-color: #f59e0b;">
+            <h2><i class="fas fa-sliders-h"></i> Optional: Tuning with GridSearchCV</h2>
+            <p>Instead of picking hyperparameters by hand, we can let sklearn try many combinations and pick the one with the best cross-validation score. <strong>GridSearchCV</strong> does that: you give a list of values for each parameter (e.g. max_depth: 3, 5, 7), and it trains and evaluates every combination (e.g. 3×3×3×2 = 54 models with 5-fold CV). Slower, but often finds better settings.</p>
+            <div class="code-block">
+<pre><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> GridSearchCV
+
+param_grid = [
+    {<span class="string">'max_depth'</span>: [<span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">10</span>],
+     <span class="string">'min_samples_split'</span>: [<span class="number">0.01</span>, <span class="number">0.05</span>, <span class="number">0.1</span>],
+     <span class="string">'max_features'</span>: [<span class="number">0.7</span>, <span class="number">0.8</span>, <span class="number">1.0</span>],
+     <span class="string">'max_samples'</span>: [<span class="number">0.8</span>, <span class="number">1.0</span>]}
+]
+search = <span class="function">GridSearchCV</span>(<span class="function">RandomForestClassifier</span>(random_state=<span class="number">0</span>), param_grid, cv=<span class="number">5</span>, verbose=<span class="number">1</span>)
+search.<span class="function">fit</span>(X_train, y_train)
+<span class="function">print</span>(<span class="string">"Best params:"</span>, search.best_params_)
+<span class="function">print</span>(<span class="string">"Best score:"</span>, search.best_score_)</pre>
+            </div>
+            <div class="eli5-box">
+                <h4>👶 In simple terms</h4>
+                <p><strong>param_grid</strong> — A dictionary (or list of dicts) of parameter names and lists of values. GridSearchCV will try every combination: max_depth=3 with max_features=0.7, then 3 with 0.8, … then 5 with 0.7, etc. <strong>cv=5</strong> means 5-fold cross-validation: the training set is split into 5 parts; each combination is trained 5 times (each time using 4 parts for train, 1 for validation) and the average score is taken. <strong>best_params_</strong> is the combination that had the best average score; <strong>best_score_</strong> is that score. You can then build a final model with <code>RandomForestClassifier(**search.best_params_)</code> and fit on the full training set, then evaluate on the held-out test set.</p>
+            </div>
+        </div>
+
+        <!-- ========== Summary ========== -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Summary</h2>
+            <table class="data-table">
+                <tr><th>Step</th><th>What we did</th></tr>
+                <tr><td>1</td><td>Imported pandas, sklearn (train_test_split, RandomForestClassifier, confusion_matrix, accuracy_score, classification_report), and hid warnings.</td></tr>
+                <tr><td>2</td><td>Loaded cars_data.csv, used head(10), info(), and value_counts() to explore rows, columns, and class balance.</td></tr>
+                <tr><td>3</td><td>Set y = class, X = other columns; encoded X with get_dummies(); split into X_train, X_test, y_train, y_test (80/20) with train_test_split.</td></tr>
+                <tr><td>4</td><td>Built RandomForestClassifier (n_estimators=100, max_depth=5, max_features=0.8, max_samples=0.8, etc.) and called fit(X_train, y_train).</td></tr>
+                <tr><td>5</td><td>Computed y_pred = model.predict(X_test); printed confusion_matrix, accuracy_score, and classification_report.</td></tr>
+                <tr><td>6</td><td>Built a DataFrame of feature names and feature_importances_, sorted by importance, and printed the top 10.</td></tr>
+                <tr><td>Optional</td><td>Used GridSearchCV with a param_grid and cv=5 to find best hyperparameters; printed best_params_ and best_score_.</td></tr>
+            </table>
+            <p style="margin-top: 18px;">You now have a full Random Forest pipeline with theory, dataset explanation, and every line and parameter explained. Next: try the same steps on the <a href="decision-trees.html">Decision Trees & Random Forests</a> lesson with the Iris dataset, or move on to <a href="boosting.html">Boosting</a>!</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="decision-trees.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Decision Trees & Random Forests</a>
+            <a href="index.html" class="nav-btn next">Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

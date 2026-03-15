@@ -1,0 +1,216 @@
+/* ═══════════════════════════════════════════════════════════
+   DESIGN SYSTEM — Typography, spacing, cards, animations, palette.
+   Additive; does not override existing styles unless used by new components.
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* Typography */
+    --ds-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --ds-font-mono: 'Fira Code', 'Consolas', monospace;
+
+    /* Spacing (8px grid) */
+    --ds-space-1: 8px;
+    --ds-space-2: 16px;
+    --ds-space-3: 24px;
+    --ds-space-4: 32px;
+    --ds-space-5: 40px;
+    --ds-space-6: 48px;
+    --ds-space-8: 64px;
+    --ds-space-10: 80px;
+
+    /* Radius */
+    --ds-radius-sm: 8px;
+    --ds-radius: 12px;
+    --ds-radius-lg: 16px;
+    --ds-radius-xl: 24px;
+    --ds-radius-full: 9999px;
+
+    /* Colors — modern palette */
+    --ds-primary: #4f46e5;
+    --ds-primary-hover: #4338ca;
+    --ds-primary-light: #e0e7ff;
+    --ds-accent: #7c3aed;
+    --ds-accent-pink: #db2777;
+    --ds-success: #059669;
+    --ds-warning: #d97706;
+    --ds-error: #dc2626;
+    --ds-text: #1e293b;
+    --ds-text-muted: #64748b;
+    --ds-text-subtle: #94a3b8;
+    --ds-surface: #ffffff;
+    --ds-surface-elevated: #f8fafc;
+    --ds-border: #e2e8f0;
+    --ds-border-light: #f1f5f9;
+
+    /* Shadows */
+    --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --ds-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --ds-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --ds-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --ds-shadow-glow: 0 0 40px rgba(79, 70, 229, 0.15);
+
+    /* Transitions */
+    --ds-transition-fast: 150ms ease;
+    --ds-transition: 250ms ease;
+    --ds-transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base typography when design-system is in use */
+.ds-root,
+.ds-page {
+    font-family: var(--ds-font-sans);
+    color: var(--ds-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.ds-heading-1 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--ds-text);
+}
+
+.ds-heading-2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ds-text);
+}
+
+.ds-heading-3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ds-text);
+}
+
+.ds-body {
+    font-size: 1rem;
+    color: var(--ds-text-muted);
+    line-height: 1.7;
+}
+
+.ds-body-sm {
+    font-size: 0.875rem;
+    color: var(--ds-text-muted);
+}
+
+/* Card */
+.ds-card {
+    background: var(--ds-surface);
+    border-radius: var(--ds-radius-lg);
+    border: 1px solid var(--ds-border);
+    box-shadow: var(--ds-shadow);
+    padding: var(--ds-space-4);
+    transition: box-shadow var(--ds-transition), transform var(--ds-transition), border-color var(--ds-transition);
+}
+
+.ds-card:hover {
+    box-shadow: var(--ds-shadow-md);
+    border-color: var(--ds-border-light);
+}
+
+.ds-card-elevated {
+    background: var(--ds-surface-elevated);
+    box-shadow: var(--ds-shadow-md);
+}
+
+/* Buttons */
+.ds-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ds-space-1);
+    font-family: var(--ds-font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: var(--ds-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color var(--ds-transition-fast), transform var(--ds-transition-fast), box-shadow var(--ds-transition-fast);
+}
+
+.ds-btn:active {
+    transform: scale(0.98);
+}
+
+.ds-btn-primary {
+    background: linear-gradient(135deg, var(--ds-primary), var(--ds-accent));
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+}
+
+.ds-btn-primary:hover {
+    background: linear-gradient(135deg, var(--ds-primary-hover), #6d28d9);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+.ds-btn-secondary {
+    background: var(--ds-surface);
+    color: var(--ds-text);
+    border: 1px solid var(--ds-border);
+}
+
+.ds-btn-secondary:hover {
+    background: var(--ds-surface-elevated);
+    border-color: var(--ds-primary-light);
+    color: var(--ds-primary);
+}
+
+.ds-btn-ghost {
+    background: transparent;
+    color: var(--ds-text-muted);
+}
+
+.ds-btn-ghost:hover {
+    background: var(--ds-surface-elevated);
+    color: var(--ds-text);
+}
+
+/* Layout */
+.ds-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-left: var(--ds-space-3);
+    padding-right: var(--ds-space-3);
+}
+
+.ds-section {
+    padding-top: var(--ds-space-8);
+    padding-bottom: var(--ds-space-8);
+}
+
+/* Animations */
+@keyframes ds-fade-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ds-scale-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.ds-animate-in {
+    animation: ds-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ds-animate-scale {
+    animation: ds-scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ds-container {
+        padding-left: var(--ds-space-2);
+        padding-right: var(--ds-space-2);
+    }
+    .ds-section {
+        padding-top: var(--ds-space-6);
+        padding-bottom: var(--ds-space-6);
+    }
+}

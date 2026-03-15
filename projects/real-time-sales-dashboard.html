@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Sales Dashboard Project | Data For Dummies</title>
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="../css/hub-styles.css">
+    <link rel="stylesheet" href="../css/project-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand"><a href="../index.html" class="logo-link home-icon-btn" title="Home"><i class="fas fa-house-chimney"></i></a></div>
+            <div class="nav-links">
+                <a href="../learning-path.html" class="nav-link">Courses</a>
+                <a href="../data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="../data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="../pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="../projects.html" class="nav-link">Projects</a>
+                <a href="../pricing.html" class="nav-link">Pricing</a>
+                <a href="../founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="top-offset-for-nav">
+        <main class="project-detail">
+
+            <!-- ========== HERO ========== -->
+            <div class="project-hero">
+                <div class="project-badges">
+                    <span class="project-badge">Intermediate</span>
+                    <span class="project-badge">Free</span>
+                </div>
+                <h1><i class="fas fa-chart-line"></i> Real-Time Sales Dashboard</h1>
+                <p>Build a live Metabase dashboard with auto-refresh, date filters, and scheduled email reports. Answer "What did we sell yesterday?" in seconds — no more running SQL by hand.</p>
+                <div class="project-tools">
+                    <span>Metabase</span><span>PostgreSQL</span><span>Python</span>
+                </div>
+            </div>
+
+            <!-- ========== TABS ========== -->
+            <div class="project-tabs">
+                <button class="project-tab active" data-tab="overview"><i class="fas fa-binoculars"></i> Overview</button>
+                <button class="project-tab" data-tab="build"><i class="fas fa-hammer"></i> Build It <span class="lock-icon"><i class="fas fa-lock"></i></span></button>
+            </div>
+
+            <!-- ============================================================
+                 TAB 1 — OVERVIEW (FREE)
+                 ============================================================ -->
+            <div class="project-panel active" id="panel-overview">
+
+                <!-- The Scenario -->
+                <section class="project-section">
+                    <h2><i class="fas fa-theater-masks"></i> The Scenario</h2>
+                    <div class="project-scenario">
+                        <h4>Imagine this…</h4>
+                        <p>You work at a <strong>retail company</strong>. Sales managers keep asking: <em>"What did we sell yesterday?"</em> — <em>"Which store is underperforming?"</em> — <em>"Can I get a weekly summary in my inbox?"</em> Right now you're running SQL by hand and sending screenshots. Your boss wants a dashboard they can open anytime, see live numbers, and drill from region → store → product.</p>
+                        <p>Your job: build a <strong>live Metabase dashboard</strong> that connects to PostgreSQL, shows revenue and sales at a glance, refreshes automatically, and sends a weekly email report. That's exactly what we're going to build together, step by step.</p>
+                    </div>
+                </section>
+
+                <!-- What You'll Build -->
+                <section class="project-section">
+                    <h2><i class="fas fa-bullseye"></i> What You'll Build</h2>
+                    <div class="anim-flow-wrap">
+                        <span class="anim-step bronze"><i class="fas fa-database"></i> Data</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step silver"><i class="fas fa-database"></i> Postgres</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step gold"><i class="fas fa-chart-bar"></i> Metabase</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step tool"><i class="fas fa-tv"></i> Dashboard</span>
+                    </div>
+                    <ul style="margin: 20px 0 0 22px; color:#475569; line-height:1.9;">
+                        <li><strong>PostgreSQL database:</strong> Tables for stores, products, and sales with ~500 sample rows generated by Python.</li>
+                        <li><strong>Metabase connection:</strong> Connect Metabase to Postgres as a data source.</li>
+                        <li><strong>Saved questions:</strong> "Total Revenue by Day," "Sales by Store," "Top 10 Products" — each with full SQL and date filters.</li>
+                        <li><strong>Live dashboard:</strong> KPI cards, charts, date filter, and drill-through (region → store).</li>
+                        <li><strong>Auto-refresh:</strong> Dashboard refreshes every 5 minutes so it feels "live."</li>
+                        <li><strong>Email subscription:</strong> Scheduled email report so stakeholders get the summary without opening Metabase.</li>
+                    </ul>
+                    <div class="project-layman">
+                        <h4>In plain English</h4>
+                        <p>Think of it like a TV news ticker. Your database is the newsroom with all the data. Metabase is the studio that turns it into charts and numbers. The dashboard is the screen everyone watches. Auto-refresh means the ticker keeps updating. The email subscription is like a daily newspaper — same info, delivered to your inbox.</p>
+                    </div>
+                </section>
+
+                <!-- Prerequisites -->
+                <section class="project-section">
+                    <h2><i class="fas fa-book-open"></i> Prerequisites</h2>
+                    <p>Before you start, make sure you're comfortable with these. If not, we link to the exact courses below — finish those first, then come back.</p>
+                    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;width:30%;">SQL basics</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">SELECT, WHERE, JOIN, GROUP BY, ORDER BY, date functions. You should be able to write a query that aggregates sales by day.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../postgres_course/index.html" style="color:#4f46e5;font-weight:600;">PostgreSQL Course</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">PostgreSQL</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">A running PostgreSQL instance (local or cloud). You'll create a database and tables.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../postgres_course/index.html" style="color:#4f46e5;font-weight:600;">PostgreSQL Course</a></td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Metabase intro</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">What Metabase is, how to run a query. You'll learn the rest here.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../metabase_course/index.html" style="color:#4f46e5;font-weight:600;">Metabase Course</a></td>
+                        </tr>
+                    </table>
+                </section>
+
+                <!-- Step-by-step Plan (overview) -->
+                <section class="project-section">
+                    <h2><i class="fas fa-list-ol"></i> Step-by-Step Plan</h2>
+                    <p>Here's the high-level road-map. The <strong>Build It</strong> tab walks you through every single step with copy-paste code, line-by-line explanations, and verification queries.</p>
+                    <ol class="project-steps">
+                        <li>
+                            <span class="step-num">1</span>
+                            <div class="step-body"><strong>Prepare the database.</strong> Create a <code>retail_analytics</code> database with tables for stores, products, and sales. Complete SQL CREATE TABLE statements included.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">2</span>
+                            <div class="step-body"><strong>Create sample data with Python.</strong> A full Python script using random/datetime to insert ~500 rows of realistic sales data into the tables. Copy, run, done.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">3</span>
+                            <div class="step-body"><strong>Install and connect Metabase.</strong> Docker command to run Metabase, how to add Postgres as a data source. Tips for non-Docker users.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">4</span>
+                            <div class="step-body"><strong>Create saved questions.</strong> "Total Revenue by Day," "Sales by Store," "Top 10 Products" — each with full SQL in project-code blocks and layman explanations.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">5</span>
+                            <div class="step-body"><strong>Build the dashboard.</strong> Create a new dashboard, add cards, add a date filter, enable drill-through so users can click region → store.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">6</span>
+                            <div class="step-body"><strong>Enable auto-refresh.</strong> Set the dashboard to refresh every 5 minutes (clock icon). It stays "live" without manual refresh.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">7</span>
+                            <div class="step-body"><strong>Set up email subscription.</strong> Create a subscription in Metabase so stakeholders receive the dashboard or a summary by email on a schedule.</div>
+                        </li>
+                    </ol>
+                </section>
+            </div><!-- /panel-overview -->
+
+            <!-- ============================================================
+                 TAB 2 — BUILD IT (PRO / PAID)
+                 ============================================================ -->
+            <div class="project-panel" id="panel-build">
+                <div class="pro-locked-wrapper is-locked">
+                    <div class="pro-locked-content">
+
+                        <!-- Progress bar -->
+                        <div class="build-progress"><div class="build-progress-fill" style="width:0%" id="buildProgress"></div></div>
+
+                        <!-- ===== STEP 1 ===== -->
+                        <div class="build-step" data-step="1">
+                            <div class="build-step-header">
+                                <div class="build-step-num">1</div>
+                                <div><h3>Prepare the Database</h3><p>Create retail_analytics database and tables</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Every dashboard needs data. We'll create a dedicated database called <code>retail_analytics</code> with three tables: <strong>stores</strong> (where we sell), <strong>products</strong> (what we sell), and <strong>sales</strong> (each transaction). This structure is standard in retail — you'll see it at real companies. Once we have the schema, Python will fill it with sample data.</p>
+                            </div>
+
+                            <h4>1a. Create the database</h4>
+                            <p>Connect to PostgreSQL (psql, pgAdmin, or DBeaver) and run:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+-- Create a dedicated database for retail sales analytics
+CREATE DATABASE retail_analytics;
+
+-- Connect to it (in psql: \c retail_analytics)
+</pre>
+                            </div>
+
+                            <h4>1b. Create the stores table</h4>
+                            <p>The <code>stores</code> table holds each physical (or virtual) store location. We need an ID, name, region, and city.</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+CREATE TABLE stores (
+    store_id   SERIAL PRIMARY KEY,
+    store_name VARCHAR(100) NOT NULL,
+    region     VARCHAR(50)  NOT NULL,
+    city       VARCHAR(80)  NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Line-by-line explanation</h4>
+                                <p><strong>SERIAL PRIMARY KEY:</strong> Auto-incrementing unique ID (1, 2, 3…) — PostgreSQL handles it. <strong>VARCHAR(100):</strong> Text up to 100 characters. <strong>NOT NULL:</strong> This column can't be empty. <strong>TIMESTAMP DEFAULT CURRENT_TIMESTAMP:</strong> When a row is inserted, this column automatically gets the current date and time.</p>
+                            </div>
+
+                            <h4>1c. Create the products table</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+CREATE TABLE products (
+    product_id   SERIAL PRIMARY KEY,
+    product_name VARCHAR(150) NOT NULL,
+    category     VARCHAR(80)  NOT NULL,
+    unit_price   DECIMAL(10, 2) NOT NULL,
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+</pre>
+                            </div>
+                            <p><strong>DECIMAL(10, 2):</strong> Money values with 2 decimal places (e.g. 29.99). Never use FLOAT for money — rounding errors cause bugs.</p>
+
+                            <h4>1d. Create the sales table</h4>
+                            <p>Each row = one sale. We link to store and product, store quantity and amount, and the sale date.</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+CREATE TABLE sales (
+    sale_id    SERIAL PRIMARY KEY,
+    store_id   INTEGER NOT NULL REFERENCES stores(store_id),
+    product_id INTEGER NOT NULL REFERENCES products(product_id),
+    quantity   INTEGER NOT NULL CHECK (quantity > 0),
+    amount     DECIMAL(10, 2) NOT NULL,
+    sale_date  DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What do REFERENCES and CHECK mean?</h4>
+                                <p><strong>REFERENCES stores(store_id):</strong> Every <code>store_id</code> in sales must exist in the stores table. If you try to insert a sale with store_id=99 but that store doesn't exist, PostgreSQL rejects it. This is <strong>referential integrity</strong> — no orphan records.</p>
+                                <p><strong>CHECK (quantity > 0):</strong> We can't sell negative or zero items. The database enforces this automatically.</p>
+                            </div>
+
+                            <h4>1e. Create indexes for fast queries</h4>
+                            <p>Dashboards often filter by date and aggregate by store. Indexes make those queries fast.</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+CREATE INDEX idx_sales_sale_date ON sales(sale_date);
+CREATE INDEX idx_sales_store_id  ON sales(store_id);
+CREATE INDEX idx_sales_product_id ON sales(product_id);
+</pre>
+                            </div>
+
+                            <h4>1f. Verify</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_name IN ('stores', 'products', 'sales');
+</pre>
+                            </div>
+                            <p>You should see three rows. If yes — step 1 is done!</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 1 complete!</h4>
+                                <ul>
+                                    <li>Database <code>retail_analytics</code> created</li>
+                                    <li>Tables: <code>stores</code>, <code>products</code>, <code>sales</code></li>
+                                    <li>Foreign keys and constraints in place</li>
+                                    <li>Indexes created for date and store queries</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 2 ===== -->
+                        <div class="build-step" data-step="2">
+                            <div class="build-step-header">
+                                <div class="build-step-num">2</div>
+                                <div><h3>Generate Sample Data with Python</h3><p>Insert ~500 sales rows using random/datetime</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Empty tables = empty dashboard. We need data! Instead of typing 500 rows by hand, we'll use a Python script that uses <code>random</code> and <code>datetime</code> to generate realistic sales. The script inserts stores, products, and ~500 sales spread over the last 90 days. Run it once, and you're done.</p>
+                            </div>
+
+                            <h4>2a. Install the PostgreSQL adapter</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+pip install psycopg2-binary
+</pre>
+                            </div>
+                            <p><code>psycopg2-binary</code> lets Python talk to PostgreSQL. The <code>-binary</code> version includes pre-built libraries so you don't need to compile.</p>
+
+                            <h4>2b. Create the Python script</h4>
+                            <p>Save this as <code>seed_retail_data.py</code> in a folder on your computer. Update the connection parameters (host, user, password, dbname) to match your setup.</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>
+import psycopg2
+import random
+from datetime import datetime, timedelta
+
+# --- CONFIG: Change these to match your PostgreSQL setup ---
+CONN_PARAMS = {
+    'host': 'localhost',
+    'port': 5432,
+    'user': 'postgres',
+    'password': 'your_password',
+    'dbname': 'retail_analytics'
+}
+
+def main():
+    conn = psycopg2.connect(**CONN_PARAMS)
+    cur = conn.cursor()
+
+    # 1. Insert stores (5 stores across 3 regions)
+    stores_data = [
+        (1, 'Downtown Store', 'North', 'New York'),
+        (2, 'Mall Outlet', 'North', 'Boston'),
+        (3, 'Southside Plaza', 'South', 'Miami'),
+        (4, 'West Coast Hub', 'West', 'Los Angeles'),
+        (5, 'Central Square', 'Central', 'Chicago'),
+    ]
+    for row in stores_data:
+        cur.execute(
+            "INSERT INTO stores (store_id, store_name, region, city) VALUES (%s, %s, %s, %s) ON CONFLICT (store_id) DO NOTHING",
+            row
+        )
+
+    # 2. Insert products (12 products across 4 categories)
+    products_data = [
+        (1, 'Wireless Mouse', 'Electronics', 29.99),
+        (2, 'USB-C Hub', 'Electronics', 49.99),
+        (3, 'Desk Lamp', 'Home', 34.99),
+        (4, 'Coffee Maker', 'Home', 79.99),
+        (5, 'Cotton T-Shirt', 'Clothing', 19.99),
+        (6, 'Running Shoes', 'Clothing', 89.99),
+        (7, 'Bluetooth Speaker', 'Electronics', 59.99),
+        (8, 'Yoga Mat', 'Home', 24.99),
+        (9, 'Backpack', 'Clothing', 44.99),
+        (10, 'Keyboard', 'Electronics', 89.99),
+        (11, 'Throw Pillow', 'Home', 29.99),
+        (12, 'Sunglasses', 'Clothing', 39.99),
+    ]
+    for row in products_data:
+        cur.execute(
+            "INSERT INTO products (product_id, product_name, category, unit_price) VALUES (%s, %s, %s, %s) ON CONFLICT (product_id) DO NOTHING",
+            row
+        )
+
+    # 3. Generate ~500 sales over the last 90 days
+    start_date = datetime.now().date() - timedelta(days=90)
+    sale_id = 1
+    for _ in range(500):
+        store_id = random.randint(1, 5)
+        product_id = random.randint(1, 12)
+        quantity = random.randint(1, 5)
+        cur.execute("SELECT unit_price FROM products WHERE product_id = %s", (product_id,))
+        unit_price = cur.fetchone()[0]
+        amount = round(quantity * unit_price, 2)
+        days_offset = random.randint(0, 90)
+        sale_date = start_date + timedelta(days=days_offset)
+        cur.execute(
+            "INSERT INTO sales (sale_id, store_id, product_id, quantity, amount, sale_date) VALUES (%s, %s, %s, %s, %s, %s)",
+            (sale_id, store_id, product_id, quantity, amount, sale_date)
+        )
+        sale_id += 1
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    print("Done! Inserted stores, products, and ~500 sales.")
+
+if __name__ == '__main__':
+    main()
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Line-by-line explanation</h4>
+                                <p><strong>psycopg2.connect:</strong> Opens a connection to your PostgreSQL database using the config. <strong>cur = conn.cursor():</strong> A cursor is how you run SQL from Python — think of it as a pointer for "next command."</p>
+                                <p><strong>INSERT ... ON CONFLICT DO NOTHING:</strong> If a store_id already exists (e.g. you ran the script twice), skip it instead of erroring. Safe for re-running.</p>
+                                <p><strong>random.randint(1, 5):</strong> Picks a random integer from 1 to 5 — we have 5 stores. Same for products (1–12). <strong>quantity = random.randint(1, 5):</strong> Each sale is 1–5 units.</p>
+                                <p><strong>cur.execute("SELECT unit_price...":</strong> We need the product's price to compute amount = quantity × unit_price. <strong>sale_date = start_date + timedelta(days=days_offset):</strong> Spreads sales across 90 days randomly.</p>
+                                <p><strong>conn.commit():</strong> Saves all changes. Without this, nothing is written. <strong>cur.close(); conn.close():</strong> Clean up — always close connections.</p>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip: ON CONFLICT</h4>
+                                <p>If your tables use SERIAL and you get "duplicate key" errors, truncate first: <code>TRUNCATE stores, products, sales RESTART IDENTITY CASCADE;</code> Then re-run the script. Or change the script to use <code>INSERT ... ON CONFLICT (store_id) DO NOTHING</code> — but stores/products need a unique constraint for that.</p>
+                            </div>
+
+                            <h4>2c. Run the script</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+python seed_retail_data.py
+</pre>
+                            </div>
+
+                            <h4>2d. Verify</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT 'stores' AS tbl, COUNT(*) AS cnt FROM stores
+UNION ALL SELECT 'products', COUNT(*) FROM products
+UNION ALL SELECT 'sales', COUNT(*) FROM sales;
+</pre>
+                            </div>
+                            <p>Expected: stores=5, products=12, sales=500. If your counts match — step 2 is done!</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 2 complete!</h4>
+                                <ul>
+                                    <li>Python script created and executed</li>
+                                    <li>5 stores, 12 products inserted</li>
+                                    <li>~500 sales spread over 90 days</li>
+                                    <li>Database ready for Metabase</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 3 ===== -->
+                        <div class="build-step" data-step="3">
+                            <div class="build-step-header">
+                                <div class="build-step-num">3</div>
+                                <div><h3>Install and Connect Metabase</h3><p>Run Metabase via Docker and add Postgres as data source</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Metabase is an open-source BI tool that connects to your database and turns SQL into charts and dashboards. You run it as a web app (like a mini "Tableau" or "Power BI"). Docker is the easiest way — one command, and Metabase is running. Then we add our <code>retail_analytics</code> Postgres database as a "data source" so Metabase can query it.</p>
+                            </div>
+
+                            <h4>3a. Run Metabase with Docker</h4>
+                            <p>If you have Docker installed, run:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Terminal</span></div>
+<pre>
+docker run -d -p 3000:3000 --name metabase metabase/metabase
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What each flag does</h4>
+                                <p><strong>-d:</strong> Run in background (detached). <strong>-p 3000:3000:</strong> Map port 3000 on your machine to Metabase's port 3000. <strong>--name metabase:</strong> Name the container so you can stop it with <code>docker stop metabase</code>. <strong>metabase/metabase:</strong> The official Metabase image from Docker Hub.</p>
+                            </div>
+
+                            <p>Open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> in your browser. On first load, Metabase will ask you to create an admin account — do that.</p>
+
+                            <h4>3b. Add PostgreSQL as a data source</h4>
+                            <p>In Metabase: <strong>Settings (gear icon) → Admin Settings → Databases → Add database</strong>.</p>
+                            <ul>
+                                <li><strong>Database type:</strong> PostgreSQL</li>
+                                <li><strong>Display name:</strong> Retail Analytics</li>
+                                <li><strong>Host:</strong> If Metabase runs in Docker on your machine, use <code>host.docker.internal</code> (Mac/Windows) or your machine's IP (Linux). For local Metabase + local Postgres, use <code>localhost</code>.</li>
+                                <li><strong>Port:</strong> 5432</li>
+                                <li><strong>Database name:</strong> retail_analytics</li>
+                                <li><strong>Username / Password:</strong> Your Postgres credentials</li>
+                            </ul>
+                            <p>Click <strong>Save</strong>. Metabase will test the connection. If it's green, you're connected!</p>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip: Metabase in Docker, Postgres on host</h4>
+                                <p>Docker containers can't reach <code>localhost</code> on your machine — localhost means "inside the container." Use <code>host.docker.internal</code> (Mac/Windows) to point to your host. On Linux, you may need <code>--add-host=host.docker.internal:host-gateway</code> when running the Docker command.</p>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Don't have Docker?</h4>
+                                <p>You can run Metabase as a JAR: download from <a href="https://www.metabase.com/start/oss/" target="_blank">metabase.com/start/oss</a>, then <code>java -jar metabase.jar</code>. Or use <a href="https://www.metabase.com/pricing" target="_blank">Metabase Cloud</a> — they host it for you and you just add your database connection string.</p>
+                            </div>
+
+                            <h4>3c. Test the connection</h4>
+                            <p>Go to <strong>Browse data</strong> → select your database → click the <code>sales</code> table. You should see rows. Run a quick "New question" → "SQL query" with:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT COUNT(*) FROM sales;
+</pre>
+                            </div>
+                            <p>You should see 500 (or however many you inserted).</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 3 complete!</h4>
+                                <ul>
+                                    <li>Metabase running (Docker or JAR)</li>
+                                    <li>PostgreSQL added as data source</li>
+                                    <li>Connection tested — can query sales</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 4 ===== -->
+                        <div class="build-step" data-step="4">
+                            <div class="build-step-header">
+                                <div class="build-step-num">4</div>
+                                <div><h3>Create Saved Questions</h3><p>Total Revenue by Day, Sales by Store, Top 10 Products</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>In Metabase, a "question" is a saved query (SQL or point-and-click). We create three questions that our dashboard will use: (1) total revenue by day (line chart), (2) sales by store (bar chart), (3) top 10 products (table). Each uses a date filter so the dashboard can show "last 7 days" or "this month." We'll use Metabase's SQL variables <code>{{ start_date }}</code> and <code>{{ end_date }}</code> for that.</p>
+                            </div>
+
+                            <h4>4a. Total Revenue by Day</h4>
+                            <p>Create a new question → Native query (SQL). Paste this and add two "Field Filter" variables: <code>start_date</code> (type: Date) and <code>end_date</code> (type: Date).</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT
+    sale_date AS date,
+    SUM(amount) AS total_revenue,
+    COUNT(*) AS order_count
+FROM sales
+WHERE sale_date BETWEEN {{ start_date }} AND {{ end_date }}
+GROUP BY sale_date
+ORDER BY sale_date
+</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What this does</h4>
+                                <p>We group sales by <code>sale_date</code> and sum the amounts. The <code>WHERE</code> clause filters by the date range the user picks. In Metabase, <code>{{ start_date }}</code> and <code>{{ end_date }}</code> are placeholders — when you add them as "Variables," Metabase shows date pickers and substitutes the values. Save this question as "Total Revenue by Day."</p>
+                            </div>
+
+                            <h4>4b. Sales by Store</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT
+    s.store_name,
+    s.region,
+    SUM(f.amount) AS total_revenue,
+    COUNT(f.sale_id) AS order_count
+FROM sales f
+JOIN stores s ON f.store_id = s.store_id
+WHERE f.sale_date BETWEEN {{ start_date }} AND {{ end_date }}
+GROUP BY s.store_id, s.store_name, s.region
+ORDER BY total_revenue DESC
+</pre>
+                            </div>
+                            <p>We join sales to stores to get store name and region. One row per store with total revenue and order count. Save as "Sales by Store." Add the same <code>start_date</code> and <code>end_date</code> variables.</p>
+
+                            <h4>4c. Top 10 Products</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>
+SELECT
+    p.product_name,
+    p.category,
+    SUM(f.amount) AS total_revenue,
+    SUM(f.quantity) AS units_sold,
+    COUNT(f.sale_id) AS times_ordered
+FROM sales f
+JOIN products p ON f.product_id = p.product_id
+WHERE f.sale_date BETWEEN {{ start_date }} AND {{ end_date }}
+GROUP BY p.product_id, p.product_name, p.category
+ORDER BY total_revenue DESC
+LIMIT 10
+</pre>
+                            </div>
+                            <p>Joins sales to products, aggregates by product, sorts by revenue, and limits to 10. Save as "Top 10 Products." Add the same date variables.</p>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip: Default values for variables</h4>
+                                <p>In the variable settings, set default values: <code>start_date</code> = 30 days ago, <code>end_date</code> = today. That way the dashboard loads with "last 30 days" by default instead of requiring the user to pick dates first.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 4 complete!</h4>
+                                <ul>
+                                    <li>"Total Revenue by Day" — line or bar chart over time</li>
+                                    <li>"Sales by Store" — bar chart by store</li>
+                                    <li>"Top 10 Products" — table of best sellers</li>
+                                    <li>All three support date filters for the dashboard</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 5 ===== -->
+                        <div class="build-step" data-step="5">
+                            <div class="build-step-header">
+                                <div class="build-step-num">5</div>
+                                <div><h3>Build the Dashboard</h3><p>Create dashboard, add cards, date filter, drill-through</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>A dashboard is a page that holds multiple "cards" (each card = one saved question visualized). We'll create a new dashboard, add our three questions as cards, add a dashboard-level date filter so one filter controls all cards, and enable drill-through so users can click a region to see stores in that region.</p>
+                            </div>
+
+                            <h4>5a. Create a new dashboard</h4>
+                            <p>Click <strong>+ New → Dashboard</strong>. Name it "Real-Time Sales Dashboard."</p>
+
+                            <h4>5b. Add cards</h4>
+                            <p>Click <strong>Add a saved question</strong>. Add "Total Revenue by Day," "Sales by Store," and "Top 10 Products." Arrange them: put "Total Revenue by Day" at the top (full width), then "Sales by Store" and "Top 10 Products" side by side below.</p>
+
+                            <h4>5c. Add a date filter</h4>
+                            <p>Click <strong>Add a filter</strong> (filter icon in top right). Choose "Time" → "All Options" or "Date Range." Name it "Date range." Connect it to each card: when you add a filter, Metabase asks which cards it should apply to — link it to all three. Map the filter to the <code>start_date</code> and <code>end_date</code> variables in each card's SQL.</p>
+
+                            <div class="project-layman">
+                                <h4>How the filter connects</h4>
+                                <p>Each of our questions has <code>{{ start_date }}</code> and <code>{{ end_date }}</code>. When you add a dashboard date filter, Metabase lets you map "Filter 1" to those variables. So when the user picks "Last 7 days," Metabase passes that range into every question. One filter, all cards update.</p>
+                            </div>
+
+                            <h4>5d. Enable drill-through</h4>
+                            <p>For "Sales by Store": click the card → three dots → "Edit question" → in the visualization, enable "Click behavior" or "Drill-through." If you have a "Sales by Region" card, you can set it so clicking "North" filters the store card to show only North stores. Metabase's drill-through lets you pass a column value (e.g. region) to another card as a filter.</p>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Simpler drill-through</h4>
+                                <p>If your Metabase version has "Dashboard click behavior," you can set: when user clicks "North" on the region chart, filter the "Sales by Store" card to show only North region. The exact UI varies by version — look under card settings → "Click behavior" or "Drill-through."</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 5 complete!</h4>
+                                <ul>
+                                    <li>Dashboard created with three cards</li>
+                                    <li>Date filter added and connected to all cards</li>
+                                    <li>Layout arranged for readability</li>
+                                    <li>Drill-through enabled where supported</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 6 ===== -->
+                        <div class="build-step" data-step="6">
+                            <div class="build-step-header">
+                                <div class="build-step-num">6</div>
+                                <div><h3>Enable Auto-Refresh</h3><p>Set dashboard to refresh every 5 minutes</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>By default, a Metabase dashboard loads once and stays static. For a "real-time" feel, we want it to refresh automatically — e.g. every 5 minutes. That way, if new sales are inserted (by your Python script or a live system), the dashboard shows updated numbers without the user hitting refresh.</p>
+                            </div>
+
+                            <h4>6a. Turn on auto-refresh</h4>
+                            <p>Open your dashboard. Look for the <strong>clock icon</strong> or "Auto-refresh" in the top-right area. Click it. Choose <strong>Every 5 minutes</strong> (or 1 minute, 15 minutes — whatever fits your use case).</p>
+
+                            <p>Once enabled, the dashboard will re-run all card queries at that interval. The page updates automatically. Users can leave it open on a TV or second monitor — it stays "live."</p>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip</h4>
+                                <p>Don't set refresh too aggressive (e.g. every 10 seconds) — it hits your database often and can slow things down. For "yesterday's sales" type reporting, 5–15 minutes is usually enough.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 6 complete!</h4>
+                                <ul>
+                                    <li>Auto-refresh enabled (clock icon)</li>
+                                    <li>Dashboard refreshes every 5 minutes</li>
+                                    <li>No manual refresh needed</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 7 ===== -->
+                        <div class="build-step" data-step="7">
+                            <div class="build-step-header">
+                                <div class="build-step-num">7</div>
+                                <div><h3>Set Up Email Subscription</h3><p>Schedule the dashboard to be emailed on a schedule</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>Managers don't always open Metabase. They want the report in their inbox — "Every Monday at 8 AM, send me the Sales Dashboard." Metabase has a <strong>subscription</strong> feature: you pick a dashboard (or individual question), add email recipients, and set a schedule (daily, weekly, etc.). Metabase sends a PDF or link. No more manual screenshots!</p>
+                            </div>
+
+                            <h4>7a. Create a subscription</h4>
+                            <p>Open your dashboard. Click the <strong>Subscribe</strong> button (bell or envelope icon, usually in the top right). In the subscription dialog:</p>
+                            <ul>
+                                <li><strong>Recipients:</strong> Add email addresses (yourself for testing, or stakeholders).</li>
+                                <li><strong>Schedule:</strong> Choose "Daily" (e.g. 8:00 AM) or "Weekly" (e.g. Monday 8:00 AM).</li>
+                                <li><strong>Format:</strong> Attach PDF snapshot of the dashboard, or send a link. PDF is often preferred for email.</li>
+                            </ul>
+                            <p>Save. Metabase will send the dashboard on that schedule. The date filter will use "yesterday" or "last 7 days" depending on how you configured the filter — you can set filter defaults for subscriptions.</p>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Email must be configured</h4>
+                                <p>Metabase needs to send email. In <strong>Admin Settings → Email</strong>, configure SMTP (Gmail, SendGrid, your company server, etc.). Without it, subscriptions won't send. Check the <a href="https://www.metabase.com/docs/latest/configuring-metabase/email" target="_blank">Metabase email docs</a> for setup.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> Step 7 complete!</h4>
+                                <ul>
+                                    <li>Subscription created for the dashboard</li>
+                                    <li>Recipients and schedule configured</li>
+                                    <li>Stakeholders get the report by email automatically</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Project Complete -->
+                        <div class="what-happened" style="margin-top:32px;">
+                            <h4><i class="fas fa-trophy"></i> Project complete!</h4>
+                            <p>You just built a real-time sales dashboard end-to-end. Here's what you can put on your resume:</p>
+                            <ul>
+                                <li>Designed and implemented a PostgreSQL schema for retail analytics (stores, products, sales)</li>
+                                <li>Generated 500+ rows of sample data with Python (random, datetime, psycopg2)</li>
+                                <li>Connected Metabase to PostgreSQL and built saved questions with parameterized date filters</li>
+                                <li>Created a live dashboard with KPI cards, charts, and drill-through</li>
+                                <li>Enabled auto-refresh and email subscriptions for stakeholder reporting</li>
+                            </ul>
+                        </div>
+
+                        <div class="project-section" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; margin-top: 28px;">
+                            <h2 style="color: #065f46;"><i class="fas fa-rocket"></i> What's next?</h2>
+                            <ul style="color: #064e3b; line-height: 1.9; margin-left: 20px;">
+                                <li>Connect more data sources (e.g. from an <a href="ecommerce-data-warehouse.html" style="color:#059669;font-weight:700;">E-Commerce Data Warehouse</a> project)</li>
+                                <li>Add alerts in Metabase (e.g. "Email me when daily revenue drops below X")</li>
+                                <li>Build a <a href="marketing-analytics-pipeline.html" style="color:#059669;font-weight:700;">Marketing Analytics Pipeline</a> and visualize it in Metabase</li>
+                                <li>Explore the <a href="../metabase_course/index.html" style="color:#059669;font-weight:700;">Metabase course</a> for advanced visualizations</li>
+                            </ul>
+                        </div>
+
+                    </div><!-- /.pro-locked-content -->
+
+                    <!-- Lock overlay (shown when locked) -->
+                    <div class="pro-lock-overlay">
+                        <div class="lock-icon-big"><i class="fas fa-lock"></i></div>
+                        <h3>Unlock the Full Build Guide</h3>
+                        <p>Get the complete step-by-step implementation: copy-paste code, line-by-line explanations, tips, warnings, and verification queries. Build this project from zero to production.</p>
+                        <a href="../pricing.html" class="unlock-btn"><i class="fas fa-crown"></i> Upgrade to Pro</a>
+                    </div>
+                </div><!-- /.pro-locked-wrapper -->
+            </div><!-- /panel-build -->
+
+            <a href="../projects.html" class="project-back"><i class="fas fa-arrow-left"></i> Back to all projects</a>
+        </main>
+    </div>
+
+    <footer class="footer" style="margin-top:48px;">
+        <div class="footer-bottom"><p>&copy; 2025 Data For Dummies. Learning notes for everyone.</p></div>
+    </footer>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:24px;">
+            <p><a href="mailto:fktiindia@gmail.com">fktiindia@gmail.com</a></p>
+            <p><a href="tel:+919833565272">+91 98335 65272</a></p>
+        </div>
+    </div>
+    <script>function showContact(){document.getElementById('contactModal').style.display='flex';} document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+    <script src="../js/hub-script.js"></script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/project-paywall.js"></script>
+    <script>
+    /* Tab switching */
+    document.querySelectorAll('.project-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.project-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.project-panel').forEach(function(p) { p.classList.remove('active'); });
+            tab.classList.add('active');
+            document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+    </script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

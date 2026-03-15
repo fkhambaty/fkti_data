@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data For Dummies | Free Data & Analytics Learning</title>
-    <meta name="description" content="Learn SQL, Python, Airflow, DBT, Redshift, PostgreSQL, Data Science, and LLMs for free. Hands-on courses with real-world projects explained simply.">
-    <meta name="keywords" content="data engineering, python, sql, airflow, dbt, data science, free courses, learn data, data for dummies">
-    <meta property="og:title" content="Data For Dummies — Free Data & Analytics Learning">
-    <meta property="og:description" content="Master data engineering tools from basic SQL to building LLMs. 10+ free courses, 50+ real-world projects, explained like you're five.">
+    <title>Data For Dummies | Data & Analytics Learning</title>
+    <meta name="description" content="Learn SQL, Python, Airflow, DBT, Redshift, PostgreSQL, Data Science, and LLMs. Start learning for free. Advanced courses and premium projects are available with a subscription.">
+    <meta name="keywords" content="data engineering, python, sql, airflow, dbt, data science, learn data, data for dummies, pro courses">
+    <meta property="og:title" content="Data For Dummies — Data & Analytics Learning">
+    <meta property="og:description" content="Master data engineering tools from basic SQL to building LLMs. Start for free; unlock advanced courses and projects with Pro.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://datafordummies.in">
     <meta property="og:image" content="https://datafordummies.in/logo.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Data For Dummies — Free Data & Analytics Learning">
-    <meta name="twitter:description" content="Learn SQL, Python, Airflow, DBT and more. Completely free, explained simply.">
+    <meta name="twitter:title" content="Data For Dummies — Data & Analytics Learning">
+    <meta name="twitter:description" content="Learn SQL, Python, DBT and more. Start learning for free. Advanced courses and premium projects available with Pro.">
     <link rel="canonical" href="https://datafordummies.in">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/fkti-light-theme.css">
@@ -148,20 +148,19 @@
                     <i class="fas fa-house-chimney"></i>
                 </a>
             </div>
-            <div class="nav-ticker" id="navTicker">
-                <span class="ticker-icon">💡</span>
-                <span class="ticker-text" id="tickerText"></span>
-            </div>
             <div class="nav-links">
                 <a href="learning-path.html" class="nav-link">Courses</a>
                 <a href="data-modelling.html" class="nav-link">Data Modelling</a>
                 <a href="data-adventure.html" class="nav-link">Data Adventure</a>
                 <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="projects.html" class="nav-link">Projects</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
                 <a href="founder.html" class="nav-link">Founder</a>
                 <a href="#" class="nav-link" onclick="showContactInfo(); return false;">Contact</a>
-                <a href="apk/FK-Learning-Hub.apk" class="app-download-nav" id="apkDownloadLink" download title="Get Free Android App">
+                <span id="auth-nav-slot"></span>
+                <a href="apk/FK-Learning-Hub.apk" class="app-download-nav" id="apkDownloadLink" download title="Download Android App">
                     <span class="app-download-nav-icon">📱</span>
-                    <span class="app-download-nav-text">Get Free Android App</span>
+                    <span class="app-download-nav-text">Download App</span>
                 </a>
             </div>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
@@ -178,12 +177,16 @@
             <div class="orb"></div>
         </div>
         <div class="hero-container">
+            <div class="hero-trivia" id="heroTrivia" aria-live="polite">
+                <span class="ticker-icon" aria-hidden="true">💡</span>
+                <span class="ticker-text" id="tickerText"></span>
+            </div>
             <div class="hero-content">
                 <div class="hero-logo-block">
                     <div class="hero-logo-frame">
-                        <img src="logo.png" alt="Data For Dummies" class="hero-logo-img">
+                        <img src="logo.png" alt="Data For Dummies" class="hero-logo-img" loading="lazy">
                         <p class="hero-tagline">The best way to learn is to teach.</p>
-                    </div>
+                </div>
                 </div>
                 <p class="hero-description">
                     Learn industry-standard tools and techniques from basic concepts to advanced implementations. 
@@ -281,62 +284,102 @@
         </div>
     </section>
 
-    <!-- ═══ UI UPGRADE: New sections (additive, non-destructive) ═══ -->
+    <!-- ═══ Homepage sections (rebuilt per plan) ═══ -->
 
-    <!-- SECTION: Enhanced Hero CTA -->
+    <!-- SECTION 1: Hero -->
     <section class="ux-hero">
-        <h2>Become a Data Engineer by <span>Building Real Pipelines</span></h2>
-        <p>Learn SQL, Python, Airflow, DBT, and real-world data workflows — explained so simply that anyone can follow. No fluff, no paywalls, just hands-on learning.</p>
+        <h2>Master Data Engineering by <span>Building Real Pipelines</span></h2>
+        <p>Learn SQL, Python, Airflow, DBT, and modern analytics engineering through real projects. Start free; unlock advanced courses and projects with Pro.</p>
         <div class="ux-hero-btns">
             <a href="learning-path.html" class="ux-btn ux-btn-primary"><i class="fas fa-play"></i> Start Learning</a>
-            <a href="learning-path.html" class="ux-btn ux-btn-secondary"><i class="fas fa-compass"></i> Explore Courses</a>
+            <a href="learning-path.html#courses" class="ux-btn ux-btn-secondary"><i class="fas fa-compass"></i> Explore Courses</a>
         </div>
     </section>
 
-    <!-- SECTION: Learning Paths -->
+    <!-- SECTION 2: Learning Paths (Data Analyst, Data Engineer, Analytics Engineer) -->
     <div class="ux-section">
         <h2 class="ux-section-title">Choose Your Path</h2>
         <div class="ux-divider"></div>
-        <p class="ux-section-sub">Whether you're just starting or ready to go deep — there's a clear path for you.</p>
+        <p class="ux-section-sub">Structured paths from beginner to production-ready. Pick one and start building.</p>
         <div class="ux-paths-grid">
             <div class="ux-path-card beginner">
-                <span class="ux-path-badge">Beginner</span>
-                <h3>Foundation</h3>
+                <span class="ux-path-badge">Data Analyst</span>
+                <h3>From numbers to insights</h3>
                 <ul class="ux-path-list">
-                    <li><i class="fas fa-database"></i> SQL Basics</li>
-                    <li><i class="fab fa-python"></i> Python Fundamentals</li>
-                    <li><i class="fas fa-lightbulb"></i> Data Concepts</li>
-                    <li><i class="fas fa-table"></i> PostgreSQL with DBeaver</li>
+                    <li><i class="fas fa-database"></i> SQL & PostgreSQL</li>
+                    <li><i class="fab fa-python"></i> Python for data</li>
+                    <li><i class="fas fa-chart-bar"></i> Metabase & dashboards</li>
+                    <li><i class="fas fa-lightbulb"></i> Statistics & reporting</li>
                 </ul>
+                <a href="learning-path.html" class="ux-btn ux-btn-secondary" style="margin-top:12px;">View path</a>
             </div>
             <div class="ux-path-card intermediate">
-                <span class="ux-path-badge">Intermediate</span>
-                <h3>Data Engineering</h3>
+                <span class="ux-path-badge">Data Engineer</span>
+                <h3>Pipelines and warehouses</h3>
                 <ul class="ux-path-list">
-                    <li><i class="fas fa-cubes"></i> Data Modelling (Kimball)</li>
-                    <li><i class="fas fa-random"></i> ETL Pipelines</li>
-                    <li><i class="fas fa-layer-group"></i> Analytics Engineering</li>
-                    <li><i class="fas fa-warehouse"></i> Data Warehousing</li>
+                    <li><i class="fas fa-cubes"></i> Data modelling (Kimball)</li>
+                    <li><i class="fas fa-project-diagram"></i> Apache Airflow</li>
+                    <li><i class="fab fa-aws"></i> Redshift & cloud storage</li>
+                    <li><i class="fas fa-warehouse"></i> ETL patterns</li>
                 </ul>
+                <a href="learning-path.html" class="ux-btn ux-btn-secondary" style="margin-top:12px;">View path</a>
             </div>
             <div class="ux-path-card advanced">
-                <span class="ux-path-badge">Advanced</span>
-                <h3>Production Systems</h3>
+                <span class="ux-path-badge">Analytics Engineer</span>
+                <h3>Transform and ship</h3>
                 <ul class="ux-path-list">
-                    <li><i class="fas fa-project-diagram"></i> Apache Airflow</li>
-                    <li><i class="fas fa-code-branch"></i> DBT Transformations</li>
-                    <li><i class="fas fa-brain"></i> LLMs from Scratch</li>
-                    <li><i class="fas fa-chart-line"></i> Data Science & ML</li>
+                    <li><i class="fas fa-random"></i> DBT transformations</li>
+                    <li><i class="fas fa-code-branch"></i> SQL models & tests</li>
+                    <li><i class="fas fa-layer-group"></i> Documentation & lineage</li>
+                    <li><i class="fas fa-chart-line"></i> Data Science & LLMs</li>
                 </ul>
+                <a href="learning-path.html" class="ux-btn ux-btn-secondary" style="margin-top:12px;">View path</a>
             </div>
         </div>
     </div>
 
-    <!-- SECTION: Tools Showcase -->
+    <!-- SECTION 3: Real Projects (4 cards with difficulty tags) -->
     <div class="ux-section">
-        <h2 class="ux-section-title">Tools You'll Master</h2>
+        <h2 class="ux-section-title">Real Projects</h2>
         <div class="ux-divider"></div>
-        <p class="ux-section-sub">Industry-standard technologies used by Netflix, Uber, Airbnb and thousands of companies worldwide.</p>
+        <p class="ux-section-sub">Build portfolios that matter. Each project includes clear difficulty and the tools you’ll use.</p>
+        <div class="ux-projects-grid">
+            <div class="ux-project">
+                <div class="ux-project-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5)"><i class="fas fa-warehouse"></i></div>
+                <span class="ux-path-badge" style="margin-bottom:8px;">Beginner</span>
+                <h3>E-Commerce Data Warehouse</h3>
+                <p>Medallion architecture (Bronze → Silver → Gold) for orders, customers, and products.</p>
+                <div class="ux-project-tags"><span>Redshift</span><span>DBT</span><span>Airflow</span><span>SQL</span></div>
+            </div>
+            <div class="ux-project">
+                <div class="ux-project-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fas fa-chart-line"></i></div>
+                <span class="ux-path-badge" style="margin-bottom:8px;">Intermediate</span>
+                <h3>Real-Time Sales Dashboard</h3>
+                <p>Live Metabase dashboard with drill-downs and scheduled reports.</p>
+                <div class="ux-project-tags"><span>Metabase</span><span>PostgreSQL</span><span>Python</span></div>
+            </div>
+            <div class="ux-project">
+                <div class="ux-project-icon" style="background:linear-gradient(135deg,#d97706,#f59e0b)"><i class="fas fa-bullseye"></i></div>
+                <span class="ux-path-badge" style="margin-bottom:8px;">Intermediate</span>
+                <h3>Marketing Analytics Pipeline</h3>
+                <p>Automate ingestion from APIs, transform with DBT, surface campaign ROI.</p>
+                <div class="ux-project-tags"><span>Airflow</span><span>DBT</span><span>Python</span><span>Metabase</span></div>
+            </div>
+            <div class="ux-project">
+                <div class="ux-project-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><i class="fas fa-users"></i></div>
+                <span class="ux-path-badge" style="margin-bottom:8px;">Advanced</span>
+                <h3>Customer Segmentation Model</h3>
+                <p>Clustering and segmentation with Python and SQL for targeted campaigns.</p>
+                <div class="ux-project-tags"><span>Python</span><span>SQL</span><span>Data Science</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: Tool Ecosystem (8 tools) -->
+    <div class="ux-section">
+        <h2 class="ux-section-title">Tool Ecosystem</h2>
+        <div class="ux-divider"></div>
+        <p class="ux-section-sub">Industry-standard technologies you’ll use on the job. Every one is covered in our courses.</p>
         <div class="ux-tools-grid">
             <div class="ux-tool" onclick="enterCourse('python')">
                 <div class="ux-tool-icon" style="background:linear-gradient(135deg,#3776ab,#ffd43b)"><i class="fab fa-python"></i></div>
@@ -350,9 +393,9 @@
                 <div class="ux-tool-icon" style="background:linear-gradient(135deg,#ff9900,#ffb84d)"><i class="fab fa-aws"></i></div>
                 <span>Redshift</span>
             </div>
-            <div class="ux-tool" onclick="enterCourse('mssql')">
-                <div class="ux-tool-icon" style="background:linear-gradient(135deg,#cc2927,#e74c3c)"><i class="fas fa-database"></i></div>
-                <span>SQL Server</span>
+            <div class="ux-tool" onclick="enterCourse('postgres')">
+                <div class="ux-tool-icon" style="background:linear-gradient(135deg,#336791,#4a90c7)"><i class="fas fa-database"></i></div>
+                <span>SQL / PostgreSQL</span>
             </div>
             <div class="ux-tool" onclick="enterCourse('dbt')">
                 <div class="ux-tool-icon" style="background:linear-gradient(135deg,#ff694b,#ff8a65)"><i class="fas fa-random"></i></div>
@@ -363,7 +406,7 @@
                 <span>Metabase</span>
             </div>
             <div class="ux-tool" onclick="enterCourse('postgres')">
-                <div class="ux-tool-icon" style="background:linear-gradient(135deg,#336791,#4a90c7)"><i class="fas fa-database"></i></div>
+                <div class="ux-tool-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><i class="fas fa-database"></i></div>
                 <span>PostgreSQL</span>
             </div>
             <div class="ux-tool" onclick="enterCourse('llm')">
@@ -373,70 +416,42 @@
         </div>
     </div>
 
-    <!-- SECTION: Project Previews -->
+    <!-- SECTION 5: Trust Signals — Built for Real Data Careers -->
     <div class="ux-section">
-        <h2 class="ux-section-title">Real-World Projects</h2>
-        <div class="ux-divider"></div>
-        <p class="ux-section-sub">Learn by building — not just reading. Each course includes hands-on projects you can showcase.</p>
-        <div class="ux-projects-grid">
-            <div class="ux-project">
-                <div class="ux-project-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5)"><i class="fas fa-warehouse"></i></div>
-                <h3>E-Commerce Data Warehouse</h3>
-                <p>Build a complete medallion architecture (Bronze → Silver → Gold) for an online store with orders, customers, and products.</p>
-                <div class="ux-project-tags"><span>Redshift</span><span>DBT</span><span>Airflow</span><span>SQL</span></div>
-            </div>
-            <div class="ux-project">
-                <div class="ux-project-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fas fa-chart-line"></i></div>
-                <h3>Real-Time Sales Dashboard</h3>
-                <p>Design a live Metabase dashboard with auto-refresh, drill-downs, and scheduled email reports for a retail company.</p>
-                <div class="ux-project-tags"><span>Metabase</span><span>PostgreSQL</span><span>Python</span></div>
-            </div>
-            <div class="ux-project">
-                <div class="ux-project-icon" style="background:linear-gradient(135deg,#d97706,#f59e0b)"><i class="fas fa-bullseye"></i></div>
-                <h3>Marketing Analytics Pipeline</h3>
-                <p>Automate daily ingestion from APIs, transform with DBT, and surface campaign ROI insights in dashboards.</p>
-                <div class="ux-project-tags"><span>Airflow</span><span>DBT</span><span>Python</span><span>Metabase</span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SECTION: Trust Signals (placeholders — marked in comments) -->
-    <div class="ux-section">
-        <h2 class="ux-section-title">Trusted by Learners</h2>
+        <h2 class="ux-section-title">Built for Real Data Careers</h2>
         <div class="ux-divider"></div>
         <div class="ux-trust-grid">
-            <!-- PLACEHOLDER: Replace with real testimonials when available -->
             <div class="ux-trust-item">
                 <div class="icon">🎓</div>
-                <h4>10+ Comprehensive Courses</h4>
+                <h4>10+ comprehensive courses</h4>
                 <p>From Python basics to building LLMs from scratch</p>
             </div>
             <div class="ux-trust-item">
                 <div class="icon">🌍</div>
-                <h4>100% Free Forever</h4>
-                <p>No paywalls, no upsells, no premium tiers</p>
+                <h4>Start free, go Pro when ready</h4>
+                <p>Advanced courses and premium projects available with a subscription</p>
             </div>
             <div class="ux-trust-item">
                 <div class="icon">🛠️</div>
-                <h4>Hands-On Projects</h4>
-                <p>Build real pipelines, not just watch tutorials</p>
+                <h4>Hands-on projects</h4>
+                <p>Build real pipelines and dashboards, not just watch tutorials</p>
             </div>
-            <!-- END PLACEHOLDER -->
         </div>
     </div>
 
-    <!-- SECTION: CTA Banner -->
+    <!-- SECTION 6: CTA — Start Building Your First Data Pipeline Today -->
     <div class="ux-cta-banner">
-        <h2>Start Your Data Journey Today</h2>
+        <h2>Start Building Your First Data Pipeline Today</h2>
         <div class="ux-divider"></div>
-        <p>Every course is free, every concept is explained simply, and every project is real. Join thousands of learners building their data careers.</p>
+        <p>Join thousands of learners. Start for free, unlock advanced courses and projects with Pro.</p>
         <div class="ux-hero-btns">
             <a href="learning-path.html" class="ux-btn ux-btn-primary"><i class="fas fa-rocket"></i> Start Learning</a>
-            <a href="apk/FK-Learning-Hub.apk" class="ux-btn ux-btn-secondary" download><i class="fas fa-mobile-alt"></i> Download App</a>
+            <a href="learning-path.html#courses" class="ux-btn ux-btn-secondary"><i class="fas fa-compass"></i> Explore Courses</a>
+            <a href="pricing.html" class="ux-btn ux-btn-secondary"><i class="fas fa-tag"></i> View Pricing</a>
         </div>
     </div>
 
-    <!-- ═══ END UI UPGRADE ═══ -->
+    <!-- ═══ END Homepage sections ═══ -->
 
     <!-- Footer -->
     <footer class="footer">
@@ -470,10 +485,16 @@
                     <a href="#" onclick="openChatbot(); return false;">Chat Support</a>
                     <a href="#" onclick="showContactInfo(); return false;">Contact</a>
                 </div>
+                <div class="footer-column">
+                    <h4>Community</h4>
+                    <a href="#" rel="noopener">Discord</a>
+                    <a href="https://github.com/fkhambaty/fkti_data" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <a href="#">Discussion Forum</a>
+                </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Data For Dummies. Free learning notes for everyone.</p>
+            <p>&copy; 2025 Data For Dummies. Learning notes for everyone. Start free, unlock more with Pro.</p>
             <p>The best way to learn is to teach.</p>
         </div>
     </footer>
@@ -778,9 +799,13 @@
         }
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-auth.js"></script>
+    <script src="js/auth-guard.js"></script>
     <script src="js/hub-script.js"></script>
-
     <script src="js/nav-ticker.js"></script>
+    <script>if(window.FKTI_AuthGuard)FKTI_AuthGuard.init();</script>
 
     <!-- Admin Key Icon -->
     <div class="admin-key-btn" onclick="showAdminModal()" title="Admin Access">
@@ -801,6 +826,7 @@
             </div>
             <div class="admin-dashboard" id="adminDashboard" style="display:none;">
                 <h3>📊 FKTI Analytics Dashboard</h3>
+                <a href="admin/analytics.html" style="display:inline-block;margin-bottom:16px;padding:10px 20px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:10px;font-weight:600;text-decoration:none;font-size:0.9rem;">Open Full Dashboard →</a>
                 <div class="stats-grid">
                     <div class="stat-box">
                         <div class="stat-icon">👥</div>
@@ -1302,6 +1328,7 @@
             });
         }
     </script>
+    <script src="js/analytics-tracker.js"></script>
 </body>
 </html>
 

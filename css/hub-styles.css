@@ -780,32 +780,33 @@ li {
 /* Theme selector removed */
 .theme-selector, .theme-toggle, .theme-dropdown { display: none !important; }
 
-/* Nav data fact ticker */
+/* Nav data fact ticker — guaranteed space so trivia is always visible */
 .nav-ticker {
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 240px;
+    min-width: 200px;
+    max-width: 420px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 14px;
+    gap: 8px;
+    padding: 0 12px;
     overflow: hidden;
 }
 .ticker-icon {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     flex-shrink: 0;
-    opacity: 0.7;
+    opacity: 0.85;
 }
 .ticker-text {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: #64748b;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     letter-spacing: -0.01em;
-    min-height: 1em;
+    min-height: 1.2em;
 }
-@media (max-width: 960px) {
+@media (max-width: 880px) {
     .nav-ticker { display: none; }
 }
 
@@ -1771,6 +1772,8 @@ li {
     display: flex;
     align-items: center;
     gap: 0;
+    flex-shrink: 1;
+    min-width: 0;
 }
 
 .nav-link {
@@ -1806,6 +1809,24 @@ li {
 
 .nav-link[onclick*="showContactInfo"] { color: #0d9488; }
 .nav-link[onclick*="showContactInfo"]:hover { background: rgba(13, 148, 136, 0.1); color: #0f766e; }
+
+/* Auth nav slot: always show Login / Sign Up or My Account */
+#auth-nav-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.auth-nav-login { color: #4f46e5 !important; }
+.auth-nav-login:hover { background: rgba(79, 70, 229, 0.12) !important; color: #4338ca !important; }
+.auth-nav-signup {
+    background: linear-gradient(135deg, #6366f1, #7c3aed);
+    color: #fff !important;
+    padding: 6px 12px;
+    margin-left: 4px;
+}
+.auth-nav-signup:hover { background: linear-gradient(135deg, #4f46e5, #6d28d9) !important; color: #fff !important; opacity: 0.95; }
+.auth-nav-account { color: #059669 !important; }
+.auth-nav-account:hover { background: rgba(5, 150, 105, 0.12) !important; color: #047857 !important; }
 
 .nav-cta {
     background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
@@ -1854,7 +1875,7 @@ li {
 /* Hero Section - light pastel gradient with color */
 .hero, .hero-modern {
     margin-top: 60px;
-    padding: 28px 0 32px;
+    padding: 16px 0 32px;
     background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 35%, #ecfeff 65%, #faf5ff 100%);
     display: flex;
     align-items: center;
@@ -1880,10 +1901,41 @@ li {
     padding: 0 var(--spacing-lg);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-2xl);
-    align-items: center;
+    gap: 0.75rem var(--spacing-2xl);
+    align-items: start;
     position: relative;
     z-index: 1;
+}
+
+/* Trivia line inside hero empty space — fills gap without adding page height */
+.hero-trivia {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 640px;
+    margin: 0 auto 0;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 14px;
+    min-height: 44px;
+    position: relative;
+    z-index: 2;
+}
+.hero-trivia .ticker-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+.hero-trivia .ticker-text {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #475569;
+    text-align: center;
+    line-height: 1.4;
 }
 
 .hero-badge {
@@ -2020,46 +2072,6 @@ li {
     box-shadow: 
         0 2px 0 #1d4ed8,
         0 3px 8px rgba(37, 99, 235, 0.3);
-}
-
-/* Free Learning Banner - Simple with 3D Effect */
-.free-learning-banner {
-    background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
-    color: var(--text-dark, #1d1d1f);
-    border: 1px solid #d1d5db;
-    border-radius: 12px;
-    padding: 14px 24px;
-    margin-bottom: 20px;
-    text-align: center;
-    box-shadow: 
-        0 4px 0 #d1d5db,
-        0 6px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.15s ease;
-}
-
-.free-learning-banner:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-        0 6px 0 #d1d5db,
-        0 10px 20px rgba(0, 0, 0, 0.12);
-}
-
-.free-learning-banner:active {
-    transform: translateY(2px);
-    box-shadow: 
-        0 2px 0 #d1d5db,
-        0 3px 8px rgba(0, 0, 0, 0.08);
-}
-
-.free-learning-banner p {
-    margin: 0;
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--text-dark, #1d1d1f);
-}
-
-.free-learning-banner strong {
-    color: var(--primary-blue, #3b82f6);
 }
 
 .btn-secondary {

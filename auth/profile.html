@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | Data For Dummies</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <link rel="stylesheet" href="../styles/auth.css">
+</head>
+<body class="auth-page ds-root">
+    <a href="../index.html" class="auth-back-home"><span aria-hidden="true">←</span> Back to home</a>
+    <div class="auth-card auth-profile-card ds-animate-in">
+        <h1>My Account</h1>
+        <p class="auth-subtitle">Manage your profile and subscription.</p>
+        <div id="profileContent" style="display:none;">
+            <div class="auth-profile-header">
+                <div class="auth-profile-avatar" id="avatarLetter">?</div>
+                <div class="auth-profile-info">
+                    <h2 id="profileName">—</h2>
+                    <p id="profileEmail">—</p>
+                    <span class="auth-badge auth-badge-free" id="subscriptionBadge">Free</span>
+                </div>
+            </div>
+            <div class="ds-card" style="margin-top: var(--ds-space-3);">
+                <h3 class="ds-heading-3" style="margin-top:0;">Subscription</h3>
+                <p class="ds-body" id="subscriptionText">You’re on the Free plan. Unlock all courses and projects with Pro.</p>
+                <a href="../pricing.html" class="ds-btn ds-btn-primary" style="margin-top: var(--ds-space-2);">Upgrade to Pro</a>
+            </div>
+            <div class="ds-card" style="margin-top: var(--ds-space-3);" id="progressSection">
+                <h3 class="ds-heading-3" style="margin-top:0;">Continue learning</h3>
+                <p class="ds-body-sm" id="progressHint">Your progress is saved when you’re logged in. Resume from where you left off.</p>
+                <div id="progressList"></div>
+            </div>
+            <p class="auth-links" style="margin-top: var(--ds-space-5);">
+                <a href="#" id="logoutBtn">Log out</a>
+            </p>
+        </div>
+        <div id="profileLoading" class="auth-subtitle">Loading…</div>
+        <div id="profileLogin" style="display:none;">
+            <p class="auth-subtitle">You’re not logged in.</p>
+            <a href="login.html" class="ds-btn ds-btn-primary auth-submit">Log in</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/progress.js"></script>
+    <script>
+        var courseUrls = {
+            python: '../python_course/index.html',
+            airflow: '../airflow_course/index.html',
+            llm: '../llm_course/index.html',
+            postgres: '../postgres_course/index.html',
+            dbt: '../dbt_course/index.html',
+            redshift: '../redshift_course/index.html',
+            mssql: '../mssql_course/index.html',
+            metabase: '../metabase_course/index.html',
+            clickhouse: '../clickhouse_course/index.html',
+            datascience: '../data_science_course/index.html'
+        };
+        var courseLabels = {
+            python: 'Python for Data Science',
+            airflow: 'Apache Airflow',
+            llm: 'Large Language Models',
+            postgres: 'PostgreSQL',
+            dbt: 'DBT',
+            redshift: 'AWS Redshift',
+            mssql: 'Microsoft SQL Server',
+            metabase: 'Metabase',
+            clickhouse: 'ClickHouse',
+            datascience: 'Data Science'
+        };
+    </script>
+    <script>
+        var profileContent = document.getElementById('profileContent');
+        var profileLoading = document.getElementById('profileLoading');
+        var profileLogin = document.getElementById('profileLogin');
+        var avatarLetter = document.getElementById('avatarLetter');
+        var profileName = document.getElementById('profileName');
+        var profileEmail = document.getElementById('profileEmail');
+        var subscriptionBadge = document.getElementById('subscriptionBadge');
+        var subscriptionText = document.getElementById('subscriptionText');
+        var logoutBtn = document.getElementById('logoutBtn');
+
+        function showLogin() {
+            profileLoading.style.display = 'none';
+            profileContent.style.display = 'none';
+            profileLogin.style.display = 'block';
+        }
+
+        function showProfile(session) {
+            profileLoading.style.display = 'none';
+            profileLogin.style.display = 'none';
+            profileContent.style.display = 'block';
+            var user = session.user;
+            var email = user.email || '';
+            var name = (user.user_metadata && user.user_metadata.full_name) || email.split('@')[0] || 'User';
+            avatarLetter.textContent = name.charAt(0).toUpperCase();
+            profileName.textContent = name;
+            profileEmail.textContent = email;
+
+            if (window.FKTI_Auth && window.FKTI_Auth.getProfile) {
+                window.FKTI_Auth.getProfile(user.id).then(function (profRes) {
+                    var profile = profRes.data;
+                    if (profile && profile.subscription_status === 'pro') {
+                        subscriptionBadge.className = 'auth-badge auth-badge-pro';
+                        subscriptionBadge.textContent = 'Pro';
+                        subscriptionText.textContent = 'You have full access to all courses and projects. Thank you for supporting Data For Dummies!';
+                        var next = subscriptionText.nextElementSibling;
+                        if (next) next.style.display = 'none';
+                    }
+                }).catch(function () {});
+            }
+
+            if (window.FKTI_Progress && window.FKTI_Progress.getProgress) {
+                window.FKTI_Progress.getProgress().then(function (list) {
+                    var el = document.getElementById('progressList');
+                    var hint = document.getElementById('progressHint');
+                    if (!el) return;
+                    if (!list.length) {
+                        hint.textContent = 'No progress yet. Start a course from the Learning Path — your progress will be saved here.';
+                        return;
+                    }
+                    hint.textContent = 'Resume from where you left off.';
+                    el.innerHTML = list.slice(0, 5).map(function (p) {
+                        var label = courseLabels[p.course_id] || p.course_id;
+                        var url = courseUrls[p.course_id] || '../learning-path.html';
+                        var last = p.last_lesson_label || p.last_lesson_id || 'Continue';
+                        return '<a href="' + url + '" style="display:block;padding:10px 12px;background:var(--ds-surface-elevated);border-radius:8px;margin-top:8px;text-decoration:none;color:var(--ds-text);font-weight:600;"><span style="display:block;font-size:0.85rem;">' + label + '</span><span style="font-size:0.8rem;color:var(--ds-text-muted);">' + (p.progress_pct ? p.progress_pct + '% complete' : '') + ' · ' + last + '</span></a>';
+                    }).join('');
+                }).catch(function () {});
+            }
+
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (window.FKTI_Auth && window.FKTI_Auth.signOut) {
+                    window.FKTI_Auth.signOut().then(function () {
+                        window.location.href = 'login.html';
+                    });
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        if (!window.FKTI_Auth || !window.FKTI_Auth.getSession) {
+            showLogin();
+        } else {
+            var settled = false;
+            window.FKTI_Auth.getSession()
+                .then(function (res) {
+                    if (settled) return;
+                    settled = true;
+                    var session = res.data && res.data.session;
+                    if (session) showProfile(session);
+                    else showLogin();
+                })
+                .catch(function () {
+                    if (!settled) { settled = true; showLogin(); }
+                });
+            setTimeout(function () {
+                if (!settled) {
+                    settled = true;
+                    if (profileLoading.style.display !== 'none') showLogin();
+                }
+            }, 2500);
+        }
+    </script>
+</body>
+</html>

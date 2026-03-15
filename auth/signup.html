@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Data For Dummies</title>
+    <link rel="stylesheet" href="../styles/design-system.css">
+    <link rel="stylesheet" href="../styles/auth.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19/build/css/intlTelInput.css">
+</head>
+<body class="auth-page ds-root">
+    <a href="../index.html" class="auth-back-home"><span aria-hidden="true">←</span> Back to home</a>
+    <div class="auth-card ds-animate-in">
+        <h1>Create account</h1>
+        <p class="auth-subtitle">We’ll send a verification code to your email.</p>
+        <div id="authError" class="auth-error" style="display:none;"></div>
+        <form class="auth-form" id="signupForm">
+            <label for="fullName">Full name</label>
+            <input type="text" id="fullName" name="fullName" required placeholder="Your name" autocomplete="name">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com" autocomplete="email">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required placeholder="At least 6 characters" autocomplete="new-password" minlength="6">
+            <label for="phone">Mobile number</label>
+            <div class="auth-phone-wrap">
+                <input type="tel" id="phone" name="phone" placeholder="Phone number" autocomplete="tel">
+            </div>
+            <button type="submit" class="ds-btn ds-btn-primary auth-submit" id="submitBtn">Send verification code</button>
+        </form>
+        <p class="auth-links">
+            Already have an account? <a href="login.html">Log in</a>
+        </p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19/build/js/intlTelInput.min.js"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script>
+        var phoneInput = document.getElementById('phone');
+        if (window.intlTelInput) {
+            window.iti = intlTelInput(phoneInput, {
+                initialCountry: 'in',
+                utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@19/build/js/utils.js'
+            });
+        }
+
+        var form = document.getElementById('signupForm');
+        var errEl = document.getElementById('authError');
+        var submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            errEl.style.display = 'none';
+            errEl.textContent = '';
+            submitBtn.disabled = true;
+
+            var fullName = document.getElementById('fullName').value.trim();
+            var email = document.getElementById('email').value.trim();
+            var password = document.getElementById('password').value;
+            var phone = phoneInput.value.trim();
+            var countryData = window.iti ? window.iti.getSelectedCountryData() : {};
+            var countryCode = (countryData.dialCode ? '+' + countryData.dialCode : '');
+
+            window.FKTI_Auth.signInWithOtp(email).then(function (res) {
+                if (res.error) {
+                    errEl.textContent = res.error.message || 'Could not send code.';
+                    errEl.style.display = 'block';
+                    submitBtn.disabled = false;
+                    return;
+                }
+                try {
+                    sessionStorage.setItem('fkti_pending_signup', JSON.stringify({
+                        fullName: fullName,
+                        email: email,
+                        password: password,
+                        phone: phone,
+                        countryCode: countryCode
+                    }));
+                } catch (err) {}
+                window.location.href = 'verify.html?email=' + encodeURIComponent(email);
+            }).catch(function () {
+                errEl.textContent = 'Something went wrong. Try again.';
+                errEl.style.display = 'block';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

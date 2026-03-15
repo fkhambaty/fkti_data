@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing | Data For Dummies</title>
+    <meta name="description" content="Start free. Upgrade to Pro for ₹499/month and unlock all advanced courses, projects, and certifications.">
+    <meta name="keywords" content="pricing, data engineering courses, pro subscription, learn data">
+    <meta property="og:title" content="Pricing | Data For Dummies">
+    <meta property="og:description" content="Start free. Pro ₹499/month — full access to courses, projects, and certifications.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pricing | Data For Dummies">
+    <meta name="twitter:description" content="Start free. Pro ₹499/month — full access to courses and projects.">
+    <link rel="stylesheet" href="css/fkti-light-theme.css">
+    <link rel="stylesheet" href="css/hub-styles.css">
+    <link rel="stylesheet" href="styles/design-system.css">
+    <link rel="stylesheet" href="styles/pricing.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="pricing-page">
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html" class="logo-link home-icon-btn" title="Home"><i class="fas fa-house-chimney"></i></a>
+            </div>
+            <div class="nav-links">
+                <a href="learning-path.html" class="nav-link">Courses</a>
+                <a href="data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="projects.html" class="nav-link">Projects</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
+                <a href="apk/FK-Learning-Hub.apk" class="app-download-nav" download title="Download Android App"><span class="app-download-nav-icon">📱</span><span class="app-download-nav-text">Download App</span></a>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="top-offset-for-nav">
+        <section class="pricing-hero">
+            <h1>Simple, transparent pricing</h1>
+            <p>Start learning for free. Unlock advanced courses, projects, and certifications with Pro.</p>
+        </section>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h2>Free</h2>
+                <p class="pricing-card-desc">Core courses and tools to build a strong foundation.</p>
+                <div class="pricing-amount">
+                    <div class="price">₹0</div>
+                    <div class="period">forever</div>
+                </div>
+                <ul class="pricing-features">
+                    <li>Python basics (Sessions 1–5)</li>
+                    <li>PostgreSQL & SQL fundamentals</li>
+                    <li>Data Science intro, Math & Statistics</li>
+                    <li>Data Modelling & Bus Matrix</li>
+                    <li>Pipeline Designer (view mode)</li>
+                    <li>Data Adventure & Learning Path</li>
+                    <li>Community access</li>
+                </ul>
+                <div class="pricing-cta">
+                    <a href="learning-path.html" class="ds-btn ds-btn-secondary">Start learning</a>
+                </div>
+            </div>
+
+            <div class="pricing-card pricing-card-featured">
+                <h2>Pro</h2>
+                <p class="pricing-card-desc">Everything in Free, plus advanced courses and real-world projects.</p>
+                <div class="pricing-amount">
+                    <div class="price">₹499 <span>/ month</span></div>
+                    <div class="period">Cancel anytime</div>
+                </div>
+                <ul class="pricing-features">
+                    <li>Full Python (Sessions 6–15), OOP, Pandas, APIs</li>
+                    <li>Airflow, DBT, Redshift, MSSQL, Metabase, ClickHouse</li>
+                    <li>Data Science advanced (ML, DL, NLP, SVM, KNN)</li>
+                    <li>Full LLM course</li>
+                    <li>Pipeline Designer export (SVG/PNG/PDF)</li>
+                    <li>All code walkthroughs & dataset downloads</li>
+                    <li>Assignments & certifications</li>
+                </ul>
+                <div class="pricing-cta">
+                    <button type="button" class="ds-btn ds-btn-primary" id="proCheckoutBtn">Upgrade to Pro</button>
+                    <div id="proCurrentBadge" class="pricing-current" style="display:none;">You are on Pro</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer" style="margin-top:48px;">
+        <div class="footer-bottom">
+            <p>&copy; 2025 Data For Dummies. Learning notes for everyone. Start free, unlock more with Pro.</p>
+        </div>
+    </footer>
+
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:800;">Contact</span>
+                <button onclick="document.getElementById('contactModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <p><a href="mailto:fktiindia@gmail.com">fktiindia@gmail.com</a></p>
+                <p><a href="tel:+919833565272">+91 98335 65272</a></p>
+            </div>
+        </div>
+    </div>
+    <script>function showContact(){var m=document.getElementById('contactModal');m.style.display='flex';} document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        window.RAZORPAY_KEY_ID = 'rzp_live_SRQVHRu7RxYjgn';
+        window.RAZORPAY_SUBSCRIPTION_LINK = 'https://razorpay.me/@datafordummies';
+    </script>
+    <script src="js/supabase-auth.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/hub-script.js"></script>
+    <script src="js/razorpay-checkout.js"></script>
+    <script>
+        document.getElementById('proCheckoutBtn').addEventListener('click', function () {
+            if (window.FKTI_RazorpayCheckout && window.FKTI_RazorpayCheckout.openProCheckout) {
+                window.FKTI_RazorpayCheckout.openProCheckout();
+            } else {
+                window.location.href = 'auth/login.html?returnTo=' + encodeURIComponent('pricing.html');
+            }
+        });
+        if (window.FKTI_Auth && window.FKTI_Auth.getSession) {
+            window.FKTI_Auth.getSession().then(function (res) {
+                var session = res.data && res.data.session;
+                if (!session) return;
+                window.FKTI_Auth.getProfile(session.user.id).then(function (profRes) {
+                    var p = profRes.data;
+                    if (p && p.subscription_status === 'pro') {
+                        var end = p.subscription_end_date && new Date(p.subscription_end_date);
+                        if (!end || end >= new Date()) {
+                            document.getElementById('proCheckoutBtn').style.display = 'none';
+                            document.getElementById('proCurrentBadge').style.display = 'block';
+                        }
+                    }
+                });
+            });
+        }
+        if (window.FKTI_AuthGuard) FKTI_AuthGuard.init();
+    </script>
+    <script src="js/analytics-tracker.js"></script>
+</body>
+</html>

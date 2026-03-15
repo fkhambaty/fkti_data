@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation Model Project | Data For Dummies</title>
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="../css/hub-styles.css">
+    <link rel="stylesheet" href="../css/project-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand"><a href="../index.html" class="logo-link home-icon-btn" title="Home"><i class="fas fa-house-chimney"></i></a></div>
+            <div class="nav-links">
+                <a href="../learning-path.html" class="nav-link">Courses</a>
+                <a href="../data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="../data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="../pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="../projects.html" class="nav-link">Projects</a>
+                <a href="../pricing.html" class="nav-link">Pricing</a>
+                <a href="../founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="top-offset-for-nav">
+        <main class="project-detail">
+
+            <!-- ========== HERO ========== -->
+            <div class="project-hero">
+                <div class="project-badges">
+                    <span class="project-badge">Advanced</span>
+                    <span class="project-badge pro">Pro</span>
+                </div>
+                <h1><i class="fas fa-users"></i> Customer Segmentation Model</h1>
+                <p>Segment customers by behavior using RFM (recency, frequency, monetary) and K-Means clustering. Build a production-ready model in Python and SQL.</p>
+                <div class="project-tools">
+                    <span>Python</span><span>SQL</span><span>Data Science</span>
+                </div>
+            </div>
+
+            <!-- ========== TABS ========== -->
+            <div class="project-tabs">
+                <button class="project-tab active" data-tab="overview"><i class="fas fa-binoculars"></i> Overview</button>
+                <button class="project-tab" data-tab="build"><i class="fas fa-hammer"></i> Build It <span class="lock-icon"><i class="fas fa-lock"></i></span></button>
+            </div>
+
+            <!-- ============================================================
+                 TAB 1 — OVERVIEW (FREE)
+                 ============================================================ -->
+            <div class="project-panel active" id="panel-overview">
+
+                <!-- The Scenario -->
+                <section class="project-section">
+                    <h2><i class="fas fa-theater-masks"></i> The Scenario</h2>
+                    <div class="project-scenario">
+                        <h4>Imagine this…</h4>
+                        <p>Your company has <strong>thousands of customers</strong>. Marketing can't treat everyone the same — some buy often and spend a lot, others browse and rarely convert, and some used to buy but stopped. Sending the same generic email or discount to everyone wastes money and annoys your best customers.</p>
+                        <p>You need to <strong>segment customers by behavior</strong>. Enter RFM: <strong>Recency</strong> (how recently they bought), <strong>Frequency</strong> (how often they buy), and <strong>Monetary</strong> (how much they spend). This project teaches you to compute RFM in SQL, run K-Means clustering in Python, and turn raw data into actionable segments (Champions, At Risk, New, Lost) so marketing can run targeted campaigns.</p>
+                    </div>
+                </section>
+
+                <!-- What You'll Build -->
+                <section class="project-section">
+                    <h2><i class="fas fa-bullseye"></i> What You'll Build</h2>
+                    <div class="anim-flow-wrap">
+                        <span class="anim-step bronze"><i class="fas fa-database"></i> SQL</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step silver"><i class="fas fa-calculator"></i> RFM Features</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step gold"><i class="fas fa-project-diagram"></i> K-Means</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step tool"><i class="fas fa-users"></i> Segments</span>
+                        <span class="anim-arrow">→</span>
+                        <span class="anim-step tool"><i class="fas fa-chart-bar"></i> Dashboard</span>
+                    </div>
+                    <ul style="margin: 20px 0 0 22px; color:#475569; line-height:1.9;">
+                        <li><strong>SQL layer:</strong> A query that computes per-customer RFM: days_since_last_order (recency), count_orders (frequency), sum_amount (monetary).</li>
+                        <li><strong>Python feature prep:</strong> Load the RFM table, normalize with StandardScaler (so distance-based K-Means isn't dominated by one feature).</li>
+                        <li><strong>K-Means clustering:</strong> Choose K with the elbow method, fit the model, assign segment labels to each customer.</li>
+                        <li><strong>Segment profiling:</strong> Profile each cluster (Champions, At Risk, New, Lost) with mean RFM and plain-language descriptions.</li>
+                        <li><strong>Save and visualize:</strong> Export to CSV or database. Optional: bar chart of segment sizes, scatter plot of recency vs monetary colored by segment.</li>
+                    </ul>
+                    <div class="project-layman">
+                        <h4>In plain English</h4>
+                        <p>We turn each customer into three numbers: <strong>how recently</strong> they bought, <strong>how often</strong> they buy, and <strong>how much</strong> they spend. We scale them so no single number dominates, then K-Means groups similar customers into segments. Each customer gets a label (Champions, At Risk, New, Lost) you can use for targeting.</p>
+                    </div>
+                </section>
+
+                <!-- Prerequisites -->
+                <section class="project-section">
+                    <h2><i class="fas fa-book-open"></i> Prerequisites</h2>
+                    <p>Before you start, make sure you're comfortable with these. We link to the exact courses below.</p>
+                    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;width:30%;">SQL</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">SELECT, WHERE, JOIN, GROUP BY, aggregate functions (COUNT, SUM). You should be able to write a query that joins customers and orders and groups by customer.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../postgres_course/index.html" style="color:#4f46e5;font-weight:600;">PostgreSQL Course</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Python (Pandas, sklearn)</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">DataFrames, read_sql or psycopg2, StandardScaler, KMeans. Basic familiarity with numpy/pandas.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../python_course/index.html" style="color:#4f46e5;font-weight:600;">Python Course</a></td>
+                        </tr>
+                        <tr style="background:#f8fafc;">
+                            <td style="padding:12px;border:1px solid #e2e8f0;font-weight:700;">Clustering intro</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;">What clustering is, how K-Means works (grouping by distance), why we need to choose K.</td>
+                            <td style="padding:12px;border:1px solid #e2e8f0;"><a href="../data_science_course/clustering.html" style="color:#4f46e5;font-weight:600;">Clustering Course</a></td>
+                        </tr>
+                    </table>
+                </section>
+
+                <!-- Step-by-step Plan (overview) -->
+                <section class="project-section">
+                    <h2><i class="fas fa-list-ol"></i> Step-by-Step Plan</h2>
+                    <p>Here's the high-level road-map. The <strong>Build It</strong> tab walks you through every single step with copy-paste code, sample data, and explanations.</p>
+                    <ol class="project-steps">
+                        <li>
+                            <span class="step-num">1</span>
+                            <div class="step-body"><strong>Build RFM features in SQL.</strong> Write a SQL query that computes per customer: days_since_last_order (recency), count_orders (frequency), sum_amount (monetary). Start with sample customers and orders tables.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">2</span>
+                            <div class="step-body"><strong>Load into Python.</strong> Connect to Postgres with psycopg2 or use pd.read_sql. Load the RFM dataframe. Inspect with df.head() and df.describe().</div>
+                        </li>
+                        <li>
+                            <span class="step-num">3</span>
+                            <div class="step-body"><strong>Normalize features.</strong> K-Means uses distance, so big numbers (e.g. monetary in thousands) would dominate. Use StandardScaler to put recency, frequency, and monetary on the same scale.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">4</span>
+                            <div class="step-body"><strong>Choose K with the elbow method.</strong> Loop K=2 to 8, compute inertia, plot an elbow curve. Use the "elbow" point to pick the number of segments.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">5</span>
+                            <div class="step-body"><strong>Run K-Means.</strong> Fit KMeans(n_clusters=4) on the scaled features. Assign cluster labels to each customer. Add a segment column to your DataFrame.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">6</span>
+                            <div class="step-body"><strong>Profile segments.</strong> groupby('segment').mean() to see average RFM per cluster. Name each segment (Champions, At Risk, New, Lost) and write 2–3 sentences describing who they are and what action to take.</div>
+                        </li>
+                        <li>
+                            <span class="step-num">7</span>
+                            <div class="step-body"><strong>Save and visualize.</strong> Export to CSV or back to the database. Optional: matplotlib bar chart of segment sizes; seaborn scatter of recency vs monetary colored by segment.</div>
+                        </li>
+                    </ol>
+                </section>
+            </div><!-- /panel-overview -->
+
+            <!-- ============================================================
+                 TAB 2 — BUILD IT (PRO / PAID)
+                 ============================================================ -->
+            <div class="project-panel" id="panel-build">
+                <div class="pro-locked-wrapper is-locked">
+                    <div class="pro-locked-content">
+
+                        <!-- Progress bar -->
+                        <div class="build-progress"><div class="build-progress-fill" style="width:0%" id="buildProgress"></div></div>
+
+                        <!-- ===== STEP 1 ===== -->
+                        <div class="build-step" data-step="1">
+                            <div class="build-step-header">
+                                <div class="build-step-num">1</div>
+                                <div><h3>Build RFM Features in SQL</h3><p>Create sample data and compute recency, frequency, monetary per customer</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>RFM stands for <strong>Recency</strong> (when did they last buy?), <strong>Frequency</strong> (how often do they buy?), and <strong>Monetary</strong> (how much do they spend?). These three numbers capture customer behavior and are the input for K-Means. We compute them in SQL because it's fast on large datasets and keeps logic in one place. First we create sample tables (customers + orders), then write the RFM query.</p>
+                            </div>
+
+                            <h4>1a. Create sample tables and insert data</h4>
+                            <p>Create a <code>customers</code> and <code>orders</code> table with roughly 50 customers and 200 orders. Run this in your Postgres database:</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>-- Create tables
+CREATE TABLE customers (
+    customer_id   SERIAL PRIMARY KEY,
+    name          TEXT,
+    email         TEXT,
+    created_at    DATE DEFAULT CURRENT_DATE
+);
+
+CREATE TABLE orders (
+    order_id      SERIAL PRIMARY KEY,
+    customer_id   INTEGER REFERENCES customers(customer_id),
+    amount        NUMERIC(10,2),
+    order_date    DATE
+);
+
+-- Insert 50 customers
+INSERT INTO customers (name, email) VALUES
+('Alice Johnson', 'alice@email.com'),
+('Bob Smith', 'bob@email.com'),
+('Charlie Davis', 'charlie@email.com'),
+('Diana Lee', 'diana@email.com'),
+('Eve Martinez', 'eve@email.com'),
+('Frank Brown', 'frank@email.com'),
+('Grace Wilson', 'grace@email.com'),
+('Hank Taylor', 'hank@email.com'),
+('Ivy Chen', 'ivy@email.com'),
+('Jack White', 'jack@email.com'),
+('Kate Green', 'kate@email.com'),
+('Leo Adams', 'leo@email.com'),
+('Mia Clark', 'mia@email.com'),
+('Noah Hall', 'noah@email.com'),
+('Olivia King', 'olivia@email.com'),
+('Paul Scott', 'paul@email.com'),
+('Quinn Turner', 'quinn@email.com'),
+('Rachel Moore', 'rachel@email.com'),
+('Sam Wright', 'sam@email.com'),
+('Tina Brooks', 'tina@email.com'),
+('Uma Patel', 'uma@email.com'),
+('Victor Singh', 'victor@email.com'),
+('Wendy Gupta', 'wendy@email.com'),
+('Xander Kumar', 'xander@email.com'),
+('Yuki Tanaka', 'yuki@email.com'),
+('Zara Khan', 'zara@email.com'),
+('Aaron Bell', 'aaron@email.com'),
+('Beth Cole', 'beth@email.com'),
+('Chris Foster', 'chris@email.com'),
+('Dana Hill', 'dana@email.com'),
+('Eric Mitchell', 'eric@email.com'),
+('Fiona Russell', 'fiona@email.com'),
+('George Hayes', 'george@email.com'),
+('Hannah Barnes', 'hannah@email.com'),
+('Ian Fisher', 'ian@email.com'),
+('Jill Powell', 'jill@email.com'),
+('Kevin Price', 'kevin@email.com'),
+('Laura Reed', 'laura@email.com'),
+('Mark Sanders', 'mark@email.com'),
+('Nina Watson', 'nina@email.com'),
+('Oscar Brooks', 'oscar@email.com'),
+('Paula Cooper', 'paula@email.com'),
+('Ray Richardson', 'ray@email.com'),
+('Sue Cox', 'sue@email.com'),
+('Tom Howard', 'tom@email.com'),
+('Ursula Ward', 'ursula@email.com'),
+('Vince Torres', 'vince@email.com'),
+('Wanda Peterson', 'wanda@email.com'),
+('Xavier Gray', 'xavier@email.com'),
+('Yolanda Ramirez', 'yolanda@email.com');</pre>
+                            </div>
+
+                            <p>Now insert ~200 orders spanning the last 12 months (mix of recency, frequency, monetary):</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>-- Insert ~200 orders (vary customer_id, amount, order_date for RFM diversity)
+INSERT INTO orders (customer_id, amount, order_date) VALUES
+(1, 89.99, '2025-03-10'), (1, 45.50, '2025-02-15'), (1, 120.00, '2025-01-20'), (1, 34.99, '2024-12-05'),
+(2, 199.99, '2025-03-12'), (2, 78.50, '2025-02-28'), (2, 55.00, '2025-01-10'),
+(3, 25.99, '2024-06-01'), (3, 18.50, '2024-05-15'),
+(4, 450.00, '2025-03-14'), (4, 320.00, '2025-02-20'), (4, 180.00, '2025-01-25'), (4, 95.00, '2024-12-10'), (4, 210.00, '2024-11-01'),
+(5, 67.99, '2025-02-01'), (5, 42.00, '2024-11-15'),
+(6, 89.00, '2024-08-20'), (6, 56.00, '2024-07-01'),
+(7, 120.50, '2025-03-08'), (7, 88.00, '2025-02-14'), (7, 155.00, '2025-01-05'),
+(8, 35.00, '2024-05-10'),
+(9, 280.00, '2025-03-15'), (9, 190.00, '2025-02-22'), (9, 95.00, '2025-01-18'), (9, 120.00, '2024-12-01'),
+(10, 45.99, '2025-02-25'), (10, 32.00, '2025-01-12'),
+(11, 78.50, '2025-03-05'), (11, 92.00, '2025-02-10'), (11, 65.00, '2025-01-08'),
+(12, 150.00, '2024-09-15'), (12, 88.00, '2024-08-01'),
+(13, 199.99, '2025-03-11'), (13, 145.00, '2025-02-18'), (13, 78.00, '2025-01-22'),
+(14, 22.50, '2024-04-20'),
+(15, 310.00, '2025-03-13'), (15, 225.00, '2025-02-25'), (15, 180.00, '2025-01-15'), (15, 95.00, '2024-12-20'),
+(16, 55.00, '2024-10-01'),
+(17, 98.99, '2025-03-09'), (17, 72.00, '2025-02-12'),
+(18, 42.50, '2024-07-15'), (18, 28.00, '2024-06-20'),
+(19, 165.00, '2025-02-28'), (19, 110.00, '2025-01-20'),
+(20, 38.00, '2024-05-25'),
+(21, 420.00, '2025-03-14'), (21, 380.00, '2025-02-20'), (21, 290.00, '2025-01-25'), (21, 195.00, '2024-12-15'), (21, 250.00, '2024-11-10'),
+(22, 67.50, '2025-02-05'), (22, 54.00, '2024-12-01'),
+(23, 135.00, '2025-03-07'), (23, 89.00, '2025-02-18'), (23, 120.00, '2025-01-10'),
+(24, 48.99, '2024-08-15'),
+(25, 89.00, '2025-03-02'), (25, 62.00, '2025-01-28'),
+(26, 178.00, '2025-03-12'), (26, 145.00, '2025-02-22'), (26, 98.00, '2025-01-15'),
+(27, 35.50, '2024-06-10'),
+(28, 95.00, '2025-02-14'), (28, 72.00, '2024-12-20'),
+(29, 210.00, '2025-03-11'), (29, 165.00, '2025-02-25'), (29, 130.00, '2025-01-18'), (29, 88.00, '2024-12-05'),
+(30, 52.00, '2024-09-01'),
+(31, 145.50, '2025-03-08'), (31, 112.00, '2025-02-15'), (31, 85.00, '2025-01-12'),
+(32, 28.99, '2024-05-15'),
+(33, 198.00, '2025-03-13'), (33, 156.00, '2025-02-28'), (33, 95.00, '2025-01-20'),
+(34, 42.00, '2024-07-20'),
+(35, 265.00, '2025-03-15'), (35, 195.00, '2025-02-20'), (35, 150.00, '2025-01-25'), (35, 120.00, '2024-12-10'),
+(36, 68.50, '2025-02-08'), (36, 45.00, '2024-11-01'),
+(37, 88.00, '2024-08-10'), (37, 55.00, '2024-06-15'),
+(38, 112.99, '2025-03-06'), (38, 78.00, '2025-02-12'), (38, 92.00, '2025-01-08'),
+(39, 32.50, '2024-04-25'),
+(40, 175.00, '2025-03-10'), (40, 130.00, '2025-02-18'), (40, 95.00, '2025-01-15'),
+(41, 48.00, '2024-10-15'),
+(42, 385.00, '2025-03-14'), (42, 320.00, '2025-02-22'), (42, 245.00, '2025-01-20'), (42, 180.00, '2024-12-01'), (42, 210.00, '2024-11-15'),
+(43, 72.50, '2025-02-25'), (43, 58.00, '2025-01-10'),
+(44, 125.00, '2025-03-05'), (44, 98.00, '2025-02-14'), (44, 135.00, '2025-01-18'),
+(45, 38.99, '2024-06-20'),
+(46, 155.00, '2025-03-09'), (46, 118.00, '2025-02-20'), (46, 85.00, '2025-01-12'),
+(47, 55.50, '2024-09-10'),
+(48, 92.00, '2025-02-28'), (48, 67.00, '2024-12-15'),
+(49, 225.00, '2025-03-12'), (49, 178.00, '2025-02-25'), (49, 142.00, '2025-01-22'), (49, 95.00, '2024-12-05'),
+(50, 45.00, '2024-08-01');
+
+-- Add more orders for some customers to increase frequency (e.g. champions)
+INSERT INTO orders (customer_id, amount, order_date) VALUES
+(1, 56.00, '2024-11-15'), (1, 78.50, '2024-10-01'), (4, 165.00, '2024-10-20'),
+(21, 320.00, '2024-10-01'), (21, 195.00, '2024-09-15'), (42, 145.00, '2024-10-10');</pre>
+                            </div>
+
+                            <h4>1b. Write the RFM query</h4>
+                            <p>Now write the SQL that computes per-customer RFM. We need: <strong>days_since_last_order</strong> (recency), <strong>count_orders</strong> (frequency), <strong>sum_amount</strong> (monetary).</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">SQL</span></div>
+<pre>-- RFM: Recency, Frequency, Monetary per customer
+WITH order_summary AS (
+    SELECT
+        customer_id,
+        COUNT(*)                    AS count_orders,
+        SUM(amount)                 AS sum_amount,
+        MAX(order_date)             AS last_order_date
+    FROM orders
+    GROUP BY customer_id
+)
+SELECT
+    c.customer_id,
+    c.name,
+    c.email,
+    COALESCE(o.count_orders, 0)      AS count_orders,
+    COALESCE(o.sum_amount, 0)       AS sum_amount,
+    CURRENT_DATE - COALESCE(o.last_order_date, c.created_at)::DATE AS days_since_last_order
+FROM customers c
+LEFT JOIN order_summary o ON c.customer_id = o.customer_id
+ORDER BY c.customer_id;</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip</h4>
+                                <p><strong>COALESCE</strong> handles customers with no orders: they get 0 for count/sum and recency from their signup date. In real data you might filter them out or treat as "New" segment.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> What happened</h4>
+                                <ul>
+                                    <li>We created <code>customers</code> and <code>orders</code> tables with 50 customers and ~200 orders.</li>
+                                    <li>The RFM query joins orders, aggregates per customer, and computes recency as days since last order. Each customer gets one row with count_orders, sum_amount, days_since_last_order.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 2 ===== -->
+                        <div class="build-step" data-step="2">
+                            <div class="build-step-header">
+                                <div class="build-step-num">2</div>
+                                <div><h3>Load into Python</h3><p>Connect to Postgres and load the RFM dataframe</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing and why</h4>
+                                <p>We need the RFM data in Python to run clustering. You can use <strong>psycopg2</strong> (raw connection + pandas) or <strong>pandas read_sql</strong> with SQLAlchemy. Either way, we end up with a DataFrame that has customer_id, count_orders, sum_amount, days_since_last_order.</p>
+                            </div>
+
+                            <h4>2a. Connect and load with psycopg2 + pandas</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>import pandas as pd
+import psycopg2
+from sqlalchemy import create_engine
+
+# Option A: Using psycopg2 directly
+conn = psycopg2.connect(
+    host='localhost',
+    port=5432,
+    dbname='your_database',
+    user='your_user',
+    password='your_password'
+)
+
+rfm_query = """
+SELECT
+    c.customer_id,
+    c.name,
+    COALESCE(o.count_orders, 0) AS count_orders,
+    COALESCE(o.sum_amount, 0) AS sum_amount,
+    (CURRENT_DATE - COALESCE(o.last_order_date, c.created_at)::DATE)::INT AS days_since_last_order
+FROM customers c
+LEFT JOIN (
+    SELECT customer_id, COUNT(*) AS count_orders, SUM(amount) AS sum_amount, MAX(order_date) AS last_order_date
+    FROM orders GROUP BY customer_id
+) o ON c.customer_id = o.customer_id
+"""
+
+df = pd.read_sql(rfm_query, conn)
+conn.close()
+
+# Option B: Using SQLAlchemy (alternative)
+# engine = create_engine('postgresql://user:password@localhost:5432/your_database')
+# df = pd.read_sql(rfm_query, engine)</pre>
+                            </div>
+
+                            <h4>2b. Inspect the dataframe</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>print(df.head())
+#    customer_id        name  count_orders  sum_amount  days_since_last_order
+# 0            1  Alice Johnson            7      549.98                     5
+# 1            2     Bob Smith            3      333.49                     3
+# ...
+
+print(df.describe())
+#        customer_id  count_orders    sum_amount  days_since_last_order
+# count    50.000000     50.000000     50.000000              50.000000
+# mean     25.500000      4.080000    119.248200             142.480000
+# std      14.577380      3.234567    100.456789             118.234567
+# min       1.000000      0.000000      0.000000               0.000000
+# 25%      13.250000      1.000000     45.000000              45.750000
+# 50%      25.500000      3.000000     88.000000             115.500000
+# 75%      37.750000      6.000000    165.000000             210.250000
+# max      50.000000     12.000000    465.000000             335.000000</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> No database? Use CSV</h4>
+                                <p>Export the SQL result to CSV and load with <code>df = pd.read_csv('rfm_data.csv')</code>. The rest of the pipeline stays the same.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> What happened</h4>
+                                <ul>
+                                    <li>We loaded the RFM query result into a pandas DataFrame.</li>
+                                    <li><code>df.head()</code> shows the first 5 rows; <code>df.describe()</code> shows mean, std, min, max for each numeric column — useful to spot scale differences (monetary in hundreds vs recency in days).</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 3 ===== -->
+                        <div class="build-step" data-step="3">
+                            <div class="build-step-header">
+                                <div class="build-step-num">3</div>
+                                <div><h3>Normalize Features</h3><p>Use StandardScaler so K-Means distance isn't dominated by one feature</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Why normalize?</h4>
+                                <p>K-Means uses <strong>Euclidean distance</strong> between points. If recency is in days (0–365), monetary in dollars (0–2000), and frequency in counts (0–15), the monetary values will dominate: a 500-dollar difference is huge compared to a 30-day difference. StandardScaler puts all features on the same scale (mean=0, std=1) so each dimension contributes fairly to the distance.</p>
+                            </div>
+
+                            <h4>3a. StandardScaler code</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>from sklearn.preprocessing import StandardScaler
+
+# Features for clustering (exclude customer_id and name)
+feature_cols = ['days_since_last_order', 'count_orders', 'sum_amount']
+X = df[feature_cols].copy()
+
+# Handle any missing values (e.g. fill with 0 for customers with no orders)
+X = X.fillna(0)
+
+# Fit and transform
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Optional: put back into a DataFrame for readability
+import numpy as np
+X_scaled_df = pd.DataFrame(X_scaled, columns=feature_cols, index=df.index)
+
+print("Before scaling (sample):")
+print(X.head())
+#   days_since_last_order  count_orders  sum_amount
+# 0                     5             7      549.98
+# 1                     3             3      333.49
+# ...
+
+print("After scaling (sample):")
+print(X_scaled_df.head())
+#   days_since_last_order  count_orders  sum_amount
+# 0              -1.164234      1.234567    0.987654
+# 1              -1.176543      0.123456    0.456789
+# ...</pre>
+                            </div>
+
+                            <h4>3b. Before/after comparison</h4>
+                            <p>Run <code>X.describe()</code> vs <code>X_scaled_df.describe()</code>. After scaling, mean ≈ 0 and std ≈ 1 for each column. That's exactly what we want.</p>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> What happened</h4>
+                                <ul>
+                                    <li>StandardScaler subtracted the mean and divided by the standard deviation for each feature.</li>
+                                    <li>All three columns now have similar scale, so K-Means won't be biased toward the feature with the largest raw values.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 4 ===== -->
+                        <div class="build-step" data-step="4">
+                            <div class="build-step-header">
+                                <div class="build-step-num">4</div>
+                                <div><h3>Choose K with the Elbow Method</h3><p>Loop K=2 to 8, compute inertia, plot the elbow</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>Why choose K?</h4>
+                                <p>K-Means needs you to specify the number of clusters (K). Too few: segments are too broad. Too many: overfitting, hard to act on. The <strong>elbow method</strong> plots inertia (within-cluster sum of squares) vs K. Where the curve "bends" (elbow), adding more clusters doesn't help much — that's a good K.</p>
+                            </div>
+
+                            <h4>4a. Elbow plot code</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+inertias = []
+K_range = range(2, 9)
+
+for k in K_range:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    kmeans.fit(X_scaled)
+    inertias.append(kmeans.inertia_)
+
+plt.figure(figsize=(8, 5))
+plt.plot(K_range, inertias, 'bo-', linewidth=2, markersize=8)
+plt.xlabel('Number of clusters (K)', fontsize=12)
+plt.ylabel('Inertia (within-cluster sum of squares)', fontsize=12)
+plt.title('Elbow Method for Optimal K', fontsize=14)
+plt.grid(True, alpha=0.3)
+plt.xticks(K_range)
+plt.tight_layout()
+plt.savefig('elbow_plot.png', dpi=150, bbox_inches='tight')
+plt.show()</pre>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>How to read the elbow plot</h4>
+                                <p>Inertia always decreases as K increases (more clusters = tighter groups). Look for the "elbow": the point where the curve flattens. Often it's around K=4 or 5 for RFM. Before the elbow: big drops (adding a cluster helps). After the elbow: small drops (diminishing returns). Pick the elbow K (e.g. 4) for your final model.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> What happened</h4>
+                                <ul>
+                                    <li>We ran K-Means for K=2,3,…,8 and stored inertia for each.</li>
+                                    <li>The plot shows where adding clusters stops helping. Use that K (often 4) for the next step.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 5 ===== -->
+                        <div class="build-step" data-step="5">
+                            <div class="build-step-header">
+                                <div class="build-step-num">5</div>
+                                <div><h3>Run K-Means</h3><p>Fit the model and assign segment labels</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing</h4>
+                                <p>We fit KMeans with the chosen K (e.g. 4), get cluster labels for each row, and add them to our DataFrame. Labels are 0, 1, 2, 3 — we'll give them business names in the next step.</p>
+                            </div>
+
+                            <h4>5a. Fit and assign labels</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre># Use K=4 (adjust if your elbow suggested differently)
+kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+kmeans.fit(X_scaled)
+
+# Assign segment (cluster) labels to each customer
+df['segment'] = kmeans.labels_
+
+# Show first 10 rows with segment
+print(df[['customer_id', 'name', 'count_orders', 'sum_amount', 'days_since_last_order', 'segment']].head(10))
+#    customer_id        name  count_orders  sum_amount  days_since_last_order  segment
+# 0            1  Alice Johnson            7      549.98                     5         0
+# 1            2     Bob Smith            3      333.49                     3         0
+# 2            3  Charlie Davis            2       44.49                   283         3
+# 3            4     Diana Lee            5     1255.00                     1         0
+# 4            5     Eve Martinez         2      109.99                   133         2
+# ...</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Tip</h4>
+                                <p><code>random_state=42</code> ensures reproducible results. <code>n_init=10</code> runs 10 different initializations and picks the best — helps avoid bad local minima.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> What happened</h4>
+                                <ul>
+                                    <li>KMeans partitioned customers into 4 groups based on their scaled RFM values.</li>
+                                    <li>Each customer now has a <code>segment</code> (0–3). Next we'll profile each segment and give them names.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 6 ===== -->
+                        <div class="build-step" data-step="6">
+                            <div class="build-step-header">
+                                <div class="build-step-num">6</div>
+                                <div><h3>Profile Segments</h3><p>Name each cluster and describe who they are</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing</h4>
+                                <p>We compute mean recency, frequency, monetary per segment. Then we map raw cluster IDs (0,1,2,3) to business names (Champions, At Risk, New, Lost) and write 2–3 sentences describing each segment so marketing knows how to treat them.</p>
+                            </div>
+
+                            <h4>6a. Group by segment and compute means</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre># Mean RFM per segment
+profile = df.groupby('segment')[['days_since_last_order', 'count_orders', 'sum_amount']].mean()
+
+print(profile)
+#         days_since_last_order  count_orders  sum_amount
+# segment
+# 0                   8.2            5.1        285.3   <- recent, frequent, high spend = Champions
+# 1                 245.3            1.2         62.1     <- old, rare, low = Lost
+# 2                 105.6            2.5        112.8     <- medium recency = At Risk or Need Attention
+# 3                  42.1            1.8         85.4     <- recent, few orders = New</pre>
+                            </div>
+
+                            <h4>6b. Map segments to names and describe</h4>
+                            <p>Based on the profile, map segment IDs to names. The mapping depends on your data — adjust the order if your clusters differ.</p>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre># Map segment IDs to names (adjust 0,1,2,3 based on your profile output)
+# Typical interpretation: low recency + high freq + high monetary = Champions
+segment_names = {
+    0: 'Champions',   # Best customers: recent, frequent, high spend
+    1: 'Lost',        # Haven't bought in a long time, low engagement
+    2: 'At Risk',     # Used to buy, slipping away (medium recency, declining)
+    3: 'New'         # Recent but few orders — potential to nurture
+}
+
+df['segment_name'] = df['segment'].map(segment_names)
+
+# Segment descriptions for documentation
+descriptions = {
+    'Champions': 'Your best customers. They buy recently, often, and spend a lot. Reward them with loyalty perks, early access, and exclusive offers. Don\'t over-discount — they\'re already engaged.',
+    'At Risk': 'Previously active customers who are slipping away. Recency is moderate but trending up. Win them back with personalized win-back campaigns, surveys, or special incentives.',
+    'New': 'Recent buyers with few orders so far. Great opportunity to nurture. Onboarding emails, cross-sell, and second-purchase incentives can turn them into Champions.',
+    'Lost': 'Haven\'t purchased in a long time and show low engagement. Either try a re-engagement campaign (last chance offer) or deprioritize — cost per acquisition may not be worth it.'
+}
+
+for name, desc in descriptions.items():
+    print(f"\n{name}: {desc}")</pre>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-check-circle"></i> What happened</h4>
+                                <ul>
+                                    <li>groupby('segment').mean() gave us average RFM per cluster.</li>
+                                    <li>We mapped numeric labels to business names and wrote action-oriented descriptions. Marketing can now use segment_name for campaign targeting.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ===== STEP 7 ===== -->
+                        <div class="build-step" data-step="7">
+                            <div class="build-step-header">
+                                <div class="build-step-num">7</div>
+                                <div><h3>Save and Visualize</h3><p>Export to CSV or database, optional charts</p></div>
+                            </div>
+
+                            <div class="project-layman">
+                                <h4>What we're doing</h4>
+                                <p>Persist the segmented data so downstream tools (Metabase, CRM, email platforms) can use it. We'll save to CSV or insert into a database table. Optionally add visualizations: a bar chart of segment sizes and a scatter plot of recency vs monetary colored by segment.</p>
+                            </div>
+
+                            <h4>7a. Save to CSV or database</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre># Save to CSV
+df.to_csv('customer_segments.csv', index=False)
+
+# Or save back to PostgreSQL
+# from sqlalchemy import create_engine
+# engine = create_engine('postgresql://user:pass@localhost:5432/db')
+# df[['customer_id', 'segment', 'segment_name']].to_sql('customer_segments', engine, if_exists='replace', index=False)</pre>
+                            </div>
+
+                            <h4>7b. Bar chart of segment sizes</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>import matplotlib.pyplot as plt
+
+# Segment counts
+seg_counts = df['segment_name'].value_counts()
+plt.figure(figsize=(8, 5))
+plt.bar(seg_counts.index, seg_counts.values, color=['#4f46e5', '#7c3aed', '#a78bfa', '#c4b5fd'])
+plt.xlabel('Segment', fontsize=12)
+plt.ylabel('Number of customers', fontsize=12)
+plt.title('Customer Segment Sizes', fontsize=14)
+plt.tight_layout()
+plt.savefig('segment_sizes.png', dpi=150, bbox_inches='tight')
+plt.show()</pre>
+                            </div>
+
+                            <h4>7c. Seaborn scatter: recency vs monetary colored by segment</h4>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+<pre>import seaborn as sns
+
+plt.figure(figsize=(10, 6))
+sns.scatterplot(
+    data=df,
+    x='days_since_last_order',
+    y='sum_amount',
+    hue='segment_name',
+    palette={'Champions': '#4f46e5', 'At Risk': '#f59e0b', 'New': '#10b981', 'Lost': '#64748b'},
+    s=80,
+    alpha=0.8
+)
+plt.xlabel('Days since last order (Recency)', fontsize=12)
+plt.ylabel('Total spend (Monetary)', fontsize=12)
+plt.title('Recency vs Monetary by Segment', fontsize=14)
+plt.legend(title='Segment', loc='upper right')
+plt.tight_layout()
+plt.savefig('rfm_scatter.png', dpi=150, bbox_inches='tight')
+plt.show()</pre>
+                            </div>
+
+                            <div class="project-tip">
+                                <h4><i class="fas fa-lightbulb"></i> Reading the scatter plot</h4>
+                                <p>Champions cluster in the bottom-right (low recency = recent, high monetary). Lost customers in the top-left (high recency, low spend). At Risk and New sit in between.</p>
+                            </div>
+
+                            <div class="what-happened">
+                                <h4><i class="fas fa-trophy"></i> Project complete!</h4>
+                                <p>You built a full customer segmentation pipeline:</p>
+                                <ul>
+                                    <li>RFM features computed in SQL</li>
+                                    <li>Data loaded, normalized, and clustered with K-Means</li>
+                                    <li>Segments profiled and named (Champions, At Risk, New, Lost)</li>
+                                    <li>Results saved to CSV and visualized</li>
+                                </ul>
+                            </div>
+
+                            <div class="project-section" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; margin-top: 28px;">
+                                <h2 style="color: #065f46;"><i class="fas fa-rocket"></i> What's next?</h2>
+                                <ul style="color: #064e3b; line-height: 1.9; margin-left: 20px;">
+                                    <li>Connect <a href="../metabase_course/index.html" style="color:#059669;font-weight:700;">Metabase</a> to your customer_segments table and build a dashboard</li>
+                                    <li>Add more features (tenure, product category preference) and re-run clustering</li>
+                                    <li>Try <a href="marketing-analytics-pipeline.html" style="color:#059669;font-weight:700;">Marketing Analytics Pipeline</a> to automate campaign ROI</li>
+                                    <li>Schedule a monthly refresh: cron job or Airflow DAG that runs the SQL → Python pipeline and updates the segment table</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div><!-- /.pro-locked-content -->
+
+                    <!-- Lock overlay (shown when locked) -->
+                    <div class="pro-lock-overlay">
+                        <div class="lock-icon-big"><i class="fas fa-lock"></i></div>
+                        <h3>Unlock the Full Build Guide</h3>
+                        <p>Get the complete step-by-step implementation: copy-paste SQL with sample data, Python code for RFM + K-Means + profiling, tips, and visualizations. Build this project from zero to production.</p>
+                        <a href="../pricing.html" class="unlock-btn"><i class="fas fa-crown"></i> Upgrade to Pro</a>
+                    </div>
+                </div><!-- /.pro-locked-wrapper -->
+            </div><!-- /panel-build -->
+
+            <a href="../projects.html" class="project-back"><i class="fas fa-arrow-left"></i> Back to all projects</a>
+        </main>
+    </div>
+
+    <footer class="footer" style="margin-top:48px;">
+        <div class="footer-bottom"><p>&copy; 2025 Data For Dummies. Learning notes for everyone.</p></div>
+    </footer>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:24px;">
+            <p><a href="mailto:fktiindia@gmail.com">fktiindia@gmail.com</a></p>
+            <p><a href="tel:+919833565272">+91 98335 65272</a></p>
+        </div>
+    </div>
+    <script>function showContact(){document.getElementById('contactModal').style.display='flex';} document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+    <script src="../js/hub-script.js"></script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/project-paywall.js"></script>
+    <script>
+    /* Tab switching */
+    document.querySelectorAll('.project-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.project-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.project-panel').forEach(function(p) { p.classList.remove('active'); });
+            tab.classList.add('active');
+            document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+    </script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

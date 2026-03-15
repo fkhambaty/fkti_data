@@ -18,14 +18,16 @@
                     <i class="fas fa-house-chimney"></i>
                 </a>
             </div>
-            <div class="nav-ticker" id="navTicker"><span class="ticker-icon">💡</span><span class="ticker-text" id="tickerText"></span></div>
             <div class="nav-links">
                 <a href="learning-path.html" class="nav-link" style="font-weight: 700;">Courses</a>
                 <a href="data-modelling.html" class="nav-link">Data Modelling</a>
                 <a href="data-adventure.html" class="nav-link">Data Adventure</a>
                 <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="projects.html" class="nav-link">Projects</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
                 <a href="founder.html" class="nav-link">Founder</a>
                 <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
             </div>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
         </div>
@@ -62,6 +64,9 @@
     .lp-hero{text-align:center;padding:24px 20px 12px;}
     .lp-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
     .lp-hero p{color:#64748b;font-size:.95rem;max-width:480px;margin:0 auto}
+    .lp-trivia{display:flex;align-items:center;justify-content:center;gap:10px;max-width:640px;margin:0 auto 24px;padding:14px 20px;background:rgba(255,255,255,0.6);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.5);border-radius:14px;min-height:48px}
+    .lp-trivia .ticker-icon{font-size:1rem;flex-shrink:0;opacity:.9}
+    .lp-trivia .ticker-text{font-size:.88rem;font-weight:600;color:#475569;text-align:center;line-height:1.4}
     .lp-grid{max-width:1100px;margin:0 auto;padding:20px 20px 48px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
     .lp-card{
         position:relative;background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);
@@ -85,6 +90,10 @@
     .lp-go i{font-size:.65rem;transition:transform .2s}
     .lp-go:hover i{transform:translateX(3px)}
 
+    /* Pro / Free+Pro badges */
+    .lp-pro-badge{position:absolute;top:10px;right:10px;font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:0.03em;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff}
+    .lp-pro-badge-partial{background:linear-gradient(135deg,#059669,#0d9488);color:#fff}
+
     /* Path visualisation */
     .lp-path{max-width:1100px;margin:0 auto 40px;padding:0 20px}
     .lp-path h3{text-align:center;font-size:1rem;font-weight:700;color:#475569;margin-bottom:16px}
@@ -100,10 +109,15 @@
     <section class="top-offset-for-nav">
         <div class="lp-hero">
             <h1>Choose Your Learning Path</h1>
-            <p>Free, professional-grade courses. Pick one and start building real skills today.</p>
+            <p>Start for free. Professional-grade courses; unlock advanced content and projects with Pro. Pick one and start building real skills today.</p>
         </div>
-        <div class="lp-grid">
+        <div class="lp-trivia" id="lpTrivia" aria-live="polite">
+            <span class="ticker-icon" aria-hidden="true">💡</span>
+            <span class="ticker-text" id="tickerText"></span>
+        </div>
+        <div class="lp-grid" id="courses">
             <div class="lp-card" onclick="enterCourse('python')" style="--c:#3b82f6">
+                <span class="lp-pro-badge lp-pro-badge-partial" title="First 5 sessions free; rest with Pro">Free + Pro</span>
                 <style>.lp-card[style*="3b82f6"]::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#3776ab,#ffd43b)"><i class="fab fa-python"></i></div>
                 <h3>Python for Data Science</h3>
@@ -113,6 +127,7 @@
             </div>
 
             <div class="lp-card" onclick="enterCourse('datascience')" style="--c:#7c3aed">
+                <span class="lp-pro-badge lp-pro-badge-partial" title="Intro & foundations free; advanced with Pro">Free + Pro</span>
                 <style>.lp-card[style*="7c3aed"]::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)"><i class="fas fa-chart-line"></i></div>
                 <h3>Data Science Fundamentals</h3>
@@ -121,7 +136,8 @@
                 <span class="lp-go" style="color:#7c3aed">Start Course <i class="fas fa-arrow-right"></i></span>
             </div>
 
-            <div class="lp-card" onclick="enterCourse('airflow')" style="--c:#0891b2">
+            <div class="lp-card lp-card-pro" onclick="enterCourse('airflow')" style="--c:#0891b2">
+                <span class="lp-pro-badge" title="Full access with Pro">Pro</span>
                 <style>.lp-card[style*="0891b2"]::before{background:linear-gradient(90deg,#0891b2,#22d3ee)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#017cee,#00c7d4)"><i class="fas fa-project-diagram"></i></div>
                 <h3>Apache Airflow</h3>
@@ -130,7 +146,8 @@
                 <span class="lp-go" style="color:#0891b2">Start Course <i class="fas fa-arrow-right"></i></span>
             </div>
 
-            <div class="lp-card" onclick="enterCourse('clickhouse')" style="--c:#ca8a04">
+            <div class="lp-card lp-card-pro" onclick="enterCourse('clickhouse')" style="--c:#ca8a04">
+                <span class="lp-pro-badge" title="Full access with Pro">Pro</span>
                 <style>.lp-card[style*="ca8a04"]::before{background:linear-gradient(90deg,#ca8a04,#facc15)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#ca8a04,#eab308)"><i class="fas fa-bolt"></i></div>
                 <h3>ClickHouse</h3>
@@ -139,7 +156,8 @@
                 <span class="lp-go" style="color:#ca8a04">Start Course <i class="fas fa-arrow-right"></i></span>
             </div>
 
-            <div class="lp-card" onclick="enterCourse('redshift')" style="--c:#ea580c">
+            <div class="lp-card lp-card-pro" onclick="enterCourse('redshift')" style="--c:#ea580c">
+                <span class="lp-pro-badge" title="Full access with Pro">Pro</span>
                 <style>.lp-card[style*="ea580c"]::before{background:linear-gradient(90deg,#ea580c,#fb923c)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#ff9900,#ffb84d)"><i class="fab fa-aws"></i></div>
                 <h3>AWS Redshift</h3>
@@ -148,7 +166,8 @@
                 <span class="lp-go" style="color:#ea580c">Start Course <i class="fas fa-arrow-right"></i></span>
             </div>
 
-            <div class="lp-card" onclick="enterCourse('mssql')" style="--c:#dc2626">
+            <div class="lp-card lp-card-pro" onclick="enterCourse('mssql')" style="--c:#dc2626">
+                <span class="lp-pro-badge" title="Full access with Pro">Pro</span>
                 <style>.lp-card[style*="dc2626"]::before{background:linear-gradient(90deg,#dc2626,#f87171)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#cc2927,#e74c3c)"><i class="fas fa-database"></i></div>
                 <h3>Microsoft SQL Server</h3>
@@ -157,7 +176,8 @@
                 <span class="lp-go" style="color:#dc2626">Start Course <i class="fas fa-arrow-right"></i></span>
             </div>
 
-            <div class="lp-card" onclick="enterCourse('dbt')" style="--c:#d97706">
+            <div class="lp-card lp-card-pro" onclick="enterCourse('dbt')" style="--c:#d97706">
+                <span class="lp-pro-badge" title="Full access with Pro">Pro</span>
                 <style>.lp-card[style*="d97706"]::before{background:linear-gradient(90deg,#d97706,#fbbf24)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#ff694b,#ff8a65)"><i class="fas fa-random"></i></div>
                 <h3>DBT Transformation</h3>
@@ -166,7 +186,8 @@
                 <span class="lp-go" style="color:#d97706">Start Course <i class="fas fa-arrow-right"></i></span>
             </div>
 
-            <div class="lp-card" onclick="enterCourse('metabase')" style="--c:#2563eb">
+            <div class="lp-card lp-card-pro" onclick="enterCourse('metabase')" style="--c:#2563eb">
+                <span class="lp-pro-badge" title="Full access with Pro">Pro</span>
                 <style>.lp-card[style*="2563eb"]::before{background:linear-gradient(90deg,#2563eb,#60a5fa)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#509ee3,#42a5f5)"><i class="fas fa-chart-bar"></i></div>
                 <h3>Metabase BI</h3>
@@ -184,7 +205,8 @@
                 <span class="lp-go" style="color:#059669">Start Course <i class="fas fa-arrow-right"></i></span>
             </div>
 
-            <div class="lp-card" onclick="enterCourse('llm')" style="--c:#7c3aed">
+            <div class="lp-card lp-card-pro" onclick="enterCourse('llm')" style="--c:#7c3aed">
+                <span class="lp-pro-badge" title="Full access with Pro">Pro</span>
                 <style>.lp-card[onclick*="llm"]::before{background:linear-gradient(90deg,#7c3aed,#a855f7)}</style>
                 <div class="lp-icon" style="background:linear-gradient(135deg,#6d28d9,#7c3aed)"><i class="fas fa-brain"></i></div>
                 <h3>Large Language Models</h3>
@@ -210,10 +232,27 @@
 
     <footer class="footer" style="margin-top: 48px;">
         <div class="footer-bottom">
-            <p>&copy; 2025 Data For Dummies. Free learning notes for everyone.</p>
+            <p>&copy; 2025 Data For Dummies. Learning notes for everyone. Start free, unlock more with Pro.</p>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-auth.js"></script>
+    <script src="js/auth-guard.js"></script>
     <script src="js/hub-script.js"></script>
     <script src="js/nav-ticker.js"></script>
+    <script>if(window.FKTI_AuthGuard)FKTI_AuthGuard.init();</script>
+    <script>
+    (function(){
+        if (window.location.hash === '#courses') {
+            var el = document.getElementById('courses');
+            if (el) {
+                el.style.scrollMarginTop = '100px';
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    })();
+    </script>
+    <script src="js/analytics-tracker.js"></script>
 </body>
 </html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB Testing & Experimentation Project | Data For Dummies</title>
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="../css/hub-styles.css">
+    <link rel="stylesheet" href="../css/project-pages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="page-orb-bg" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand"><a href="../index.html" class="logo-link home-icon-btn" title="Home"><i class="fas fa-house-chimney"></i></a></div>
+            <div class="nav-links">
+                <a href="../learning-path.html" class="nav-link">Courses</a>
+                <a href="../data-modelling.html" class="nav-link">Data Modelling</a>
+                <a href="../data-adventure.html" class="nav-link">Data Adventure</a>
+                <a href="../pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                <a href="../projects.html" class="nav-link">Projects</a>
+                <a href="../pricing.html" class="nav-link">Pricing</a>
+                <a href="../founder.html" class="nav-link">Founder</a>
+                <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                <span id="auth-nav-slot"></span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="top-offset-for-nav">
+        <main class="project-detail">
+            <div class="project-hero">
+                <div class="project-badges">
+                    <span class="project-badge">Intermediate</span>
+                    <span class="project-badge pro">Pro</span>
+                </div>
+                <h1><i class="fas fa-chart-bar"></i> AB Testing & Experimentation</h1>
+                <p>Design an A/B test, simulate experiment data, run statistical tests (z-test, confidence intervals), and write data-driven recommendations.</p>
+                <div class="project-tools">
+                    <span>Python</span><span>Statistics</span><span>Data Science</span>
+                </div>
+            </div>
+
+            <div class="project-tabs">
+                <button class="project-tab active" data-panel="overview"><i class="fas fa-info-circle"></i> Overview</button>
+                <button class="project-tab" data-panel="build"><i class="fas fa-code"></i> Build It <i class="fas fa-lock lock-icon"></i></button>
+            </div>
+
+            <div id="panel-overview" class="project-panel active">
+                <section class="project-section">
+                    <h2><i class="fas fa-theater-masks"></i> Scenario</h2>
+                    <div class="project-scenario">
+                        <h4>👶 In plain English</h4>
+                        <p>Product wants to change the &ldquo;Sign up&rdquo; button from blue to green. Will more people click it? Instead of guessing, we run an <strong>A/B test</strong>: half the users see blue (control), half see green (variant). After collecting data we compare click rates. But &ldquo;green had 2% more clicks&rdquo; isn&rsquo;t enough—maybe it was luck. Run a proper experiment: define success metric and sample size, run or simulate the test, then use <strong>statistics</strong> (z-test for proportions, confidence intervals) to say whether the difference is real or noise, and write a clear recommendation.</p>
+                    </div>
+                </section>
+                <section class="project-section">
+                    <h2><i class="fas fa-bullseye"></i> What You&rsquo;ll Build</h2>
+                    <div class="anim-flow-wrap">
+                        <div class="anim-step bronze">Hypothesis</div>
+                        <span class="anim-arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="anim-step silver">Data</div>
+                        <span class="anim-arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="anim-step gold">Z-Test</div>
+                        <span class="anim-arrow"><i class="fas fa-arrow-right"></i></span>
+                        <div class="anim-step tool">CI & Recommendation</div>
+                    </div>
+                    <ul style="margin-left:20px; color:#475569; line-height:1.9;">
+                        <li><strong>Hypothesis:</strong> H0 vs H1, metric, alpha</li>
+                        <li><strong>Data:</strong> Simulated or real A/B experiment data</li>
+                        <li><strong>Z-test:</strong> Two-proportion z-test with scipy</li>
+                        <li><strong>Confidence interval:</strong> 95% CI for difference in proportions</li>
+                        <li><strong>Recommendation:</strong> Ship, keep, or run longer—backed by stats</li>
+                    </ul>
+                </section>
+                <section class="project-section">
+                    <h2><i class="fas fa-book-open"></i> Prerequisites</h2>
+                    <p>Basic statistics (proportions, hypothesis testing, p-values), Python (Pandas, scipy), and intro to A/B testing. Our <a href="../data_science_course/hypothesis-testing.html">Hypothesis Testing</a> and <a href="../data_science_course/ab-testing.html">AB Testing</a> lessons cover this.</p>
+                </section>
+                <section class="project-section">
+                    <h2><i class="fas fa-list-ol"></i> Step-by-Step Plan</h2>
+                    <ol class="project-steps">
+                        <li><span class="step-num">1</span><div class="step-body"><strong>Write hypothesis.</strong> H0, H1, metric (conversion), alpha (0.05).</div></li>
+                        <li><span class="step-num">2</span><div class="step-body"><strong>Calculate sample size.</strong> Use statsmodels or formula.</div></li>
+                        <li><span class="step-num">3</span><div class="step-body"><strong>Generate/collect data.</strong> Simulated 10k users, 50/50 split.</div></li>
+                        <li><span class="step-num">4</span><div class="step-body"><strong>Compute conversion rates.</strong> Control vs variant with pandas.</div></li>
+                        <li><span class="step-num">5</span><div class="step-body"><strong>Run z-test.</strong> scipy.stats.proportions_ztest.</div></li>
+                        <li><span class="step-num">6</span><div class="step-body"><strong>Build confidence interval.</strong> 95% CI for difference.</div></li>
+                        <li><span class="step-num">7</span><div class="step-body"><strong>Write recommendation.</strong> Decision framework and summary.</div></li>
+                    </ol>
+                </section>
+            </div>
+
+            <div id="panel-build" class="project-panel">
+                <div class="pro-locked-wrapper is-locked">
+                    <div class="pro-locked-content">
+                        <div class="build-step">
+                            <div class="build-step-header">
+                                <span class="build-step-num">1</span>
+                                <div>
+                                    <h3>Write Hypothesis Doc</h3>
+                                    <p>Define H0, H1, metric, and alpha</p>
+                                </div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>👶 In plain English</h4>
+                                <p>Before touching data, write down what you&rsquo;re testing. H0 = no change; H1 = green increases conversion. We measure conversion rate and use 5% significance.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+                                <pre># HYPOTHESIS
+# H0: p_control = p_variant  (no difference in conversion)
+# H1: p_variant > p_control  (green button increases conversion)
+# Metric: conversion = signups / visitors
+# Alpha: 0.05</pre>
+                            </div>
+                            <div class="what-happened">
+                                <h4>What happened</h4>
+                                <p>You documented the null and alternative hypothesis, the success metric (conversion rate), and the significance level. This is your experiment design foundation.</p>
+                            </div>
+                        </div>
+
+                        <div class="build-step">
+                            <div class="build-step-header">
+                                <span class="build-step-num">2</span>
+                                <div>
+                                    <h3>Sample Size Calculation</h3>
+                                    <p>Use statsmodels to determine required n</p>
+                                </div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>👶 In plain English</h4>
+                                <p>How many users do we need to detect a 2% lift (e.g. 12% vs 14%)? statsmodels has built-in power analysis for proportions.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+                                <pre>from statsmodels.stats.power import zt_ind_solve_power
+from statsmodels.stats.proportion import proportion_effectsize
+import numpy as np
+
+# We want 80% power to detect 12% vs 14% at alpha=0.05
+p1, p2 = 0.12, 0.14
+effect = proportion_effectsize(p1, p2)  # standardized effect for proportions
+n = zt_ind_solve_power(effect_size=effect, alpha=0.05, power=0.8,
+                       alternative='larger', ratio=1.0)
+print(f"Per group sample size: {int(np.ceil(n))}")  # ~2270 per group</pre>
+                            </div>
+                            <div class="project-tip">
+                                <h4>💡 Tip</h4>
+                                <p>In practice, use ~5000 per group to be safe. Our simulation will use 5000 each (10k total).</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4>What happened</h4>
+                                <p>Power analysis tells us roughly 2270 per group gives 80% chance to detect the 2pp lift. We&rsquo;ll over-sample for safety.</p>
+                            </div>
+                        </div>
+
+                        <div class="build-step">
+                            <div class="build-step-header">
+                                <span class="build-step-num">3</span>
+                                <div>
+                                    <h3>Generate Simulated Data</h3>
+                                    <p>10k users, 50/50 split, control 12%, variant 14%</p>
+                                </div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>👶 In plain English</h4>
+                                <p>We create fake experiment data: assign each user to A or B at random, then flip a biased coin (12% or 14%) to decide if they convert. This lets us validate our analysis.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+                                <pre>import numpy as np
+import pandas as pd
+
+np.random.seed(42)
+n_users = 10000
+variant = np.random.choice(['control', 'variant'], size=n_users, p=[0.5, 0.5])
+p_convert = np.where(variant == 'control', 0.12, 0.14)
+converted = np.random.binomial(1, p_convert)
+
+df = pd.DataFrame({'user_id': range(n_users), 'variant': variant, 'converted': converted})
+print(df.groupby('variant')['converted'].agg(['sum', 'count', 'mean']))</pre>
+                            </div>
+                            <div class="what-happened">
+                                <h4>What happened</h4>
+                                <p>We generated 10k rows. Each user is in control or variant with 50/50 probability. Control converts at 12%, variant at 14%. Pandas summary shows counts and conversion rates per group.</p>
+                            </div>
+                        </div>
+
+                        <div class="build-step">
+                            <div class="build-step-header">
+                                <span class="build-step-num">4</span>
+                                <div>
+                                    <h3>Compute Conversion Rates</h3>
+                                    <p>Aggregate with pandas</p>
+                                </div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>👶 In plain English</h4>
+                                <p>For each group (control, variant), count how many converted and how many total. Conversion rate = converts / total.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+                                <pre>control = df[df['variant'] == 'control']
+variant_df = df[df['variant'] == 'variant']
+
+n_A, conv_A = len(control), control['converted'].sum()
+n_B, conv_B = len(variant_df), variant_df['converted'].sum()
+p_A, p_B = conv_A / n_A, conv_B / n_B
+
+print(f"Control:  {conv_A}/{n_A} = {p_A:.4f}")
+print(f"Variant:  {conv_B}/{n_B} = {p_B:.4f}")</pre>
+                            </div>
+                            <div class="what-happened">
+                                <h4>What happened</h4>
+                                <p>We extracted counts (conversions and sample size) for each group. These are the inputs for the z-test.</p>
+                            </div>
+                        </div>
+
+                        <div class="build-step">
+                            <div class="build-step-header">
+                                <span class="build-step-num">5</span>
+                                <div>
+                                    <h3>Two-Proportion Z-Test</h3>
+                                    <p>scipy.stats.proportions_ztest</p>
+                                </div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>👶 In plain English</h4>
+                                <p>The z-test asks: &ldquo;Could the difference between p_A and p_B be due to random chance?&rdquo; If p-value &lt; 0.05, we reject H0 and say the difference is statistically significant.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+                                <pre>from scipy import stats
+
+counts = np.array([conv_A, conv_B])
+nobs = np.array([n_A, n_B])
+z_stat, p_value = stats.proportions_ztest(counts, nobs, alternative='larger')
+
+print(f"Z-statistic: {z_stat:.4f}")
+print(f"P-value: {p_value:.6f}")
+print(f"Significant at alpha=0.05? {p_value < 0.05}")</pre>
+                            </div>
+                            <div class="project-tip">
+                                <h4>💡 Tip</h4>
+                                <p>Use <code>alternative='larger'</code> for one-sided (variant &gt; control). Use <code>'two-sided'</code> if you want to detect any difference in either direction.</p>
+                            </div>
+                            <div class="what-happened">
+                                <h4>What happened</h4>
+                                <p>The z-test compared the two proportions. A small p-value (&lt; 0.05) means we reject &ldquo;no difference&rdquo; and conclude the variant has a higher conversion rate. With 10k users and 2pp true lift, you should see p &lt; 0.05.</p>
+                            </div>
+                        </div>
+
+                        <div class="build-step">
+                            <div class="build-step-header">
+                                <span class="build-step-num">6</span>
+                                <div>
+                                    <h3>Confidence Interval for Difference</h3>
+                                    <p>Manual formula for 95% CI</p>
+                                </div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>👶 In plain English</h4>
+                                <p>We want to say: &ldquo;The true difference in conversion is between X% and Y% with 95% confidence.&rdquo; That&rsquo;s the confidence interval.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+                                <pre>from scipy import stats as sp_stats
+
+diff = p_B - p_A
+se = np.sqrt(p_A * (1 - p_A) / n_A + p_B * (1 - p_B) / n_B)
+z_crit = sp_stats.norm.ppf(0.975)  # 1.96 for 95% CI
+ci_low = diff - z_crit * se
+ci_high = diff + z_crit * se
+
+print(f"Difference (B - A): {diff:.4f}")
+print(f"95% CI: [{ci_low:.4f}, {ci_high:.4f}]")
+print(f"CI excludes 0? {ci_low > 0}")</pre>
+                            </div>
+                            <div class="what-happened">
+                                <h4>What happened</h4>
+                                <p>We computed the standard error of the difference and built a 95% CI. If the CI excludes 0, we&rsquo;re confident the variant really is better. This backs up the z-test result.</p>
+                            </div>
+                        </div>
+
+                        <div class="build-step">
+                            <div class="build-step-header">
+                                <span class="build-step-num">7</span>
+                                <div>
+                                    <h3>Decision Framework & Recommendation</h3>
+                                    <p>Write a clear summary</p>
+                                </div>
+                            </div>
+                            <div class="project-layman">
+                                <h4>👶 In plain English</h4>
+                                <p>Combine p-value and CI into a decision: ship green (significant, positive lift), keep blue (not significant), or run longer (inconclusive). Then write 2–3 sentences for stakeholders.</p>
+                            </div>
+                            <div class="project-code code-block">
+                                <div class="code-header"><span class="code-lang">Python</span></div>
+                                <pre>def recommend(p_value, ci_low, ci_high, alpha=0.05):
+    if p_value < alpha and ci_low > 0:
+        return "SHIP: Statistically significant. Ship the green button."
+    elif p_value >= alpha and ci_high < 0:
+        return "KEEP: Control is better. Keep the blue button."
+    elif ci_low <= 0 <= ci_high:
+        return "INCONCLUSIVE: Run longer or increase sample size."
+    else:
+        return "INCONCLUSIVE: Run longer."
+
+rec = recommend(p_value, ci_low, ci_high)
+print(rec)
+# Summary for stakeholders:
+print(f"""
+A/B Test Summary
+- Metric: Sign-up conversion
+- Control (blue): {p_A:.2%} ({conv_A}/{n_A})
+- Variant (green): {p_B:.2%} ({conv_B}/{n_B})
+- Lift: {(p_B-p_A)/p_A*100:.1f}% relative
+- P-value: {p_value:.4f}
+- 95% CI: [{ci_low:.2%}, {ci_high:.2%}]
+- Recommendation: {rec}
+""")</pre>
+                            </div>
+                            <div class="what-happened">
+                                <h4>What happened</h4>
+                                <p>You built a reusable decision function and a stakeholder-friendly summary. This is how product teams communicate experiment results: metric, numbers, and a clear recommendation.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pro-lock-overlay">
+                        <div class="lock-icon-big"><i class="fas fa-lock"></i></div>
+                        <h3>Unlock with Pro</h3>
+                        <p>Get full step-by-step code, tips, and explanations. Build a complete A/B test analysis you can show in interviews.</p>
+                        <a href="../pricing.html" class="unlock-btn"><i class="fas fa-crown"></i> Unlock Pro</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="../projects.html" class="project-back"><i class="fas fa-arrow-left"></i> Back to all projects</a>
+        </main>
+    </div>
+
+    <footer class="footer" style="margin-top:48px;">
+        <div class="footer-bottom"><p>&copy; 2025 Data For Dummies. Learning notes for everyone.</p></div>
+    </footer>
+    <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:800;">Contact</span>
+                <button onclick="document.getElementById('contactModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+            </div>
+            <div style="padding:24px;">
+                <p><a href="mailto:fktiindia@gmail.com">fktiindia@gmail.com</a></p>
+                <p><a href="tel:+919833565272">+91 98335 65272</a></p>
+            </div>
+        </div>
+    </div>
+    <script>function showContact(){var m=document.getElementById('contactModal');m.style.display='flex';} document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/hub-script.js"></script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/project-paywall.js"></script>
+    <script>
+    (function(){var tabs=document.querySelectorAll('.project-tab');var panels=document.querySelectorAll('.project-panel');tabs.forEach(function(t){t.addEventListener('click',function(){var p=this.getAttribute('data-panel');tabs.forEach(function(x){x.classList.remove('active');});panels.forEach(function(x){x.classList.remove('active');});this.classList.add('active');var el=document.getElementById('panel-'+p);if(el)el.classList.add('active');});});})();
+    </script>
+    <script>if(window.FKTI_AuthGuard)FKTI_AuthGuard.init();</script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>
