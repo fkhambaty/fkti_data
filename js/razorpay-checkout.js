@@ -7,6 +7,19 @@
 (function () {
     'use strict';
 
+    function getBasePath() {
+        if (window.FKTI_BASE_URL) return window.FKTI_BASE_URL.replace(/\/$/, '');
+        var path = window.location.pathname || '';
+        var parts = path.split('/').filter(Boolean);
+        if (parts.length > 1) return '/' + parts[0];
+        return '';
+    }
+
+    function resolveUrl(relative) {
+        var base = getBasePath();
+        return base ? base + '/' + relative.replace(/^\//, '') : relative;
+    }
+
     function openProCheckout() {
         var keyId = window.RAZORPAY_KEY_ID;
         var supabaseUrl = (window.SUPABASE_URL || '').replace(/\/$/, '');
@@ -18,14 +31,14 @@
         }
 
         if (!auth || !auth.getSession) {
-            window.location.href = 'auth/login.html?returnTo=' + encodeURIComponent(window.location.href);
+            window.location.href = resolveUrl('auth/login.html') + '?returnTo=' + encodeURIComponent(window.location.href);
             return;
         }
 
         auth.getSession().then(function (res) {
             var session = res.data && res.data.session;
             if (!session) {
-                window.location.href = 'auth/login.html?returnTo=' + encodeURIComponent(window.location.href);
+                window.location.href = resolveUrl('auth/login.html') + '?returnTo=' + encodeURIComponent(window.location.href);
                 return;
             }
 
@@ -39,7 +52,9 @@
 
             var origin = window.location.origin || '';
             var isSecure = origin.indexOf('https://') === 0;
-            var callbackUrl = isSecure ? origin + '/auth/profile.html?subscription=success' : 'https://datafordummies.in/auth/profile.html?subscription=success';
+            var profilePath = resolveUrl('auth/profile.html');
+            var absProfile = (profilePath.indexOf('/') === 0 ? profilePath : '/' + profilePath);
+            var callbackUrl = isSecure ? (origin + absProfile + '?subscription=success') : ('https://datafordummies.in' + absProfile + '?subscription=success');
 
             if (supabaseUrl && supabaseUrl.indexOf('supabase') !== -1) {
                 fetch(supabaseUrl + '/functions/v1/create-subscription', {
@@ -80,15 +95,13 @@
         if (link) {
             window.location.href = link;
         } else {
-            window.location.href = 'auth/profile.html';
+            window.location.href = resolveUrl('auth/profile.html');
         }
     }
 
     function showSubscriptionError(message) {
-        var goProfile = 'auth/profile.html?error=subscription_unavailable';
-        if (window.location.pathname.indexOf('/auth/') !== -1) goProfile = 'profile.html?error=subscription_unavailable';
-        if (window.location.pathname.indexOf('/auth/') === -1 && window.location.pathname.indexOf('pricing') !== -1) goProfile = 'auth/profile.html?error=subscription_unavailable';
-        window.location.href = goProfile + (message ? '&msg=' + encodeURIComponent(message) : '');
+        var goProfile = resolveUrl('auth/profile.html') + '?error=subscription_unavailable' + (message ? '&msg=' + encodeURIComponent(message) : '');
+        window.location.href = goProfile;
     }
 
     function openRazorpay(keyId, subscriptionId, name, email, contact, callbackUrl, userId) {
