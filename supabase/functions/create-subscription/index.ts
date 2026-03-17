@@ -87,11 +87,12 @@ serve(async (req) => {
 
   const data = await createRes.json();
   if (!createRes.ok) {
-    const msg =
+    const razorpayMsg =
       data.error?.description ||
       (typeof data.error === 'string' ? data.error : null) ||
-      'Payment provider error. Please try again.';
-    return new Response(JSON.stringify({ error: msg }), {
+      'Payment provider error';
+    const debugInfo = `key=${RAZORPAY_KEY_ID.slice(0, 12)}…, plan=${RAZORPAY_PLAN_ID.slice(0, 12)}…, razorpay_status=${createRes.status}`;
+    return new Response(JSON.stringify({ error: `${razorpayMsg} [${debugInfo}]` }), {
       status: 400,
       headers: { ...cors, 'Content-Type': 'application/json' },
     });

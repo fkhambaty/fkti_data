@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6: Templating & Context | FKTI Airflow Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #0891b2; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0e7490; }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 50%, #06b6d4 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .tab-nav { display: flex; gap: 5px; background: white; padding: 8px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); flex-wrap: wrap; position: sticky; top: 10px; z-index: 100; }
+        .tab-btn { flex: 1; min-width: 120px; padding: 14px 20px; border: none; background: transparent; border-radius: 15px; font-family: 'Nunito', sans-serif; font-size: 0.95em; font-weight: 700; cursor: pointer; transition: all 0.3s; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tab-btn:hover { background: #f0fdfa; color: #0891b2; }
+        .tab-btn.active { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section { background: white; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #a5f3fc; }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #cffafe; }
+        .section h3 { color: #0891b2; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+
+        .eli5-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px dashed #f59e0b; }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+
+        .visual-example { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #22c55e; text-align: center; }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+
+        .step-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #3b82f6; }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+
+        .formula-box { background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #a855f7; text-align: center; }
+        .formula-box h4 { color: #7c3aed; margin-bottom: 15px; }
+
+        .important-box { background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 20px; padding: 25px; margin: 25px 0; border: 3px solid #ef4444; }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+
+        .real-life { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #f97316; }
+        .real-life h4 { color: #c2410c; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #9a3412; }
+
+        .analogy-box { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #3b82f6; }
+        .analogy-box h4 { color: #1d4ed8; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #1e3a5f; }
+
+        .key-point { background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border-radius: 20px; padding: 25px; margin: 25px 0; border: 3px solid #14b8a6; }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+
+        .code-block { background: #1e293b; border-radius: 20px; padding: 30px; margin: 25px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+
+        .data-table { width: 100%; border-collapse: collapse; margin: 25px 0; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .data-table th { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .data-table tr:hover { background: #ccfbf1; }
+
+        .diagram-container { background: #f8fafc; border: 2px solid #a5f3fc; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center; overflow-x: auto; }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-weight: 600; color: #475569; margin-top: 15px; font-size: 1em; }
+
+        .interactive-quiz { background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%); border-radius: 20px; padding: 28px; margin: 25px 0; border: 2px solid #0891b2; }
+        .interactive-quiz h4 { color: #0e7490; margin-bottom: 15px; }
+        .quiz-option { display: block; padding: 14px 20px; margin: 10px 0; background: white; border: 2px solid #a5f3fc; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .quiz-option:hover { border-color: #06b6d4; background: #f0fdfa; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+
+        .comparison-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 25px 0; }
+        .compare-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 2px solid #e2e8f0; transition: all 0.3s; }
+        .compare-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        .compare-card h4 { color: #0891b2; margin-bottom: 15px; }
+
+        .flow-animation { background: #f0fdfa; border-radius: 20px; padding: 30px; margin: 25px 0; border: 2px solid #a5f3fc; overflow: hidden; }
+        .flow-steps { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .flow-node { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; padding: 15px 25px; border-radius: 15px; font-weight: 700; text-align: center; min-width: 120px; animation: nodePulse 2s ease-in-out infinite; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .flow-node:nth-child(odd) { animation-delay: 0.2s; }
+        @keyframes nodePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .flow-arrow { font-size: 1.8em; color: #0891b2; animation: arrowBounce 1.5s ease-in-out infinite; }
+        @keyframes arrowBounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .tab-btn { min-width: 90px; padding: 10px 12px; font-size: 0.85em; }
+            .flow-steps { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="dependencies.html"><i class="fas fa-arrow-left"></i> Module 5</a>
+            <a href="sensors.html">Module 7 <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 6 OF 15</span>
+            <h1><i class="fas fa-magic"></i> Templating & Context</h1>
+            <p>Make your DAGs smart with Jinja templates, macros, and dynamic variables!</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <!-- ==================== TAB: LEARN ==================== -->
+        <div class="tab-content active" id="tab-learn">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Why Templating?</h2>
+                <p>Imagine you have a daily ETL job that loads data for "today." Without templating, you'd have to hardcode the date in your DAG &mdash; and every single day, you'd need to change it manually. That's a recipe for disaster!</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Hardcoded values are like writing your birthdate on a form and handing it to everyone in your class. "Born on March 15, 2010" &mdash; that only works for one person! <strong>Templating is like having a blank line</strong> where each person fills in their own date. In Airflow, the "blank" gets filled automatically with the execution date &mdash; and it changes every single run!</p>
+                </div>
+
+                <div class="comparison-cards">
+                    <div class="compare-card" style="border-color: #fecaca;">
+                        <h4 style="color: #b91c1c;"><i class="fas fa-times-circle"></i> Hardcoded</h4>
+                        <p><code>bash_command='echo "2024-01-15"'</code> &mdash; Always prints the same date. Useless for a daily job!</p>
+                    </div>
+                    <div class="compare-card" style="border-color: #86efac;">
+                        <h4 style="color: #166534;"><i class="fas fa-check-circle"></i> Dynamic (Templated)</h4>
+                        <p><code>bash_command='echo "{{ ds }}"'</code> &mdash; Prints the execution date. Jan 15, Jan 16, Jan 17... automatically!</p>
+                    </div>
+                </div>
+
+                <div class="real-life">
+                    <h4><i class="fas fa-building"></i> Real-World Example</h4>
+                    <p>A retail company runs a daily pipeline to load sales data from <code>s3://bucket/sales/2024-01-15.csv</code>. With templating: <code>s3://bucket/sales/{{ ds }}.csv</code> &mdash; Airflow substitutes the correct date for each run. No manual edits, no mistakes, no "wrong date" bugs!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-file-alt"></i> What is Jinja2?</h2>
+                <p><strong>Jinja2</strong> is a template engine used by Python (and Airflow). It lets you embed placeholders like <code>{{ variable }}</code> in strings. When the task runs, Airflow replaces those placeholders with actual values.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Jinja is like a <strong>fill-in-the-blank worksheet</strong>. You write: "Hello, _____! Today is _____." The teacher (Airflow) fills in the blanks: "Hello, Alice! Today is Monday." Next time: "Hello, Bob! Today is Tuesday." Same template, different fill-ins!</p>
+                </div>
+
+                <div class="analogy-box">
+                    <h4><i class="fas fa-envelope"></i> Like Mail Merge in Word</h4>
+                    <p>Remember mail merge? You create one letter: "Dear {{ first_name }}, your order {{ order_id }} will arrive on {{ delivery_date }}." Then you merge with a spreadsheet, and Word generates 100 personalized letters. Airflow does the same thing for your DAGs &mdash; one template, infinite personalized executions!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-database"></i> Template Variables in Airflow</h2>
+                <p>Airflow provides a set of <strong>built-in template variables</strong> you can use inside template_fields. These are available automatically when a task runs.</p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Variable</th><th>Description</th><th>Example Output</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>{{ ds }}</code></td><td>Execution date as string (YYYY-MM-DD)</td><td>2024-01-15</td></tr>
+                        <tr><td><code>{{ ds_nodash }}</code></td><td>Same date, no dashes (for file paths)</td><td>20240115</td></tr>
+                        <tr><td><code>{{ data_interval_start }}</code></td><td>Start of the data interval</td><td>2024-01-15 00:00:00+00:00</td></tr>
+                        <tr><td><code>{{ data_interval_end }}</code></td><td>End of the data interval</td><td>2024-01-16 00:00:00+00:00</td></tr>
+                        <tr><td><code>{{ ts }}</code></td><td>Timestamp (ISO format)</td><td>2024-01-15T00:00:00+00:00</td></tr>
+                        <tr><td><code>{{ params.key }}</code></td><td>User-defined DAG params</td><td>Whatever you passed in <code>params</code></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-lightbulb"></i> Pro Tip</h4>
+                    <p><code>ds_nodash</code> is perfect for S3 paths, e.g. <code>s3://bucket/data/{{ ds_nodash }}/</code> &rarr; <code>s3://bucket/data/20240115/</code>. Some systems don't like dashes in paths!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-list-check"></i> Templating Operator Arguments</h2>
+                <p>Not every operator argument supports templating! Only arguments that are in the operator's <strong>template_fields</strong> can use <code>{{ ... }}</code>.</p>
+
+                <h3>Which Fields Are Templated?</h3>
+                <p>Each operator defines which of its arguments get rendered with Jinja. Check the operator docs or the source code for <code>template_fields</code>.</p>
+
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li><strong>BashOperator:</strong> <code>bash_command</code> is templated. You can use <code>{{ ds }}</code> directly in the command!</li>
+                    <li><strong>PythonOperator:</strong> <code>templates_dict</code> is templated &mdash; a dict whose values are rendered with Jinja before being passed to the callable. The callable itself receives context via <code>**kwargs</code> or <code>ti</code> (TaskInstance).</li>
+                    <li><strong>PythonOperator:</strong> For dynamic values, use <code>op_kwargs</code> with pre-computed values, or access <code>kwargs['ds']</code>, <code>kwargs['logical_date']</code>, etc. inside your callable.</li>
+                </ul>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Rule of Thumb</h4>
+                    <p>If an argument is in <code>template_fields</code>, you can put <code>{{ ds }}</code> and friends in it. If not, templating won't work &mdash; you'll see the literal <code>{{ ds }}</code> in your output!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-python"></i> Templating the PythonOperator</h2>
+                <p>The PythonOperator is special: its <code>python_callable</code> runs Python code, so you get execution context directly. You don't need Jinja for everything!</p>
+
+                <h3>Using op_kwargs with Template Strings</h3>
+                <p>You can pass templated values via <code>op_kwargs</code> if the operator supports it. More commonly, you pass the <strong>context</strong> and pull values inside the function.</p>
+
+                <h3>Accessing Context via **kwargs or ti</h3>
+                <p>Your Python callable can accept <code>**kwargs</code> or named args like <code>ti</code> (TaskInstance), <code>execution_date</code>, <code>logical_date</code>, etc. Airflow injects these automatically!</p>
+
+                <div class="formula-box">
+                    <h4>Old Style vs New Style</h4>
+                    <p><strong>provide_context=True</strong> (old): Explicitly passed context. Deprecated in Airflow 2.x.</p>
+                    <p><strong>New style:</strong> Just use <code>**kwargs</code> in your callable. Airflow always passes context. Access <code>kwargs['ds']</code>, <code>kwargs['logical_date']</code>, <code>kwargs['params']</code>, etc.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-calculator"></i> Macros</h2>
+                <p>Airflow provides <strong>macros</strong> &mdash; pre-built functions you can use inside Jinja templates. They live in the <code>macros</code> namespace.</p>
+
+                <h3>Common Macros</h3>
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li><code>macros.ds_add(ds, days)</code> &mdash; Add days to a date string. Example: <code>{{ macros.ds_add(ds, -1) }}</code> gives yesterday.</li>
+                    <li><code>macros.ds_format(ds, input_fmt, output_fmt)</code> &mdash; Reformats a date. Example: <code>{{ macros.ds_format(ds, '%Y-%m-%d', '%Y/%m/%d') }}</code></li>
+                </ul>
+
+                <h3>Custom Macros via user_defined_macros</h3>
+                <p>You can add your own macros when defining the DAG: <code>user_defined_macros={'my_func': my_func}</code>. Then use <code>{{ my_func(ds) }}</code> in templates!</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-filter"></i> Jinja Filters</h2>
+                <p>Jinja filters transform values. Use the pipe <code>|</code> followed by the filter name.</p>
+
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li><code>{{ value | default('fallback') }}</code> &mdash; Use 'fallback' if value is undefined or empty.</li>
+                    <li><code>{{ value | int }}</code> &mdash; Convert to integer.</li>
+                    <li><code>{{ value | upper }}</code> &mdash; Uppercase string.</li>
+                    <li><code>{{ value | truncate(10) }}</code> &mdash; Truncate to 10 chars.</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-search"></i> Inspecting Rendered Templates in the UI</h2>
+                <p>After a task runs (or when you hover in the UI), you can see the <strong>rendered</strong> template &mdash; what the command actually looked like after substitution. This is incredibly useful for debugging!</p>
+
+                <div class="step-box">
+                    <h4>Where to Find It</h4>
+                    <p>In the Airflow UI: open a task instance &rarr; click "Rendered" tab (or "Task Instance Details" and look for rendered template). You'll see the final <code>bash_command</code> or other templated fields with all <code>{{ ... }}</code> replaced by real values.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-exclamation-triangle"></i> Common Pitfalls</h2>
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li><strong>Quoting:</strong> In BashOperator, use single quotes for the outer string so <code>{{ ds }}</code> isn't interpreted by the shell. Use double quotes for inner strings if needed.</li>
+                    <li><strong>Nested templates:</strong> Don't over-complicate. <code>{{ "{{ ds }}" }}</code> won't work the way you expect. Keep templates simple.</li>
+                    <li><strong>Debugging:</strong> When templating fails silently, check the Rendered tab. Often the issue is a typo in the variable name (e.g. <code>{{ ds }}</code> vs <code>{{ date }}</code>).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: VISUAL ==================== -->
+        <div class="tab-content" id="tab-visual">
+
+            <div class="section">
+                <h2><i class="fas fa-project-diagram"></i> Template Rendering Pipeline</h2>
+                <p>How a template flows from your DAG code to the actual executed command:</p>
+
+                <div class="diagram-container">
+                    <svg width="700" height="140" viewBox="0 0 700 140">
+                        <defs>
+                            <linearGradient id="tplGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#06b6d4"/><stop offset="100%" style="stop-color:#0891b2"/></linearGradient>
+                            <marker id="tplArr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0891b2"/></marker>
+                        </defs>
+                        <rect x="20" y="40" width="120" height="55" rx="12" fill="url(#tplGrad)"/><text x="80" y="75" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">DAG Code</text><text x="80" y="88" text-anchor="middle" fill="white" font-size="10">'echo {{ ds }}'</text>
+                        <line x1="140" y1="67" x2="180" y2="67" stroke="#0891b2" stroke-width="2" marker-end="url(#tplArr)"/>
+                        <rect x="190" y="40" width="130" height="55" rx="12" fill="url(#tplGrad)"/><text x="255" y="72" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">Airflow Renders</text><text x="255" y="88" text-anchor="middle" fill="white" font-size="10">Jinja2 Engine</text>
+                        <line x1="320" y1="67" x2="360" y2="67" stroke="#0891b2" stroke-width="2" marker-end="url(#tplArr)"/>
+                        <rect x="370" y="40" width="130" height="55" rx="12" fill="url(#tplGrad)"/><text x="435" y="72" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">Substituted</text><text x="435" y="88" text-anchor="middle" fill="white" font-size="10">'echo 2024-01-15'</text>
+                        <line x1="500" y1="67" x2="540" y2="67" stroke="#0891b2" stroke-width="2" marker-end="url(#tplArr)"/>
+                        <rect x="550" y="40" width="130" height="55" rx="12" fill="#22c55e"/><text x="615" y="72" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">Bash Executes</text><text x="615" y="88" text-anchor="middle" fill="white" font-size="10">Output: 2024-01-15</text>
+                    </svg>
+                    <p class="diagram-caption">Template rendering flow: DAG → Jinja → Substitution → Execution</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-exchange-alt"></i> Variable Substitution Flow</h2>
+                <div class="diagram-container">
+                    <svg width="650" height="120" viewBox="0 0 650 120">
+                        <defs><linearGradient id="vGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#7c3aed"/></linearGradient></defs>
+                        <rect x="30" y="30" width="100" height="45" rx="10" fill="url(#vGrad)"/><text x="80" y="58" text-anchor="middle" fill="white" font-size="11">{{ ds }}</text>
+                        <text x="180" y="55" fill="#475569" font-size="14">→</text>
+                        <rect x="200" y="30" width="100" height="45" rx="10" fill="#ecfdf5"/><text x="250" y="58" text-anchor="middle" fill="#166534" font-size="11">2024-01-15</text>
+                        <rect x="330" y="30" width="100" height="45" rx="10" fill="url(#vGrad)"/><text x="380" y="58" text-anchor="middle" fill="white" font-size="11">{{ ds_nodash }}</text>
+                        <text x="480" y="55" fill="#475569" font-size="14">→</text>
+                        <rect x="500" y="30" width="100" height="45" rx="10" fill="#ecfdf5"/><text x="550" y="58" text-anchor="middle" fill="#166534" font-size="11">20240115</text>
+                    </svg>
+                    <p class="diagram-caption">Variable substitution: placeholders become actual values at runtime</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-desktop"></i> Rendered Template Inspection UI</h2>
+                <div class="visual-example">
+                    <h4>Where to See Rendered Output</h4>
+                    <p>Task Instance → <strong>Rendered</strong> tab shows the final rendered template.</p>
+                    <p>Graph View → Hover over a task → tooltip may show key info.</p>
+                    <p>Grid View → Click task → Task Instance Details → Rendered tab.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE ==================== -->
+        <div class="tab-content" id="tab-code">
+
+            <div class="section">
+                <h2><i class="fas fa-terminal"></i> BashOperator with Templates</h2>
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.operators.bash <span class="keyword">import</span> BashOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"templating_bash_dag"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    <span class="comment"># bash_command is a template_field - use {{ ds }} directly!</span>
+    echo_date = <span class="function">BashOperator</span>(
+        task_id=<span class="string">"echo_date"</span>,
+        bash_command=<span class="string">'echo "Execution date: {{ ds }}"'</span>,
+    )
+
+    <span class="comment"># Build a dynamic path (e.g. for S3 or local files)</span>
+    list_files = <span class="function">BashOperator</span>(
+        task_id=<span class="string">"list_files"</span>,
+        bash_command=<span class="string">'echo "Path: s3://bucket/data/{{ ds_nodash }}/"'</span>,
+    )</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-python"></i> PythonOperator with Context</h2>
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.operators.python <span class="keyword">import</span> PythonOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">def</span> <span class="function">print_context</span>(**kwargs):
+    ds = kwargs.get(<span class="string">"ds"</span>)
+    logical_date = kwargs.get(<span class="string">"logical_date"</span>)
+    ti = kwargs.get(<span class="string">"ti"</span>)
+    params = kwargs.get(<span class="string">"params"</span>, {})
+    <span class="function">print</span>(<span class="string">f"Execution date: {ds}"</span>)
+    <span class="function">print</span>(<span class="string">f"Logical date: {logical_date}"</span>)
+    <span class="function">print</span>(<span class="string">f"Params: {params}"</span>)
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"templating_python_dag"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+    params={<span class="string">"env"</span>: <span class="string">"production"</span>},
+) <span class="keyword">as</span> dag:
+
+    python_task = <span class="function">PythonOperator</span>(
+        task_id=<span class="string">"print_context"</span>,
+        python_callable=print_context,
+    )</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-calculator"></i> Macros Example</h2>
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.operators.bash <span class="keyword">import</span> BashOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"macros_dag"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    <span class="comment"># macros.ds_add: yesterday = ds + (-1) days</span>
+    echo_yesterday = <span class="function">BashOperator</span>(
+        task_id=<span class="string">"echo_yesterday"</span>,
+        bash_command=<span class="string">'echo "Yesterday: {{ macros.ds_add(ds, -1) }}"'</span>,
+    )</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-puzzle-piece"></i> Custom Macros &amp; Params</h2>
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.operators.bash <span class="keyword">import</span> BashOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">def</span> <span class="function">custom_format</span>(ds):
+    <span class="keyword">return</span> ds.replace(<span class="string">"-"</span>, <span class="string">"/"</span>)
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"custom_macros_dag"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+    user_defined_macros={<span class="string">"my_format"</span>: custom_format},
+    params={<span class="string">"bucket"</span>: <span class="string">"my-bucket"</span>},
+) <span class="keyword">as</span> dag:
+
+    task = <span class="function">BashOperator</span>(
+        task_id=<span class="string">"task"</span>,
+        bash_command=<span class="string">'echo "Path: s3://{{ params.bucket }}/{{ my_format(ds) }}"'</span>,
+    )</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PRACTICE ==================== -->
+        <div class="tab-content" id="tab-practice">
+
+            <div class="section">
+                <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+
+                <h3>Exercise 1: BashOperator with {{ ds }}</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>Write a BashOperator that echoes the execution date in the format: "Processing data for YYYY-MM-DD". Use the <code>{{ ds }}</code> variable. Trigger the DAG and verify the Rendered tab shows the correct date.</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-lightbulb"></i> Hint</h4>
+                    <p>Use single quotes for the outer bash_command string so the shell doesn't interpret <code>{{ ds }}</code>. Example: <code>bash_command='echo "Processing data for {{ ds }}"'</code></p>
+                </div>
+
+                <h3>Exercise 2: PythonOperator with **kwargs</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>Create a PythonOperator callable that accepts <code>**kwargs</code>, extracts <code>ds</code> and <code>data_interval_end</code>, and prints them. Verify they match the execution date and interval.</p>
+                </div>
+
+                <h3>Exercise 3: Use macros.ds_add</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>Write a BashOperator that prints "Yesterday: YYYY-MM-DD" using <code>{{ macros.ds_add(ds, -1) }}</code>. Then try <code>macros.ds_add(ds, 7)</code> to get "One week from execution date".</p>
+                </div>
+
+                <h3>Exercise 4: Params in a Template</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>Define a DAG with <code>params={'bucket': 'my-data-bucket', 'prefix': 'raw'}</code>. In a BashOperator, build and echo the full path: <code>s3://{{ params.bucket }}/{{ params.prefix }}/{{ ds_nodash }}/</code>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: QUIZ ==================== -->
+        <div class="tab-content" id="tab-quiz">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Module 6 Quiz</h2>
+                <p>Test your understanding! Click on the answer you think is correct.</p>
+
+                <div class="interactive-quiz">
+                    <h4>1. What does {{ ds }} render to?</h4>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> A timestamp with timezone</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="true"><input type="radio" name="q1"> The execution date as YYYY-MM-DD</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> The current system date</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> The DAG start_date</label>
+                    <p class="quiz-feedback" id="fb-q1"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>2. Which BashOperator argument is templated?</h4>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> task_id</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="true"><input type="radio" name="q2"> bash_command</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> retries</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> queue</label>
+                    <p class="quiz-feedback" id="fb-q2"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>3. How do you access execution date in a PythonOperator callable?</h4>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Use {{ ds }} in the function body</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="true"><input type="radio" name="q3"> Use **kwargs and get kwargs['ds'] or kwargs['logical_date']</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Import it from airflow.models</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> It's not available in PythonOperator</label>
+                    <p class="quiz-feedback" id="fb-q3"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>4. What does macros.ds_add(ds, -1) return?</h4>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> The same date</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="true"><input type="radio" name="q4"> The date one day before ds</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> The date one day after ds</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> An error</label>
+                    <p class="quiz-feedback" id="fb-q4"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>5. Where can you inspect the rendered template in Airflow?</h4>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> DAG code view only</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="true"><input type="radio" name="q5"> Task Instance → Rendered tab</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Scheduler logs</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Admin settings</label>
+                    <p class="quiz-feedback" id="fb-q5"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>6. How do you pass custom parameters for use in templates?</h4>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Via environment variables</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="true"><input type="radio" name="q6"> Via the params dict in the DAG definition, then {{ params.key }}</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Via XCom only</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Via the Variables UI only</label>
+                    <p class="quiz-feedback" id="fb-q6"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>7. What is ds_nodash useful for?</h4>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> Debugging</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="true"><input type="radio" name="q7"> File paths (e.g. S3) where dashes aren't desired</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> Displaying dates to users</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> It's deprecated</label>
+                    <p class="quiz-feedback" id="fb-q7"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>8. Which PythonOperator argument supports Jinja templating?</h4>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> python_callable</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="true"><input type="radio" name="q8"> templates_dict</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> op_args</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> trigger_rule</label>
+                    <p class="quiz-feedback" id="fb-q8"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="dependencies.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 5: Dependencies</a>
+            <a href="sensors.html" class="nav-btn next">Module 7: Sensors <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const quizId = this.dataset.quiz;
+            const isCorrect = this.dataset.correct === 'true';
+            document.querySelectorAll(`[data-quiz="${quizId}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                if (o.dataset.correct === 'true') o.classList.add('correct');
+            });
+            if (!isCorrect) this.classList.add('wrong');
+            const fb = document.getElementById('fb-' + quizId);
+            if (fb) {
+                fb.style.display = 'block';
+                fb.textContent = isCorrect ? 'Correct! Well done!' : 'Not quite. The correct answer is highlighted in green.';
+                fb.className = 'quiz-feedback ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 300);
+    });
+    </script>
+    <script src="../js/code-copy.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 9: Variables & Connections | FKTI Airflow Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #0891b2; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0e7490; }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 50%, #06b6d4 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        /* ===== TAB SYSTEM ===== */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .tab-btn:hover { background: #f0fdfa; color: #0891b2; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== CONTENT SECTIONS ===== */
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #a5f3fc;
+        }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #cffafe; }
+        .section h3 { color: #0891b2; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+
+        /* ===== CALLOUT BOXES ===== */
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+
+        .formula-box {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+            text-align: center;
+        }
+        .formula-box h4 { color: #7c3aed; margin-bottom: 15px; }
+
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+
+        .real-life {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #f97316;
+        }
+        .real-life h4 { color: #c2410c; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #9a3412; }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1d4ed8; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #1e3a5f; }
+
+        .key-point {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #14b8a6;
+        }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+
+        /* ===== CODE BLOCKS ===== */
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+
+        /* ===== DATA TABLES ===== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .data-table tr:hover { background: #ccfbf1; }
+
+        /* ===== COMPARISON CARDS ===== */
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .compare-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        .compare-card h4 { color: #0891b2; margin-bottom: 15px; }
+
+        /* ===== DIAGRAMS (SVG-based) ===== */
+        .diagram-container {
+            background: #f8fafc;
+            border: 2px solid #a5f3fc;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-weight: 600; color: #475569; margin-top: 15px; font-size: 1em; }
+
+        /* ===== QUIZ ===== */
+        .interactive-quiz {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin: 25px 0;
+            border: 2px solid #0891b2;
+        }
+        .interactive-quiz h4 { color: #0e7490; margin-bottom: 15px; }
+        .quiz-option {
+            display: block;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #a5f3fc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #06b6d4; background: #f0fdfa; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+
+        /* ===== FLOW ANIMATION ===== */
+        .flow-animation {
+            background: #f0fdfa;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 2px solid #a5f3fc;
+            overflow: hidden;
+        }
+        .flow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .flow-node {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 120px;
+            animation: nodePulse 2s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        @keyframes nodePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .flow-arrow {
+            font-size: 1.8em;
+            color: #0891b2;
+            animation: arrowBounce 1.5s ease-in-out infinite;
+        }
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+
+        /* ===== ARCH GRID ===== */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .arch-component {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .arch-component:hover { border-color: #06b6d4; transform: translateY(-3px); }
+        .arch-component i { font-size: 2.5em; margin-bottom: 15px; color: #0891b2; }
+        .arch-component h5 { color: #0e7490; margin-bottom: 8px; }
+        .arch-component p { color: #64748b; font-size: 0.95em; margin: 0; line-height: 1.6; }
+
+        /* ===== NAV BUTTONS ===== */
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .tab-btn { min-width: 90px; padding: 10px 12px; font-size: 0.85em; }
+            .flow-steps { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <span style="display: flex; gap: 20px;">
+                <a href="xcom.html"><i class="fas fa-arrow-left"></i> Module 8</a>
+                <a href="custom-components.html">Module 10 <i class="fas fa-arrow-right"></i></a>
+            </span>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 9 OF 15</span>
+            <h1><i class="fas fa-key"></i> Variables & Connections</h1>
+            <p>Manage configuration, secrets, and external system credentials like a pro!</p>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <!-- ==================== TAB: LEARN ==================== -->
+        <div class="tab-content active" id="tab-learn">
+
+            <div class="section">
+                <h2><i class="fas fa-exclamation-triangle"></i> The Problem: Hardcoding Configs</h2>
+
+                <p>When you write a DAG that connects to a database or calls an API, it's tempting to stick the password or API key right in the code. <strong>Don't do it!</strong> Hardcoding credentials is dangerous and inflexible.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Imagine writing your phone number in permanent marker on every document you own. If you change numbers, you'd have to track down every single paper and fix it! And anyone who sees a document knows your number.</p>
+                    <p><strong>Hardcoding configs is the same:</strong> Your password lives in 10 DAG files. You change it for security? You must update 10 files. Someone checks your code into Git? The password is now in version history forever. Oops!</p>
+                </div>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-shield-alt"></i> Why This Matters</h4>
+                    <p><strong>Security:</strong> Credentials in code can leak via Git, logs, or screenshots.<br>
+                    <strong>Flexibility:</strong> Different environments (dev, staging, prod) need different values. Hardcoding means separate DAG files per environment.<br>
+                    <strong>Maintainability:</strong> One change (new API key) should be in one place, not scattered across dozens of files.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-database"></i> Airflow Variables</h2>
+
+                <p><strong>Airflow Variables</strong> are key-value pairs stored in Airflow's metadata database. You set them once, and any DAG can read them. Perfect for configuration that changes between environments or over time.</p>
+
+                <h3>Setting Variables</h3>
+
+                <div class="step-box">
+                    <h4>Three Ways to Set Variables</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Via the UI (Admin → Variables)</h5>
+                            <p>Go to the Airflow web UI, click <strong>Admin</strong> → <strong>Variables</strong>. Add a new variable with a key and value. Great for quick edits and non-technical users.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Via CLI</h5>
+                            <p><code>airflow variables set key value</code> — Sets a variable from the command line. Useful for CI/CD pipelines and automation scripts.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Via Environment Variables</h5>
+                            <p>Set <code>AIRFLOW_VAR_&lt;KEY&gt;</code> (e.g., <code>AIRFLOW_VAR_MY_CONFIG</code>). Airflow reads these at runtime. Great for Docker/Kubernetes where you inject secrets via env vars.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Reading Variables in DAGs</h3>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><code>Variable.get('key')</code> — Returns the value as a string</li>
+                    <li style="margin-bottom: 10px;"><code>Variable.get('config', deserialize_json=True)</code> — For JSON variables, returns a Python dict</li>
+                    <li style="margin-bottom: 10px;"><code>Variable.get('key', default_var='fallback')</code> — Use a default if the variable doesn't exist</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-balance-scale"></i> When to Use Variables vs Params vs Env Vars</h2>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Use Case</th><th>Use This</th><th>Why</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>System credentials (DB, API)</td><td><strong>Connections</strong></td><td>Airflow encrypts and manages them; operators expect conn_id</td></tr>
+                        <tr><td>Config values (retry count, batch size)</td><td><strong>Variables</strong></td><td>Changeable via UI/CLI without editing DAG code</td></tr>
+                        <tr><td>Run-time overrides (specific date)</td><td><strong>Params</strong></td><td>Per-DAG-run values; users can tweak when triggering</td></tr>
+                        <tr><td>Highly sensitive (prod passwords)</td><td><strong>Env vars / Secret Backends</strong></td><td>Never stored in Airflow DB; injected at runtime</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-plug"></i> Airflow Connections</h2>
+
+                <p><strong>Connections</strong> store credentials for external systems: databases, APIs, cloud providers. Each connection has a <strong>Connection ID</strong> plus fields like host, port, login, password, schema, and optional extra JSON.</p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Field</th><th>Purpose</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Connection ID</td><td>Unique name used in DAGs (e.g., <code>postgres_default</code>)</td></tr>
+                        <tr><td>Conn Type</td><td>postgres, mysql, http, aws, google_cloud, etc.</td></tr>
+                        <tr><td>Host</td><td>Server address</td></tr>
+                        <tr><td>Port</td><td>Connection port</td></tr>
+                        <tr><td>Login</td><td>Username</td></tr>
+                        <tr><td>Password</td><td>Password (stored encrypted)</td></tr>
+                        <tr><td>Schema</td><td>Database schema (for DB connections)</td></tr>
+                        <tr><td>Extra</td><td>JSON for additional params (e.g., AWS region)</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Setting Connections</h3>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>UI:</strong> Admin → Connections → Add</li>
+                    <li style="margin-bottom: 10px;"><strong>CLI:</strong> <code>airflow connections add my_conn --conn-type postgres --conn-host localhost ...</code></li>
+                    <li style="margin-bottom: 10px;"><strong>Env var:</strong> <code>AIRFLOW_CONN_&lt;CONN_ID&gt;</code> — Set to a connection URI (e.g., <code>postgres://user:pass@host:5432/db</code>)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cogs"></i> Using Connections in Operators</h2>
+
+                <p>Operators have parameters like <code>postgres_conn_id</code>, <code>http_conn_id</code>, <code>aws_conn_id</code>, etc. You pass the <strong>Connection ID</strong>, and the operator (via its underlying <strong>Hook</strong>) fetches the credentials automatically.</p>
+
+                <div class="analogy-box">
+                    <h4><i class="fas fa-key"></i> How Hooks Use Connections</h4>
+                    <p>When you write <code>PostgresOperator(conn_id='my_postgres', ...)</code>, the operator creates a <code>PostgresHook</code>. The hook calls <code>get_connection('my_postgres')</code>, loads host, port, login, password from the connection, and opens a real connection to PostgreSQL. You never see the password in your DAG!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-link"></i> Hooks Explained</h2>
+
+                <p><strong>Hooks</strong> are the interface between Airflow and external systems. They encapsulate connection logic and provide methods to interact with the system (run queries, upload files, etc.).</p>
+
+                <div class="arch-grid">
+                    <div class="arch-component">
+                        <i class="fas fa-database"></i>
+                        <h5>PostgresHook</h5>
+                        <p>Connect to PostgreSQL; run SQL, bulk load</p>
+                    </div>
+                    <div class="arch-component">
+                        <i class="fas fa-cloud"></i>
+                        <h5>S3Hook</h5>
+                        <p>Upload/download from AWS S3</p>
+                    </div>
+                    <div class="arch-component">
+                        <i class="fas fa-globe"></i>
+                        <h5>HttpHook</h5>
+                        <p>Make HTTP requests (GET, POST) to APIs</p>
+                    </div>
+                    <div class="arch-component">
+                        <i class="fas fa-envelope"></i>
+                        <h5>SlackHook</h5>
+                        <p>Send messages to Slack</p>
+                    </div>
+                </div>
+
+                <p>To get connection details inside a task: <code>hook.get_connection(conn_id)</code> returns the full Connection object.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-vault"></i> Secret Backends</h2>
+
+                <p>For high-security environments, Airflow can fetch Variables and Connections from <strong>Secret Backends</strong> instead of its own database:</p>
+
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>HashiCorp Vault</strong> — Popular enterprise secrets manager</li>
+                    <li style="margin-bottom: 10px;"><strong>AWS Secrets Manager</strong> — Native AWS integration</li>
+                    <li style="margin-bottom: 10px;"><strong>GCP Secret Manager</strong> — For Google Cloud deployments</li>
+                </ul>
+
+                <p>You configure the backend in <code>airflow.cfg</code>. Airflow then looks up variables and connections from the external vault instead of the metadata DB.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-check-double"></i> Best Practices</h2>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-lightbulb"></i> Summary</h4>
+                    <p><strong>Never hardcode credentials</strong> in DAG files! Use connections for system credentials (databases, APIs, cloud). Use variables for configuration values (batch size, retry count). Use environment variables or Secret Backends for highly sensitive data. Follow the <strong>principle of least privilege</strong> — give connections only the permissions they need.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: VISUAL ==================== -->
+        <div class="tab-content" id="tab-visual">
+
+            <div class="section">
+                <h2><i class="fas fa-exchange-alt"></i> Variable Flow</h2>
+                <p>How variables flow from sources into your DAG tasks:</p>
+
+                <div class="diagram-container">
+                    <svg width="700" height="140" viewBox="0 0 700 140">
+                        <defs>
+                            <linearGradient id="vNode" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                <stop offset="100%" style="stop-color:#0891b2"/>
+                            </linearGradient>
+                            <marker id="arrowV" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#0891b2"/>
+                            </marker>
+                        </defs>
+                        <rect x="10" y="45" width="120" height="50" rx="12" fill="url(#vNode)"/>
+                        <text x="70" y="75" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">UI / CLI / Env</text>
+                        <line x1="130" y1="70" x2="170" y2="70" stroke="#0891b2" stroke-width="2" marker-end="url(#arrowV)"/>
+                        <rect x="180" y="45" width="140" height="50" rx="12" fill="url(#vNode)"/>
+                        <text x="250" y="75" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">Metadata DB (Variables)</text>
+                        <line x1="320" y1="70" x2="360" y2="70" stroke="#0891b2" stroke-width="2" marker-end="url(#arrowV)"/>
+                        <rect x="370" y="45" width="140" height="50" rx="12" fill="url(#vNode)"/>
+                        <text x="440" y="75" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">Variable.get()</text>
+                        <line x1="510" y1="70" x2="550" y2="70" stroke="#0891b2" stroke-width="2" marker-end="url(#arrowV)"/>
+                        <rect x="560" y="45" width="130" height="50" rx="12" fill="url(#vNode)"/>
+                        <text x="625" y="75" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">Your Task</text>
+                    </svg>
+                    <p class="diagram-caption">Variables: Set → Stored → Retrieved → Used in tasks</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-project-diagram"></i> Connection Architecture</h2>
+
+                <div class="diagram-container">
+                    <svg width="750" height="200" viewBox="0 0 750 200">
+                        <defs>
+                            <linearGradient id="connGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                <stop offset="100%" style="stop-color:#7c3aed"/>
+                            </linearGradient>
+                            <linearGradient id="extGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f97316"/>
+                                <stop offset="100%" style="stop-color:#ea580c"/>
+                            </linearGradient>
+                            <marker id="arrC" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                            </marker>
+                        </defs>
+                        <rect x="20" y="70" width="150" height="60" rx="15" fill="url(#connGrad)"/>
+                        <text x="95" y="105" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="13">Airflow Connections</text>
+                        <text x="95" y="120" text-anchor="middle" fill="white" font-family="Nunito" font-size="11">(DB / API creds)</text>
+                        <line x1="170" y1="100" x2="220" y2="100" stroke="#64748b" stroke-width="2" marker-end="url(#arrC)"/>
+                        <rect x="230" y="70" width="140" height="60" rx="15" fill="url(#connGrad)"/>
+                        <text x="300" y="105" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="13">Hook</text>
+                        <text x="300" y="120" text-anchor="middle" fill="white" font-family="Nunito" font-size="11">get_connection()</text>
+                        <line x1="370" y1="100" x2="420" y2="100" stroke="#64748b" stroke-width="2" marker-end="url(#arrC)"/>
+                        <rect x="430" y="70" width="140" height="60" rx="15" fill="url(#connGrad)"/>
+                        <text x="500" y="105" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="13">Operator</text>
+                        <text x="500" y="120" text-anchor="middle" fill="white" font-family="Nunito" font-size="11">conn_id=</text>
+                        <line x1="570" y1="100" x2="620" y2="100" stroke="#64748b" stroke-width="2" marker-end="url(#arrC)"/>
+                        <rect x="630" y="50" width="100" height="40" rx="10" fill="url(#extGrad)"/>
+                        <text x="680" y="75" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="11">Postgres</text>
+                        <rect x="630" y="110" width="100" height="40" rx="10" fill="url(#extGrad)"/>
+                        <text x="680" y="135" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="11">S3 / API</text>
+                    </svg>
+                    <p class="diagram-caption">Connections feed Hooks, which Operators use to talk to external systems</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-plug"></i> Hooks Connecting to External Systems</h2>
+
+                <div class="diagram-container">
+                    <svg width="700" height="180" viewBox="0 0 700 180">
+                        <defs>
+                            <linearGradient id="hGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                <stop offset="100%" style="stop-color:#0891b2"/>
+                            </linearGradient>
+                            <linearGradient id="sysGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#22c55e"/>
+                                <stop offset="100%" style="stop-color:#16a34a"/>
+                            </linearGradient>
+                            <marker id="arrH" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+                            </marker>
+                        </defs>
+                        <rect x="300" y="30" width="100" height="50" rx="12" fill="url(#hGrad)"/>
+                        <text x="350" y="60" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">PostgresHook</text>
+                        <rect x="100" y="110" width="100" height="45" rx="10" fill="url(#sysGrad)"/>
+                        <text x="150" y="140" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="11">PostgreSQL</text>
+                        <rect x="300" y="110" width="100" height="45" rx="10" fill="url(#sysGrad)"/>
+                        <text x="350" y="140" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="11">S3 / API</text>
+                        <rect x="500" y="110" width="100" height="45" rx="10" fill="url(#sysGrad)"/>
+                        <text x="550" y="140" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="11">Slack</text>
+                        <line x1="350" y1="80" x2="150" y2="110" stroke="#475569" stroke-width="2" marker-end="url(#arrH)"/>
+                        <line x1="350" y1="80" x2="350" y2="110" stroke="#475569" stroke-width="2" marker-end="url(#arrH)"/>
+                        <line x1="350" y1="80" x2="550" y2="110" stroke="#475569" stroke-width="2" marker-end="url(#arrH)"/>
+                        <rect x="100" y="110" width="100" height="45" rx="10" fill="url(#hGrad)"/>
+                        <text x="150" y="88" text-anchor="middle" fill="white" font-family="Nunito" font-size="10">S3Hook</text>
+                        <rect x="100" y="110" width="100" height="45" rx="10" fill="url(#hGrad)"/>
+                        <text x="300" y="88" text-anchor="middle" fill="white" font-family="Nunito" font-size="10">HttpHook</text>
+                        <rect x="500" y="110" width="100" height="45" rx="10" fill="url(#hGrad)"/>
+                        <text x="550" y="88" text-anchor="middle" fill="white" font-family="Nunito" font-size="10">SlackHook</text>
+                    </svg>
+                    <p class="diagram-caption">Different hooks connect Airflow to different external systems</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE ==================== -->
+        <div class="tab-content" id="tab-code">
+
+            <div class="section">
+                <h2><i class="fas fa-database"></i> Variables: Setting & Reading</h2>
+
+                <div class="code-block">
+<pre><span class="comment"># Set via CLI</span>
+<span class="function">airflow</span> variables set my_config <span class="string">"production"</span>
+<span class="function">airflow</span> variables set retry_count <span class="number">5</span>
+
+<span class="comment"># JSON variable</span>
+<span class="function">airflow</span> variables set config_json <span class="string">'{"batch_size": 1000, "timeout": 60}'</span>
+
+<span class="comment"># Set via environment variable (prefix AIRFLOW_VAR_)</span>
+<span class="comment"># export AIRFLOW_VAR_MY_CONFIG=production</span></pre>
+                </div>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.models <span class="keyword">import</span> Variable
+<span class="keyword">from</span> airflow.operators.python <span class="keyword">import</span> PythonOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"variables_demo"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    <span class="keyword">def</span> <span class="function">use_variables</span>(**context):
+        env = <span class="function">Variable.get</span>(<span class="string">'my_config'</span>)
+        config = <span class="function">Variable.get</span>(<span class="string">'config_json'</span>, deserialize_json=<span class="keyword">True</span>)
+        batch_size = config[<span class="string">'batch_size'</span>]
+        <span class="function">print</span>(<span class="string">f"Env: {env}, Batch: {batch_size}"</span>)
+
+    task = <span class="function">PythonOperator</span>(task_id=<span class="string">"use_vars"</span>, python_callable=use_variables)</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-plug"></i> Connections: CLI & Usage</h2>
+
+                <div class="code-block">
+<pre><span class="comment"># Add a PostgreSQL connection via CLI</span>
+<span class="function">airflow</span> connections add postgres_warehouse \
+  --conn-type postgres \
+  --conn-host mydb.example.com \
+  --conn-port <span class="number">5432</span> \
+  --conn-login myuser \
+  --conn-password secret123 \
+  --conn-schema analytics
+
+<span class="comment"># Via environment variable (connection URI)</span>
+<span class="comment"># export AIRFLOW_CONN_POSTGRES_WAREHOUSE="postgres://user:pass@host:5432/dbname"</span></pre>
+                </div>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.providers.postgres.operators.postgres <span class="keyword">import</span> PostgresOperator
+<span class="keyword">from</span> airflow.providers.http.operators.http <span class="keyword">import</span> SimpleHttpOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"connections_demo"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    run_sql = <span class="function">PostgresOperator</span>(
+        task_id=<span class="string">"run_query"</span>,
+        postgres_conn_id=<span class="string">"postgres_warehouse"</span>,
+        sql=<span class="string">"SELECT 1"</span>,
+    )
+
+    call_api = <span class="function">SimpleHttpOperator</span>(
+        task_id=<span class="string">"call_api"</span>,
+        http_conn_id=<span class="string">"my_api"</span>,
+        method=<span class="string">"GET"</span>,
+        endpoint=<span class="string">"/data"</span>,
+    )</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-link"></i> Using Hooks & get_connection()</h2>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow.providers.postgres.hooks.postgres <span class="keyword">import</span> PostgresHook
+
+<span class="keyword">def</span> <span class="function">custom_task</span>(**context):
+    hook = <span class="function">PostgresHook</span>(postgres_conn_id=<span class="string">"postgres_warehouse"</span>)
+    conn = hook.<span class="function">get_connection</span>(<span class="string">"postgres_warehouse"</span>)
+    host = conn.host
+    <span class="comment"># Use hook to run query</span>
+    result = hook.<span class="function">get_records</span>(<span class="string">"SELECT * FROM users LIMIT 10"</span>)
+    <span class="keyword">return</span> result</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PRACTICE ==================== -->
+        <div class="tab-content" id="tab-practice">
+
+            <div class="section">
+                <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+
+                <h3>Exercise 1: Pick the Right Tool</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>You need to store: (a) your PostgreSQL password, (b) a batch size of 1000 records, (c) an API key for a paid service. Which should go in Variables, Connections, or a Secret Backend?</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <p>(a) PostgreSQL password → <strong>Connections</strong> (it's a credential for a system). (b) Batch size → <strong>Variables</strong> (config value). (c) API key → <strong>Connections</strong> (credential) or <strong>Secret Backend</strong> if highly sensitive.</p>
+                </div>
+
+                <h3>Exercise 2: Set a Variable via CLI</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>Write the exact CLI command to set a variable named <code>env</code> with value <code>staging</code>.</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="code-block">
+<pre><span class="function">airflow</span> variables set env staging</pre>
+                    </div>
+                </div>
+
+                <h3>Exercise 3: Use Variable.get() with a Default</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>Write Python code to read a variable <code>timeout</code>, defaulting to <code>30</code> if it doesn't exist.</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="code-block">
+<pre>timeout = <span class="function">Variable.get</span>(<span class="string">'timeout'</span>, default_var=<span class="string">'30'</span>)</pre>
+                    </div>
+                </div>
+
+                <h3>Exercise 4: Connection URI</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>What environment variable would you set to provide a PostgreSQL connection with user <code>admin</code>, password <code>secret</code>, host <code>db.local</code>, port <code>5432</code>, database <code>mydb</code>? Use connection ID <code>pg_main</code>.</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <p><code>AIRFLOW_CONN_PG_MAIN=postgres://admin:secret@db.local:5432/mydb</code> — The connection ID becomes uppercase and underscores in the env var name. The URI format is <code>conn_type://login:password@host:port/schema</code>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: QUIZ ==================== -->
+        <div class="tab-content" id="tab-quiz">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Module 9 Quiz</h2>
+                <p>Test your understanding! Click on the answer you think is correct.</p>
+
+                <div class="interactive-quiz">
+                    <h4>1. Where are Airflow Variables stored?</h4>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> In the DAG file</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="true"><input type="radio" name="q1"> In Airflow's metadata database</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> In environment variables only</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> In a separate Redis cache</label>
+                    <p class="quiz-feedback" id="fb-q1"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>2. How do you set a Variable via environment variable?</h4>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> VARIABLE_key</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="true"><input type="radio" name="q2"> AIRFLOW_VAR_KEY</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> AIRFLOW_VARIABLE_key</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> ENV_VAR_key</label>
+                    <p class="quiz-feedback" id="fb-q2"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>3. What does Variable.get('config', deserialize_json=True) return?</h4>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> A string</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="true"><input type="radio" name="q3"> A Python dict</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> A list</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> A Connection object</label>
+                    <p class="quiz-feedback" id="fb-q3"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>4. Connections are best used for ___?</h4>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Configuration values like batch size</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="true"><input type="radio" name="q4"> Credentials for databases, APIs, and cloud services</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Per-run parameters</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> DAG schedule intervals</label>
+                    <p class="quiz-feedback" id="fb-q4"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>5. How do you pass a connection to PostgresOperator?</h4>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> postgres_connection=</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="true"><input type="radio" name="q5"> postgres_conn_id=</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> connection_id=</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> conn=</label>
+                    <p class="quiz-feedback" id="fb-q5"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>6. What is a Hook in Airflow?</h4>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> A type of Operator</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="true"><input type="radio" name="q6"> The interface between Airflow and external systems</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> A scheduled trigger</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> A DAG dependency</label>
+                    <p class="quiz-feedback" id="fb-q6"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>7. Which is NOT a Secret Backend option?</h4>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> HashiCorp Vault</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> AWS Secrets Manager</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="true"><input type="radio" name="q7"> Jenkins</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> GCP Secret Manager</label>
+                    <p class="quiz-feedback" id="fb-q7"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>8. What is the principle of least privilege?</h4>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Use as many credentials as possible</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="true"><input type="radio" name="q8"> Give connections only the permissions they need</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Store all secrets in one place</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Use the same password everywhere</label>
+                    <p class="quiz-feedback" id="fb-q8"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAV BUTTONS -->
+        <div class="nav-buttons">
+            <a href="xcom.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 8: XCom</a>
+            <a href="custom-components.html" class="nav-btn next">Module 10: Custom Components <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const quizId = this.dataset.quiz;
+            const isCorrect = this.dataset.correct === 'true';
+            document.querySelectorAll(`[data-quiz="${quizId}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                if (o.dataset.correct === 'true') o.classList.add('correct');
+            });
+            if (!isCorrect) this.classList.add('wrong');
+            const fb = document.getElementById('fb-' + quizId);
+            if (fb) {
+                fb.style.display = 'block';
+                fb.textContent = isCorrect ? 'Correct! Well done!' : 'Not quite. The correct answer is highlighted in green.';
+                fb.className = 'quiz-feedback ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 300);
+    });
+    </script>
+    <script src="../js/code-copy.js" defer></script>
+</body>
+</html>

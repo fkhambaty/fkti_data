@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 15: Security & Cloud | FKTI Airflow Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #0891b2; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0e7490; }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 50%, #06b6d4 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .tab-btn:hover { background: #f0fdfa; color: #0891b2; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #a5f3fc;
+        }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #cffafe; }
+        .section h3 { color: #0891b2; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+
+        .key-point {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #14b8a6;
+        }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1d4ed8; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #1e3a5f; }
+
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .data-table tr:hover { background: #ccfbf1; }
+
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .compare-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        .compare-card h4 { color: #0891b2; margin-bottom: 15px; }
+
+        .diagram-container {
+            background: #f8fafc;
+            border: 2px solid #a5f3fc;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-weight: 600; color: #475569; margin-top: 15px; font-size: 1em; }
+
+        .interactive-quiz {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin: 25px 0;
+            border: 2px solid #0891b2;
+        }
+        .interactive-quiz h4 { color: #0e7490; margin-bottom: 15px; }
+        .quiz-option {
+            display: block;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #a5f3fc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #06b6d4; background: #f0fdfa; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .tab-btn { min-width: 90px; padding: 10px 12px; font-size: 0.85em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="certification-hub.html">Certification <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 15 OF 15</span>
+            <h1><i class="fas fa-shield-alt"></i> Security & Cloud</h1>
+            <p>RBAC, encryption, and deploying on AWS, Azure, and GCP!</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <!-- ==================== TAB: LEARN ==================== -->
+        <div class="tab-content active" id="tab-learn">
+
+            <div class="section">
+                <h2><i class="fas fa-user-shield"></i> RBAC: Roles & Permissions</h2>
+
+                <p><strong>Role-Based Access Control (RBAC)</strong> in Airflow lets you decide who can see and do what. Instead of giving every user full power, you assign <strong>roles</strong> (e.g. Admin, User, Viewer) and each role has a set of <strong>permissions</strong> (e.g. can edit DAGs, can trigger runs, can only view).</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Imagine a library. The <strong>librarian</strong> can add books, remove books, and see who borrowed what. A <strong>member</strong> can only browse and borrow. A <strong>guest</strong> can only look through the window. RBAC is like that: different "keys" (roles) open different doors (permissions).</p>
+                </div>
+
+                <h3>Built-in Airflow Roles</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Role</th><th>Typical permissions</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Admin</strong></td><td>Full access: users, roles, DAGs, config, variables, connections</td></tr>
+                        <tr><td><strong>Op</strong></td><td>Run/trigger DAGs, view logs, clear tasks; cannot change config or users</td></tr>
+                        <tr><td><strong>User</strong></td><td>View DAGs and trigger runs within their DAG access</td></tr>
+                        <tr><td><strong>Viewer</strong></td><td>Read-only: see DAGs, task states, logs; cannot trigger or edit</td></tr>
+                        <tr><td><strong>Public</strong></td><td>No UI access (for API-only or anonymous)</td></tr>
+                    </tbody>
+                </table>
+
+                <p>You can create custom roles and assign specific permissions (e.g. "can edit only DAGs in folder <code>team_a/</code>"). This keeps production safe when many people use the same Airflow instance.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-lock"></i> Encrypting Data at Rest (Fernet)</h2>
+
+                <p>Airflow stores <strong>Variables</strong> and <strong>Connections</strong> (passwords, API keys) in the metadata database. By default they can be stored in plain text. For production, you should encrypt them using <strong>Fernet</strong> (symmetric encryption).</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Fernet is like a lockbox. You put your secret (e.g. a password) inside and lock it with a key. Only someone with the same key can open the box and read the password. Airflow uses one key (the Fernet key) to lock all secrets before saving them to the database.</p>
+                </div>
+
+                <p>You generate a Fernet key once, set it in <code>airflow.cfg</code> (or an env var), and Airflow automatically encrypts Variables and Connections when saving and decrypts when reading. Never commit the Fernet key to Git!</p>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Important</h4>
+                    <p>If you lose the Fernet key, you cannot decrypt existing secrets. Store the key in a secure secret manager (e.g. AWS Secrets Manager, HashiCorp Vault) and rotate it with care.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-network-wired"></i> LDAP &amp; HTTPS</h2>
+
+                <p><strong>LDAP</strong> (Lightweight Directory Access Protocol) lets you plug Airflow into your company's existing user directory (e.g. Active Directory). Users log in with their corporate username and password; you don't have to create accounts manually in Airflow.</p>
+
+                <p><strong>HTTPS</strong> is a must in production. It encrypts traffic between the browser and the Airflow web server so passwords and session cookies can't be sniffed. You typically put a reverse proxy (e.g. Nginx, Caddy) or a load balancer in front of the web server and terminate SSL there.</p>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> Best practice</h4>
+                    <p>Use LDAP (or OAuth/OIDC) for authentication and HTTPS everywhere. Never run the Airflow UI over plain HTTP in production.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-key"></i> Secret Backends</h2>
+
+                <p>Instead of storing secrets only in the Airflow metadata database, you can use a <strong>secret backend</strong> so that Variables and Connections are fetched from an external store (e.g. AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, HashiCorp Vault).</p>
+
+                <p>Benefits: central key management, rotation without touching Airflow config, and tighter access control. You configure the backend in <code>airflow.cfg</code> or via environment variables; Airflow then pulls secrets from that backend when tasks run.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cloud"></i> Cloud Deployment Overview</h2>
+
+                <p>Running Airflow in the cloud usually means either a <strong>managed</strong> service (someone else runs Airflow for you) or <strong>self-hosted</strong> (you run it on VMs, Kubernetes, etc.). The three main managed options are:</p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Cloud</th><th>Managed service</th><th>Notes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>AWS</strong></td><td>Amazon Managed Workflows for Apache Airflow (MWAA)</td><td>Managed Airflow; you choose version, worker size, and DAGs; AWS handles scheduler, workers, DB, and scaling.</td></tr>
+                        <tr><td><strong>Azure</strong></td><td>Azure Data Factory with Airflow (or self-host on AKS)</td><td>Integrated with Azure data services; you can also run open-source Airflow on AKS.</td></tr>
+                        <tr><td><strong>GCP</strong></td><td>Cloud Composer (Airflow managed)</td><td>Fully managed Airflow on GKE; automatic upgrades, monitoring, and integration with BigQuery, GCS, etc.</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p><strong>Managed</strong> = Like a gym membership: the gym (AWS/Azure/GCP) provides the building, equipment, and maintenance; you just show up and run your workouts (DAGs). <strong>Self-hosted</strong> = You buy the equipment and set up the gym yourself; more control but more work.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-balance-scale"></i> Choosing Managed vs Self-Hosted</h2>
+
+                <div class="comparison-cards">
+                    <div class="compare-card">
+                        <h4><i class="fas fa-cloud"></i> Managed (MWAA, Composer, etc.)</h4>
+                        <p><strong>Pros:</strong> No server or DB maintenance, automatic patches and upgrades, built-in monitoring, SLA. <strong>Cons:</strong> Less control over versions and config, can be costlier at very large scale.</p>
+                    </div>
+                    <div class="compare-card">
+                        <h4><i class="fas fa-server"></i> Self-Hosted (EC2, K8s, VMs)</h4>
+                        <p><strong>Pros:</strong> Full control, can optimize cost and topology, any Airflow version/plugins. <strong>Cons:</strong> You own availability, backups, upgrades, and security.</p>
+                    </div>
+                </div>
+
+                <p>Choose <strong>managed</strong> when you want to focus on pipelines and have a small team. Choose <strong>self-hosted</strong> when you need strict control, custom integrations, or have dedicated platform engineers.</p>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: VISUAL ==================== -->
+        <div class="tab-content" id="tab-visual">
+
+            <div class="section">
+                <h2><i class="fas fa-users-cog"></i> RBAC Roles Diagram</h2>
+                <p>Who can do what: a simple view of Airflow roles and permissions.</p>
+
+                <div class="diagram-container">
+                    <svg width="700" height="280" viewBox="0 0 700 280">
+                        <defs>
+                            <linearGradient id="adminGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0e7490"/><stop offset="100%" style="stop-color:#0891b2"/></linearGradient>
+                            <linearGradient id="opGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#059669"/><stop offset="100%" style="stop-color:#10b981"/></linearGradient>
+                            <linearGradient id="userGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2563eb"/><stop offset="100%" style="stop-color:#3b82f6"/></linearGradient>
+                            <linearGradient id="viewGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#64748b"/><stop offset="100%" style="stop-color:#94a3b8"/></linearGradient>
+                            <marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#475569"/></marker>
+                        </defs>
+                        <rect x="50" y="30" width="140" height="50" rx="12" fill="url(#adminGrad)"/>
+                        <text x="120" y="62" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="14">Admin</text>
+                        <rect x="280" y="30" width="140" height="50" rx="12" fill="url(#opGrad)"/>
+                        <text x="350" y="62" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="14">Op</text>
+                        <rect x="510" y="30" width="140" height="50" rx="12" fill="url(#userGrad)"/>
+                        <text x="580" y="62" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="14">User</text>
+                        <rect x="280" y="120" width="140" height="50" rx="12" fill="url(#viewGrad)"/>
+                        <text x="350" y="152" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="14">Viewer</text>
+                        <text x="120" y="110" text-anchor="middle" fill="#0e7490" font-size="12">Full access</text>
+                        <text x="350" y="110" text-anchor="middle" fill="#059669" font-size="12">Trigger, clear, logs</text>
+                        <text x="580" y="110" text-anchor="middle" fill="#2563eb" font-size="12">Trigger DAGs</text>
+                        <text x="350" y="200" text-anchor="middle" fill="#64748b" font-size="12">Read-only</text>
+                        <rect x="200" y="220" width="300" height="45" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+                        <text x="350" y="248" text-anchor="middle" fill="#475569" font-size="13" font-weight="600">Permissions decrease: Admin → Op → User → Viewer</text>
+                    </svg>
+                    <p class="diagram-caption">RBAC: from full control (Admin) to read-only (Viewer)</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Cloud Deployment Options</h2>
+                <p>Where can Airflow run? Managed vs self-hosted across the big three clouds.</p>
+
+                <div class="diagram-container">
+                    <svg width="680" height="220" viewBox="0 0 680 220">
+                        <defs>
+                            <linearGradient id="aws" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff9900"/><stop offset="100%" style="stop-color:#ffad33"/></linearGradient>
+                            <linearGradient id="az" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0078d4"/><stop offset="100%" style="stop-color:#50e6ff"/></linearGradient>
+                            <linearGradient id="gcp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4285f4"/><stop offset="100%" style="stop-color:#34a853"/></linearGradient>
+                        </defs>
+                        <rect x="30" y="20" width="190" height="85" rx="15" fill="url(#aws)" opacity="0.9"/>
+                        <text x="125" y="50" text-anchor="middle" fill="white" font-weight="700" font-size="16">AWS</text>
+                        <text x="125" y="72" text-anchor="middle" fill="white" font-size="12">MWAA (managed)</text>
+                        <text x="125" y="92" text-anchor="middle" fill="white" font-size="11">Self: EC2, EKS</text>
+                        <rect x="245" y="20" width="190" height="85" rx="15" fill="url(#az)" opacity="0.9"/>
+                        <text x="340" y="50" text-anchor="middle" fill="white" font-weight="700" font-size="16">Azure</text>
+                        <text x="340" y="72" text-anchor="middle" fill="white" font-size="12">Data Factory / AKS</text>
+                        <text x="340" y="92" text-anchor="middle" fill="white" font-size="11">Self: AKS, VMs</text>
+                        <rect x="460" y="20" width="190" height="85" rx="15" fill="url(#gcp)" opacity="0.9"/>
+                        <text x="555" y="50" text-anchor="middle" fill="white" font-weight="700" font-size="16">GCP</text>
+                        <text x="555" y="72" text-anchor="middle" fill="white" font-size="12">Cloud Composer</text>
+                        <text x="555" y="92" text-anchor="middle" fill="white" font-size="11">Self: GKE</text>
+                        <rect x="120" y="130" width="440" height="70" rx="12" fill="#ecfdf5" stroke="#22c55e"/>
+                        <text x="340" y="160" text-anchor="middle" fill="#166534" font-weight="700">Managed = MWAA / Composer / Azure — no server ops</text>
+                        <text x="340" y="185" text-anchor="middle" fill="#166534" font-size="13">Self-hosted = You run scheduler, workers, DB (EC2, K8s, AKS, GKE)</text>
+                    </svg>
+                    <p class="diagram-caption">Deployment options: managed services vs self-hosted on each cloud</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE ==================== -->
+        <div class="tab-content" id="tab-code">
+
+            <div class="section">
+                <h2><i class="fas fa-cog"></i> RBAC Configuration</h2>
+                <p>Enable RBAC and create a custom role via <code>airflow.cfg</code> and the UI or CLI.</p>
+
+                <div class="code-block">
+<pre><span class="comment"># airflow.cfg — enable RBAC (default in Airflow 2+)</span>
+[api]
+auth_backends = airflow.api.auth.backend.session,airflow.api.auth.backend.basic_auth
+
+[webserver]
+rbac = <span class="keyword">True</span>
+
+<span class="comment"># Create a user and assign role via CLI</span>
+<span class="function">airflow</span> users create \
+  --username data_engineer \
+  --password &lt;secure_password&gt; \
+  --firstname Data \
+  --lastname Engineer \
+  --role Op \
+  --email engineer@company.com
+
+<span class="comment"># List roles (Admin UI: Security → List Roles)</span>
+<span class="function">airflow</span> roles list</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-key"></i> Fernet Key</h2>
+                <p>Generate a Fernet key and set it so Airflow can encrypt Variables and Connections.</p>
+
+                <div class="code-block">
+<pre><span class="comment"># Generate a Fernet key (Python)</span>
+<span class="keyword">from</span> cryptography.fernet <span class="keyword">import</span> Fernet
+<span class="function">print</span>(Fernet.generate_key().decode())
+
+<span class="comment"># Example output (use your own!):</span>
+<span class="comment"># xK8s2Fg...base64...=</span>
+
+<span class="comment"># Set in airflow.cfg</span>
+[core]
+fernet_key = your_generated_fernet_key_here
+
+<span class="comment"># Or via environment variable (recommended for production)</span>
+<span class="comment"># AIRFLOW__CORE__FERNET_KEY=your_generated_fernet_key_here</span></pre>
+                </div>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Security</h4>
+                    <p>Never commit the Fernet key to Git. Use a secret manager (e.g. AWS Secrets Manager) and inject it via env vars or a secure config service.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-lock"></i> HTTPS Configuration</h2>
+                <p>Run the web server behind a reverse proxy that terminates SSL (example: Nginx).</p>
+
+                <div class="code-block">
+<pre><span class="comment"># Example: Nginx proxy to Airflow (HTTPS)</span>
+server {
+    listen <span class="number">443</span> ssl;
+    server_name airflow.company.com;
+
+    ssl_certificate     /etc/ssl/certs/airflow.crt;
+    ssl_certificate_key /etc/ssl/private/airflow.key;
+
+    location / {
+        proxy_pass http://localhost:<span class="number">8080</span>;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre>
+                </div>
+
+                <p>In <code>airflow.cfg</code> set <code>base_url</code> to your HTTPS URL so links in the UI and emails use HTTPS.</p>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PRACTICE ==================== -->
+        <div class="tab-content" id="tab-practice">
+
+            <div class="section">
+                <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+                <p>Try these to reinforce Security & Cloud concepts. Use ELI5 thinking!</p>
+
+                <h3>Exercise 1: Who Gets Which Role?</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Your team has: (1) a data engineer who triggers DAGs and debugs, (2) an analyst who only needs to see dashboards and logs, (3) you as the platform owner. Which Airflow roles would you assign?</p>
+                </div>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> ELI5</h4>
+                    <p>Engineer = needs to "run" and "fix" = Op. Analyst = only "look" = Viewer. You = full control = Admin.</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <p><strong>Data engineer</strong> → Op (trigger DAGs, view/clear tasks, see logs). <strong>Analyst</strong> → Viewer (read-only). <strong>Platform owner</strong> → Admin (users, config, roles).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Exercise 2: Why Fernet?</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Your DAG uses a Connection that stores a database password. Someone gets read-only access to the Airflow metadata database. What risk do you have if Fernet is NOT used vs if it IS used?</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <p><strong>Without Fernet:</strong> Passwords are in plain text in the DB → the attacker can steal them. <strong>With Fernet:</strong> Only encrypted values are stored → without the Fernet key they cannot decrypt; risk is much lower.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Exercise 3: Managed vs Self-Hosted</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Startup of 5 people, one data engineer. They need Airflow for 20 DAGs. Would you recommend managed (e.g. MWAA or Composer) or self-hosted? Why?</p>
+                </div>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> ELI5</h4>
+                    <p>Small team + not many DAGs = you want to spend time on data, not servers. Managed = someone else handles upgrades and outages.</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <p><strong>Recommend managed.</strong> One data engineer shouldn't also own DB backups, Airflow upgrades, and scheduler availability. MWAA or Composer gives a known cost and SLA so the team can focus on pipelines.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Exercise 4: Secret Backend</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>You have 50 Connections and 30 Variables. Security wants to rotate DB passwords every 90 days. How does using a secret backend (e.g. AWS Secrets Manager) help?</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <p>With a secret backend, Airflow fetches Connection and Variable values from the external store at runtime. You rotate the password in one place (Secrets Manager); no need to update 50 Connections in the Airflow UI. Fewer mistakes and audit trail in the secret manager.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: QUIZ ==================== -->
+        <div class="tab-content" id="tab-quiz">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Module 15 Quiz</h2>
+                <p>Test your Security & Cloud knowledge. Click the answer you think is correct.</p>
+
+                <div class="interactive-quiz">
+                    <h4>1. What does RBAC stand for?</h4>
+                    <label class="quiz-option" data-quiz="q1" data-correct="true"><input type="radio" name="q1"> Role-Based Access Control</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> Resource-Based Access Control</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> Random Base Access Code</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> Restrictive Backend Access Control</label>
+                    <p class="quiz-feedback" id="fb-q1"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>2. Which role in Airflow has full access (users, config, DAGs)?</h4>
+                    <label class="quiz-option" data-quiz="q2" data-correct="true"><input type="radio" name="q2"> Admin</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> Op</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> User</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> Viewer</label>
+                    <p class="quiz-feedback" id="fb-q2"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>3. What is Fernet used for in Airflow?</h4>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Scheduling DAGs</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Sending email alerts</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="true"><input type="radio" name="q3"> Encrypting Variables and Connections at rest</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Authenticating LDAP users</label>
+                    <p class="quiz-feedback" id="fb-q3"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>4. If you lose the Fernet key, what happens?</h4>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Airflow stops scheduling</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="true"><input type="radio" name="q4"> You cannot decrypt existing encrypted secrets</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Nothing; keys are optional</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Only the UI is affected</label>
+                    <p class="quiz-feedback" id="fb-q4"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>5. What is LDAP typically used for with Airflow?</h4>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Encrypting the database</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="true"><input type="radio" name="q5"> Authenticating users against a company directory</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Storing DAG files</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Running tasks in parallel</label>
+                    <p class="quiz-feedback" id="fb-q5"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>6. AWS's managed Airflow service is called ___?</h4>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Cloud Composer</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Azure Data Factory</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="true"><input type="radio" name="q6"> Amazon MWAA (Managed Workflows for Apache Airflow)</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Airflow ECS</label>
+                    <p class="quiz-feedback" id="fb-q6"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>7. GCP's managed Airflow offering is ___?</h4>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> MWAA</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="true"><input type="radio" name="q7"> Cloud Composer</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> Airflow on GKE</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> BigQuery Workflows</label>
+                    <p class="quiz-feedback" id="fb-q7"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>8. A secret backend in Airflow is used to ___?</h4>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Hide DAG code</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="true"><input type="radio" name="q8"> Fetch Variables and Connections from an external store (e.g. AWS Secrets Manager)</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Encrypt the metadata database</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Schedule secret tasks</label>
+                    <p class="quiz-feedback" id="fb-q8"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="production.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 14: Production Operations</a>
+            <a href="index.html" class="nav-btn next">Course Hub <i class="fas fa-th-large"></i></a>
+        </div>
+        <p style="text-align: center; margin-top: 15px;"><a href="certification-hub.html" style="color: #0891b2; font-weight: 600;">Get certified → Certification Hub</a></p>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const quizId = this.dataset.quiz;
+            const isCorrect = this.dataset.correct === 'true';
+            document.querySelectorAll(`[data-quiz="${quizId}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                if (o.dataset.correct === 'true') o.classList.add('correct');
+            });
+            if (!isCorrect) this.classList.add('wrong');
+            const fb = document.getElementById('fb-' + quizId);
+            if (fb) {
+                fb.style.display = 'block';
+                fb.textContent = isCorrect ? 'Correct! Well done!' : 'Not quite. The correct answer is highlighted in green.';
+                fb.className = 'quiz-feedback ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 300);
+    });
+    </script>
+    <script src="../js/code-copy.js" defer></script>
+</body>
+</html>

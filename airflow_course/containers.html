@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 12: Containers & Airflow | FKTI Airflow Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #0891b2; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0e7490; }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 50%, #06b6d4 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .tab-btn:hover { background: #f0fdfa; color: #0891b2; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #a5f3fc;
+        }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #cffafe; }
+        .section h3 { color: #0891b2; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+
+        .key-point {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #14b8a6;
+        }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1d4ed8; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #1e3a5f; }
+
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .data-table tr:hover { background: #ccfbf1; }
+
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .compare-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        .compare-card h4 { color: #0891b2; margin-bottom: 15px; }
+
+        .diagram-container {
+            background: #f8fafc;
+            border: 2px solid #a5f3fc;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-weight: 600; color: #475569; margin-top: 15px; font-size: 1em; }
+
+        .interactive-quiz {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin: 25px 0;
+            border: 2px solid #0891b2;
+        }
+        .interactive-quiz h4 { color: #0e7490; margin-bottom: 15px; }
+        .quiz-option {
+            display: block;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #a5f3fc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #06b6d4; background: #f0fdfa; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+
+        .flow-animation {
+            background: #f0fdfa;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 2px solid #a5f3fc;
+            overflow: hidden;
+        }
+        .flow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .flow-node {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 120px;
+            animation: nodePulse 2s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .flow-node:nth-child(odd) { animation-delay: 0.2s; }
+        .flow-arrow { font-size: 1.8em; color: #0891b2; animation: arrowBounce 1.5s ease-in-out infinite; }
+        @keyframes nodePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes arrowBounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .tab-btn { min-width: 90px; padding: 10px 12px; font-size: 0.85em; }
+            .flow-steps { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="testing.html"><i class="fas fa-arrow-left"></i> Module 11</a>
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="best-practices.html">Module 13 <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 12 OF 15</span>
+            <h1><i class="fas fa-box-open"></i> Containers & Airflow</h1>
+            <p>Run your Airflow tasks in Docker and Kubernetes for isolation, reproducibility, and scale.</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <!-- ==================== TAB: LEARN ==================== -->
+        <div class="tab-content active" id="tab-learn">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Why Containers with Airflow?</h2>
+
+                <p>Your Airflow workers usually run on the same machine (or a fixed set of machines). But sometimes you need a task to run in a <strong>completely isolated environment</strong> &mdash; with its own Python version, libraries, or even a different OS. That's where containers shine.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Imagine Airflow is a teacher assigning homework. Usually kids do homework at their desk (same room = same worker). But sometimes the teacher says: "This assignment must be done in the science lab" or "in the computer room." Containers are like those special rooms &mdash; each has exactly the tools and environment needed for that one task, and when the task is done, the room is cleaned up. No mess left on the main desk!</p>
+                </div>
+
+                <p>Containers give you:</p>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>Isolation</strong> &mdash; Task A's dependencies don't clash with Task B's.</li>
+                    <li style="margin-bottom: 10px;"><strong>Reproducibility</strong> &mdash; "Runs the same everywhere" &mdash; dev, staging, prod.</li>
+                    <li style="margin-bottom: 10px;"><strong>Flexibility</strong> &mdash; Run a data science image here, a Node.js script there, all from one DAG.</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-ship"></i> Docker Basics (What You Need to Know)</h2>
+
+                <p><strong>Docker</strong> lets you package an app and its dependencies into a single unit called an <strong>image</strong>. You run that image as a <strong>container</strong> &mdash; a lightweight, isolated process. For Airflow, you only need a few ideas:</p>
+
+                <div class="step-box">
+                    <h4>Docker Concepts in 3 Steps</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Image</h5>
+                            <p>A read-only template (like a recipe). Example: <code>python:3.9-slim</code> or <code>mycompany/etl-job:latest</code>. You build or pull images; you don't run them directly.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Container</h5>
+                            <p>A running instance of an image. When Airflow runs a Docker task, it starts a container from an image, runs a command inside it, then stops the container. One task = one (or more) containers.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Docker daemon</h5>
+                            <p>The Docker engine that runs on the host. Airflow's worker must have access to Docker (or to a Kubernetes cluster) to run container-based operators.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> Key Takeaway</h4>
+                    <p>For Airflow you don't need to be a Docker expert. You need: an image name, an optional command, and (for DockerOperator) a way for the worker to talk to Docker. That's enough to run tasks in containers.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cube"></i> DockerOperator</h2>
+
+                <p>The <strong>DockerOperator</strong> runs a Docker container as an Airflow task. You specify which image to use and what command to run inside the container. Airflow starts the container, waits for it to finish, and marks the task success or failure based on the container's exit code.</p>
+
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>Use when:</strong> You have Docker on the same host as your Airflow worker (or the worker can reach a Docker daemon).</li>
+                    <li style="margin-bottom: 10px;"><strong>Good for:</strong> Single-machine setups, dev/staging, or when you don't need Kubernetes.</li>
+                </ul>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Requirement</h4>
+                    <p>The Airflow worker must have the Docker Python library installed and permission to talk to the Docker daemon (e.g. the worker runs in a container that mounts the Docker socket, or Docker is installed on the worker host).</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-dharmachakra"></i> KubernetesPodOperator</h2>
+
+                <p>The <strong>KubernetesPodOperator</strong> creates a Pod (one or more containers) in a Kubernetes cluster, runs your task inside it, and then tears the Pod down. Kubernetes schedules the Pod onto any available node; you don't manage servers yourself.</p>
+
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>Use when:</strong> You're running Airflow on Kubernetes (e.g. Astronomer, Helm chart) or your workers can authenticate to a K8s cluster.</li>
+                    <li style="margin-bottom: 10px;"><strong>Good for:</strong> Scale, resource limits, multi-team isolation, and "run anywhere" portability.</li>
+                </ul>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>DockerOperator is like asking your neighbor's kitchen to bake one cake: you send the recipe (image + command) and they give you the result. KubernetesPodOperator is like a cloud kitchen: you send the same recipe to "the cloud kitchen" and they find any free kitchen (node), bake the cake, and then close that kitchen. You don't care which kitchen it was &mdash; you just get the cake.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-balance-scale"></i> When to Use Which?</h2>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Scenario</th><th>Use</th><th>Why</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Local dev, single server</td><td>DockerOperator</td><td>Simple; no K8s cluster needed</td></tr>
+                        <tr><td>Airflow on Kubernetes (e.g. Astronomer, Helm)</td><td>KubernetesPodOperator</td><td>Native; Pods run in same cluster</td></tr>
+                        <tr><td>Heavy or variable workloads</td><td>KubernetesPodOperator</td><td>K8s scales nodes and schedules Pods</td></tr>
+                        <tr><td>Strict dependency isolation per task</td><td>Either</td><td>Both run tasks in isolated containers</td></tr>
+                        <tr><td>No Docker/K8s in your stack</td><td>BashOperator / PythonOperator</td><td>Containers are optional</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-lightbulb"></i> Rule of Thumb</h4>
+                    <p>If you're already on Kubernetes, prefer KubernetesPodOperator. If you're on VMs or a single server with Docker, use DockerOperator. Both give you isolation and reproducibility; K8s adds orchestration and scaling.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: VISUAL ==================== -->
+        <div class="tab-content" id="tab-visual">
+
+            <div class="section">
+                <h2><i class="fas fa-project-diagram"></i> Docker vs Kubernetes Flow</h2>
+                <p>How a single Airflow task flows when using DockerOperator vs KubernetesPodOperator:</p>
+
+                <div class="flow-animation">
+                    <p style="text-align: center; font-weight: 700; color: #0e7490; margin-bottom: 15px;">DockerOperator flow</p>
+                    <div class="flow-steps">
+                        <div class="flow-node">Airflow Scheduler</div>
+                        <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                        <div class="flow-node">Worker</div>
+                        <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                        <div class="flow-node">Docker daemon</div>
+                        <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                        <div class="flow-node">Container (task)</div>
+                    </div>
+                    <p class="diagram-caption">Task runs in a container on the same host (or host reachable by worker)</p>
+                </div>
+
+                <div class="flow-animation">
+                    <p style="text-align: center; font-weight: 700; color: #0e7490; margin-bottom: 15px;">KubernetesPodOperator flow</p>
+                    <div class="flow-steps">
+                        <div class="flow-node">Airflow Scheduler</div>
+                        <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                        <div class="flow-node">Worker (K8s client)</div>
+                        <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                        <div class="flow-node">Kubernetes API</div>
+                        <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                        <div class="flow-node">Pod on any node</div>
+                    </div>
+                    <p class="diagram-caption">Task runs in a Pod; K8s picks the node and cleans up when done</p>
+                </div>
+
+                <div class="diagram-container">
+                    <svg width="700" height="200" viewBox="0 0 700 200">
+                        <defs>
+                            <linearGradient id="dg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#06b6d4"/><stop offset="100%" style="stop-color:#0891b2"/></linearGradient>
+                            <linearGradient id="kg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#326ce5"/><stop offset="100%" style="stop-color:#3960c6"/></linearGradient>
+                            <marker id="ar" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker>
+                        </defs>
+                        <text x="350" y="22" text-anchor="middle" fill="#475569" font-weight="700">Docker path (one host)</text>
+                        <rect x="20" y="35" width="100" height="40" rx="10" fill="url(#dg)"/>
+                        <text x="70" y="60" text-anchor="middle" fill="white" font-size="11" font-weight="700">Worker</text>
+                        <line x1="120" y1="55" x2="170" y2="55" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+                        <rect x="180" y="35" width="120" height="40" rx="10" fill="url(#dg)"/>
+                        <text x="240" y="60" text-anchor="middle" fill="white" font-size="11" font-weight="700">Docker</text>
+                        <line x1="300" y1="55" x2="350" y2="55" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+                        <rect x="360" y="35" width="120" height="40" rx="10" fill="url(#dg)"/>
+                        <text x="420" y="60" text-anchor="middle" fill="white" font-size="11" font-weight="700">Container</text>
+
+                        <text x="350" y="112" text-anchor="middle" fill="#475569" font-weight="700">Kubernetes path (cluster)</text>
+                        <rect x="20" y="125" width="100" height="40" rx="10" fill="url(#kg)"/>
+                        <text x="70" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="700">Worker</text>
+                        <line x1="120" y1="145" x2="170" y2="145" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+                        <rect x="180" y="125" width="120" height="40" rx="10" fill="url(#kg)"/>
+                        <text x="240" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="700">K8s API</text>
+                        <line x1="300" y1="145" x2="350" y2="145" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+                        <rect x="360" y="125" width="120" height="40" rx="10" fill="url(#kg)"/>
+                        <text x="420" y="150" text-anchor="middle" fill="white" font-size="11" font-weight="700">Pod</text>
+                        <text x="520" y="145" fill="#64748b" font-size="10">(any node)</text>
+                    </svg>
+                    <p class="diagram-caption">Docker: worker talks to Docker on one host. Kubernetes: worker talks to API; cluster runs Pod anywhere.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE ==================== -->
+        <div class="tab-content" id="tab-code">
+
+            <div class="section">
+                <h2><i class="fas fa-cube"></i> DockerOperator Example</h2>
+                <p>Run a Python script inside a container using the official Python image:</p>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.providers.docker.operators.docker <span class="keyword">import</span> DockerOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"docker_example_dag"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    run_in_docker = <span class="function">DockerOperator</span>(
+        task_id=<span class="string">"run_in_docker"</span>,
+        image=<span class="string">"python:3.9-slim"</span>,
+        command=<span class="string">"python -c \"print('Hello from inside Docker!')\""</span>,
+        auto_remove=<span class="keyword">True</span>,
+        docker_url=<span class="string">"unix:///var/run/docker.sock"</span>,
+    )</pre>
+                </div>
+
+                <p><strong>Parameters:</strong> <code>image</code> = which image to run. <code>command</code> = what to run inside the container. <code>auto_remove=True</code> = delete the container after it finishes. <code>docker_url</code> = how the worker reaches Docker (default is local socket).</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-dharmachakra"></i> KubernetesPodOperator Example</h2>
+                <p>Run the same logic as a Pod in Kubernetes:</p>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.providers.cncf.kubernetes.operators.kubernetes_pod <span class="keyword">import</span> KubernetesPodOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"k8s_example_dag"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    run_in_k8s = <span class="function">KubernetesPodOperator</span>(
+        task_id=<span class="string">"run_in_k8s"</span>,
+        namespace=<span class="string">"default"</span>,
+        image=<span class="string">"python:3.9-slim"</span>,
+        cmds=[<span class="string">"python"</span>, <span class="string">"-c"</span>],
+        arguments=[<span class="string">"print('Hello from inside Kubernetes!')"</span>],
+        name=<span class="string">"airflow-k8s-task"</span>,
+        get_logs=<span class="keyword">True</span>,
+        is_delete_operator_pod=<span class="keyword">True</span>,
+    )</pre>
+                </div>
+
+                <p><strong>Parameters:</strong> <code>namespace</code> = where to create the Pod. <code>image</code> = container image. <code>cmds</code> + <code>arguments</code> = command and args for the container. <code>get_logs=True</code> = stream logs to Airflow. <code>is_delete_operator_pod=True</code> = delete the Pod when the task finishes.</p>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Note</h4>
+                    <p>Airflow must run with a Kubernetes connection configured (e.g. in-cluster config or kubeconfig) so the worker can create Pods. Install the provider: <code>pip install apache-airflow-providers-cncf-kubernetes</code>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PRACTICE ==================== -->
+        <div class="tab-content" id="tab-practice">
+
+            <div class="section">
+                <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+                <p>Try these to solidify containers and Airflow. Answers use the same styling as the rest of the course.</p>
+
+                <h3>Exercise 1: Why Containers?</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Your DAG has Task A (needs Python 3.8 + pandas 1.2) and Task B (needs Python 3.11 + pandas 2.0). Both run on the same Airflow worker. What problem can this cause, and how do containers help?</p>
+                </div>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Two kids need different toys in the same room: one needs Legos, the other needs Play-Doh. If you only have one table, they fight. Containers are like giving each kid their own room with exactly their toys &mdash; no fighting!</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <p><strong>Problem:</strong> Conflicting dependencies on one worker (different Python or library versions) can cause import errors or wrong behavior.<br>
+                            <strong>Containers help:</strong> Run Task A in a container with Python 3.8 + pandas 1.2, and Task B in another container with Python 3.11 + pandas 2.0. Each task gets an isolated environment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Exercise 2: Docker vs K8s Choice</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Your company runs Airflow on a single VM with Docker installed. You need one task to run a custom ETL image. Should you use DockerOperator or KubernetesPodOperator? Why?</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <p><strong>Use DockerOperator.</strong> You have Docker on the VM and no Kubernetes cluster. DockerOperator talks directly to the Docker daemon on that host. KubernetesPodOperator would require a K8s cluster and extra configuration with no benefit in this setup.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Exercise 3: Write a DockerOperator Task</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>Write a single task that uses DockerOperator to run the image <code>alpine:latest</code> with the command <code>echo "Containers are cool"</code>. Task id: <code>alpine_echo</code>.</p>
+                </div>
+
+                <div class="code-block">
+<pre><span class="comment"># Solution:</span>
+<span class="keyword">from</span> airflow.providers.docker.operators.docker <span class="keyword">import</span> DockerOperator
+
+alpine_echo = <span class="function">DockerOperator</span>(
+    task_id=<span class="string">"alpine_echo"</span>,
+    image=<span class="string">"alpine:latest"</span>,
+    command=<span class="string">'echo "Containers are cool"'</span>,
+    auto_remove=<span class="keyword">True</span>,
+)</pre>
+                </div>
+
+                <h3>Exercise 4: When to Use KubernetesPodOperator</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>List two situations where KubernetesPodOperator is a better fit than DockerOperator.</p>
+                </div>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>DockerOperator = one kitchen in your house. KubernetesPodOperator = a cloud kitchen service that has many kitchens and picks one for you. Use the cloud when you have lots of orders or many different "recipes" and don't want to manage the kitchens yourself.</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <p><strong>1.</strong> Airflow is already running on Kubernetes (e.g. Helm, Astronomer) &mdash; Pods run natively in the same cluster.<br>
+                            <strong>2.</strong> You need automatic scaling or resource limits (CPU/memory) per task, or many concurrent tasks that shouldn't overload a single Docker host. Kubernetes schedules Pods across nodes and enforces limits.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: QUIZ ==================== -->
+        <div class="tab-content" id="tab-quiz">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Module 12 Quiz</h2>
+                <p>Test your understanding! Click the answer you think is correct.</p>
+
+                <div class="interactive-quiz">
+                    <h4>1. What is the main benefit of running an Airflow task in a container?</h4>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> It makes the task run faster</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="true"><input type="radio" name="q1"> Isolation and reproducibility (same environment everywhere)</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> It reduces Airflow memory usage</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> It replaces the need for a DAG</label>
+                    <p class="quiz-feedback" id="fb-q1"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>2. DockerOperator runs the task by ___?</h4>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> Sending code to a remote server</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="true"><input type="radio" name="q2"> Starting a Docker container with an image and command</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> Creating a Kubernetes Pod</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> Running a Bash script on the worker</label>
+                    <p class="quiz-feedback" id="fb-q2"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>3. KubernetesPodOperator runs the task by ___?</h4>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Starting a container on the worker's Docker daemon</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="true"><input type="radio" name="q3"> Creating a Pod in a Kubernetes cluster and running the container there</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Sending the task to the Airflow scheduler</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Writing results to the metadata database</label>
+                    <p class="quiz-feedback" id="fb-q3"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>4. When is DockerOperator a better choice than KubernetesPodOperator?</h4>
+                    <label class="quiz-option" data-quiz="q4" data-correct="true"><input type="radio" name="q4"> When you have Docker on the host but no Kubernetes cluster</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> When you need maximum scaling across many nodes</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> When Airflow is running on Kubernetes</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> When you want to avoid containers entirely</label>
+                    <p class="quiz-feedback" id="fb-q4"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>5. In Docker, an "image" is best described as ___?</h4>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> A running process</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="true"><input type="radio" name="q5"> A read-only template used to create containers</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> The Airflow DAG file</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> A Kubernetes namespace</label>
+                    <p class="quiz-feedback" id="fb-q5"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>6. What must the Airflow worker have to use DockerOperator?</h4>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> A Kubernetes cluster</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="true"><input type="radio" name="q6"> Access to a Docker daemon (e.g. Docker socket or Docker on the host)</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> A separate database for containers</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> A different scheduler</label>
+                    <p class="quiz-feedback" id="fb-q6"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>7. KubernetesPodOperator is a better fit when ___?</h4>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> You have only one server</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="true"><input type="radio" name="q7"> Airflow runs on Kubernetes or you need cluster scheduling and scaling</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> You do not want to use containers</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> You only run Bash commands</label>
+                    <p class="quiz-feedback" id="fb-q7"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>8. What does "is_delete_operator_pod=True" do in KubernetesPodOperator?</h4>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Deletes the DAG after the run</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="true"><input type="radio" name="q8"> Deletes the Pod after the task finishes (cleanup)</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Removes the Docker image from the node</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Stops the Airflow scheduler</label>
+                    <p class="quiz-feedback" id="fb-q8"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="testing.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 11: Testing</a>
+            <a href="best-practices.html" class="nav-btn next">Module 13: Best Practices <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const quizId = this.dataset.quiz;
+            const isCorrect = this.dataset.correct === 'true';
+            document.querySelectorAll(`[data-quiz="${quizId}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                if (o.dataset.correct === 'true') o.classList.add('correct');
+            });
+            if (!isCorrect) this.classList.add('wrong');
+            const fb = document.getElementById('fb-' + quizId);
+            if (fb) {
+                fb.style.display = 'block';
+                fb.textContent = isCorrect ? 'Correct! Well done!' : 'Not quite. The correct answer is highlighted in green.';
+                fb.className = 'quiz-feedback ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 300);
+    });
+    </script>
+    <script src="../js/code-copy.js" defer></script>
+</body>
+</html>

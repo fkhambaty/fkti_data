@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 10: Custom Components | FKTI Airflow Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #0891b2; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0e7490; }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 50%, #06b6d4 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        /* ===== TAB SYSTEM ===== */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .tab-btn:hover { background: #f0fdfa; color: #0891b2; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== CONTENT SECTIONS ===== */
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #a5f3fc;
+        }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #cffafe; }
+        .section h3 { color: #0891b2; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+
+        /* ===== CALLOUT BOXES ===== */
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+
+        .formula-box {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+            text-align: center;
+        }
+        .formula-box h4 { color: #7c3aed; margin-bottom: 15px; }
+
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+
+        .real-life {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #f97316;
+        }
+        .real-life h4 { color: #c2410c; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #9a3412; }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1d4ed8; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #1e3a5f; }
+
+        .key-point {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #14b8a6;
+        }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+
+        /* ===== CODE BLOCKS ===== */
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+
+        /* ===== DATA TABLES ===== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .data-table tr:hover { background: #ccfbf1; }
+
+        /* ===== COMPARISON CARDS ===== */
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .compare-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        .compare-card h4 { color: #0891b2; margin-bottom: 15px; }
+
+        /* ===== DIAGRAMS ===== */
+        .diagram-container {
+            background: #f8fafc;
+            border: 2px solid #a5f3fc;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-weight: 600; color: #475569; margin-top: 15px; font-size: 1em; }
+
+        /* ===== QUIZ ===== */
+        .interactive-quiz {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin: 25px 0;
+            border: 2px solid #0891b2;
+        }
+        .interactive-quiz h4 { color: #0e7490; margin-bottom: 15px; }
+        .quiz-option {
+            display: block;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #a5f3fc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #06b6d4; background: #f0fdfa; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+
+        /* ===== FLOW / ARCH ===== */
+        .flow-animation {
+            background: #f0fdfa;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 2px solid #a5f3fc;
+            overflow: hidden;
+        }
+        .flow-steps { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .flow-node {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .flow-arrow { font-size: 1.8em; color: #0891b2; }
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .arch-component {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .arch-component:hover { border-color: #06b6d4; transform: translateY(-3px); }
+        .arch-component i { font-size: 2.5em; margin-bottom: 15px; color: #0891b2; }
+        .arch-component h5 { color: #0e7490; margin-bottom: 8px; }
+        .arch-component p { color: #64748b; font-size: 0.95em; margin: 0; line-height: 1.6; }
+
+        /* ===== NAV BUTTONS ===== */
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .tab-btn { min-width: 90px; padding: 10px 12px; font-size: 0.85em; }
+            .flow-steps { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <span style="display: flex; gap: 20px;">
+                <a href="variables-connections.html"><i class="fas fa-arrow-left"></i> Module 9</a>
+                <a href="testing.html">Module 11 <i class="fas fa-arrow-right"></i></a>
+            </span>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 10 OF 15</span>
+            <h1><i class="fas fa-puzzle-piece"></i> Custom Components</h1>
+            <p>Build your own hooks, operators, and sensors!</p>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <!-- ==================== TAB: LEARN ==================== -->
+        <div class="tab-content active" id="tab-learn">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Why Custom Components?</h2>
+
+                <p>Airflow ships with dozens of built-in operators, hooks, and sensors. But when you need to talk to an internal API, a proprietary database, or a service that doesn't have an Airflow integration yet, you build <strong>custom components</strong>. They keep your DAGs clean, reusable, and testable.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Think of built-in operators as toys that come in the box. Custom components are toys you build yourself: they do exactly what your pipeline needs, and you can use them again and again in different DAGs instead of copy-pasting the same Python code everywhere.</p>
+                </div>
+
+                <div class="step-box">
+                    <h4>When to Build Custom Components</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>No existing integration</h5>
+                            <p>Your company uses a tool that doesn't have an Airflow provider. You create a Hook to manage the connection and an Operator that uses that hook.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Reuse across many DAGs</h5>
+                            <p>Same "call our internal API" logic in 20 DAGs? Put it in one custom operator and pass parameters. One place to fix bugs and add features.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Wait for a condition</h5>
+                            <p>You need to wait until a file appears, a table has rows, or an API returns "ready." A custom sensor that <code>poke</code>s until the condition is true is the right tool.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> The Big Three</h4>
+                    <p><strong>Hooks</strong> = connection + interface to an external system (get a client, run a query). <strong>Operators</strong> = a single unit of work (use a hook and do one thing). <strong>Sensors</strong> = wait until a condition is met (poke until true). Build hooks first, then operators/sensors that use them.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-link"></i> Custom Hooks</h2>
+
+                <p>A <strong>Hook</strong> encapsulates connection logic and provides a simple interface (e.g., <code>get_conn()</code>) that operators and sensors use. You subclass <code>BaseHook</code> and implement <code>get_conn()</code> (and optionally <code>get_connection()</code> to read from Airflow Connections).</p>
+
+                <h3>BaseHook and get_conn</h3>
+                <p>All hooks inherit from <code>airflow.hooks.base.BaseHook</code>. You override <code>get_conn()</code> to return whatever your task needs: a database connection, an API client, a session object, etc. Use <code>self.get_connection(conn_id)</code> to get login details from Airflow's Connections store so you never hardcode secrets.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>A hook is like a phone charger: it connects your task (phone) to the outside world (outlet). <code>get_conn()</code> is "plug in and get power" &mdash; once you have the connection, you can run queries or call APIs. The connection details live in Airflow (Admin → Connections), not in your code.</p>
+                </div>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Remember</h4>
+                    <p>Hooks should be <strong>stateless</strong> and <strong>idempotent</strong>: creating a connection or running a read should not change external state. Save "do something" logic for operators.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cogs"></i> Custom Operators</h2>
+
+                <p>An <strong>Operator</strong> represents one task in your DAG. You subclass <code>BaseOperator</code>, define templatable fields (e.g., <code>sql</code>, <code>path</code>) and implement <code>execute(context)</code>. Inside <code>execute</code> you typically get a hook with <code>self.hook</code> (or instantiate your custom hook) and perform the work.</p>
+
+                <h3>BaseOperator and execute</h3>
+                <p><code>BaseOperator</code> gives you everything Airflow needs: task_id, retries, retry_delay, templates, etc. You add your own constructor arguments (e.g., <code>conn_id</code>, <code>query</code>) and put the real logic in <code>execute(self, context)</code>. Return value is optional; to pass data to downstream tasks, push to XCom.</p>
+
+                <div class="step-box">
+                    <h4>Operator Checklist</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Call super().__init__()</h5>
+                            <p>Pass through <code>**kwargs</code> to <code>BaseOperator</code> so task_id, retries, and templates work.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Implement execute(context)</h5>
+                            <p>Do one logical thing: run a query, call an API, write a file. Use your hook for connections.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Use template_fields for parameters</h5>
+                            <p>Add attribute names to <code>template_fields</code> so Airflow can render Jinja (e.g., <code>{{ ds }}</code>) in those fields.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-hourglass-half"></i> Custom Sensors</h2>
+
+                <p><strong>Sensors</strong> are operators that wait until a condition is true. You subclass <code>BaseSensorOperator</code> and implement <code>poke(self, context)</code>. The sensor runs <code>poke()</code> repeatedly (every <code>poke_interval</code> seconds) until it returns <code>True</code> or the task times out.</p>
+
+                <h3>BaseSensorOperator and poke</h3>
+                <p>Instead of <code>execute</code>, you implement <code>poke(context)</code>. Return <code>True</code> when the condition is met (e.g., file exists, table has rows); return <code>False</code> to sleep and try again. Set <code>poke_interval</code> and <code>timeout</code> so you don't poll too aggressively or wait forever.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>A sensor is like checking the mailbox every few minutes: "Is the package here?" If no, go back to sleep. If yes, you're done! <code>poke</code> is that "check once" action; Airflow keeps calling it until you say "yes" or time runs out.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-box-open"></i> Packaging</h2>
+
+                <p>For a single DAG, you can put custom hooks/operators/sensors in a <code>plugins/</code> folder or next to your DAG file. For reuse across many DAGs or teams, package them as a Python package (e.g., <code>my_airflow_plugins</code>) and install it in the Airflow environment. Then <code>from my_airflow_plugins.operators import MyOperator</code> in any DAG.</p>
+
+                <div class="step-box">
+                    <h4>Where to Put Custom Code</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>plugins/ directory</h5>
+                            <p>Airflow auto-loads modules under <code>airflow.plugins_manager</code>. Put Python files or packages in <code>plugins/</code> and register hooks/operators in a plugin class. Simple and built-in.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Installed package</h5>
+                            <p>Build a wheel/sdist, add to <code>pip install</code> in your Docker image or venv. Best for multiple repos or versioned, shared components.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-thumbs-up"></i> Best Practices</h2>
+
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>One logical action per operator.</strong> Don't chain five API calls in one operator; split or use a pipeline.</li>
+                    <li style="margin-bottom: 10px;"><strong>Use hooks for I/O.</strong> Operators should get connections/clients from hooks, not create them from scratch.</li>
+                    <li style="margin-bottom: 10px;"><strong>Make sensors efficient.</strong> Don't poke every second if the condition can only change every hour. Use <code>poke_interval</code> and <code>timeout</code> wisely.</li>
+                    <li style="margin-bottom: 10px;"><strong>Add template_fields</strong> for any parameter that should support Jinja (execution_date, ds, etc.).</li>
+                    <li style="margin-bottom: 10px;"><strong>Write unit tests</strong> for your hook and operator logic so refactors don't break DAGs.</li>
+                </ul>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-lightbulb"></i> Pro Tip</h4>
+                    <p>Start with a hook that wraps your external system. Then build one operator and one sensor that use it. Once that works, expand to more operators or share the package with other teams.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: VISUAL ==================== -->
+        <div class="tab-content" id="tab-visual">
+
+            <div class="section">
+                <h2><i class="fas fa-sitemap"></i> Hook / Operator / Sensor Hierarchy</h2>
+                <p>Custom components sit on top of Airflow's base classes. Operators and sensors use hooks for connections; sensors add "wait until" behavior.</p>
+
+                <div class="diagram-container">
+                    <svg width="700" height="280" viewBox="0 0 700 280">
+                        <defs>
+                            <linearGradient id="baseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#64748b"/>
+                                <stop offset="100%" style="stop-color:#475569"/>
+                            </linearGradient>
+                            <linearGradient id="hookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                <stop offset="100%" style="stop-color:#0891b2"/>
+                            </linearGradient>
+                            <linearGradient id="opGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                <stop offset="100%" style="stop-color:#7c3aed"/>
+                            </linearGradient>
+                            <linearGradient id="sensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f97316"/>
+                                <stop offset="100%" style="stop-color:#ea580c"/>
+                            </linearGradient>
+                            <marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+                            </marker>
+                        </defs>
+                        <!-- BaseHook -->
+                        <rect x="250" y="20" width="200" height="50" rx="12" fill="url(#baseGrad)"/>
+                        <text x="350" y="52" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="14">BaseHook</text>
+                        <text x="350" y="78" text-anchor="middle" fill="#64748b" font-family="Nunito" font-size="11">get_conn()</text>
+
+                        <!-- Custom Hook -->
+                        <rect x="270" y="100" width="160" height="45" rx="12" fill="url(#hookGrad)"/>
+                        <text x="350" y="128" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="13">MyCustomHook</text>
+                        <line x1="350" y1="70" x2="350" y2="100" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+
+                        <!-- BaseOperator -->
+                        <rect x="80" y="180" width="180" height="50" rx="12" fill="url(#baseGrad)"/>
+                        <text x="170" y="210" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="13">BaseOperator</text>
+                        <text x="170" y="238" text-anchor="middle" fill="#64748b" font-family="Nunito" font-size="10">execute(context)</text>
+
+                        <!-- BaseSensorOperator -->
+                        <rect x="440" y="180" width="220" height="50" rx="12" fill="url(#baseGrad)"/>
+                        <text x="550" y="210" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="12">BaseSensorOperator</text>
+                        <text x="550" y="238" text-anchor="middle" fill="#64748b" font-family="Nunito" font-size="10">poke(context)</text>
+
+                        <!-- Custom Operator -->
+                        <rect x="100" y="255" width="140" height="22" rx="8" fill="url(#opGrad)"/>
+                        <text x="170" y="270" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="11">MyOperator</text>
+                        <line x1="170" y1="230" x2="170" y2="255" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+
+                        <!-- Custom Sensor -->
+                        <rect x="460" y="255" width="180" height="22" rx="8" fill="url(#sensGrad)"/>
+                        <text x="550" y="270" text-anchor="middle" fill="white" font-family="Nunito" font-weight="700" font-size="11">MyFileSensor</text>
+                        <line x1="550" y1="230" x2="550" y2="255" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+
+                        <!-- "uses" from operator/sensor to hook -->
+                        <path d="M 170 200 Q 260 160 350 145" stroke="#14b8a6" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+                        <text x="240" y="165" fill="#0f766e" font-family="Nunito" font-size="10" font-weight="600">uses</text>
+                        <path d="M 550 200 Q 460 160 350 145" stroke="#14b8a6" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+                    </svg>
+                    <p class="diagram-caption">Base classes → custom implementations. Operators and sensors use the hook for connections.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-box"></i> Packaging Diagram</h2>
+                <p>How custom components fit into your project or a shared package:</p>
+
+                <div class="diagram-container">
+                    <svg width="650" height="220" viewBox="0 0 650 220">
+                        <defs>
+                            <linearGradient id="pkgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                <stop offset="100%" style="stop-color:#0891b2"/>
+                            </linearGradient>
+                            <marker id="arr2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#0891b2"/>
+                            </marker>
+                        </defs>
+                        <rect x="20" y="30" width="180" height="160" rx="15" fill="#f0fdfa" stroke="#06b6d4" stroke-width="2"/>
+                        <text x="110" y="55" text-anchor="middle" fill="#0e7490" font-family="Nunito" font-weight="700" font-size="14">plugins/ or</text>
+                        <text x="110" y="75" text-anchor="middle" fill="#0e7490" font-family="Nunito" font-weight="700" font-size="14">my_airflow_plugins</text>
+                        <rect x="35" y="90" width="150" height="28" rx="8" fill="white" stroke="#a5f3fc" stroke-width="1"/>
+                        <text x="110" y="108" text-anchor="middle" fill="#334155" font-family="Nunito" font-size="12">hooks/</text>
+                        <rect x="35" y="125" width="150" height="28" rx="8" fill="white" stroke="#a5f3fc" stroke-width="1"/>
+                        <text x="110" y="143" text-anchor="middle" fill="#334155" font-family="Nunito" font-size="12">operators/</text>
+                        <rect x="35" y="160" width="150" height="28" rx="8" fill="white" stroke="#a5f3fc" stroke-width="1"/>
+                        <text x="110" y="178" text-anchor="middle" fill="#334155" font-family="Nunito" font-size="12">sensors/</text>
+
+                        <line x1="200" y1="110" x2="270" y2="110" stroke="#0891b2" stroke-width="2" marker-end="url(#arr2)"/>
+                        <rect x="280" y="50" width="320" height="120" rx="15" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+                        <text x="440" y="80" text-anchor="middle" fill="#0e7490" font-family="Nunito" font-weight="700" font-size="14">DAGs</text>
+                        <text x="440" y="105" text-anchor="middle" fill="#475569" font-family="Nunito" font-size="12">from my_airflow_plugins.operators import MyOperator</text>
+                        <text x="440" y="128" text-anchor="middle" fill="#475569" font-family="Nunito" font-size="12">from my_airflow_plugins.hooks import MyHook</text>
+                        <text x="440" y="151" text-anchor="middle" fill="#475569" font-family="Nunito" font-size="12">MyOperator(task_id='run_it', conn_id='my_conn', ...)</text>
+
+                        <text x="325" y="210" text-anchor="middle" fill="#475569" font-family="Nunito" font-size="11">Package provides components; DAGs import and use them</text>
+                    </svg>
+                    <p class="diagram-caption">One package (or plugins folder) holds hooks, operators, sensors; DAGs import and instantiate them.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE ==================== -->
+        <div class="tab-content" id="tab-code">
+
+            <div class="section">
+                <h2><i class="fas fa-link"></i> Custom Hook Example</h2>
+                <p>A hook that returns a simple API client (e.g., for an internal service). Connection details come from Airflow Connections.</p>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow.hooks.base <span class="keyword">import</span> BaseHook
+
+<span class="keyword">class</span> <span class="function">MyApiHook</span>(BaseHook):
+    conn_name_attr = <span class="string">"conn_id"</span>
+    default_conn_name = <span class="string">"my_api_default"</span>
+    conn_type = <span class="string">"generic"</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, conn_id: str = default_conn_name, *args, **kwargs):
+        <span class="keyword">super</span>().<span class="function">__init__</span>(*args, **kwargs)
+        self.conn_id = conn_id
+
+    <span class="keyword">def</span> <span class="function">get_conn</span>(self):
+        conn = self.<span class="function">get_connection</span>(self.conn_id)
+        <span class="comment"># Build your client from conn.host, conn.login, conn.password, conn.extra_dejson</span>
+        api_client = <span class="function">SomeApiClient</span>(
+            base_url=conn.host,
+            api_key=conn.password,
+            **conn.extra_dejson
+        )
+        <span class="keyword">return</span> api_client</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cogs"></i> Custom Operator Example</h2>
+                <p>An operator that uses the hook and runs one logical action (e.g., trigger a sync).</p>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow.models <span class="keyword">import</span> BaseOperator
+<span class="keyword">from</span> .hooks.my_api_hook <span class="keyword">import</span> MyApiHook
+
+<span class="keyword">class</span> <span class="function">MyApiSyncOperator</span>(BaseOperator):
+    template_fields = (<span class="string">"job_name"</span>,)
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, conn_id: str, job_name: str, **kwargs):
+        <span class="keyword">super</span>().<span class="function">__init__</span>(**kwargs)
+        self.conn_id = conn_id
+        self.job_name = job_name
+
+    <span class="keyword">def</span> <span class="function">execute</span>(self, context):
+        hook = <span class="function">MyApiHook</span>(conn_id=self.conn_id)
+        client = hook.<span class="function">get_conn</span>()
+        result = client.<span class="function">trigger_sync</span>(self.job_name)
+        <span class="keyword">return</span> result.get(<span class="string">"run_id"</span>)  <span class="comment"># optional: push to XCom</span></pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-hourglass-half"></i> Custom Sensor Example</h2>
+                <p>A sensor that pokes until a file exists (or any condition you implement).</p>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow.sensors.base <span class="keyword">import</span> BaseSensorOperator
+
+<span class="keyword">class</span> <span class="function">MyFileSensor</span>(BaseSensorOperator):
+    template_fields = (<span class="string">"path"</span>,)
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, path: str, poke_interval: int = <span class="number">60</span>, timeout: int = <span class="number">3600</span>, **kwargs):
+        <span class="keyword">super</span>().<span class="function">__init__</span>(poke_interval=poke_interval, timeout=timeout, **kwargs)
+        self.path = path
+
+    <span class="keyword">def</span> <span class="function">poke</span>(self, context):
+        <span class="keyword">import</span> os
+        <span class="keyword">return</span> os.path.<span class="function">isfile</span>(self.path)</pre>
+                </div>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-lightbulb"></i> Usage in a DAG</h4>
+                    <p>Import your hook, operator, and sensor; instantiate them with the right <code>conn_id</code> or <code>path</code>; set dependencies with <code>>></code>. Ensure the plugin package or <code>plugins/</code> path is on Airflow's Python path.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PRACTICE ==================== -->
+        <div class="tab-content" id="tab-practice">
+
+            <div class="section">
+                <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+                <p>Use the ELI5 and step boxes to reason through each exercise. Try writing code on paper or in a file before peeking at the answers.</p>
+
+                <h3>Exercise 1: Where does connection logic go?</h3>
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Scenario</h4>
+                    <p>You need to run a query on a PostgreSQL database in three different DAGs. Should you put the "connect to Postgres" code in the operator or in a hook? Why?</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <p>Put it in a <strong>hook</strong>. Connection logic (get host, password, open connection) belongs in a hook so it can be reused by many operators and sensors. The operator should call <code>hook.get_conn()</code> and then run the query. That way you reuse one place for credentials and connection handling.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Exercise 2: poke vs execute</h3>
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Scenario</h4>
+                    <p>You need to wait until a table has at least 100 rows before continuing the pipeline. Should you use a custom Operator or a custom Sensor? What method do you implement?</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <p>Use a <strong>Sensor</strong> and implement <code>poke(context)</code>. In <code>poke</code>, run a <code>SELECT COUNT(*)</code> (via a hook), return <code>True</code> if count &ge; 100, else <code>False</code>. Airflow will call <code>poke</code> every <code>poke_interval</code> until it returns True or the task times out.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Exercise 3: template_fields</h3>
+                <div class="analogy-box">
+                    <h4>Challenge</h4>
+                    <p>You have a custom operator with a parameter <code>output_path</code> that should support Jinja, e.g. <code>output_path="/data/{{ ds }}/result.csv"</code>. What do you need to add to your operator class?</p>
+                </div>
+
+                <div class="code-block">
+<pre><span class="comment"># Add template_fields to your operator class:</span>
+<span class="keyword">class</span> <span class="function">MyOperator</span>(BaseOperator):
+    template_fields = (<span class="string">"output_path"</span>,)   <span class="comment"># Airflow will render Jinja in this field</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, output_path: str, **kwargs):
+        <span class="keyword">super</span>().<span class="function">__init__</span>(**kwargs)
+        self.output_path = output_path</pre>
+                </div>
+
+                <h3>Exercise 4: One operator, one action</h3>
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Scenario</h4>
+                    <p>Your DAG should: (1) call API to start a job, (2) wait until the job is done, (3) download the result file. How many custom components (hooks/operators/sensors) would you ideally create, and what would each do?</p>
+                </div>
+
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>One Hook</h5>
+                            <p>API hook with <code>get_conn()</code> returning the API client. Used by both the "start job" operator and the "wait until done" sensor.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>One Operator</h5>
+                            <p>"Start job" operator: in <code>execute</code>, get hook, call <code>client.start_job(...)</code>, push job_id to XCom for the sensor.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>One Sensor</h5>
+                            <p>"Job done" sensor: in <code>poke</code>, get job_id from XCom (or pass as templated param), call API to check status, return True when done.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h5>Download</h5>
+                            <p>Either another operator (same hook, <code>client.download_result(...)</code>) or a built-in operator like <code>HttpOperator</code> / custom "download file" operator. So: 1 hook, 2 operators, 1 sensor (or 2 operators if you combine "download" into one).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: QUIZ ==================== -->
+        <div class="tab-content" id="tab-quiz">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Module 10 Quiz</h2>
+                <p>Test your understanding! Click the answer you think is correct.</p>
+
+                <div class="interactive-quiz">
+                    <h4>1. What does a Hook provide that Operators and Sensors use?</h4>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> A single unit of work (one task)</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="true"><input type="radio" name="q1"> Connection and interface to an external system (e.g. get_conn)</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> Wait-until logic (poke)</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> DAG schedule and dependencies</label>
+                    <p class="quiz-feedback" id="fb-q1"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>2. Which method do you implement in a custom Operator?</h4>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> get_conn()</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> poke(context)</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="true"><input type="radio" name="q2"> execute(context)</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> run()</label>
+                    <p class="quiz-feedback" id="fb-q2"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>3. Which method do you implement in a custom Sensor?</h4>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> execute(context)</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="true"><input type="radio" name="q3"> poke(context)</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> get_conn()</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> check(context)</label>
+                    <p class="quiz-feedback" id="fb-q3"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>4. What does poke() return when the condition is not yet met?</h4>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> True</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="true"><input type="radio" name="q4"> False (sensor will sleep and try again)</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> None</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> An exception</label>
+                    <p class="quiz-feedback" id="fb-q4"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>5. Where should you store connection credentials when building a custom Hook?</h4>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Hardcoded in the Hook class</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="true"><input type="radio" name="q5"> In Airflow Connections (Admin → Connections), read via get_connection()</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> In the DAG file as variables</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> In a config file in the repo</label>
+                    <p class="quiz-feedback" id="fb-q5"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>6. What is template_fields used for?</h4>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Defining which tasks run in parallel</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="true"><input type="radio" name="q6"> Listing operator parameters that support Jinja templating (e.g. {{ ds }})</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Specifying the DAG schedule</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Connecting to the database</label>
+                    <p class="quiz-feedback" id="fb-q6"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>7. Custom hooks should be ___?</h4>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> Stateful and side-effect free</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="true"><input type="radio" name="q7"> Stateless; connection/read logic only (no "do something" side effects)</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> The same as operators</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> Defined inside the DAG file</label>
+                    <p class="quiz-feedback" id="fb-q7"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>8. Where can you put custom hooks/operators so Airflow can load them?</h4>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Only inside the dags/ folder</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="true"><input type="radio" name="q8"> In a plugins/ directory or in an installed Python package</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Only in the Airflow core source code</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> In the metadata database</label>
+                    <p class="quiz-feedback" id="fb-q8"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAV BUTTONS -->
+        <div class="nav-buttons">
+            <a href="variables-connections.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 9: Variables &amp; Connections</a>
+            <a href="testing.html" class="nav-btn next">Module 11: Testing <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const quizId = this.dataset.quiz;
+            const isCorrect = this.dataset.correct === 'true';
+            document.querySelectorAll(`[data-quiz="${quizId}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                if (o.dataset.correct === 'true') o.classList.add('correct');
+            });
+            if (!isCorrect) this.classList.add('wrong');
+            const fb = document.getElementById('fb-' + quizId);
+            if (fb) {
+                fb.style.display = 'block';
+                fb.textContent = isCorrect ? 'Correct! Well done!' : 'Not quite. The correct answer is highlighted in green.';
+                fb.className = 'quiz-feedback ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 300);
+    });
+    </script>
+    <script src="../js/code-copy.js" defer></script>
+</body>
+</html>

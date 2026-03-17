@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Scheduling Mastery | FKTI Airflow Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #0891b2; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0e7490; }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 50%, #06b6d4 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        /* ===== TAB SYSTEM ===== */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .tab-btn:hover { background: #f0fdfa; color: #0891b2; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== CONTENT SECTIONS ===== */
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #a5f3fc;
+        }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #cffafe; }
+        .section h3 { color: #0891b2; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+
+        /* ===== CALLOUT BOXES ===== */
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+
+        .formula-box {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #a855f7;
+            text-align: center;
+        }
+        .formula-box h4 { color: #7c3aed; margin-bottom: 15px; }
+
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+
+        .real-life {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #f97316;
+        }
+        .real-life h4 { color: #c2410c; font-size: 1.2em; margin-bottom: 15px; }
+        .real-life p { color: #9a3412; }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1d4ed8; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #1e3a5f; }
+
+        .key-point {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #14b8a6;
+        }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+
+        /* ===== CODE BLOCKS ===== */
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+        .code-block .output { color: #a78bfa; }
+
+        /* ===== DATA TABLES ===== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .data-table tr:hover { background: #ccfbf1; }
+
+        /* ===== COMPARISON CARDS ===== */
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .compare-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        .compare-card h4 { color: #0891b2; margin-bottom: 15px; }
+
+        /* ===== DIAGRAMS ===== */
+        .diagram-container {
+            background: #f8fafc;
+            border: 2px solid #a5f3fc;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-weight: 600; color: #475569; margin-top: 15px; font-size: 1em; }
+
+        /* ===== QUIZ ===== */
+        .interactive-quiz {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin: 25px 0;
+            border: 2px solid #0891b2;
+        }
+        .interactive-quiz h4 { color: #0e7490; margin-bottom: 15px; }
+        .quiz-option {
+            display: block;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #a5f3fc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #06b6d4; background: #f0fdfa; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+
+        .flow-animation {
+            background: #f0fdfa;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 2px solid #a5f3fc;
+            overflow: hidden;
+        }
+        .flow-steps { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .flow-node {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 120px;
+            animation: nodePulse 2s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        @keyframes nodePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .flow-arrow { font-size: 1.8em; color: #0891b2; animation: arrowBounce 1.5s ease-in-out infinite; }
+        @keyframes arrowBounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .tab-btn { min-width: 90px; padding: 10px 12px; font-size: 0.85em; }
+            .flow-steps { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="first-dag.html">Module 2 <i class="fas fa-arrow-left"></i></a>
+            <a href="operators.html">Module 4 <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 3 OF 15</span>
+            <h1><i class="fas fa-clock"></i> Scheduling Mastery</h1>
+            <p>Master cron expressions, execution dates, incremental processing, and backfilling!</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <!-- ==================== TAB: LEARN ==================== -->
+        <div class="tab-content active" id="tab-learn">
+
+            <div class="section">
+                <h2><i class="fas fa-clock"></i> What is Scheduling?</h2>
+
+                <p><strong>Scheduling</strong> means running your DAGs automatically at fixed intervals, without you having to click "Trigger DAG" every time. Instead of manual runs, Airflow's scheduler decides when each DAG should run based on the schedule you define.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Imagine you have a pet hamster that needs feeding every morning at 8am. You could wake up every day and feed it yourself &mdash; or you could set an alarm clock. The alarm <strong>schedules</strong> the feeding for you automatically!</p>
+                    <p><strong>Airflow scheduling is like that alarm clock</strong> &mdash; you tell it "run this pipeline every day at midnight" or "every hour" and it wakes up and runs your DAG at the right time, every time.</p>
+                </div>
+
+                <div class="real-life">
+                    <h4><i class="fas fa-building"></i> Real-World Example</h4>
+                    <p>A company tracks user events (clicks, sign-ups, purchases) in a database. Every day at 6am, they need a pipeline to process yesterday's events, aggregate them, and update their analytics dashboard. Without scheduling, someone would have to log in at 6am every single day. With Airflow scheduling, the DAG runs automatically at 6am every day &mdash; no human needed!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-cog"></i> schedule_interval / schedule Parameter</h2>
+
+                <p>In your DAG definition, you specify <em>when</em> the DAG runs using either <code>schedule_interval</code> (older Airflow) or <code>schedule</code> (Airflow 2.2+). They do the same thing!</p>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Naming Change</h4>
+                    <p><code>schedule_interval</code> was deprecated in favor of <code>schedule</code>. Use <code>schedule</code> in new DAGs. Both work, but <code>schedule</code> is the modern choice.</p>
+                </div>
+
+                <p>You can use three types of schedules:</p>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>Presets</strong> &mdash; Simple words like <code>@daily</code>, <code>@weekly</code></li>
+                    <li style="margin-bottom: 10px;"><strong>Cron expressions</strong> &mdash; Flexible like <code>0 9 * * MON</code> (every Monday at 9am)</li>
+                    <li style="margin-bottom: 10px;"><strong>timedelta</strong> &mdash; Python intervals like <code>timedelta(hours=3)</code></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-magic"></i> Airflow Presets</h2>
+
+                <p>Airflow provides convenient preset strings for common schedules. No need to learn cron syntax for these!</p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Preset</th><th>Meaning</th><th>Equivalent Cron</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>@once</code></td><td>Run once (no automatic repeats)</td><td>N/A</td></tr>
+                        <tr><td><code>@hourly</code></td><td>Every hour at minute 0</td><td><code>0 * * * *</code></td></tr>
+                        <tr><td><code>@daily</code></td><td>Every day at midnight (00:00)</td><td><code>0 0 * * *</code></td></tr>
+                        <tr><td><code>@weekly</code></td><td>Every Sunday at midnight</td><td><code>0 0 * * 0</code></td></tr>
+                        <tr><td><code>@monthly</code></td><td>First day of every month at midnight</td><td><code>0 0 1 * *</code></td></tr>
+                        <tr><td><code>@yearly</code></td><td>January 1st at midnight</td><td><code>0 0 1 1 *</code></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> When to Use Presets</h4>
+                    <p>Use presets when your schedule matches exactly. Need "every Monday at 9am"? Presets won't help &mdash; you'll need a cron expression!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-braille"></i> Cron Expressions &mdash; Deep Dive</h2>
+
+                <p>A <strong>cron expression</strong> has 5 fields separated by spaces. Each field controls one part of the schedule:</p>
+
+                <div class="formula-box">
+                    <h4>Cron Format: 5 Fields</h4>
+                    <p style="font-family: 'Fira Code'; font-size: 1.3em; color: #7c3aed;">minute &nbsp; hour &nbsp; day-of-month &nbsp; month &nbsp; day-of-week</p>
+                    <p style="margin-top: 15px; color: #6d28d9;">0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * &nbsp;&nbsp;&nbsp;&nbsp; MON</p>
+                    <p style="margin-top: 10px; font-size: 0.95em;">(every Monday at 9:00 AM)</p>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Field</th><th>Valid Values</th><th>Example</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>minute</td><td>0&ndash;59</td><td><code>0</code> = at :00, <code>30</code> = at :30</td></tr>
+                        <tr><td>hour</td><td>0&ndash;23</td><td><code>9</code> = 9am, <code>0</code> = midnight</td></tr>
+                        <tr><td>day-of-month</td><td>1&ndash;31</td><td><code>1</code> = 1st, <code>15</code> = 15th</td></tr>
+                        <tr><td>month</td><td>1&ndash;12 or JAN&ndash;DEC</td><td><code>1</code> = Jan, <code>12</code> = Dec</td></tr>
+                        <tr><td>day-of-week</td><td>0&ndash;7 (0 and 7 = Sunday) or MON&ndash;SUN</td><td><code>MON</code> = Monday, <code>5</code> = Friday</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Special Characters</h3>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong><code>*</code></strong> (wildcard) &mdash; Every value. <code>*</code> in minute = every minute</li>
+                    <li style="margin-bottom: 10px;"><strong><code>1-5</code></strong> (range) &mdash; From 1 to 5 inclusive</li>
+                    <li style="margin-bottom: 10px;"><strong><code>*/15</code></strong> (step) &mdash; Every 15 units. <code>*/15</code> in minute = every 15 minutes</li>
+                    <li style="margin-bottom: 10px;"><strong><code>1,15,30</code></strong> (list) &mdash; Only 1, 15, and 30</li>
+                </ul>
+
+                <h3>Cron Examples</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Expression</th><th>Meaning</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>0 * * * *</code></td><td>Every hour (at minute 0)</td></tr>
+                        <tr><td><code>0 0 * * *</code></td><td>Every day at midnight</td></tr>
+                        <tr><td><code>0 9 * * MON</code></td><td>Every Monday at 9am</td></tr>
+                        <tr><td><code>*/15 * * * *</code></td><td>Every 15 minutes</td></tr>
+                        <tr><td><code>0 0 1 * *</code></td><td>First day of every month at midnight</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-calendar-alt"></i> Execution Dates Explained (The Tricky Part!)</h2>
+
+                <p>This is the <strong>most confusing part of Airflow</strong>! Once you get it, everything clicks. Let's break it down.</p>
+
+                <div class="analogy-box">
+                    <h4><i class="fas fa-utensils"></i> The Restaurant Analogy</h4>
+                    <p>Imagine you run a restaurant. Every day, you "close the books" for the previous day. On <strong>Tuesday morning</strong>, you review Monday's sales. You're not reviewing Tuesday's data &mdash; Tuesday isn't over yet! You're reviewing the data <em>for the period that just ended</em> (Monday).</p>
+                    <p><strong>Airflow works the same way.</strong> A DAG run that starts on Tuesday at 6am is processing <strong>Monday's data</strong>. The "execution date" (logical_date) points to the beginning of that data period &mdash; midnight Monday &mdash; even though the run actually happens on Tuesday.</p>
+                </div>
+
+                <h3>Key Terms</h3>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>logical_date</strong> (formerly <code>execution_date</code>) &mdash; The start of the data interval. For a daily DAG, it's midnight of the day whose data you're processing.</li>
+                    <li style="margin-bottom: 10px;"><strong>data_interval_start</strong> &mdash; Same as logical_date. Start of the period.</li>
+                    <li style="margin-bottom: 10px;"><strong>data_interval_end</strong> &mdash; End of the period. For daily, it's midnight of the next day.</li>
+                </ul>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Critical Insight</h4>
+                    <p>A DAG run for a period <strong>STARTS at the END of that period</strong>. You process Monday's data when Monday is over &mdash; i.e., on Tuesday. The logical_date = Monday 00:00 (start of Monday), even though you actually run on Tuesday.</p>
+                </div>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> Use data_interval_start / data_interval_end</h4>
+                    <p>Airflow 2.2+ uses <code>data_interval_start</code> and <code>data_interval_end</code>. The old <code>execution_date</code> is deprecated. New code should use the interval terms!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-database"></i> Incremental Processing</h2>
+
+                <p><strong>Incremental processing</strong> means you process only <em>new</em> data since the last run, instead of reprocessing everything. This saves time and resources.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Imagine you have a giant toy box. Every day you get 5 new toys. You could either: (A) count ALL the toys in the box every day, or (B) just add the 5 new ones to your count. Option B is incremental &mdash; you only process what's new!</p>
+                </div>
+
+                <div class="real-life">
+                    <h4><i class="fas fa-building"></i> User Events Example (Ch. 3)</h4>
+                    <p>Your app logs user events (clicks, page views) to a database. A daily DAG with <code>schedule="@daily"</code> runs every morning. Instead of processing all events ever, you use <code>{{ data_interval_start }}</code> and <code>{{ data_interval_end }}</code> in your SQL:</p>
+                    <p><code>WHERE event_time >= '{{ data_interval_start }}' AND event_time < '{{ data_interval_end }}'</code></p>
+                    <p>Each run processes only that day's events. Monday's run gets Monday's events. Tuesday's run gets Tuesday's events. No duplicates, no full-table scans!</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-history"></i> Backfilling</h2>
+
+                <p><strong>Backfilling</strong> means running your DAG for past dates. Maybe you just created the DAG and want to process historical data, or you fixed a bug and need to reprocess last week.</p>
+
+                <div class="step-box">
+                    <h4>When to Backfill</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>New DAG</h5>
+                            <p>You built a pipeline and want to backfill data from Jan 1 to today.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Bug Fix</h5>
+                            <p>A task had a bug; you fixed it and want to reprocess affected dates.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Data Recovery</h5>
+                            <p>Source data was corrupted and restored; you need to re-run the pipeline.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p>Use the CLI: <code>airflow dags backfill -s START_DATE -e END_DATE dag_id</code></p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-calendar-check"></i> start_date and end_date Behavior</h2>
+
+                <p><strong>start_date</strong> tells Airflow: "Don't schedule any runs before this date." The first run will be for the first schedule slot on or after start_date.</p>
+                <p><strong>end_date</strong> (optional) tells Airflow: "Stop scheduling after this date." Useful for one-time or temporary DAGs.</p>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> start_date Gotcha</h4>
+                    <p>Don't use <code>datetime.now()</code> or dynamic dates for start_date! Airflow parses the DAG file once and caches it. Use a fixed date like <code>datetime(2024, 1, 1)</code>.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-toggle-on"></i> catchup Parameter</h2>
+
+                <p><strong>catchup</strong> controls what happens when there's a gap between start_date and "now."</p>
+
+                <div class="comparison-cards">
+                    <div class="compare-card">
+                        <h4>catchup=True (default)</h4>
+                        <p>Airflow will create DAG runs for every schedule slot between start_date and now. If you deploy a daily DAG with start_date 30 days ago, it will queue 30 runs!</p>
+                    </div>
+                    <div class="compare-card">
+                        <h4>catchup=False</h4>
+                        <p>Airflow only schedules from "now" onward. No past runs. Use this when you don't need historical backfill and want to avoid a flood of runs.</p>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> Recommendation</h4>
+                    <p>Most production DAGs use <code>catchup=False</code>. Do backfills explicitly with <code>airflow dags backfill</code> when needed, rather than catching up automatically.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-clock"></i> Timetables (Airflow 2.x)</h2>
+
+                <p>In Airflow 2.2+, <strong>timetables</strong> offer a more powerful, programmatic way to define schedules. Instead of cron, you write a Python class that returns when the next run should be.</p>
+
+                <p>Use timetables when you need:</p>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;">Custom logic (e.g., "run on the last business day of each month")</li>
+                    <li style="margin-bottom: 10px;">Schedules that depend on external factors</li>
+                </ul>
+                <p>For most use cases, presets and cron expressions are enough. Timetables are for advanced scenarios.</p>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: VISUAL ==================== -->
+        <div class="tab-content" id="tab-visual">
+
+            <div class="section">
+                <h2><i class="fas fa-timeline"></i> Execution Dates vs Actual Run Time</h2>
+                <p>See how a daily DAG's logical_date differs from when it actually runs:</p>
+
+                <div class="diagram-container">
+                    <svg width="750" height="120" viewBox="0 0 750 120">
+                        <defs>
+                            <linearGradient id="vg1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                <stop offset="100%" style="stop-color:#0891b2"/>
+                            </linearGradient>
+                            <marker id="ar1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <polygon points="0 0, 8 3, 0 6" fill="#0891b2"/>
+                            </marker>
+                        </defs>
+                        <rect x="10" y="50" width="100" height="40" rx="8" fill="#e0f2fe"/>
+                        <text x="60" y="75" text-anchor="middle" fill="#0369a1" font-size="12" font-weight="600">Mon 00:00</text>
+                        <rect x="120" y="50" width="100" height="40" rx="8" fill="#e0f2fe"/>
+                        <text x="170" y="75" text-anchor="middle" fill="#0369a1" font-size="12" font-weight="600">Tue 00:00</text>
+                        <line x1="220" y1="70" x2="280" y2="70" stroke="#0e7490" stroke-width="2" marker-end="url(#ar1)"/>
+                        <rect x="290" y="40" width="140" height="60" rx="10" fill="url(#vg1)"/>
+                        <text x="360" y="68" text-anchor="middle" fill="white" font-size="11">DAG Run</text>
+                        <text x="360" y="88" text-anchor="middle" fill="white" font-size="10">logical_date = Mon 00:00</text>
+                        <text x="360" y="105" text-anchor="middle" fill="white" font-size="10">Runs: Tue 06:00</text>
+                        <rect x="450" y="50" width="120" height="40" rx="8" fill="#fef3c7"/>
+                        <text x="510" y="75" text-anchor="middle" fill="#92400e" font-size="11">Tue 06:00</text>
+                        <text x="375" y="20" text-anchor="middle" fill="#475569" font-size="12">data_interval: Mon 00:00 → Tue 00:00 | Actual run: Tue 06:00</text>
+                    </svg>
+                    <p class="diagram-caption">For Monday's data: logical_date is Mon 00:00, but the run happens Tuesday morning</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-braille"></i> Cron Expression Visual Decoder</h2>
+                <p>The 5 fields of a cron expression with examples:</p>
+
+                <div class="diagram-container">
+                    <svg width="700" height="180" viewBox="0 0 700 180">
+                        <rect x="20" y="20" width="120" height="35" rx="8" fill="#dbeafe"/>
+                        <text x="80" y="42" text-anchor="middle" font-size="12" font-weight="700">minute</text>
+                        <rect x="160" y="20" width="120" height="35" rx="8" fill="#dbeafe"/>
+                        <text x="220" y="42" text-anchor="middle" font-size="12" font-weight="700">hour</text>
+                        <rect x="300" y="20" width="120" height="35" rx="8" fill="#dbeafe"/>
+                        <text x="360" y="42" text-anchor="middle" font-size="12" font-weight="700">day</text>
+                        <rect x="440" y="20" width="120" height="35" rx="8" fill="#dbeafe"/>
+                        <text x="500" y="42" text-anchor="middle" font-size="12" font-weight="700">month</text>
+                        <rect x="580" y="20" width="120" height="35" rx="8" fill="#dbeafe"/>
+                        <text x="640" y="42" text-anchor="middle" font-size="12" font-weight="700">dow</text>
+                        <text x="80" y="90" text-anchor="middle" font-family="monospace" font-size="14">0</text>
+                        <text x="220" y="90" text-anchor="middle" font-family="monospace" font-size="14">9</text>
+                        <text x="360" y="90" text-anchor="middle" font-family="monospace" font-size="14">*</text>
+                        <text x="500" y="90" text-anchor="middle" font-family="monospace" font-size="14">*</text>
+                        <text x="640" y="90" text-anchor="middle" font-family="monospace" font-size="14">MON</text>
+                        <text x="350" y="130" text-anchor="middle" fill="#64748b" font-size="13">= Every Monday at 9:00 AM</text>
+                        <text x="80" y="165" text-anchor="middle" fill="#64748b" font-size="10">0-59</text>
+                        <text x="220" y="165" text-anchor="middle" fill="#64748b" font-size="10">0-23</text>
+                        <text x="360" y="165" text-anchor="middle" fill="#64748b" font-size="10">1-31</text>
+                        <text x="500" y="165" text-anchor="middle" fill="#64748b" font-size="10">1-12</text>
+                        <text x="640" y="165" text-anchor="middle" fill="#64748b" font-size="10">0-7</text>
+                    </svg>
+                    <p class="diagram-caption">0 9 * * MON decoded: minute=0, hour=9, every day, every month, Mondays only</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-history"></i> Backfilling Timeline</h2>
+                <p>When you backfill, Airflow queues multiple runs in order:</p>
+
+                <div class="flow-animation">
+                    <div class="flow-steps">
+                        <div class="flow-node">Jan 1</div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-node">Jan 2</div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-node">Jan 3</div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-node">...</div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-node">Today</div>
+                    </div>
+                    <p style="text-align:center; margin-top:15px; color:#0e7490; font-weight:600;">airflow dags backfill -s 2024-01-01 -e 2024-03-15 my_dag</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-calendar-alt"></i> data_interval_start and data_interval_end</h2>
+                <p>For a daily DAG processing Monday's data:</p>
+
+                <div class="diagram-container">
+                    <svg width="650" height="100" viewBox="0 0 650 100">
+                        <rect x="50" y="30" width="250" height="45" rx="10" fill="#dcfce7"/>
+                        <text x="175" y="58" text-anchor="middle" font-weight="700" fill="#166534">data_interval_start</text>
+                        <text x="175" y="75" text-anchor="middle" font-size="12">Mon 2024-01-08 00:00</text>
+                        <line x1="300" y1="52" x2="350" y2="52" stroke="#22c55e" stroke-width="2"/>
+                        <text x="325" y="45" font-size="10" fill="#64748b">period</text>
+                        <rect x="360" y="30" width="250" height="45" rx="10" fill="#fef3c7"/>
+                        <text x="485" y="58" text-anchor="middle" font-weight="700" fill="#92400e">data_interval_end</text>
+                        <text x="485" y="75" text-anchor="middle" font-size="12">Tue 2024-01-09 00:00</text>
+                    </svg>
+                    <p class="diagram-caption">Monday's data = events from Mon 00:00 (inclusive) to Tue 00:00 (exclusive)</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-balance-scale"></i> catchup=True vs catchup=False</h2>
+
+                <div class="comparison-cards">
+                    <div class="compare-card">
+                        <h4>catchup=True</h4>
+                        <p style="font-size: 0.95em;">Deploy DAG with start_date 30 days ago → 30 runs queue immediately (Jan 1–30)</p>
+                        <div style="margin-top: 15px; display: flex; gap: 5px; flex-wrap: wrap;">
+                            <span style="background:#22c55e; color:white; padding: 4px 10px; border-radius: 8px; font-size: 12px;">Run 1</span>
+                            <span style="background:#22c55e; color:white; padding: 4px 10px; border-radius: 8px; font-size: 12px;">Run 2</span>
+                            <span style="background:#22c55e; color:white; padding: 4px 10px; border-radius: 8px; font-size: 12px;">...</span>
+                            <span style="background:#22c55e; color:white; padding: 4px 10px; border-radius: 8px; font-size: 12px;">Run 30</span>
+                        </div>
+                    </div>
+                    <div class="compare-card">
+                        <h4>catchup=False</h4>
+                        <p style="font-size: 0.95em;">Deploy same DAG → only 1 run queues (today). No past runs.</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background:#06b6d4; color:white; padding: 4px 10px; border-radius: 8px; font-size: 12px;">Run (today only)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE ==================== -->
+        <div class="tab-content" id="tab-code">
+
+            <div class="section">
+                <h2><i class="fas fa-code"></i> DAG with @daily Schedule</h2>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.operators.bash <span class="keyword">import</span> BashOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"daily_user_events"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"@daily"</span>,
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    process_events = <span class="function">BashOperator</span>(
+        task_id=<span class="string">"process_events"</span>,
+        bash_command=<span class="string">'echo "Processing {{ ds }}"'</span>,
+    )</pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-code"></i> DAG with Cron (Every Monday 9am)</h2>
+
+                <div class="code-block">
+<pre><span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"weekly_report"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="string">"0 9 * * MON"</span>,  <span class="comment"># Every Monday at 9:00 AM</span>
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+    <span class="comment"># ... tasks ...</span></pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-code"></i> DAG with timedelta (Every 3 Hours)</h2>
+
+                <div class="code-block">
+<pre><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta
+
+<span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"hourly_sync"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    schedule=<span class="function">timedelta</span>(hours=<span class="number">3</span>),
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+    <span class="comment"># Runs every 3 hours</span></pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-code"></i> DAG with start_date and end_date</h2>
+
+                <div class="code-block">
+<pre><span class="keyword">with</span> <span class="function">DAG</span>(
+    dag_id=<span class="string">"campaign_2024_q1"</span>,
+    start_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    end_date=<span class="function">datetime</span>(<span class="number">2024</span>, <span class="number">3</span>, <span class="number">31</span>),
+    schedule=<span class="string">"@daily"</span>,
+) <span class="keyword">as</span> dag:
+    <span class="comment"># Will stop scheduling after March 31, 2024</span></pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-code"></i> Execution Context in Tasks</h2>
+
+                <p>Use Jinja templating to pass dates into your tasks:</p>
+
+                <div class="code-block">
+<pre><span class="comment"># {{ ds }} = logical_date as YYYY-MM-DD string</span>
+<span class="comment"># {{ data_interval_start }} = start of data period</span>
+<span class="comment"># {{ data_interval_end }} = end of data period</span>
+
+process = <span class="function">BashOperator</span>(
+    task_id=<span class="string">"process"</span>,
+    bash_command=<span class="string">'''
+        echo "Processing data for {{ ds }}"
+        echo "Interval: {{ data_interval_start }} to {{ data_interval_end }}"
+    '''</span>,
+)
+
+<span class="comment"># In PythonOperator, access via context:</span>
+<span class="keyword">def</span> <span class="function">my_task</span>(**context):
+    ds = context[<span class="string">"ds"</span>]
+    interval_start = context[<span class="string">"data_interval_start"</span>]
+    interval_end = context[<span class="string">"data_interval_end"</span>]
+    <span class="keyword">return</span> <span class="string">f"Processed {ds}"</span></pre>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-terminal"></i> Backfill Command</h2>
+
+                <div class="code-block">
+<pre><span class="comment"># Backfill from Jan 1 to Mar 15, 2024</span>
+<span class="function">airflow</span> dags backfill -s <span class="number">2024</span>-<span class="number">01</span>-<span class="number">01</span> -e <span class="number">2024</span>-<span class="number">03</span>-<span class="number">15</span> daily_user_events
+
+<span class="comment"># Backfill from a single date (no -e)</span>
+<span class="function">airflow</span> dags backfill -s <span class="number">2024</span>-<span class="number">01</span>-<span class="number">01</span> daily_user_events
+
+<span class="comment"># Backfill and run tasks even if they already succeeded (re-run)</span>
+<span class="function">airflow</span> dags backfill -s <span class="number">2024</span>-<span class="number">01</span>-<span class="number">01</span> --reset-dagruns daily_user_events</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PRACTICE ==================== -->
+        <div class="tab-content" id="tab-practice">
+
+            <div class="section">
+                <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+
+                <h3>Exercise 1: Write a Cron Expression</h3>
+                <div class="analogy-box">
+                    <p>Write the cron expression for: <strong>"Every day at 6:30 AM"</strong></p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <p><code>30 6 * * *</code> — minute=30, hour=6, every day/month/dow</p>
+                </div>
+
+                <h3>Exercise 2: Predict the Execution Date</h3>
+                <div class="analogy-box">
+                    <p>A daily DAG with <code>schedule="@daily"</code> runs at 6am on <strong>Wednesday, March 13, 2024</strong>. What is the <code>logical_date</code> (data_interval_start) for this run?</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <p><strong>2024-03-12 00:00:00</strong> (Tuesday midnight). The run on Wednesday 6am processes Tuesday's data. The data interval is Tuesday 00:00 → Wednesday 00:00.</p>
+                </div>
+
+                <h3>Exercise 3: Another Cron</h3>
+                <div class="analogy-box">
+                    <p>Write the cron expression for: <strong>"Every 15 minutes"</strong></p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <p><code>*/15 * * * *</code> — step of 15 in the minute field, every hour, every day, etc.</p>
+                </div>
+
+                <h3>Exercise 4: Incremental DAG Setup</h3>
+                <div class="analogy-box">
+                    <p>You have a table <code>user_events</code> with a <code>event_time</code> timestamp. Write the WHERE clause for a daily incremental DAG so each run processes only that day's events. Use Airflow template variables.</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="code-block">
+<pre><span class="string">WHERE event_time >= '{{ data_interval_start }}' AND event_time < '{{ data_interval_end }}'</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: QUIZ ==================== -->
+        <div class="tab-content" id="tab-quiz">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Module 3 Quiz</h2>
+
+                <div class="interactive-quiz">
+                    <h4>1. What does scheduling mean in Airflow?</h4>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> Manually triggering DAGs from the UI</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="true"><input type="radio" name="q1"> Running DAGs automatically at fixed intervals</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> Running DAGs only when data arrives</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> Sending alerts when tasks fail</label>
+                    <p class="quiz-feedback" id="fb-q1"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>2. What cron expression means "every hour"?</h4>
+                    <label class="quiz-option" data-quiz="q2" data-correct="true"><input type="radio" name="q2"> 0 * * * *</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> * 0 * * *</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> 0 0 * * *</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> @hourly</label>
+                    <p class="quiz-feedback" id="fb-q2"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>3. A daily DAG runs on Tuesday at 6am. What data does it process?</h4>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Tuesday's data</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="true"><input type="radio" name="q3"> Monday's data</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> Both Monday and Tuesday</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> No data (it's a test run)</label>
+                    <p class="quiz-feedback" id="fb-q3"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>4. What is logical_date (formerly execution_date)?</h4>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> The exact time the DAG run started</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="true"><input type="radio" name="q4"> The start of the data interval being processed</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> The end of the data interval</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> The next scheduled run time</label>
+                    <p class="quiz-feedback" id="fb-q4"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>5. What does catchup=False do?</h4>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Runs the DAG for all past dates since start_date</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="true"><input type="radio" name="q5"> Schedules only from "now" onward, skipping past dates</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Prevents the DAG from ever running</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> Disables backfilling entirely</label>
+                    <p class="quiz-feedback" id="fb-q5"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>6. What command do you use to backfill a DAG?</h4>
+                    <label class="quiz-option" data-quiz="q6" data-correct="true"><input type="radio" name="q6"> airflow dags backfill</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> airflow dags trigger</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> airflow tasks run</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> airflow scheduler backfill</label>
+                    <p class="quiz-feedback" id="fb-q6"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>7. Which template variable gives you the logical date as YYYY-MM-DD?</h4>
+                    <label class="quiz-option" data-quiz="q7" data-correct="true"><input type="radio" name="q7"> {{ ds }}</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> {{ execution_date }}</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> {{ run_id }}</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> {{ today }}</label>
+                    <p class="quiz-feedback" id="fb-q7"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>8. Incremental processing means:</h4>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Running the DAG faster</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="true"><input type="radio" name="q8"> Processing only new data since the last run</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Running the DAG more frequently</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> Skipping failed tasks</label>
+                    <p class="quiz-feedback" id="fb-q8"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="first-dag.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 2: Your First DAG</a>
+            <a href="operators.html" class="nav-btn next">Module 4: Operators <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const quizId = this.dataset.quiz;
+            const isCorrect = this.dataset.correct === 'true';
+            document.querySelectorAll(`[data-quiz="${quizId}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                if (o.dataset.correct === 'true') o.classList.add('correct');
+            });
+            if (!isCorrect) this.classList.add('wrong');
+            const fb = document.getElementById('fb-' + quizId);
+            if (fb) {
+                fb.style.display = 'block';
+                fb.textContent = isCorrect ? 'Correct! Well done!' : 'Not quite. The correct answer is highlighted in green.';
+                fb.className = 'quiz-feedback ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 300);
+    });
+    </script>
+    <script src="../js/code-copy.js" defer></script>
+</body>
+</html>

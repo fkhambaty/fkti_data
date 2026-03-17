@@ -2,39 +2,22 @@
  * Razorpay Checkout for Pro subscription.
  * Requires: window.RAZORPAY_KEY_ID, window.SUPABASE_URL, window.SUPABASE_ANON_KEY,
  * and window.FKTI_Auth.getSession() (supabase-auth.js).
- * Call FKTI_RazorpayCheckout.openProCheckout() when user clicks Upgrade to Pro.
  */
 (function () {
     'use strict';
 
-    function getBasePath() {
-        if (window.FKTI_BASE_URL) return window.FKTI_BASE_URL.replace(/\/$/, '');
-        var path = window.location.pathname || '';
-        var parts = path.split('/').filter(Boolean);
-        var reserved = ['auth', 'css', 'js', 'api'];
-        if (parts.length === 0 || reserved.indexOf(parts[0]) !== -1) return '';
-        if (parts.length > 1) return '/' + parts[0];
-        return '';
-    }
-
-    function resolveUrl(relative) {
-        var base = getBasePath();
-        return base ? base + '/' + relative.replace(/^\//, '') : relative;
-    }
-
     function authPageUrl(page) {
-        var base = getBasePath();
-        var path = base ? base + '/auth/' + page : '/auth/' + page;
-        return window.location.origin + path;
+        return window.location.origin + '/auth/' + page;
     }
 
     function openProCheckout() {
         var keyId = window.RAZORPAY_KEY_ID;
         var supabaseUrl = (window.SUPABASE_URL || '').replace(/\/$/, '');
+        var anonKey = window.SUPABASE_ANON_KEY || '';
         var auth = window.FKTI_Auth;
 
-        if (!keyId) {
-            fallbackToPaymentLink();
+        if (!keyId || !supabaseUrl || !anonKey) {
+            redirectToProfileWithError('Payment not configured. Please contact support.');
             return;
         }
 
@@ -60,47 +43,35 @@
 
             var callbackUrl = authPageUrl('profile.html') + '?subscription=success';
 
-            if (supabaseUrl && supabaseUrl.indexOf('supabase') !== -1) {
-                fetch(supabaseUrl + '/functions/v1/create-subscription', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + session.access_token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ user_id: userId })
-                })
-                    .then(function (r) {
-                        return r.text().then(function (text) {
-                            var data;
-                            try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
-                            return { ok: r.ok, status: r.status, data: data, text: text };
-                        });
-                    })
-                    .then(function (result) {
-                        var data = result.data;
-                        if (result.ok && data.subscription_id) {
-                            openRazorpay(keyId, data.subscription_id, name, email, contact, callbackUrl, userId);
-                        } else {
-                            var msg = (data && data.error) ? data.error : 'Could not start subscription. Please try again or pay directly from your profile.';
-                            redirectToProfileWithError(msg);
-                        }
-                    })
-                    .catch(function (err) {
-                        redirectToProfileWithError(err && err.message ? err.message : 'Could not start subscription. Please check your connection or pay directly from your profile.');
+            fetch(supabaseUrl + '/functions/v1/create-subscription', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + session.access_token,
+                    'apikey': anonKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId })
+            })
+                .then(function (r) {
+                    return r.text().then(function (text) {
+                        var data;
+                        try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
+                        return { ok: r.ok, status: r.status, data: data, text: text };
                     });
-            } else {
-                redirectToProfileWithError('Subscription service not configured. Please try the direct payment link below.');
-            }
+                })
+                .then(function (result) {
+                    var data = result.data;
+                    if (result.ok && data.subscription_id) {
+                        openRazorpay(keyId, data.subscription_id, name, email, contact, callbackUrl, userId);
+                    } else {
+                        var msg = (data && (data.error || data.message)) || ('Server returned ' + result.status + '. Please try again.');
+                        redirectToProfileWithError(msg);
+                    }
+                })
+                .catch(function (err) {
+                    redirectToProfileWithError(err && err.message ? err.message : 'Network error. Please check your connection and try again.');
+                });
         });
-    }
-
-    function fallbackToPaymentLink() {
-        var link = window.RAZORPAY_SUBSCRIPTION_LINK || '';
-        if (link) {
-            window.location.href = link;
-        } else {
-            redirectToProfileWithError('Payment link not configured. Please contact support.');
-        }
     }
 
     function redirectToProfileWithError(message) {
@@ -114,31 +85,21 @@
             s.src = 'https://checkout.razorpay.com/v1/checkout.js';
             s.async = true;
             document.head.appendChild(s);
-            s.onload = function () {
-                doOpen();
-            };
+            s.onload = function () { doOpen(); };
         } else {
             doOpen();
         }
 
         function doOpen() {
-            var base = getBasePath();
-            var logoPath = base ? base + '/logo.png' : '/logo.png';
             var options = {
                 key: keyId,
                 subscription_id: subscriptionId,
                 name: 'Data For Dummies',
                 description: 'Pro — ₹499/month',
-                image: window.location.origin + logoPath,
+                image: window.location.origin + '/logo.png',
                 callback_url: callbackUrl,
-                prefill: {
-                    name: name,
-                    email: email,
-                    contact: contact
-                },
-                notes: {
-                    user_id: userId
-                },
+                prefill: { name: name, email: email, contact: contact },
+                notes: { user_id: userId },
                 theme: { color: '#4f46e5' }
             };
             var rzp = new Razorpay(options);

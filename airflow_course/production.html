@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 14: Production Operations | FKTI Airflow Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a { color: #0891b2; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #0e7490; }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #0e7490 0%, #0891b2 50%, #06b6d4 100%);
+            border-radius: 25px;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .tab-btn:hover { background: #f0fdfa; color: #0891b2; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section {
+            background: white;
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            border: 3px solid #a5f3fc;
+        }
+        .section h2 { color: #0e7490; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #cffafe; }
+        .section h3 { color: #0891b2; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #06b6d4; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+
+        .eli5-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px dashed #f59e0b;
+        }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+
+        .visual-example {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #22c55e;
+            text-align: center;
+        }
+        .visual-example h4 { color: #166534; font-size: 1.2em; margin-bottom: 20px; }
+
+        .step-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; font-size: 1.1em; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+
+        .important-box {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #ef4444;
+        }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+
+        .key-point {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 3px solid #14b8a6;
+        }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+
+        .code-block {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .code-block .string { color: #4ade80; }
+        .code-block .number { color: #fb923c; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .data-table th { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0fdfa; }
+        .data-table tr:hover { background: #ccfbf1; }
+
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .compare-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .compare-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        .compare-card h4 { color: #0891b2; margin-bottom: 15px; }
+
+        .diagram-container {
+            background: #f8fafc;
+            border: 2px solid #a5f3fc;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-weight: 600; color: #475569; margin-top: 15px; font-size: 1em; }
+
+        .interactive-quiz {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin: 25px 0;
+            border: 2px solid #0891b2;
+        }
+        .interactive-quiz h4 { color: #0e7490; margin-bottom: 15px; }
+        .quiz-option {
+            display: block;
+            padding: 14px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #a5f3fc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #06b6d4; background: #f0fdfa; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 3px solid #3b82f6;
+        }
+        .analogy-box h4 { color: #1d4ed8; font-size: 1.2em; margin-bottom: 15px; }
+        .analogy-box p { color: #1e3a5f; }
+
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .section { padding: 25px 20px; }
+            .tab-btn { min-width: 90px; padding: 10px 12px; font-size: 0.85em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="security-cloud.html">Module 15 <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 14 OF 15</span>
+            <h1><i class="fas fa-server"></i> Production Operations</h1>
+            <p>Executors, monitoring, logging, and scaling!</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <!-- ==================== TAB: LEARN ==================== -->
+        <div class="tab-content active" id="tab-learn">
+
+            <div class="section">
+                <h2><i class="fas fa-cogs"></i> Executor Types</h2>
+
+                <p>The <strong>executor</strong> is the component that decides <em>where</em> and <em>how</em> your tasks run. Choosing the right executor is critical for production: it affects parallelism, reliability, and cost.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Imagine a restaurant kitchen. The <strong>executor</strong> is the head chef who decides who does what:</p>
+                    <p><strong>Sequential</strong> = One chef does every dish, one at a time. Slow but simple.</p>
+                    <p><strong>Local</strong> = Several chefs in the same kitchen, each doing one dish at a time.</p>
+                    <p><strong>Celery</strong> = Many kitchens (workers) in different places, all taking orders from one central board.</p>
+                    <p><strong>Kubernetes</strong> = The kitchen can grow or shrink automatically: more chefs when it's busy, fewer when it's quiet.</p>
+                </div>
+
+                <h3>Executor Comparison</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Executor</th><th>Use Case</th><th>Parallelism</th><th>Production?</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>SequentialExecutor</strong></td><td>Learning, local dev</td><td>1 task at a time</td><td>No</td></tr>
+                        <tr><td><strong>LocalExecutor</strong></td><td>Single machine, small teams</td><td>Multiple tasks (multiprocessing)</td><td>Yes (small scale)</td></tr>
+                        <tr><td><strong>CeleryExecutor</strong></td><td>Distributed workers, high throughput</td><td>Many workers, horizontal scale</td><td>Yes</td></tr>
+                        <tr><td><strong>KubernetesExecutor</strong></td><td>Cloud-native, auto-scaling</td><td>Pods per task, scale to zero</td><td>Yes</td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>SequentialExecutor</strong> runs one task after another in the same process. No parallelism — good only for trying Airflow on your laptop.</p>
+                <p><strong>LocalExecutor</strong> uses a database as a queue and runs tasks in subprocesses on the same machine. Simple to set up; limited by one box.</p>
+                <p><strong>CeleryExecutor</strong> uses Celery workers and a message broker (e.g. Redis or RabbitMQ). You add more worker machines to run more tasks — classic production choice.</p>
+                <p><strong>KubernetesExecutor</strong> creates a new Kubernetes Pod for each task and tears it down when done. Perfect for cloud, isolation, and scaling with cluster size.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-database"></i> Metastore Setup</h2>
+
+                <p>Airflow's <strong>metadata database</strong> (metastore) stores DAG definitions, task states, run history, connections, variables, and more. In production it must be robust and backed up.</p>
+
+                <h3>Recommendations</h3>
+                <div class="step-box">
+                    <h4>Metastore Best Practices</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Use PostgreSQL or MySQL</h5>
+                            <p>SQLite is only for development. Production needs PostgreSQL (preferred) or MySQL for concurrent scheduler and worker access.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Connection pooling</h5>
+                            <p>Use PgBouncer or similar to avoid exhausting DB connections when you have many workers.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Backups</h5>
+                            <p>Schedule regular backups. Restoring from a backup is the main recovery path after a metastore failure.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> Key Takeaway</h4>
+                    <p>The metastore is the single source of truth. If it's slow or down, the whole Airflow deployment is affected. Treat it like a critical production database.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-file-alt"></i> Logging</h2>
+
+                <p>Task logs tell you what happened during a run. In production you need to know <em>where</em> logs go and how to keep them when workers or pods disappear.</p>
+
+                <h3>Where Logs Go</h3>
+                <p>By default, logs are written to the <strong>local filesystem</strong> of the worker that ran the task (e.g. <code>AIRFLOW_HOME/logs/dag_id/task_id/date/run.log</code>). That's fine for a single machine; it's a problem when you have many workers or ephemeral pods.</p>
+
+                <h3>Remote Logging</h3>
+                <p>Configure <strong>remote logging</strong> so logs are stored in a central, durable place:</p>
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Cloud Storage:</strong> S3, GCS, or Azure Blob — same place you might store data; logs survive worker restarts.</li>
+                    <li style="margin-bottom: 8px;"><strong>Elasticsearch (or similar):</strong> For search and dashboards over log content.</li>
+                </ul>
+                <p>In <code>airflow.cfg</code> you set the logging section to use a handler that writes to your chosen backend (e.g. <code>remote_base_log_folder</code> for S3/GCS). The UI then fetches logs from that location instead of the local disk.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>Local logs are like sticky notes on each chef's station — if the chef leaves, the notes are gone. Remote logging is like writing everything in a shared notebook in the office: anyone can look up what happened, even after the kitchen is reorganized.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-chart-line"></i> Monitoring</h2>
+
+                <p>Production Airflow needs visibility into health and performance. The Airflow UI is a start; for serious ops you add metrics and dashboards.</p>
+
+                <h3>Prometheus + Grafana</h3>
+                <p>Airflow can expose <strong>Prometheus metrics</strong> (task success/failure counts, DAG parse times, scheduler loop duration, etc.). Prometheus scrapes these; Grafana displays them in dashboards. You can track:</p>
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 8px;">Number of running vs queued tasks</li>
+                    <li style="margin-bottom: 8px;">Task duration and failure rates per DAG or task</li>
+                    <li style="margin-bottom: 8px;">Scheduler and worker health</li>
+                </ul>
+
+                <h3>What to Monitor</h3>
+                <div class="step-box">
+                    <h4>Key Metrics</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Scheduler lag</h5>
+                            <p>How far behind "now" the scheduler is. Growing lag means tasks are being delayed.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Queue depth</h5>
+                            <p>Number of tasks waiting for a worker. Consistently high queue = need more workers or faster tasks.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Task failure rate</h5>
+                            <p>Failures per DAG or globally. Spikes often indicate upstream or config issues.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-bell"></i> Alerting</h2>
+
+                <p>When something goes wrong, you want to know immediately. Airflow supports alerting <strong>on failure</strong> (and other events) so you're notified instead of discovering broken pipelines later.</p>
+
+                <h3>How Alerting Works</h3>
+                <p>You can configure:</p>
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Email:</strong> Send emails on task or DAG failure (built-in).</li>
+                    <li style="margin-bottom: 8px;"><strong>Slack/Teams:</strong> Use notifiers or custom callbacks to post to Slack or Microsoft Teams.</li>
+                    <li style="margin-bottom: 8px;"><strong>PagerDuty / Opsgenie:</strong> For on-call escalation.</li>
+                </ul>
+                <p>At the DAG or task level you set <code>on_failure_callback</code> (and optionally <code>on_success_callback</code>) to call a function that sends the alert. You can also use <strong>SLA misses</strong>: define a time limit for a task or DAG; if it's exceeded, Airflow can trigger an SLA miss callback (e.g. email or webhook).</p>
+
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Don't Skip Alerting</h4>
+                    <p>In production, pipelines run unattended. Without alerting, a single failing task or stuck scheduler can go unnoticed until users or downstream systems complain. Set up at least email or Slack on failure for critical DAGs.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-expand-arrows-alt"></i> Scaling</h2>
+
+                <p>Scaling means handling more DAGs and more tasks without everything slowing down. You scale <strong>workers</strong> and, in some setups, <strong>schedulers</strong>.</p>
+
+                <h3>Multiple Workers</h3>
+                <p>With <strong>CeleryExecutor</strong> or <strong>LocalExecutor</strong>, you run multiple worker processes (or machines). More workers = more tasks running at once. Tune the number based on queue depth and CPU/memory. Avoid running more workers than your queue typically needs — it wastes resources and can overload the metastore.</p>
+
+                <h3>Multiple Schedulers</h3>
+                <p>Airflow 2.x supports <strong>HA (high availability) schedulers</strong>: multiple scheduler processes with a distributed lock so only one schedules at a time. If one scheduler dies, another takes over. This improves availability; it doesn't make scheduling faster (only one scheduler is active).</p>
+
+                <h3>KubernetesExecutor Scaling</h3>
+                <p>With <strong>KubernetesExecutor</strong>, each task runs in its own Pod. Scaling is handled by the cluster: you add nodes or use cluster autoscaler. No need to manually add Airflow workers — the cluster grows when the queue grows.</p>
+
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p>More workers = more chefs in the kitchen. Multiple schedulers = having a backup manager so if one is sick, the other can still assign work. Kubernetes scaling = the restaurant can open extra pop-up kitchens when there's a rush and close them when it's quiet.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-tachometer-alt"></i> Performance Tuning</h2>
+
+                <p>Small config changes can have a big impact on throughput and stability.</p>
+
+                <h3>Common Knobs</h3>
+                <ul style="margin: 15px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>parallelism</strong> — Max number of task instances that can run across the whole Airflow deployment.</li>
+                    <li style="margin-bottom: 8px;"><strong>dag_concurrency</strong> — Max concurrent task instances per DAG.</li>
+                    <li style="margin-bottom: 8px;"><strong>max_active_runs_per_dag</strong> — How many DAG runs (per DAG) can be active at once; prevents one DAG from flooding the queue.</li>
+                    <li style="margin-bottom: 8px;"><strong>scheduler_heartbeat_sec</strong> — How often the scheduler reports that it's alive; tune if you see lock issues.</li>
+                    <li style="margin-bottom: 8px;"><strong>min_file_process_interval</strong> — How often DAG files are re-parsed; increase to reduce scheduler load if you have many DAG files.</li>
+                </ul>
+                <p>Start with defaults, then adjust based on metrics: if the queue is always full, increase parallelism or add workers; if the scheduler is CPU-bound, increase min_file_process_interval or reduce DAG complexity.</p>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-lightbulb"></i> Pro Tip</h4>
+                    <p>Change one thing at a time and watch metrics. Tuning is iterative — what works for 10 DAGs may not work for 500.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: VISUAL ==================== -->
+        <div class="tab-content" id="tab-visual">
+
+            <div class="section">
+                <h2><i class="fas fa-balance-scale"></i> Executor Comparison</h2>
+                <p>How each executor runs tasks: from one at a time to many machines.</p>
+
+                <div class="diagram-container">
+                    <svg width="700" height="280" viewBox="0 0 700 280">
+                        <defs>
+                            <linearGradient id="seqGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#94a3b8"/>
+                                <stop offset="100%" style="stop-color:#64748b"/>
+                            </linearGradient>
+                            <linearGradient id="localGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                <stop offset="100%" style="stop-color:#0891b2"/>
+                            </linearGradient>
+                            <linearGradient id="celeryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#22c55e"/>
+                                <stop offset="100%" style="stop-color:#16a34a"/>
+                            </linearGradient>
+                            <linearGradient id="k8sGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                <stop offset="100%" style="stop-color:#7c3aed"/>
+                            </linearGradient>
+                            <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                            </marker>
+                        </defs>
+                        <!-- Sequential -->
+                        <text x="90" y="25" text-anchor="middle" fill="#475569" font-weight="700" font-size="13">Sequential</text>
+                        <rect x="20" y="35" width="140" height="50" rx="10" fill="url(#seqGrad)"/>
+                        <text x="90" y="65" text-anchor="middle" fill="white" font-size="12">1 process</text>
+                        <text x="90" y="80" text-anchor="middle" fill="white" font-size="11">1 task at a time</text>
+                        <line x1="90" y1="85" x2="90" y2="105" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+                        <rect x="50" y="108" width="80" height="35" rx="8" fill="#e2e8f0"/>
+                        <text x="90" y="130" text-anchor="middle" fill="#475569" font-size="10">Task 1 → 2 → 3</text>
+
+                        <!-- Local -->
+                        <text x="270" y="25" text-anchor="middle" fill="#475569" font-weight="700" font-size="13">Local</text>
+                        <rect x="200" y="35" width="140" height="50" rx="10" fill="url(#localGrad)"/>
+                        <text x="270" y="62" text-anchor="middle" fill="white" font-size="12">1 machine</text>
+                        <text x="270" y="78" text-anchor="middle" fill="white" font-size="11">N processes</text>
+                        <line x1="270" y1="85" x2="270" y2="105" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+                        <rect x="215" y="108" width="110" height="35" rx="8" fill="#cffafe"/>
+                        <text x="270" y="130" text-anchor="middle" fill="#0e7490" font-size="10">Tasks in parallel</text>
+
+                        <!-- Celery -->
+                        <text x="450" y="25" text-anchor="middle" fill="#475569" font-weight="700" font-size="13">Celery</text>
+                        <rect x="380" y="35" width="140" height="50" rx="10" fill="url(#celeryGrad)"/>
+                        <text x="450" y="62" text-anchor="middle" fill="white" font-size="12">Broker + Workers</text>
+                        <text x="450" y="78" text-anchor="middle" fill="white" font-size="11">Many machines</text>
+                        <line x1="450" y1="85" x2="450" y2="105" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+                        <rect x="395" y="108" width="110" height="35" rx="8" fill="#dcfce7"/>
+                        <text x="450" y="130" text-anchor="middle" fill="#166534" font-size="10">Horizontal scale</text>
+
+                        <!-- K8s -->
+                        <text x="630" y="25" text-anchor="middle" fill="#475569" font-weight="700" font-size="13">Kubernetes</text>
+                        <rect x="560" y="35" width="140" height="50" rx="10" fill="url(#k8sGrad)"/>
+                        <text x="630" y="62" text-anchor="middle" fill="white" font-size="12">Pod per task</text>
+                        <text x="630" y="78" text-anchor="middle" fill="white" font-size="11">Auto-scale</text>
+                        <line x1="630" y1="85" x2="630" y2="105" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+                        <rect x="575" y="108" width="110" height="35" rx="8" fill="#ede9fe"/>
+                        <text x="630" y="130" text-anchor="middle" fill="#5b21b6" font-size="10">Cloud-native</text>
+
+                        <!-- Monitoring stack -->
+                        <text x="350" y="175" text-anchor="middle" fill="#0e7490" font-weight="700" font-size="16">Monitoring Stack</text>
+                        <rect x="80" y="190" width="120" height="70" rx="12" fill="#1e293b"/>
+                        <text x="140" y="218" text-anchor="middle" fill="#e2e8f0" font-size="12">Airflow</text>
+                        <text x="140" y="238" text-anchor="middle" fill="#94a3b8" font-size="10">(metrics endpoint)</text>
+                        <line x1="200" y1="225" x2="260" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+                        <rect x="260" y="190" width="120" height="70" rx="12" fill="#e67700"/>
+                        <text x="320" y="218" text-anchor="middle" fill="white" font-size="12">Prometheus</text>
+                        <text x="320" y="238" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">(scrape & store)</text>
+                        <line x1="380" y1="225" x2="440" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+                        <rect x="440" y="190" width="120" height="70" rx="12" fill="#f46800"/>
+                        <text x="500" y="218" text-anchor="middle" fill="white" font-size="12">Grafana</text>
+                        <text x="500" y="238" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">(dashboards)</text>
+                        <line x1="560" y1="225" x2="620" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+                        <rect x="620" y="190" width="120" height="70" rx="12" fill="#22c55e"/>
+                        <text x="680" y="218" text-anchor="middle" fill="white" font-size="12">Alerts</text>
+                        <text x="680" y="238" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">(Slack/PagerDuty)</text>
+                    </svg>
+                    <p class="diagram-caption">Top: Executor types. Bottom: Typical monitoring flow (Airflow → Prometheus → Grafana → Alerts)</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-project-diagram"></i> Monitoring Stack Diagram</h2>
+                <p>In production, Airflow feeds metrics into Prometheus; Grafana visualizes them; alerting notifies on thresholds.</p>
+
+                <div class="visual-example">
+                    <h4>Production Monitoring Flow</h4>
+                    <p><strong>Airflow</strong> (scheduler, workers) exposes /metrics → <strong>Prometheus</strong> scrapes and stores time-series → <strong>Grafana</strong> queries Prometheus and shows dashboards → <strong>Alertmanager</strong> (or Grafana alerts) sends to Slack, email, or PagerDuty when rules fire.</p>
+                    <p style="margin-top: 15px;">Logs can go in parallel: task logs → remote storage (S3/GCS) or to Elasticsearch for search. The Airflow UI reads logs from the configured backend.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: CODE ==================== -->
+        <div class="tab-content" id="tab-code">
+
+            <div class="section">
+                <h2><i class="fas fa-file-code"></i> airflow.cfg Snippets</h2>
+                <p>Key sections for production: executor, parallelism, and logging.</p>
+
+                <h3>Executor and Parallelism</h3>
+                <div class="code-block">
+<pre><span class="comment"># airflow.cfg — [core]</span>
+
+<span class="comment"># Use Celery for distributed workers (or LocalExecutor for single machine)</span>
+executor = CeleryExecutor
+
+<span class="comment"># Max task instances running across the whole deployment</span>
+parallelism = <span class="number">32</span>
+
+<span class="comment"># Max concurrent task instances per DAG</span>
+dag_concurrency = <span class="number">16</span>
+
+<span class="comment"># Max active DAG runs per DAG (prevents one DAG from filling the queue)</span>
+max_active_runs_per_dag = <span class="number">3</span></pre>
+                </div>
+
+                <h3>Executor-Specific Config (Celery)</h3>
+                <div class="code-block">
+<pre><span class="comment"># airflow.cfg — [celery]</span>
+
+broker_url = redis://redis:6379/0
+result_backend = db+postgresql://airflow:airflow@postgres/airflow
+
+<span class="comment"># Concurrency per worker (tasks per worker process)</span>
+worker_concurrency = <span class="number">4</span></pre>
+                </div>
+
+                <h3>Remote Logging (e.g. S3)</h3>
+                <div class="code-block">
+<pre><span class="comment"># airflow.cfg — [logging]</span>
+
+remote_logging = True
+remote_base_log_folder = s3://your-bucket/airflow-logs/
+remote_log_conn_id = aws_default
+encrypt_s3_logs = False</pre>
+                </div>
+
+                <h3>Prometheus Metrics</h3>
+                <div class="code-block">
+<pre><span class="comment"># Enable Prometheus metrics (Airflow 2.x)</span>
+<span class="comment"># In airflow.cfg [metrics] or via env:</span>
+
+<span class="comment"># Metrics are exposed at /metrics when using Prometheus Exporter or</span>
+<span class="comment"># with apache-airflow-providers-prometheus</span>
+
+<span class="comment"># Example: statsd_exporter or custom exporter can scrape:</span>
+<span class="comment"># - airflow_task_fail_total</span>
+<span class="comment"># - airflow_dag_processing_total_parse_time</span>
+<span class="comment"># - airflow_scheduler_heartbeat</span></pre>
+                </div>
+
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> Note</h4>
+                    <p>Exact config keys can vary by Airflow version. Always check the official <code>airflow.cfg</code> template for your version. Use environment variables (e.g. <code>AIRFLOW__CORE__EXECUTOR</code>) in containers instead of editing the file directly when possible.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PRACTICE ==================== -->
+        <div class="tab-content" id="tab-practice">
+
+            <div class="section">
+                <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+                <p>Try these to reinforce production operations. Use the Learn and Code tabs as reference.</p>
+
+                <h3>Exercise 1: Choose the Executor</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Your team has 50 DAGs, about 500 tasks per day, and runs everything on a single beefy server. You want parallelism but don't want to introduce Redis or Kubernetes yet.</p>
+                    <p><strong>Question:</strong> Which executor would you choose and why?</p>
+                </div>
+                <div class="eli5-box">
+                    <h4><i class="fas fa-lightbulb"></i> Hint</h4>
+                    <p>You need more than one task at a time (so not Sequential). You're on one machine and don't want extra infrastructure (no Celery broker, no K8s).</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step-content">
+                        <p><strong>LocalExecutor.</strong> It allows multiple tasks to run in parallel on the same machine using subprocesses and the metadata DB as the queue. No Redis or Celery workers needed. When you outgrow the box, you can move to CeleryExecutor.</p>
+                    </div>
+                </div>
+
+                <h3>Exercise 2: Where Do Logs Go?</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>You use KubernetesExecutor. A task fails; you open the Airflow UI and click "Log" for that task instance. Where does the log content come from?</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step-content">
+                        <p>With default config, logs are written inside the task's Pod. When the Pod is removed after the run, those logs are gone. So you must configure <strong>remote logging</strong> (e.g. S3 or GCS). The UI then fetches logs from that remote storage. Without remote logging, you may see "log not found" for completed or failed tasks whose Pods are already deleted.</p>
+                    </div>
+                </div>
+
+                <h3>Exercise 3: Why Multiple Schedulers?</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Your company enables "HA Scheduler" with two scheduler processes. A colleague says: "Now we can run twice as many DAGs." Is that correct?</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step-content">
+                        <p><strong>No.</strong> With HA schedulers, only one scheduler process is active at a time (enforced by a distributed lock). The second is a standby. The benefit is <strong>high availability</strong>: if the active scheduler crashes, the standby takes over quickly. It does not double scheduling throughput.</p>
+                    </div>
+                </div>
+
+                <h3>Exercise 4: Tuning the Queue</h3>
+                <div class="analogy-box">
+                    <h4>Scenario</h4>
+                    <p>Your Grafana dashboard shows that the "scheduler" queue often has 200+ tasks waiting. You have 10 Celery workers with concurrency 4 (40 slots). What are two things you could do?</p>
+                </div>
+                <div class="step-box">
+                    <h4><i class="fas fa-check"></i> Answer</h4>
+                    <div class="step-content">
+                        <p>1) <strong>Add more workers</strong> (or increase <code>worker_concurrency</code>) so more tasks run at once. 2) <strong>Increase <code>parallelism</code></strong> in <code>airflow.cfg</code> so the scheduler is allowed to queue more tasks for execution (if the cap is currently lower than 40, raising it lets workers use all slots). Also check that <code>dag_concurrency</code> and <code>max_active_runs_per_dag</code> aren’t limiting specific DAGs too tightly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: QUIZ ==================== -->
+        <div class="tab-content" id="tab-quiz">
+
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Module 14 Quiz</h2>
+                <p>Test your understanding of production operations. Click the answer you think is correct.</p>
+
+                <div class="interactive-quiz">
+                    <h4>1. Which executor runs only one task at a time?</h4>
+                    <label class="quiz-option" data-quiz="q1" data-correct="true"><input type="radio" name="q1"> SequentialExecutor</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> LocalExecutor</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> CeleryExecutor</label>
+                    <label class="quiz-option" data-quiz="q1" data-correct="false"><input type="radio" name="q1"> KubernetesExecutor</label>
+                    <p class="quiz-feedback" id="fb-q1"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>2. In production, the Airflow metadata database should be ___?</h4>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> SQLite</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="true"><input type="radio" name="q2"> PostgreSQL or MySQL</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> Stored in Redis</label>
+                    <label class="quiz-option" data-quiz="q2" data-correct="false"><input type="radio" name="q2"> Not used</label>
+                    <p class="quiz-feedback" id="fb-q2"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>3. Remote logging (e.g. to S3) is important when ___?</h4>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> You have only one DAG</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="true"><input type="radio" name="q3"> Workers are ephemeral (e.g. KubernetesExecutor) or multiple machines</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> You never want to see logs</label>
+                    <label class="quiz-option" data-quiz="q3" data-correct="false"><input type="radio" name="q3"> You use SequentialExecutor</label>
+                    <p class="quiz-feedback" id="fb-q3"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>4. Prometheus in an Airflow stack is typically used for ___?</h4>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Storing DAG code</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="true"><input type="radio" name="q4"> Scraping and storing metrics (e.g. task counts, scheduler health)</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Executing tasks</label>
+                    <label class="quiz-option" data-quiz="q4" data-correct="false"><input type="radio" name="q4"> Replacing the metadata database</label>
+                    <p class="quiz-feedback" id="fb-q4"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>5. Alerting on task failure is important in production because ___?</h4>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> It makes tasks run faster</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="true"><input type="radio" name="q5"> Pipelines run unattended; you need to know when something breaks</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> It reduces the number of DAGs</label>
+                    <label class="quiz-option" data-quiz="q5" data-correct="false"><input type="radio" name="q5"> It is required by Airflow</label>
+                    <p class="quiz-feedback" id="fb-q5"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>6. Multiple HA schedulers mean ___?</h4>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Double the scheduling speed</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="true"><input type="radio" name="q6"> One active scheduler; others are standby for failover</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> Each scheduler handles different DAGs</label>
+                    <label class="quiz-option" data-quiz="q6" data-correct="false"><input type="radio" name="q6"> No scheduler is needed</label>
+                    <p class="quiz-feedback" id="fb-q6"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>7. The config option "parallelism" in airflow.cfg controls ___?</h4>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> How many DAG files are parsed per minute</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="true"><input type="radio" name="q7"> Maximum number of task instances that can run across the whole deployment</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> How many schedulers you can run</label>
+                    <label class="quiz-option" data-quiz="q7" data-correct="false"><input type="radio" name="q7"> Number of connections to the metadata DB</label>
+                    <p class="quiz-feedback" id="fb-q7"></p>
+                </div>
+
+                <div class="interactive-quiz">
+                    <h4>8. KubernetesExecutor is a good fit when ___?</h4>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> You want to run only one task at a time</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="true"><input type="radio" name="q8"> You run Airflow on Kubernetes and want a pod per task with auto-scaling</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> You do not use a metadata database</label>
+                    <label class="quiz-option" data-quiz="q8" data-correct="false"><input type="radio" name="q8"> You want to avoid any parallelism</label>
+                    <p class="quiz-feedback" id="fb-q8"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="best-practices.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 13: Best Practices</a>
+            <a href="security-cloud.html" class="nav-btn next">Module 15: Security &amp; Cloud <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const quizId = this.dataset.quiz;
+            const isCorrect = this.dataset.correct === 'true';
+            document.querySelectorAll(`[data-quiz="${quizId}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                if (o.dataset.correct === 'true') o.classList.add('correct');
+            });
+            if (!isCorrect) this.classList.add('wrong');
+            const fb = document.getElementById('fb-' + quizId);
+            if (fb) {
+                fb.style.display = 'block';
+                fb.textContent = isCorrect ? 'Correct! Well done!' : 'Not quite. The correct answer is highlighted in green.';
+                fb.className = 'quiz-feedback ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.querySelector('.back-to-top').classList.toggle('show', window.scrollY > 300);
+    });
+    </script>
+    <script src="../js/code-copy.js" defer></script>
+</body>
+</html>
