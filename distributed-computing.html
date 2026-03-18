@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Computing for Pipelines | Data For Dummies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8faff; --bg2: #f0f4ff; --text: #1e293b; --text2: #475569;
+            --blue: #3b82f6; --purple: #7c3aed; --green: #059669; --orange: #ea580c;
+            --pink: #db2777; --cyan: #0891b2; --amber: #d97706;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+
+        /* Animated Background */
+        .bg-animation { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .bg-animation .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.14; animation: orbFloat 18s ease-in-out infinite; }
+        .bg-animation .orb:nth-child(1) { width: 400px; height: 400px; background: #818cf8; top: 5%; left: 5%; animation-delay: 0s; }
+        .bg-animation .orb:nth-child(2) { width: 350px; height: 350px; background: #67e8f9; top: 50%; right: 0; animation-delay: -6s; }
+        .bg-animation .orb:nth-child(3) { width: 300px; height: 300px; background: #f9a8d4; bottom: 10%; left: 20%; animation-delay: -12s; }
+        @keyframes orbFloat {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(40px,-25px) scale(1.05); }
+            66% { transform: translate(-20px,35px) scale(0.95); }
+        }
+
+        /* Nav */
+        .top-nav {
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 999px; box-shadow: 0 4px 32px rgba(0,0,0,0.06); padding: 0; position: sticky; top: 8px;
+            z-index: 100; max-width: 1100px; margin: 0 auto; animation: navIn 0.6s ease both;
+        }
+        @keyframes navIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+        .top-nav .nav-c { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 8px 0 16px; gap: 8px; }
+        .top-nav .nav-brand a { display: flex; align-items: center; text-decoration: none; }
+        .top-nav .nav-links { display: flex; align-items: center; gap: 2px; }
+        .top-nav .nav-link {
+            color: #475569; text-decoration: none; font-weight: 600; font-size: 0.78rem; padding: 6px 12px;
+            border-radius: 999px; transition: all 0.25s; white-space: nowrap;
+        }
+        .top-nav .nav-link:hover { color: #6366f1; background: rgba(99,102,241,0.08); transform: translateY(-1px); }
+        .top-nav .nav-link.active { color: #0891b2; background: rgba(8,145,178,0.1); font-weight: 700; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+        /* Hero */
+        .hero { text-align: center; padding: 60px 20px 50px; position: relative; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px; background: rgba(8,145,178,0.12);
+            color: #0891b2; padding: 10px 22px; border-radius: 999px; font-weight: 800; font-size: 0.9em;
+            border: 1px solid rgba(8,145,178,0.2); margin-bottom: 24px; animation: fadeUp 0.6s 0.1s both;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem); font-weight: 900;
+            background: linear-gradient(135deg, #0891b2, #6366f1, #7c3aed);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 18px; line-height: 1.2; animation: fadeUp 0.6s 0.2s both;
+        }
+        .hero .subtitle { font-size: 1.15em; color: var(--text2); max-width: 700px; margin: 0 auto 28px; animation: fadeUp 0.6s 0.3s both; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Pipeline Hero - large clear boxes, no tiny elements */
+        .pipeline-hero {
+            max-width: 900px; margin: 36px auto 0; padding: 24px;
+            display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+            animation: fadeUp 0.8s 0.5s both;
+        }
+        .pipe-node {
+            min-width: 100px; padding: 20px 24px; border-radius: 16px;
+            font-weight: 800; font-size: 1.05rem; color: white; text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12); transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .pipe-node:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+        .pipe-arrow { font-size: 1.5rem; color: #64748b; font-weight: 300; }
+
+        /* CTA */
+        .hero-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 20px;
+            background: linear-gradient(135deg, #0891b2, #0e7490); color: white; padding: 14px 28px;
+            border-radius: 14px; font-weight: 800; text-decoration: none; font-size: 1rem;
+            box-shadow: 0 4px 20px rgba(8,145,178,0.4); transition: all 0.3s; }
+        .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(8,145,178,0.5); color: white; }
+
+        /* Tabs */
+        .tabs-wrapper { margin: 40px auto 50px; max-width: 1000px; }
+        .tab-bar {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+            background: rgba(255,255,255,0.8); padding: 10px; border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .tab-btn {
+            padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+            background: rgba(0,0,0,0.04); color: var(--text2); border: 1px solid transparent;
+            cursor: pointer; transition: all 0.25s; font-family: inherit;
+        }
+        .tab-btn:hover { background: rgba(8,145,178,0.1); color: #0891b2; }
+        .tab-btn.active { background: #0891b2; color: white; border-color: #0891b2; }
+        .tab-pane { display: none; padding: 0; }
+        .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* Content Sections */
+        .content-section { margin-bottom: 70px; scroll-margin-top: 90px; }
+        .section-header { text-align: center; margin-bottom: 40px; padding: 30px 20px; }
+        .section-number { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; font-weight: 900; font-size: 1.2em; margin-bottom: 14px; }
+        .section-header h2 { font-size: 2em; font-weight: 900; margin-bottom: 10px; color: var(--text); }
+        .section-header p { font-size: 1.1em; color: var(--text2); max-width: 620px; margin: 0 auto; }
+
+        /* Topic Cards */
+        .topic-card {
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 20px; padding: 32px; margin-bottom: 28px; transition: all 0.3s; position: relative;
+            overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .topic-card:hover { border-color: rgba(8,145,178,0.2); box-shadow: 0 8px 32px rgba(8,145,178,0.08); }
+        .topic-card .card-accent { position: absolute; top: 0; left: 0; width: 5px; height: 100%; border-radius: 20px 0 0 20px; }
+        .topic-title { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; cursor: pointer; }
+        .topic-title .icon-box { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4em; flex-shrink: 0; }
+        .topic-title h3 { font-size: 1.35em; font-weight: 800; }
+        .topic-title .toggle-icon { margin-left: auto; color: var(--text2); transition: transform 0.3s; font-size: 1.1em; }
+        .topic-title .toggle-icon.open { transform: rotate(180deg); }
+        .topic-body { padding-left: 0; }
+        .topic-body.collapsed { display: none; }
+
+        /* Analogy Box */
+        .analogy-box {
+            background: linear-gradient(135deg, rgba(5,150,105,0.08), rgba(8,145,178,0.08));
+            border: 1px solid rgba(5,150,105,0.2); border-radius: 18px; padding: 24px 28px;
+            margin: 24px 0; display: flex; gap: 18px; align-items: flex-start;
+        }
+        .analogy-box .analogy-icon { font-size: 2em; flex-shrink: 0; }
+        .analogy-box .analogy-text { font-size: 1.05em; color: #047857; font-weight: 600; }
+
+        /* Example Box */
+        .example-box {
+            background: rgba(234,88,12,0.06); border: 1px solid rgba(234,88,12,0.2); border-radius: 18px;
+            padding: 24px 28px; margin: 24px 0;
+        }
+        .example-box .example-label { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--orange); margin-bottom: 12px; font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .example-box p, .example-box ul { color: var(--text2); font-size: 1em; }
+        .example-box ul { padding-left: 22px; }
+        .example-box li { margin-bottom: 8px; }
+
+        /* Key Point */
+        .key-point { background: rgba(124,58,237,0.06); border-left: 5px solid var(--purple); border-radius: 0 14px 14px 0; padding: 20px 24px; margin: 24px 0; }
+        .key-point .label { font-weight: 800; color: var(--purple); font-size: 0.88em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+
+        /* Diagram Container */
+        .diagram-container {
+            background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 18px; padding: 32px; margin: 28px 0; text-align: center;
+            overflow-x: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-label { text-align: center; font-size: 0.9em; color: var(--text2); margin-top: 16px; font-style: italic; }
+
+        /* Interactive Tool Cards */
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
+        .tool-card {
+            background: rgba(255,255,255,0.9); border: 2px solid rgba(0,0,0,0.06);
+            border-radius: 16px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.35s;
+        }
+        .tool-card:hover { border-color: var(--cyan); transform: scale(1.05) rotate(-2deg); box-shadow: 0 12px 32px rgba(8,145,178,0.2); }
+        .tool-card .tool-icon { font-size: 2.5em; margin-bottom: 12px; }
+        .tool-card .tool-name { font-weight: 800; font-size: 1.1em; margin-bottom: 6px; }
+        .tool-card .tool-role { font-size: 0.85em; color: var(--text2); }
+
+        /* Interactive Flow Simulator */
+        .flow-simulator {
+            background: linear-gradient(135deg, rgba(8,145,178,0.06), rgba(99,102,241,0.06));
+            border: 2px dashed rgba(8,145,178,0.3); border-radius: 20px;
+            padding: 36px; margin: 32px 0; position: relative;
+        }
+        .flow-simulator h4 { margin-bottom: 20px; color: var(--cyan); font-size: 1.1em; }
+        .flow-stage { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .flow-node {
+            padding: 14px 24px; border-radius: 14px; font-weight: 700; font-size: 0.95em;
+            transition: all 0.3s; cursor: pointer; border: 2px solid transparent;
+        }
+        .flow-node:hover { transform: scale(1.08); }
+        .flow-node.active { animation: nodeGlow 1.5s ease-in-out infinite; }
+        @keyframes nodeGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(8,145,178,0.4); } 50% { box-shadow: 0 0 0 12px rgba(8,145,178,0); } }
+        .flow-arrow { font-size: 1.5em; color: var(--cyan); animation: arrowPulse 1.2s ease-in-out infinite; }
+        @keyframes arrowPulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        /* Failure Demo */
+        .failure-demo { margin: 28px 0; }
+        .failure-btn {
+            padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 1em;
+            background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;
+            cursor: pointer; transition: all 0.3s; font-family: inherit;
+        }
+        .failure-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(239,68,68,0.4); }
+        .failure-result { margin-top: 16px; padding: 20px; border-radius: 14px; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); display: none; }
+        .failure-result.show { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Quiz */
+        .quiz-box {
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08));
+            border: 2px solid rgba(99,102,241,0.25); border-radius: 20px; padding: 28px; margin: 32px 0;
+        }
+        .quiz-box h4 { color: var(--purple); margin-bottom: 18px; font-size: 1.15em; }
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+        .quiz-option {
+            background: rgba(255,255,255,0.8); border: 2px solid rgba(0,0,0,0.06);
+            border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.3s;
+            font-family: inherit; font-size: 0.98em; color: var(--text); text-align: left;
+        }
+        .quiz-option:hover { border-color: var(--purple); background: rgba(139,92,246,0.05); }
+        .quiz-option.correct { background: rgba(34,197,94,0.15); border-color: #22c55e; }
+        .quiz-option.wrong { background: rgba(239,68,68,0.15); border-color: #ef4444; }
+        .quiz-feedback { margin-top: 16px; padding: 16px; border-radius: 12px; font-weight: 700; display: none; }
+        .quiz-feedback.show { display: block; animation: fadeIn 0.4s ease; }
+
+        /* CTA Banner */
+        .cta-banner {
+            background: linear-gradient(135deg, #0891b2, #0e7490);
+            border-radius: 24px; padding: 48px; text-align: center; margin: 60px 0 40px;
+            color: white; box-shadow: 0 12px 40px rgba(8,145,178,0.35);
+        }
+        .cta-banner h3 { font-size: 1.8em; margin-bottom: 12px; }
+        .cta-banner p { opacity: 0.95; margin-bottom: 24px; font-size: 1.1em; }
+        .cta-banner .cta-btn {
+            display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px;
+            background: white; color: #0891b2; border-radius: 14px; font-weight: 800; font-size: 1.05em;
+            text-decoration: none; transition: all 0.3s;
+        }
+        .cta-banner .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+        /* Footer */
+        .page-footer { text-align: center; padding: 40px 20px; border-top: 1px solid rgba(0,0,0,0.06); color: var(--text2); margin-top: 60px; }
+
+        /* Animations */
+        .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.7s ease-out; }
+        .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+        /* Particles in pipeline */
+        .particle-flow { animation: particleMove 3s ease-in-out infinite; }
+        @keyframes particleMove { 0%,100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(20px); opacity: 1; } }
+
+        /* Floating data particles (ambient) */
+        .floating-particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .float-dot { position: absolute; width: 6px; height: 6px; background: #0891b2; border-radius: 50%; opacity: 0.2; animation: floatUp 8s ease-in-out infinite; }
+        .float-dot:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+        .float-dot:nth-child(2) { left: 85%; top: 30%; animation-delay: -2s; }
+        .float-dot:nth-child(3) { left: 50%; top: 60%; animation-delay: -4s; }
+        .float-dot:nth-child(4) { left: 25%; top: 80%; animation-delay: -1s; }
+        .float-dot:nth-child(5) { left: 70%; top: 70%; animation-delay: -3s; }
+        @keyframes floatUp {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+            50% { transform: translate(20px, -30px) scale(1.2); opacity: 0.3; }
+        }
+
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8em; }
+            .section-header h2 { font-size: 1.5em; }
+            .topic-card { padding: 24px; }
+            .toc-grid { grid-template-columns: 1fr; }
+            .tool-grid { grid-template-columns: repeat(2, 1fr); }
+            .flow-stage { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="floating-particles">
+        <div class="float-dot"></div><div class="float-dot"></div><div class="float-dot"></div><div class="float-dot"></div><div class="float-dot"></div>
+    </div>
+
+    <div class="page-wrapper">
+        <nav class="top-nav">
+            <div class="nav-c">
+                <div class="nav-brand">
+                    <a href="index.html" class="home-icon-btn" title="Home" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;font-size:1rem;text-decoration:none;box-shadow:0 2px 12px rgba(8,145,178,0.35);transition:all .3s;">
+                        <i class="fas fa-house-chimney" style="position:relative;z-index:1;"></i>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="learning-path.html" class="nav-link">Courses</a>
+                    <a href="data-modelling.html" class="nav-link">Data Modelling</a>
+                    <a href="data-adventure.html" class="nav-link">Data Adventure</a>
+                    <a href="distributed-computing.html" class="nav-link active">Distributed Computing</a>
+                    <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
+                    <a href="projects.html" class="nav-link">Projects</a>
+                    <a href="pricing.html" class="nav-link">Pricing</a>
+                    <a href="founder.html" class="nav-link">Founder</a>
+                    <a href="#" class="nav-link" onclick="showContact(); return false;">Contact</a>
+                    <span id="auth-nav-slot"></span>
+                </div>
+            </div>
+        </nav>
+
+        <div id="contactModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+            <div style="background:#fff;border-radius:20px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:modalIn .3s ease;">
+                <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:800;font-size:1.05rem;">📧 Contact</span><button onclick="document.getElementById('contactModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;">&times;</button></div>
+                <div style="padding:24px;">
+                    <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8faff;border-radius:12px;margin-bottom:10px;"><span style="font-size:1.5rem;">📩</span><div><strong style="font-size:.85rem;">General</strong><a href="mailto:fktiindia@gmail.com" style="font-size:.82rem;color:#4f46e5;">fktiindia@gmail.com</a></div></div>
+                    <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#fdf2f8;border-radius:12px;margin-bottom:10px;"><span style="font-size:1.5rem;">👨‍💼</span><div><strong style="font-size:.85rem;">Founder</strong><a href="mailto:fakhruddinkhambaty@gmail.com" style="font-size:.82rem;color:#7c3aed;">fakhruddinkhambaty@gmail.com</a></div></div>
+                    <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#ecfeff;border-radius:12px;"><span style="font-size:1.5rem;">📞</span><div><strong style="font-size:.85rem;">Phone</strong><a href="tel:+919833565272" style="font-size:.82rem;color:#0891b2;">+91 98335 65272</a></div></div>
+                </div>
+            </div>
+        </div>
+        <script>function showContact(){document.getElementById('contactModal').style.display='flex';}document.getElementById('contactModal').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});</script>
+
+        <section class="hero">
+            <div class="container">
+                <span class="hero-badge"><i class="fas fa-network-wired"></i> Data Pipelines Made Simple</span>
+                <h1>Distributed Computing for Pipelines</h1>
+                <p class="subtitle">
+                    Ever wondered how data travels from your PostgreSQL database to Redshift dashboards? 
+                    It’s not magic — it’s <strong>distributed computing</strong>. We’ll explain it like you’re five.
+                </p>
+
+                <!-- Pipeline Hero - large, readable boxes -->
+                <div class="pipeline-hero">
+                    <div class="pipe-node" style="background:#3b82f6;">PostgreSQL</div>
+                    <span class="pipe-arrow">→</span>
+                    <div class="pipe-node" style="background:#017cee;">Airflow</div>
+                    <span class="pipe-arrow">→</span>
+                    <div class="pipe-node" style="background:#ff694b;">DBT</div>
+                    <span class="pipe-arrow">→</span>
+                    <div class="pipe-node" style="background:#f59e0b;">S3</div>
+                    <span class="pipe-arrow">→</span>
+                    <div class="pipe-node" style="background:#059669;">Redshift</div>
+                    <span class="pipe-arrow">→</span>
+                    <div class="pipe-node" style="background:#509ee3;">Metabase</div>
+                </div>
+
+                <a href="pipeline-designer.html" class="hero-cta"><i class="fas fa-palette"></i> Design Your Own Pipeline</a>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <section class="tabs-wrapper container">
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="basics">Basics</button>
+                <button class="tab-btn" data-tab="concepts">Concepts</button>
+                <button class="tab-btn" data-tab="tools">Tools</button>
+                <button class="tab-btn" data-tab="flow">Flow &amp; Failure</button>
+                <button class="tab-btn" data-tab="quiz">Quiz</button>
+            </div>
+
+            <!-- Tab 1: Basics -->
+            <div class="tab-pane active" id="tab-basics">
+        <!-- Section 1: What is Distributed Computing? -->
+        <section class="content-section container" id="what-is">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#0891b2;color:white;">1</div>
+                <h2>What is Distributed Computing?</h2>
+                <p>Think of a big kitchen with many chefs — each works on their own dish, but together they create a feast. That's distributed computing.</p>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(8,145,178,0.2);color:#0891b2;"><i class="fas fa-utensils"></i></div>
+                    <h3>The Kitchen Analogy</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <div class="key-point">
+                        <div class="label">📖 Classic Definition (from the textbook)</div>
+                        "You know you are using [a distributed system] when the crash of a computer you have never heard of prevents you from doing work." — Leslie Lamport
+                    </div>
+                    <div class="analogy-box">
+                        <span class="analogy-icon">👨‍🍳</span>
+                        <div class="analogy-text">
+                            <strong>One chef (single machine):</strong> Makes one dish at a time. If the oven breaks, everything stops.<br><br>
+                            <strong>Many chefs (distributed):</strong> Chef A makes salad, Chef B grills meat, Chef C bakes dessert — all at once. If Chef B's grill fails, the salad and dessert still get done. The feast continues!
+                        </div>
+                    </div>
+                    <p style="margin-top:16px;">In data pipelines: <strong>PostgreSQL</strong> holds raw data, <strong>Airflow</strong> coordinates who does what, <strong>DBT</strong> transforms on one or many workers, <strong>S3</strong> stores intermediate data, <strong>Redshift</strong> runs queries across many nodes. Each "chef" is a separate computer or service — they don't share a single kitchen (memory). They pass "dishes" (data) via the network.</p>
+                </div>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(99,102,241,0.2);color:#6366f1;"><i class="fas fa-list-check"></i></div>
+                    <h3>Three Rules of Distributed Systems</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <ol style="padding-left:24px; margin:16px 0;">
+                        <li style="margin-bottom:12px;"><strong>No shared memory:</strong> Each machine has its own RAM and disk. Data moves by sending messages (files, API calls, streams) over the network. That's why we use S3, Kafka, or databases — they're the "messengers."</li>
+                        <li style="margin-bottom:12px;"><strong>No single clock:</strong> Machines can't perfectly sync time. We use "logical" ordering (who ran first?) instead of "what time is it?" — Airflow's task IDs and timestamps help with this.</li>
+                        <li style="margin-bottom:12px;"><strong>Geographic separation:</strong> Your source DB might be in Mumbai, S3 in us-east-1, Redshift somewhere else. Data travels across cables and clouds. That's distribution!</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data River Animation -->
+        <section class="content-section container">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#06b6d4;color:white;">🌊</div>
+                <h2>Data Flows Like a River</h2>
+                <p>Watch the animation below — each droplet is a batch of data moving through the pipeline.</p>
+            </div>
+            <div class="diagram-container animate-on-scroll" style="background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 100%);">
+                <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="riverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#0ea5e9"/>
+                            <stop offset="100%" stop-color="#06b6d4"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- River bed -->
+                    <path d="M 20 90 Q 100 70, 200 90 T 400 90 T 600 90 T 680 90" fill="none" stroke="url(#riverGrad)" stroke-width="24" stroke-linecap="round" opacity="0.4"/>
+                    <!-- Animated droplets -->
+                    <circle r="6" fill="#0ea5e9" opacity="0.9">
+                        <animateMotion dur="4s" repeatCount="indefinite" path="M 20 90 Q 100 70, 200 90 T 400 90 T 600 90 T 680 90"/>
+                    </circle>
+                    <circle r="5" fill="#06b6d4" opacity="0.8">
+                        <animateMotion dur="3.5s" repeatCount="indefinite" path="M 20 90 Q 100 70, 200 90 T 400 90 T 600 90 T 680 90" begin="0.5s"/>
+                    </circle>
+                    <circle r="4" fill="#22d3ee" opacity="0.7">
+                        <animateMotion dur="3s" repeatCount="indefinite" path="M 20 90 Q 100 70, 200 90 T 400 90 T 600 90 T 680 90" begin="1s"/>
+                    </circle>
+                    <!-- Labels -->
+                    <text x="80" y="115" text-anchor="middle" font-size="11" fill="#0369a1" font-weight="700">Source</text>
+                    <text x="250" y="60" text-anchor="middle" font-size="11" fill="#0369a1" font-weight="700">Airflow</text>
+                    <text x="400" y="115" text-anchor="middle" font-size="11" fill="#0369a1" font-weight="700">DBT</text>
+                    <text x="550" y="60" text-anchor="middle" font-size="11" fill="#0369a1" font-weight="700">Warehouse</text>
+                    <text x="680" y="115" text-anchor="middle" font-size="11" fill="#0369a1" font-weight="700">Analytics</text>
+                </svg>
+                <p class="diagram-label">Each droplet = a batch of records flowing through the distributed pipeline</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Why Pipelines Need It -->
+        <section class="content-section container" id="why-pipelines">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#6366f1;color:white;">2</div>
+                <h2>Why Pipelines Need Distributed Computing</h2>
+                <p>Data doesn't fit on one machine. And even if it did, you'd want speed and resilience.</p>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(5,150,105,0.2);color:#059669;"><i class="fas fa-database"></i></div>
+                    <h3>Data is Too Big for One Box</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <div class="example-box">
+                        <div class="example-label"><i class="fas fa-lightbulb"></i> Layman Example</div>
+                        <p>Imagine a library with 10 million books. One librarian can't read and sort them all. So you have:</p>
+                        <ul>
+                            <li>Librarian A: Reads from Shelf 1–100</li>
+                            <li>Librarian B: Reads from Shelf 101–200</li>
+                            <li>Librarian C: Writes the sorted catalog</li>
+                        </ul>
+                        <p>Same idea in pipelines: <strong>Redshift</strong> and <strong>Spark</strong> split data across nodes. Each node processes a chunk. Results are combined. That's distributed processing.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="diagram-container animate-on-scroll">
+                <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+                    <text x="300" y="30" text-anchor="middle" font-weight="800" font-size="14" fill="#1e293b">Single Machine vs Distributed Pipeline</text>
+                    <!-- Single -->
+                    <rect x="50" y="60" width="200" height="140" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="150" y="90" text-anchor="middle" font-weight="800" font-size="12" fill="#92400e">Single Machine</text>
+                    <text x="150" y="115" text-anchor="middle" font-size="10" fill="#78350f">Everything in one box</text>
+                    <rect x="70" y="130" width="80" height="50" rx="8" fill="#3b82f6" opacity="0.8"/>
+                    <text x="110" y="158" text-anchor="middle" fill="white" font-size="9">Extract</text>
+                    <rect x="160" y="130" width="80" height="50" rx="8" fill="#3b82f6" opacity="0.8"/>
+                    <text x="200" y="158" text-anchor="middle" fill="white" font-size="9">Transform</text>
+                    <text x="150" y="210" text-anchor="middle" font-size="10" fill="#92400e">❌ One failure = all stops</text>
+                    <!-- Arrow -->
+                    <path d="M260 130 L310 130" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+                    <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+                    <!-- Distributed -->
+                    <rect x="320" y="60" width="230" height="140" rx="12" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+                    <text x="435" y="90" text-anchor="middle" font-weight="800" font-size="12" fill="#065f46">Distributed Pipeline</text>
+                    <text x="435" y="108" text-anchor="middle" font-size="10" fill="#047857">Many nodes, coordinated</text>
+                    <rect x="335" y="125" width="55" height="40" rx="8" fill="#3b82f6"/>
+                    <text x="362" y="150" text-anchor="middle" fill="white" font-size="8">Postgres</text>
+                    <rect x="400" y="125" width="55" height="40" rx="8" fill="#017cee"/>
+                    <text x="427" y="150" text-anchor="middle" fill="white" font-size="8">Airflow</text>
+                    <rect x="465" y="125" width="55" height="40" rx="8" fill="#ff694b"/>
+                    <text x="492" y="150" text-anchor="middle" fill="white" font-size="8">DBT</text>
+                    <rect x="530" y="125" width="55" height="40" rx="8" fill="#059669"/>
+                    <text x="557" y="150" text-anchor="middle" fill="white" font-size="8">Redshift</text>
+                    <text x="435" y="210" text-anchor="middle" font-size="10" fill="#065f46">✅ One fails → others continue</text>
+                </svg>
+                <p class="diagram-label">Distributed = resilience + speed</p>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(124,58,237,0.2);color:#7c3aed;"><i class="fas fa-expand-arrows-alt"></i></div>
+                    <h3>Scalability & Modularity (From the Textbook)</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <p>The PDF lists key benefits of distributed systems. Here's how they show up in pipelines:</p>
+                    <ul style="padding-left:24px; margin:16px 0;">
+                        <li style="margin-bottom:10px;"><strong>Scalability:</strong> Add more Airflow workers or Redshift nodes — no single bottleneck. Data volume grows? Scale out.</li>
+                        <li style="margin-bottom:10px;"><strong>Modularity:</strong> Swap PostgreSQL for MySQL, or Redshift for Snowflake. As long as they speak the same "language" (SQL, JDBC), the rest of the pipeline keeps working.</li>
+                        <li style="margin-bottom:10px;"><strong>Resource sharing:</strong> One S3 bucket or Redshift cluster serves many pipelines. You don't replicate everything everywhere.</li>
+                        <li style="margin-bottom:10px;"><strong>Inherently distributed:</strong> Money transfers, CDC from multiple regions — the work is naturally spread across locations.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+            </div><!-- end tab-basics -->
+
+            <!-- Tab 2: Concepts -->
+            <div class="tab-pane" id="tab-concepts">
+        <!-- Section 2b: Logical Time & Ordering -->
+        <section class="content-section container" id="logical-time">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#a855f7;color:white;">⏱️</div>
+                <h2>Logical Time & Ordering</h2>
+                <p>Machines don't share a clock. So how do we know "what happened before what"? Enter logical time.</p>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(168,85,247,0.2);color:#a855f7;"><i class="fas fa-sort-numeric-down"></i></div>
+                    <h3>The "Happens-Before" Idea</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <div class="analogy-box">
+                        <span class="analogy-icon">📬</span>
+                        <div class="analogy-text">
+                            If you send a letter, it must have been written <em>before</em> it arrived. We don't need wall clocks — we use <strong>causal order</strong>: "A happened before B" means A could have influenced B.
+                        </div>
+                    </div>
+                    <p style="margin-top:16px;">In pipelines: <strong>Airflow</strong> uses <code>execution_date</code> and task instance IDs to order runs. <strong>Kafka</strong> uses offsets within a partition — message 5 comes before message 6. <strong>DBT</strong> uses model dependencies (staging runs before marts). We care about order, not "what time is it on server X."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2c: Snapshots -->
+        <section class="content-section container" id="snapshots">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#ec4899;color:white;">📸</div>
+                <h2>Global Snapshots & Consistent Reads</h2>
+                <p>How do you get a "picture" of the whole system at one moment? The Chandy–Lamport snapshot algorithm is the classic answer.</p>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(236,72,153,0.2);color:#ec4899;"><i class="fas fa-image"></i></div>
+                    <h3>What's a Consistent Snapshot?</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <p>A snapshot is consistent if it looks like everything froze at one instant — no "message half in flight" or "partially applied" state. In pipelines:</p>
+                    <ul style="padding-left:24px; margin:16px 0;">
+                        <li style="margin-bottom:10px;"><strong>Bronze layer:</strong> Raw data landed from the source at a specific time. It's a point-in-time "photo" of the source.</li>
+                        <li style="margin-bottom:10px;"><strong>CDC (Change Data Capture):</strong> Reads the source's transaction log at a specific LSN (Log Sequence Number) — that's a consistent snapshot.</li>
+                        <li style="margin-bottom:10px;"><strong>Redshift / Snowflake:</strong> Time-travel queries let you "go back" to a consistent state.</li>
+                    </ul>
+                    <div class="key-point">
+                        <div class="label">🔑 From the PDF</div>
+                        The Chandy–Lamport algorithm uses special "marker" messages to record the state of each process and the messages in flight. Our pipelines achieve similar guarantees via transaction boundaries, LSNs, and immutable Bronze loads.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2d: Message Ordering -->
+        <section class="content-section container" id="message-ordering">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#14b8a6;color:white;">📋</div>
+                <h2>Message Ordering</h2>
+                <p>FIFO, causal, total order — and why Kafka partitions matter.</p>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(20,184,166,0.2);color:#14b8a6;"><i class="fas fa-stream"></i></div>
+                    <h3>Ordering Guarantees in Pipelines</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <p>The PDF defines several message ordering paradigms. Here's the pipeline version:</p>
+                    <table class="comparison-table" style="width:100%; border-collapse:collapse; margin:16px 0; font-size:0.95em;">
+                        <thead><tr style="background:rgba(20,184,166,0.15);"><th style="padding:12px; text-align:left;">Order</th><th style="padding:12px;">Meaning</th><th style="padding:12px;">Pipeline Example</th></tr></thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:12px;"><strong>FIFO</strong></td><td style="padding:12px;">Same sender → same order</td><td style="padding:12px;">Kafka: messages in one partition are FIFO</td></tr>
+                            <tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:12px;"><strong>Causal</strong></td><td style="padding:12px;">If A caused B, B sees A first</td><td style="padding:12px;">Event ordering: click → add_to_cart → purchase</td></tr>
+                            <tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:12px;"><strong>Total</strong></td><td style="padding:12px;">Everyone agrees on order</td><td style="padding:12px;">Kafka partition key ensures order per entity</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="example-box">
+                        <div class="example-label"><i class="fas fa-lightbulb"></i> Layman Example</div>
+                        <p>Imagine a queue at a coffee shop. FIFO = you get served in the order you arrived. Causal = your friend's order (which you inspired) comes after yours. Total = everyone agrees "person 3 was served before person 4." Kafka partitions give you FIFO per key (e.g. per customer_id).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(99,102,241,0.2);color:#6366f1;"><i class="fas fa-exchange-alt"></i></div>
+                    <h3>Message-Passing vs Shared Memory</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <p>The PDF compares two paradigms. <strong>Our pipelines use message-passing:</strong></p>
+                    <ul style="padding-left:24px; margin:16px 0;">
+                        <li style="margin-bottom:10px;"><strong>Shared memory:</strong> All processes read/write the same RAM. (Think: one big whiteboard everyone can see.)</li>
+                        <li style="margin-bottom:10px;"><strong>Message-passing:</strong> Data is sent as messages — files to S3, rows to a DB, events to Kafka. (Think: passing notes.)</li>
+                    </ul>
+                    <p>We use message-passing because our nodes are geographically separate. S3 PUT, Kafka produce, PostgreSQL INSERT — these are all "send" operations. The receiver (next stage) does a "receive" (S3 GET, Kafka consume, SELECT). Blocking vs non-blocking? Airflow tasks are blocking: a task doesn't finish until its work is done. Kafka consumers can be non-blocking (poll, process async).</p>
+                </div>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(59,130,246,0.2);color:#3b82f6;"><i class="fas fa-microchip"></i></div>
+                    <h3>Granularity — Coarse vs Fine</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <p>The PDF defines <strong>granularity</strong> as the ratio of computation to communication. For pipelines:</p>
+                    <ul style="padding-left:24px; margin:16px 0;">
+                        <li style="margin-bottom:10px;"><strong>Coarse-grained:</strong> Each task does a lot of work and talks to others rarely. Example: "Extract 1M rows from Postgres, load to S3" — one big batch, minimal back-and-forth.</li>
+                        <li style="margin-bottom:10px;"><strong>Fine-grained:</strong> Lots of small messages, frequent sync. Example: Real-time stream processing where every event triggers a micro-update.</li>
+                    </ul>
+                    <p>Loosely coupled systems (our pipelines: Postgres in Mumbai, S3 in us-east-1) work best with <strong>coarse-grained</strong> tasks. Fine-grained would drown in network latency. That's why we batch: daily DBT runs, hourly Airflow DAGs, not per-row RPCs.</p>
+                </div>
+            </div>
+        </section>
+            </div><!-- end tab-concepts -->
+
+            <!-- Tab 3: Tools -->
+            <div class="tab-pane" id="tab-tools">
+        <!-- Section 3: Your Tools -->
+        <section class="content-section container" id="your-tools">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#ea580c;color:white;">3</div>
+                <h2>Your Tools in Action</h2>
+                <p>Every tool in our pipeline-designer is part of the distributed system. Click to see each one's role!</p>
+            </div>
+
+            <div class="tool-grid animate-on-scroll">
+                <div class="tool-card" onclick="showToolTip('airflow')">
+                    <div class="tool-icon">🌀</div>
+                    <div class="tool-name">Airflow</div>
+                    <div class="tool-role">Orchestrator — tells everyone what to do and when</div>
+                </div>
+                <div class="tool-card" onclick="showToolTip('dbt')">
+                    <div class="tool-icon">🔄</div>
+                    <div class="tool-name">DBT</div>
+                    <div class="tool-role">Transform — cleans and shapes data (runs on warehouse)</div>
+                </div>
+                <div class="tool-card" onclick="showToolTip('s3')">
+                    <div class="tool-icon">🪣</div>
+                    <div class="tool-name">S3</div>
+                    <div class="tool-role">Storage — holds data between stages (distributed by design)</div>
+                </div>
+                <div class="tool-card" onclick="showToolTip('kafka')">
+                    <div class="tool-icon">📡</div>
+                    <div class="tool-name">Kafka</div>
+                    <div class="tool-role">Streaming — moves events in real-time across many consumers</div>
+                </div>
+                <div class="tool-card" onclick="showToolTip('redshift')">
+                    <div class="tool-icon">🏗️</div>
+                    <div class="tool-name">Redshift</div>
+                    <div class="tool-role">Warehouse — queries run in parallel across nodes</div>
+                </div>
+                <div class="tool-card" onclick="showToolTip('postgres')">
+                    <div class="tool-icon">🐘</div>
+                    <div class="tool-name">PostgreSQL</div>
+                    <div class="tool-role">Source — where raw data lives (can be one or many)</div>
+                </div>
+                <div class="tool-card" onclick="showToolTip('metabase')">
+                    <div class="tool-icon">📊</div>
+                    <div class="tool-name">Metabase</div>
+                    <div class="tool-role">Analytics — reads from warehouse (distributed queries)</div>
+                </div>
+            </div>
+
+            <div id="toolTipBox" style="display:none; background:rgba(8,145,178,0.1); border:2px solid #0891b2; border-radius:16px; padding:24px; margin-top:20px; animation:fadeIn 0.4s;">
+                <h4 id="toolTipTitle" style="color:#0891b2; margin-bottom:12px;"></h4>
+                <p id="toolTipText" style="color:#475569; line-height:1.6;"></p>
+            </div>
+        </section>
+            </div><!-- end tab-tools -->
+
+            <!-- Tab 4: Flow & Failure -->
+            <div class="tab-pane" id="tab-flow">
+        <!-- Section 4: How Data Flows -->
+        <section class="content-section container" id="how-flows">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#22c55e;color:white;">4</div>
+                <h2>How Data Flows — Step by Step</h2>
+                <p>Click the "Play" button to animate the flow. Watch data move through the pipeline!</p>
+            </div>
+
+            <div class="flow-simulator animate-on-scroll">
+                <h4><i class="fas fa-play-circle"></i> Interactive Flow — Click "Start" to animate</h4>
+                <button id="flowStartBtn" style="padding:14px 28px; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; border:none; border-radius:12px; font-weight:700; cursor:pointer; font-family:inherit; margin-bottom:20px;" onclick="startFlowAnimation()">
+                    <i class="fas fa-play"></i> Start Flow
+                </button>
+                <div class="flow-stage" id="flowStages">
+                    <div class="flow-node" id="fn1" style="background:#3b82f6; color:white;">PostgreSQL</div>
+                    <span class="flow-arrow" id="arr1">→</span>
+                    <div class="flow-node" id="fn2" style="background:#017cee; color:white;">Airflow</div>
+                    <span class="flow-arrow" id="arr2">→</span>
+                    <div class="flow-node" id="fn3" style="background:#ff694b; color:white;">DBT</div>
+                    <span class="flow-arrow" id="arr3">→</span>
+                    <div class="flow-node" id="fn4" style="background:#f59e0b; color:white;">S3 / Bronze</div>
+                    <span class="flow-arrow" id="arr4">→</span>
+                    <div class="flow-node" id="fn5" style="background:#eab308; color:#1e293b;">Silver</div>
+                    <span class="flow-arrow" id="arr5">→</span>
+                    <div class="flow-node" id="fn6" style="background:#059669; color:white;">Gold / Redshift</div>
+                    <span class="flow-arrow" id="arr6">→</span>
+                    <div class="flow-node" id="fn7" style="background:#509ee3; color:white;">Metabase</div>
+                </div>
+                <p style="margin-top:20px; color:#64748b; font-size:0.95em;">Each step runs on different machines or services. Data is passed via network calls, file uploads, or SQL queries.</p>
+            </div>
+        </section>
+
+        <!-- Section 5: Failures -->
+        <section class="content-section container" id="failures">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#ef4444;color:white;">5</div>
+                <h2>When Things Break — Fault Tolerance</h2>
+                <p>In distributed systems, something will eventually fail. The good news: the pipeline keeps going.</p>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(239,68,68,0.2);color:#ef4444;"><i class="fas fa-bolt"></i></div>
+                    <h3>What Happens When a Node Fails?</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <div class="key-point">
+                        <div class="label">🔑 Key Idea</div>
+                        Airflow retries failed tasks. DBT can re-run from the last checkpoint. S3 doesn't lose data. Redshift has multiple copies. Distributed = built-in redundancy.
+                    </div>
+                    <div class="failure-demo">
+                        <p style="margin-bottom:12px;">Click to simulate a failure and see how the system responds:</p>
+                        <button class="failure-btn" onclick="simulateFailure()"><i class="fas fa-bomb"></i> Simulate DBT Node Failure</button>
+                        <div class="failure-result" id="failureResult">
+                            <strong style="color:#22c55e;">✅ Recovery:</strong> Airflow detected the failure, retried the DBT task, and it succeeded on attempt 2. Data continued flowing to Redshift. No manual intervention needed!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(245,158,11,0.2);color:#f59e0b;"><i class="fas fa-flag-checkered"></i></div>
+                    <h3>Termination Detection — When is the DAG "Done"?</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <p>The PDF has a whole chapter on <strong>termination detection</strong>: how do we know all distributed processes have finished? In pipelines:</p>
+                    <ul style="padding-left:24px; margin:16px 0;">
+                        <li style="margin-bottom:10px;"><strong>Airflow:</strong> A DAG run is "success" only when all downstream tasks have completed. The scheduler tracks task states (queued, running, success, failed). No orphan tasks = terminated.</li>
+                        <li style="margin-bottom:10px;"><strong>DBT:</strong> Runs models in dependency order. Exit code 0 means all models ran successfully — that's termination.</li>
+                        <li style="margin-bottom:10px;"><strong>Kafka consumers:</strong> "Lag" = messages not yet processed. Lag = 0 means the consumer has caught up (termination for that run).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="topic-card animate-on-scroll">
+                <div class="topic-title" onclick="this.parentElement.querySelector('.topic-body').classList.toggle('collapsed'); this.querySelector('.toggle-icon').classList.toggle('open');">
+                    <div class="icon-box" style="background:rgba(6,182,212,0.2);color:#06b6d4;"><i class="fas fa-undo"></i></div>
+                    <h3>Checkpointing & Rollback Recovery</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="topic-body">
+                    <p>The PDF covers checkpoint-based and log-based recovery. In pipelines:</p>
+                    <ul style="padding-left:24px; margin:16px 0;">
+                        <li style="margin-bottom:10px;"><strong>Checkpointing:</strong> DBT incremental models use <code>unique_key</code> + "max(updated_at)" to only process new rows. The checkpoint is "we've processed up to this point."</li>
+                        <li style="margin-bottom:10px;"><strong>Rollback:</strong> Airflow retries a failed task from scratch. DBT can re-run from a specific model. Redshift/Snowflake support time-travel: restore to a prior state.</li>
+                        <li style="margin-bottom:10px;"><strong>Idempotency:</strong> Running the same pipeline twice should produce the same result. That's the pipeline version of "recoverable" — no duplicate side effects.</li>
+                    </ul>
+                    <div class="key-point">
+                        <div class="label">🔑 From the PDF</div>
+                        Koo–Toueg coordinated checkpointing ensures a consistent global state before saving. Our pipelines achieve idempotency via unique keys, upserts, and "replace" semantics so re-runs don't corrupt data.
+                    </div>
+                </div>
+            </div>
+        </section>
+            </div><!-- end tab-flow -->
+
+            <!-- Tab 5: Quiz -->
+            <div class="tab-pane" id="tab-quiz">
+        <!-- Quiz -->
+        <section class="content-section container" id="quiz">
+            <div class="section-header animate-on-scroll">
+                <div class="section-number" style="background:#8b5cf6;color:white;">6</div>
+                <h2>Quick Quiz</h2>
+                <p>Test what you've learned. Pick the best answer!</p>
+            </div>
+
+            <div class="quiz-box animate-on-scroll">
+                <h4><i class="fas fa-brain"></i> In a distributed pipeline, why don't we use a "single shared memory"?</h4>
+                <div class="quiz-options" id="quiz1">
+                    <div class="quiz-option" data-correct="true">Machines are in different locations and can't share RAM — data must move over the network.</div>
+                    <div class="quiz-option" data-correct="false">We could, but it would be too fast and overwhelm users.</div>
+                    <div class="quiz-option" data-correct="false">Shared memory is illegal in data engineering.</div>
+                </div>
+                <div class="quiz-feedback" id="quiz1Feedback"></div>
+            </div>
+
+            <div class="quiz-box animate-on-scroll">
+                <h4><i class="fas fa-brain"></i> What is Airflow's main job in a distributed pipeline?</h4>
+                <div class="quiz-options" id="quiz2">
+                    <div class="quiz-option" data-correct="false">To store the raw data in S3.</div>
+                    <div class="quiz-option" data-correct="true">To orchestrate — decide when each task runs and in what order.</div>
+                    <div class="quiz-option" data-correct="false">To run SQL transformations itself.</div>
+                </div>
+                <div class="quiz-feedback" id="quiz2Feedback"></div>
+            </div>
+
+            <div class="quiz-box animate-on-scroll">
+                <h4><i class="fas fa-brain"></i> Why does Kafka offer FIFO order only within a partition?</h4>
+                <div class="quiz-options" id="quiz3">
+                    <div class="quiz-option" data-correct="false">Because total order across all partitions would be too slow.</div>
+                    <div class="quiz-option" data-correct="true">Because partitioning allows parallel consumption — each partition is a separate ordered stream. Total order would require a single bottleneck.</div>
+                    <div class="quiz-option" data-correct="false">Kafka doesn't offer FIFO; it's random order.</div>
+                </div>
+                <div class="quiz-feedback" id="quiz3Feedback"></div>
+            </div>
+        </section>
+            </div><!-- end tab-quiz -->
+        </section><!-- end tabs-wrapper -->
+
+        <!-- CTA -->
+        <section class="container">
+            <div class="cta-banner animate-on-scroll">
+                <h3>Design Your Own Distributed Pipeline</h3>
+                <p>Use our Pipeline Designer to pick sources, destinations, and compute strategies. See how your choices map to real distributed architecture.</p>
+                <a href="pipeline-designer.html" class="cta-btn"><i class="fas fa-palette"></i> Open Pipeline Designer</a>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <p>Part of <a href="index.html" style="color:#0891b2;">Data For Dummies</a> — Learn data engineering the simple way.</p>
+            <p style="margin-top:8px;"><a href="data-modelling.html" style="color:#7c3aed;">Data Modelling</a> · <a href="pipeline-designer.html" style="color:#db2777;">Pipeline Designer</a> · <a href="learning-path.html" style="color:#6366f1;">Courses</a></p>
+            <p style="margin-top:16px; font-size:0.9em; opacity:0.9;">Concepts simplified from <em>Distributed Computing: Principles, Algorithms, and Systems</em> by Kshemkalyani & Singhal (Cambridge University Press). We map textbook theory to pipeline tools — Airflow, DBT, Kafka, S3, Redshift.</p>
+        </footer>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); if (b.dataset.tab === tabId) b.classList.add('active'); });
+            document.querySelectorAll('.tab-pane').forEach(p => { p.classList.remove('active'); if (p.id === 'tab-' + tabId) p.classList.add('active'); });
+        }
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() { switchTab(this.dataset.tab); });
+        });
+
+        function showToolTip(tool) {
+            const box = document.getElementById('toolTipBox');
+            const title = document.getElementById('toolTipTitle');
+            const text = document.getElementById('toolTipText');
+            const tips = {
+                airflow: ['Airflow — The Conductor', 'Airflow doesn\'t process data itself. It schedules tasks, monitors them, retries on failure, and ensures dependencies run in order. Think of it as the project manager of your pipeline.'],
+                dbt: ['DBT — The Chef', 'DBT runs SQL transforms on your warehouse (Redshift, Snowflake, etc.). The warehouse is already distributed — DBT just sends SQL. Multiple models can run in parallel.'],
+                s3: ['S3 — The Storage Room', 'S3 is distributed by design. Your data is spread across many servers. If one fails, others have copies. Perfect for Bronze/Silver/Gold layers.'],
+                kafka: ['Kafka — The Conveyor Belt', 'Kafka streams events. Producers write, consumers read. Multiple consumers can read the same stream. Distributed, fault-tolerant, built for scale.'],
+                redshift: ['Redshift — The Big Kitchen', 'Redshift runs your SQL across many nodes. Each node holds a slice of data. Queries are parallelized automatically.'],
+                postgres: ['PostgreSQL — The Pantry', 'Your source database. Can be a single server or a distributed setup (e.g. Citus). Data is extracted from here into the pipeline.'],
+                metabase: ['Metabase — The Menu', 'Metabase connects to your warehouse and runs queries. Those queries hit Redshift/Snowflake, which run them in parallel across nodes.']
+            };
+            const t = tips[tool];
+            if (t) { title.textContent = t[0]; text.textContent = t[1]; box.style.display = 'block'; }
+        }
+
+        function startFlowAnimation() {
+            const nodeIds = ['fn1','fn2','fn3','fn4','fn5','fn6','fn7'];
+            const btn = document.getElementById('flowStartBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Flowing...';
+            nodeIds.forEach((id, i) => {
+                setTimeout(() => {
+                    nodeIds.forEach(nid => document.getElementById(nid).classList.remove('active'));
+                    document.getElementById(id).classList.add('active');
+                }, i * 700);
+            });
+            setTimeout(() => {
+                document.getElementById('fn7').classList.remove('active');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-redo"></i> Play Again';
+            }, nodeIds.length * 700 + 800);
+        }
+
+        function simulateFailure() {
+            document.getElementById('failureResult').classList.add('show');
+        }
+
+        document.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                const options = this.closest('.quiz-options');
+                const feedback = options.nextElementSibling;
+                const correct = this.dataset.correct === 'true';
+                options.querySelectorAll('.quiz-option').forEach(o => { o.classList.remove('correct','wrong'); o.style.pointerEvents = 'none'; });
+                this.classList.add(correct ? 'correct' : 'wrong');
+                feedback.textContent = correct ? '✅ Correct! Well done!' : '❌ Not quite. Read the section again and try!';
+                feedback.className = 'quiz-feedback show';
+                feedback.style.background = correct ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-auth.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script>if(window.FKTI_AuthGuard)FKTI_AuthGuard.init();</script>
+    <script src="js/analytics-tracker.js"></script>
+</body>
+</html>
