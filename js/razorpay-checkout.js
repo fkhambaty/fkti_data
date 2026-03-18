@@ -2,12 +2,19 @@
  * Razorpay Checkout for Pro subscription.
  * Requires: window.RAZORPAY_KEY_ID, window.SUPABASE_URL, window.SUPABASE_ANON_KEY,
  * and window.FKTI_Auth.getSession() (supabase-auth.js).
+ *
+ * Optional fallback: window.RAZORPAY_SUBSCRIPTION_LINK — if set, used when the
+ * Edge Function is unreachable or misconfigured so users can still subscribe.
  */
 (function () {
     'use strict';
 
     function authPageUrl(page) {
         return window.location.origin + '/auth/' + page;
+    }
+
+    function getFallbackLink() {
+        return window.RAZORPAY_SUBSCRIPTION_LINK || '';
     }
 
     function openProCheckout() {
@@ -17,6 +24,10 @@
         var auth = window.FKTI_Auth;
 
         if (!keyId || !supabaseUrl || !anonKey) {
+            if (getFallbackLink()) {
+                window.location.href = getFallbackLink();
+                return;
+            }
             redirectToProfileWithError('Payment not configured. Please contact support.');
             return;
         }
@@ -64,12 +75,25 @@
                     if (result.ok && data.subscription_id) {
                         openRazorpay(keyId, data.subscription_id, name, email, contact, callbackUrl, userId);
                     } else {
-                        var msg = (data && (data.error || data.message)) || ('Server returned ' + result.status + '. Please try again.');
-                        redirectToProfileWithError(msg);
+                        var userMsg = (data && data.error) || '';
+                        var isFatalConfig = result.status === 503 || result.status === 502
+                            || (result.status === 400 && userMsg.indexOf('setup issue') >= 0);
+
+                        if (isFatalConfig && getFallbackLink()) {
+                            window.location.href = getFallbackLink();
+                        } else {
+                            redirectToProfileWithError(
+                                userMsg || 'Could not start subscription. Please try again.'
+                            );
+                        }
                     }
                 })
-                .catch(function (err) {
-                    redirectToProfileWithError(err && err.message ? err.message : 'Network error. Please check your connection and try again.');
+                .catch(function () {
+                    if (getFallbackLink()) {
+                        window.location.href = getFallbackLink();
+                    } else {
+                        redirectToProfileWithError('Network error. Please check your connection and try again.');
+                    }
                 });
         });
     }
@@ -86,6 +110,13 @@
             s.async = true;
             document.head.appendChild(s);
             s.onload = function () { doOpen(); };
+            s.onerror = function () {
+                if (getFallbackLink()) {
+                    window.location.href = getFallbackLink();
+                } else {
+                    redirectToProfileWithError('Could not load payment gateway. Please try again.');
+                }
+            };
         } else {
             doOpen();
         }
@@ -100,10 +131,25 @@
                 callback_url: callbackUrl,
                 prefill: { name: name, email: email, contact: contact },
                 notes: { user_id: userId },
-                theme: { color: '#4f46e5' }
+                theme: { color: '#4f46e5' },
+                modal: {
+                    ondismiss: function () {}
+                }
             };
-            var rzp = new Razorpay(options);
-            rzp.open();
+            try {
+                var rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    var desc = (response.error && response.error.description) || 'Payment failed. Please try again.';
+                    redirectToProfileWithError(desc);
+                });
+                rzp.open();
+            } catch (e) {
+                if (getFallbackLink()) {
+                    window.location.href = getFallbackLink();
+                } else {
+                    redirectToProfileWithError('Could not open payment window. Please try again.');
+                }
+            }
         }
     }
 

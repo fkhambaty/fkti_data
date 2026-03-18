@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet dbt — Your Data's Best Friend | FKTI dbt Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 1 · BEGINNER</span>
+    <h1>👋 Meet dbt — Your Data's Best Friend</h1>
+    <p class="subtitle">Discover the tool that changed how the world transforms data. No jargon, just fun analogies and "aha!" moments.</p>
+</div>
+
+<!-- Sticky Nav -->
+<div class="lesson-container">
+    <nav class="lesson-nav">
+        <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+        <a href="history.html">History of dbt <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: What is dbt?
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🤔 What is dbt?</h2>
+
+        <div class="eli5-box">
+            <p>Imagine you have a <strong>HUGE messy room</strong> full of toys (data). Lego bricks are mixed with action figures, puzzle pieces are under the bed, and crayons are in your sock drawer. It's chaos!</p>
+            <p style="margin-top:12px;">Now imagine you have a <strong>magical robot helper</strong> that sorts every toy into neat, labelled boxes — Legos in one box, puzzles in another — and then <strong>checks</strong> that nothing is broken or missing. All you have to do is write simple instructions on sticky notes (SQL files) like "put all the red Legos together."</p>
+            <p style="margin-top:12px;"><strong>That magical robot is dbt.</strong></p>
+        </div>
+
+        <h3>The Technical Definition</h3>
+        <p><strong>dbt</strong> stands for <strong>Data Build Tool</strong>. It's an open-source command-line tool that lets analytics engineers transform raw data inside a data warehouse using plain SQL.</p>
+        <p>Instead of moving data out of the warehouse, cleaning it somewhere else, and loading it back (the old way), dbt says: <em>"Just write SELECT statements. I'll handle the rest."</em></p>
+
+        <div class="pro-tip">
+            <p>dbt doesn't extract or load data — it only handles the <strong>T</strong> (Transform) in ELT. Think of it as the chef in the kitchen, not the delivery truck.</p>
+        </div>
+
+        <h3>How dbt Works — In 30 Seconds</h3>
+        <p>Here's the entire magic trick in four steps:</p>
+
+        <!-- Animated Pipeline Diagram -->
+        <div class="visual-example">
+            <div class="pipeline-diagram">
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">📦</div>
+                    <span class="pipeline-label">Raw Data</span>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:var(--dbt-gradient);">🔄</div>
+                    <span class="pipeline-label">dbt<br>(Transform)</span>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);">✨</div>
+                    <span class="pipeline-label">Clean Tables</span>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">📊</div>
+                    <span class="pipeline-label">Dashboard</span>
+                </div>
+            </div>
+
+            <!-- Animated SVG showing data flow -->
+            <svg viewBox="0 0 800 120" style="width:100%;max-width:800px;margin:0 auto;display:block;">
+                <defs>
+                    <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ef4444"/>
+                        <stop offset="33%" style="stop-color:#ff694a"/>
+                        <stop offset="66%" style="stop-color:#22c55e"/>
+                        <stop offset="100%" style="stop-color:#3b82f6"/>
+                    </linearGradient>
+                </defs>
+                <line x1="60" y1="60" x2="740" y2="60" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round"/>
+                <line x1="60" y1="60" x2="740" y2="60" stroke="url(#flowGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 6">
+                    <animate attributeName="stroke-dashoffset" from="0" to="-36" dur="1.5s" repeatCount="indefinite"/>
+                </line>
+                <circle cx="60" cy="60" r="18" fill="#ef4444" opacity="0.9"><animate attributeName="r" values="16;20;16" dur="2s" repeatCount="indefinite"/></circle>
+                <text x="60" y="100" text-anchor="middle" font-size="12" fill="#64748b" font-family="Nunito" font-weight="700">Messy Data</text>
+                <circle cx="310" cy="60" r="22" fill="#ff694a" opacity="0.95"><animate attributeName="r" values="20;24;20" dur="2s" repeatCount="indefinite"/></circle>
+                <text x="310" y="65" text-anchor="middle" font-size="14" fill="#fff" font-weight="800">dbt</text>
+                <text x="310" y="100" text-anchor="middle" font-size="12" fill="#64748b" font-family="Nunito" font-weight="700">Transform</text>
+                <circle cx="540" cy="60" r="18" fill="#22c55e" opacity="0.9"><animate attributeName="r" values="16;20;16" dur="2s" repeatCount="indefinite"/></circle>
+                <text x="540" y="100" text-anchor="middle" font-size="12" fill="#64748b" font-family="Nunito" font-weight="700">Clean Tables</text>
+                <circle cx="740" cy="60" r="18" fill="#3b82f6" opacity="0.9"><animate attributeName="r" values="16;20;16" dur="2s" repeatCount="indefinite"/></circle>
+                <text x="740" y="100" text-anchor="middle" font-size="12" fill="#64748b" font-family="Nunito" font-weight="700">Dashboards</text>
+            </svg>
+        </div>
+
+        <p>You write a SQL file (called a <strong>model</strong>). dbt reads it, figures out dependencies, runs it in your warehouse, and creates a clean table or view. That's it. No fancy GUI, no drag-and-drop — just SQL and a sprinkle of magic (Jinja templating).</p>
+
+        <div class="step-box">
+            <h4>🧩 The Three Things dbt Does</h4>
+            <ol style="margin-left:20px;margin-top:12px;">
+                <li><strong>Transforms</strong> — Turns messy raw data into clean, business-ready tables using SQL</li>
+                <li><strong>Tests</strong> — Automatically checks your data for problems (nulls, duplicates, bad values)</li>
+                <li><strong>Documents</strong> — Generates a beautiful website showing every table, column, and how they connect</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: The Restaurant Kitchen Analogy
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🍳 The Restaurant Kitchen Analogy</h2>
+
+        <p>The best way to understand dbt is to think of a <strong>restaurant kitchen</strong>. Let's map every part of the data world to something you already know:</p>
+
+        <div class="real-life">
+            <p><strong>🥬 Raw ingredients</strong> (potatoes, tomatoes, chicken) = <strong>Raw data</strong> arriving from apps, databases, and APIs</p>
+            <p style="margin-top:8px;"><strong>🏪 The kitchen</strong> (with ovens, stoves, and countertops) = <strong>Your data warehouse</strong> (Snowflake, BigQuery, Redshift, Postgres)</p>
+            <p style="margin-top:8px;"><strong>📝 Recipes</strong> (step-by-step cooking instructions) = <strong>dbt models</strong> (SQL files that describe transformations)</p>
+            <p style="margin-top:8px;"><strong>👨‍🍳 The head chef</strong> (reads recipes, manages cooking order) = <strong>dbt itself</strong> (reads SQL files, manages execution order)</p>
+            <p style="margin-top:8px;"><strong>🧪 Quality checks</strong> (taste-testing before serving) = <strong>dbt tests</strong> (automated data quality checks)</p>
+            <p style="margin-top:8px;"><strong>📋 The menu</strong> (what dishes are available and what's in them) = <strong>dbt documentation</strong> (auto-generated docs for your data)</p>
+        </div>
+
+        <!-- Animated Restaurant SVG -->
+        <div class="visual-example">
+            <svg viewBox="0 0 900 340" style="width:100%;max-width:900px;margin:0 auto;display:block;">
+                <!-- Delivery Truck (Raw Data) -->
+                <rect x="20" y="60" width="140" height="90" rx="14" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="90" y="95" text-anchor="middle" font-size="28">🚚</text>
+                <text x="90" y="125" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="700" font-family="Nunito">Raw Ingredients</text>
+                <text x="90" y="140" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Nunito">(Raw Data)</text>
+
+                <!-- Arrow 1 -->
+                <line x1="165" y1="105" x2="225" y2="105" stroke="#ff694a" stroke-width="3" stroke-dasharray="8 4">
+                    <animate attributeName="stroke-dashoffset" from="0" to="-24" dur="1s" repeatCount="indefinite"/>
+                </line>
+                <polygon points="225,98 240,105 225,112" fill="#ff694a"/>
+
+                <!-- Kitchen (Warehouse) -->
+                <rect x="245" y="30" width="200" height="150" rx="16" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                <text x="345" y="60" text-anchor="middle" font-size="11" fill="#9a3412" font-weight="800" font-family="Nunito">🏪 THE KITCHEN</text>
+                <text x="345" y="76" text-anchor="middle" font-size="9" fill="#c2410c" font-family="Nunito">(Data Warehouse)</text>
+
+                <!-- Chef (dbt) inside kitchen -->
+                <rect x="280" y="88" width="130" height="70" rx="12" fill="#fff" stroke="#ff694a" stroke-width="2" stroke-dasharray="4 2">
+                    <animate attributeName="stroke-dashoffset" from="0" to="-12" dur="2s" repeatCount="indefinite"/>
+                </rect>
+                <text x="345" y="115" text-anchor="middle" font-size="24">👨‍🍳</text>
+                <text x="345" y="138" text-anchor="middle" font-size="10" fill="#c2410c" font-weight="700" font-family="Nunito">dbt (the Chef)</text>
+                <text x="345" y="152" text-anchor="middle" font-size="8" fill="#9a3412" font-family="Nunito">Follows recipes (SQL)</text>
+
+                <!-- Arrow 2 -->
+                <line x1="450" y1="105" x2="510" y2="105" stroke="#22c55e" stroke-width="3" stroke-dasharray="8 4">
+                    <animate attributeName="stroke-dashoffset" from="0" to="-24" dur="1s" repeatCount="indefinite"/>
+                </line>
+                <polygon points="510,98 525,105 510,112" fill="#22c55e"/>
+
+                <!-- Quality Check -->
+                <rect x="530" y="60" width="140" height="90" rx="14" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+                <text x="600" y="95" text-anchor="middle" font-size="28">🧪</text>
+                <text x="600" y="125" text-anchor="middle" font-size="11" fill="#166534" font-weight="700" font-family="Nunito">Quality Check</text>
+                <text x="600" y="140" text-anchor="middle" font-size="9" fill="#15803d" font-family="Nunito">(dbt Tests)</text>
+
+                <!-- Arrow 3 -->
+                <line x1="675" y1="105" x2="735" y2="105" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8 4">
+                    <animate attributeName="stroke-dashoffset" from="0" to="-24" dur="1s" repeatCount="indefinite"/>
+                </line>
+                <polygon points="735,98 750,105 735,112" fill="#3b82f6"/>
+
+                <!-- Served Dish (Dashboard) -->
+                <rect x="755" y="60" width="120" height="90" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <text x="815" y="95" text-anchor="middle" font-size="28">🍽️</text>
+                <text x="815" y="125" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="700" font-family="Nunito">Served Dish</text>
+                <text x="815" y="140" text-anchor="middle" font-size="9" fill="#1d4ed8" font-family="Nunito">(Dashboard)</text>
+
+                <!-- Recipe card floating -->
+                <rect x="270" y="200" width="150" height="80" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="2" transform="rotate(-3 345 240)">
+                    <animate attributeName="transform" values="rotate(-3 345 240);rotate(1 345 240);rotate(-3 345 240)" dur="4s" repeatCount="indefinite"/>
+                </rect>
+                <text x="345" y="230" text-anchor="middle" font-size="10" fill="#854d0e" font-weight="700" font-family="Fira Code" transform="rotate(-3 345 240)">📝 Recipe (SQL)</text>
+                <text x="345" y="248" text-anchor="middle" font-size="8" fill="#92400e" font-family="Fira Code" transform="rotate(-3 345 240)">SELECT name, SUM(qty)</text>
+                <text x="345" y="262" text-anchor="middle" font-size="8" fill="#92400e" font-family="Fira Code" transform="rotate(-3 345 240)">FROM raw_orders</text>
+
+                <!-- Menu (Documentation) -->
+                <rect x="560" y="200" width="150" height="80" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+                <text x="635" y="230" text-anchor="middle" font-size="22">📋</text>
+                <text x="635" y="255" text-anchor="middle" font-size="10" fill="#5b21b6" font-weight="700" font-family="Nunito">The Menu</text>
+                <text x="635" y="270" text-anchor="middle" font-size="8" fill="#6d28d9" font-family="Nunito">(dbt Documentation)</text>
+            </svg>
+        </div>
+
+        <div class="eli5-box">
+            <p>Without dbt, it's like having 10 different cooks in the kitchen, each with their own secret recipe, nobody writing anything down, and no one taste-testing the food before it goes to the customer. <strong>Chaos!</strong></p>
+            <p style="margin-top:10px;">With dbt, there's <strong>one recipe book</strong> (your SQL models in Git), <strong>one head chef</strong> (dbt), and <strong>automatic taste-testing</strong> (dbt tests) before anything reaches the customer (your dashboard).</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: ETL vs ELT — The Big Shift
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔀 ETL vs ELT — The Big Shift</h2>
+
+        <p>Before we go deeper into dbt, you need to understand the <strong>biggest revolution</strong> in data engineering in the last decade: the shift from <strong>ETL</strong> to <strong>ELT</strong>.</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>🏚️ Traditional ETL</h4>
+                <p style="color:var(--dbt-text-light);font-size:0.95em;margin-bottom:16px;"><strong>E</strong>xtract → <strong>T</strong>ransform → <strong>L</strong>oad</p>
+                <ol style="margin-left:18px;line-height:2;">
+                    <li><strong>Extract</strong> data from source systems</li>
+                    <li><strong>Transform</strong> data on a separate ETL server (outside the warehouse)</li>
+                    <li><strong>Load</strong> the cleaned data into the warehouse</li>
+                </ol>
+                <p style="margin-top:14px;color:#991b1b;font-weight:600;">⚠️ Slow, expensive, hard to change</p>
+            </div>
+
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🚀 Modern ELT (with dbt)</h4>
+                <p style="color:var(--dbt-text-light);font-size:0.95em;margin-bottom:16px;"><strong>E</strong>xtract → <strong>L</strong>oad → <strong>T</strong>ransform</p>
+                <ol style="margin-left:18px;line-height:2;">
+                    <li><strong>Extract</strong> data from source systems</li>
+                    <li><strong>Load</strong> raw data directly into the warehouse</li>
+                    <li><strong>Transform</strong> data <em>inside</em> the warehouse using dbt</li>
+                </ol>
+                <p style="margin-top:14px;color:#166534;font-weight:600;">✅ Fast, flexible, version-controlled</p>
+            </div>
+        </div>
+
+        <div class="eli5-box">
+            <p><strong>ETL</strong> is like cooking dinner at home, packing it in Tupperware, driving it to a restaurant, and serving it to customers. By the time it arrives, it might be cold and you can't easily change the recipe.</p>
+            <p style="margin-top:10px;"><strong>ELT</strong> is like bringing fresh groceries straight to the restaurant kitchen and letting the chef (dbt) cook right there — using the restaurant's amazing ovens and stoves (the warehouse's compute power). Much faster, much fresher!</p>
+        </div>
+
+        <!-- Animated ETL vs ELT SVG -->
+        <div class="visual-example">
+            <svg viewBox="0 0 800 300" style="width:100%;max-width:800px;margin:0 auto;display:block;">
+                <!-- ETL Row -->
+                <text x="400" y="25" text-anchor="middle" font-size="14" fill="#991b1b" font-weight="800" font-family="Nunito">🏚️ OLD WAY: ETL</text>
+                <rect x="30" y="40" width="120" height="55" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="90" y="62" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="700" font-family="Nunito">① EXTRACT</text>
+                <text x="90" y="80" text-anchor="middle" font-size="18">📤</text>
+                <line x1="155" y1="68" x2="210" y2="68" stroke="#ef4444" stroke-width="2" stroke-dasharray="6 3"><animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1s" repeatCount="indefinite"/></line>
+                <polygon points="210,62 222,68 210,74" fill="#ef4444"/>
+
+                <rect x="225" y="40" width="160" height="55" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="305" y="62" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="700" font-family="Nunito">② TRANSFORM</text>
+                <text x="305" y="82" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Nunito">⚠️ Outside warehouse!</text>
+                <line x1="390" y1="68" x2="445" y2="68" stroke="#ef4444" stroke-width="2" stroke-dasharray="6 3"><animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1s" repeatCount="indefinite"/></line>
+                <polygon points="445,62 457,68 445,74" fill="#ef4444"/>
+
+                <rect x="460" y="40" width="120" height="55" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="520" y="62" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="700" font-family="Nunito">③ LOAD</text>
+                <text x="520" y="80" text-anchor="middle" font-size="18">📥</text>
+                <line x1="585" y1="68" x2="630" y2="68" stroke="#ef4444" stroke-width="2"/>
+                <polygon points="630,62 642,68 630,74" fill="#ef4444"/>
+
+                <rect x="645" y="40" width="120" height="55" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+                <text x="705" y="62" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="700" font-family="Nunito">Warehouse</text>
+                <text x="705" y="80" text-anchor="middle" font-size="18">🏢</text>
+
+                <!-- Divider -->
+                <line x1="30" y1="130" x2="770" y2="130" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+                <text x="400" y="125" text-anchor="middle" font-size="11" fill="#94a3b8" font-family="Nunito">vs</text>
+
+                <!-- ELT Row -->
+                <text x="400" y="165" text-anchor="middle" font-size="14" fill="#166534" font-weight="800" font-family="Nunito">🚀 NEW WAY: ELT (with dbt)</text>
+                <rect x="30" y="180" width="120" height="55" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+                <text x="90" y="202" text-anchor="middle" font-size="10" fill="#166534" font-weight="700" font-family="Nunito">① EXTRACT</text>
+                <text x="90" y="220" text-anchor="middle" font-size="18">📤</text>
+                <line x1="155" y1="208" x2="210" y2="208" stroke="#22c55e" stroke-width="2" stroke-dasharray="6 3"><animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1s" repeatCount="indefinite"/></line>
+                <polygon points="210,202 222,208 210,214" fill="#22c55e"/>
+
+                <rect x="225" y="180" width="120" height="55" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+                <text x="285" y="202" text-anchor="middle" font-size="10" fill="#166534" font-weight="700" font-family="Nunito">② LOAD</text>
+                <text x="285" y="220" text-anchor="middle" font-size="18">📥</text>
+                <line x1="350" y1="208" x2="405" y2="208" stroke="#22c55e" stroke-width="2" stroke-dasharray="6 3"><animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1s" repeatCount="indefinite"/></line>
+                <polygon points="405,202 417,208 405,214" fill="#22c55e"/>
+
+                <!-- Warehouse with dbt inside -->
+                <rect x="420" y="175" width="345" height="65" rx="14" fill="#ecfdf5" stroke="#22c55e" stroke-width="2"/>
+                <text x="592" y="195" text-anchor="middle" font-size="10" fill="#166534" font-weight="700" font-family="Nunito">🏢 Warehouse</text>
+                <rect x="450" y="205" width="140" height="28" rx="8" fill="#ff694a" opacity="0.15" stroke="#ff694a" stroke-width="1.5">
+                    <animate attributeName="opacity" values="0.1;0.25;0.1" dur="2s" repeatCount="indefinite"/>
+                </rect>
+                <text x="520" y="224" text-anchor="middle" font-size="10" fill="#c2410c" font-weight="800" font-family="Nunito">③ dbt TRANSFORMS ✨</text>
+                <text x="680" y="224" text-anchor="middle" font-size="9" fill="#15803d" font-family="Nunito">✅ Inside warehouse!</text>
+            </svg>
+        </div>
+
+        <h3>Side-by-Side Comparison</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Traditional ETL</th>
+                    <th>Modern ELT + dbt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Where transformation happens</td><td>Separate ETL server</td><td>Inside the data warehouse</td></tr>
+                <tr><td>Language</td><td>Proprietary GUI / Java / Python</td><td>SQL (the language you already know!)</td></tr>
+                <tr><td>Version control</td><td>Difficult or impossible</td><td>Git-based, just like software</td></tr>
+                <tr><td>Testing</td><td>Manual, after deployment</td><td>Automated, built into every run</td></tr>
+                <tr><td>Documentation</td><td>External wikis, often outdated</td><td>Auto-generated, always current</td></tr>
+                <tr><td>Scalability</td><td>Limited by ETL server hardware</td><td>Scales with your warehouse</td></tr>
+                <tr><td>Cost</td><td>High (Informatica, SSIS licenses)</td><td>Free (dbt Core) or low (dbt Cloud)</td></tr>
+                <tr><td>Speed of change</td><td>Days to weeks</td><td>Minutes to hours</td></tr>
+            </tbody>
+        </table>
+
+        <div class="important-box">
+            <p>The shift from ETL to ELT was made possible by <strong>cloud data warehouses</strong> (Snowflake, BigQuery, Redshift) that have massive compute power. Since the warehouse can handle heavy transformations, there's no need for a separate ETL server anymore. dbt takes full advantage of this.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: Where dbt Fits in the Modern Data Stack
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧱 Where dbt Fits in the Modern Data Stack</h2>
+
+        <p>The "Modern Data Stack" is a set of cloud-based tools that work together to move, transform, and visualize data. Think of it like an assembly line in a factory. Each tool has one job, and they all work together.</p>
+
+        <div class="eli5-box">
+            <p>Imagine a <strong>pizza delivery chain</strong>:</p>
+            <p style="margin-top:8px;">🌾 <strong>Farmers</strong> grow wheat and tomatoes = <strong>Data Sources</strong> (your apps, databases, APIs)</p>
+            <p style="margin-top:4px;">🚛 <strong>Delivery trucks</strong> bring ingredients to the kitchen = <strong>Ingestion tools</strong> (Fivetran, Airbyte)</p>
+            <p style="margin-top:4px;">🏪 <strong>The kitchen</strong> where everything is stored = <strong>Data Warehouse</strong> (Snowflake, BigQuery)</p>
+            <p style="margin-top:4px;">👨‍🍳 <strong>The chef</strong> who makes the pizza = <strong>dbt</strong> (transforms raw ingredients into delicious pizza)</p>
+            <p style="margin-top:4px;">🍕 <strong>The menu board</strong> customers see = <strong>BI Tools</strong> (Metabase, Looker, Tableau)</p>
+        </div>
+
+        <!-- Modern Data Stack Pipeline -->
+        <div class="visual-example">
+            <div class="pipeline-diagram" style="flex-wrap:wrap;">
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">📱</div>
+                    <span class="pipeline-label">Data Sources<br><small style="color:var(--dbt-text-light);">Apps, DBs, APIs</small></span>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">🚛</div>
+                    <span class="pipeline-label">Ingestion<br><small style="color:var(--dbt-text-light);">Fivetran / Airbyte</small></span>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);">🏢</div>
+                    <span class="pipeline-label">Warehouse<br><small style="color:var(--dbt-text-light);">Snowflake / BQ</small></span>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon pulse" style="background:var(--dbt-gradient);box-shadow:0 0 20px rgba(255,105,74,0.4);">🔄</div>
+                    <span class="pipeline-label" style="color:var(--dbt-primary);font-weight:800;">dbt<br><small style="color:var(--dbt-text-light);">Transform!</small></span>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);">📊</div>
+                    <span class="pipeline-label">BI Tools<br><small style="color:var(--dbt-text-light);">Metabase / Looker</small></span>
+                </div>
+            </div>
+        </div>
+
+        <h3>Each Piece Explained Simply</h3>
+
+        <div class="step-box">
+            <h4>📱 1. Data Sources — Where data is born</h4>
+            <p>Your company's apps, databases, payment systems, marketing tools, etc. For example: Shopify stores order data, Stripe stores payment data, Google Analytics stores website visit data.</p>
+            <p style="margin-top:8px;"><strong>Analogy:</strong> These are the farms and factories that produce raw ingredients.</p>
+        </div>
+
+        <div class="step-box">
+            <h4>🚛 2. Ingestion Tools — The delivery trucks</h4>
+            <p>Tools like <strong>Fivetran</strong>, <strong>Airbyte</strong>, or <strong>Stitch</strong> connect to your data sources and copy the raw data into your warehouse. They handle the "Extract" and "Load" parts.</p>
+            <p style="margin-top:8px;"><strong>Analogy:</strong> Delivery trucks that pick up ingredients from farms and bring them to the restaurant kitchen.</p>
+        </div>
+
+        <div class="step-box">
+            <h4>🏢 3. Data Warehouse — The kitchen</h4>
+            <p><strong>Snowflake</strong>, <strong>Google BigQuery</strong>, <strong>Amazon Redshift</strong>, or <strong>Databricks</strong>. This is where all your data lives and where transformations happen. Modern warehouses can process terabytes of data in seconds.</p>
+            <p style="margin-top:8px;"><strong>Analogy:</strong> A massive, state-of-the-art restaurant kitchen with industrial ovens and unlimited counter space.</p>
+        </div>
+
+        <div class="step-box" style="border-color:var(--dbt-primary);background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%);">
+            <h4>🔄 4. dbt — The head chef (YOU ARE HERE!)</h4>
+            <p>dbt reads your SQL "recipes" (models), figures out the right order to cook things (dependency graph), transforms raw data into clean tables, tests everything, and generates documentation. This is the <strong>heart</strong> of the modern data stack.</p>
+            <p style="margin-top:8px;"><strong>Analogy:</strong> The brilliant head chef who follows recipes, manages the cooking order, taste-tests everything, and updates the menu.</p>
+        </div>
+
+        <div class="step-box">
+            <h4>📊 5. BI Tools — The dining room</h4>
+            <p><strong>Metabase</strong>, <strong>Looker</strong>, <strong>Tableau</strong>, or <strong>Power BI</strong>. These tools connect to the clean tables dbt created and display beautiful dashboards and reports for business users.</p>
+            <p style="margin-top:8px;"><strong>Analogy:</strong> The dining room where customers enjoy the beautifully plated dishes.</p>
+        </div>
+
+        <div class="pro-tip">
+            <p>dbt is the <strong>glue</strong> that makes the modern data stack work. Without it, you'd have raw data sitting in your warehouse with no way to turn it into useful insights — like having a kitchen full of ingredients but no chef.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: Who Uses dbt?
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌍 Who Uses dbt?</h2>
+
+        <p>dbt isn't some niche tool — it's used by <strong>thousands of companies</strong>, from tiny startups to massive enterprises. Here are some mind-blowing numbers:</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">100,000+</div>
+                <div class="stat-label">Active Projects</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">75%</div>
+                <div class="stat-label">Top Data Teams</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">9,000+</div>
+                <div class="stat-label">Companies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Database Adapters</div>
+            </div>
+        </div>
+
+        <h3>Companies That Trust dbt</h3>
+        <div class="real-life">
+            <p>Here are just a few of the companies using dbt every single day:</p>
+            <ul style="margin-left:20px;margin-top:12px;line-height:2.2;">
+                <li>🎵 <strong>Spotify</strong> — Models music streaming data for 500M+ users</li>
+                <li>💳 <strong>Stripe</strong> — Processes billions in payment data transformations</li>
+                <li>🦊 <strong>GitLab</strong> — Product usage analytics and DevOps metrics</li>
+                <li>🛍️ <strong>Shopify</strong> — E-commerce analytics for millions of merchants</li>
+                <li>✈️ <strong>JetBlue</strong> — Flight operations and customer experience analytics</li>
+                <li>💬 <strong>Discord</strong> — Community engagement and usage analytics</li>
+                <li>🏦 <strong>Monzo</strong> — Real-time financial data modeling</li>
+                <li>📦 <strong>Deliveroo</strong> — Delivery logistics and restaurant analytics</li>
+            </ul>
+        </div>
+
+        <div class="eli5-box">
+            <p>If data were a sport, dbt would be the most popular piece of equipment. Almost every serious data team in the world uses it — just like almost every soccer team uses a soccer ball. It's <em>that</em> fundamental.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Why YOU Should Learn dbt
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🚀 Why YOU Should Learn dbt</h2>
+
+        <p>Still not convinced? Here's why learning dbt is one of the <strong>best career moves</strong> you can make right now:</p>
+
+        <div class="comparison-cards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+            <div class="comparison-card" style="text-align:center;">
+                <div style="font-size:2.5em;margin-bottom:12px;">💰</div>
+                <h4>High Demand, High Pay</h4>
+                <p>Analytics Engineers (dbt experts) earn <strong>$120K–$180K+</strong> in the US. dbt is the #1 most-requested skill in analytics job postings.</p>
+            </div>
+            <div class="comparison-card" style="text-align:center;">
+                <div style="font-size:2.5em;margin-bottom:12px;">📈</div>
+                <h4>Career Growth</h4>
+                <p>dbt created an entirely new role: <strong>Analytics Engineer</strong>. It bridges the gap between data engineering and data analysis.</p>
+            </div>
+            <div class="comparison-card" style="text-align:center;">
+                <div style="font-size:2.5em;margin-bottom:12px;">🧠</div>
+                <h4>Easy to Learn</h4>
+                <p>If you know SQL, you already know 80% of dbt. The learning curve is gentle — you can build your first project in a day.</p>
+            </div>
+            <div class="comparison-card" style="text-align:center;">
+                <div style="font-size:2.5em;margin-bottom:12px;">🌐</div>
+                <h4>Massive Community</h4>
+                <p>50,000+ members in dbt Slack, tons of free resources, packages, and a welcoming community that loves helping beginners.</p>
+            </div>
+            <div class="comparison-card" style="text-align:center;">
+                <div style="font-size:2.5em;margin-bottom:12px;">🆓</div>
+                <h4>Free & Open Source</h4>
+                <p>dbt Core is completely free. You can start learning today with zero cost — just install it and go.</p>
+            </div>
+            <div class="comparison-card" style="text-align:center;">
+                <div style="font-size:2.5em;margin-bottom:12px;">🔮</div>
+                <h4>Future-Proof</h4>
+                <p>Every company is becoming data-driven. dbt skills will be relevant for decades as data only grows in importance.</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p><strong>Career hack:</strong> If you're a data analyst who wants to level up, learning dbt is the fastest path to becoming an Analytics Engineer — a role that typically pays 30-50% more than a pure analyst role.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: dbt Core vs dbt Cloud
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>☁️ dbt Core vs dbt Cloud</h2>
+
+        <p>dbt comes in two flavors. Think of it like cooking at home vs. using a meal-kit delivery service:</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #1e3a5f;">
+                <h4>🖥️ dbt Core (Free, Open Source)</h4>
+                <p style="margin-bottom:14px;color:var(--dbt-text-light);">Like cooking from scratch at home</p>
+                <ul style="margin-left:18px;line-height:2;">
+                    <li>✅ Completely free forever</li>
+                    <li>✅ Full power and flexibility</li>
+                    <li>✅ Run from your terminal</li>
+                    <li>✅ You manage scheduling & deployment</li>
+                    <li>⚠️ Requires Python & command line skills</li>
+                    <li>⚠️ You handle infrastructure</li>
+                </ul>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid var(--dbt-primary);">
+                <h4>☁️ dbt Cloud (Managed Service)</h4>
+                <p style="margin-bottom:14px;color:var(--dbt-text-light);">Like using a meal-kit service</p>
+                <ul style="margin-left:18px;line-height:2;">
+                    <li>✅ Web-based IDE (no terminal needed)</li>
+                    <li>✅ Built-in scheduling & orchestration</li>
+                    <li>✅ Team collaboration features</li>
+                    <li>✅ One-click deployment</li>
+                    <li>✅ Free tier for 1 developer</li>
+                    <li>💰 Paid plans for teams ($100/seat/month)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="eli5-box">
+            <p><strong>dbt Core</strong> is like having a fully equipped kitchen at home — you have all the tools, but you need to buy groceries, manage the oven timer, and clean up yourself.</p>
+            <p style="margin-top:10px;"><strong>dbt Cloud</strong> is like a fancy cooking class where someone sets up the kitchen for you, gives you pre-measured ingredients, and handles the cleanup. You just focus on cooking!</p>
+            <p style="margin-top:10px;">For learning, either works great. We'll cover both in this course.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you absorbed the key concepts. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: What does dbt stand for?</h3>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>A)</strong> Data Build Tool
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Database Backup Technology
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> Data Business Transformer
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Digital Batch Transfer
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: In the ELT approach, where does transformation happen?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> On a separate ETL server
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> In your local computer
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Inside the data warehouse
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> In the source database
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: Which of these is NOT something dbt does?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Transform data using SQL
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Test data quality automatically
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Extract data from source systems
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Generate documentation
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: What's Coming Next — A Sneak Peek
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>👀 What's Coming Next?</h2>
+
+        <p>Now that you know <em>what</em> dbt is and <em>why</em> it matters, in the next lesson we'll explore the <strong>fascinating history</strong> of how dbt was born — from one frustrated analyst's "eureka moment" to a tool used by 9,000+ companies.</p>
+
+        <div class="step-box">
+            <h4>📜 Next Lesson: History & Evolution of dbt</h4>
+            <ul style="margin-left:20px;margin-top:12px;line-height:2;">
+                <li>The "Data Chaos Era" — what life was like before dbt</li>
+                <li>Drew Banin's eureka moment at RJMetrics</li>
+                <li>The founding of Fishtown Analytics (now dbt Labs)</li>
+                <li>dbt Cloud launch and the $4.2B valuation</li>
+                <li>Where dbt is heading in 2025 and beyond</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 10: Reflection & Core / Non-Core
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>In your own words, explain to a friend (or a rubber duck) what dbt does and why the shift from ETL to ELT matters. If you can explain it simply, you truly understand it!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>dbt = Data Build Tool</strong> — transforms raw data into clean tables using SQL inside your warehouse</li>
+                <li><strong>ELT > ETL</strong> — load raw data first, then transform inside the warehouse (faster, cheaper, more flexible)</li>
+                <li><strong>dbt does 3 things:</strong> Transform, Test, Document</li>
+                <li><strong>Modern Data Stack:</strong> Sources → Ingestion → Warehouse → <strong>dbt</strong> → BI Tools</li>
+                <li><strong>dbt Core</strong> is free and open source; <strong>dbt Cloud</strong> is the managed service</li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li>Specific company adoption stories (Spotify, Stripe, etc.)</li>
+                <li>Exact salary numbers (they vary by region and experience)</li>
+                <li>dbt Cloud pricing tiers</li>
+                <li>The pizza delivery chain analogy (fun but not tested!)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="hub.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Course Hub
+        </a>
+        <a href="history.html" class="nav-btn-next">
+            History of dbt <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    // Scroll-triggered fade-in
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    // Back to top show/hide
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+// Quiz checking
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

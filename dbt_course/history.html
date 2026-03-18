@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2: History & Evolution of dbt | FKTI dbt Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Background particles -->
+    <div class="page-bg-particles">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <!-- Hero -->
+    <div class="lesson-hero">
+        <span class="badge">LESSON 2 · BEGINNER</span>
+        <h1>📜 The Story of dbt</h1>
+        <p class="subtitle">From a frustrated analyst's side project to the backbone of modern data teams</p>
+    </div>
+
+    <!-- Sticky nav -->
+    <div class="lesson-container">
+        <nav class="lesson-nav">
+            <a href="meet-dbt.html"><i class="fas fa-arrow-left"></i> Prev: Meet dbt</a>
+            <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+            <a href="installation.html">Next: Installation <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <!-- ============================================================
+             SECTION 1 — The Data Chaos Era
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🌪️ The Data Chaos Era (2012–2015)</h2>
+
+            <div class="eli5-box">
+                <p>Imagine 10 people trying to cook in the same kitchen, but <strong>nobody wrote down any recipes</strong>. Everyone makes the same dish differently. One person adds salt, another doesn't. One person bakes at 350°F, another at 400°F. The food comes out different every single time. <strong>That's what data teams looked like before dbt.</strong></p>
+            </div>
+
+            <p>Between 2012 and 2015, the data world was like the Wild West. Companies were collecting more data than ever before — from websites, mobile apps, payment systems, marketing tools — but they had <strong>no good way to transform and organise</strong> all that raw data into something useful.</p>
+
+            <h3>🔥 The Four Horsemen of Data Chaos</h3>
+
+            <div class="comparison-cards">
+                <div class="comparison-card">
+                    <h4>📂 Scattered SQL</h4>
+                    <p>SQL queries lived in random places — someone's laptop, a shared Google Doc, buried in an email thread, or hard-coded inside a Tableau dashboard. There was no single source of truth.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🚫 No Version Control</h4>
+                    <p>Nobody tracked <em>who</em> changed a query, <em>when</em> they changed it, or <em>why</em>. If a dashboard broke on Monday morning, the team spent hours playing detective.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🧪 Zero Testing</h4>
+                    <p>There were no automated checks. Bad data — duplicates, nulls, impossible values — flowed straight into executive dashboards. The CEO would ask, "Why does this number look wrong?" and nobody had a quick answer.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>📊 Inconsistent Metrics</h4>
+                    <p>Marketing said revenue was $5M. Finance said $4.8M. Product said $5.2M. Everyone used slightly different SQL to calculate "revenue." Meetings became arguments about whose number was right.</p>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <p><strong>Real-world example:</strong> Imagine you work at a pizza chain. Store A counts "revenue" as all orders placed. Store B counts only delivered orders. Store C counts orders minus refunds. The CEO looks at a report and sees three different revenue numbers. Who's right? <strong>Nobody knows</strong>, because there's no agreed-upon recipe.</p>
+            </div>
+
+            <!-- Animated chaos diagram -->
+            <div class="visual-example">
+                <p style="text-align:center; font-weight:700; margin-bottom:16px;">The Chaos: SQL Scattered Everywhere</p>
+                <div class="pipeline-diagram">
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#fef3c7;">💻</div>
+                        <span class="pipeline-label">Analyst's<br>Laptop</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#dbeafe;">📊</div>
+                        <span class="pipeline-label">Tableau<br>Dashboard</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#fce7f3;">📧</div>
+                        <span class="pipeline-label">Email<br>Thread</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#dcfce7;">📝</div>
+                        <span class="pipeline-label">Google<br>Doc</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#fef2f2;">🤯</div>
+                        <span class="pipeline-label">Total<br>Chaos</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="important-box">
+                <p>The fundamental problem wasn't that people were bad at SQL. The problem was that <strong>there was no system</strong> — no framework, no workflow, no process — for managing data transformations the way software engineers managed code.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 2 — Drew Banin's Eureka Moment
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>💡 Drew Banin's Eureka Moment (2016)</h2>
+
+            <p>Our story begins with a young data analyst named <strong>Drew Banin</strong>, working at a company called <strong>RJMetrics</strong> in Philadelphia. RJMetrics was a business intelligence platform — they helped other companies understand their data.</p>
+
+            <p>Drew was smart, hard-working, and increasingly <strong>frustrated</strong>.</p>
+
+            <h3>😤 The Daily Grind</h3>
+
+            <p>Every single day, Drew found himself doing the same painful thing: <strong>maintaining identical SQL transformations across five different tools</strong>. He'd write a query to calculate monthly recurring revenue (MRR) in one tool, then copy-paste it into another tool, then tweak it slightly for a third tool, and so on.</p>
+
+            <div class="eli5-box">
+                <p>It's like writing the same essay for 5 different teachers, <strong>by hand</strong>, every single time. And every time one teacher wants a small change, you have to update all 5 copies manually. Miss one? That teacher gets the wrong essay. Now imagine doing this every day for years.</p>
+            </div>
+
+            <p>Here's what Drew's typical week looked like:</p>
+            <ul style="margin:16px 0 16px 24px; line-height:2.2;">
+                <li>📊 Write a revenue query in the <strong>analytics database</strong></li>
+                <li>📋 Copy the same logic into <strong>Looker</strong> for dashboards</li>
+                <li>📓 Paste a version into a <strong>Jupyter notebook</strong> for ad-hoc analysis</li>
+                <li>📧 Email a slightly different version to the <strong>finance team</strong></li>
+                <li>🔧 Hard-code yet another version into an <strong>ETL pipeline</strong></li>
+            </ul>
+
+            <div class="real-life">
+                <p><strong>Real-world analogy:</strong> Imagine you're a chef who has perfected a chocolate cake recipe. But instead of writing it down once in a recipe book, you have to memorise it and recite it from scratch every time someone asks. Sometimes you forget the baking soda. Sometimes you say "2 cups of sugar" instead of "1.5 cups." The cake comes out different every time — and you can never figure out which version was the "right" one.</p>
+            </div>
+
+            <h3>🤔 The Question That Changed Everything</h3>
+
+            <p>One evening, after yet another fire-drill caused by a broken dashboard (someone had updated the SQL in one place but forgotten the other four), Drew sat back and asked himself a simple but revolutionary question:</p>
+
+            <div class="formula-box" style="text-align:center;">
+                <p style="font-size:1.3em; font-weight:800; color:#6d28d9; margin:0;">"Why can't data transformations work like software development?"</p>
+            </div>
+
+            <p>Software engineers had solved this problem decades ago. They had:</p>
+            <ul style="margin:16px 0 16px 24px; line-height:2.2;">
+                <li>✅ <strong>Version control</strong> (Git) — track every change, by whom, and why</li>
+                <li>✅ <strong>Testing</strong> — automated checks that catch bugs before deployment</li>
+                <li>✅ <strong>Modularity</strong> — write code once, reuse it everywhere</li>
+                <li>✅ <strong>Code review</strong> — peers check your work before it goes live</li>
+                <li>✅ <strong>CI/CD</strong> — automated deployment pipelines</li>
+            </ul>
+
+            <p>Data analysts had <strong>none of this</strong>. They were stuck in the stone age while software engineers were living in the future.</p>
+
+            <div class="pro-tip">
+                <p>Drew's co-founder <strong>Tristan Handy</strong> later described the problem perfectly: <em>"We had all these amazing data warehouses — Redshift, BigQuery, Snowflake — that could process billions of rows in seconds. But the way we managed the SQL that ran inside them was stuck in 2005."</em></p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 3 — The Birth of dbt
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🐣 The Birth of dbt (2016–2017)</h2>
+
+            <p>Drew didn't just complain about the problem — he <strong>built a solution</strong>. Working nights and weekends, he created the first version of dbt: a simple Python command-line tool that could read SQL files, understand their dependencies, and execute them in the right order against a data warehouse.</p>
+
+            <div class="eli5-box">
+                <p>Drew basically built a <strong>robot that could read recipe cards</strong> (SQL files) and <strong>cook dishes in order, automatically</strong>. The robot knew that you have to make the sauce before you can put it on the pasta. It knew that you need to chop the vegetables before you can make the salad. And it did everything in the right order, every single time, without forgetting a step.</p>
+            </div>
+
+            <h3>🛠️ What the First dbt Could Do</h3>
+
+            <div class="comparison-cards">
+                <div class="comparison-card">
+                    <h4>📝 SQL + Jinja</h4>
+                    <p>Write your transformations as plain SQL files with Jinja templating. No proprietary language to learn — if you knew SQL, you knew dbt.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🔗 ref() Function</h4>
+                    <p>Instead of hard-coding table names, use <code>{{ ref('model_name') }}</code>. dbt automatically figures out the execution order.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>⚙️ Materializations</h4>
+                    <p>Tell dbt whether your model should be a <strong>view</strong> or a <strong>table</strong> with a single config line. No manual DDL needed.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🐍 Python CLI</h4>
+                    <p>Install with <code>pip install dbt</code>, run with <code>dbt run</code>. Simple, clean, no bloated GUI — just a terminal and your SQL files.</p>
+                </div>
+            </div>
+
+            <h3>📄 What Early dbt Code Looked Like</h3>
+
+            <div class="code-block">
+                <span class="label">SQL — models/customers.sql (circa 2016)</span>
+                <pre><code><span class="comment">-- One of the very first dbt models ever written</span>
+<span class="comment">-- Simple, clean, revolutionary</span>
+
+{{ config(materialized='table') }}
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    first_name,
+    last_name,
+    email,
+    created_at
+<span class="keyword">FROM</span> {{ ref('raw_customers') }}
+<span class="keyword">WHERE</span> customer_id <span class="keyword">IS NOT NULL</span></code></pre>
+            </div>
+
+            <p>It looks simple, right? Almost <em>too</em> simple. But that was the genius. Drew didn't try to reinvent SQL. He just added a thin layer of intelligence on top of it:</p>
+
+            <ul style="margin:16px 0 16px 24px; line-height:2.2;">
+                <li><code>{{ config(materialized='table') }}</code> — tells dbt to create a physical table</li>
+                <li><code>{{ ref('raw_customers') }}</code> — creates a dependency link so dbt knows to run <code>raw_customers</code> first</li>
+                <li>Everything else is <strong>plain SQL</strong> that any analyst already knows</li>
+            </ul>
+
+            <div class="real-life">
+                <p><strong>Real-world analogy:</strong> Think of dbt like the invention of the <strong>recipe book</strong>. Before recipe books, grandma's secret soup recipe lived only in her head. If she forgot an ingredient, the soup tasted different. A recipe book doesn't change how you cook — you still chop, stir, and bake — but it gives you a <strong>reliable, repeatable system</strong> so the soup tastes the same every time.</p>
+            </div>
+
+            <h3>🌐 Open Source from Day One</h3>
+
+            <p>Drew made a critical decision: he <strong>open-sourced dbt</strong>. Anyone could use it, modify it, and contribute to it for free. This was a bold move — most data tools at the time were expensive, proprietary products from companies like Informatica and IBM.</p>
+
+            <p>The open-source decision meant that dbt's growth would be driven by the <strong>community</strong>, not by a sales team. And that community would grow faster than anyone expected.</p>
+        </div>
+
+        <!-- ============================================================
+             SECTION 4 — Fishtown Analytics & Growth
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🏢 Fishtown Analytics & Growth (2018–2019)</h2>
+
+            <p>By 2018, dbt was gaining real traction. Drew Banin and <strong>Tristan Handy</strong> founded a company called <strong>Fishtown Analytics</strong> (named after the Fishtown neighbourhood in Philadelphia where they worked) to build a business around dbt.</p>
+
+            <div class="eli5-box">
+                <p>Imagine you built an amazing free recipe app in your garage. People love it. Now you start a company to make a <strong>premium version</strong> with extra features — like meal planning, grocery lists, and cooking timers — while keeping the basic recipe app free forever. That's what Fishtown Analytics did with dbt.</p>
+            </div>
+
+            <h3>🚀 Early Adopters Who Took the Leap</h3>
+
+            <p>Some brave, forward-thinking companies became early dbt adopters:</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">👓</div>
+                    <div class="stat-label">Warby Parker</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🛏️</div>
+                    <div class="stat-label">Casper</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🎵</div>
+                    <div class="stat-label">SeatGeek</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">📊</div>
+                    <div class="stat-label">Buffer</div>
+                </div>
+            </div>
+
+            <p>These companies reported dramatic improvements:</p>
+            <ul style="margin:16px 0 16px 24px; line-height:2.2;">
+                <li>⏱️ <strong>80% less time</strong> spent on data pipeline maintenance</li>
+                <li>🐛 <strong>90% fewer data bugs</strong> reaching production dashboards</li>
+                <li>👥 <strong>5x faster onboarding</strong> for new data analysts</li>
+                <li>📈 <strong>One source of truth</strong> for every business metric</li>
+            </ul>
+
+            <h3>🧪 The Testing Framework Arrives</h3>
+
+            <p>In 2019, dbt added one of its most important features: a <strong>built-in testing framework</strong>. Now you could write simple YAML declarations to automatically check your data:</p>
+
+            <div class="code-block">
+                <span class="label">YAML — schema.yml (testing, 2019)</span>
+                <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">customers</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">unique</span>
+          - <span class="string">not_null</span>
+      - <span class="keyword">name</span>: <span class="string">email</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">not_null</span>
+          - <span class="string">unique</span></code></pre>
+            </div>
+
+            <div class="real-life">
+                <p><strong>Real-world analogy:</strong> Adding tests to dbt was like adding a <strong>quality inspector</strong> to a factory assembly line. Before, defective products (bad data) would reach customers (dashboards). Now, the inspector catches problems <em>before</em> they leave the factory.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 5 — dbt Cloud & COVID Acceleration
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>☁️ dbt Cloud & COVID Acceleration (2020)</h2>
+
+            <p>2020 was the year everything changed — for the world, and for dbt.</p>
+
+            <h3>🌐 dbt Cloud: The Managed Service</h3>
+
+            <p>Fishtown Analytics launched <strong>dbt Cloud</strong> — a web-based platform that let you develop, test, schedule, and monitor your dbt projects without touching the command line. It was dbt with training wheels, a dashboard, and a scheduling engine all rolled into one.</p>
+
+            <div class="comparison-cards">
+                <div class="comparison-card">
+                    <h4>💻 Web-Based IDE</h4>
+                    <p>Write and test dbt models directly in your browser. No local setup required — just log in and start building.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>⏰ Job Scheduling</h4>
+                    <p>Schedule your dbt runs to execute automatically — every hour, every day, or on a custom cron schedule.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>👥 Team Collaboration</h4>
+                    <p>Multiple team members can work on the same project with Git integration, code review, and environment management.</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>📊 Monitoring</h4>
+                    <p>See which models ran, how long they took, which tests passed or failed — all in a beautiful dashboard.</p>
+                </div>
+            </div>
+
+            <h3>🦠 The COVID Effect</h3>
+
+            <p>Then COVID-19 hit. Suddenly, millions of knowledge workers were working from home. Data teams that relied on "walking over to someone's desk to ask about a query" were in trouble. They needed tools that enabled <strong>remote, asynchronous collaboration</strong>.</p>
+
+            <p>dbt was perfectly positioned. It was Git-based (so changes were tracked), it had documentation (so you could understand models without asking someone), and dbt Cloud worked in a browser (so you didn't need a corporate VPN).</p>
+
+            <div class="eli5-box">
+                <p>Imagine your school suddenly switches to online classes. The teacher who already had all their lessons on YouTube and Google Docs was fine. The teacher who only taught from handwritten notes on a whiteboard was in big trouble. dbt was the teacher with everything online — ready for remote work from day one.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">10x</div>
+                    <div class="stat-label">Download Increase in 2020</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5,000+</div>
+                    <div class="stat-label">Slack Community Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">850+</div>
+                    <div class="stat-label">Contributors on GitHub</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Warehouse Adapters</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 6 — dbt Labs & Enterprise
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🏗️ dbt Labs & Enterprise Era (2021–2022)</h2>
+
+            <p>By 2021, dbt wasn't a scrappy open-source project any more — it was the <strong>centre of the Modern Data Stack</strong>. The company raised <strong>$52 million in Series B funding</strong> and renamed itself from Fishtown Analytics to <strong>dbt Labs</strong> to reflect its growth.</p>
+
+            <h3>🎉 dbt 1.0 — The Stability Promise</h3>
+
+            <p>In December 2021, dbt Labs released <strong>dbt 1.0</strong> — a huge milestone. The "1.0" label meant:</p>
+
+            <ul style="margin:16px 0 16px 24px; line-height:2.2;">
+                <li>🔒 <strong>Semantic versioning</strong> — no more surprise breaking changes</li>
+                <li>📋 <strong>Stable API</strong> — packages and integrations could rely on consistent behaviour</li>
+                <li>🏢 <strong>Enterprise-ready</strong> — big companies could adopt dbt with confidence</li>
+            </ul>
+
+            <div class="real-life">
+                <p><strong>Real-world analogy:</strong> Think of dbt 1.0 like a restaurant getting its <strong>health inspection certificate</strong>. Before the certificate, adventurous foodies would eat there. After the certificate, even cautious corporate event planners would book it. The food didn't change — but the <em>trust</em> did.</p>
+            </div>
+
+            <h3>📐 The Semantic Layer</h3>
+
+            <p>dbt Labs introduced the <strong>Semantic Layer</strong> — a way to define business metrics (like "revenue," "churn rate," "active users") in one place and have every downstream tool (Looker, Tableau, Mode, etc.) use the exact same definition.</p>
+
+            <p>Remember the chaos from Section 1, where Marketing, Finance, and Product all had different revenue numbers? The Semantic Layer was dbt's answer: <strong>define it once, use it everywhere</strong>.</p>
+
+            <h3>🔌 20+ Adapters</h3>
+
+            <p>dbt now worked with over 20 data platforms:</p>
+
+            <div class="pipeline-diagram">
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:#dbeafe;">❄️</div>
+                    <span class="pipeline-label">Snowflake</span>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:#dcfce7;">📊</div>
+                    <span class="pipeline-label">BigQuery</span>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:#fef2f2;">🔴</div>
+                    <span class="pipeline-label">Redshift</span>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:#f3e8ff;">🟣</div>
+                    <span class="pipeline-label">Databricks</span>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:#fef3c7;">🐘</div>
+                    <span class="pipeline-label">Postgres</span>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:#ecfdf5;">🔷</div>
+                    <span class="pipeline-label">Spark</span>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:#fff7ed;">➕</div>
+                    <span class="pipeline-label">14+ more</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 7 — dbt Today
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🚀 dbt Today (2023–2026)</h2>
+
+            <p>Fast-forward to today, and dbt is no longer just a tool — it's an <strong>ecosystem</strong>. It's the backbone of how modern data teams build, test, document, and deploy data transformations worldwide.</p>
+
+            <h3>🤖 AI-Powered Features</h3>
+
+            <p><strong>dbt Copilot</strong> uses artificial intelligence to help you write SQL, generate documentation, and suggest tests. It's like having a senior analytics engineer looking over your shoulder, offering suggestions as you type.</p>
+
+            <div class="eli5-box">
+                <p>Imagine you're writing an essay, and a really smart friend sits next to you whispering, "Hey, you should probably add a paragraph about X" or "That sentence has a grammar mistake." That's dbt Copilot — an AI assistant that helps you write better data transformations.</p>
+            </div>
+
+            <h3>🕸️ dbt Mesh for Large Organisations</h3>
+
+            <p>Big companies (think: hundreds of data engineers across dozens of teams) needed a way to manage <strong>multiple interconnected dbt projects</strong>. dbt Mesh lets teams own their own projects while still sharing models across team boundaries — like departments in a company that have their own budgets but share a cafeteria.</p>
+
+            <h3>🔬 Column-Level Lineage</h3>
+
+            <p>Early dbt could tell you that <code>model_A</code> depends on <code>model_B</code>. Modern dbt can tell you that <strong>column <code>revenue</code> in <code>model_A</code></strong> comes from <strong>column <code>amount</code> in <code>model_B</code></strong> after being multiplied by <code>exchange_rate</code> from <code>model_C</code>. That's column-level lineage — and it's a game-changer for debugging and compliance.</p>
+
+            <h3>🌍 50+ Adapters</h3>
+
+            <p>dbt now connects to over 50 data platforms, from traditional warehouses to modern lakehouses, from cloud giants to open-source databases. If your company stores data somewhere, there's probably a dbt adapter for it.</p>
+
+            <div class="pro-tip">
+                <p>The dbt community now has its own annual conference called <strong>Coalesce</strong> (a clever data pun — "coalesce" is a SQL function that returns the first non-null value). Thousands of data professionals attend to share best practices, new features, and war stories.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 8 — Impact Stats
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>📊 dbt by the Numbers</h2>
+
+            <p>Let's step back and appreciate just how far dbt has come from Drew Banin's side project:</p>
+
+            <div class="stats-grid">
+                <div class="stat-card glow">
+                    <div class="stat-number">100K+</div>
+                    <div class="stat-label">Active Projects Worldwide</div>
+                </div>
+                <div class="stat-card glow">
+                    <div class="stat-number">$4.2B</div>
+                    <div class="stat-label">Company Valuation</div>
+                </div>
+                <div class="stat-card glow">
+                    <div class="stat-number">9,000+</div>
+                    <div class="stat-label">Companies Using dbt</div>
+                </div>
+                <div class="stat-card glow">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Data Platform Adapters</div>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <p><strong>To put this in perspective:</strong> dbt went from a side project by one frustrated analyst in 2016 to a $4.2 billion company used by 9,000+ organisations in under a decade. That's like going from selling lemonade on your street corner to running a global beverage empire — in less time than it takes most people to finish a PhD.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 9 — Timeline Summary
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🗺️ The Complete dbt Timeline</h2>
+
+            <p>Here's the full journey at a glance:</p>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2012–2015</div>
+                    <div class="timeline-content">
+                        <strong>The Chaos Era</strong> — Data teams struggle with scattered SQL, no version control, no testing, and inconsistent metrics across organisations.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2016</div>
+                    <div class="timeline-content">
+                        <strong>Drew Banin's Eureka Moment</strong> — Working at RJMetrics, Drew asks: "Why can't data work like software?" He starts building dbt as a side project.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2016–2017</div>
+                    <div class="timeline-content">
+                        <strong>First Open-Source Release</strong> — dbt launches as a simple Python CLI with SQL + Jinja templating. The <code>ref()</code> function is born.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2018</div>
+                    <div class="timeline-content">
+                        <strong>Fishtown Analytics Founded</strong> — Drew and Tristan Handy start a company. Early adopters include Warby Parker and Casper.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2019</div>
+                    <div class="timeline-content">
+                        <strong>Testing Framework & Docs</strong> — Built-in testing (<code>unique</code>, <code>not_null</code>) and auto-generated documentation arrive. Community grows rapidly.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-content">
+                        <strong>dbt Cloud & COVID Boom</strong> — Managed service launches. Remote work drives 10x download increase. Web-based IDE makes dbt accessible to everyone.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                        <strong>$52M Funding & Rebrand</strong> — Renamed to dbt Labs. dbt 1.0 released with stability guarantees. Semantic Layer introduced.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                        <strong>Enterprise Adoption</strong> — 20+ adapters, dbt Mesh for large orgs, enterprise access controls and audit logging.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023–2026</div>
+                    <div class="timeline-content">
+                        <strong>AI & Modern Era</strong> — dbt Copilot (AI), column-level lineage, 50+ adapters, $4.2B valuation, and 9,000+ companies using dbt daily.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 10 — Interactive Quiz
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🧠 Test Your Knowledge</h2>
+
+            <p>Let's see how much you remember from the story of dbt! Answer these 3 questions:</p>
+
+            <div class="interactive-quiz" id="quiz-1">
+                <h3>Question 1 of 3</h3>
+                <p><strong>Who created dbt, and where was he working at the time?</strong></p>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> A) Tristan Handy, working at Snowflake
+                </label>
+                <label class="quiz-option" data-correct="true" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> B) Drew Banin, working at RJMetrics
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> C) Jeff Bezos, working at Amazon
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> D) Martin Fowler, working at ThoughtWorks
+                </label>
+                <button class="nav-btn-next" style="margin-top:16px;" onclick="checkAnswer('quiz-1', this)">Check Answer</button>
+                <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+
+            <div class="interactive-quiz" id="quiz-2">
+                <h3>Question 2 of 3</h3>
+                <p><strong>What event in 2020 caused dbt downloads to increase 10x?</strong></p>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> A) dbt was acquired by Google
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> B) A viral TikTok video about SQL
+                </label>
+                <label class="quiz-option" data-correct="true" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> C) COVID-19 drove remote work and the need for collaborative data tools
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> D) Snowflake's IPO made everyone interested in data
+                </label>
+                <button class="nav-btn-next" style="margin-top:16px;" onclick="checkAnswer('quiz-2', this)">Check Answer</button>
+                <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+
+            <div class="interactive-quiz" id="quiz-3">
+                <h3>Question 3 of 3</h3>
+                <p><strong>What was the original company name before it became "dbt Labs"?</strong></p>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> A) Data Build Company
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> B) Philadelphia Data Co.
+                </label>
+                <label class="quiz-option" data-correct="true" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> C) Fishtown Analytics
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> D) Transform Inc.
+                </label>
+                <button class="nav-btn-next" style="margin-top:16px;" onclick="checkAnswer('quiz-3', this)">Check Answer</button>
+                <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 11 — Core / Non-Core & Nav
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>📋 Lesson Summary</h2>
+
+            <div class="core-box">
+                <ul style="margin-left:20px; line-height:2;">
+                    <li><strong>Before dbt (2012–2015):</strong> SQL was scattered, untested, unversioned, and metrics were inconsistent.</li>
+                    <li><strong>Drew Banin</strong> created dbt in 2016 at RJMetrics to bring software engineering practices to data.</li>
+                    <li><strong>dbt is open-source</strong> — a Python CLI that runs SQL + Jinja against your data warehouse.</li>
+                    <li><strong>Key milestones:</strong> Fishtown Analytics (2018), testing framework (2019), dbt Cloud (2020), dbt 1.0 (2021).</li>
+                    <li><strong>Today:</strong> 100K+ projects, 50+ adapters, AI features, $4.2B valuation.</li>
+                </ul>
+            </div>
+
+            <div class="noncore-box">
+                <ul style="margin-left:20px; line-height:2;">
+                    <li>Specific funding rounds and investor names.</li>
+                    <li>Detailed feature release dates for each minor version.</li>
+                    <li>The Coalesce conference and community Slack history.</li>
+                    <li>dbt Mesh architecture details (covered in the Advanced lesson).</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt">
+                <p style="margin:0;"><strong>In one sentence:</strong> Why do you think dbt succeeded where other data tools failed? Think about what made it different — the open-source model, the focus on SQL, the community, or something else?</p>
+            </div>
+
+            <!-- Nav buttons -->
+            <div class="nav-buttons">
+                <a href="meet-dbt.html" class="nav-btn-prev"><i class="fas fa-arrow-left"></i> Prev: Meet dbt</a>
+                <a href="installation.html" class="nav-btn-next">Next: Installation <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+    </div><!-- /lesson-container -->
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // IntersectionObserver for fade-in sections
+        const faders = document.querySelectorAll('.fade-in-section');
+        const fadeObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        faders.forEach(el => fadeObs.observe(el));
+
+        // Back to top
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            backToTopBtn.classList.toggle('show', window.pageYOffset > 300);
+        });
+
+        // Quiz logic
+        function selectOption(label) {
+            const quiz = label.closest('.interactive-quiz');
+            quiz.querySelectorAll('.quiz-option').forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                o.style.fontWeight = '';
+            });
+            label.querySelector('input').checked = true;
+        }
+
+        function checkAnswer(quizId, btn) {
+            const quiz = document.getElementById(quizId);
+            const selected = quiz.querySelector('.quiz-option input:checked');
+            const feedback = quiz.querySelector('.quiz-feedback');
+
+            if (!selected) {
+                feedback.style.display = 'block';
+                feedback.textContent = '⚠️ Please select an answer first!';
+                feedback.style.background = '#fef3c7';
+                feedback.style.color = '#92400e';
+                return;
+            }
+
+            const label = selected.closest('.quiz-option');
+            const isCorrect = label.getAttribute('data-correct') === 'true';
+
+            quiz.querySelectorAll('.quiz-option').forEach(o => {
+                o.style.pointerEvents = 'none';
+                if (o.getAttribute('data-correct') === 'true') {
+                    o.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                label.classList.add('correct');
+                feedback.style.display = 'block';
+                feedback.textContent = '🎉 Correct! Well done!';
+                feedback.style.background = '#f0fdf4';
+                feedback.style.color = '#166534';
+            } else {
+                label.classList.add('wrong');
+                feedback.style.display = 'block';
+                feedback.textContent = '❌ Not quite. The correct answer is highlighted in green.';
+                feedback.style.background = '#fef2f2';
+                feedback.style.color = '#991b1b';
+            }
+
+            btn.style.display = 'none';
+        }
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

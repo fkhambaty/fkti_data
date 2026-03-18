@@ -3,36 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DBT Course Hub | Fakhruddin Khambaty's Learning Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>dbt Course Hub | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+
         .container { max-width: 1200px; margin: 0 auto; }
-        .nav { background: rgba(30, 41, 59, 0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #475569; }
-        .nav a { color: #38bdf8; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .nav a:hover { color: #7dd3fc; }
-        .header { text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); border-radius: 25px; margin-bottom: 50px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+
+        .nav {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #475569;
+        }
+        .nav a { color: #ff694a; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
+        .nav a:hover { color: #ffb09a; }
+
+        .header {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #ff694a 0%, #e5532e 50%, #c2410c 100%);
+            border-radius: 25px;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+        .header > * { position: relative; z-index: 1; }
         .header h1 { font-size: 3em; margin-bottom: 15px; font-weight: 800; }
-        .header p { font-size: 1.3em; opacity: 0.9; max-width: 700px; margin: 0 auto 20px; }
-        .header-badge { background: rgba(255,255,255,0.2); color: white; padding: 10px 25px; border-radius: 30px; font-weight: 700; display: inline-block; margin-bottom: 20px; }
-        .progress-section { background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 30px; margin-bottom: 40px; border: 1px solid #475569; }
-        .progress-section h3 { color: #38bdf8; margin-bottom: 15px; }
+        .header p { font-size: 1.3em; opacity: 0.92; max-width: 700px; margin: 0 auto 20px; }
+        .header-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .progress-section {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid #475569;
+        }
+        .progress-section h3 { color: #ff694a; margin-bottom: 15px; }
         .progress-bar-bg { background: #334155; border-radius: 10px; height: 25px; overflow: hidden; }
-        .progress-bar { background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%); height: 100%; width: 80%; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.9em; }
-        .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .module-card { background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 28px; border: 2px solid #475569; transition: all 0.3s; position: relative; overflow: visible; text-decoration: none; color: inherit; display: block; }
-        .module-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%); border-radius: 20px 20px 0 0; }
-        .module-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); border-color: #3b82f6; }
-        .module-icon { font-size: 2.5em; margin-bottom: 12px; }
-        .module-card h3 { font-size: 1.25em; margin-bottom: 10px; color: white; }
-        .module-card p { color: #94a3b8; font-size: 0.95em; line-height: 1.5; }
+        .progress-bar {
+            background: linear-gradient(90deg, #ff694a 0%, #f97316 100%);
+            height: 100%;
+            width: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .module-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid #475569;
+            transition: all 0.3s;
+            position: relative;
+            overflow: visible;
+        }
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--module-color, #ff694a) 0%, var(--module-color-2, #f97316) 100%);
+            border-radius: 20px 20px 0 0;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border-color: var(--module-color, #ff694a);
+        }
+
+        .module-icon { font-size: 3em; margin-bottom: 15px; }
+        .module-card h3 { font-size: 1.4em; margin-bottom: 12px; color: white; }
+        .module-card p { color: #94a3b8; margin-bottom: 20px; line-height: 1.6; }
+
+        .module-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .status-ready { background: #22c55e; color: white; }
+        .status-coming { background: #f59e0b; color: #1e293b; }
+
+        .module-lessons {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #475569;
+            overflow: visible;
+        }
+
+        .lesson-link {
+            display: block;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: rgba(255, 105, 74, 0.1);
+            border-radius: 10px;
+            color: #ffb09a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .lesson-link:hover {
+            background: rgba(255, 105, 74, 0.2);
+            transform: translateX(5px);
+        }
+        .lesson-link i { margin-right: 8px; }
+
+        .lesson-wrap { position: relative; display: block; overflow: visible; }
+        .subtopics-popover {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            margin-bottom: 10px;
+            min-width: 260px;
+            max-width: 340px;
+            padding: 16px 20px;
+            background: #ffffff;
+            border: 2px solid #ff694a;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            z-index: 200;
+            pointer-events: none;
+            font-size: 0.9em;
+        }
+        .lesson-wrap:hover .subtopics-popover { display: block; }
+        .subtopics-popover::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            bottom: -10px;
+            border: 10px solid transparent;
+            border-top-color: #ff694a;
+            border-bottom: none;
+        }
+        .subtopics-popover::after {
+            content: '';
+            position: absolute;
+            left: 22px;
+            bottom: -7px;
+            border: 8px solid transparent;
+            border-top-color: #ffffff;
+            border-bottom: none;
+        }
+        .subtopics-popover .popover-title {
+            color: #c2410c;
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ffedd5;
+            font-size: 0.95em;
+        }
+        .subtopics-popover ul { list-style: none; margin: 0; padding: 0; color: #1e293b; line-height: 1.8; }
+        .subtopics-popover li { padding: 2px 0; }
+        .subtopics-popover li::before { content: '▸ '; color: #ff694a; font-weight: bold; }
+
+        .module-intro  { --module-color: #ff694a; --module-color-2: #f97316; }
+        .module-setup  { --module-color: #3b82f6; --module-color-2: #60a5fa; }
+        .module-core   { --module-color: #8b5cf6; --module-color-2: #a78bfa; }
+        .module-test   { --module-color: #22c55e; --module-color-2: #4ade80; }
+        .module-deploy { --module-color: #ec4899; --module-color-2: #f472b6; }
+        .module-adv    { --module-color: #eab308; --module-color-2: #facc15; }
+
         .footer { text-align: center; padding: 30px; color: #64748b; font-size: 0.95em; }
-        .footer a { color: #38bdf8; text-decoration: none; }
-        .btn-full { display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; padding: 14px 28px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; font-weight: 700; text-decoration: none; font-family: 'Nunito', sans-serif; transition: all 0.2s; }
-        .btn-full:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4); }
-        @media (max-width: 768px) { .header h1 { font-size: 2em; } .modules-grid { grid-template-columns: 1fr; } }
+        .footer a { color: #ff694a; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .module-card { padding: 25px 20px; }
+            .subtopics-popover { left: 0; right: 0; max-width: none; }
+        }
     </style>
 </head>
 <body>
@@ -41,32 +228,112 @@
             <a href="../index.html"><i class="fas fa-home"></i><span>Main Website</span></a>
             <a href="../data_science_course/index.html"><span>Data Science Course</span><i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="header">
-            <span class="header-badge">🔄 DBT</span>
-            <h1>DBT Course Hub</h1>
-            <p>Modern analytics engineering made simple. Same teaching philosophy: step-by-step, hands-on.</p>
+            <span class="header-badge">🔄 THE COMPLETE dbt CURRICULUM</span>
+            <h1>🏗️ dbt Course Hub</h1>
+            <p>From "What is dbt?" to building production data pipelines. Every concept explained like you're 5 years old, with animations and real-world examples!</p>
         </div>
+
         <div class="progress-section">
             <h3>📈 Course Progress</h3>
-            <div class="progress-bar-bg"><div class="progress-bar">Full Course Ready</div></div>
-            <p style="margin-top: 15px; color: #94a3b8;">Welcome, History, Installation, DBT Basics, Models, Testing, Deployment, Advanced, Projects & Exercises.</p>
+            <div class="progress-bar-bg">
+                <div class="progress-bar">12 Lessons Ready</div>
+            </div>
+            <p style="margin-top: 15px; color: #94a3b8;">Meet dbt, History, Installation, Project Structure, Models, Sources & Refs, Testing, Documentation, Jinja & Macros, Packages, Deployment, and Advanced Topics.</p>
         </div>
+
         <div class="modules-grid">
-            <a href="index.html#welcome" class="module-card"><div class="module-icon">🏠</div><h3>Welcome</h3><p>What you'll learn, why DBT, real-world success stories.</p></a>
-            <a href="index.html#history" class="module-card"><div class="module-icon">📜</div><h3>History</h3><p>How DBT evolved and the modern data stack.</p></a>
-            <a href="index.html#installation" class="module-card"><div class="module-icon">⚙️</div><h3>Installation</h3><p>DBT Core, DBT Cloud, and project setup.</p></a>
-            <a href="index.html#basics" class="module-card"><div class="module-icon">📚</div><h3>DBT Basics</h3><p>Fundamentals, project structure, SQL transformations.</p></a>
-            <a href="index.html#models" class="module-card"><div class="module-icon">🏗️</div><h3>Models</h3><p>Building models, ref(), source(), and lineage.</p></a>
-            <a href="index.html#incremental" class="module-card"><div class="module-icon">🔄</div><h3>Incremental Models</h3><p>merge, append, delete+insert; incremental strategies.</p></a>
-            <a href="index.html#snapshots" class="module-card"><div class="module-icon">📸</div><h3>Snapshots</h3><p>Slowly Changing Dimensions; snapshot strategies.</p></a>
-            <a href="index.html#testing" class="module-card"><div class="module-icon">🧪</div><h3>Testing</h3><p>Data quality tests, singular tests, and testing strategies.</p></a>
-            <a href="index.html#deployment" class="module-card"><div class="module-icon">🚀</div><h3>Deployment</h3><p>DBT Cloud, CI/CD, and production runs.</p></a>
-            <a href="index.html#advanced" class="module-card"><div class="module-icon">⚡</div><h3>Advanced</h3><p>Macros, packages, seeds, hooks, and best practices.</p></a>
-            <a href="index.html#projects" class="module-card"><div class="module-icon">💡</div><h3>Projects</h3><p>Real-world analytics engineering projects.</p></a>
-            <a href="index.html#exercises" class="module-card"><div class="module-icon">🎯</div><h3>Exercises</h3><p>Hands-on exercises and quizzes.</p></a>
+            <!-- Module 1: Introduction -->
+            <div class="module-card module-intro">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">👋</div>
+                <h3>Module 1: Introduction</h3>
+                <p>What is dbt? Why does every modern data team use it? Start your journey here with fun analogies and zero jargon.</p>
+                <div class="module-lessons">
+                    <span class="lesson-wrap"><a href="meet-dbt.html" class="lesson-link" data-subtopics="What is dbt?|The Restaurant Kitchen Analogy|ETL vs ELT|Where dbt Fits|Who Uses dbt?|The Modern Data Stack|Why You Should Learn dbt"><i class="fas fa-play-circle"></i> Meet dbt (Start Here!)</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                    <span class="lesson-wrap"><a href="history.html" class="lesson-link" data-subtopics="The Data Chaos Era|Drew Banin's Eureka Moment|Fishtown Analytics|dbt Cloud Launch|dbt 1.0 & Beyond|dbt Today"><i class="fas fa-play-circle"></i> History & Evolution of dbt</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                </div>
+            </div>
+
+            <!-- Module 2: Getting Started -->
+            <div class="module-card module-setup">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚙️</div>
+                <h3>Module 2: Getting Started</h3>
+                <p>Install dbt, connect to your warehouse, and understand every file and folder in a dbt project.</p>
+                <div class="module-lessons">
+                    <span class="lesson-wrap"><a href="installation.html" class="lesson-link" data-subtopics="Prerequisites|Install dbt Core|Install dbt Cloud|Connect to Warehouse|profiles.yml Explained|Verify Installation|Your First dbt run"><i class="fas fa-play-circle"></i> Installation & Setup</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                    <span class="lesson-wrap"><a href="project-structure.html" class="lesson-link" data-subtopics="dbt_project.yml|models/ Folder|macros/ Folder|seeds/ Folder|snapshots/ Folder|tests/ Folder|analysis/ Folder|The Layered Architecture"><i class="fas fa-play-circle"></i> Project Structure (Every File Explained)</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                </div>
+            </div>
+
+            <!-- Module 3: Core Concepts -->
+            <div class="module-card module-core">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🏗️</div>
+                <h3>Module 3: Core Concepts</h3>
+                <p>The heart of dbt — models, materializations, sources, refs, and the magical lineage graph.</p>
+                <div class="module-lessons">
+                    <span class="lesson-wrap"><a href="models.html" class="lesson-link" data-subtopics="What is a Model?|Views vs Tables|Incremental Models|Snapshots (SCD)|Ephemeral Models|Choosing Materializations|Staging → Intermediate → Marts"><i class="fas fa-play-circle"></i> Models & Materializations</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                    <span class="lesson-wrap"><a href="sources-refs.html" class="lesson-link" data-subtopics="What is source()?|What is ref()?|Why Not Just Write Table Names?|Animated Lineage Graph|Building Your First DAG|Multi-Source Projects"><i class="fas fa-play-circle"></i> Sources, Refs & Lineage</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                </div>
+            </div>
+
+            <!-- Module 4: Quality & Documentation -->
+            <div class="module-card module-test">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🧪</div>
+                <h3>Module 4: Quality & Documentation</h3>
+                <p>Catch bugs before your boss does! Learn testing, freshness checks, and auto-generated docs.</p>
+                <div class="module-lessons">
+                    <span class="lesson-wrap"><a href="testing.html" class="lesson-link" data-subtopics="Why Test Data?|Schema Tests (unique, not_null)|Relationship Tests|Custom SQL Tests|Source Freshness|dbt_expectations Package|Testing Workflow"><i class="fas fa-play-circle"></i> Testing & Data Quality</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                    <span class="lesson-wrap"><a href="documentation.html" class="lesson-link" data-subtopics="Why Document?|schema.yml Files|dbt docs generate|The Lineage Graph|Column Descriptions|Doc Blocks|Hosting Your Docs"><i class="fas fa-play-circle"></i> Documentation & Lineage</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                </div>
+            </div>
+
+            <!-- Module 5: Power Features -->
+            <div class="module-card module-adv">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚡</div>
+                <h3>Module 5: Power Features</h3>
+                <p>Level up with Jinja templating, macros, packages, and seeds. Write SQL that writes SQL!</p>
+                <div class="module-lessons">
+                    <span class="lesson-wrap"><a href="jinja-macros.html" class="lesson-link" data-subtopics="What is Jinja?|Variables & Filters|if/else Logic|for Loops|Writing Macros|Using Macros in Models|Built-in dbt Macros"><i class="fas fa-play-circle"></i> Jinja & Macros</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                    <span class="lesson-wrap"><a href="packages-seeds.html" class="lesson-link" data-subtopics="What are Packages?|packages.yml|dbt_utils|dbt_expectations|Seeds (CSV Data)|When to Use Seeds|Building Your Own Package"><i class="fas fa-play-circle"></i> Packages & Seeds</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                </div>
+            </div>
+
+            <!-- Module 6: Production -->
+            <div class="module-card module-deploy">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🚀</div>
+                <h3>Module 6: Production & Advanced</h3>
+                <p>Ship to production! CI/CD, dbt Cloud, Airflow integration, and enterprise best practices.</p>
+                <div class="module-lessons">
+                    <span class="lesson-wrap"><a href="deployment.html" class="lesson-link" data-subtopics="Dev vs Prod Environments|dbt Cloud Jobs|GitHub Actions CI/CD|Airflow + dbt|Monitoring & Alerting|Blue-Green Deployments"><i class="fas fa-play-circle"></i> Deployment & CI/CD</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                    <span class="lesson-wrap"><a href="advanced.html" class="lesson-link" data-subtopics="Hooks (pre & post)|Exposures|dbt Mesh|Semantic Layer|Performance Tuning|Enterprise Patterns|Career Advice"><i class="fas fa-play-circle"></i> Advanced & Best Practices</a><div class="subtopics-popover"><span class="popover-title">In this lesson</span><ul class="popover-list"></ul></div></span>
+                </div>
+            </div>
         </div>
-        <p style="text-align: center;"><a href="index.html" class="btn-full"><i class="fas fa-book-open"></i> Open Full Course</a></p>
-        <div class="footer"><p>© 2026 <a href="../index.html">Fakhruddin Khambaty's Learning Hub</a> | DBT Course</p></div>
+
+        <div class="footer">
+            <p>📚 The most comprehensive, beginner-friendly dbt course on the internet</p>
+            <p>Created by <a href="../index.html">Fakhruddin Khambaty</a></p>
+        </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.lesson-wrap').forEach(function(wrap) {
+            var a = wrap.querySelector('.lesson-link[data-subtopics]');
+            if (!a) return;
+            var ul = wrap.querySelector('.subtopics-popover .popover-list');
+            if (!ul) return;
+            var topics = a.getAttribute('data-subtopics').split('|');
+            ul.innerHTML = topics.map(function(t) { return '<li>' + t.trim() + '</li>'; }).join('');
+        });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/analytics-tracker.js"></script>
 </body>
 </html>

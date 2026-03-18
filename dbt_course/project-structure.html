@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Structure | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 4 · BEGINNER</span>
+    <h1>📁 dbt Project Structure — Every File Explained</h1>
+    <p class="subtitle">Understanding your dbt project is like learning the layout of a new kitchen — once you know where everything is, cooking becomes effortless.</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="installation.html"><i class="fas fa-arrow-left"></i> Installation</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="models.html">Models <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: The Big Picture
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏠 The Big Picture</h2>
+
+        <div class="eli5-box">
+            <p>A dbt project is like a <strong>well-organized kitchen</strong>. Every drawer has a purpose, every shelf holds specific items. The spoons don't go in the fridge, and the milk doesn't go in the cutlery drawer!</p>
+            <p style="margin-top:12px;">Right now, you're standing at the kitchen door for the first time. Let's open <strong>every drawer</strong> and see what's inside. By the end of this lesson, you'll know exactly where everything goes — and <em>why</em>.</p>
+        </div>
+
+        <h3>Your Entire dbt Project at a Glance</h3>
+        <p>When you run <code>dbt init my_project</code>, dbt creates a folder structure that looks like this. Don't panic — we'll explain <strong>every single line</strong>:</p>
+
+        <div class="folder-tree">
+            <span class="folder">📁 my_dbt_project/</span>
+            <span class="indent"><span class="file-yml">📄 dbt_project.yml</span> &nbsp;← The recipe book cover</span>
+            <span class="indent"><span class="file-yml">📄 packages.yml</span> &nbsp;← Your shopping list for add-ons</span>
+            <span class="indent"><span class="folder">📁 models/</span> &nbsp;← Where the magic happens (SQL files)</span>
+            <span class="indent-2"><span class="folder">📁 staging/</span> &nbsp;← Prep station (wash &amp; chop)</span>
+            <span class="indent-3"><span class="file-sql">📄 stg_customers.sql</span></span>
+            <span class="indent-3"><span class="file-sql">📄 stg_orders.sql</span></span>
+            <span class="indent-3"><span class="file-yml">📄 _stg_models.yml</span></span>
+            <span class="indent-2"><span class="folder">📁 intermediate/</span> &nbsp;← Cooking station (combine)</span>
+            <span class="indent-3"><span class="file-sql">📄 int_orders_joined.sql</span></span>
+            <span class="indent-2"><span class="folder">📁 marts/</span> &nbsp;← Plating station (serve!)</span>
+            <span class="indent-3"><span class="file-sql">📄 fct_orders.sql</span></span>
+            <span class="indent-3"><span class="file-sql">📄 dim_customers.sql</span></span>
+            <span class="indent-3"><span class="file-yml">📄 _mart_models.yml</span></span>
+            <span class="indent"><span class="folder">📁 macros/</span> &nbsp;← Secret recipes (reusable SQL)</span>
+            <span class="indent-2"><span class="file-sql">📄 cents_to_dollars.sql</span></span>
+            <span class="indent"><span class="folder">📁 seeds/</span> &nbsp;← Pantry staples (CSV data)</span>
+            <span class="indent-2"><span class="file-csv">📄 country_codes.csv</span></span>
+            <span class="indent"><span class="folder">📁 snapshots/</span> &nbsp;← Food diary (point-in-time)</span>
+            <span class="indent-2"><span class="file-sql">📄 snapshot_orders.sql</span></span>
+            <span class="indent"><span class="folder">📁 tests/</span> &nbsp;← Quality control (custom tests)</span>
+            <span class="indent-2"><span class="file-sql">📄 assert_positive_revenue.sql</span></span>
+            <span class="indent"><span class="folder">📁 analyses/</span> &nbsp;← Scratch pad (ad-hoc queries)</span>
+            <span class="indent-2"><span class="file-sql">📄 monthly_revenue_check.sql</span></span>
+        </div>
+
+        <div class="pro-tip">
+            <p><strong>Color code:</strong> <span style="color:#67e8f9;">Cyan = SQL files</span> &nbsp;|&nbsp; <span style="color:#86efac;">Green = YAML config files</span> &nbsp;|&nbsp; <span style="color:#fdba74;">Orange = CSV data files</span>. You'll see this pattern everywhere in dbt!</p>
+        </div>
+
+        <p>Think of this folder tree as a <strong>map of your kitchen</strong>. Each folder is a different station, and each file is a specific tool or ingredient. Let's tour every station now.</p>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: dbt_project.yml — The Recipe Book Cover
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📖 dbt_project.yml — The Recipe Book Cover</h2>
+
+        <div class="eli5-box">
+            <p>This is like the <strong>cover page of your recipe book</strong> — it says what the book is called, who wrote it, and how the recipes are organized. Every dbt project <em>must</em> have this file. Without it, dbt doesn't even know it's looking at a dbt project!</p>
+        </div>
+
+        <p>This is the <strong>single most important file</strong> in your project. It lives at the root of your project folder and tells dbt everything it needs to know about your project. Let's look at a real example:</p>
+
+        <div class="code-block">
+            <span class="label">dbt_project.yml</span>
+            <pre><code><span class="comment"># ── What is this project called? ──</span>
+<span class="keyword">name</span>: <span class="string">'my_online_store'</span>       <span class="comment"># Your project's unique name (no spaces!)</span>
+<span class="keyword">version</span>: <span class="string">'1.0.0'</span>              <span class="comment"># Version number (like a book edition)</span>
+
+<span class="comment"># ── Who wrote this? ──</span>
+<span class="keyword">profile</span>: <span class="string">'my_online_store'</span>    <span class="comment"># Links to your profiles.yml (warehouse connection)</span>
+
+<span class="comment"># ── Where are things stored? ──</span>
+<span class="keyword">model-paths</span>: [<span class="string">"models"</span>]       <span class="comment"># Where dbt looks for SQL models</span>
+<span class="keyword">analysis-paths</span>: [<span class="string">"analyses"</span>]  <span class="comment"># Where ad-hoc queries live</span>
+<span class="keyword">test-paths</span>: [<span class="string">"tests"</span>]         <span class="comment"># Where custom tests live</span>
+<span class="keyword">seed-paths</span>: [<span class="string">"seeds"</span>]         <span class="comment"># Where CSV seed files live</span>
+<span class="keyword">macro-paths</span>: [<span class="string">"macros"</span>]       <span class="comment"># Where reusable macros live</span>
+<span class="keyword">snapshot-paths</span>: [<span class="string">"snapshots"</span>] <span class="comment"># Where snapshot definitions live</span>
+
+<span class="comment"># ── How should models be built by default? ──</span>
+<span class="keyword">models</span>:
+  <span class="keyword">my_online_store</span>:
+    <span class="keyword">staging</span>:
+      <span class="keyword">+materialized</span>: <span class="string">view</span>      <span class="comment"># Staging models = lightweight views</span>
+    <span class="keyword">intermediate</span>:
+      <span class="keyword">+materialized</span>: <span class="string">view</span>      <span class="comment"># Intermediate = also views</span>
+    <span class="keyword">marts</span>:
+      <span class="keyword">+materialized</span>: <span class="string">table</span>     <span class="comment"># Marts = full tables (fast for dashboards!)</span></code></pre>
+        </div>
+
+        <h3>Key Settings Explained</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Setting</th>
+                    <th>What It Does</th>
+                    <th>Kitchen Analogy</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>name</code></td><td>Unique identifier for your project</td><td>The title on your recipe book cover</td></tr>
+                <tr><td><code>version</code></td><td>Tracks which edition of your project this is</td><td>"2nd Edition" on the book spine</td></tr>
+                <tr><td><code>profile</code></td><td>Links to your warehouse credentials in <code>profiles.yml</code></td><td>Which kitchen (warehouse) you're cooking in</td></tr>
+                <tr><td><code>model-paths</code></td><td>Tells dbt where to find your SQL models</td><td>Which shelf has the recipe cards</td></tr>
+                <tr><td><code>+materialized</code></td><td>How dbt should build models (view, table, incremental)</td><td>Should we serve on a plate (table) or a tray (view)?</td></tr>
+            </tbody>
+        </table>
+
+        <div class="important-box">
+            <p>The <code>name</code> field must match the folder name under the <code>models:</code> section. If your project is called <code>my_online_store</code>, then the models config must also start with <code>my_online_store:</code>. Mismatch = errors!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: models/ — Where the Magic Happens
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>✨ models/ — Where the Magic Happens</h2>
+
+        <p>This is the <strong>heart and soul</strong> of your dbt project. Every SQL file in this folder is a "model" — a transformation that turns raw data into something useful. Most of your time as a dbt developer will be spent here.</p>
+
+        <div class="eli5-box">
+            <p>Think of the <code>models/</code> folder as the <strong>main cooking area</strong> of your restaurant kitchen. It has three stations, and every dish passes through them in order — just like an assembly line!</p>
+        </div>
+
+        <h3>The 3-Layer Architecture</h3>
+        <p>Professional dbt projects organize models into <strong>three layers</strong>. This isn't just a suggestion — it's the industry-standard best practice used by companies like Spotify, GitLab, and Shopify.</p>
+
+        <!-- Animated Warehouse Diagram: 3 Layers -->
+        <div class="visual-example">
+            <div class="warehouse-diagram">
+                <div class="warehouse-layer" style="border-color:#3b82f6;animation-delay:0s;">
+                    <div class="layer-icon">🥬</div>
+                    <div class="layer-name" style="color:#1d4ed8;">Staging</div>
+                    <div class="layer-desc">Prep Station</div>
+                    <div class="layer-desc" style="font-size:0.8em;margin-top:4px;">Wash, chop, rename</div>
+                </div>
+                <div style="font-size:2em;color:var(--dbt-primary);align-self:center;animation:arrowPulse 1.5s ease-in-out infinite;">→</div>
+                <div class="warehouse-layer" style="border-color:#8b5cf6;animation-delay:0.2s;">
+                    <div class="layer-icon">🍳</div>
+                    <div class="layer-name" style="color:#6d28d9;">Intermediate</div>
+                    <div class="layer-desc">Cooking Station</div>
+                    <div class="layer-desc" style="font-size:0.8em;margin-top:4px;">Combine, join, enrich</div>
+                </div>
+                <div style="font-size:2em;color:var(--dbt-primary);align-self:center;animation:arrowPulse 1.5s ease-in-out infinite;">→</div>
+                <div class="warehouse-layer" style="border-color:#22c55e;animation-delay:0.4s;">
+                    <div class="layer-icon">🍽️</div>
+                    <div class="layer-name" style="color:#166534;">Marts</div>
+                    <div class="layer-desc">Plating Station</div>
+                    <div class="layer-desc" style="font-size:0.8em;margin-top:4px;">Ready to serve!</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Restaurant analogy — making a Caesar salad:</strong></p>
+            <p style="margin-top:8px;">🥬 <strong>Staging (Prep Station)</strong> — Wash the lettuce, chop the croutons, grate the parmesan. You're just cleaning and renaming raw ingredients. No mixing yet!</p>
+            <p style="margin-top:4px;">🍳 <strong>Intermediate (Cooking Station)</strong> — Toss the lettuce with dressing, mix in croutons and parmesan. You're combining prepped ingredients into something new.</p>
+            <p style="margin-top:4px;">🍽️ <strong>Marts (Plating Station)</strong> — Arrange beautifully on a plate, add a lemon wedge. This is the final dish that goes to the customer (your dashboard).</p>
+        </div>
+
+        <!-- Layer 1: Staging -->
+        <h3>🥬 Layer 1: Staging Models (<code>stg_</code>)</h3>
+        <p>Staging models are your <strong>first touch</strong> on raw data. They do simple, boring-but-essential work: rename columns, cast data types, and apply light cleaning. One staging model per source table.</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_customers.sql</span>
+            <pre><code><span class="comment">-- Staging model: clean up raw customer data</span>
+<span class="comment">-- One staging model per source table. Keep it simple!</span>
+
+<span class="keyword">SELECT</span>
+    <span class="function">id</span>          <span class="keyword">AS</span> customer_id,
+    <span class="function">first_name</span>,
+    <span class="function">last_name</span>,
+    <span class="function">email_addr</span>  <span class="keyword">AS</span> email,           <span class="comment">-- Rename for clarity</span>
+    <span class="function">created_at</span>::<span class="keyword">DATE</span> <span class="keyword">AS</span> signup_date  <span class="comment">-- Cast to date</span>
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw'</span>, <span class="string">'customers'</span>) }}</code></pre>
+        </div>
+
+        <!-- Layer 2: Intermediate -->
+        <h3>🍳 Layer 2: Intermediate Models (<code>int_</code>)</h3>
+        <p>Intermediate models <strong>combine</strong> staging models. They join tables, aggregate data, and create business logic. Think of them as the "cooking" step.</p>
+
+        <div class="code-block">
+            <span class="label">models/intermediate/int_orders_joined.sql</span>
+            <pre><code><span class="comment">-- Intermediate: join customers with their orders</span>
+
+<span class="keyword">SELECT</span>
+    o.order_id,
+    o.order_date,
+    o.amount,
+    c.customer_id,
+    c.first_name,
+    c.email
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }} o
+<span class="keyword">LEFT JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }} c
+    <span class="keyword">ON</span> o.customer_id = c.customer_id</code></pre>
+        </div>
+
+        <!-- Layer 3: Marts -->
+        <h3>🍽️ Layer 3: Mart Models (<code>fct_</code> and <code>dim_</code>)</h3>
+        <p>Mart models are the <strong>final, polished tables</strong> that your dashboards and analysts query directly. They come in two flavors:</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>📊 Fact Tables (<code>fct_</code>)</h4>
+                <p>Events that happened — orders placed, payments made, clicks recorded. They have <strong>numbers you can count and sum</strong>.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>👤 Dimension Tables (<code>dim_</code>)</h4>
+                <p>Descriptive attributes — customer details, product info, store locations. They describe the <strong>"who, what, where"</strong> of your facts.</p>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders.sql</span>
+            <pre><code><span class="comment">-- Mart: final orders fact table for dashboards</span>
+
+<span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    order_date,
+    amount,
+    <span class="keyword">CASE</span>
+        <span class="keyword">WHEN</span> amount > <span class="number">100</span> <span class="keyword">THEN</span> <span class="string">'high_value'</span>
+        <span class="keyword">WHEN</span> amount > <span class="number">50</span>  <span class="keyword">THEN</span> <span class="string">'medium_value'</span>
+        <span class="keyword">ELSE</span> <span class="string">'low_value'</span>
+    <span class="keyword">END</span> <span class="keyword">AS</span> order_tier
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'int_orders_joined'</span>) }}</code></pre>
+        </div>
+
+        <h3>Naming Conventions Cheat Sheet</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Prefix</th>
+                    <th>Layer</th>
+                    <th>Example</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>stg_</code></td><td>Staging</td><td><code>stg_customers</code></td><td>Clean raw data, rename columns</td></tr>
+                <tr><td><code>int_</code></td><td>Intermediate</td><td><code>int_orders_joined</code></td><td>Join and combine staging models</td></tr>
+                <tr><td><code>fct_</code></td><td>Marts (Fact)</td><td><code>fct_orders</code></td><td>Event/transaction tables with metrics</td></tr>
+                <tr><td><code>dim_</code></td><td>Marts (Dimension)</td><td><code>dim_customers</code></td><td>Descriptive lookup tables</td></tr>
+            </tbody>
+        </table>
+
+        <div class="pro-tip">
+            <p>Naming conventions aren't just cosmetic — they let <strong>anyone</strong> on your team instantly understand what a model does just by reading its name. <code>stg_orders</code>? That's a staging model for orders. <code>fct_revenue</code>? That's a final fact table for revenue. No guessing needed!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: macros/ — Your Secret Recipes
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧙 macros/ — Your Secret Recipes</h2>
+
+        <div class="eli5-box">
+            <p>Macros are like those <strong>cooking shortcuts your grandma taught you</strong> — instead of writing the same 10 steps every time you make gravy, you just say "make gravy the grandma way" and everyone knows what to do. Write once, reuse everywhere!</p>
+        </div>
+
+        <p>A macro is a <strong>reusable piece of SQL</strong> written with Jinja (a templating language). You define it once in the <code>macros/</code> folder and then call it from any model. This keeps your code DRY (Don't Repeat Yourself).</p>
+
+        <div class="code-block">
+            <span class="label">macros/cents_to_dollars.sql</span>
+            <pre><code><span class="comment">-- Macro: convert cents to dollars (reusable!)</span>
+
+{% <span class="keyword">macro</span> <span class="function">cents_to_dollars</span>(column_name) %}
+    (<span class="keyword">ROUND</span>({{ column_name }} / <span class="number">100.0</span>, <span class="number">2</span>))
+{% <span class="keyword">endmacro</span> %}</code></pre>
+        </div>
+
+        <p>Now you can use it in <strong>any</strong> model like this:</p>
+
+        <div class="code-block">
+            <span class="label">Using the macro in a model</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    {{ <span class="function">cents_to_dollars</span>(<span class="string">'amount_cents'</span>) }} <span class="keyword">AS</span> amount_dollars
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_payments'</span>) }}</code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Without a macro:</strong> You write <code>ROUND(amount_cents / 100.0, 2)</code> in 15 different models. One day the boss says "use 4 decimal places." You have to find and change all 15 files. 😱</p>
+            <p style="margin-top:8px;"><strong>With a macro:</strong> You change the formula in <em>one</em> file (<code>cents_to_dollars.sql</code>), and all 15 models are instantly updated. 🎉</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: seeds/ — Your Pantry Staples
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧂 seeds/ — Your Pantry Staples</h2>
+
+        <div class="eli5-box">
+            <p>Seeds are like the <strong>salt, pepper, and spices in your pantry</strong> — small, rarely changing reference data that you always keep handy. You don't buy new salt every day; it just sits there, ready when you need it.</p>
+        </div>
+
+        <p>Seeds are <strong>CSV files</strong> that dbt loads directly into your warehouse as tables. They're perfect for small, static reference data that doesn't come from a source system.</p>
+
+        <div class="code-block">
+            <span class="label">seeds/country_codes.csv</span>
+            <pre><code><span class="string">country_code</span>,<span class="string">country_name</span>,<span class="string">region</span>
+<span class="output">US</span>,<span class="output">United States</span>,<span class="output">North America</span>
+<span class="output">GB</span>,<span class="output">United Kingdom</span>,<span class="output">Europe</span>
+<span class="output">IN</span>,<span class="output">India</span>,<span class="output">Asia</span>
+<span class="output">AU</span>,<span class="output">Australia</span>,<span class="output">Oceania</span>
+<span class="output">BR</span>,<span class="output">Brazil</span>,<span class="output">South America</span></code></pre>
+        </div>
+
+        <p>Run <code>dbt seed</code> and this CSV becomes a real table in your warehouse that you can join with any model using <code>{{ ref('country_codes') }}</code>.</p>
+
+        <h3>When to Use Seeds vs. Sources</h3>
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>🌱 Use Seeds When...</h4>
+                <ul style="margin-left:16px;line-height:2;">
+                    <li>Data is small (< 1,000 rows)</li>
+                    <li>Data rarely changes</li>
+                    <li>Data doesn't come from a source system</li>
+                    <li>Examples: country codes, status mappings, category labels</li>
+                </ul>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>📡 Use Sources When...</h4>
+                <ul style="margin-left:16px;line-height:2;">
+                    <li>Data is large or growing</li>
+                    <li>Data changes frequently</li>
+                    <li>Data comes from apps, APIs, or databases</li>
+                    <li>Examples: orders, users, transactions, events</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: snapshots/ — Your Food Diary
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📸 snapshots/ — Your Food Diary</h2>
+
+        <div class="eli5-box">
+            <p>Snapshots are like <strong>taking a photo of your fridge every day</strong>. Yesterday there were 6 eggs. Today there are 4. Tomorrow there might be 12 (you went shopping!). By looking at all the photos, you can see exactly <em>what changed and when</em>.</p>
+        </div>
+
+        <p>In the data world, this is called <strong>Slowly Changing Dimension Type 2 (SCD Type 2)</strong>. Sounds scary, but it's simple: dbt keeps a history of how rows change over time.</p>
+
+        <div class="code-block">
+            <span class="label">snapshots/snapshot_orders.sql</span>
+            <pre><code>{% <span class="keyword">snapshot</span> <span class="function">snapshot_orders</span> %}
+
+{{
+    <span class="function">config</span>(
+        <span class="keyword">target_schema</span>=<span class="string">'snapshots'</span>,
+        <span class="keyword">unique_key</span>=<span class="string">'order_id'</span>,
+        <span class="keyword">strategy</span>=<span class="string">'timestamp'</span>,
+        <span class="keyword">updated_at</span>=<span class="string">'updated_at'</span>,
+    )
+}}
+
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> {{ <span class="function">source</span>(<span class="string">'raw'</span>, <span class="string">'orders'</span>) }}
+
+{% <span class="keyword">endsnapshot</span> %}</code></pre>
+        </div>
+
+        <h3>How SCD Type 2 Works — Visually</h3>
+        <p>Imagine a customer changes their email address. Here's what the snapshot table looks like:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>customer_id</th>
+                    <th>email</th>
+                    <th>dbt_valid_from</th>
+                    <th>dbt_valid_to</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>42</td><td>old@email.com</td><td>2024-01-01</td><td>2024-06-15</td></tr>
+                <tr><td>42</td><td>new@email.com</td><td>2024-06-15</td><td><em>null</em> (current)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="pro-tip">
+            <p>The row with <code>dbt_valid_to = null</code> is always the <strong>current</strong> version. Previous versions have an end date, so you can see the full history. It's like a time machine for your data!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: tests/ — Quality Control
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧪 tests/ — Quality Control</h2>
+
+        <div class="eli5-box">
+            <p>Tests are like the <strong>health inspector visiting your kitchen</strong> — they check that everything is safe, clean, and correct before any food reaches a customer. If something is wrong, the inspector shuts things down and tells you exactly what to fix.</p>
+        </div>
+
+        <p>The <code>tests/</code> folder holds <strong>custom SQL tests</strong> — queries that should return <strong>zero rows</strong> if everything is correct. If any rows come back, the test fails (something is wrong!).</p>
+
+        <div class="code-block">
+            <span class="label">tests/assert_positive_revenue.sql</span>
+            <pre><code><span class="comment">-- This test FAILS if any order has negative revenue</span>
+<span class="comment">-- (A passing test returns zero rows)</span>
+
+<span class="keyword">SELECT</span>
+    order_id,
+    amount
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'fct_orders'</span>) }}
+<span class="keyword">WHERE</span>
+    amount < <span class="number">0</span></code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Two types of tests in dbt:</strong></p>
+            <p style="margin-top:8px;">📋 <strong>Schema tests</strong> — Defined in YAML files (e.g., <code>unique</code>, <code>not_null</code>). Quick, declarative, no SQL needed.</p>
+            <p style="margin-top:4px;">📝 <strong>Custom tests</strong> — SQL files in the <code>tests/</code> folder. For complex business logic that schema tests can't cover.</p>
+        </div>
+
+        <div class="important-box">
+            <p>Run <code>dbt test</code> after every <code>dbt run</code>. Think of it as tasting your food before serving it. Never skip this step!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: analyses/ — Your Scratch Pad
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📝 analyses/ — Your Scratch Pad</h2>
+
+        <div class="eli5-box">
+            <p>This is your <strong>notepad where you try new recipe ideas</strong> before adding them to the official recipe book. Maybe you want to experiment with a new sauce — you scribble notes here first. If it works, you promote it to a real model. If not, no harm done!</p>
+        </div>
+
+        <p>Analysis files are SQL files that dbt <strong>compiles but does NOT run</strong>. They're perfect for:</p>
+
+        <ul style="margin-left:20px;line-height:2.2;">
+            <li>🔍 Ad-hoc investigations ("Why did revenue drop last Tuesday?")</li>
+            <li>📊 One-off reports for your boss</li>
+            <li>🧪 Prototyping a new model before making it official</li>
+            <li>📋 Audit queries you run periodically</li>
+        </ul>
+
+        <div class="code-block">
+            <span class="label">analyses/monthly_revenue_check.sql</span>
+            <pre><code><span class="comment">-- Quick check: monthly revenue trend</span>
+<span class="comment">-- This compiles (so ref() works) but doesn't create a table</span>
+
+<span class="keyword">SELECT</span>
+    <span class="function">DATE_TRUNC</span>(<span class="string">'month'</span>, order_date) <span class="keyword">AS</span> month,
+    <span class="function">SUM</span>(amount) <span class="keyword">AS</span> total_revenue,
+    <span class="function">COUNT</span>(*) <span class="keyword">AS</span> order_count
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'fct_orders'</span>) }}
+<span class="keyword">GROUP BY</span> <span class="number">1</span>
+<span class="keyword">ORDER BY</span> <span class="number">1</span> <span class="keyword">DESC</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The key difference: <strong>models</strong> create tables/views in your warehouse. <strong>Analyses</strong> just compile SQL (resolving <code>ref()</code> and <code>source()</code>) so you can copy-paste the compiled query into your SQL editor. They're for humans, not for the warehouse.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: schema.yml — The Label Maker
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏷️ schema.yml — The Label Maker</h2>
+
+        <div class="eli5-box">
+            <p>Imagine you have a <strong>label maker</strong> in your kitchen. You stick labels on every jar: "Sugar", "Salt", "Flour — do NOT confuse with powdered sugar!" The schema.yml file is your label maker — it describes every model, every column, and adds tests to make sure nothing goes wrong.</p>
+        </div>
+
+        <p>Schema YAML files (usually named <code>_models.yml</code> or <code>schema.yml</code>) live alongside your models and serve three purposes:</p>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">📖</div>
+                <div class="stat-label">Documentation</div>
+                <p style="font-size:0.85em;color:var(--dbt-text-light);margin-top:4px;">Describe what each model and column means</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">🧪</div>
+                <div class="stat-label">Testing</div>
+                <p style="font-size:0.85em;color:var(--dbt-text-light);margin-top:4px;">Define tests like unique, not_null, accepted_values</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">🔗</div>
+                <div class="stat-label">Relationships</div>
+                <p style="font-size:0.85em;color:var(--dbt-text-light);margin-top:4px;">Define how models connect to each other</p>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/_mart_models.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">fct_orders</span>
+    <span class="keyword">description</span>: <span class="string">"Final orders fact table. One row per order."</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">order_id</span>
+        <span class="keyword">description</span>: <span class="string">"Unique identifier for each order"</span>
+        <span class="keyword">tests</span>:
+          - <span class="function">unique</span>            <span class="comment"># No duplicate order IDs!</span>
+          - <span class="function">not_null</span>          <span class="comment"># Every row must have an ID</span>
+
+      - <span class="keyword">name</span>: <span class="string">amount</span>
+        <span class="keyword">description</span>: <span class="string">"Order total in dollars"</span>
+        <span class="keyword">tests</span>:
+          - <span class="function">not_null</span>
+
+      - <span class="keyword">name</span>: <span class="string">order_tier</span>
+        <span class="keyword">description</span>: <span class="string">"Classification: high_value, medium_value, low_value"</span>
+        <span class="keyword">tests</span>:
+          - <span class="function">accepted_values</span>:
+              <span class="keyword">values</span>: [<span class="string">'high_value'</span>, <span class="string">'medium_value'</span>, <span class="string">'low_value'</span>]
+
+  - <span class="keyword">name</span>: <span class="string">dim_customers</span>
+    <span class="keyword">description</span>: <span class="string">"Customer dimension table. One row per customer."</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">description</span>: <span class="string">"Unique customer identifier"</span>
+        <span class="keyword">tests</span>:
+          - <span class="function">unique</span>
+          - <span class="function">not_null</span>
+          - <span class="function">relationships</span>:
+              <span class="keyword">to</span>: <span class="string">ref('stg_customers')</span>
+              <span class="keyword">field</span>: <span class="string">customer_id</span></code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>How it all connects:</strong> When you run <code>dbt test</code>, dbt reads these YAML files and automatically generates SQL queries to check every test you defined. It's like having a health inspector who reads your labels and verifies every jar actually contains what it says.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 10: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you can navigate the dbt kitchen with your eyes closed. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: Where do your SQL transformation files live?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> seeds/
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> models/
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> macros/
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> analyses/
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: What naming prefix indicates a staging model?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> fct_
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> dim_
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> stg_
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> raw_
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: What is the purpose of the seeds/ folder?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Store your SQL transformation models
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Store reusable macros
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Store small, static CSV reference data
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Store point-in-time snapshots
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 11: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Close your eyes and try to draw the dbt project folder tree from memory. Can you name all 7 main folders and explain what each one does? If you can, you're ready for the next lesson!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>dbt_project.yml</strong> — The main config file; every project must have one</li>
+                <li><strong>models/</strong> — SQL transformations organized in 3 layers: staging → intermediate → marts</li>
+                <li><strong>Naming:</strong> <code>stg_</code> (staging), <code>int_</code> (intermediate), <code>fct_</code> (facts), <code>dim_</code> (dimensions)</li>
+                <li><strong>macros/</strong> — Reusable SQL snippets (write once, use everywhere)</li>
+                <li><strong>seeds/</strong> — Small CSV reference data loaded into the warehouse</li>
+                <li><strong>tests/</strong> — Custom SQL tests that should return zero rows when passing</li>
+                <li><strong>schema.yml</strong> — Describes models, columns, and defines tests</li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>snapshots/</strong> — SCD Type 2 history tracking (important but advanced)</li>
+                <li><strong>analyses/</strong> — Ad-hoc queries that compile but don't create tables</li>
+                <li><strong>packages.yml</strong> — Third-party package management (covered in a later lesson)</li>
+                <li>The specific materialization settings in dbt_project.yml (covered in Models lesson)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="installation.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Installation & Setup
+        </a>
+        <a href="models.html" class="nav-btn-next">
+            Models & Materializations <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

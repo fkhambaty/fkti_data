@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced dbt & Best Practices | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 12 · ADVANCED</span>
+    <h1>⚡ Advanced dbt & Best Practices</h1>
+    <p class="subtitle">Enterprise patterns, performance tuning, and career advice for analytics engineers</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="deployment.html"><i class="fas fa-arrow-left"></i> Deployment</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="hub.html">Back to Hub <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: Hooks — Pre & Post Actions
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🪝 Hooks — Pre & Post Actions</h2>
+
+        <div class="eli5-box">
+            <p>Hooks are like the <strong>prep work before cooking</strong> and the <strong>cleanup after</strong>. Before you cook dinner, you preheat the oven and wash your hands. After dinner, you wash the dishes and wipe the counter. You don't think about it — it just <em>happens</em> every time.</p>
+            <p style="margin-top:12px;">dbt hooks work the same way. They're SQL statements that run <strong>automatically</strong> before or after your model builds. You set them up once, and they fire every single time — no manual work needed!</p>
+        </div>
+
+        <h3>What Are pre-hook and post-hook?</h3>
+        <p>A <strong>pre-hook</strong> runs <em>before</em> your model's SQL executes. A <strong>post-hook</strong> runs <em>after</em>. You define them in the model's config block or in <code>dbt_project.yml</code>.</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders.sql — Hooks in model config</span>
+            <pre><code><span class="comment">-- pre-hook: runs BEFORE the model builds</span>
+<span class="comment">-- post-hook: runs AFTER the model builds</span>
+
+{{
+  <span class="function">config</span>(
+    <span class="keyword">materialized</span>=<span class="string">'table'</span>,
+    <span class="keyword">pre_hook</span>=[
+      <span class="string">"INSERT INTO audit_log (event, ts) VALUES ('fct_orders_start', CURRENT_TIMESTAMP)"</span>
+    ],
+    <span class="keyword">post_hook</span>=[
+      <span class="string">"GRANT SELECT ON {{ this }} TO ROLE reporting_role"</span>,
+      <span class="string">"INSERT INTO audit_log (event, ts) VALUES ('fct_orders_done', CURRENT_TIMESTAMP)"</span>
+    ]
+  )
+}}
+
+<span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    amount,
+    order_date
+<span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}</code></pre>
+        </div>
+
+        <h3>Common Use Cases</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>🔐 Granting Permissions</h4>
+                <p>After a model builds, grant SELECT to the reporting team so dashboards can read the data immediately.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                <h4>📝 Audit Logging</h4>
+                <p>Log when each model starts and finishes building. Great for debugging slow pipelines.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>📊 Creating Indexes</h4>
+                <p>After a table is built, create indexes on frequently queried columns to speed up dashboards.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>🧹 Cleanup</h4>
+                <p>Drop temporary tables, vacuum/analyze tables, or run any housekeeping SQL after the build.</p>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">dbt_project.yml — Project-wide hooks</span>
+            <pre><code><span class="keyword">models</span>:
+  <span class="keyword">my_project</span>:
+    <span class="keyword">marts</span>:
+      +<span class="keyword">post-hook</span>:
+        - <span class="string">"GRANT SELECT ON {{ this }} TO ROLE analyst_role"</span>
+        - <span class="string">"ANALYZE {{ this }}"</span>
+
+<span class="comment"># Every model in the marts/ folder will automatically:</span>
+<span class="comment"># 1. Build the table/view</span>
+<span class="comment"># 2. Grant SELECT to analyst_role</span>
+<span class="comment"># 3. Run ANALYZE for query optimization</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Use project-wide hooks in <code>dbt_project.yml</code> for things that apply to many models (like granting permissions). Use model-level hooks for one-off tasks specific to a single model. Don't go overboard — every hook adds execution time!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: Exposures — Connecting to Dashboards
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📋 Exposures — Connecting to Dashboards</h2>
+
+        <div class="eli5-box">
+            <p>Exposures are like a <strong>guest list for your restaurant</strong>. They tell dbt: "Hey, these dashboards and reports depend on this data, so <em>be careful when changing it!</em>"</p>
+            <p style="margin-top:12px;">Without exposures, you might change a model and accidentally break 5 dashboards without knowing. With exposures, dbt shows you exactly what's downstream — so you can warn people before making changes.</p>
+        </div>
+
+        <h3>What Are Exposures?</h3>
+        <p>Exposures are <strong>declarations of downstream consumers</strong> — the dashboards, reports, ML models, and applications that use your dbt models. They don't change how dbt runs; they add visibility to your lineage graph.</p>
+
+        <div class="code-block">
+            <span class="label">models/exposures.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">exposures</span>:
+  - <span class="keyword">name</span>: <span class="string">weekly_revenue_dashboard</span>
+    <span class="keyword">type</span>: <span class="string">dashboard</span>
+    <span class="keyword">maturity</span>: <span class="string">high</span>
+    <span class="keyword">url</span>: <span class="string">https://bi-tool.company.com/dashboards/42</span>
+    <span class="keyword">description</span>: >
+      <span class="string">The CEO's weekly revenue dashboard.</span>
+      <span class="string">Breaking this will result in a very bad Monday morning.</span>
+
+    <span class="keyword">depends_on</span>:
+      - <span class="function">ref('fct_orders')</span>
+      - <span class="function">ref('dim_customers')</span>
+
+    <span class="keyword">owner</span>:
+      <span class="keyword">name</span>: <span class="string">Sarah Chen</span>
+      <span class="keyword">email</span>: <span class="string">sarah@company.com</span>
+
+  - <span class="keyword">name</span>: <span class="string">churn_prediction_model</span>
+    <span class="keyword">type</span>: <span class="string">ml</span>
+    <span class="keyword">maturity</span>: <span class="string">medium</span>
+    <span class="keyword">description</span>: <span class="string">"ML model that predicts customer churn"</span>
+
+    <span class="keyword">depends_on</span>:
+      - <span class="function">ref('dim_customers')</span>
+      - <span class="function">ref('fct_orders')</span>
+
+    <span class="keyword">owner</span>:
+      <span class="keyword">name</span>: <span class="string">Data Science Team</span>
+      <span class="keyword">email</span>: <span class="string">ds-team@company.com</span></code></pre>
+        </div>
+
+        <h3>How Exposures Appear in the Lineage Graph</h3>
+
+        <div class="real-life">
+            <p>Open <code>dbt docs generate && dbt docs serve</code> and you'll see your exposures as <strong>orange nodes</strong> at the far right of the lineage graph. They connect back to the models they depend on, giving you a complete picture: raw data → staging → marts → <strong>dashboards</strong>.</p>
+        </div>
+
+        <!-- Animated pipeline showing the flow -->
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#64748b,#475569);color:#fff;">🗄️</div>
+                <div class="pipeline-label">Sources</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;">📦</div>
+                <div class="pipeline-label">Staging</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;">🏗️</div>
+                <div class="pipeline-label">Marts</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">📊</div>
+                <div class="pipeline-label">Exposures<br><small style="color:var(--dbt-text-light);">Dashboards</small></div>
+            </div>
+        </div>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🧠 Exposure Types</p>
+            <p style="color:#4c1d95;"><strong>dashboard</strong> — BI dashboards (Looker, Tableau, Metabase)<br>
+            <strong>notebook</strong> — Jupyter notebooks or analysis scripts<br>
+            <strong>analysis</strong> — Ad-hoc SQL queries or reports<br>
+            <strong>ml</strong> — Machine learning models that consume your data<br>
+            <strong>application</strong> — Backend services or APIs reading from your warehouse</p>
+        </div>
+
+        <div class="pro-tip">
+            <p>Exposures are one of the most underused features in dbt. Add them for every important dashboard. When someone opens a PR that changes <code>fct_orders</code>, they'll immediately see: "Warning — this model feeds the CEO's revenue dashboard." That's powerful!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: dbt Mesh — Multi-Project Architecture
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔗 dbt Mesh — Multi-Project Architecture</h2>
+
+        <div class="eli5-box">
+            <p>dbt Mesh is like a <strong>chain of restaurants</strong>. Each restaurant (project) has its own kitchen, its own menu, and its own chef. But they can <strong>share recipes and ingredients</strong> across locations. The pizza dough recipe from Location A can be used by Location B — without Location B needing to know how the dough is made.</p>
+            <p style="margin-top:12px;">When your company gets big enough that one dbt project becomes a mess (hundreds of models, dozens of teams stepping on each other), you split it into multiple projects that talk to each other. That's dbt Mesh.</p>
+        </div>
+
+        <h3>When One Project Isn't Enough</h3>
+        <p>Signs you need dbt Mesh:</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>😵 500+ Models</h4>
+                <p>Your single project has grown so large that <code>dbt run</code> takes forever and nobody knows what half the models do.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>👥 Multiple Teams</h4>
+                <p>The marketing team, finance team, and product team all work in the same project and keep breaking each other's models.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🏢 Different Domains</h4>
+                <p>Your data spans completely different business domains (e-commerce, logistics, HR) that shouldn't be tightly coupled.</p>
+            </div>
+        </div>
+
+        <h3>Cross-Project Refs</h3>
+        <p>In dbt Mesh, projects can reference models from other projects using a two-argument <code>ref()</code>:</p>
+
+        <div class="code-block">
+            <span class="label">Project B — referencing a model from Project A</span>
+            <pre><code><span class="comment">-- In the "marketing" project, reference a model from the "core" project</span>
+
+<span class="keyword">SELECT</span>
+    c.customer_id,
+    c.customer_name,
+    m.campaign_name,
+    m.spend
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'core'</span>, <span class="string">'dim_customers'</span>) }} c   <span class="comment">-- ← Cross-project ref!</span>
+<span class="keyword">JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_campaigns'</span>) }} m          <span class="comment">-- ← Same-project ref (normal)</span>
+    <span class="keyword">ON</span> c.customer_id = m.customer_id</code></pre>
+        </div>
+
+        <h3>Public vs Private Models</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🌍 Public Models</h4>
+                <p>Can be referenced by <strong>other projects</strong>. These are your "API" — the stable, well-documented models you share across teams. Think of them as the menu items your restaurant chain offers everywhere.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>🔒 Private Models</h4>
+                <p>Can only be used <strong>within the same project</strong>. These are your internal staging models, intermediate calculations, and work-in-progress. Like the secret sauce recipe that stays in one kitchen.</p>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/dim_customers.sql — Making a model public</span>
+            <pre><code>{{
+  <span class="function">config</span>(
+    <span class="keyword">materialized</span>=<span class="string">'table'</span>,
+    <span class="keyword">access</span>=<span class="string">'public'</span>   <span class="comment">-- ← Other projects can ref() this model</span>
+  )
+}}
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    customer_name,
+    email,
+    signup_date
+<span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }}  <span class="comment">-- stg_customers stays private</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Start with one project. Only split into dbt Mesh when you genuinely feel the pain of a monolith. Premature splitting creates more problems than it solves — like opening 10 restaurant locations before your first one is profitable!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: The Semantic Layer
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📐 The Semantic Layer</h2>
+
+        <div class="eli5-box">
+            <p>The Semantic Layer is like a <strong>universal menu that works across all restaurants in the chain</strong>. No matter which location you visit, "revenue" means the same thing — it's always calculated the same way. No more arguments about whether revenue includes tax or not!</p>
+            <p style="margin-top:12px;">Without a Semantic Layer, different dashboards might calculate "revenue" differently. The finance dashboard says $1M, the marketing dashboard says $1.2M, and the CEO is confused. The Semantic Layer defines metrics <strong>once</strong>, and every tool uses the same definition.</p>
+        </div>
+
+        <h3>The Problem It Solves</h3>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">💸 The "Which Revenue Is Right?" Problem</p>
+            <p>Company X has 3 dashboards showing revenue. Dashboard A says $1M (includes refunds). Dashboard B says $1.2M (excludes refunds). Dashboard C says $950K (only counts completed orders). The CEO asks: "What's our actual revenue?" Nobody knows, because each analyst wrote their own SQL.</p>
+        </div>
+
+        <h3>MetricFlow Integration</h3>
+        <p>dbt uses <strong>MetricFlow</strong> to power the Semantic Layer. You define metrics in YAML, and any tool (Looker, Tableau, even a Python script) can query them consistently.</p>
+
+        <div class="code-block">
+            <span class="label">models/semantic/sem_metrics.yml</span>
+            <pre><code><span class="keyword">semantic_models</span>:
+  - <span class="keyword">name</span>: <span class="string">orders</span>
+    <span class="keyword">defaults</span>:
+      <span class="keyword">agg_time_dimension</span>: <span class="string">order_date</span>
+    <span class="keyword">model</span>: <span class="function">ref('fct_orders')</span>
+
+    <span class="keyword">entities</span>:
+      - <span class="keyword">name</span>: <span class="string">order_id</span>
+        <span class="keyword">type</span>: <span class="string">primary</span>
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">type</span>: <span class="string">foreign</span>
+
+    <span class="keyword">dimensions</span>:
+      - <span class="keyword">name</span>: <span class="string">order_date</span>
+        <span class="keyword">type</span>: <span class="string">time</span>
+        <span class="keyword">type_params</span>:
+          <span class="keyword">time_granularity</span>: <span class="string">day</span>
+
+    <span class="keyword">measures</span>:
+      - <span class="keyword">name</span>: <span class="string">order_total</span>
+        <span class="keyword">agg</span>: <span class="string">sum</span>
+        <span class="keyword">expr</span>: <span class="string">amount</span>
+      - <span class="keyword">name</span>: <span class="string">order_count</span>
+        <span class="keyword">agg</span>: <span class="string">count</span>
+
+<span class="keyword">metrics</span>:
+  - <span class="keyword">name</span>: <span class="string">revenue</span>
+    <span class="keyword">description</span>: <span class="string">"Total revenue — the ONE true definition"</span>
+    <span class="keyword">type</span>: <span class="string">simple</span>
+    <span class="keyword">label</span>: <span class="string">Revenue</span>
+    <span class="keyword">type_params</span>:
+      <span class="keyword">measure</span>: <span class="string">order_total</span>
+
+  - <span class="keyword">name</span>: <span class="string">average_order_value</span>
+    <span class="keyword">description</span>: <span class="string">"Average revenue per order"</span>
+    <span class="keyword">type</span>: <span class="string">derived</span>
+    <span class="keyword">label</span>: <span class="string">Avg Order Value</span>
+    <span class="keyword">type_params</span>:
+      <span class="keyword">expr</span>: <span class="string">revenue / order_count</span>
+      <span class="keyword">metrics</span>:
+        - <span class="keyword">name</span>: <span class="string">revenue</span>
+        - <span class="keyword">name</span>: <span class="string">order_count</span>
+          <span class="keyword">offset_window</span>: <span class="number">1</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Terminal — Querying the Semantic Layer</span>
+            <pre><code><span class="comment"># Query metrics directly from the command line</span>
+<span class="function">$</span> dbt sl query --metrics revenue --group-by order_date__month
+
+<span class="output">order_date__month | revenue</span>
+<span class="output">-----------------+---------</span>
+<span class="output">2024-01          | 125,430</span>
+<span class="output">2024-02          | 142,890</span>
+<span class="output">2024-03          | 168,200</span>
+
+<span class="comment"># Same metric, different granularity — same answer every time!</span>
+<span class="function">$</span> dbt sl query --metrics revenue --group-by order_date__year</code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The Semantic Layer is still evolving (it's a dbt Cloud feature). If you're on dbt Core, you can still define metrics in YAML for documentation purposes. The key takeaway: <strong>define your metrics once, in code, and version-control them</strong> — never let two dashboards disagree on what "revenue" means.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: Performance Tuning
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🚀 Performance Tuning</h2>
+
+        <div class="eli5-box">
+            <p>Performance tuning is like <strong>making your car go faster</strong>. You can upgrade the engine (better SQL), use a shorter route (partitioning), carry less stuff (selecting only needed columns), and drive during off-peak hours (scheduling). Each trick saves time and money — and in the cloud, time literally <em>is</em> money.</p>
+        </div>
+
+        <h3>1. Incremental Model Optimization</h3>
+        <p>Instead of rebuilding an entire table every run, only process <strong>new or changed rows</strong>:</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders_incremental.sql</span>
+            <pre><code>{{
+  <span class="function">config</span>(
+    <span class="keyword">materialized</span>=<span class="string">'incremental'</span>,
+    <span class="keyword">unique_key</span>=<span class="string">'order_id'</span>,
+    <span class="keyword">incremental_strategy</span>=<span class="string">'merge'</span>,       <span class="comment">-- or 'delete+insert', 'append'</span>
+    <span class="keyword">on_schema_change</span>=<span class="string">'sync_all_columns'</span>  <span class="comment">-- handle new columns automatically</span>
+  )
+}}
+
+<span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    amount,
+    order_date,
+    updated_at
+<span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}
+
+{% <span class="keyword">if</span> is_incremental() %}
+    <span class="keyword">WHERE</span> updated_at > (<span class="keyword">SELECT</span> <span class="function">MAX</span>(updated_at) <span class="keyword">FROM</span> {{ <span class="function">this</span> }})
+{% <span class="keyword">endif</span> %}</code></pre>
+        </div>
+
+        <h3>2. Partition & Cluster Keys</h3>
+        <p>Tell your warehouse how to organize data physically for faster queries:</p>
+
+        <div class="code-block">
+            <span class="label">BigQuery example — partition + cluster</span>
+            <pre><code>{{
+  <span class="function">config</span>(
+    <span class="keyword">materialized</span>=<span class="string">'table'</span>,
+    <span class="keyword">partition_by</span>={
+      <span class="string">"field"</span>: <span class="string">"order_date"</span>,
+      <span class="string">"data_type"</span>: <span class="string">"date"</span>,
+      <span class="string">"granularity"</span>: <span class="string">"month"</span>
+    },
+    <span class="keyword">cluster_by</span>=[<span class="string">"customer_id"</span>, <span class="string">"status"</span>]
+  )
+}}
+
+<span class="comment">-- BigQuery will store data in monthly partitions</span>
+<span class="comment">-- and cluster within each partition by customer_id + status</span>
+<span class="comment">-- Queries filtering on these columns will be MUCH faster!</span>
+
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}</code></pre>
+        </div>
+
+        <h3>3. Selective Runs with Tags</h3>
+
+        <div class="code-block">
+            <span class="label">Terminal — Run only what you need</span>
+            <pre><code><span class="comment"># Tag your models in config:</span>
+<span class="comment"># {{ config(tags=['daily', 'finance']) }}</span>
+
+<span class="comment"># Run only daily models</span>
+<span class="function">$</span> dbt run --select tag:daily
+
+<span class="comment"># Run only finance models and their upstream dependencies</span>
+<span class="function">$</span> dbt run --select +tag:finance
+
+<span class="comment"># Run a specific model and everything downstream</span>
+<span class="function">$</span> dbt run --select stg_orders+
+
+<span class="comment"># Exclude slow models during development</span>
+<span class="function">$</span> dbt run --exclude tag:heavy</code></pre>
+        </div>
+
+        <h3>Optimization Techniques Comparison</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Technique</th>
+                    <th>What It Does</th>
+                    <th>Speed Gain</th>
+                    <th>Cost Savings</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Incremental models</strong></td>
+                    <td>Only process new/changed rows</td>
+                    <td>10x–100x faster</td>
+                    <td>High — scans less data</td>
+                </tr>
+                <tr>
+                    <td><strong>Partitioning</strong></td>
+                    <td>Organize data by date/key</td>
+                    <td>5x–50x faster queries</td>
+                    <td>High — prunes partitions</td>
+                </tr>
+                <tr>
+                    <td><strong>Clustering</strong></td>
+                    <td>Sort data within partitions</td>
+                    <td>2x–10x faster queries</td>
+                    <td>Medium</td>
+                </tr>
+                <tr>
+                    <td><strong>Tag-based selection</strong></td>
+                    <td>Run only needed models</td>
+                    <td>Variable</td>
+                    <td>High — fewer models = less compute</td>
+                </tr>
+                <tr>
+                    <td><strong>Parallel execution</strong></td>
+                    <td>Run independent models simultaneously</td>
+                    <td>2x–4x faster builds</td>
+                    <td>Same cost, less wall-clock time</td>
+                </tr>
+                <tr>
+                    <td><strong>Ephemeral models</strong></td>
+                    <td>Inline CTEs instead of creating tables</td>
+                    <td>Eliminates table creation overhead</td>
+                    <td>Medium — no storage cost</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="code-block">
+            <span class="label">Terminal — Parallel execution</span>
+            <pre><code><span class="comment"># Run up to 8 models in parallel (default is 1)</span>
+<span class="function">$</span> dbt run --threads 8
+
+<span class="comment"># Set in profiles.yml for permanent config:</span>
+<span class="comment"># my_project:</span>
+<span class="comment">#   target: dev</span>
+<span class="comment">#   outputs:</span>
+<span class="comment">#     dev:</span>
+<span class="comment">#       threads: 4    ← dev uses 4 threads</span>
+<span class="comment">#     prod:</span>
+<span class="comment">#       threads: 16   ← prod uses 16 threads</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The biggest cost saver? <strong>Stop using <code>SELECT *</code></strong>. Only select the columns you actually need. In columnar warehouses like BigQuery, Snowflake, and Redshift, you pay per column scanned. Selecting 5 columns instead of 50 can cut your bill by 90%!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Enterprise Patterns
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏢 Enterprise Patterns</h2>
+
+        <div class="eli5-box">
+            <p>Enterprise patterns are like the <strong>rules for running a big hospital</strong> instead of a small clinic. A small clinic can be informal — one doctor, one nurse, everyone knows everything. But a hospital needs strict protocols: who can access patient records, how to handle emergencies, how to train new staff. Same with data at scale.</p>
+        </div>
+
+        <h3>Multi-Environment Setup</h3>
+        <p>Every serious dbt project has at least 3 environments:</p>
+
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;">🛠️</div>
+                <div class="pipeline-label">DEV<br><small style="color:var(--dbt-text-light);">Your sandbox</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🧪</div>
+                <div class="pipeline-label">STAGING<br><small style="color:var(--dbt-text-light);">Test with real data</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">🚀</div>
+                <div class="pipeline-label">PROD<br><small style="color:var(--dbt-text-light);">Live dashboards</small></div>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">profiles.yml — Multi-environment config</span>
+            <pre><code><span class="keyword">my_project</span>:
+  <span class="keyword">target</span>: <span class="string">dev</span>   <span class="comment"># default target</span>
+  <span class="keyword">outputs</span>:
+    <span class="keyword">dev</span>:
+      <span class="keyword">type</span>: <span class="string">snowflake</span>
+      <span class="keyword">schema</span>: <span class="string">dbt_yourname</span>     <span class="comment"># Each dev gets their own schema</span>
+      <span class="keyword">threads</span>: <span class="number">4</span>
+    <span class="keyword">staging</span>:
+      <span class="keyword">type</span>: <span class="string">snowflake</span>
+      <span class="keyword">schema</span>: <span class="string">staging</span>
+      <span class="keyword">threads</span>: <span class="number">8</span>
+    <span class="keyword">prod</span>:
+      <span class="keyword">type</span>: <span class="string">snowflake</span>
+      <span class="keyword">schema</span>: <span class="string">analytics</span>       <span class="comment"># The "real" schema dashboards read from</span>
+      <span class="keyword">threads</span>: <span class="number">16</span></code></pre>
+        </div>
+
+        <h3>Data Contracts</h3>
+        <p>Data contracts guarantee the <strong>shape</strong> of your model's output. If someone accidentally changes a column name or type, dbt will refuse to build it.</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/dim_customers.yml — Data contract</span>
+            <pre><code><span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">dim_customers</span>
+    <span class="keyword">config</span>:
+      <span class="keyword">contract</span>:
+        <span class="keyword">enforced</span>: <span class="string">true</span>    <span class="comment"># ← Enforce the contract!</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">data_type</span>: <span class="string">integer</span>
+        <span class="keyword">constraints</span>:
+          - <span class="keyword">type</span>: <span class="string">not_null</span>
+          - <span class="keyword">type</span>: <span class="string">primary_key</span>
+      - <span class="keyword">name</span>: <span class="string">customer_name</span>
+        <span class="keyword">data_type</span>: <span class="string">varchar</span>
+      - <span class="keyword">name</span>: <span class="string">email</span>
+        <span class="keyword">data_type</span>: <span class="string">varchar</span>
+      - <span class="keyword">name</span>: <span class="string">signup_date</span>
+        <span class="keyword">data_type</span>: <span class="string">date</span></code></pre>
+        </div>
+
+        <h3>Model Versioning</h3>
+        <p>When you need to change a model's structure but can't break existing consumers:</p>
+
+        <div class="code-block">
+            <span class="label">Versioned models</span>
+            <pre><code><span class="comment">-- Consumers can choose which version to use:</span>
+
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'dim_customers'</span>, <span class="keyword">v</span>=<span class="number">1</span>) }}  <span class="comment">-- Old version (deprecated)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'dim_customers'</span>, <span class="keyword">v</span>=<span class="number">2</span>) }}  <span class="comment">-- New version (current)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'dim_customers'</span>) }}          <span class="comment">-- Latest version (default)</span></code></pre>
+        </div>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>🔐 RBAC (Role-Based Access)</h4>
+                <p>Use post-hooks to GRANT permissions. Analysts get SELECT, engineers get SELECT + INSERT, admins get everything. Never give everyone full access.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                <h4>📜 Governance & Compliance</h4>
+                <p>Use model groups, access controls, and data contracts to enforce who can change what. Tag PII columns and apply masking policies automatically.</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>Enterprise patterns aren't just for big companies. Even a 3-person data team benefits from separate dev/prod environments and data contracts. Start simple and add governance as you grow — but <strong>always</strong> have at least dev + prod from day one.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: Common dbt Anti-Patterns
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🚫 Common dbt Anti-Patterns</h2>
+
+        <div class="eli5-box">
+            <p>Anti-patterns are like <strong>bad habits</strong>. Biting your nails, skipping breakfast, leaving the fridge door open — they seem harmless at first, but they add up over time. In dbt, anti-patterns lead to slow builds, wrong data, and angry stakeholders. Let's learn what <em>not</em> to do!</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">🚫 Anti-Pattern #1: SELECT * in Production Models</p>
+            <p><strong>Why it's bad:</strong> You're scanning every column, even ones nobody uses. In columnar warehouses, this can cost 10x more than selecting only the columns you need. Plus, if the source adds a column called <code>_internal_debug_flag</code>, it silently appears in your production table.</p>
+            <p style="margin-top:10px;"><strong>Fix:</strong> Always explicitly list your columns. <code>SELECT customer_id, name, email FROM ...</code></p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">🚫 Anti-Pattern #2: Not Testing Primary Keys</p>
+            <p><strong>Why it's bad:</strong> Without <code>unique</code> + <code>not_null</code> on your primary key, duplicate rows silently multiply through every downstream model. Your revenue doubles, your user count triples, and nobody notices until the board meeting.</p>
+            <p style="margin-top:10px;"><strong>Fix:</strong> Add <code>unique</code> + <code>not_null</code> tests to every single primary key. No exceptions.</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">🚫 Anti-Pattern #3: Hardcoding Environment Values</p>
+            <p><strong>Why it's bad:</strong> Writing <code>FROM production_db.public.orders</code> directly in your SQL means the model only works in production. It breaks in dev and staging.</p>
+            <p style="margin-top:10px;"><strong>Fix:</strong> Always use <code>{{ source() }}</code> and <code>{{ ref() }}</code>. Let dbt handle the database/schema resolution based on your target environment.</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">🚫 Anti-Pattern #4: One Giant Model Instead of Layers</p>
+            <p><strong>Why it's bad:</strong> A 500-line SQL file that does staging, business logic, and aggregation all in one model is impossible to test, debug, or reuse. When something breaks, good luck finding the bug.</p>
+            <p style="margin-top:10px;"><strong>Fix:</strong> Follow the staging → intermediate → marts pattern. Each layer does one thing well. Small, testable, reusable models.</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">🚫 Anti-Pattern #5: Not Using Incremental for Large Tables</p>
+            <p><strong>Why it's bad:</strong> Rebuilding a 10-billion-row table from scratch every day is like demolishing your house and rebuilding it every time you want to change a lightbulb. It's slow, expensive, and unnecessary.</p>
+            <p style="margin-top:10px;"><strong>Fix:</strong> Use <code>materialized='incremental'</code> for any table over ~1 million rows that has a reliable timestamp column.</p>
+        </div>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🧠 The Golden Rule</p>
+            <p style="color:#4c1d95;font-size:1.05em;">If you wouldn't be comfortable explaining your dbt project to a new team member in 30 minutes, it's probably too complex. Simplify, document, and test.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Career Advice
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🎯 Career Advice: Becoming an Analytics Engineer</h2>
+
+        <div class="eli5-box">
+            <p>An analytics engineer is like a <strong>translator between the data world and the business world</strong>. Data engineers build the pipes that carry water. Business analysts drink the water. Analytics engineers make sure the water is clean, properly filtered, and delivered to the right glass. It's one of the hottest roles in tech right now!</p>
+        </div>
+
+        <h3>What Does an Analytics Engineer Do?</h3>
+        <p>Analytics engineers own the <strong>transformation layer</strong> — everything between raw data landing in the warehouse and clean data appearing in dashboards. They write dbt models, define metrics, build tests, and make sure the data is trustworthy.</p>
+
+        <h3>Skills You Need</h3>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">🗃️</div>
+                <div class="stat-label"><strong>SQL</strong><br>Your primary language. Master window functions, CTEs, and joins.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">🔄</div>
+                <div class="stat-label"><strong>dbt</strong><br>The core tool. Know models, tests, docs, and Jinja inside out.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">🌿</div>
+                <div class="stat-label"><strong>Git</strong><br>Version control. Branching, PRs, and code review are daily tasks.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">📐</div>
+                <div class="stat-label"><strong>Data Modeling</strong><br>Star schema, dimensional modeling, and normalization.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">💬</div>
+                <div class="stat-label"><strong>Communication</strong><br>Explain data concepts to non-technical stakeholders.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">🐍</div>
+                <div class="stat-label"><strong>Python</strong><br>Helpful for scripting, automation, and data analysis.</div>
+            </div>
+        </div>
+
+        <h3>Salary Ranges (2024–2025, Global)</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>USA (USD)</th>
+                    <th>Europe (EUR)</th>
+                    <th>India (INR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Junior</strong> (0–2 years)</td>
+                    <td>$80K–$110K</td>
+                    <td>€45K–€65K</td>
+                    <td>₹8L–₹15L</td>
+                </tr>
+                <tr>
+                    <td><strong>Mid-level</strong> (2–5 years)</td>
+                    <td>$110K–$150K</td>
+                    <td>€65K–€90K</td>
+                    <td>₹15L–₹30L</td>
+                </tr>
+                <tr>
+                    <td><strong>Senior</strong> (5+ years)</td>
+                    <td>$150K–$200K+</td>
+                    <td>€90K–€130K</td>
+                    <td>₹30L–₹50L+</td>
+                </tr>
+                <tr>
+                    <td><strong>Staff / Lead</strong></td>
+                    <td>$180K–$250K+</td>
+                    <td>€110K–€160K</td>
+                    <td>₹45L–₹75L+</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>How to Build a Portfolio</h3>
+
+        <div class="step-box">
+            <p style="font-weight:800;color:#1e40af;font-size:1.1em;margin-bottom:12px;">📁 Portfolio Checklist</p>
+            <p><strong>1.</strong> Build a complete dbt project using a public dataset (Jaffle Shop, NYC taxi data, or Kaggle datasets)</p>
+            <p><strong>2.</strong> Push it to GitHub with a clear README explaining your architecture</p>
+            <p><strong>3.</strong> Include tests, documentation, and a generated docs site</p>
+            <p><strong>4.</strong> Write a blog post walking through your design decisions</p>
+            <p><strong>5.</strong> Contribute to open-source dbt packages (even fixing typos in docs counts!)</p>
+        </div>
+
+        <h3>Certifications</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ff694a;">
+                <h4>🏅 dbt Analytics Engineering Certification</h4>
+                <p>The official certification from dbt Labs. Covers models, tests, documentation, Jinja, and deployment. Highly respected in the industry. Study this course and you'll be well-prepared!</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>☁️ Cloud Certifications</h4>
+                <p>Pair your dbt skills with a cloud cert: Snowflake SnowPro Core, Google Cloud Professional Data Engineer, or AWS Data Analytics Specialty.</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p><strong>Pro tip:</strong> Contribute to open-source dbt packages! Even small contributions (bug fixes, documentation improvements, new macros) show employers that you understand the ecosystem deeply. Check out <code>dbt-utils</code>, <code>dbt-expectations</code>, and <code>dbt-audit-helper</code> on GitHub.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: Course Summary & What's Next
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📚 Course Summary & What's Next</h2>
+
+        <div class="eli5-box">
+            <p>You've just completed a <strong>12-lesson journey</strong> from "What is dbt?" to enterprise-grade best practices. That's like going from learning to boil water to running a professional kitchen. Let's look back at everything you've learned!</p>
+        </div>
+
+        <h3>Recap of All 12 Lessons</h3>
+
+        <div class="pipeline-diagram" style="flex-wrap:wrap;gap:10px;">
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ff694a,#e5532e);color:#fff;width:50px;height:50px;font-size:1.2em;">1</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Meet<br>dbt</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;width:50px;height:50px;font-size:1.2em;">2</div>
+                <div class="pipeline-label" style="font-size:0.75em;">History</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;width:50px;height:50px;font-size:1.2em;">3</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Install</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;width:50px;height:50px;font-size:1.2em;">4</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Project<br>Structure</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;width:50px;height:50px;font-size:1.2em;">5</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Models</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#a855f7,#9333ea);color:#fff;width:50px;height:50px;font-size:1.2em;">6</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Sources<br>& Refs</div>
+            </div>
+        </div>
+        <div class="pipeline-diagram" style="flex-wrap:wrap;gap:10px;">
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;width:50px;height:50px;font-size:1.2em;">7</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Testing</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;width:50px;height:50px;font-size:1.2em;">8</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Docs</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;width:50px;height:50px;font-size:1.2em;">9</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Jinja &<br>Macros</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;width:50px;height:50px;font-size:1.2em;">10</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Packages<br>& Seeds</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;width:50px;height:50px;font-size:1.2em;">11</div>
+                <div class="pipeline-label" style="font-size:0.75em;">Deploy<br>& CI/CD</div>
+            </div>
+            <div class="pipeline-arrow" style="font-size:1.2em;">→</div>
+            <div class="pipeline-step" style="min-width:80px;">
+                <div class="pipeline-icon glow" style="background:linear-gradient(135deg,#eab308,#ca8a04);color:#fff;width:50px;height:50px;font-size:1.2em;">12</div>
+                <div class="pipeline-label" style="font-size:0.75em;"><strong>Advanced<br>& Best<br>Practices</strong></div>
+            </div>
+        </div>
+
+        <h3>What's Next?</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ff694a;">
+                <h4>🛠️ Build a Practice Project</h4>
+                <p>Clone the <a href="https://github.com/dbt-labs/jaffle-shop" target="_blank" style="color:#ff694a;font-weight:700;">Jaffle Shop</a> repo and extend it. Add incremental models, custom tests, macros, and documentation. Push it to your GitHub.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>💬 Join dbt Community Slack</h4>
+                <p>Over 70,000 analytics engineers share tips, answer questions, and post job opportunities. It's the best community in data. Join at <strong>community.getdbt.com</strong>.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🏅 Get Certified</h4>
+                <p>Take the <strong>dbt Analytics Engineering Certification</strong> exam. This course covers everything you need. Study the docs, practice with real projects, and you'll pass!</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                <h4>📖 Keep Learning</h4>
+                <p>Read the <a href="https://docs.getdbt.com" target="_blank" style="color:#8b5cf6;font-weight:700;">official dbt docs</a>, follow the <a href="https://www.getdbt.com/blog" target="_blank" style="color:#8b5cf6;font-weight:700;">dbt blog</a>, and watch talks from <strong>Coalesce</strong> (dbt's annual conference).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 10: Final Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Final Quiz — The Grand Finale!</h2>
+
+        <p>Four challenging questions to test your mastery. These are harder than the previous quizzes — you've earned it!</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: A post-hook runs <code>GRANT SELECT ON {{ this }} TO ROLE analyst</code>. When does this execute?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Before the model's SQL runs
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> During the model's SQL execution, as a CTE
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> After the model's table/view has been created
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Only when you manually run <code>dbt run-operation</code>
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: In dbt Mesh, what does <code>access='public'</code> on a model mean?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> The model is visible on the public internet
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> Other dbt projects can reference this model with cross-project ref()
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> Anyone in the company can edit the model's SQL
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> The model skips all tests and builds immediately
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: Which is the BIGGEST cost saver in a columnar warehouse like BigQuery or Snowflake?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Using more threads for parallel execution
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Running <code>dbt test</code> less frequently
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Replacing <code>SELECT *</code> with explicit column lists and using incremental models
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Using ephemeral materialization for all models
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 4: What problem does the Semantic Layer solve?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> It makes dbt models run faster by caching results
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> It automatically generates documentation for all models
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> It replaces the need for a data warehouse entirely
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>D)</strong> It ensures metrics like "revenue" are defined once and calculated consistently across all tools
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 11: Celebration + Core/Non-Core
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div style="text-align:center;padding:40px 20px;">
+            <div style="font-size:4em;margin-bottom:16px;" class="pulse">🎉</div>
+            <h2 style="font-size:2.2em;color:var(--dbt-primary);border:none;display:block;margin-bottom:16px;">Congratulations!</h2>
+            <p style="font-size:1.3em;color:var(--dbt-text);max-width:600px;margin:0 auto 20px;">You've completed the <strong>entire dbt course</strong> — all 12 lessons, from zero to advanced. You now know more about dbt than most data professionals. That's incredible!</p>
+            <div style="font-size:2.5em;margin:20px 0;">🏆🎓⚡</div>
+        </div>
+
+        <div class="reflection-prompt">
+            <p>Can you explain hooks, exposures, and the Semantic Layer to a colleague? Do you know the top 5 anti-patterns to avoid? Can you describe the analytics engineer role and the skills needed? If yes — you're ready for the real world!</p>
+        </div>
+
+        <h3 style="margin-top:30px;">Lesson 12 — Core vs Non-Core</h3>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Hooks</strong> — pre-hook runs before model builds, post-hook runs after (permissions, logging, indexes)</li>
+                <li><strong>Exposures</strong> — Declare downstream consumers (dashboards, ML models) in YAML for lineage visibility</li>
+                <li><strong>Performance tuning</strong> — Incremental models, partitioning, clustering, selective runs with tags</li>
+                <li><strong>Anti-patterns</strong> — Avoid SELECT *, untested PKs, hardcoded values, monolith models</li>
+                <li><strong>Multi-environment</strong> — Always have at least dev + prod; use profiles.yml to manage targets</li>
+                <li><strong>Analytics Engineer</strong> — Owns the transformation layer; needs SQL, dbt, Git, data modeling, communication</li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>dbt Mesh</strong> — Multi-project architecture with cross-project refs and public/private models</li>
+                <li><strong>Semantic Layer</strong> — MetricFlow-powered single source of truth for metrics (dbt Cloud feature)</li>
+                <li><strong>Data contracts</strong> — Enforce column names and types; prevent breaking changes</li>
+                <li><strong>Model versioning</strong> — Serve multiple versions of a model for backward compatibility</li>
+                <li><strong>dbt Certification</strong> — Official dbt Analytics Engineering Certification exam</li>
+            </ul>
+        </div>
+
+        <h3 style="margin-top:30px;">Full Course Summary — Core Concepts</h3>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>L1 — Meet dbt:</strong> dbt transforms raw data into analytics-ready tables using SQL + software engineering practices</li>
+                <li><strong>L2 — History:</strong> Created by Fishtown Analytics (now dbt Labs) in 2016 to bring engineering rigor to analytics</li>
+                <li><strong>L3 — Installation:</strong> Install via pip, configure profiles.yml to connect to your warehouse</li>
+                <li><strong>L4 — Project Structure:</strong> models/, macros/, seeds/, tests/, snapshots/ — each folder has a purpose</li>
+                <li><strong>L5 — Models:</strong> SQL files that become tables/views; materializations control how they're built</li>
+                <li><strong>L6 — Sources & Refs:</strong> source() declares raw tables, ref() creates the dependency graph</li>
+                <li><strong>L7 — Testing:</strong> unique, not_null, accepted_values, relationships + custom SQL tests</li>
+                <li><strong>L8 — Documentation:</strong> schema.yml descriptions + dbt docs generate for auto-generated docs site</li>
+                <li><strong>L9 — Jinja & Macros:</strong> Templating language that makes SQL dynamic; macros are reusable functions</li>
+                <li><strong>L10 — Packages & Seeds:</strong> Install community packages; seeds load CSV files into your warehouse</li>
+                <li><strong>L11 — Deployment:</strong> CI/CD with GitHub Actions, dbt Cloud jobs, Airflow orchestration</li>
+                <li><strong>L12 — Advanced:</strong> Hooks, exposures, dbt Mesh, Semantic Layer, performance tuning, enterprise patterns</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="deployment.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Deployment & CI/CD
+        </a>
+        <a href="hub.html" class="nav-btn-next">
+            Back to Course Hub <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">&#10004; Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">&#10008; Not quite!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">&larr; Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Models & Materializations | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 5 · CORE</span>
+    <h1>🏗️ Models & Materializations — The Heart of dbt</h1>
+    <p class="subtitle">Every SQL file is a model. Every model becomes a table or view. Let's master this.</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="project-structure.html"><i class="fas fa-arrow-left"></i> Project Structure</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="sources-refs.html">Sources & Refs <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: What is a Model?
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📄 What is a Model?</h2>
+
+        <div class="eli5-box">
+            <p>A model is just a <strong>SQL SELECT statement saved in a file</strong>. That's it. Seriously — that's the whole thing.</p>
+            <p style="margin-top:12px;">dbt takes your SELECT and turns it into a <strong>real table or view</strong> in your warehouse. It's like writing a recipe on a card — dbt reads the card and cooks the dish for you. You write the instructions, dbt does the cooking!</p>
+        </div>
+
+        <p>Let's look at the simplest possible model. Create a file called <code>my_first_model.sql</code> inside your <code>models/</code> folder:</p>
+
+        <div class="code-block">
+            <span class="label">models/my_first_model.sql</span>
+            <pre><code><span class="comment">-- This entire file IS the model. Nothing else needed!</span>
+
+<span class="keyword">SELECT</span>
+    <span class="number">1</span> <span class="keyword">AS</span> id,
+    <span class="string">'Hello dbt!'</span> <span class="keyword">AS</span> greeting</code></pre>
+        </div>
+
+        <p>When you run <code>dbt run</code>, dbt reads this file and executes something like:</p>
+
+        <div class="code-block">
+            <span class="label">What dbt actually runs in your warehouse</span>
+            <pre><code><span class="keyword">CREATE VIEW</span> my_first_model <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>
+        <span class="number">1</span> <span class="keyword">AS</span> id,
+        <span class="string">'Hello dbt!'</span> <span class="keyword">AS</span> greeting
+);</code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>The Golden Rule of dbt Models:</strong></p>
+            <p style="margin-top:8px;">📄 <strong>One .sql file</strong> = <strong>One model</strong> = <strong>One table or view</strong> in your warehouse</p>
+            <p style="margin-top:8px;">If you have 50 SQL files in your <code>models/</code> folder, running <code>dbt run</code> creates 50 tables/views. It's that simple. No config files, no registration, no boilerplate — just write SQL and go.</p>
+        </div>
+
+        <p>Here's a more realistic model — a staging model that cleans up raw customer data:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_customers.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    <span class="function">id</span>            <span class="keyword">AS</span> customer_id,
+    <span class="function">first_name</span>,
+    <span class="function">last_name</span>,
+    <span class="function">email_addr</span>    <span class="keyword">AS</span> email,
+    <span class="function">created_at</span>::<span class="keyword">DATE</span> <span class="keyword">AS</span> signup_date,
+    <span class="keyword">CASE</span>
+        <span class="keyword">WHEN</span> status = <span class="string">'A'</span> <span class="keyword">THEN</span> <span class="string">'active'</span>
+        <span class="keyword">WHEN</span> status = <span class="string">'I'</span> <span class="keyword">THEN</span> <span class="string">'inactive'</span>
+        <span class="keyword">ELSE</span> <span class="string">'unknown'</span>
+    <span class="keyword">END</span> <span class="keyword">AS</span> customer_status
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw'</span>, <span class="string">'customers'</span>) }}</code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Notice there's <strong>no CREATE TABLE</strong> or <strong>CREATE VIEW</strong> in the file. You only write the SELECT. dbt wraps it in the appropriate DDL for you based on the <em>materialization</em> you choose. That's the magic!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: Materializations — How dbt Builds Your Models
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧱 Materializations — How dbt Builds Your Models</h2>
+
+        <div class="eli5-box">
+            <p>A "materialization" is just a fancy word for <strong>HOW dbt creates your model in the warehouse</strong>. Think of it like choosing how to serve food:</p>
+            <p style="margin-top:12px;">🪟 <strong>View</strong> = Look through a window (query runs fresh every time)</p>
+            <p>📸 <strong>Table</strong> = Print a photo (data is stored physically)</p>
+            <p>📸+ <strong>Incremental</strong> = Add new photos to an album (only process new data)</p>
+            <p>📝 <strong>Ephemeral</strong> = A sticky note (exists only temporarily)</p>
+            <p>📷 <strong>Snapshot</strong> = A daily photo diary (tracks changes over time)</p>
+        </div>
+
+        <p>dbt has <strong>5 materialization types</strong>. Choosing the right one is one of the most important decisions you'll make. Let's deep-dive into each one.</p>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2a: Views
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h3 style="font-size:1.8em;font-weight:800;color:var(--dbt-secondary);margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #3b82f6;display:inline-block;">🪟 Materialization 1: View (Default)</h3>
+
+        <div class="eli5-box">
+            <p>A view is like a <strong>window into your data</strong>. Every time someone looks through the window, the query runs fresh. Nothing is stored — it's just a saved query. Imagine a window in your house that always shows the live street outside. You don't take a photo of the street; you just look through the window whenever you want to see what's happening <em>right now</em>.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_orders.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'view'</span>) }}
+
+<span class="comment">-- This creates a VIEW in your warehouse</span>
+<span class="comment">-- The query runs fresh every time someone queries stg_orders</span>
+
+<span class="keyword">SELECT</span>
+    <span class="function">id</span>         <span class="keyword">AS</span> order_id,
+    <span class="function">user_id</span>    <span class="keyword">AS</span> customer_id,
+    <span class="function">order_date</span>,
+    <span class="function">status</span>,
+    <span class="function">amount</span> / <span class="number">100.0</span> <span class="keyword">AS</span> amount_dollars
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw'</span>, <span class="string">'orders'</span>) }}</code></pre>
+        </div>
+
+        <p><strong>When to use views:</strong></p>
+        <ul style="margin-left:20px;line-height:2.2;">
+            <li>Staging models (light transformations)</li>
+            <li>Models that don't need to be super fast to query</li>
+            <li>When you always want the freshest data</li>
+            <li>Small datasets where query speed isn't a concern</li>
+        </ul>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ Pros</h4>
+                <ul style="margin-left:16px;line-height:2;">
+                    <li>No storage cost (nothing is physically stored)</li>
+                    <li>Always shows the latest data</li>
+                    <li>Builds instantly (just saves the query)</li>
+                    <li>Perfect for staging layers</li>
+                </ul>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ Cons</h4>
+                <ul style="margin-left:16px;line-height:2;">
+                    <li>Slow to query (runs the full SQL every time)</li>
+                    <li>Stacks up — if view A references view B which references view C, querying A runs all three</li>
+                    <li>Not suitable for dashboards with many users</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2b: Tables
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h3 style="font-size:1.8em;font-weight:800;color:var(--dbt-secondary);margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #8b5cf6;display:inline-block;">📸 Materialization 2: Table</h3>
+
+        <div class="eli5-box">
+            <p>A table is like <strong>printing a photo</strong>. The data is physically stored in your warehouse. It's fast to look at (no waiting for the camera to take a new picture), but you need to <strong>reprint the entire photo</strong> (rebuild the table) whenever the underlying data changes.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_daily_revenue.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'table'</span>) }}
+
+<span class="comment">-- This creates a physical TABLE in your warehouse</span>
+<span class="comment">-- Data is stored — queries are fast!</span>
+
+<span class="keyword">SELECT</span>
+    <span class="function">DATE_TRUNC</span>(<span class="string">'day'</span>, order_date) <span class="keyword">AS</span> revenue_date,
+    <span class="function">COUNT</span>(*) <span class="keyword">AS</span> total_orders,
+    <span class="function">SUM</span>(amount_dollars) <span class="keyword">AS</span> total_revenue,
+    <span class="function">AVG</span>(amount_dollars) <span class="keyword">AS</span> avg_order_value
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}
+<span class="keyword">WHERE</span>
+    status = <span class="string">'completed'</span>
+<span class="keyword">GROUP BY</span> <span class="number">1</span></code></pre>
+        </div>
+
+        <p><strong>When to use tables:</strong></p>
+        <ul style="margin-left:20px;line-height:2.2;">
+            <li>Mart models that dashboards query directly</li>
+            <li>Heavy aggregations and complex joins</li>
+            <li>Models queried frequently by many users</li>
+            <li>When query speed matters more than storage cost</li>
+        </ul>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ Pros</h4>
+                <ul style="margin-left:16px;line-height:2;">
+                    <li>Fast to query (data is pre-computed)</li>
+                    <li>Great for dashboards and BI tools</li>
+                    <li>No cascading query chains</li>
+                </ul>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ Cons</h4>
+                <ul style="margin-left:16px;line-height:2;">
+                    <li>Uses warehouse storage</li>
+                    <li>Full rebuild every <code>dbt run</code> (drops and recreates)</li>
+                    <li>Rebuild can be slow for large datasets</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="real-life">
+            <p><strong>View vs Table — The Restaurant Analogy:</strong></p>
+            <p style="margin-top:8px;">🪟 <strong>View</strong> = A made-to-order dish. The chef cooks it fresh every time someone orders. Great for quality, but slow if 100 people order at once.</p>
+            <p style="margin-top:4px;">📸 <strong>Table</strong> = A buffet dish. The chef cooks a big batch in advance. Everyone grabs a plate instantly. But if the recipe changes, you need to cook a whole new batch.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2c: Incremental
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h3 style="font-size:1.8em;font-weight:800;color:var(--dbt-secondary);margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #f59e0b;display:inline-block;">📸+ Materialization 3: Incremental</h3>
+
+        <div class="eli5-box">
+            <p>Imagine you have a <strong>photo album with 10,000 photos</strong>. Every day, you take 50 new photos. Would you reprint ALL 10,000 photos every single day? Of course not! You'd only print the <strong>50 new ones</strong> and add them to the album.</p>
+            <p style="margin-top:12px;">That's exactly what incremental models do. Instead of rebuilding the entire table every run, dbt only processes the <strong>new or changed rows</strong> and inserts/merges them. This saves <em>massive</em> amounts of time and compute cost.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_events.sql</span>
+            <pre><code>{{ <span class="function">config</span>(
+    <span class="keyword">materialized</span>=<span class="string">'incremental'</span>,
+    <span class="keyword">unique_key</span>=<span class="string">'event_id'</span>,
+    <span class="keyword">incremental_strategy</span>=<span class="string">'merge'</span>
+) }}
+
+<span class="keyword">SELECT</span>
+    event_id,
+    user_id,
+    event_type,
+    event_timestamp,
+    page_url,
+    device_type
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_events'</span>) }}
+
+<span class="comment">-- This WHERE clause is the magic!</span>
+<span class="comment">-- It only runs on the FIRST build (full load)</span>
+<span class="comment">-- On subsequent runs, it filters to only NEW rows</span>
+{% <span class="keyword">if</span> <span class="function">is_incremental</span>() %}
+    <span class="keyword">WHERE</span> event_timestamp > (
+        <span class="keyword">SELECT</span> <span class="function">MAX</span>(event_timestamp)
+        <span class="keyword">FROM</span> {{ <span class="function">this</span> }}
+    )
+{% <span class="keyword">endif</span> %}</code></pre>
+        </div>
+
+        <h3>How It Works — Step by Step</h3>
+
+        <!-- Animated Diagram: Full Refresh vs Incremental -->
+        <div class="visual-example">
+            <p style="color:#065f46;font-weight:700;font-size:1.1em;margin-bottom:16px;">Full Refresh vs Incremental — Visual Comparison</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                <div style="background:#fff;border-radius:12px;padding:20px;border:2px solid #ef4444;">
+                    <p style="font-weight:800;color:#dc2626;text-align:center;margin-bottom:12px;">❌ Table (Full Rebuild)</p>
+                    <div style="font-family:'Fira Code',monospace;font-size:0.85em;line-height:2;color:#1e293b;">
+                        <div>Day 1: Process <strong>10,000</strong> rows</div>
+                        <div>Day 2: Process <strong>10,050</strong> rows</div>
+                        <div>Day 3: Process <strong>10,100</strong> rows</div>
+                        <div>Day 4: Process <strong>10,150</strong> rows</div>
+                        <div style="margin-top:8px;color:#dc2626;font-weight:700;">Total processed: 40,300 rows</div>
+                    </div>
+                </div>
+                <div style="background:#fff;border-radius:12px;padding:20px;border:2px solid #22c55e;">
+                    <p style="font-weight:800;color:#16a34a;text-align:center;margin-bottom:12px;">✅ Incremental</p>
+                    <div style="font-family:'Fira Code',monospace;font-size:0.85em;line-height:2;color:#1e293b;">
+                        <div>Day 1: Process <strong>10,000</strong> rows (first run)</div>
+                        <div>Day 2: Process <strong>50</strong> new rows</div>
+                        <div>Day 3: Process <strong>50</strong> new rows</div>
+                        <div>Day 4: Process <strong>50</strong> new rows</div>
+                        <div style="margin-top:8px;color:#16a34a;font-weight:700;">Total processed: 10,150 rows</div>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align:center;margin-top:16px;color:#065f46;font-weight:600;">That's a <strong>75% reduction</strong> in processing! For tables with billions of rows, this is the difference between minutes and hours.</p>
+        </div>
+
+        <h3>The 3 Incremental Strategies</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Strategy</th>
+                    <th>How It Works</th>
+                    <th>Best For</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>append</code></td>
+                    <td>Simply adds new rows to the table. No duplicate checking.</td>
+                    <td>Event logs, immutable data (rows never change)</td>
+                </tr>
+                <tr>
+                    <td><code>merge</code></td>
+                    <td>Inserts new rows AND updates existing rows (using <code>unique_key</code>).</td>
+                    <td>Data that can be updated (orders, user profiles)</td>
+                </tr>
+                <tr>
+                    <td><code>delete+insert</code></td>
+                    <td>Deletes matching rows first, then inserts the new version.</td>
+                    <td>When merge isn't supported or you need a clean swap</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="important-box">
+            <p><strong>The Full-Refresh Escape Hatch:</strong> If your incremental model gets out of sync or you change the logic, you can force a complete rebuild with:</p>
+            <p style="margin-top:8px;font-family:'Fira Code',monospace;background:rgba(0,0,0,0.05);padding:8px 16px;border-radius:8px;"><code>dbt run --full-refresh -s fct_events</code></p>
+            <p style="margin-top:8px;">This drops the existing table and rebuilds it from scratch — like reprinting the entire photo album. Use it when you change column definitions or fix bugs in your incremental logic.</p>
+        </div>
+
+        <div class="pro-tip">
+            <p>The <code>{{ this }}</code> variable is special — it refers to the <strong>current model's table in the warehouse</strong>. So <code>SELECT MAX(event_timestamp) FROM {{ this }}</code> gets the latest timestamp already in your table, and you only process rows newer than that.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2d: Ephemeral
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h3 style="font-size:1.8em;font-weight:800;color:var(--dbt-secondary);margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #6366f1;display:inline-block;">📝 Materialization 4: Ephemeral</h3>
+
+        <div class="eli5-box">
+            <p>An ephemeral model is like a <strong>sticky note you use while cooking but throw away after</strong>. You write "chop onions, mince garlic" on a sticky note as a reminder, but you don't frame it and hang it on the wall. It exists only to help you while you're cooking.</p>
+            <p style="margin-top:12px;">In dbt, an ephemeral model <strong>doesn't create anything in your warehouse</strong>. Instead, it gets injected as a CTE (Common Table Expression) inside whatever model references it. It's invisible to your warehouse — only dbt knows it exists.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/intermediate/int_order_amounts.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'ephemeral'</span>) }}
+
+<span class="comment">-- This model won't create a table or view!</span>
+<span class="comment">-- It becomes a CTE inside any model that ref()s it</span>
+
+<span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    amount_dollars,
+    amount_dollars * <span class="number">0.1</span> <span class="keyword">AS</span> tax_amount,
+    amount_dollars * <span class="number">1.1</span> <span class="keyword">AS</span> total_with_tax
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}</code></pre>
+        </div>
+
+        <p>When another model references this ephemeral model, dbt compiles it as a CTE:</p>
+
+        <div class="code-block">
+            <span class="label">What dbt actually compiles (behind the scenes)</span>
+            <pre><code><span class="comment">-- dbt injects the ephemeral model as a CTE</span>
+<span class="keyword">WITH</span> int_order_amounts <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>
+        order_id,
+        customer_id,
+        amount_dollars,
+        amount_dollars * <span class="number">0.1</span> <span class="keyword">AS</span> tax_amount,
+        amount_dollars * <span class="number">1.1</span> <span class="keyword">AS</span> total_with_tax
+    <span class="keyword">FROM</span> raw.orders
+)
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> int_order_amounts
+<span class="keyword">WHERE</span> total_with_tax > <span class="number">100</span></code></pre>
+        </div>
+
+        <p><strong>When to use ephemeral:</strong></p>
+        <ul style="margin-left:20px;line-height:2.2;">
+            <li>Intermediate calculations you don't need to query directly</li>
+            <li>Helper logic used by multiple models</li>
+            <li>When you want to keep your warehouse clean (fewer objects)</li>
+        </ul>
+
+        <div class="important-box">
+            <p><strong>Careful!</strong> You can't query an ephemeral model directly in your SQL editor — it doesn't exist in the warehouse. You also can't use <code>dbt test</code> on it directly. Use ephemeral sparingly and only for truly intermediate calculations.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2e: Snapshots
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h3 style="font-size:1.8em;font-weight:800;color:var(--dbt-secondary);margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #22c55e;display:inline-block;">📷 Materialization 5: Snapshot</h3>
+
+        <div class="eli5-box">
+            <p>Snapshots are like <strong>taking a photo of your fridge every day</strong>. Monday: 6 eggs, whole milk, cheddar cheese. Tuesday: 4 eggs, whole milk, swiss cheese. The milk brand didn't change, but the cheese did! By looking at all your daily photos, you can see <em>exactly what changed and when</em>.</p>
+            <p style="margin-top:12px;">In data terms, this is called <strong>Slowly Changing Dimension Type 2 (SCD Type 2)</strong>. Don't let the fancy name scare you — it just means "keep a history of how rows change over time."</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">snapshots/snapshot_customers.sql</span>
+            <pre><code>{% <span class="keyword">snapshot</span> <span class="function">snapshot_customers</span> %}
+
+{{
+    <span class="function">config</span>(
+        <span class="keyword">target_schema</span>=<span class="string">'snapshots'</span>,
+        <span class="keyword">unique_key</span>=<span class="string">'customer_id'</span>,
+        <span class="keyword">strategy</span>=<span class="string">'timestamp'</span>,
+        <span class="keyword">updated_at</span>=<span class="string">'updated_at'</span>,
+    )
+}}
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    email,
+    plan_type,
+    updated_at
+<span class="keyword">FROM</span> {{ <span class="function">source</span>(<span class="string">'raw'</span>, <span class="string">'customers'</span>) }}
+
+{% <span class="keyword">endsnapshot</span> %}</code></pre>
+        </div>
+
+        <h3>SCD Type 2 — How It Tracks Changes</h3>
+        <p>Imagine customer #42 changes their email and upgrades their plan. Here's what the snapshot table looks like over time:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>customer_id</th>
+                    <th>email</th>
+                    <th>plan_type</th>
+                    <th>dbt_valid_from</th>
+                    <th>dbt_valid_to</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>42</td>
+                    <td>old@email.com</td>
+                    <td>free</td>
+                    <td>2024-01-01</td>
+                    <td>2024-03-15</td>
+                </tr>
+                <tr>
+                    <td>42</td>
+                    <td>old@email.com</td>
+                    <td>pro</td>
+                    <td>2024-03-15</td>
+                    <td>2024-06-20</td>
+                </tr>
+                <tr style="background:#f0fdf4;">
+                    <td>42</td>
+                    <td><strong>new@email.com</strong></td>
+                    <td>pro</td>
+                    <td>2024-06-20</td>
+                    <td><em>null</em> (current)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pro-tip">
+            <p>The row with <code>dbt_valid_to = null</code> is always the <strong>current</strong> version. Previous versions have an end date. It's like a time machine for your data — you can ask "What was customer 42's email on February 1st?" and get the answer!</p>
+        </div>
+
+        <div class="real-life">
+            <p><strong>When to use snapshots:</strong></p>
+            <p style="margin-top:8px;">📊 Tracking customer plan changes for churn analysis</p>
+            <p>💰 Tracking product price changes over time</p>
+            <p>🏢 Tracking employee department transfers</p>
+            <p>📦 Tracking order status changes (pending → shipped → delivered)</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: The Materialization Decision Tree
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌳 The Materialization Decision Tree</h2>
+
+        <p>Not sure which materialization to pick? Follow this flowchart:</p>
+
+        <div class="visual-example">
+            <div style="max-width:700px;margin:0 auto;">
+                <!-- Decision Tree using styled divs -->
+                <div style="text-align:center;">
+                    <div style="display:inline-block;background:var(--dbt-gradient);color:#fff;padding:14px 28px;border-radius:14px;font-weight:800;font-size:1.1em;margin-bottom:8px;">Start Here: What kind of model?</div>
+                </div>
+
+                <div style="display:grid;gap:12px;margin-top:16px;">
+                    <!-- Question 1 -->
+                    <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:16px 20px;border-radius:12px;border:2px solid #3b82f6;">
+                        <span style="font-size:1.5em;">🔍</span>
+                        <div style="flex:1;">
+                            <strong style="color:#1e40af;">Is it a staging model?</strong>
+                            <span style="color:#64748b;margin-left:8px;">(light cleaning, renaming)</span>
+                        </div>
+                        <span style="background:#3b82f6;color:#fff;padding:6px 16px;border-radius:8px;font-weight:700;">→ View</span>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:16px 20px;border-radius:12px;border:2px solid #f59e0b;">
+                        <span style="font-size:1.5em;">📊</span>
+                        <div style="flex:1;">
+                            <strong style="color:#92400e;">Is the table huge? (&gt;1M rows)</strong>
+                            <span style="color:#64748b;margin-left:8px;">(events, logs, transactions)</span>
+                        </div>
+                        <span style="background:#f59e0b;color:#1e293b;padding:6px 16px;border-radius:8px;font-weight:700;">→ Incremental</span>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:16px 20px;border-radius:12px;border:2px solid #22c55e;">
+                        <span style="font-size:1.5em;">📷</span>
+                        <div style="flex:1;">
+                            <strong style="color:#166534;">Do you need historical tracking?</strong>
+                            <span style="color:#64748b;margin-left:8px;">(what changed and when)</span>
+                        </div>
+                        <span style="background:#22c55e;color:#fff;padding:6px 16px;border-radius:8px;font-weight:700;">→ Snapshot</span>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:16px 20px;border-radius:12px;border:2px solid #6366f1;">
+                        <span style="font-size:1.5em;">📝</span>
+                        <div style="flex:1;">
+                            <strong style="color:#4338ca;">Is it only used inside other models?</strong>
+                            <span style="color:#64748b;margin-left:8px;">(helper logic, no direct queries)</span>
+                        </div>
+                        <span style="background:#6366f1;color:#fff;padding:6px 16px;border-radius:8px;font-weight:700;">→ Ephemeral</span>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:16px 20px;border-radius:12px;border:2px solid #8b5cf6;">
+                        <span style="font-size:1.5em;">🍽️</span>
+                        <div style="flex:1;">
+                            <strong style="color:#5b21b6;">Otherwise (mart models, dashboards)</strong>
+                            <span style="color:#64748b;margin-left:8px;">(needs to be fast to query)</span>
+                        </div>
+                        <span style="background:#8b5cf6;color:#fff;padding:6px 16px;border-radius:8px;font-weight:700;">→ Table</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>When in doubt, start with <strong>view</strong> (it's the default). If queries are too slow, upgrade to <strong>table</strong>. If the table is too big to rebuild every run, upgrade to <strong>incremental</strong>. You can always change the materialization later — it's just one line of config!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: The 3-Layer Architecture
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏛️ The 3-Layer Architecture</h2>
+
+        <div class="eli5-box">
+            <p>Professional dbt projects organize models into <strong>three layers</strong>, like a restaurant kitchen with three stations. Raw ingredients come in, get prepped, get cooked, and come out as a beautiful dish. Every model belongs to one of these layers.</p>
+        </div>
+
+        <!-- Animated Warehouse Diagram: 3 Layers -->
+        <div class="visual-example">
+            <div class="warehouse-diagram">
+                <div class="warehouse-layer" style="border-color:#3b82f6;animation-delay:0s;">
+                    <div class="layer-icon">🥬</div>
+                    <div class="layer-name" style="color:#1d4ed8;">Staging</div>
+                    <div class="layer-desc">Prep Station</div>
+                    <div class="layer-desc" style="font-size:0.8em;margin-top:4px;">Clean, rename, cast</div>
+                    <div class="layer-desc" style="font-size:0.75em;margin-top:6px;color:#3b82f6;font-weight:700;">materialized = view</div>
+                </div>
+                <div style="font-size:2em;color:var(--dbt-primary);align-self:center;animation:arrowPulse 1.5s ease-in-out infinite;">→</div>
+                <div class="warehouse-layer" style="border-color:#8b5cf6;animation-delay:0.2s;">
+                    <div class="layer-icon">🍳</div>
+                    <div class="layer-name" style="color:#6d28d9;">Intermediate</div>
+                    <div class="layer-desc">Cooking Station</div>
+                    <div class="layer-desc" style="font-size:0.8em;margin-top:4px;">Join, combine, enrich</div>
+                    <div class="layer-desc" style="font-size:0.75em;margin-top:6px;color:#8b5cf6;font-weight:700;">materialized = ephemeral / view</div>
+                </div>
+                <div style="font-size:2em;color:var(--dbt-primary);align-self:center;animation:arrowPulse 1.5s ease-in-out infinite;">→</div>
+                <div class="warehouse-layer" style="border-color:#22c55e;animation-delay:0.4s;">
+                    <div class="layer-icon">🍽️</div>
+                    <div class="layer-name" style="color:#166534;">Marts</div>
+                    <div class="layer-desc">Plating Station</div>
+                    <div class="layer-desc" style="font-size:0.8em;margin-top:4px;">Final tables for dashboards</div>
+                    <div class="layer-desc" style="font-size:0.75em;margin-top:6px;color:#22c55e;font-weight:700;">materialized = table / incremental</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layer 1: Staging -->
+        <h3>🥬 Layer 1: Staging (<code>stg_</code>)</h3>
+        <p><strong>Purpose:</strong> One staging model per source table. Clean up the raw data — rename ugly columns, cast data types, filter out junk. No joins, no aggregations, no business logic.</p>
+
+        <div class="real-life">
+            <p><strong>Think of it like washing vegetables.</strong> You don't cook them yet. You just wash off the dirt, peel the skin, and chop them into uniform pieces so they're ready for the next station.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_customers.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'view'</span>) }}
+
+<span class="keyword">SELECT</span>
+    <span class="function">id</span>            <span class="keyword">AS</span> customer_id,
+    <span class="function">first_name</span>,
+    <span class="function">last_name</span>,
+    <span class="function">LOWER</span>(email_addr)  <span class="keyword">AS</span> email,
+    <span class="function">created_at</span>::<span class="keyword">DATE</span> <span class="keyword">AS</span> signup_date,
+    <span class="keyword">CASE</span>
+        <span class="keyword">WHEN</span> status = <span class="string">'A'</span> <span class="keyword">THEN</span> <span class="string">'active'</span>
+        <span class="keyword">WHEN</span> status = <span class="string">'I'</span> <span class="keyword">THEN</span> <span class="string">'inactive'</span>
+        <span class="keyword">ELSE</span> <span class="string">'unknown'</span>
+    <span class="keyword">END</span> <span class="keyword">AS</span> customer_status
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw'</span>, <span class="string">'customers'</span>) }}</code></pre>
+        </div>
+
+        <!-- Layer 2: Intermediate -->
+        <h3>🍳 Layer 2: Intermediate (<code>int_</code>)</h3>
+        <p><strong>Purpose:</strong> Combine staging models. Join tables, apply business logic, create calculated fields. This is where the real cooking happens.</p>
+
+        <div class="code-block">
+            <span class="label">models/intermediate/int_customer_orders.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'ephemeral'</span>) }}
+
+<span class="keyword">SELECT</span>
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    c.email,
+    c.signup_date,
+    o.order_id,
+    o.order_date,
+    o.amount_dollars,
+    o.status <span class="keyword">AS</span> order_status
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }} c
+<span class="keyword">LEFT JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }} o
+    <span class="keyword">ON</span> c.customer_id = o.customer_id</code></pre>
+        </div>
+
+        <!-- Layer 3: Marts -->
+        <h3>🍽️ Layer 3: Marts (<code>fct_</code> and <code>dim_</code>)</h3>
+        <p><strong>Purpose:</strong> The final, polished tables that your dashboards and analysts query. Marts come in two flavors:</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>📊 Fact Tables (<code>fct_</code>)</h4>
+                <p>Events that happened — orders placed, payments made, clicks recorded. They have <strong>numbers you can count and sum</strong>.</p>
+                <p style="margin-top:8px;font-size:0.9em;color:var(--dbt-text-light);">Examples: <code>fct_orders</code>, <code>fct_payments</code>, <code>fct_page_views</code></p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>👤 Dimension Tables (<code>dim_</code>)</h4>
+                <p>Descriptive attributes — customer details, product info, store locations. They describe the <strong>"who, what, where"</strong> of your facts.</p>
+                <p style="margin-top:8px;font-size:0.9em;color:var(--dbt-text-light);">Examples: <code>dim_customers</code>, <code>dim_products</code>, <code>dim_stores</code></p>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_customer_summary.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'table'</span>) }}
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    first_name,
+    last_name,
+    email,
+    signup_date,
+    <span class="function">COUNT</span>(order_id) <span class="keyword">AS</span> total_orders,
+    <span class="function">SUM</span>(amount_dollars) <span class="keyword">AS</span> lifetime_revenue,
+    <span class="function">AVG</span>(amount_dollars) <span class="keyword">AS</span> avg_order_value,
+    <span class="function">MIN</span>(order_date) <span class="keyword">AS</span> first_order_date,
+    <span class="function">MAX</span>(order_date) <span class="keyword">AS</span> last_order_date,
+    <span class="keyword">CASE</span>
+        <span class="keyword">WHEN</span> <span class="function">COUNT</span>(order_id) >= <span class="number">10</span> <span class="keyword">THEN</span> <span class="string">'vip'</span>
+        <span class="keyword">WHEN</span> <span class="function">COUNT</span>(order_id) >= <span class="number">5</span>  <span class="keyword">THEN</span> <span class="string">'regular'</span>
+        <span class="keyword">WHEN</span> <span class="function">COUNT</span>(order_id) >= <span class="number">1</span>  <span class="keyword">THEN</span> <span class="string">'new'</span>
+        <span class="keyword">ELSE</span> <span class="string">'prospect'</span>
+    <span class="keyword">END</span> <span class="keyword">AS</span> customer_tier
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'int_customer_orders'</span>) }}
+<span class="keyword">GROUP BY</span>
+    customer_id, first_name, last_name, email, signup_date</code></pre>
+        </div>
+
+        <h3>Naming Conventions Cheat Sheet</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Prefix</th>
+                    <th>Layer</th>
+                    <th>Materialization</th>
+                    <th>Example</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>stg_</code></td><td>Staging</td><td>View</td><td><code>stg_customers</code></td><td>Clean raw data, rename columns</td></tr>
+                <tr><td><code>int_</code></td><td>Intermediate</td><td>Ephemeral / View</td><td><code>int_customer_orders</code></td><td>Join and combine staging models</td></tr>
+                <tr><td><code>fct_</code></td><td>Marts (Fact)</td><td>Table / Incremental</td><td><code>fct_orders</code></td><td>Event/transaction tables with metrics</td></tr>
+                <tr><td><code>dim_</code></td><td>Marts (Dimension)</td><td>Table</td><td><code>dim_customers</code></td><td>Descriptive lookup tables</td></tr>
+            </tbody>
+        </table>
+
+        <!-- Real-World E-Commerce Flow -->
+        <h3>Real-World Example: E-Commerce Data Flow</h3>
+        <p>Let's trace how raw e-commerce data flows through all 3 layers:</p>
+
+        <div class="visual-example">
+            <div class="pipeline-diagram">
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#64748b,#475569);color:#fff;">📦</div>
+                    <div class="pipeline-label">Raw<br>Sources</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;">🥬</div>
+                    <div class="pipeline-label">stg_customers<br>stg_orders<br>stg_products</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;">🍳</div>
+                    <div class="pipeline-label">int_customer<br>_orders<br>int_order<br>_products</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">🍽️</div>
+                    <div class="pipeline-label">fct_orders<br>dim_customers<br>dim_products</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">📊</div>
+                    <div class="pipeline-label">Dashboards<br>&amp; Reports</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: Hands-On Exercise
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🛠️ Hands-On: Build Your First 3 Models</h2>
+
+        <p>Time to get your hands dirty! Let's build a complete 3-layer pipeline from scratch. We'll create a staging model, an intermediate model, and a mart model.</p>
+
+        <div class="step-box">
+            <h3 style="color:#1e40af;margin-top:0;">Step 1: Create the Staging Model</h3>
+            <p>Create the file <code>models/staging/stg_customers.sql</code>:</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_customers.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'view'</span>) }}
+
+<span class="keyword">SELECT</span>
+    <span class="function">id</span>            <span class="keyword">AS</span> customer_id,
+    <span class="function">first_name</span>,
+    <span class="function">last_name</span>,
+    <span class="function">LOWER</span>(email)   <span class="keyword">AS</span> email,
+    <span class="function">created_at</span>::<span class="keyword">DATE</span> <span class="keyword">AS</span> signup_date
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw'</span>, <span class="string">'customers'</span>) }}</code></pre>
+        </div>
+
+        <div class="step-box">
+            <h3 style="color:#1e40af;margin-top:0;">Step 2: Create the Intermediate Model</h3>
+            <p>Create the file <code>models/intermediate/int_customer_orders.sql</code>:</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/intermediate/int_customer_orders.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'ephemeral'</span>) }}
+
+<span class="keyword">SELECT</span>
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    c.email,
+    c.signup_date,
+    o.order_id,
+    o.order_date,
+    o.amount_dollars
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }} c
+<span class="keyword">LEFT JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }} o
+    <span class="keyword">ON</span> c.customer_id = o.customer_id</code></pre>
+        </div>
+
+        <div class="step-box">
+            <h3 style="color:#1e40af;margin-top:0;">Step 3: Create the Mart Model</h3>
+            <p>Create the file <code>models/marts/fct_customer_summary.sql</code>:</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_customer_summary.sql</span>
+            <pre><code>{{ <span class="function">config</span>(<span class="keyword">materialized</span>=<span class="string">'table'</span>) }}
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    first_name,
+    last_name,
+    email,
+    signup_date,
+    <span class="function">COUNT</span>(order_id)       <span class="keyword">AS</span> total_orders,
+    <span class="function">COALESCE</span>(<span class="function">SUM</span>(amount_dollars), <span class="number">0</span>) <span class="keyword">AS</span> lifetime_revenue,
+    <span class="function">COALESCE</span>(<span class="function">AVG</span>(amount_dollars), <span class="number">0</span>) <span class="keyword">AS</span> avg_order_value,
+    <span class="function">MIN</span>(order_date)       <span class="keyword">AS</span> first_order_date,
+    <span class="function">MAX</span>(order_date)       <span class="keyword">AS</span> last_order_date
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'int_customer_orders'</span>) }}
+<span class="keyword">GROUP BY</span>
+    customer_id, first_name, last_name, email, signup_date</code></pre>
+        </div>
+
+        <div class="step-box">
+            <h3 style="color:#1e40af;margin-top:0;">Step 4: Run It!</h3>
+            <p>Open your terminal and run:</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="output">$ dbt run</span>
+
+<span class="comment">Running with dbt=1.7.0</span>
+<span class="comment">Found 3 models, 0 tests, 0 snapshots, 0 seeds</span>
+
+<span class="function">Concurrency</span>: 4 threads (target='dev')
+
+<span class="number">1 of 3</span> START view model dev.stg_customers .............. [<span class="keyword">RUN</span>]
+<span class="number">1 of 3</span> OK created view model dev.stg_customers .......... [<span class="string">CREATE VIEW</span> in 0.12s]
+
+<span class="number">2 of 3</span> START table model dev.fct_customer_summary ........ [<span class="keyword">RUN</span>]
+<span class="number">2 of 3</span> OK created table model dev.fct_customer_summary ... [<span class="string">SELECT 1,247</span> in 0.45s]
+
+<span class="output">Finished running 1 view model, 1 table model in 0 hours 0 minutes and 0.89 seconds (0.89s).</span>
+<span class="string">Completed successfully</span>
+
+<span class="keyword">Done.</span> PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2</code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Notice the output says <strong>TOTAL=2</strong>, not 3! That's because <code>int_customer_orders</code> is ephemeral — it doesn't create anything in the warehouse. It was silently injected as a CTE inside <code>fct_customer_summary</code>. Sneaky and efficient!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Materialization Comparison Table
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📊 Materialization Comparison Table</h2>
+
+        <p>Here's the ultimate cheat sheet. Bookmark this — you'll come back to it often!</p>
+
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>View</th>
+                        <th>Table</th>
+                        <th>Incremental</th>
+                        <th>Ephemeral</th>
+                        <th>Snapshot</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Creates in warehouse?</strong></td>
+                        <td>Yes (view)</td>
+                        <td>Yes (table)</td>
+                        <td>Yes (table)</td>
+                        <td>No</td>
+                        <td>Yes (table)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stores data?</strong></td>
+                        <td>No</td>
+                        <td>Yes</td>
+                        <td>Yes</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Build speed</strong></td>
+                        <td>Instant</td>
+                        <td>Slow (full rebuild)</td>
+                        <td>Fast (new rows only)</td>
+                        <td>N/A</td>
+                        <td>Fast (changed rows)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Query speed</strong></td>
+                        <td>Slow</td>
+                        <td>Fast</td>
+                        <td>Fast</td>
+                        <td>N/A</td>
+                        <td>Fast</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Storage cost</strong></td>
+                        <td>None</td>
+                        <td>High</td>
+                        <td>High</td>
+                        <td>None</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tracks history?</strong></td>
+                        <td>No</td>
+                        <td>No</td>
+                        <td>No</td>
+                        <td>No</td>
+                        <td>Yes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Best for</strong></td>
+                        <td>Staging, light transforms</td>
+                        <td>Marts, dashboards</td>
+                        <td>Large fact tables</td>
+                        <td>Helper CTEs</td>
+                        <td>SCD Type 2</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Typical layer</strong></td>
+                        <td>Staging</td>
+                        <td>Marts</td>
+                        <td>Marts</td>
+                        <td>Intermediate</td>
+                        <td>Snapshots folder</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you've mastered models and materializations. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: What is a dbt model?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> A Python script that transforms data
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> A SQL SELECT statement saved in a .sql file
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> A YAML configuration file
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> A stored procedure in the warehouse
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: Which materialization should you use for a staging model?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Table
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> View
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> Incremental
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Snapshot
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: You have a table with 500 million event rows that grows by 1 million per day. Which materialization saves the most compute?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> View
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Table
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Incremental
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Ephemeral
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 4: What does an ephemeral model create in the warehouse?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> A view
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> A table
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> A temporary table
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>D)</strong> Nothing — it becomes a CTE inside other models
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Can you explain the difference between a view and a table to a non-technical friend? Try it out loud! If you can explain it using the "window vs photo" analogy, you've truly understood it.</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>A model</strong> = a SQL SELECT in a .sql file → becomes a table or view</li>
+                <li><strong>View</strong> = saved query, runs fresh every time (staging layer)</li>
+                <li><strong>Table</strong> = physically stored data, fast to query (mart layer)</li>
+                <li><strong>Incremental</strong> = only processes new/changed rows (large fact tables)</li>
+                <li><strong>3-Layer Architecture:</strong> staging (<code>stg_</code>) → intermediate (<code>int_</code>) → marts (<code>fct_</code> / <code>dim_</code>)</li>
+                <li><strong>{{ config(materialized='...') }}</strong> at the top of a model sets its type</li>
+                <li><strong>Naming conventions:</strong> <code>stg_</code>, <code>int_</code>, <code>fct_</code>, <code>dim_</code></li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Ephemeral</strong> = invisible CTE, doesn't create warehouse objects</li>
+                <li><strong>Snapshot</strong> = SCD Type 2 history tracking (lives in snapshots/ folder)</li>
+                <li><strong>Incremental strategies:</strong> append, merge, delete+insert</li>
+                <li><strong>{{ this }}</strong> = refers to the current model's existing table</li>
+                <li><strong>--full-refresh</strong> flag to force a complete rebuild of incremental models</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="project-structure.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Project Structure
+        </a>
+        <a href="sources-refs.html" class="nav-btn-next">
+            Sources & Refs <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

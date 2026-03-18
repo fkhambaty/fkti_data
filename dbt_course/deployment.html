@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment & CI/CD | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 11 · ADVANCED</span>
+    <h1>🚀 Deployment & CI/CD — Ship It!</h1>
+    <p class="subtitle">From your laptop to production. Automate everything.</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="packages-seeds.html"><i class="fas fa-arrow-left"></i> Packages & Seeds</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="advanced.html">Advanced <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: Dev vs Prod — Why It Matters
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏠 Dev vs Prod — Why It Matters</h2>
+
+        <div class="eli5-box">
+            <p>Imagine you're a chef testing a new recipe. You don't serve it to customers right away — you test it in the <strong>back kitchen</strong> first. You taste it, adjust the seasoning, maybe burn a few batches. Only when it's perfect do you put it on the menu for the restaurant floor.</p>
+            <p style="margin-top:12px;"><strong>Dev</strong> is your test kitchen — break things, experiment, nobody cares. <strong>Prod</strong> is the restaurant floor — real customers, real dashboards, real decisions. If you serve a burnt dish in prod, people make wrong business decisions based on bad data!</p>
+        </div>
+
+        <h3>Separate Schemas: The Two Kitchens</h3>
+        <p>In dbt, you keep dev and prod completely separate by using different <strong>schemas</strong> (think of them as different rooms in your data warehouse):</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>🧪 Development</h4>
+                <p><code>dev_analytics</code> schema</p>
+                <p style="margin-top:8px;font-size:0.9em;color:var(--dbt-text-light);">Your personal sandbox. Run experiments, break things, iterate fast. Only you can see this data.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🏭 Production</h4>
+                <p><code>prod_analytics</code> schema</p>
+                <p style="margin-top:8px;font-size:0.9em;color:var(--dbt-text-light);">The real deal. Dashboards, reports, and business decisions are based on this. Treat it like a hospital operating room — sterile and controlled.</p>
+            </div>
+        </div>
+
+        <h3>profiles.yml — Defining Your Targets</h3>
+        <p>The <code>profiles.yml</code> file tells dbt <em>where</em> to run your models. You define separate targets for dev and prod:</p>
+
+        <div class="code-block">
+            <span class="label">~/.dbt/profiles.yml</span>
+            <pre><code><span class="keyword">my_project</span>:
+  <span class="keyword">target</span>: <span class="string">dev</span>                    <span class="comment"># Default target when you run dbt locally</span>
+  <span class="keyword">outputs</span>:
+
+    <span class="keyword">dev</span>:
+      <span class="keyword">type</span>: <span class="string">postgres</span>
+      <span class="keyword">host</span>: <span class="string">localhost</span>
+      <span class="keyword">user</span>: <span class="string">analytics_dev</span>
+      <span class="keyword">password</span>: <span class="string">"{{ env_var('DBT_DEV_PASSWORD') }}"</span>
+      <span class="keyword">database</span>: <span class="string">warehouse</span>
+      <span class="keyword">schema</span>: <span class="string">dev_analytics</span>          <span class="comment"># ← Your test kitchen</span>
+      <span class="keyword">threads</span>: <span class="number">4</span>
+
+    <span class="keyword">prod</span>:
+      <span class="keyword">type</span>: <span class="string">postgres</span>
+      <span class="keyword">host</span>: <span class="string">prod-warehouse.company.com</span>
+      <span class="keyword">user</span>: <span class="string">analytics_prod</span>
+      <span class="keyword">password</span>: <span class="string">"{{ env_var('DBT_PROD_PASSWORD') }}"</span>
+      <span class="keyword">database</span>: <span class="string">warehouse</span>
+      <span class="keyword">schema</span>: <span class="string">prod_analytics</span>         <span class="comment"># ← The restaurant floor</span>
+      <span class="keyword">threads</span>: <span class="number">8</span></code></pre>
+        </div>
+
+        <h3>Using <code>target.name</code> in Your Models</h3>
+        <p>Sometimes you want your models to behave differently in dev vs prod. For example, in dev you might only process the last 7 days of data (to save time), but in prod you process everything:</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    order_date,
+    amount
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}
+
+{% <span class="keyword">if</span> target.name == <span class="string">'dev'</span> %}
+    <span class="comment">-- In dev: only process last 7 days (fast iteration!)</span>
+    <span class="keyword">WHERE</span> order_date >= <span class="function">CURRENT_DATE</span> - <span class="keyword">INTERVAL</span> <span class="string">'7 days'</span>
+{% <span class="keyword">endif</span> %}
+
+<span class="comment">-- In prod: this WHERE clause is skipped → processes ALL data</span></code></pre>
+        </div>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🧠 The Golden Rule</p>
+            <p style="color:#4c1d95;">Never run <code>dbt run --target prod</code> from your laptop. Production deployments should <strong>always</strong> go through an automated pipeline (CI/CD). This prevents "oops, I accidentally dropped the production table" moments.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: Deployment Options
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🗺️ Deployment Options</h2>
+
+        <div class="eli5-box">
+            <p>There are many ways to get your dbt models from your laptop to production. It's like choosing how to deliver a pizza — you can hand-deliver it, use a delivery app, hire a courier, or set up a drone. Each has trade-offs in cost, complexity, and reliability.</p>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Option</th>
+                    <th>Complexity</th>
+                    <th>Cost</th>
+                    <th>Best For</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>dbt Cloud</strong></td>
+                    <td>⭐ Low</td>
+                    <td>$$$ (paid)</td>
+                    <td>Teams wanting a managed, no-ops solution</td>
+                </tr>
+                <tr>
+                    <td><strong>GitHub Actions</strong></td>
+                    <td>⭐⭐ Medium</td>
+                    <td>Free (open source)</td>
+                    <td>Teams already on GitHub who want flexibility</td>
+                </tr>
+                <tr>
+                    <td><strong>Airflow + dbt</strong></td>
+                    <td>⭐⭐⭐ High</td>
+                    <td>Free (open source)</td>
+                    <td>Complex pipelines where dbt is one step of many</td>
+                </tr>
+                <tr>
+                    <td><strong>Kubernetes CronJobs</strong></td>
+                    <td>⭐⭐⭐ High</td>
+                    <td>$$ (infra costs)</td>
+                    <td>Container-based teams with existing K8s clusters</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;">💻</div>
+                <div class="pipeline-label">Write<br>Code<br><small style="color:var(--dbt-text-light);">Local</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;">🔀</div>
+                <div class="pipeline-label">Push to<br>Git<br><small style="color:var(--dbt-text-light);">PR</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🧪</div>
+                <div class="pipeline-label">CI Tests<br>Run<br><small style="color:var(--dbt-text-light);">Auto</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">✅</div>
+                <div class="pipeline-label">Merge<br>to Main<br><small style="color:var(--dbt-text-light);">Approved</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">🚀</div>
+                <div class="pipeline-label">Deploy<br>to Prod<br><small style="color:var(--dbt-text-light);">Auto</small></div>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>If you're just starting out, <strong>dbt Cloud</strong> is the easiest path. If you want full control and don't mind YAML files, <strong>GitHub Actions</strong> is the most popular free option. If dbt is part of a larger data pipeline (extract → load → transform → serve), <strong>Airflow</strong> is the industry standard orchestrator.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: dbt Cloud Deployment
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>☁️ dbt Cloud Deployment</h2>
+
+        <div class="eli5-box">
+            <p>dbt Cloud is like a <strong>fully automated kitchen</strong>. You set the timer, pick the recipes, and it cooks, tests, and serves the food on schedule. You don't need to stand there stirring the pot — it does everything for you. You just check the results in the morning with your coffee.</p>
+        </div>
+
+        <h3>Setting Up Environments</h3>
+        <p>In dbt Cloud, you create separate <strong>environments</strong> for each stage of your pipeline:</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>🧪 Development</h4>
+                <p>Your personal IDE workspace. Run models interactively, test queries, iterate fast.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);">Schema: <code>dev_&lt;your_name&gt;</code></p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>🔬 Staging</h4>
+                <p>A mirror of production for final testing. CI jobs run here to validate PRs before merging.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);">Schema: <code>staging_analytics</code></p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🏭 Production</h4>
+                <p>The real deal. Scheduled jobs run here on a cron schedule. Dashboards read from this.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);">Schema: <code>prod_analytics</code></p>
+            </div>
+        </div>
+
+        <h3>Creating a Production Job</h3>
+        <p>A dbt Cloud <strong>job</strong> is a scheduled set of commands. Here's what a typical production job looks like:</p>
+
+        <div class="code-block">
+            <span class="label">Typical Production Job — Commands</span>
+            <pre><code><span class="comment"># Step 1: Load reference data (country codes, status mappings, etc.)</span>
+<span class="function">$</span> dbt seed
+
+<span class="comment"># Step 2: Build all models (staging → intermediate → marts)</span>
+<span class="function">$</span> dbt run
+
+<span class="comment"># Step 3: Run ALL tests (schema tests, custom tests, freshness)</span>
+<span class="function">$</span> dbt test
+
+<span class="comment"># Or combine steps 2 & 3 with "build" (runs + tests in DAG order)</span>
+<span class="function">$</span> dbt build</code></pre>
+        </div>
+
+        <div class="step-box">
+            <p style="font-weight:800;color:#1e40af;font-size:1.1em;margin-bottom:12px;">Job Configuration Checklist</p>
+            <p><strong>Schedule:</strong> Cron expression (e.g., <code>0 6 * * *</code> = every day at 6 AM)</p>
+            <p><strong>Commands:</strong> <code>dbt seed</code>, <code>dbt run</code>, <code>dbt test</code> (or just <code>dbt build</code>)</p>
+            <p><strong>Notifications:</strong> Email or Slack alerts on failure</p>
+            <p><strong>Timeout:</strong> Kill the job if it runs longer than expected (e.g., 60 minutes)</p>
+            <p><strong>Retries:</strong> Automatically retry on transient failures (e.g., warehouse timeout)</p>
+        </div>
+
+        <div class="real-life">
+            <p><strong>A typical morning at a data team using dbt Cloud:</strong> At 6 AM, the production job runs automatically. By 7 AM, all models are built and tested. If anything fails, the on-call engineer gets a Slack notification. By 8 AM when the business team opens their dashboards, the data is fresh, tested, and ready. Nobody had to wake up early or press any buttons!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: GitHub Actions CI/CD
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>⚙️ GitHub Actions CI/CD</h2>
+
+        <div class="eli5-box">
+            <p>CI/CD is like having a <strong>robot assistant</strong> that checks your recipe every time you change it. You write a new recipe (code), hand it to the robot (open a pull request), and the robot automatically taste-tests everything (runs dbt tests). If it passes all taste tests, the robot adds it to the menu (deploys to production). If something tastes wrong, the robot blocks it and tells you what's broken.</p>
+            <p style="margin-top:12px;"><strong>CI</strong> = Continuous Integration (test every change). <strong>CD</strong> = Continuous Deployment (auto-deploy when tests pass).</p>
+        </div>
+
+        <h3>Full CI Workflow Example</h3>
+        <p>Create this file in your repository. GitHub Actions will automatically run it on every pull request:</p>
+
+        <div class="code-block">
+            <span class="label">.github/workflows/dbt_ci.yml</span>
+            <pre><code><span class="keyword">name</span>: <span class="string">dbt CI</span>
+
+<span class="keyword">on</span>:
+  <span class="keyword">pull_request</span>:
+    <span class="keyword">branches</span>: [<span class="string">main</span>]
+
+<span class="keyword">jobs</span>:
+  <span class="keyword">dbt-test</span>:
+    <span class="keyword">runs-on</span>: <span class="string">ubuntu-latest</span>
+
+    <span class="keyword">steps</span>:
+      - <span class="keyword">name</span>: <span class="string">Checkout code</span>
+        <span class="keyword">uses</span>: <span class="string">actions/checkout@v4</span>
+
+      - <span class="keyword">name</span>: <span class="string">Set up Python</span>
+        <span class="keyword">uses</span>: <span class="string">actions/setup-python@v5</span>
+        <span class="keyword">with</span>:
+          <span class="keyword">python-version</span>: <span class="string">'3.11'</span>
+
+      - <span class="keyword">name</span>: <span class="string">Install dbt</span>
+        <span class="keyword">run</span>: <span class="string">pip install dbt-postgres</span>
+
+      - <span class="keyword">name</span>: <span class="string">Install packages</span>
+        <span class="keyword">run</span>: <span class="string">dbt deps</span>
+
+      - <span class="keyword">name</span>: <span class="string">Run modified models</span>
+        <span class="keyword">run</span>: <span class="string">dbt run --select state:modified+</span>
+        <span class="keyword">env</span>:
+          <span class="keyword">DBT_PROFILES_DIR</span>: <span class="string">.</span>
+          <span class="keyword">DBT_PASSWORD</span>: <span class="string">${{ secrets.DBT_PASSWORD }}</span>
+
+      - <span class="keyword">name</span>: <span class="string">Test modified models</span>
+        <span class="keyword">run</span>: <span class="string">dbt test --select state:modified+</span>
+        <span class="keyword">env</span>:
+          <span class="keyword">DBT_PROFILES_DIR</span>: <span class="string">.</span>
+          <span class="keyword">DBT_PASSWORD</span>: <span class="string">${{ secrets.DBT_PASSWORD }}</span></code></pre>
+        </div>
+
+        <h3>Slim CI with <code>state:modified</code></h3>
+
+        <div class="real-life">
+            <p><strong>Why "state:modified"?</strong> Imagine your project has 200 models. You changed just 1 model. Without Slim CI, you'd rebuild and test all 200 models — taking 45 minutes. With <code>state:modified+</code>, dbt only runs the model you changed <em>plus</em> everything downstream of it. That's maybe 5 models and 3 minutes. It's like only re-inspecting the rooms you renovated, not the entire building!</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Slim CI commands explained</span>
+            <pre><code><span class="comment"># Only run models that changed since the last production run</span>
+<span class="function">$</span> dbt run --select <span class="string">state:modified+</span> --defer --state <span class="string">./prod-artifacts/</span>
+
+<span class="comment"># state:modified  → models YOU changed in this PR</span>
+<span class="comment"># +               → plus everything DOWNSTREAM of those models</span>
+<span class="comment"># --defer         → for unchanged models, use prod tables instead of rebuilding</span>
+<span class="comment"># --state         → path to production's manifest.json (the "before" snapshot)</span></code></pre>
+        </div>
+
+        <h3>Deploy on Merge to Main</h3>
+
+        <div class="code-block">
+            <span class="label">.github/workflows/dbt_deploy.yml</span>
+            <pre><code><span class="keyword">name</span>: <span class="string">dbt Deploy to Production</span>
+
+<span class="keyword">on</span>:
+  <span class="keyword">push</span>:
+    <span class="keyword">branches</span>: [<span class="string">main</span>]
+
+<span class="keyword">jobs</span>:
+  <span class="keyword">deploy</span>:
+    <span class="keyword">runs-on</span>: <span class="string">ubuntu-latest</span>
+    <span class="keyword">steps</span>:
+      - <span class="keyword">uses</span>: <span class="string">actions/checkout@v4</span>
+      - <span class="keyword">uses</span>: <span class="string">actions/setup-python@v5</span>
+        <span class="keyword">with</span>:
+          <span class="keyword">python-version</span>: <span class="string">'3.11'</span>
+
+      - <span class="keyword">run</span>: <span class="string">pip install dbt-postgres</span>
+      - <span class="keyword">run</span>: <span class="string">dbt deps</span>
+      - <span class="keyword">run</span>: <span class="string">dbt seed --target prod</span>
+      - <span class="keyword">run</span>: <span class="string">dbt run --target prod</span>
+      - <span class="keyword">run</span>: <span class="string">dbt test --target prod</span>
+        <span class="keyword">env</span>:
+          <span class="keyword">DBT_PROFILES_DIR</span>: <span class="string">.</span>
+          <span class="keyword">DBT_PROD_PASSWORD</span>: <span class="string">${{ secrets.DBT_PROD_PASSWORD }}</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The CI workflow runs on <strong>pull requests</strong> (test before merge). The deploy workflow runs on <strong>push to main</strong> (deploy after merge). Together, they form a safety net: no untested code ever reaches production. It's the gold standard for data teams!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: Airflow + dbt Integration
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌬️ Airflow + dbt Integration</h2>
+
+        <div class="eli5-box">
+            <p><strong>Airflow</strong> is the head chef who coordinates the entire kitchen. <strong>dbt</strong> is the sous chef who handles all the data prep. Together they run a smooth operation. Airflow says "First, extract data from the API. Then, load it into the warehouse. Then, let dbt transform it. Finally, send a Slack notification." dbt handles step 3 beautifully, but Airflow orchestrates the whole show.</p>
+        </div>
+
+        <h3>When to Use Airflow + dbt</h3>
+        <p>Use Airflow when dbt is <strong>one step in a larger pipeline</strong>:</p>
+
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;">📥</div>
+                <div class="pipeline-label">Extract<br>from API<br><small style="color:var(--dbt-text-light);">Python</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;">📤</div>
+                <div class="pipeline-label">Load to<br>Warehouse<br><small style="color:var(--dbt-text-light);">Fivetran</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ff694a,#e5532e);color:#fff;">🔧</div>
+                <div class="pipeline-label">Transform<br>with dbt<br><small style="color:var(--dbt-text-light);">dbt run</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">🧪</div>
+                <div class="pipeline-label">Test<br>Quality<br><small style="color:var(--dbt-text-light);">dbt test</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">📢</div>
+                <div class="pipeline-label">Notify<br>Team<br><small style="color:var(--dbt-text-light);">Slack</small></div>
+            </div>
+        </div>
+
+        <h3>Full Airflow DAG Example</h3>
+
+        <div class="code-block">
+            <span class="label">dags/dbt_pipeline.py</span>
+            <pre><code><span class="keyword">from</span> airflow <span class="keyword">import</span> DAG
+<span class="keyword">from</span> airflow.operators.bash <span class="keyword">import</span> BashOperator
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta
+
+default_args = {
+    <span class="string">'owner'</span>: <span class="string">'data-team'</span>,
+    <span class="string">'retries'</span>: <span class="number">2</span>,
+    <span class="string">'retry_delay'</span>: timedelta(minutes=<span class="number">5</span>),
+    <span class="string">'email_on_failure'</span>: <span class="keyword">True</span>,
+    <span class="string">'email'</span>: [<span class="string">'data-alerts@company.com'</span>],
+}
+
+<span class="keyword">with</span> DAG(
+    dag_id=<span class="string">'dbt_production_pipeline'</span>,
+    default_args=default_args,
+    schedule_interval=<span class="string">'0 6 * * *'</span>,     <span class="comment"># Every day at 6 AM</span>
+    start_date=datetime(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    catchup=<span class="keyword">False</span>,
+) <span class="keyword">as</span> dag:
+
+    dbt_seed = BashOperator(
+        task_id=<span class="string">'dbt_seed'</span>,
+        bash_command=<span class="string">'cd /opt/dbt/my_project && dbt seed --target prod'</span>,
+    )
+
+    dbt_run = BashOperator(
+        task_id=<span class="string">'dbt_run'</span>,
+        bash_command=<span class="string">'cd /opt/dbt/my_project && dbt run --target prod'</span>,
+    )
+
+    dbt_test = BashOperator(
+        task_id=<span class="string">'dbt_test'</span>,
+        bash_command=<span class="string">'cd /opt/dbt/my_project && dbt test --target prod'</span>,
+    )
+
+    notify_success = BashOperator(
+        task_id=<span class="string">'notify_success'</span>,
+        bash_command=<span class="string">'echo "dbt pipeline completed successfully!"'</span>,
+    )
+
+    <span class="comment"># Define the execution order</span>
+    dbt_seed >> dbt_run >> dbt_test >> notify_success</code></pre>
+        </div>
+
+        <h3>The Cosmos Package — dbt + Airflow Made Easy</h3>
+        <p>The <code>astronomer-cosmos</code> package automatically converts your dbt DAG into individual Airflow tasks — one task per model. This gives you granular visibility and retry capabilities:</p>
+
+        <div class="code-block">
+            <span class="label">dags/dbt_cosmos_pipeline.py</span>
+            <pre><code><span class="keyword">from</span> cosmos <span class="keyword">import</span> DbtDag, ProjectConfig, ProfileConfig
+
+dbt_dag = DbtDag(
+    project_config=ProjectConfig(<span class="string">"/opt/dbt/my_project"</span>),
+    profile_config=ProfileConfig(
+        profile_name=<span class="string">"my_project"</span>,
+        target_name=<span class="string">"prod"</span>,
+    ),
+    schedule_interval=<span class="string">"0 6 * * *"</span>,
+    start_date=datetime(<span class="number">2024</span>, <span class="number">1</span>, <span class="number">1</span>),
+    dag_id=<span class="string">"dbt_cosmos_pipeline"</span>,
+)
+
+<span class="comment"># Cosmos auto-generates one Airflow task per dbt model!</span>
+<span class="comment"># stg_customers → stg_orders → fct_orders → dim_customers</span>
+<span class="comment"># Each model is a separate, retryable task in Airflow.</span></code></pre>
+        </div>
+
+        <div class="visual-example">
+            <p style="color:#065f46;"><strong>Why Cosmos is a game-changer:</strong> Without Cosmos, a single <code>dbt run</code> is one big Airflow task. If model #47 out of 200 fails, you have to re-run all 200. With Cosmos, each model is its own task — if model #47 fails, you only retry that one model. It's like having individual light switches instead of one master switch for the whole building!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Environment Variables & Secrets
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔐 Environment Variables & Secrets</h2>
+
+        <div class="eli5-box">
+            <p>Imagine writing your house key's code on a sticky note and taping it to your front door. That's what <strong>hardcoding passwords</strong> in your code is like. Anyone who sees the code gets your password. Instead, you keep the key in a safe (environment variables) and only take it out when you need to unlock the door.</p>
+        </div>
+
+        <h3>Using <code>env_var()</code> in profiles.yml</h3>
+
+        <div class="code-block">
+            <span class="label">profiles.yml — The SAFE way</span>
+            <pre><code><span class="keyword">my_project</span>:
+  <span class="keyword">target</span>: <span class="string">prod</span>
+  <span class="keyword">outputs</span>:
+    <span class="keyword">prod</span>:
+      <span class="keyword">type</span>: <span class="string">snowflake</span>
+      <span class="keyword">account</span>: <span class="string">"{{ env_var('SNOWFLAKE_ACCOUNT') }}"</span>
+      <span class="keyword">user</span>: <span class="string">"{{ env_var('SNOWFLAKE_USER') }}"</span>
+      <span class="keyword">password</span>: <span class="string">"{{ env_var('SNOWFLAKE_PASSWORD') }}"</span>
+      <span class="keyword">role</span>: <span class="string">"{{ env_var('SNOWFLAKE_ROLE') }}"</span>
+      <span class="keyword">database</span>: <span class="string">"{{ env_var('SNOWFLAKE_DATABASE') }}"</span>
+      <span class="keyword">warehouse</span>: <span class="string">"{{ env_var('SNOWFLAKE_WAREHOUSE') }}"</span>
+      <span class="keyword">schema</span>: <span class="string">prod_analytics</span>
+      <span class="keyword">threads</span>: <span class="number">8</span></code></pre>
+        </div>
+
+        <h3>Where to Store Secrets</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>🔑 GitHub Secrets</h4>
+                <p>Go to your repo → Settings → Secrets → Actions. Add variables like <code>DBT_PROD_PASSWORD</code>. GitHub encrypts them and injects them into your workflow at runtime.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                <h4>☁️ dbt Cloud Variables</h4>
+                <p>In dbt Cloud → Environment → Environment Variables. Set values per environment (dev vs prod). dbt Cloud handles injection automatically.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🗄️ Vault / AWS Secrets Manager</h4>
+                <p>Enterprise-grade secret management. Your CI/CD pipeline fetches secrets at runtime from a centralized vault. Most secure option.</p>
+            </div>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">🚨 Security Best Practices</p>
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Never</strong> commit passwords, API keys, or tokens to Git — ever</li>
+                <li>Add <code>profiles.yml</code> to your <code>.gitignore</code> (it contains connection details)</li>
+                <li>Use <code>env_var()</code> for every credential in profiles.yml</li>
+                <li>Rotate passwords regularly (at least every 90 days)</li>
+                <li>Use read-only service accounts for production dbt runs</li>
+                <li>Audit who has access to production credentials quarterly</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: Monitoring & Alerting
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📊 Monitoring & Alerting</h2>
+
+        <div class="eli5-box">
+            <p>Deploying your models is only half the battle. You also need to <strong>watch them like a security camera</strong>. Is the pipeline running on time? Are tests passing? Did the data arrive? Monitoring is like having a smoke detector in your kitchen — you don't need it every day, but when something burns, you want to know <em>immediately</em>.</p>
+        </div>
+
+        <h3>What to Monitor</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>⏱️ Execution Time</h4>
+                <p>Track how long each model takes to build. If <code>fct_orders</code> usually takes 2 minutes but suddenly takes 30, something changed — maybe a bad join is creating a cartesian product.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>🧪 Test Failures</h4>
+                <p>Get notified instantly when a test fails. A failing <code>not_null</code> test on <code>customer_id</code> at 6 AM means your 8 AM dashboard will show wrong numbers.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>📅 Data Freshness</h4>
+                <p>Monitor <code>dbt source freshness</code> results. If your orders table hasn't been updated in 12 hours, the ETL pipeline upstream probably crashed.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>📈 Row Count Trends</h4>
+                <p>Track row counts over time. A sudden 10x spike means duplicates; a sudden drop to zero means data loss. Both are emergencies.</p>
+            </div>
+        </div>
+
+        <h3>Notification Channels</h3>
+
+        <div class="code-block">
+            <span class="label">dbt Cloud notification setup</span>
+            <pre><code><span class="comment"># In dbt Cloud → Account Settings → Notifications</span>
+
+<span class="comment"># Email notifications:</span>
+<span class="comment"># ✅ On job failure → data-team@company.com</span>
+<span class="comment"># ✅ On test failure → data-quality@company.com</span>
+
+<span class="comment"># Slack notifications (via webhook):</span>
+<span class="comment"># ✅ On job failure → #data-alerts channel</span>
+<span class="comment"># ✅ On job success → #data-pipeline-log channel</span>
+
+<span class="comment"># For GitHub Actions, add a Slack step:</span>
+- <span class="keyword">name</span>: <span class="string">Notify Slack on failure</span>
+  <span class="keyword">if</span>: <span class="string">failure()</span>
+  <span class="keyword">uses</span>: <span class="string">slackapi/slack-github-action@v1</span>
+  <span class="keyword">with</span>:
+    <span class="keyword">channel-id</span>: <span class="string">'C01234ABCDE'</span>
+    <span class="keyword">slack-message</span>: <span class="string">'🚨 dbt pipeline failed! Check: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'</span>
+  <span class="keyword">env</span>:
+    <span class="keyword">SLACK_BOT_TOKEN</span>: <span class="string">${{ secrets.SLACK_BOT_TOKEN }}</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Set up a <strong>"morning check" dashboard</strong> that shows: (1) last successful run time, (2) number of test failures, (3) source freshness status, and (4) model execution times. Your on-call engineer checks this first thing every morning. If everything is green, grab your coffee. If something is red, start debugging before the business team notices!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Blue-Green Deployments
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔵🟢 Blue-Green Deployments</h2>
+
+        <div class="eli5-box">
+            <p>Imagine you have <strong>two identical kitchens</strong> — Kitchen A (Blue) and Kitchen B (Green). While Kitchen A serves customers, Kitchen B quietly prepares the new menu. Once Kitchen B is ready and taste-tested, you <strong>swap</strong> — customers now eat from Kitchen B, and Kitchen A becomes the prep area. Customers never notice the change. Zero downtime, zero risk!</p>
+        </div>
+
+        <h3>How It Works</h3>
+
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;">🔵</div>
+                <div class="pipeline-label">Blue<br>(Live)<br><small style="color:var(--dbt-text-light);">Serving</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">🟢</div>
+                <div class="pipeline-label">Green<br>(Build)<br><small style="color:var(--dbt-text-light);">Staging</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🧪</div>
+                <div class="pipeline-label">Test<br>Green<br><small style="color:var(--dbt-text-light);">Validate</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;">🔄</div>
+                <div class="pipeline-label">Swap<br>Schemas<br><small style="color:var(--dbt-text-light);">Atomic</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">🟢</div>
+                <div class="pipeline-label">Green<br>(Live!)<br><small style="color:var(--dbt-text-light);">Serving</small></div>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Blue-Green deployment script</span>
+            <pre><code><span class="comment"># Step 1: Build everything in a staging schema</span>
+<span class="function">$</span> dbt run --target prod --vars <span class="string">'{"schema_suffix": "_staging"}'</span>
+
+<span class="comment"># Step 2: Run ALL tests against the staging schema</span>
+<span class="function">$</span> dbt test --target prod --vars <span class="string">'{"schema_suffix": "_staging"}'</span>
+
+<span class="comment"># Step 3: If all tests pass, swap the schemas (atomic operation)</span>
+<span class="keyword">ALTER SCHEMA</span> prod_analytics <span class="keyword">RENAME TO</span> prod_analytics_old;
+<span class="keyword">ALTER SCHEMA</span> prod_analytics_staging <span class="keyword">RENAME TO</span> prod_analytics;
+
+<span class="comment"># Step 4: Drop the old schema (optional, keep as backup)</span>
+<span class="comment">-- DROP SCHEMA prod_analytics_old CASCADE;</span>
+
+<span class="comment"># Result: Zero downtime! Dashboards never saw stale or partial data.</span></code></pre>
+        </div>
+
+        <div class="step-box">
+            <p style="font-weight:800;color:#1e40af;font-size:1.1em;margin-bottom:12px;">Why Blue-Green Matters</p>
+            <p><strong>Without Blue-Green:</strong> During a <code>dbt run</code>, some tables are updated and some aren't. If a dashboard queries at that exact moment, it sees a mix of old and new data — like reading a book where half the pages are from the old edition and half from the new one.</p>
+            <p style="margin-top:8px;"><strong>With Blue-Green:</strong> The swap is atomic — one instant, everything changes at once. Dashboards always see a consistent snapshot. It's the gold standard for production deployments.</p>
+        </div>
+
+        <div class="pro-tip">
+            <p>Blue-green deployments are an <strong>advanced pattern</strong>. Most teams don't need this on day one. Start with simple scheduled deployments. Once your project grows to 100+ models and your dashboards are business-critical, consider blue-green for zero-downtime deployments.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you're ready to ship it. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: Why should you NEVER run <code>dbt run --target prod</code> from your laptop?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> It's slower than running from the cloud
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> Production deployments should go through automated CI/CD to prevent accidental changes
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> dbt doesn't support the --target flag locally
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Your laptop doesn't have enough RAM
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: What does <code>state:modified+</code> do in Slim CI?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Runs all models in the project
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Only runs models that have been deleted
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Runs only the models you changed plus everything downstream
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Runs models in reverse order
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: In a blue-green deployment, what happens during the "swap"?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> All tables are dropped and rebuilt from scratch
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> The database is taken offline for maintenance
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> The staging schema is atomically renamed to production — zero downtime
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Users are redirected to a backup database
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 10: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Can you explain the difference between dev and prod environments? Can you describe what CI/CD does and why it matters? Do you know where to store secrets and why you should never hardcode them? If yes, you're ready to ship it!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Dev vs Prod</strong> — Separate schemas keep experiments away from real dashboards</li>
+                <li><strong>profiles.yml targets</strong> — Define dev and prod connections with different schemas</li>
+                <li><strong>target.name</strong> — Use Jinja to make models behave differently in dev vs prod</li>
+                <li><strong>CI/CD</strong> — Automated testing on PRs (CI) and automated deployment on merge (CD)</li>
+                <li><strong>env_var()</strong> — Never hardcode credentials; use environment variables</li>
+                <li><strong>Monitoring</strong> — Track execution time, test failures, and data freshness</li>
+                <li><strong>Production commands</strong> — <code>dbt seed</code> → <code>dbt run</code> → <code>dbt test</code> (or <code>dbt build</code>)</li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>dbt Cloud</strong> — Managed deployment with scheduled jobs and built-in IDE</li>
+                <li><strong>GitHub Actions</strong> — Free CI/CD with <code>state:modified</code> for Slim CI</li>
+                <li><strong>Airflow + dbt</strong> — Orchestrating dbt as part of a larger pipeline</li>
+                <li><strong>Cosmos package</strong> — One Airflow task per dbt model for granular retries</li>
+                <li><strong>Blue-green deployments</strong> — Zero-downtime schema swaps for critical pipelines</li>
+                <li><strong>Kubernetes CronJobs</strong> — Container-based dbt scheduling</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="packages-seeds.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Packages & Seeds
+        </a>
+        <a href="advanced.html" class="nav-btn-next">
+            Advanced <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

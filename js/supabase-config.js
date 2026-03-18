@@ -7,3 +7,6 @@ window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXB
 
 // Razorpay — used for Pro checkout via create-subscription Edge Function.
 window.RAZORPAY_KEY_ID = 'rzp_live_SRQVHRu7RxYjgn';
+
+// Fallback: direct Razorpay subscription link used when Edge Function is unavailable.
+window.RAZORPAY_SUBSCRIPTION_LINK = window.RAZORPAY_SUBSCRIPTION_LINK || 'https://razorpay.me/@datafordummies';

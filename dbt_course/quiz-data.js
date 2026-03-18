@@ -1,228 +1,227 @@
-// Terraform Course Quiz Data
+// dbt Course Quiz Data
 const quizData = [
     {
-        question: "What does IaC stand for in the context of Terraform?",
+        question: "What does dbt stand for?",
         options: [
-            "Infrastructure as Code",
-            "Internet as Code", 
-            "Integration as Code",
-            "Installation as Code"
+            "Data Build Tool",
+            "Database Transformation",
+            "Data Business Technology",
+            "Digital Build Toolkit"
         ],
         correct: 0,
-        explanation: "IaC stands for Infrastructure as Code, which is the practice of managing and provisioning computing infrastructure through machine-readable definition files."
+        explanation: "dbt stands for Data Build Tool. It transforms data inside your warehouse using SQL."
     },
     {
-        question: "Who founded HashiCorp, the company behind Terraform?",
+        question: "In the modern data stack, where does dbt fit?",
         options: [
-            "Linus Torvalds",
-            "Mitchell Hashimoto and Armon Dadgar",
-            "Jeff Bezos",
-            "Elon Musk"
-        ],
-        correct: 1,
-        explanation: "Mitchell Hashimoto and Armon Dadgar founded HashiCorp in 2014, with Terraform being one of their flagship products."
-    },
-    {
-        question: "In what year was Terraform first released?",
-        options: [
-            "2013",
-            "2014", 
-            "2015",
-            "2016"
-        ],
-        correct: 1,
-        explanation: "Terraform 0.1.0 was first released on July 28, 2014, introducing Infrastructure as Code to the world."
-    },
-    {
-        question: "What is the correct sequence of Terraform workflow?",
-        options: [
-            "Plan → Write → Apply",
-            "Apply → Plan → Write",
-            "Write → Plan → Apply",
-            "Write → Apply → Plan"
+            "It extracts data from sources",
+            "It loads data into the warehouse",
+            "It transforms data inside the warehouse",
+            "It visualizes data in dashboards"
         ],
         correct: 2,
-        explanation: "The Terraform workflow is: Write (define infrastructure), Plan (preview changes), Apply (create/update infrastructure)."
+        explanation: "dbt handles the T (Transform) in ELT. It transforms data that's already loaded into your data warehouse."
     },
     {
-        question: "What file extension do Terraform configuration files use?",
+        question: "What is a dbt model?",
         options: [
-            ".tf",
-            ".terraform",
-            ".hcl", 
-            ".config"
+            "A machine learning algorithm",
+            "A SQL SELECT statement saved in a .sql file",
+            "A Python script that processes data",
+            "A database schema diagram"
         ],
-        correct: 0,
-        explanation: "Terraform configuration files use the .tf extension and are written in HashiCorp Configuration Language (HCL)."
+        correct: 1,
+        explanation: "A dbt model is simply a SQL SELECT statement saved in a .sql file. dbt compiles and runs it to create tables or views."
     },
     {
-        question: "Which command initializes a new or existing Terraform configuration?",
+        question: "Which materialization creates a saved query that runs fresh every time it's accessed?",
         options: [
-            "terraform start",
-            "terraform begin",
-            "terraform init",
-            "terraform create"
+            "Table",
+            "View",
+            "Incremental",
+            "Ephemeral"
+        ],
+        correct: 1,
+        explanation: "A view is a saved query — it doesn't store data physically. The query runs every time someone accesses the view."
+    },
+    {
+        question: "What does {{ ref('stg_customers') }} do in a dbt model?",
+        options: [
+            "Creates a new table called stg_customers",
+            "References the stg_customers model and creates a dependency",
+            "Deletes the stg_customers table",
+            "Imports a Python module"
+        ],
+        correct: 1,
+        explanation: "ref() references another dbt model by name. It resolves to the correct schema.table and creates a dependency in the DAG."
+    },
+    {
+        question: "What is the purpose of source() in dbt?",
+        options: [
+            "To create new raw data tables",
+            "To declare and reference raw data tables that dbt doesn't manage",
+            "To delete source data after transformation",
+            "To connect to external APIs"
+        ],
+        correct: 1,
+        explanation: "source() declares raw data tables in your warehouse that dbt reads from but doesn't create. It enables freshness checks and lineage tracking."
+    },
+    {
+        question: "Which dbt test checks that a column has no duplicate values?",
+        options: [
+            "not_null",
+            "accepted_values",
+            "unique",
+            "relationships"
         ],
         correct: 2,
-        explanation: "The 'terraform init' command initializes a Terraform configuration, downloading required providers and modules."
+        explanation: "The 'unique' test ensures every value in a column is distinct — no duplicates allowed."
     },
     {
-        question: "What does 'terraform plan' do?",
+        question: "What command generates dbt documentation as a website?",
         options: [
-            "Creates infrastructure immediately",
-            "Shows what changes Terraform will make",
-            "Destroys existing infrastructure", 
-            "Updates Terraform to the latest version"
+            "dbt docs build",
+            "dbt docs generate",
+            "dbt generate docs",
+            "dbt build docs"
         ],
         correct: 1,
-        explanation: "The 'terraform plan' command creates an execution plan, showing what actions Terraform will take to reach the desired state."
+        explanation: "'dbt docs generate' creates the documentation website including the lineage graph, model descriptions, and column details."
     },
     {
-        question: "In Terraform, what is a 'provider'?",
+        question: "What is Jinja in the context of dbt?",
         options: [
-            "A person who provides Terraform support",
-            "A plugin that defines and manages resources for a specific platform",
-            "A cloud service provider only",
-            "A type of Terraform module"
+            "A data warehouse",
+            "A templating language that adds logic to SQL",
+            "A testing framework",
+            "A deployment tool"
         ],
         correct: 1,
-        explanation: "A provider in Terraform is a plugin that defines resource types and data sources for a specific platform (AWS, Azure, etc.)."
+        explanation: "Jinja is a Python-based templating language. In dbt, it lets you add variables, loops, conditionals, and macros to your SQL."
     },
     {
-        question: "What is the purpose of Terraform state?",
+        question: "What is a dbt macro?",
         options: [
-            "To store user passwords",
-            "To track the current state of infrastructure",
-            "To backup Terraform code",
-            "To store provider credentials"
+            "A type of database index",
+            "A reusable Jinja function that generates SQL",
+            "A data visualization tool",
+            "A warehouse connection type"
         ],
         correct: 1,
-        explanation: "Terraform state tracks the current state of your infrastructure, mapping real resources to your configuration."
+        explanation: "A macro is a reusable Jinja function stored in the macros/ folder. You call it in models to generate SQL dynamically."
     },
     {
-        question: "Which major version introduced stability guarantees and backwards compatibility?",
+        question: "What command installs dbt packages listed in packages.yml?",
         options: [
-            "Terraform 0.15",
-            "Terraform 0.12",
-            "Terraform 1.0", 
-            "Terraform 2.0"
+            "dbt install",
+            "dbt packages",
+            "dbt deps",
+            "dbt get"
         ],
         correct: 2,
-        explanation: "Terraform 1.0, released in 2021, introduced stability guarantees and backwards compatibility promises."
+        explanation: "'dbt deps' (short for dependencies) downloads and installs all packages listed in your packages.yml file."
     },
     {
-        question: "What is a Terraform module?",
+        question: "What are dbt seeds?",
         options: [
-            "A container for multiple resources used together",
-            "A single resource definition",
-            "A provider plugin",
-            "A state file"
+            "Raw data from external APIs",
+            "CSV files loaded into the warehouse as tables",
+            "Database connection credentials",
+            "Automated test scripts"
         ],
-        correct: 0,
-        explanation: "A Terraform module is a container for multiple resources that are used together, promoting code reuse and organization."
+        correct: 1,
+        explanation: "Seeds are CSV files in your seeds/ folder that dbt loads into your warehouse as tables. They're ideal for small, static reference data."
     },
     {
-        question: "Which company famously uses Terraform to manage their global streaming infrastructure?",
+        question: "In the 3-layer architecture, what is the correct order?",
         options: [
-            "Disney+",
-            "Amazon Prime",
-            "Netflix",
-            "Hulu"
+            "Marts → Staging → Intermediate",
+            "Intermediate → Staging → Marts",
+            "Staging → Intermediate → Marts",
+            "Staging → Marts → Intermediate"
         ],
         correct: 2,
-        explanation: "Netflix uses Terraform extensively to manage their global streaming infrastructure across multiple cloud regions."
+        explanation: "The standard dbt architecture flows: Staging (clean raw data) → Intermediate (business logic) → Marts (final tables for end users)."
     },
     {
-        question: "What is the default backend for Terraform state storage?",
+        question: "What does is_incremental() check in a dbt model?",
         options: [
-            "Amazon S3",
-            "Local filesystem",
-            "Azure Blob Storage",
-            "Google Cloud Storage"
+            "If the model is running for the first time",
+            "If the model already exists and this is NOT a full refresh",
+            "If the data warehouse is connected",
+            "If tests have passed"
         ],
         correct: 1,
-        explanation: "By default, Terraform stores state locally in a file named terraform.tfstate in your working directory."
+        explanation: "is_incremental() returns true when the model already exists in the warehouse AND the run is not a --full-refresh. It's used to process only new/changed data."
     },
     {
-        question: "What command would you use to format your Terraform code?",
+        question: "What file stores your warehouse connection credentials?",
         options: [
-            "terraform format",
-            "terraform fmt",
-            "terraform style",
-            "terraform beautify"
-        ],
-        correct: 1,
-        explanation: "The 'terraform fmt' command automatically formats Terraform configuration files to a canonical format."
-    },
-    {
-        question: "In Terraform, what are 'data sources' used for?",
-        options: [
-            "To create new resources",
-            "To fetch information about existing resources",
-            "To destroy resources",
-            "To validate configuration"
-        ],
-        correct: 1,
-        explanation: "Data sources in Terraform allow you to fetch information about existing resources or infrastructure that exists outside of Terraform."
-    },
-    {
-        question: "What is Terraform Cloud primarily used for?",
-        options: [
-            "Writing Terraform code",
-            "Remote state management and collaboration",
-            "Installing Terraform",
-            "Creating cloud accounts"
-        ],
-        correct: 1,
-        explanation: "Terraform Cloud provides remote state management, collaborative workflows, and advanced features for teams using Terraform."
-    },
-    {
-        question: "Which of these is a best practice for Terraform state files?",
-        options: [
-            "Store them in version control",
-            "Share them via email",
-            "Use remote backend storage",
-            "Delete them after each run"
+            "dbt_project.yml",
+            "schema.yml",
+            "profiles.yml",
+            "packages.yml"
         ],
         correct: 2,
-        explanation: "Using remote backend storage (like S3, Azure Storage, etc.) is a best practice for storing Terraform state files securely."
+        explanation: "profiles.yml (stored in ~/.dbt/) contains your warehouse connection details including host, port, credentials, and target schemas."
     },
     {
-        question: "What does the 'terraform destroy' command do?",
+        question: "Who created dbt?",
         options: [
-            "Deletes Terraform installation",
-            "Destroys all resources managed by Terraform",
-            "Removes the state file",
-            "Uninstalls providers"
+            "Jeff Bezos at Amazon",
+            "Drew Banin at RJMetrics / Fishtown Analytics",
+            "Larry Page at Google",
+            "Satya Nadella at Microsoft"
         ],
         correct: 1,
-        explanation: "The 'terraform destroy' command destroys all resources that are managed by the current Terraform configuration."
+        explanation: "Drew Banin created dbt while working at RJMetrics. He later co-founded Fishtown Analytics (now dbt Labs) to commercialize it."
     },
     {
-        question: "In Terraform HCL syntax, how do you define a variable?",
+        question: "What is the DAG in dbt?",
         options: [
-            "var \"name\" { }",
-            "variable \"name\" { }",
-            "define \"name\" { }",
-            "param \"name\" { }"
+            "Data Analysis Graph — a chart of metrics",
+            "Directed Acyclic Graph — the dependency tree of models",
+            "Database Access Gateway — a connection manager",
+            "Dynamic Aggregation Generator — a macro system"
         ],
         correct: 1,
-        explanation: "In Terraform, variables are defined using the 'variable' keyword followed by the variable name in quotes."
+        explanation: "The DAG (Directed Acyclic Graph) shows how models depend on each other. dbt uses it to determine the correct build order."
     },
     {
-        question: "What is the maximum number of resources Terraform can manage in a single state file?",
+        question: "What is the difference between ETL and ELT?",
         options: [
-            "1,000 resources",
-            "10,000 resources",
-            "There is no hard limit",
-            "100,000 resources"
+            "ETL is newer than ELT",
+            "In ETL, transformation happens before loading; in ELT, it happens after loading",
+            "ETL uses SQL; ELT uses Python",
+            "There is no difference"
+        ],
+        correct: 1,
+        explanation: "In ETL, data is transformed before loading into the warehouse. In ELT (which dbt uses), data is loaded first, then transformed inside the warehouse."
+    },
+    {
+        question: "What does 'dbt build' do?",
+        options: [
+            "Only runs models",
+            "Only runs tests",
+            "Runs models, tests, snapshots, and seeds in dependency order",
+            "Generates documentation"
         ],
         correct: 2,
-        explanation: "There is no hard limit on the number of resources Terraform can manage, though performance may be impacted with very large state files."
+        explanation: "'dbt build' is the all-in-one command that runs seeds, models, snapshots, and tests in the correct dependency order."
+    },
+    {
+        question: "What is a dbt exposure?",
+        options: [
+            "A security vulnerability in your data",
+            "A declaration of downstream consumers like dashboards and ML models",
+            "A type of materialization",
+            "An error in your dbt project"
+        ],
+        correct: 1,
+        explanation: "Exposures declare downstream consumers (dashboards, reports, ML models) that depend on your dbt models. They appear in the lineage graph."
     }
 ];
 
-// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = quizData;
 }

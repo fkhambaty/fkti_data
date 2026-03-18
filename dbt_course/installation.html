@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation & Setup | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Background particles -->
+    <div class="page-bg-particles">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <!-- Hero -->
+    <div class="lesson-hero">
+        <span class="badge">LESSON 3 · BEGINNER</span>
+        <h1>⚙️ Installing dbt — Let's Get Cooking!</h1>
+        <p class="subtitle">Set up your dbt kitchen in under 10 minutes</p>
+    </div>
+
+    <!-- Sticky nav -->
+    <div class="lesson-container">
+        <nav class="lesson-nav">
+            <a href="history.html"><i class="fas fa-arrow-left"></i> Prev: History</a>
+            <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+            <a href="project-structure.html">Next: Project Structure <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <!-- ============================================================
+             SECTION 1 — Before We Start
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🧑‍🍳 Before We Start</h2>
+
+            <div class="eli5-box">
+                <p>Before you can cook, you need a kitchen! You need a stove, some pots, a cutting board, and a clean counter. <strong>Setting up dbt is exactly like setting up a kitchen</strong> — we need a few things in place before we can start making delicious data dishes.</p>
+            </div>
+
+            <p>Don't worry — this is one of the <strong>easiest</strong> setups in the entire data engineering world. If you can install an app on your phone, you can install dbt. We'll go step by step, with screenshots of what you should see at every stage.</p>
+
+            <h3>📋 What You Need (Prerequisites)</h3>
+
+            <div class="comparison-cards">
+                <div class="comparison-card" style="text-align:center;">
+                    <div style="font-size:2.5em;margin-bottom:12px;">🐍</div>
+                    <h4>Python 3.8+</h4>
+                    <p>dbt is built with Python. You need Python 3.8 or higher installed on your computer. Don't worry — we'll show you how to check.</p>
+                </div>
+                <div class="comparison-card" style="text-align:center;">
+                    <div style="font-size:2.5em;margin-bottom:12px;">💻</div>
+                    <h4>A Terminal</h4>
+                    <p>Mac: Terminal app. Windows: Command Prompt or PowerShell. Linux: any terminal. This is where you'll type commands.</p>
+                </div>
+                <div class="comparison-card" style="text-align:center;">
+                    <div style="font-size:2.5em;margin-bottom:12px;">🏢</div>
+                    <h4>A Data Warehouse</h4>
+                    <p>Snowflake, BigQuery, Redshift, PostgreSQL — or <strong>DuckDB</strong> for free local practice with zero cloud accounts needed!</p>
+                </div>
+            </div>
+
+            <div class="pro-tip">
+                <p><strong>Beginner?</strong> Use <strong>DuckDB</strong>. It's a free, lightweight database that runs on your laptop — no cloud account, no credit card, no setup headaches. It's like having a mini kitchen right on your desk. We'll show you how to set it up in this lesson.</p>
+            </div>
+
+            <div class="real-life">
+                <p><strong>Think of it this way:</strong> Python is like electricity — your kitchen needs power to run the stove. The terminal is like the kitchen counter — it's where you do the actual work. And the data warehouse is like the fridge — it's where all your ingredients (data) are stored. dbt is the chef that ties it all together.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 2 — Option A: dbt Core (Free, Open Source)
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🖥️ Option A: dbt Core (Free, Open Source)</h2>
+
+            <p>dbt Core is the <strong>free, open-source</strong> version of dbt. It runs from your terminal (command line). This is what most professionals use, and it's what we recommend for learning because you'll understand exactly what's happening under the hood.</p>
+
+            <div class="eli5-box">
+                <p>dbt Core is like building your own kitchen at home. You pick the appliances, you arrange the counter, you control everything. It takes a few minutes to set up, but once it's done, you have <strong>full control</strong> and it's <strong>completely free forever</strong>.</p>
+            </div>
+
+            <!-- Step 1 -->
+            <h3>📌 Step 1: Check Your Python Version</h3>
+
+            <p>Open your terminal and type this command:</p>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">python</span> --version</code></pre>
+            </div>
+
+            <p>Or on some systems (especially Mac):</p>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">python3</span> --version</code></pre>
+            </div>
+
+            <p>You should see something like:</p>
+
+            <div class="code-block">
+                <span class="label">Expected Output</span>
+                <pre><code><span class="output">Python 3.11.5</span></code></pre>
+            </div>
+
+            <div class="important-box">
+                <p>If you see a version <strong>lower than 3.8</strong> (like Python 2.7 or Python 3.6), you need to upgrade. Visit <a href="https://www.python.org/downloads/" target="_blank" style="color:#991b1b;font-weight:700;">python.org/downloads</a> and grab the latest version. If you see "command not found," Python isn't installed yet — same fix, go download it.</p>
+            </div>
+
+            <!-- Step 2 -->
+            <h3>📌 Step 2: Create a Virtual Environment</h3>
+
+            <div class="eli5-box">
+                <p>A virtual environment is like having a <strong>separate drawer for each cooking project</strong>. Your pasta tools don't mix with your baking tools. Your dbt project gets its own clean drawer where only dbt-related stuff lives. This way, nothing gets messy or conflicts with other Python projects on your computer.</p>
+            </div>
+
+            <div class="code-block">
+                <span class="label">Terminal — Create & activate virtual environment</span>
+                <pre><code><span class="comment"># Navigate to where you want your project</span>
+<span class="keyword">cd</span> ~/projects
+
+<span class="comment"># Create a virtual environment called "dbt-env"</span>
+<span class="keyword">python3</span> -m venv dbt-env
+
+<span class="comment"># Activate it (Mac/Linux)</span>
+<span class="keyword">source</span> dbt-env/bin/activate
+
+<span class="comment"># Activate it (Windows)</span>
+<span class="keyword">dbt-env\Scripts\activate</span></code></pre>
+            </div>
+
+            <p>Once activated, you'll see <code>(dbt-env)</code> at the beginning of your terminal prompt. That means you're inside the virtual environment — your separate drawer is open and ready!</p>
+
+            <div class="code-block">
+                <span class="label">What your terminal looks like after activation</span>
+                <pre><code><span class="output">(dbt-env) user@laptop ~/projects $</span></code></pre>
+            </div>
+
+            <div class="pro-tip">
+                <p>Every time you open a new terminal window and want to work on dbt, you'll need to activate the virtual environment again with <code>source dbt-env/bin/activate</code>. Think of it like opening that specific drawer before you start cooking.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <h3>📌 Step 3: Install dbt with Your Adapter</h3>
+
+            <p>dbt needs an <strong>adapter</strong> — a plugin that tells it how to talk to your specific data warehouse. Think of adapters like <strong>power plug converters</strong> when you travel. A US plug doesn't fit a UK socket without an adapter. Similarly, dbt needs the right adapter to connect to Snowflake vs. BigQuery vs. PostgreSQL.</p>
+
+            <p>Pick the adapter that matches your data warehouse:</p>
+
+            <div class="comparison-cards" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="comparison-card" style="text-align:center; border-top:4px solid #29b5e8;">
+                    <div style="font-size:2em;margin-bottom:8px;">❄️</div>
+                    <h4>Snowflake</h4>
+                    <div class="code-block" style="margin:12px 0 0;">
+                        <pre><code><span class="keyword">pip install</span> dbt-snowflake</code></pre>
+                    </div>
+                </div>
+                <div class="comparison-card" style="text-align:center; border-top:4px solid #4285f4;">
+                    <div style="font-size:2em;margin-bottom:8px;">📊</div>
+                    <h4>BigQuery</h4>
+                    <div class="code-block" style="margin:12px 0 0;">
+                        <pre><code><span class="keyword">pip install</span> dbt-bigquery</code></pre>
+                    </div>
+                </div>
+                <div class="comparison-card" style="text-align:center; border-top:4px solid #e63946;">
+                    <div style="font-size:2em;margin-bottom:8px;">🔴</div>
+                    <h4>Redshift</h4>
+                    <div class="code-block" style="margin:12px 0 0;">
+                        <pre><code><span class="keyword">pip install</span> dbt-redshift</code></pre>
+                    </div>
+                </div>
+                <div class="comparison-card" style="text-align:center; border-top:4px solid #336791;">
+                    <div style="font-size:2em;margin-bottom:8px;">🐘</div>
+                    <h4>PostgreSQL</h4>
+                    <div class="code-block" style="margin:12px 0 0;">
+                        <pre><code><span class="keyword">pip install</span> dbt-postgres</code></pre>
+                    </div>
+                </div>
+                <div class="comparison-card" style="text-align:center; border-top:4px solid #ffc107;">
+                    <div style="font-size:2em;margin-bottom:8px;">🦆</div>
+                    <h4>DuckDB</h4>
+                    <div class="code-block" style="margin:12px 0 0;">
+                        <pre><code><span class="keyword">pip install</span> dbt-duckdb</code></pre>
+                    </div>
+                    <p style="margin-top:8px;font-size:0.85em;color:#166534;font-weight:700;">⭐ Best for beginners!</p>
+                </div>
+            </div>
+
+            <div class="pro-tip">
+                <p><strong>New to data engineering?</strong> Start with <code>dbt-duckdb</code>. DuckDB is a free, in-process database — no server to install, no cloud account to create, no credit card needed. It's like a portable mini-oven you can carry in your backpack. Perfect for learning!</p>
+            </div>
+
+            <p>The installation will download dbt and all its dependencies. This usually takes 1–3 minutes depending on your internet speed. You'll see a bunch of text scrolling by — that's normal!</p>
+
+            <!-- Step 4 -->
+            <h3>📌 Step 4: Verify the Installation</h3>
+
+            <p>Let's make sure dbt installed correctly. Type:</p>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">dbt</span> --version</code></pre>
+            </div>
+
+            <p>You should see something like this:</p>
+
+            <div class="code-block">
+                <span class="label">Expected Output</span>
+                <pre><code><span class="output">Core:
+  - installed: 1.9.0
+  - latest:    1.9.0 - Up to date!
+
+Plugins:
+  - duckdb: 1.9.0 - Up to date!</span></code></pre>
+            </div>
+
+            <div class="real-life">
+                <p>Seeing that output is like turning on the stove for the first time and seeing the flame. <strong>It works!</strong> Your kitchen has power. Your dbt is installed and ready to cook data.</p>
+            </div>
+
+            <!-- Step 5 -->
+            <h3>📌 Step 5: Initialize Your First Project</h3>
+
+            <p>Now let's create your very first dbt project! This is like setting up the kitchen layout — where the pots go, where the spices are, where the recipes live.</p>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">dbt</span> init my_first_project</code></pre>
+            </div>
+
+            <p>dbt will ask you a few questions:</p>
+
+            <div class="code-block">
+                <span class="label">Interactive prompts</span>
+                <pre><code><span class="output">Which database would you like to use?
+[1] duckdb
+
+Enter a number: </span><span class="number">1</span>
+<span class="output">
+Profile my_first_project written to ~/.dbt/profiles.yml.
+Your new dbt project "my_first_project" was created!</span></code></pre>
+            </div>
+
+            <p>After this, you'll have a brand new folder called <code>my_first_project</code> with all the files dbt needs. We'll explore every file in the next lesson (Project Structure), but for now — <strong>congratulations, your kitchen is built!</strong></p>
+
+            <!-- Visual: Installation flow -->
+            <div class="visual-example">
+                <p style="text-align:center; font-weight:700; margin-bottom:16px;">The Complete Installation Flow</p>
+                <div class="pipeline-diagram">
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#fef3c7;">🐍</div>
+                        <span class="pipeline-label">Check<br>Python</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#dbeafe;">📦</div>
+                        <span class="pipeline-label">Create<br>Venv</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#dcfce7;">⬇️</div>
+                        <span class="pipeline-label">pip install<br>dbt</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon" style="background:#f3e8ff;">✅</div>
+                        <span class="pipeline-label">Verify<br>Version</span>
+                    </div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon pulse" style="background:var(--dbt-gradient);color:#fff;">🎉</div>
+                        <span class="pipeline-label">dbt init<br>Project!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 3 — Option B: dbt Cloud (Managed Service)
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>☁️ Option B: dbt Cloud (Managed Service)</h2>
+
+            <div class="eli5-box">
+                <p><strong>dbt Cloud</strong> is like a fully equipped cooking school — they provide the kitchen, the tools, and even help you follow the recipes. <strong>dbt Core</strong> is like setting up your own kitchen at home. Both make the same food; dbt Cloud just handles the setup for you.</p>
+            </div>
+
+            <p>If you don't want to install anything on your computer, dbt Cloud lets you write and run dbt models <strong>entirely in your web browser</strong>. It's great for teams and for people who prefer a visual interface.</p>
+
+            <h3>📌 Step 1: Sign Up</h3>
+
+            <div class="step-box">
+                <h4>🌐 Go to <a href="https://cloud.getdbt.com" target="_blank" style="color:#3b82f6;">cloud.getdbt.com</a></h4>
+                <ol style="margin-left:20px;margin-top:12px;line-height:2.2;">
+                    <li>Click <strong>"Sign Up"</strong> (you can use your Google or GitHub account)</li>
+                    <li>Choose the <strong>Free Developer plan</strong> — it includes 1 developer seat, 1 project, and unlimited runs</li>
+                    <li>Verify your email address</li>
+                    <li>You're in! Welcome to dbt Cloud.</li>
+                </ol>
+            </div>
+
+            <h3>📌 Step 2: Connect Your Data Warehouse</h3>
+
+            <p>dbt Cloud will walk you through connecting to your warehouse. You'll need:</p>
+
+            <div class="comparison-cards">
+                <div class="comparison-card">
+                    <h4>🔑 Connection Details</h4>
+                    <ul style="margin-left:18px;line-height:2;">
+                        <li>Host / Account URL</li>
+                        <li>Database name</li>
+                        <li>Username & password (or OAuth)</li>
+                        <li>Schema name</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>🔒 Security</h4>
+                    <ul style="margin-left:18px;line-height:2;">
+                        <li>dbt Cloud encrypts all credentials</li>
+                        <li>Supports SSO and MFA</li>
+                        <li>IP whitelisting available</li>
+                        <li>SOC 2 Type II certified</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>📌 Step 3: Connect Your Git Repository</h3>
+
+            <p>dbt Cloud integrates with GitHub, GitLab, or Azure DevOps. This means your dbt project lives in Git (version control), and dbt Cloud pulls the latest code every time it runs.</p>
+
+            <div class="real-life">
+                <p>Think of Git as a <strong>recipe binder with a time machine</strong>. Every time you change a recipe, Git saves the old version. If the new recipe tastes terrible, you can go back to the version that worked. dbt Cloud connects to this binder automatically.</p>
+            </div>
+
+            <h3>💰 Pricing Overview</h3>
+
+            <div class="comparison-cards" style="grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));">
+                <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                    <h4>🆓 Developer (Free)</h4>
+                    <ul style="margin-left:18px;line-height:2;font-size:0.95em;">
+                        <li>1 developer seat</li>
+                        <li>1 project</li>
+                        <li>Unlimited runs</li>
+                        <li>Web-based IDE</li>
+                        <li>Job scheduling</li>
+                    </ul>
+                    <p style="margin-top:12px;font-weight:800;color:#166534;font-size:1.1em;">$0/month</p>
+                </div>
+                <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                    <h4>👥 Team</h4>
+                    <ul style="margin-left:18px;line-height:2;font-size:0.95em;">
+                        <li>Multiple developer seats</li>
+                        <li>Unlimited projects</li>
+                        <li>CI/CD integration</li>
+                        <li>Semantic Layer access</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <p style="margin-top:12px;font-weight:800;color:#1e40af;font-size:1.1em;">$100/seat/month</p>
+                </div>
+                <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                    <h4>🏢 Enterprise</h4>
+                    <ul style="margin-left:18px;line-height:2;font-size:0.95em;">
+                        <li>Everything in Team</li>
+                        <li>SSO / SAML</li>
+                        <li>Audit logging</li>
+                        <li>Custom SLAs</li>
+                        <li>Dedicated support</li>
+                    </ul>
+                    <p style="margin-top:12px;font-weight:800;color:#5b21b6;font-size:1.1em;">Custom pricing</p>
+                </div>
+            </div>
+
+            <div class="pro-tip">
+                <p>For this course, the <strong>free Developer plan</strong> is more than enough. You get a full web IDE, scheduling, and unlimited runs. You won't need to pay a single rupee/dollar to follow along.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 4 — Connecting to Your Warehouse (profiles.yml)
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🔗 Connecting to Your Warehouse (profiles.yml)</h2>
+
+            <p>If you chose <strong>dbt Core</strong>, the most important configuration file you'll ever meet is <code>profiles.yml</code>. This file tells dbt <em>where</em> your data warehouse is and <em>how</em> to connect to it.</p>
+
+            <div class="eli5-box">
+                <p><strong>profiles.yml</strong> is like your kitchen's address book — it tells dbt where your warehouse lives and how to get in. Without it, dbt is like a delivery driver with no address — it has the food but doesn't know where to go!</p>
+            </div>
+
+            <h3>📍 Where Does profiles.yml Live?</h3>
+
+            <p>By default, dbt looks for this file at:</p>
+
+            <div class="code-block">
+                <span class="label">File location</span>
+                <pre><code><span class="comment"># Mac / Linux</span>
+~/.dbt/profiles.yml
+
+<span class="comment"># Windows</span>
+C:\Users\YourName\.dbt\profiles.yml</code></pre>
+            </div>
+
+            <p>When you ran <code>dbt init</code>, dbt created this file for you automatically. But you'll often need to edit it to match your warehouse credentials.</p>
+
+            <h3>📄 Example: DuckDB (Simplest — Great for Beginners)</h3>
+
+            <div class="code-block">
+                <span class="label">YAML — ~/.dbt/profiles.yml (DuckDB)</span>
+                <pre><code><span class="keyword">my_first_project</span>:
+  <span class="keyword">target</span>: <span class="string">dev</span>
+  <span class="keyword">outputs</span>:
+    <span class="keyword">dev</span>:
+      <span class="keyword">type</span>: <span class="string">duckdb</span>
+      <span class="keyword">path</span>: <span class="string">my_first_project.duckdb</span></code></pre>
+            </div>
+
+            <p>That's it! Two lines of config and DuckDB is ready. No passwords, no servers, no cloud accounts. This is why we love DuckDB for learning.</p>
+
+            <h3>📄 Example: PostgreSQL</h3>
+
+            <div class="code-block">
+                <span class="label">YAML — ~/.dbt/profiles.yml (PostgreSQL)</span>
+                <pre><code><span class="keyword">my_first_project</span>:
+  <span class="keyword">target</span>: <span class="string">dev</span>
+  <span class="keyword">outputs</span>:
+    <span class="keyword">dev</span>:
+      <span class="keyword">type</span>: <span class="string">postgres</span>
+      <span class="keyword">host</span>: <span class="string">localhost</span>
+      <span class="keyword">user</span>: <span class="string">your_username</span>
+      <span class="keyword">password</span>: <span class="string">your_password</span>
+      <span class="keyword">port</span>: <span class="number">5432</span>
+      <span class="keyword">dbname</span>: <span class="string">my_database</span>
+      <span class="keyword">schema</span>: <span class="string">dbt_dev</span>
+      <span class="keyword">threads</span>: <span class="number">4</span></code></pre>
+            </div>
+
+            <h3>📄 Example: Snowflake</h3>
+
+            <div class="code-block">
+                <span class="label">YAML — ~/.dbt/profiles.yml (Snowflake)</span>
+                <pre><code><span class="keyword">my_first_project</span>:
+  <span class="keyword">target</span>: <span class="string">dev</span>
+  <span class="keyword">outputs</span>:
+    <span class="keyword">dev</span>:
+      <span class="keyword">type</span>: <span class="string">snowflake</span>
+      <span class="keyword">account</span>: <span class="string">xy12345.us-east-1</span>
+      <span class="keyword">user</span>: <span class="string">your_username</span>
+      <span class="keyword">password</span>: <span class="string">your_password</span>
+      <span class="keyword">role</span>: <span class="string">TRANSFORMER</span>
+      <span class="keyword">database</span>: <span class="string">ANALYTICS</span>
+      <span class="keyword">warehouse</span>: <span class="string">TRANSFORMING</span>
+      <span class="keyword">schema</span>: <span class="string">dbt_dev</span>
+      <span class="keyword">threads</span>: <span class="number">4</span></code></pre>
+            </div>
+
+            <h3>📄 Example: BigQuery</h3>
+
+            <div class="code-block">
+                <span class="label">YAML — ~/.dbt/profiles.yml (BigQuery)</span>
+                <pre><code><span class="keyword">my_first_project</span>:
+  <span class="keyword">target</span>: <span class="string">dev</span>
+  <span class="keyword">outputs</span>:
+    <span class="keyword">dev</span>:
+      <span class="keyword">type</span>: <span class="string">bigquery</span>
+      <span class="keyword">method</span>: <span class="string">oauth</span>
+      <span class="keyword">project</span>: <span class="string">my-gcp-project-id</span>
+      <span class="keyword">dataset</span>: <span class="string">dbt_dev</span>
+      <span class="keyword">threads</span>: <span class="number">4</span>
+      <span class="keyword">location</span>: <span class="string">US</span></code></pre>
+            </div>
+
+            <div class="important-box">
+                <p><strong>NEVER commit profiles.yml to Git!</strong> This file contains passwords and connection secrets. It's like leaving your house key under the doormat and posting a photo on Instagram. Always add <code>profiles.yml</code> to your <code>.gitignore</code> file. dbt does this by default, but double-check!</p>
+            </div>
+
+            <div class="real-life">
+                <p>Think of <code>profiles.yml</code> like the <strong>WiFi password written on a sticky note</strong> in your kitchen. You need it to connect, but you'd never post it publicly. It stays private, on your machine, and never goes into the shared recipe book (Git).</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 5 — Your First dbt Run
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🚀 Your First dbt Run — The Magic Moment</h2>
+
+            <p>This is it. The moment you've been waiting for. Your kitchen is set up, your address book is configured, and it's time to <strong>cook your first dish</strong>.</p>
+
+            <div class="eli5-box">
+                <p>Imagine you've just finished building your kitchen. The stove works, the fridge is plugged in, and you have a recipe book on the counter. Now you're going to cook your very first meal — just to make sure everything works. That's what we're about to do with dbt.</p>
+            </div>
+
+            <h3>📌 Step 1: Navigate to Your Project</h3>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">cd</span> my_first_project</code></pre>
+            </div>
+
+            <h3>📌 Step 2: Run <code>dbt debug</code> — Check the Connection</h3>
+
+            <p>Before cooking, let's make sure the stove actually turns on. <code>dbt debug</code> checks that dbt can connect to your warehouse.</p>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">dbt</span> debug</code></pre>
+            </div>
+
+            <p>If everything is configured correctly, you'll see a beautiful wall of green:</p>
+
+            <div class="code-block">
+                <span class="label">Expected Output (all green = success!)</span>
+                <pre><code><span class="output">Configuration:
+  profiles.yml file [OK found and valid]
+  dbt_project.yml file [OK found and valid]
+
+Required dependencies:
+  - git [OK found]
+
+Connection:
+  host: localhost
+  port: 5432
+  user: your_username
+  database: my_database
+  schema: dbt_dev
+  Connection test: [OK connection ok]
+
+All checks passed!</span></code></pre>
+            </div>
+
+            <div class="formula-box" style="text-align:center;">
+                <p style="font-size:1.3em; font-weight:800; color:#6d28d9; margin:0;">"All checks passed!" = Your kitchen is ready to cook! 🎉</p>
+            </div>
+
+            <h3>📌 Step 3: Run <code>dbt run</code> — Cook Your First Models</h3>
+
+            <p>When you created the project with <code>dbt init</code>, dbt included two example models. Let's run them!</p>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">dbt</span> run</code></pre>
+            </div>
+
+            <div class="code-block">
+                <span class="label">Expected Output</span>
+                <pre><code><span class="output">Running with dbt=1.9.0
+Found 2 models, 4 tests, 0 sources, 0 exposures
+
+Concurrency: 4 threads (target='dev')
+
+1 of 2 START sql table model dbt_dev.my_first_dbt_model ......... [RUN]
+1 of 2 OK created sql table model dbt_dev.my_first_dbt_model ..... [</span><span class="string">SELECT 2</span><span class="output">]
+2 of 2 START sql view model dbt_dev.my_second_dbt_model .......... [RUN]
+2 of 2 OK created sql view model dbt_dev.my_second_dbt_model ..... [</span><span class="string">OK</span><span class="output">]
+
+Finished running 2 models in 0.42s.
+
+Completed successfully
+
+Done. PASS=2 WARN=0 ERROR=0 SKIP=0 TOTAL=2</span></code></pre>
+            </div>
+
+            <div class="real-life">
+                <p>See those green <strong>PASS=2</strong> and <strong>ERROR=0</strong>? That means both example models ran perfectly. It's like your first two dishes came out of the oven looking and tasting exactly right. <strong>Chef's kiss!</strong> 👨‍🍳💋</p>
+            </div>
+
+            <h3>📌 Step 4: Run <code>dbt test</code> — Quality Check</h3>
+
+            <p>Now let's taste-test the food. <code>dbt test</code> runs automated checks on your data to make sure nothing is broken.</p>
+
+            <div class="code-block">
+                <span class="label">Terminal</span>
+                <pre><code><span class="keyword">dbt</span> test</code></pre>
+            </div>
+
+            <div class="code-block">
+                <span class="label">Expected Output</span>
+                <pre><code><span class="output">Running with dbt=1.9.0
+Found 2 models, 4 tests, 0 sources
+
+Concurrency: 4 threads (target='dev')
+
+1 of 4 START test not_null_my_first_dbt_model_id ................ [RUN]
+1 of 4 PASS not_null_my_first_dbt_model_id ...................... [</span><span class="string">PASS</span><span class="output">]
+2 of 4 START test unique_my_first_dbt_model_id .................. [RUN]
+2 of 4 PASS unique_my_first_dbt_model_id ........................ [</span><span class="string">PASS</span><span class="output">]
+3 of 4 START test not_null_my_second_dbt_model_id ............... [RUN]
+3 of 4 PASS not_null_my_second_dbt_model_id ..................... [</span><span class="string">PASS</span><span class="output">]
+4 of 4 START test unique_my_second_dbt_model_id ................. [RUN]
+4 of 4 PASS unique_my_second_dbt_model_id ....................... [</span><span class="string">PASS</span><span class="output">]
+
+Finished running 4 tests in 0.28s.
+
+Completed successfully
+
+Done. PASS=4 WARN=0 ERROR=0 SKIP=0 TOTAL=4</span></code></pre>
+            </div>
+
+            <div class="step-box" style="border-color:#22c55e;background:linear-gradient(135deg,#f0fdf4,#dcfce7);">
+                <h4>🎉 Congratulations! Your Kitchen is Ready!</h4>
+                <p style="margin-top:12px;">If you see green checkmarks and <strong>PASS</strong> on everything, you've successfully:</p>
+                <ol style="margin-left:20px;margin-top:12px;line-height:2.2;">
+                    <li>✅ Installed dbt</li>
+                    <li>✅ Connected to your data warehouse</li>
+                    <li>✅ Run your first models</li>
+                    <li>✅ Passed your first tests</li>
+                </ol>
+                <p style="margin-top:12px;font-weight:700;">You are officially a dbt user. Welcome to the club! 🥳</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 6 — Common Installation Issues
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🔧 Common Installation Issues</h2>
+
+            <p>Even the best chefs sometimes have a stove that won't light or a fridge that makes weird noises. Here are the most common problems people run into when installing dbt, and how to fix them:</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Problem</th>
+                        <th>What You See</th>
+                        <th>How to Fix It</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Python version too old</strong></td>
+                        <td><code>ERROR: dbt requires Python &gt;=3.8</code></td>
+                        <td>Download the latest Python from <a href="https://python.org" target="_blank" style="color:var(--dbt-primary);">python.org</a>. On Mac, try <code>brew install python3</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>"command not found: dbt"</strong></td>
+                        <td><code>zsh: command not found: dbt</code></td>
+                        <td>Make sure your virtual environment is activated. Run <code>source dbt-env/bin/activate</code> first.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Permission denied</strong></td>
+                        <td><code>ERROR: Could not install packages due to an OSError: [Errno 13]</code></td>
+                        <td>Don't use <code>sudo pip install</code>. Instead, use a virtual environment (Step 2 above). If you must, try <code>pip install --user dbt-core</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Connection refused</strong></td>
+                        <td><code>Connection test: FAILED</code> in <code>dbt debug</code></td>
+                        <td>Check your profiles.yml — is the host, port, username, and password correct? Is the warehouse running? Can you connect with another tool (like psql or DBeaver)?</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SSL certificate error</strong></td>
+                        <td><code>SSL: CERTIFICATE_VERIFY_FAILED</code></td>
+                        <td>On Mac, run: <code>/Applications/Python\ 3.x/Install\ Certificates.command</code>. On other systems, try <code>pip install --trusted-host pypi.org dbt-core</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>pip not found</strong></td>
+                        <td><code>command not found: pip</code></td>
+                        <td>Try <code>pip3</code> instead of <code>pip</code>. Or ensure Python is in your PATH. On Mac: <code>brew install python3</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conflicting packages</strong></td>
+                        <td><code>ERROR: Cannot install dbt-core and ...</code></td>
+                        <td>This is exactly why we use virtual environments! Create a fresh one and install dbt there. Your separate drawer keeps things clean.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <p><strong>Still stuck?</strong> The dbt community Slack (<a href="https://getdbt.slack.com" target="_blank" style="color:#166534;">getdbt.slack.com</a>) has 50,000+ members who love helping beginners. Post your error message in the <code>#beginners</code> channel and someone will usually respond within minutes. It's like having 50,000 sous-chefs on speed dial!</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 7 — Interactive Quiz
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>🧠 Test Your Knowledge</h2>
+
+            <p>Let's make sure you've got the key concepts down! Answer these 3 questions:</p>
+
+            <div class="interactive-quiz" id="quiz-1">
+                <h3>Question 1 of 3</h3>
+                <p><strong>What command do you use to check if dbt is installed correctly?</strong></p>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> A) dbt check
+                </label>
+                <label class="quiz-option" data-correct="true" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> B) dbt --version
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> C) dbt install --verify
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q1"> D) pip show dbt
+                </label>
+                <button class="nav-btn-next" style="margin-top:16px;" onclick="checkAnswer('quiz-1', this)">Check Answer</button>
+                <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+
+            <div class="interactive-quiz" id="quiz-2">
+                <h3>Question 2 of 3</h3>
+                <p><strong>Where does the profiles.yml file live by default?</strong></p>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> A) Inside your dbt project folder
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> B) In the /etc/dbt/ directory
+                </label>
+                <label class="quiz-option" data-correct="true" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> C) In ~/.dbt/profiles.yml (your home directory)
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q2"> D) It's stored in the cloud automatically
+                </label>
+                <button class="nav-btn-next" style="margin-top:16px;" onclick="checkAnswer('quiz-2', this)">Check Answer</button>
+                <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+
+            <div class="interactive-quiz" id="quiz-3">
+                <h3>Question 3 of 3</h3>
+                <p><strong>Why should you NEVER commit profiles.yml to Git?</strong></p>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> A) Because it's too large and slows down Git
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> B) Because dbt Cloud doesn't support it
+                </label>
+                <label class="quiz-option" data-correct="true" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> C) Because it contains passwords and connection secrets
+                </label>
+                <label class="quiz-option" data-correct="false" onclick="selectOption(this)">
+                    <input type="radio" name="q3"> D) Because Git can't handle YAML files
+                </label>
+                <button class="nav-btn-next" style="margin-top:16px;" onclick="checkAnswer('quiz-3', this)">Check Answer</button>
+                <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SECTION 8 — Core / Non-Core & Nav
+             ============================================================ -->
+        <div class="section fade-in-section">
+            <h2>📋 Lesson Summary</h2>
+
+            <div class="core-box">
+                <ul style="margin-left:20px; line-height:2;">
+                    <li><strong>dbt Core</strong> is free and open source — install with <code>pip install dbt-&lt;adapter&gt;</code>.</li>
+                    <li><strong>Virtual environments</strong> keep your dbt installation clean and isolated from other Python projects.</li>
+                    <li><strong>profiles.yml</strong> lives at <code>~/.dbt/profiles.yml</code> and tells dbt how to connect to your warehouse.</li>
+                    <li><strong>dbt debug</strong> checks your connection; <strong>dbt run</strong> executes models; <strong>dbt test</strong> validates data.</li>
+                    <li><strong>NEVER</strong> commit profiles.yml to Git — it contains passwords!</li>
+                    <li><strong>DuckDB</strong> is the easiest adapter for beginners — no cloud account needed.</li>
+                </ul>
+            </div>
+
+            <div class="noncore-box">
+                <ul style="margin-left:20px; line-height:2;">
+                    <li>dbt Cloud pricing tiers and enterprise features.</li>
+                    <li>Specific adapter installation quirks (BigQuery OAuth, Snowflake key-pair auth).</li>
+                    <li>Advanced profiles.yml options (multiple targets, environment variables).</li>
+                    <li>SSL certificate troubleshooting details.</li>
+                </ul>
+            </div>
+
+            <div class="reflection-prompt">
+                <p style="margin:0;"><strong>Quick challenge:</strong> Open your terminal right now and try installing dbt with DuckDB. Can you get from zero to <code>dbt debug — All checks passed!</code> in under 10 minutes? Time yourself and see!</p>
+            </div>
+
+            <!-- Nav buttons -->
+            <div class="nav-buttons">
+                <a href="history.html" class="nav-btn-prev"><i class="fas fa-arrow-left"></i> Prev: History</a>
+                <a href="project-structure.html" class="nav-btn-next">Next: Project Structure <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+    </div><!-- /lesson-container -->
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // IntersectionObserver for fade-in sections
+        const faders = document.querySelectorAll('.fade-in-section');
+        const fadeObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        faders.forEach(el => fadeObs.observe(el));
+
+        // Back to top
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            backToTopBtn.classList.toggle('show', window.pageYOffset > 300);
+        });
+
+        // Quiz logic
+        function selectOption(label) {
+            const quiz = label.closest('.interactive-quiz');
+            quiz.querySelectorAll('.quiz-option').forEach(o => {
+                o.classList.remove('correct', 'wrong');
+                o.style.fontWeight = '';
+            });
+            label.querySelector('input').checked = true;
+        }
+
+        function checkAnswer(quizId, btn) {
+            const quiz = document.getElementById(quizId);
+            const selected = quiz.querySelector('.quiz-option input:checked');
+            const feedback = quiz.querySelector('.quiz-feedback');
+
+            if (!selected) {
+                feedback.style.display = 'block';
+                feedback.textContent = '⚠️ Please select an answer first!';
+                feedback.style.background = '#fef3c7';
+                feedback.style.color = '#92400e';
+                return;
+            }
+
+            const label = selected.closest('.quiz-option');
+            const isCorrect = label.getAttribute('data-correct') === 'true';
+
+            quiz.querySelectorAll('.quiz-option').forEach(o => {
+                o.style.pointerEvents = 'none';
+                if (o.getAttribute('data-correct') === 'true') {
+                    o.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                label.classList.add('correct');
+                feedback.style.display = 'block';
+                feedback.textContent = '🎉 Correct! Well done!';
+                feedback.style.background = '#f0fdf4';
+                feedback.style.color = '#166534';
+            } else {
+                label.classList.add('wrong');
+                feedback.style.display = 'block';
+                feedback.textContent = '❌ Not quite. The correct answer is highlighted in green.';
+                feedback.style.background = '#fef2f2';
+                feedback.style.color = '#991b1b';
+            }
+
+            btn.style.display = 'none';
+        }
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

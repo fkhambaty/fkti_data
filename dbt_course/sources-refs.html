@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sources, Refs & Lineage | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 6 · CORE</span>
+    <h1>🔗 Sources, Refs & Lineage — Connecting the Dots</h1>
+    <p class="subtitle">How dbt knows which models depend on which, and builds them in the right order</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="models.html"><i class="fas fa-arrow-left"></i> Models</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="testing.html">Testing <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: The Problem — Hardcoded Table Names
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🚨 The Problem: Hardcoded Table Names</h2>
+
+        <div class="eli5-box">
+            <p>Imagine your recipe says <strong>"use the tomatoes from the blue bowl on the third shelf."</strong> What if someone moves the bowl to the second shelf? Or paints it green? Everything breaks!</p>
+            <p style="margin-top:12px;">That's exactly what happens when you hardcode table names in SQL. dbt solves this with two magic words: <code>source()</code> and <code>ref()</code>.</p>
+        </div>
+
+        <p>Here's what <strong>bad SQL</strong> looks like — the kind written before dbt existed:</p>
+
+        <div class="code-block">
+            <span class="label">BAD: Hardcoded table names</span>
+            <pre><code><span class="comment">-- ❌ DON'T DO THIS — hardcoded schema and table names!</span>
+
+<span class="keyword">SELECT</span>
+    c.id        <span class="keyword">AS</span> customer_id,
+    c.first_name,
+    o.order_id,
+    o.amount
+<span class="keyword">FROM</span>
+    <span class="string">raw_production.public.customers</span> c    <span class="comment">-- What if the schema changes?</span>
+<span class="keyword">LEFT JOIN</span>
+    <span class="string">raw_production.public.orders</span> o       <span class="comment">-- What if we move to a new database?</span>
+    <span class="keyword">ON</span> c.id = o.customer_id</code></pre>
+        </div>
+
+        <h3>What Goes Wrong with Hardcoding?</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Scenario</th>
+                    <th>What Happens</th>
+                    <th>Pain Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Schema name changes</td><td>Every query referencing it breaks</td><td>😱 High</td></tr>
+                <tr><td>Move to a new warehouse</td><td>Rewrite every single SQL file</td><td>🤯 Extreme</td></tr>
+                <tr><td>Dev vs Prod environments</td><td>Can't easily switch between them</td><td>😤 Medium</td></tr>
+                <tr><td>Someone renames a table</td><td>No way to find all references</td><td>😵 High</td></tr>
+                <tr><td>Build order unknown</td><td>dbt has no idea which model to build first</td><td>💀 Critical</td></tr>
+            </tbody>
+        </table>
+
+        <div class="important-box">
+            <p>Hardcoding table names is the #1 mistake beginners make. It's like writing someone's street address on every letter instead of using their name — if they move, all your letters go to the wrong place!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: source() — Declaring Your Raw Data
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📡 source() — Declaring Your Raw Data</h2>
+
+        <div class="eli5-box">
+            <p><code>source()</code> is like putting a <strong>label on each ingredient delivery</strong>: "These tomatoes came from Farm ABC, delivered today." Now dbt knows where every ingredient comes from, and it can check if the delivery is fresh!</p>
+        </div>
+
+        <p>A <strong>source</strong> is raw data that lands in your warehouse from external systems — your app's database, Stripe payments, Google Analytics, etc. dbt doesn't <em>create</em> these tables; they already exist. You just need to <strong>tell dbt about them</strong>.</p>
+
+        <h3>Step 1: Declare Sources in YAML</h3>
+        <p>First, create a YAML file that lists all your raw data tables. This is like registering your ingredient suppliers:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/_sources.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">sources</span>:
+  - <span class="keyword">name</span>: <span class="string">raw_shop</span>              <span class="comment"># A friendly name for this group</span>
+    <span class="keyword">database</span>: <span class="string">raw_production</span>     <span class="comment"># The actual database name</span>
+    <span class="keyword">schema</span>: <span class="string">public</span>              <span class="comment"># The actual schema name</span>
+    <span class="keyword">description</span>: <span class="string">"Raw data from our online shop's PostgreSQL database"</span>
+
+    <span class="keyword">tables</span>:
+      - <span class="keyword">name</span>: <span class="string">customers</span>
+        <span class="keyword">description</span>: <span class="string">"One row per registered customer"</span>
+        <span class="keyword">columns</span>:
+          - <span class="keyword">name</span>: <span class="string">id</span>
+            <span class="keyword">description</span>: <span class="string">"Primary key"</span>
+
+      - <span class="keyword">name</span>: <span class="string">orders</span>
+        <span class="keyword">description</span>: <span class="string">"One row per order placed"</span>
+        <span class="keyword">loaded_at_field</span>: <span class="string">_etl_loaded_at</span>    <span class="comment"># For freshness checks!</span>
+        <span class="keyword">freshness</span>:
+          <span class="keyword">warn_after</span>: {<span class="keyword">count</span>: <span class="number">12</span>, <span class="keyword">period</span>: <span class="string">hour</span>}
+          <span class="keyword">error_after</span>: {<span class="keyword">count</span>: <span class="number">24</span>, <span class="keyword">period</span>: <span class="string">hour</span>}
+
+      - <span class="keyword">name</span>: <span class="string">payments</span>
+        <span class="keyword">description</span>: <span class="string">"One row per payment transaction"</span></code></pre>
+        </div>
+
+        <h3>Step 2: Use source() in Your Models</h3>
+        <p>Now, instead of hardcoding <code>raw_production.public.customers</code>, you write:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_customers.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    id          <span class="keyword">AS</span> customer_id,
+    first_name,
+    last_name,
+    email_addr  <span class="keyword">AS</span> email,
+    created_at::<span class="keyword">DATE</span> <span class="keyword">AS</span> signup_date
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw_shop'</span>, <span class="string">'customers'</span>) }}
+    <span class="comment">--  ↑ friendly name   ↑ table name</span></code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>What happens under the hood:</strong> When dbt compiles this, it replaces <code>{{ source('raw_shop', 'customers') }}</code> with the actual table path <code>raw_production.public.customers</code>. If the schema ever changes, you update it in <strong>one place</strong> (the YAML file), and every model that uses this source is automatically fixed!</p>
+        </div>
+
+        <h3>Source Freshness: Is My Data Stale?</h3>
+        <p>Remember the <code>freshness</code> block in the YAML above? Run this command to check if your raw data is up-to-date:</p>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="function">$</span> dbt source freshness
+
+<span class="output">Running source freshness checks...</span>
+<span class="string">PASS</span>  source raw_shop.customers   <span class="comment"># Last loaded 2 hours ago ✅</span>
+<span class="keyword">WARN</span>  source raw_shop.orders      <span class="comment"># Last loaded 14 hours ago ⚠️</span>
+<span class="output">ERROR</span> source raw_shop.payments    <span class="comment"># Last loaded 30 hours ago ❌</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Source freshness is like checking the expiration date on your milk. If the data is too old, something is probably broken upstream (maybe your ETL pipeline stopped running). Catch it before your dashboards show stale numbers!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: ref() — The Magic Glue
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🪄 ref() — The Magic Glue</h2>
+
+        <div class="eli5-box">
+            <p><code>ref()</code> is like saying <strong>"use the chopped tomatoes from the prep station"</strong> instead of "use the tomatoes from the blue bowl on shelf 3." If the prep station moves to a different counter, dbt automatically updates the reference. You never have to worry about <em>where</em> something is — just <em>what</em> it's called.</p>
+        </div>
+
+        <p>While <code>source()</code> points to <strong>raw external data</strong>, <code>ref()</code> points to <strong>other dbt models</strong>. It's how models talk to each other.</p>
+
+        <h3>How ref() Works</h3>
+
+        <div class="code-block">
+            <span class="label">models/intermediate/int_customer_orders.sql</span>
+            <pre><code><span class="comment">-- This model DEPENDS on stg_customers and stg_orders</span>
+<span class="comment">-- ref() tells dbt about these dependencies!</span>
+
+<span class="keyword">SELECT</span>
+    c.customer_id,
+    c.first_name,
+    c.email,
+    o.order_id,
+    o.order_date,
+    o.amount
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }} c
+<span class="keyword">LEFT JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }} o
+    <span class="keyword">ON</span> c.customer_id = o.customer_id</code></pre>
+        </div>
+
+        <h3>Why ref() Is Better Than Hardcoding</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ Hardcoded</h4>
+                <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:#fef2f2;padding:12px;border-radius:8px;margin-top:8px;">FROM analytics.public.stg_customers</p>
+                <ul style="margin:12px 0 0 16px;line-height:2;color:var(--dbt-text-light);">
+                    <li>Breaks if schema changes</li>
+                    <li>dbt can't detect dependencies</li>
+                    <li>No build order awareness</li>
+                </ul>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ Using ref()</h4>
+                <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:#f0fdf4;padding:12px;border-radius:8px;margin-top:8px;">FROM {{ ref('stg_customers') }}</p>
+                <ul style="margin:12px 0 0 16px;line-height:2;color:var(--dbt-text-light);">
+                    <li>Resolves automatically</li>
+                    <li>dbt builds the dependency graph</li>
+                    <li>Correct build order guaranteed</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🧠 The Golden Rule</p>
+            <p style="color:#4c1d95;font-size:1.05em;"><strong>Every</strong> time you reference another dbt model, use <code>ref()</code>. Every time you reference raw external data, use <code>source()</code>. <strong>Never</strong> hardcode table names. Period.</p>
+        </div>
+
+        <h3>What ref() Does Behind the Scenes</h3>
+        <p>When dbt sees <code>{{ ref('stg_customers') }}</code>, it does <strong>two things</strong>:</p>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">1️⃣</div>
+                <div class="stat-label">Resolves the Name</div>
+                <p style="font-size:0.85em;color:var(--dbt-text-light);margin-top:4px;">Replaces it with the full table path (e.g., <code>analytics.dbt_fk.stg_customers</code>)</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">2️⃣</div>
+                <div class="stat-label">Records the Dependency</div>
+                <p style="font-size:0.85em;color:var(--dbt-text-light);margin-top:4px;">Adds an edge to the DAG: "this model depends on stg_customers"</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>This second part is the real magic. By using <code>ref()</code>, you're not just writing SQL — you're <strong>drawing a map</strong> of how all your models connect. dbt uses this map to figure out the perfect build order. It's like telling a GPS every road connection so it can find the fastest route!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: The DAG (Directed Acyclic Graph)
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌳 The DAG (Directed Acyclic Graph)</h2>
+
+        <div class="eli5-box">
+            <p>The DAG is like a <strong>family tree for your data</strong>. It shows who is the parent of whom. dbt uses this tree to figure out the cooking order — <strong>you can't make a cake before you've mixed the batter!</strong></p>
+            <p style="margin-top:12px;">The word "Acyclic" means <strong>no loops</strong> — data flows in one direction, like a river flowing downhill. It never flows back upstream.</p>
+        </div>
+
+        <h3>What Does a DAG Look Like?</h3>
+        <p>Every <code>source()</code> and <code>ref()</code> call creates a connection. Together, they form a beautiful graph:</p>
+
+        <!-- Animated SVG DAG -->
+        <div class="dag-container">
+            <svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+                <!-- Edges (animated dashed lines) -->
+                <line x1="130" y1="70" x2="290" y2="70" class="dag-edge" stroke="#67e8f9" stroke-width="2.5" />
+                <line x1="130" y1="180" x2="290" y2="180" class="dag-edge" stroke="#67e8f9" stroke-width="2.5" />
+                <line x1="130" y1="280" x2="290" y2="250" class="dag-edge" stroke="#67e8f9" stroke-width="2.5" />
+                <line x1="410" y1="70" x2="530" y2="130" class="dag-edge" stroke="#c084fc" stroke-width="2.5" />
+                <line x1="410" y1="180" x2="530" y2="150" class="dag-edge" stroke="#c084fc" stroke-width="2.5" />
+                <line x1="410" y1="250" x2="530" y2="260" class="dag-edge" stroke="#c084fc" stroke-width="2.5" />
+                <line x1="650" y1="140" x2="720" y2="190" class="dag-edge" stroke="#86efac" stroke-width="2.5" />
+                <line x1="650" y1="260" x2="720" y2="210" class="dag-edge" stroke="#86efac" stroke-width="2.5" />
+
+                <!-- Source nodes -->
+                <g class="dag-node">
+                    <rect x="10" y="45" width="120" height="50" rx="10" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="70" y="75" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="700" font-family="Nunito">raw_customers</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="10" y="155" width="120" height="50" rx="10" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="70" y="185" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="700" font-family="Nunito">raw_orders</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="10" y="255" width="120" height="50" rx="10" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="70" y="285" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="700" font-family="Nunito">raw_payments</text>
+                </g>
+
+                <!-- Staging nodes -->
+                <g class="dag-node">
+                    <rect x="290" y="45" width="120" height="50" rx="10" fill="#1a1a2e" stroke="#67e8f9" stroke-width="2"/>
+                    <text x="350" y="75" text-anchor="middle" fill="#67e8f9" font-size="12" font-weight="700" font-family="Nunito">stg_customers</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="290" y="155" width="120" height="50" rx="10" fill="#1a1a2e" stroke="#67e8f9" stroke-width="2"/>
+                    <text x="350" y="185" text-anchor="middle" fill="#67e8f9" font-size="12" font-weight="700" font-family="Nunito">stg_orders</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="290" y="225" width="120" height="50" rx="10" fill="#1a1a2e" stroke="#67e8f9" stroke-width="2"/>
+                    <text x="350" y="255" text-anchor="middle" fill="#67e8f9" font-size="12" font-weight="700" font-family="Nunito">stg_payments</text>
+                </g>
+
+                <!-- Intermediate nodes -->
+                <g class="dag-node">
+                    <rect x="530" y="110" width="120" height="50" rx="10" fill="#1a1a2e" stroke="#c084fc" stroke-width="2"/>
+                    <text x="590" y="134" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">int_customer</text>
+                    <text x="590" y="150" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">_orders</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="530" y="235" width="120" height="50" rx="10" fill="#1a1a2e" stroke="#c084fc" stroke-width="2"/>
+                    <text x="590" y="259" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">int_order</text>
+                    <text x="590" y="275" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">_payments</text>
+                </g>
+
+                <!-- Mart node -->
+                <g class="dag-node">
+                    <rect x="700" y="170" width="90" height="50" rx="10" fill="#0f2e1f" stroke="#86efac" stroke-width="2"/>
+                    <text x="745" y="194" text-anchor="middle" fill="#86efac" font-size="11" font-weight="700" font-family="Nunito">fct_customer</text>
+                    <text x="745" y="210" text-anchor="middle" fill="#86efac" font-size="11" font-weight="700" font-family="Nunito">_ltv</text>
+                </g>
+
+                <!-- Layer labels -->
+                <text x="70" y="30" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">SOURCES</text>
+                <text x="350" y="30" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">STAGING</text>
+                <text x="590" y="95" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">INTERMEDIATE</text>
+                <text x="745" y="160" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">MARTS</text>
+            </svg>
+        </div>
+
+        <div class="real-life">
+            <p><strong>How dbt reads this DAG:</strong></p>
+            <p style="margin-top:8px;">1. Build <code>stg_customers</code>, <code>stg_orders</code>, <code>stg_payments</code> first (they only depend on sources)</p>
+            <p>2. Then build <code>int_customer_orders</code> and <code>int_order_payments</code> (they depend on staging models)</p>
+            <p>3. Finally build <code>fct_customer_ltv</code> (it depends on intermediate models)</p>
+            <p style="margin-top:8px;">dbt figures this out <strong>automatically</strong> from your <code>ref()</code> calls. You never have to manually specify the order!</p>
+        </div>
+
+        <h3>See Your DAG: dbt docs generate</h3>
+        <p>dbt comes with a built-in tool to visualize your entire DAG as an interactive website:</p>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="comment"># Generate the documentation site (including the lineage graph)</span>
+<span class="function">$</span> dbt docs generate
+
+<span class="comment"># Open it in your browser</span>
+<span class="function">$</span> dbt docs serve
+
+<span class="output">Running docs generate...</span>
+<span class="output">Catalog written to /target/catalog.json</span>
+<span class="string">Serving docs at http://localhost:8080</span>
+<span class="output">Press Ctrl+C to exit.</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The lineage graph in <code>dbt docs</code> is interactive — you can click on any node to see its SQL, description, columns, and tests. It's like Google Maps for your data warehouse. Every data team should have this running!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: Building a Real DAG — Step by Step
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏗️ Building a Real DAG — Step by Step</h2>
+
+        <p>Let's build a complete pipeline from scratch. We'll track <strong>customer lifetime value (LTV)</strong> — how much money each customer has spent in total. Watch how <code>source()</code> and <code>ref()</code> connect everything:</p>
+
+        <!-- Animated pipeline diagram -->
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#1e3a5f,#3b82f6);color:#fff;">📦</div>
+                <div class="pipeline-label">raw_customers<br><small style="color:var(--dbt-text-light);">source</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#0e7490,#22d3ee);color:#fff;">🥬</div>
+                <div class="pipeline-label">stg_customers<br><small style="color:var(--dbt-text-light);">staging</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#6d28d9,#a78bfa);color:#fff;">🍳</div>
+                <div class="pipeline-label">int_customer<br>_orders<br><small style="color:var(--dbt-text-light);">intermediate</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#166534,#4ade80);color:#fff;">🍽️</div>
+                <div class="pipeline-label">fct_customer<br>_ltv<br><small style="color:var(--dbt-text-light);">mart</small></div>
+            </div>
+        </div>
+
+        <h3>Step 1: Declare the Source</h3>
+
+        <div class="code-block">
+            <span class="label">models/staging/_sources.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">sources</span>:
+  - <span class="keyword">name</span>: <span class="string">raw_shop</span>
+    <span class="keyword">database</span>: <span class="string">raw_production</span>
+    <span class="keyword">schema</span>: <span class="string">public</span>
+    <span class="keyword">tables</span>:
+      - <span class="keyword">name</span>: <span class="string">customers</span>
+      - <span class="keyword">name</span>: <span class="string">orders</span></code></pre>
+        </div>
+
+        <h3>Step 2: Staging Model (uses source())</h3>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_customers.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    id              <span class="keyword">AS</span> customer_id,
+    first_name,
+    last_name,
+    email_addr      <span class="keyword">AS</span> email,
+    created_at::<span class="keyword">DATE</span> <span class="keyword">AS</span> signup_date
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw_shop'</span>, <span class="string">'customers'</span>) }}
+    <span class="comment">-- ↑ Points to RAW data (external)</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_orders.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    order_date,
+    amount,
+    status
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw_shop'</span>, <span class="string">'orders'</span>) }}
+    <span class="comment">-- ↑ Points to RAW data (external)</span></code></pre>
+        </div>
+
+        <h3>Step 3: Intermediate Model (uses ref())</h3>
+
+        <div class="code-block">
+            <span class="label">models/intermediate/int_customer_orders.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    c.customer_id,
+    c.first_name,
+    c.email,
+    o.order_id,
+    o.order_date,
+    o.amount
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }} c
+    <span class="comment">-- ↑ Points to ANOTHER dbt model</span>
+<span class="keyword">LEFT JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }} o
+    <span class="comment">-- ↑ Points to ANOTHER dbt model</span>
+    <span class="keyword">ON</span> c.customer_id = o.customer_id</code></pre>
+        </div>
+
+        <h3>Step 4: Mart Model (uses ref())</h3>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_customer_ltv.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    customer_id,
+    first_name,
+    email,
+    <span class="function">COUNT</span>(order_id)  <span class="keyword">AS</span> total_orders,
+    <span class="function">SUM</span>(amount)      <span class="keyword">AS</span> lifetime_value,
+    <span class="function">MIN</span>(order_date)  <span class="keyword">AS</span> first_order_date,
+    <span class="function">MAX</span>(order_date)  <span class="keyword">AS</span> most_recent_order
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'int_customer_orders'</span>) }}
+    <span class="comment">-- ↑ Points to the intermediate model</span>
+<span class="keyword">GROUP BY</span>
+    customer_id, first_name, email</code></pre>
+        </div>
+
+        <div class="visual-example">
+            <p style="color:#065f46;"><strong>Notice the pattern:</strong></p>
+            <p style="color:#065f46;margin-top:8px;">📦 <strong>Sources</strong> → use <code>source('name', 'table')</code> — raw external data</p>
+            <p style="color:#065f46;">🥬 <strong>Staging</strong> → reads from sources, referenced by <code>ref('stg_...')</code></p>
+            <p style="color:#065f46;">🍳 <strong>Intermediate</strong> → reads from staging via <code>ref()</code></p>
+            <p style="color:#065f46;">🍽️ <strong>Marts</strong> → reads from intermediate via <code>ref()</code></p>
+            <p style="color:#065f46;margin-top:8px;">Data flows <strong>one direction only</strong> — downstream. Never upstream. That's what makes it a DAG!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Advanced — Cross-Project Refs (dbt Mesh)
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌐 Advanced: Cross-Project Refs (dbt Mesh)</h2>
+
+        <div class="eli5-box">
+            <p>Imagine you run a <strong>chain of restaurants</strong>. Each restaurant has its own kitchen (dbt project), but sometimes the Italian restaurant needs the bread recipe from the French bakery. <strong>Cross-project refs</strong> let one project reference models from another project — like sharing recipes across restaurants!</p>
+        </div>
+
+        <p>When your company grows, you might split one giant dbt project into multiple smaller ones. dbt Mesh (introduced in dbt 1.6+) lets these projects talk to each other:</p>
+
+        <div class="code-block">
+            <span class="label">Cross-project ref (dbt Mesh)</span>
+            <pre><code><span class="comment">-- In the "marketing" project, reference a model from the "core" project</span>
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    lifetime_value,
+    marketing_channel
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'core'</span>, <span class="string">'fct_customer_ltv'</span>) }}
+    <span class="comment">-- ↑ project name  ↑ model name</span>
+<span class="keyword">LEFT JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'marketing_attribution'</span>) }}
+    <span class="keyword">ON</span> ...</code></pre>
+        </div>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                <h4>📦 Single Project</h4>
+                <p>All models in one repo. Simple, but gets unwieldy at 500+ models.</p>
+                <p style="margin-top:8px;font-size:0.9em;color:var(--dbt-text-light);">ref('model_name')</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🌐 dbt Mesh (Multi-Project)</h4>
+                <p>Split into domain-specific projects. Each team owns their models.</p>
+                <p style="margin-top:8px;font-size:0.9em;color:var(--dbt-text-light);">ref('project', 'model_name')</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>You don't need dbt Mesh until your project has hundreds of models and multiple teams. For now, just know it exists. It's like knowing that highways exist even though you're still learning to ride a bicycle!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: Common Mistakes
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🚫 Common Mistakes</h2>
+
+        <p>Even experienced dbt developers trip on these. Learn them now so you don't have to learn them the hard way!</p>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">Mistake #1: Circular References</p>
+            <p>Model A references Model B, and Model B references Model A. This creates an infinite loop — dbt can't figure out which to build first!</p>
+            <div style="background:#fff;border-radius:10px;padding:16px;margin-top:12px;">
+                <p style="font-family:'Fira Code',monospace;font-size:0.85em;color:#dc2626;">
+                    model_a.sql: SELECT * FROM {{ ref('model_b') }}<br>
+                    model_b.sql: SELECT * FROM {{ ref('model_a') }}<br><br>
+                    <span style="color:#991b1b;">ERROR: Found a cycle: model_a → model_b → model_a</span>
+                </p>
+            </div>
+            <p style="margin-top:12px;"><strong>Fix:</strong> Restructure so data flows in one direction. If A and B both need the same data, create a shared parent model C that both reference.</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">Mistake #2: Forgetting to Declare Sources</p>
+            <p>You use <code>{{ source('raw_shop', 'customers') }}</code> in a model but never defined <code>raw_shop</code> in a YAML file.</p>
+            <div style="background:#fff;border-radius:10px;padding:16px;margin-top:12px;">
+                <p style="font-family:'Fira Code',monospace;font-size:0.85em;color:#dc2626;">
+                    Compilation Error: source 'raw_shop' was not found
+                </p>
+            </div>
+            <p style="margin-top:12px;"><strong>Fix:</strong> Always create a <code>_sources.yml</code> file in your staging folder that declares every source.</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">Mistake #3: Hardcoding Instead of Using ref()</p>
+            <p>Writing <code>FROM analytics.dbt_fk.stg_customers</code> instead of <code>FROM {{ ref('stg_customers') }}</code>. The query works, but dbt doesn't know about the dependency — so it might try to build your model <em>before</em> the staging model exists!</p>
+            <p style="margin-top:12px;"><strong>Fix:</strong> Search your project for any <code>FROM</code> clause that doesn't use <code>ref()</code> or <code>source()</code>. Replace them all.</p>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Quick self-check:</strong> Open any model in your project. Does every <code>FROM</code> and <code>JOIN</code> clause use either <code>ref()</code> or <code>source()</code>? If you see a raw table name like <code>database.schema.table</code>, that's a bug waiting to happen!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you can connect the dots (pun intended). Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: When should you use source() vs ref()?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> source() for everything, ref() is deprecated
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> source() for raw external data, ref() for other dbt models
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> ref() for raw data, source() for dbt models
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> They're interchangeable — use whichever you prefer
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: What does the DAG help dbt figure out?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Which warehouse to connect to
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> How much each model costs to run
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> The correct order to build models (dependencies)
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Which columns to include in each model
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: What happens if Model A refs Model B, and Model B refs Model A?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> dbt builds them simultaneously
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> dbt picks one randomly to build first
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> dbt throws a circular dependency error
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> dbt ignores one of the references
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Without looking at your notes, can you explain the difference between <code>source()</code> and <code>ref()</code> to a friend? Can you draw a simple DAG with 4 nodes and explain the build order? If yes, you've nailed this lesson!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>source()</strong> — Declares and references raw external data; defined in YAML</li>
+                <li><strong>ref()</strong> — References other dbt models; creates the dependency graph</li>
+                <li><strong>Never hardcode</strong> table names — always use source() or ref()</li>
+                <li><strong>DAG</strong> — Directed Acyclic Graph; dbt's map of model dependencies</li>
+                <li><strong>Build order</strong> — dbt automatically determines the correct sequence from the DAG</li>
+                <li><strong>Source freshness</strong> — Check if raw data is stale with <code>dbt source freshness</code></li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Cross-project refs</strong> — dbt Mesh for multi-project setups (advanced)</li>
+                <li><strong>dbt docs serve</strong> — Interactive lineage graph visualization</li>
+                <li>Specific freshness configuration options (warn_after, error_after)</li>
+                <li>The two-argument form of ref() for cross-project references</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="models.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Models & Materializations
+        </a>
+        <a href="testing.html" class="nav-btn-next">
+            Testing & Data Quality <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

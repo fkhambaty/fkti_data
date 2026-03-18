@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packages & Seeds | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 10 · INTERMEDIATE</span>
+    <h1>📦 Packages & Seeds — Standing on Giants' Shoulders</h1>
+    <p class="subtitle">Why reinvent the wheel? Use community packages and load reference data with seeds.</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="jinja-macros.html"><i class="fas fa-arrow-left"></i> Jinja & Macros</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="deployment.html">Deployment <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: What are dbt Packages?
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📦 What are dbt Packages?</h2>
+
+        <div class="eli5-box">
+            <p>Packages are like <strong>pre-made spice mixes</strong>. Instead of measuring out 12 individual spices every time you cook, you grab a jar of "Italian Seasoning" that someone already mixed perfectly. dbt packages give you pre-built macros and tests that save you hours of work.</p>
+            <p style="margin-top:12px;">Imagine you need to create a unique ID by combining three columns. You <em>could</em> spend 30 minutes writing and testing a macro from scratch. Or you could install <code>dbt_utils</code> and use <code>generate_surrogate_key</code> in 10 seconds. That's the power of packages!</p>
+        </div>
+
+        <h3>How Packages Work</h3>
+        <p>dbt packages are <strong>community-built, version-controlled collections</strong> of macros, tests, and models that anyone can install and use. Think of them like apps on your phone — someone else built them, you just install and enjoy.</p>
+
+        <!-- Animated pipeline diagram -->
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#6d28d9,#a78bfa);color:#fff;">👩‍💻</div>
+                <div class="pipeline-label">Developer<br>writes package<br><small style="color:var(--dbt-text-light);">Step 1</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#fff;">🌐</div>
+                <div class="pipeline-label">Publishes to<br>dbt Hub<br><small style="color:var(--dbt-text-light);">Step 2</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;">📋</div>
+                <div class="pipeline-label">You add to<br>packages.yml<br><small style="color:var(--dbt-text-light);">Step 3</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#4ade80);color:#fff;">⬇️</div>
+                <div class="pipeline-label">dbt deps<br>installs it<br><small style="color:var(--dbt-text-light);">Step 4</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ef4444,#f87171);color:#fff;">🚀</div>
+                <div class="pipeline-label">Use macros<br>& tests!<br><small style="color:var(--dbt-text-light);">Step 5</small></div>
+            </div>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number">4,000+</div>
+                <div class="stat-label">packages available on dbt Hub</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">90%</div>
+                <div class="stat-label">of dbt projects use at least one package</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">10x</div>
+                <div class="stat-label">faster development with community packages</div>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>Before writing any macro or custom test from scratch, search <a href="https://hub.getdbt.com" target="_blank" style="color:#166534;font-weight:700;">hub.getdbt.com</a> first. Chances are, someone has already built exactly what you need — battle-tested and used by thousands of teams!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: Installing Packages
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>⬇️ Installing Packages</h2>
+
+        <div class="eli5-box">
+            <p><code>dbt deps</code> is like <strong>going to the grocery store</strong> — it downloads all the ingredients (packages) you listed in your shopping list (<code>packages.yml</code>). You write down what you need, run the command, and dbt fetches everything for you. No manual downloading, no hunting around the internet!</p>
+        </div>
+
+        <h3>Step 1: Create packages.yml</h3>
+        <p>Create a file called <code>packages.yml</code> in the <strong>root</strong> of your dbt project (same level as <code>dbt_project.yml</code>):</p>
+
+        <div class="code-block">
+            <span class="label">packages.yml</span>
+            <pre><code><span class="keyword">packages</span>:
+  <span class="comment"># The Swiss Army Knife — macros for everything</span>
+  - <span class="keyword">package</span>: <span class="string">dbt-labs/dbt_utils</span>
+    <span class="keyword">version</span>: [<span class="string">">=1.1.0"</span>, <span class="string">"<2.0.0"</span>]
+
+  <span class="comment"># Advanced data quality tests (Great Expectations-style)</span>
+  - <span class="keyword">package</span>: <span class="string">calogica/dbt_expectations</span>
+    <span class="keyword">version</span>: [<span class="string">">=0.10.0"</span>, <span class="string">"<0.11.0"</span>]
+
+  <span class="comment"># Compare model versions during refactoring</span>
+  - <span class="keyword">package</span>: <span class="string">dbt-labs/audit_helper</span>
+    <span class="keyword">version</span>: [<span class="string">">=0.9.0"</span>, <span class="string">"<1.0.0"</span>]
+
+  <span class="comment"># Generate YAML and SQL boilerplate automatically</span>
+  - <span class="keyword">package</span>: <span class="string">dbt-labs/codegen</span>
+    <span class="keyword">version</span>: [<span class="string">">=0.12.0"</span>, <span class="string">"<1.0.0"</span>]</code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Version pinning explained:</strong> The syntax <code>[">=1.1.0", "<2.0.0"]</code> means "any version from 1.1.0 up to (but not including) 2.0.0." This protects you from breaking changes. It's like saying "I want Italian Seasoning version 1, not version 2 where they changed the recipe!"</p>
+        </div>
+
+        <h3>Step 2: Run dbt deps</h3>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="function">$</span> dbt deps
+
+<span class="output">Installing dbt-labs/dbt_utils...</span>
+<span class="output">  Installed from version 1.1.1</span>
+<span class="output">Installing calogica/dbt_expectations...</span>
+<span class="output">  Installed from version 0.10.3</span>
+<span class="output">Installing dbt-labs/audit_helper...</span>
+<span class="output">  Installed from version 0.9.0</span>
+<span class="output">Installing dbt-labs/codegen...</span>
+<span class="output">  Installed from version 0.12.1</span>
+
+<span class="string">Successfully installed 4 packages.</span></code></pre>
+        </div>
+
+        <h3>Where Do Packages Go?</h3>
+        <p>Packages are downloaded into the <code>dbt_packages/</code> folder (previously <code>dbt_modules/</code>). This folder is auto-generated — <strong>never edit files inside it</strong>.</p>
+
+        <div class="folder-tree">
+            <span class="folder">📁 my_dbt_project/</span>
+            <span class="indent"><span class="file-yml">📄 dbt_project.yml</span></span>
+            <span class="indent"><span class="file-yml">📄 packages.yml</span> ← your shopping list</span>
+            <span class="indent"><span class="folder">📁 dbt_packages/</span> ← auto-generated by dbt deps</span>
+            <span class="indent-2"><span class="folder">📁 dbt_utils/</span></span>
+            <span class="indent-2"><span class="folder">📁 dbt_expectations/</span></span>
+            <span class="indent-2"><span class="folder">📁 audit_helper/</span></span>
+            <span class="indent-2"><span class="folder">📁 codegen/</span></span>
+            <span class="indent"><span class="folder">📁 models/</span></span>
+            <span class="indent"><span class="folder">📁 seeds/</span></span>
+        </div>
+
+        <div class="important-box">
+            <p>Add <code>dbt_packages/</code> to your <code>.gitignore</code>! These files are downloaded, not written by you. It's like not checking your grocery bags into version control — you just keep the shopping list (<code>packages.yml</code>) and re-download when needed.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: dbt_utils — The Swiss Army Knife
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔧 dbt_utils — The Swiss Army Knife</h2>
+
+        <div class="eli5-box">
+            <p><code>dbt_utils</code> is like a <strong>kitchen multi-tool</strong> — it has a knife, bottle opener, screwdriver, and more. You'll use it in almost every project. It's the single most popular dbt package, installed by virtually every team on the planet. If dbt is the kitchen, <code>dbt_utils</code> is the drawer full of essential gadgets.</p>
+        </div>
+
+        <h3>1. <code>generate_surrogate_key</code> — Creating Unique IDs</h3>
+        <p>Sometimes your data doesn't have a single unique column. You need to combine multiple columns into one unique ID. This macro does it for you:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_order_items.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    {{ <span class="function">dbt_utils.generate_surrogate_key</span>([
+        <span class="string">'order_id'</span>,
+        <span class="string">'product_id'</span>
+    ]) }} <span class="keyword">AS</span> order_item_id,
+    order_id,
+    product_id,
+    quantity,
+    unit_price
+<span class="keyword">FROM</span>
+    {{ <span class="function">source</span>(<span class="string">'raw_shop'</span>, <span class="string">'order_items'</span>) }}
+
+<span class="comment">-- Result: order_item_id = 'a1b2c3d4e5f6...' (a hash of order_id + product_id)</span>
+<span class="comment">-- Every combination of order + product gets a unique, consistent ID!</span></code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Why not just concatenate?</strong> You could write <code>order_id || '-' || product_id</code>, but what if <code>order_id</code> is NULL? The whole thing becomes NULL. <code>generate_surrogate_key</code> handles NULLs, data types, and edge cases automatically. It's like using a professional blender instead of mashing things with a fork.</p>
+        </div>
+
+        <h3>2. <code>pivot</code> / <code>unpivot</code> — Reshaping Data</h3>
+        <p>Turn rows into columns (pivot) or columns into rows (unpivot):</p>
+
+        <div class="code-block">
+            <span class="label">Pivot: rows → columns</span>
+            <pre><code><span class="comment">-- Turn this:  customer_id | month    | revenue</span>
+<span class="comment">--             1           | January  | 500</span>
+<span class="comment">--             1           | February | 300</span>
+<span class="comment">--</span>
+<span class="comment">-- Into this:  customer_id | January | February</span>
+<span class="comment">--             1           | 500     | 300</span>
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    {{ <span class="function">dbt_utils.pivot</span>(
+        <span class="string">'month'</span>,
+        <span class="function">dbt_utils.get_column_values</span>(
+            <span class="keyword">table</span>=<span class="function">ref</span>(<span class="string">'monthly_revenue'</span>),
+            <span class="keyword">column</span>=<span class="string">'month'</span>
+        ),
+        <span class="keyword">agg</span>=<span class="string">'sum'</span>,
+        <span class="keyword">then_value</span>=<span class="string">'revenue'</span>
+    ) }}
+<span class="keyword">FROM</span> {{ <span class="function">ref</span>(<span class="string">'monthly_revenue'</span>) }}
+<span class="keyword">GROUP BY</span> customer_id</code></pre>
+        </div>
+
+        <h3>3. <code>date_spine</code> — Generating Date Ranges</h3>
+        <p>Need a table with every single date between two points? This is your friend:</p>
+
+        <div class="code-block">
+            <span class="label">models/utilities/dim_dates.sql</span>
+            <pre><code>{{ <span class="function">dbt_utils.date_spine</span>(
+    <span class="keyword">datepart</span>=<span class="string">"day"</span>,
+    <span class="keyword">start_date</span>=<span class="string">"cast('2020-01-01' as date)"</span>,
+    <span class="keyword">end_date</span>=<span class="string">"cast('2030-12-31' as date)"</span>
+) }}
+
+<span class="comment">-- Generates a table with one row per day:</span>
+<span class="comment">-- date_day</span>
+<span class="comment">-- 2020-01-01</span>
+<span class="comment">-- 2020-01-02</span>
+<span class="comment">-- 2020-01-03</span>
+<span class="comment">-- ... (4,017 rows)</span>
+<span class="comment">-- 2030-12-31</span></code></pre>
+        </div>
+
+        <h3>4. <code>get_column_values</code> — Dynamic Column Lists</h3>
+
+        <div class="code-block">
+            <span class="label">Get all unique statuses dynamically</span>
+            <pre><code><span class="comment">-- Instead of hardcoding ['active', 'inactive', 'suspended']...</span>
+<span class="comment">-- Let dbt figure it out from the actual data!</span>
+
+{% <span class="keyword">set</span> statuses = <span class="function">dbt_utils.get_column_values</span>(
+    <span class="keyword">table</span>=<span class="function">ref</span>(<span class="string">'stg_customers'</span>),
+    <span class="keyword">column</span>=<span class="string">'status'</span>
+) %}
+
+<span class="comment">-- statuses = ['active', 'inactive', 'suspended', 'pending']</span>
+<span class="comment">-- Now use this list in a pivot, CASE WHEN, or anywhere else!</span></code></pre>
+        </div>
+
+        <h3>5. <code>star</code> — Select All Columns Except Some</h3>
+
+        <div class="code-block">
+            <span class="label">Select everything except sensitive columns</span>
+            <pre><code><span class="keyword">SELECT</span>
+    {{ <span class="function">dbt_utils.star</span>(
+        <span class="keyword">from</span>=<span class="function">ref</span>(<span class="string">'stg_customers'</span>),
+        <span class="keyword">except</span>=[<span class="string">"email"</span>, <span class="string">"phone_number"</span>, <span class="string">"ssn"</span>]
+    ) }}
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }}
+
+<span class="comment">-- Selects ALL columns EXCEPT email, phone_number, and ssn</span>
+<span class="comment">-- Perfect for creating PII-free views!</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The <code>dbt_utils</code> package has 50+ macros. Don't try to memorize them all — just know they exist. When you hit a problem, check the <a href="https://github.com/dbt-labs/dbt-utils" target="_blank" style="color:#166534;font-weight:700;">dbt_utils README</a> first. Odds are, there's a macro for it!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: dbt_expectations — The Quality Inspector
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔍 dbt_expectations — The Quality Inspector</h2>
+
+        <div class="eli5-box">
+            <p>If built-in tests are like a <strong>basic health check</strong> (temperature, blood pressure), then <code>dbt_expectations</code> is like a <strong>full medical exam</strong> with an MRI, blood work, and X-rays. It brings dozens of specialized tests inspired by the Python library <strong>Great Expectations</strong> — giving you surgical precision over data quality.</p>
+        </div>
+
+        <h3>Popular dbt_expectations Tests</h3>
+
+        <div class="code-block">
+            <span class="label">schema.yml — Using dbt_expectations</span>
+            <pre><code><span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">stg_orders</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">amount</span>
+        <span class="keyword">tests</span>:
+          <span class="comment"># Every order amount must be between $0 and $100,000</span>
+          - <span class="string">dbt_expectations.expect_column_values_to_be_between</span>:
+              <span class="keyword">min_value</span>: <span class="number">0</span>
+              <span class="keyword">max_value</span>: <span class="number">100000</span>
+
+          <span class="comment"># Average order value should be between $10 and $500</span>
+          - <span class="string">dbt_expectations.expect_column_mean_to_be_between</span>:
+              <span class="keyword">min_value</span>: <span class="number">10</span>
+              <span class="keyword">max_value</span>: <span class="number">500</span>
+
+      - <span class="keyword">name</span>: <span class="string">email</span>
+        <span class="keyword">tests</span>:
+          <span class="comment"># Every email must match the pattern *@*.*</span>
+          - <span class="string">dbt_expectations.expect_column_values_to_match_regex</span>:
+              <span class="keyword">regex</span>: <span class="string">"^[^@]+@[^@]+\\.[^@]+$"</span>
+
+    <span class="keyword">tests</span>:
+      <span class="comment"># Table should have between 1,000 and 10,000,000 rows</span>
+      - <span class="string">dbt_expectations.expect_table_row_count_to_be_between</span>:
+          <span class="keyword">min_value</span>: <span class="number">1000</span>
+          <span class="keyword">max_value</span>: <span class="number">10000000</span></code></pre>
+        </div>
+
+        <h3>When to Use dbt_expectations vs Built-in Tests</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Scenario</th>
+                    <th>Built-in Test</th>
+                    <th>dbt_expectations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Column has no NULLs</td><td><code>not_null</code> ✅</td><td>Overkill</td></tr>
+                <tr><td>Column is unique</td><td><code>unique</code> ✅</td><td>Overkill</td></tr>
+                <tr><td>Values within a range</td><td>Custom SQL test</td><td><code>expect_column_values_to_be_between</code> ✅</td></tr>
+                <tr><td>Row count sanity check</td><td>Custom SQL test</td><td><code>expect_table_row_count_to_be_between</code> ✅</td></tr>
+                <tr><td>Regex pattern matching</td><td>Custom SQL test</td><td><code>expect_column_values_to_match_regex</code> ✅</td></tr>
+                <tr><td>Statistical distribution</td><td>Not possible</td><td><code>expect_column_mean_to_be_between</code> ✅</td></tr>
+            </tbody>
+        </table>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🧠 Rule of Thumb</p>
+            <p style="color:#4c1d95;">Start with the 4 built-in tests (<code>unique</code>, <code>not_null</code>, <code>accepted_values</code>, <code>relationships</code>). When you need something they can't do — range checks, pattern matching, row count validation, statistical tests — reach for <code>dbt_expectations</code>.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: Other Popular Packages
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌟 Other Popular Packages</h2>
+
+        <p>The dbt ecosystem is rich with community packages. Here are the ones you'll encounter most often:</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>🔍 audit_helper</h4>
+                <p>Compare two versions of a model side-by-side. Perfect for refactoring — did your changes break anything?</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);"><strong>Use when:</strong> Rewriting a model and need to verify the output hasn't changed</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                <h4>⚡ codegen</h4>
+                <p>Auto-generate <code>schema.yml</code> files and base model SQL from your sources. Saves hours of boilerplate typing.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);"><strong>Use when:</strong> Setting up a new project or adding new sources</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>📅 dbt_date</h4>
+                <p>Date utility macros: fiscal years, business days, date dimensions, and more.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);"><strong>Use when:</strong> Building date dimension tables or working with fiscal calendars</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>🗄️ dbt_external_tables</h4>
+                <p>Manage external tables (S3, GCS, Azure Blob) as dbt sources with schema evolution support.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);"><strong>Use when:</strong> Your raw data lives in cloud object storage</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>📊 re_data</h4>
+                <p>Automated data monitoring and anomaly detection. Tracks metrics over time and alerts on drift.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);"><strong>Use when:</strong> You want continuous data observability without manual checks</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #0ea5e9;">
+                <h4>🏷️ dbt_meta_testing</h4>
+                <p>Enforce that every model has descriptions, tests, and documentation. Keeps your project tidy.</p>
+                <p style="margin-top:8px;font-size:0.85em;color:var(--dbt-text-light);"><strong>Use when:</strong> You want to enforce documentation standards across the team</p>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Using codegen to auto-generate schema.yml</span>
+            <pre><code><span class="comment">-- Run this in a dbt compile or statement:</span>
+
+{{ <span class="function">codegen.generate_model_yaml</span>(
+    <span class="keyword">model_names</span>=[<span class="string">'stg_customers'</span>, <span class="string">'stg_orders'</span>]
+) }}
+
+<span class="comment">-- Output: a complete schema.yml with all columns listed!</span>
+<span class="comment">-- Copy-paste it into your YAML file and add descriptions.</span>
+<span class="comment">-- Saves 15+ minutes per model.</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>You don't need all these packages on day one. Start with <code>dbt_utils</code> (everyone needs it) and <code>dbt_expectations</code> (for quality). Add others as your project grows. It's like building a toolbox — you don't buy every tool at the hardware store, just the ones you need for the current job!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Seeds — Your Pantry Staples
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌱 Seeds — Your Pantry Staples</h2>
+
+        <div class="eli5-box">
+            <p>Seeds are like the <strong>salt, pepper, and olive oil in your pantry</strong> — small, rarely changing reference data that you always need handy. Country codes, status mappings, department names, currency conversion rates... these don't change every day, and they're too small to warrant a full ETL pipeline. Just put them in a CSV file, and dbt loads them into your warehouse!</p>
+        </div>
+
+        <h3>What are Seeds?</h3>
+        <p>Seeds are <strong>CSV files</strong> that live in your dbt project's <code>seeds/</code> folder. When you run <code>dbt seed</code>, dbt reads these CSV files and creates actual tables in your data warehouse. That's it — no ETL pipeline, no Fivetran connector, no API calls. Just a CSV file and one command.</p>
+
+        <h3>Creating a Seed</h3>
+        <p><strong>Step 1:</strong> Create a CSV file in the <code>seeds/</code> folder:</p>
+
+        <div class="code-block">
+            <span class="label">seeds/country_codes.csv</span>
+            <pre><code><span class="string">country_code</span>,<span class="string">country_name</span>,<span class="string">region</span>
+<span class="string">US</span>,<span class="string">United States</span>,<span class="string">North America</span>
+<span class="string">GB</span>,<span class="string">United Kingdom</span>,<span class="string">Europe</span>
+<span class="string">DE</span>,<span class="string">Germany</span>,<span class="string">Europe</span>
+<span class="string">JP</span>,<span class="string">Japan</span>,<span class="string">Asia</span>
+<span class="string">IN</span>,<span class="string">India</span>,<span class="string">Asia</span>
+<span class="string">BR</span>,<span class="string">Brazil</span>,<span class="string">South America</span>
+<span class="string">AU</span>,<span class="string">Australia</span>,<span class="string">Oceania</span>
+<span class="string">NG</span>,<span class="string">Nigeria</span>,<span class="string">Africa</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">seeds/status_mappings.csv</span>
+            <pre><code><span class="string">status_code</span>,<span class="string">status_label</span>,<span class="string">is_active</span>
+<span class="number">1</span>,<span class="string">Active</span>,<span class="string">true</span>
+<span class="number">2</span>,<span class="string">Inactive</span>,<span class="string">false</span>
+<span class="number">3</span>,<span class="string">Suspended</span>,<span class="string">false</span>
+<span class="number">4</span>,<span class="string">Pending Review</span>,<span class="string">false</span>
+<span class="number">5</span>,<span class="string">Archived</span>,<span class="string">false</span></code></pre>
+        </div>
+
+        <p><strong>Step 2:</strong> Run <code>dbt seed</code> to load them into your warehouse:</p>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="function">$</span> dbt seed
+
+<span class="output">Running seed country_codes.............</span> <span class="string">OK</span> <span class="comment">[INSERT 8 rows in 0.42s]</span>
+<span class="output">Running seed status_mappings..........</span> <span class="string">OK</span> <span class="comment">[INSERT 5 rows in 0.31s]</span>
+
+<span class="string">Completed successfully. 2 seeds loaded.</span>
+
+<span class="comment"># Load a specific seed only</span>
+<span class="function">$</span> dbt seed --select country_codes
+
+<span class="comment"># Full refresh (drop and recreate the table)</span>
+<span class="function">$</span> dbt seed --full-refresh</code></pre>
+        </div>
+
+        <h3>Using Seeds in Your Models</h3>
+        <p>Once loaded, seeds are referenced with <code>ref()</code> — just like any other model:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_customers_enriched.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    c.customer_id,
+    c.first_name,
+    c.country_code,
+    cc.country_name,
+    cc.region
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_customers'</span>) }} c
+<span class="keyword">LEFT JOIN</span>
+    {{ <span class="function">ref</span>(<span class="string">'country_codes'</span>) }} cc
+    <span class="comment">--  ↑ This is a SEED, but you reference it with ref() just like a model!</span>
+    <span class="keyword">ON</span> c.country_code = cc.country_code</code></pre>
+        </div>
+
+        <div class="visual-example">
+            <p style="color:#065f46;"><strong>Seeds appear in your DAG!</strong> When you use <code>ref('country_codes')</code>, dbt adds the seed to your dependency graph. It knows to load the seed <em>before</em> building any model that depends on it. Everything stays in the right order.</p>
+        </div>
+
+        <h3>Configuring Seeds in dbt_project.yml</h3>
+
+        <div class="code-block">
+            <span class="label">dbt_project.yml</span>
+            <pre><code><span class="keyword">seeds</span>:
+  <span class="keyword">my_project</span>:
+    +<span class="keyword">schema</span>: <span class="string">seeds</span>              <span class="comment"># Load into a 'seeds' schema</span>
+    +<span class="keyword">quote_columns</span>: <span class="string">false</span>       <span class="comment"># Don't quote column names</span>
+
+    <span class="keyword">country_codes</span>:
+      +<span class="keyword">column_types</span>:
+        <span class="keyword">country_code</span>: <span class="string">varchar(2)</span>  <span class="comment"># Override auto-detected types</span>
+        <span class="keyword">country_name</span>: <span class="string">varchar(100)</span></code></pre>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: When to Use Seeds vs Sources
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>⚖️ Seeds vs Sources — When to Use Which?</h2>
+
+        <div class="eli5-box">
+            <p>Seeds are like the <strong>spice rack</strong> in your kitchen — small jars of things that rarely change. Sources are like the <strong>fridge</strong> — big, constantly restocked with fresh ingredients. You wouldn't put a whole turkey on the spice rack, and you wouldn't keep salt in the fridge. Each has its place!</p>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Criteria</th>
+                    <th>🌱 Seeds</th>
+                    <th>📡 Sources</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Size</strong></td>
+                    <td>Small (< 1,000 rows)</td>
+                    <td>Any size (millions of rows)</td>
+                </tr>
+                <tr>
+                    <td><strong>Change frequency</strong></td>
+                    <td>Rarely (monthly/quarterly)</td>
+                    <td>Frequently (hourly/daily)</td>
+                </tr>
+                <tr>
+                    <td><strong>Where it lives</strong></td>
+                    <td>CSV in your dbt repo (version-controlled)</td>
+                    <td>Already in your warehouse (loaded by ETL)</td>
+                </tr>
+                <tr>
+                    <td><strong>Who maintains it</strong></td>
+                    <td>Analytics engineer (you!)</td>
+                    <td>Data engineer / ETL pipeline</td>
+                </tr>
+                <tr>
+                    <td><strong>How to load</strong></td>
+                    <td><code>dbt seed</code></td>
+                    <td>Fivetran, Airbyte, custom ETL</td>
+                </tr>
+                <tr>
+                    <td><strong>Examples</strong></td>
+                    <td>Country codes, status mappings, department names</td>
+                    <td>Orders, customers, transactions, events</td>
+                </tr>
+                <tr>
+                    <td><strong>How to reference</strong></td>
+                    <td><code>ref('seed_name')</code></td>
+                    <td><code>source('name', 'table')</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ Good Seed Examples</h4>
+                <ul style="margin:12px 0 0 16px;line-height:2;color:var(--dbt-text-light);">
+                    <li>Country codes (250 rows)</li>
+                    <li>US state abbreviations (50 rows)</li>
+                    <li>Department name mappings (20 rows)</li>
+                    <li>Status code lookups (10 rows)</li>
+                    <li>Currency exchange rates (monthly snapshot)</li>
+                    <li>Employee-to-manager mappings (small org)</li>
+                </ul>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ Bad Seed Examples</h4>
+                <ul style="margin:12px 0 0 16px;line-height:2;color:var(--dbt-text-light);">
+                    <li>Customer list (100K+ rows)</li>
+                    <li>Transaction history (millions of rows)</li>
+                    <li>Real-time event data</li>
+                    <li>Anything that changes daily</li>
+                    <li>Data with PII (emails, SSNs)</li>
+                    <li>Large product catalogs (10K+ items)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">⚠️ The 1,000-Row Rule</p>
+            <p>If your CSV has more than ~1,000 rows, it probably shouldn't be a seed. Large seeds slow down <code>dbt seed</code> and bloat your git repository. Use a proper ETL tool to load large datasets as sources instead.</p>
+        </div>
+
+        <div class="pro-tip">
+            <p>Seeds are <strong>version-controlled</strong> — that's their superpower! When you update a country code mapping, the change shows up in a git pull request. Your team can review it, approve it, and you have a full history of every change. Try doing that with a raw database table!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Building Your Own Package
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏗️ Building Your Own Package</h2>
+
+        <div class="eli5-box">
+            <p>Once you've written macros that you use across multiple projects, it's time to <strong>package them up</strong> and share them — either within your company or with the whole dbt community. It's like writing a cookbook: you've perfected your recipes, now publish them so others can benefit!</p>
+        </div>
+
+        <h3>When to Build a Package</h3>
+
+        <div class="step-box">
+            <p style="font-weight:800;color:#1e40af;font-size:1.1em;margin-bottom:12px;">You should build a package when:</p>
+            <p>✅ You have macros used in <strong>3+ projects</strong></p>
+            <p>✅ Multiple teams copy-paste the same code</p>
+            <p>✅ Your macros are <strong>generic enough</strong> to work in any project</p>
+            <p>✅ You want to enforce company-wide standards</p>
+        </div>
+
+        <h3>Package Structure</h3>
+
+        <div class="folder-tree">
+            <span class="folder">📁 my_company_dbt_utils/</span>
+            <span class="indent"><span class="file-yml">📄 dbt_project.yml</span> ← package metadata</span>
+            <span class="indent"><span class="folder">📁 macros/</span></span>
+            <span class="indent-2"><span class="file-sql">📄 generate_schema_name.sql</span></span>
+            <span class="indent-2"><span class="file-sql">📄 cents_to_dollars.sql</span></span>
+            <span class="indent-2"><span class="file-sql">📄 clean_email.sql</span></span>
+            <span class="indent"><span class="folder">📁 tests/</span></span>
+            <span class="indent-2"><span class="file-sql">📄 test_is_valid_email.sql</span></span>
+            <span class="indent"><span class="file">📄 README.md</span></span>
+        </div>
+
+        <h3>Using a Git Package (Private)</h3>
+        <p>You don't have to publish to dbt Hub. You can install packages directly from a Git repository:</p>
+
+        <div class="code-block">
+            <span class="label">packages.yml — Installing from Git</span>
+            <pre><code><span class="keyword">packages</span>:
+  <span class="comment"># Public packages from dbt Hub</span>
+  - <span class="keyword">package</span>: <span class="string">dbt-labs/dbt_utils</span>
+    <span class="keyword">version</span>: [<span class="string">">=1.1.0"</span>, <span class="string">"<2.0.0"</span>]
+
+  <span class="comment"># Private company package from GitHub</span>
+  - <span class="keyword">git</span>: <span class="string">"https://github.com/my-company/our-dbt-utils.git"</span>
+    <span class="keyword">revision</span>: <span class="string">v1.2.0</span>    <span class="comment"># Pin to a specific tag or branch</span>
+
+  <span class="comment"># Or use a local path (for development)</span>
+  - <span class="keyword">local</span>: <span class="string">../my-local-package</span></code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Publishing to dbt Hub:</strong> If your package is useful to the community, you can publish it on <a href="https://hub.getdbt.com" target="_blank" style="color:#7c2d12;font-weight:700;">hub.getdbt.com</a>. It's free, and your package becomes installable by anyone with a simple <code>package: your-name/your-package</code> entry. Many popular packages started as internal tools that teams decided to open-source!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you can stand on giants' shoulders. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: What command installs packages listed in packages.yml?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> <code>dbt install</code>
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> <code>dbt packages install</code>
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> <code>dbt deps</code>
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> <code>dbt get</code>
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: Which is a good use case for a seed?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Loading 5 million customer records
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> A 50-row country code lookup table
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> Real-time transaction data that changes every second
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> A 500,000-row product catalog
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: How do you reference a seed in a dbt model?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> <code>{{ source('seeds', 'country_codes') }}</code>
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> <code>{{ seed('country_codes') }}</code>
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> <code>{{ ref('country_codes') }}</code>
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> <code>FROM seeds.country_codes</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 10: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Can you explain to a friend what dbt packages are and why you'd use them? Can you name 3 macros from <code>dbt_utils</code>? Do you know when to use a seed vs a source? If yes, you've nailed this lesson!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Packages</strong> — Community-built collections of macros and tests; installed via <code>packages.yml</code></li>
+                <li><strong>dbt deps</strong> — Command to download/install all packages</li>
+                <li><strong>dbt_utils</strong> — The most popular package: surrogate keys, pivots, date spines, and 50+ macros</li>
+                <li><strong>Seeds</strong> — CSV files in <code>seeds/</code> that dbt loads into your warehouse with <code>dbt seed</code></li>
+                <li><strong>ref() for seeds</strong> — Seeds are referenced with <code>ref('seed_name')</code>, just like models</li>
+                <li><strong>Seeds vs Sources</strong> — Seeds = small, stable, version-controlled; Sources = large, frequently updated</li>
+                <li><strong>1,000-row rule</strong> — If a CSV has more than ~1,000 rows, use a source instead of a seed</li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>dbt_expectations</strong> — Advanced testing package with Great Expectations-style tests</li>
+                <li><strong>audit_helper</strong> — Comparing model versions during refactoring</li>
+                <li><strong>codegen</strong> — Auto-generating YAML and SQL boilerplate</li>
+                <li><strong>Building your own package</strong> — Publishing reusable macros to Git or dbt Hub</li>
+                <li><strong>Git packages</strong> — Installing private packages from GitHub repos</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="jinja-macros.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Jinja & Macros
+        </a>
+        <a href="deployment.html" class="nav-btn-next">
+            Deployment <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

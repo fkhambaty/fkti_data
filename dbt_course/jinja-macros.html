@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinja & Macros | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 9 · INTERMEDIATE</span>
+    <h1>🧙 Jinja & Macros — SQL That Writes SQL</h1>
+    <p class="subtitle">The secret superpower that makes dbt 10x more powerful than plain SQL</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="documentation.html"><i class="fas fa-arrow-left"></i> Documentation</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="packages-seeds.html">Packages & Seeds <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: What is Jinja?
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🤔 What is Jinja?</h2>
+
+        <div class="eli5-box">
+            <p>Imagine you're writing a birthday card to <strong>100 friends</strong>. Instead of writing each card by hand — "Dear Alice, Happy Birthday!", "Dear Bob, Happy Birthday!", "Dear Charlie..." — you create a <strong>template</strong>:</p>
+            <p style="margin-top:12px;font-family:'Fira Code',monospace;background:rgba(255,255,255,0.5);padding:10px;border-radius:8px;font-size:0.95em;">"Dear <strong>{name}</strong>, Happy Birthday! You're turning <strong>{age}</strong>!"</p>
+            <p style="margin-top:12px;">Then you let a machine fill in each name and age automatically. <strong>That's Jinja</strong> — a templating language that lets you write <strong>dynamic SQL</strong>. Instead of writing the same SQL 20 times with tiny changes, you write it once and let Jinja do the repetitive work.</p>
+        </div>
+
+        <h3>Why Does dbt Use Jinja?</h3>
+        <p>Plain SQL is <strong>static</strong> — what you write is exactly what runs. But real-world data problems need <strong>dynamic</strong> behavior:</p>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ Plain SQL Problems</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Copy-paste the same logic 20 times. Change one thing? Update all 20 files. Want different behavior in dev vs prod? Maintain two separate queries.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ Jinja + SQL Solutions</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Write logic once, reuse everywhere. One change updates everything. Dev vs prod? One <code>if</code> statement handles both automatically.</p>
+            </div>
+        </div>
+
+        <h3>The Three Jinja Delimiters</h3>
+        <p>Jinja uses three special bracket styles. Think of them as three different types of instructions:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Syntax</th>
+                    <th>Name</th>
+                    <th>What It Does</th>
+                    <th>Analogy</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>{{ }}</code></td>
+                    <td><strong>Expressions</strong></td>
+                    <td>Outputs a value (prints something)</td>
+                    <td>The blank in a Mad Libs: "I ate a ___"</td>
+                </tr>
+                <tr>
+                    <td><code>{% %}</code></td>
+                    <td><strong>Statements</strong></td>
+                    <td>Logic — if/else, for loops, macros</td>
+                    <td>The instructions: "If rainy, bring umbrella"</td>
+                </tr>
+                <tr>
+                    <td><code>{# #}</code></td>
+                    <td><strong>Comments</strong></td>
+                    <td>Notes that don't appear in output</td>
+                    <td>Sticky notes to yourself: "TODO: fix this"</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>How dbt Compiles Jinja</h3>
+        <p>When you run <code>dbt run</code>, dbt takes your Jinja+SQL file and <strong>compiles</strong> it into pure SQL before sending it to your database. Your database never sees the Jinja — it only sees clean SQL.</p>
+
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;">📝</div>
+                <div class="pipeline-label">You Write<br>Jinja + SQL</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ff694a,#e5532e);color:#fff;">⚙️</div>
+                <div class="pipeline-label">dbt<br>Compiles</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;">📄</div>
+                <div class="pipeline-label">Pure SQL<br>Generated</div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">🗄️</div>
+                <div class="pipeline-label">Database<br>Executes</div>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <span class="label">What you write (Jinja + SQL)</span>
+            <pre><code><span class="keyword">SELECT</span>
+    customer_id,
+    first_name,
+    last_name
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_customers'</span>) <span class="function">}}</span>
+<span class="keyword">WHERE</span>
+    status = <span class="string">'active'</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">What dbt compiles it to (pure SQL sent to database)</span>
+            <pre><code><span class="keyword">SELECT</span>
+    customer_id,
+    first_name,
+    last_name
+<span class="keyword">FROM</span>
+    <span class="string">analytics.staging.stg_customers</span>
+<span class="keyword">WHERE</span>
+    status = <span class="string">'active'</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>You can always see the compiled SQL by running <code>dbt compile</code> or checking the <code>target/compiled/</code> folder. This is incredibly useful for debugging — if your Jinja isn't producing the SQL you expect, look at the compiled output!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: Variables & Filters
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🎯 Variables & Filters</h2>
+
+        <div class="eli5-box">
+            <p><strong>Variables</strong> are like blanks in a <strong>Mad Libs</strong> game. You leave a blank: "The ___ jumped over the ___" and someone fills in the words. In dbt, you define variables once and use them everywhere.</p>
+            <p style="margin-top:12px;"><strong>Filters</strong> are like <strong>autocorrect</strong> — they automatically clean up or transform text. "bob" becomes "BOB" with the <code>upper</code> filter. No manual work needed!</p>
+        </div>
+
+        <h3>Project Variables with <code>var()</code></h3>
+        <p>Define variables in your <code>dbt_project.yml</code> and use them across your entire project:</p>
+
+        <div class="code-block">
+            <span class="label">dbt_project.yml</span>
+            <pre><code><span class="keyword">name</span>: <span class="string">'my_project'</span>
+<span class="keyword">version</span>: <span class="string">'1.0.0'</span>
+
+<span class="keyword">vars</span>:
+  <span class="keyword">start_date</span>: <span class="string">'2023-01-01'</span>
+  <span class="keyword">currency</span>: <span class="string">'USD'</span>
+  <span class="keyword">enable_debug</span>: <span class="string">false</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders.sql — Using variables</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    amount,
+    order_date
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_orders'</span>) <span class="function">}}</span>
+<span class="keyword">WHERE</span>
+    order_date >= <span class="string">'</span><span class="function">{{</span> <span class="function">var</span>(<span class="string">'start_date'</span>) <span class="function">}}</span><span class="string">'</span>
+
+<span class="comment">{# Compiles to: WHERE order_date >= '2023-01-01' #}</span></code></pre>
+        </div>
+
+        <p>You can also override variables from the command line:</p>
+
+        <div class="code-block">
+            <span class="label">Terminal — Override a variable at runtime</span>
+            <pre><code><span class="comment"># Use a different start date without changing any files</span>
+<span class="function">$</span> dbt run --vars <span class="string">'{"start_date": "2024-06-01"}'</span>
+
+<span class="comment"># Now the query uses 2024-06-01 instead of 2023-01-01</span></code></pre>
+        </div>
+
+        <h3>Jinja Filters</h3>
+        <p>Filters transform values using the pipe <code>|</code> symbol. They're chained after a value to modify it:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Filter</th>
+                    <th>What It Does</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>upper</code></td><td>UPPERCASE</td><td><code>{{ "hello" | upper }}</code></td><td><code>HELLO</code></td></tr>
+                <tr><td><code>lower</code></td><td>lowercase</td><td><code>{{ "HELLO" | lower }}</code></td><td><code>hello</code></td></tr>
+                <tr><td><code>trim</code></td><td>Remove whitespace</td><td><code>{{ "  hi  " | trim }}</code></td><td><code>hi</code></td></tr>
+                <tr><td><code>replace</code></td><td>Swap text</td><td><code>{{ "cat" | replace("c","b") }}</code></td><td><code>bat</code></td></tr>
+                <tr><td><code>default</code></td><td>Fallback value</td><td><code>{{ undefined_var | default("N/A") }}</code></td><td><code>N/A</code></td></tr>
+                <tr><td><code>list | join</code></td><td>Combine list items</td><td><code>{{ ["a","b","c"] | join(", ") }}</code></td><td><code>a, b, c</code></td></tr>
+            </tbody>
+        </table>
+
+        <div class="real-life">
+            <p><strong>Think of filters like a factory assembly line.</strong> A raw material (your value) goes in one end, passes through machines (filters) that shape, polish, and transform it, and a finished product comes out the other end. You can chain multiple filters: <code>{{ " hello " | trim | upper }}</code> → <code>HELLO</code></p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: if/else Logic
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔀 if/else Logic</h2>
+
+        <div class="eli5-box">
+            <p>It's like a recipe that says: <strong>"If you're cooking for 2 people, use 1 cup of rice. If you're cooking for 10 people, use 5 cups."</strong> The recipe adapts based on the situation. Jinja's <code>if/else</code> lets your SQL adapt based on the environment, variables, or any condition you want.</p>
+        </div>
+
+        <h3>The Basic Pattern</h3>
+
+        <div class="code-block">
+            <span class="label">Jinja if/else syntax</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">if</span> condition <span class="function">%}</span>
+    <span class="comment">-- SQL when condition is true</span>
+<span class="function">{%</span> <span class="keyword">else</span> <span class="function">%}</span>
+    <span class="comment">-- SQL when condition is false</span>
+<span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span></code></pre>
+        </div>
+
+        <h3>Use Case: Dev vs Prod</h3>
+        <p>This is the <strong>#1 most common use</strong> of Jinja if/else in dbt. In development, you don't want to process millions of rows — it's slow and expensive. So you limit the data:</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    amount,
+    order_date
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_orders'</span>) <span class="function">}}</span>
+
+<span class="function">{%</span> <span class="keyword">if</span> target.name == <span class="string">'dev'</span> <span class="function">%}</span>
+<span class="keyword">WHERE</span> order_date >= <span class="function">DATEADD</span>(<span class="string">'day'</span>, <span class="number">-30</span>, <span class="function">CURRENT_DATE</span>)
+<span class="comment">{# In dev: only last 30 days — fast! #}</span>
+<span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+
+<span class="comment">{# In prod: no WHERE clause — process ALL data #}</span></code></pre>
+        </div>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>🛠️ In Dev (target.name = 'dev')</h4>
+                <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:#fef9c3;padding:10px;border-radius:8px;margin-top:10px;">SELECT ... FROM stg_orders<br><strong>WHERE order_date >= DATEADD('day', -30, CURRENT_DATE)</strong></p>
+                <p style="font-size:0.85em;margin-top:8px;color:var(--dbt-text-light);">Only 30 days of data → runs in seconds</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>🚀 In Prod (target.name = 'prod')</h4>
+                <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:#f0fdf4;padding:10px;border-radius:8px;margin-top:10px;">SELECT ... FROM stg_orders</p>
+                <p style="font-size:0.85em;margin-top:8px;color:var(--dbt-text-light);">All data → complete and accurate</p>
+            </div>
+        </div>
+
+        <h3>Use Case: Conditional Columns</h3>
+
+        <div class="code-block">
+            <span class="label">models/marts/dim_customers.sql</span>
+            <pre><code><span class="keyword">SELECT</span>
+    customer_id,
+    first_name,
+    last_name,
+    email
+
+    <span class="function">{%</span> <span class="keyword">if</span> <span class="function">var</span>(<span class="string">'include_pii'</span>, <span class="string">false</span>) <span class="function">%}</span>
+    , phone_number
+    , home_address
+    <span class="comment">{# Only include sensitive data if explicitly enabled #}</span>
+    <span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_customers'</span>) <span class="function">}}</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The <code>target</code> object gives you information about the current environment. <code>target.name</code> is the profile target (dev, prod, staging). <code>target.schema</code> is the database schema. <code>target.database</code> is the database name. Use these to make your models environment-aware!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: for Loops
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔄 for Loops</h2>
+
+        <div class="eli5-box">
+            <p>Instead of writing <code>SUM(jan_sales)</code>, <code>SUM(feb_sales)</code>, <code>SUM(mar_sales)</code>, ... <code>SUM(dec_sales)</code> by hand — <strong>all 12 lines</strong> — you write a loop that does it for all 12 months automatically. It's like telling a robot: "Stamp every envelope in this pile" instead of stamping each one yourself.</p>
+        </div>
+
+        <h3>The Basic Pattern</h3>
+
+        <div class="code-block">
+            <span class="label">Jinja for loop syntax</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">for</span> item <span class="keyword">in</span> list <span class="function">%}</span>
+    <span class="comment">-- SQL that repeats for each item</span>
+    <span class="function">{{</span> item <span class="function">}}</span>
+<span class="function">{%</span> <span class="keyword">endfor</span> <span class="function">%}</span></code></pre>
+        </div>
+
+        <h3>Example: Generating Monthly Columns</h3>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_monthly_revenue.sql — What you write</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">set</span> months = [
+    <span class="string">'jan'</span>, <span class="string">'feb'</span>, <span class="string">'mar'</span>, <span class="string">'apr'</span>, <span class="string">'may'</span>, <span class="string">'jun'</span>,
+    <span class="string">'jul'</span>, <span class="string">'aug'</span>, <span class="string">'sep'</span>, <span class="string">'oct'</span>, <span class="string">'nov'</span>, <span class="string">'dec'</span>
+] <span class="function">%}</span>
+
+<span class="keyword">SELECT</span>
+    customer_id,
+    <span class="function">{%</span> <span class="keyword">for</span> month <span class="keyword">in</span> months <span class="function">%}</span>
+    <span class="function">SUM</span>(<span class="function">{{</span> month <span class="function">}}</span>_sales) <span class="keyword">AS</span> total_<span class="function">{{</span> month <span class="function">}}</span>_sales<span class="function">{%</span> <span class="keyword">if</span> <span class="keyword">not</span> loop.last <span class="function">%}</span>,<span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+    <span class="function">{%</span> <span class="keyword">endfor</span> <span class="function">%}</span>
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_sales'</span>) <span class="function">}}</span>
+<span class="keyword">GROUP BY</span> customer_id</code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Compiled SQL — What the database sees</span>
+            <pre><code><span class="keyword">SELECT</span>
+    customer_id,
+    <span class="function">SUM</span>(jan_sales) <span class="keyword">AS</span> total_jan_sales,
+    <span class="function">SUM</span>(feb_sales) <span class="keyword">AS</span> total_feb_sales,
+    <span class="function">SUM</span>(mar_sales) <span class="keyword">AS</span> total_mar_sales,
+    <span class="function">SUM</span>(apr_sales) <span class="keyword">AS</span> total_apr_sales,
+    <span class="function">SUM</span>(may_sales) <span class="keyword">AS</span> total_may_sales,
+    <span class="function">SUM</span>(jun_sales) <span class="keyword">AS</span> total_jun_sales,
+    <span class="function">SUM</span>(jul_sales) <span class="keyword">AS</span> total_jul_sales,
+    <span class="function">SUM</span>(aug_sales) <span class="keyword">AS</span> total_aug_sales,
+    <span class="function">SUM</span>(sep_sales) <span class="keyword">AS</span> total_sep_sales,
+    <span class="function">SUM</span>(oct_sales) <span class="keyword">AS</span> total_oct_sales,
+    <span class="function">SUM</span>(nov_sales) <span class="keyword">AS</span> total_nov_sales,
+    <span class="function">SUM</span>(dec_sales) <span class="keyword">AS</span> total_dec_sales
+<span class="keyword">FROM</span>
+    analytics.staging.stg_sales
+<span class="keyword">GROUP BY</span> customer_id</code></pre>
+        </div>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🔑 The <code>loop</code> Object</p>
+            <p style="color:#4c1d95;">Inside a for loop, Jinja gives you a special <code>loop</code> variable:</p>
+            <p style="color:#4c1d95;margin-top:8px;"><code>loop.index</code> — Current iteration (1, 2, 3...)</p>
+            <p style="color:#4c1d95;"><code>loop.first</code> — True on the first iteration</p>
+            <p style="color:#4c1d95;"><code>loop.last</code> — True on the last iteration (perfect for trailing commas!)</p>
+            <p style="color:#4c1d95;"><code>loop.length</code> — Total number of items</p>
+        </div>
+
+        <h3>Example: UNION ALL Multiple Sources</h3>
+
+        <div class="code-block">
+            <span class="label">models/staging/stg_all_payments.sql</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">set</span> payment_methods = [<span class="string">'credit_card'</span>, <span class="string">'paypal'</span>, <span class="string">'bank_transfer'</span>, <span class="string">'apple_pay'</span>] <span class="function">%}</span>
+
+<span class="function">{%</span> <span class="keyword">for</span> method <span class="keyword">in</span> payment_methods <span class="function">%}</span>
+
+<span class="keyword">SELECT</span>
+    order_id,
+    amount,
+    <span class="string">'</span><span class="function">{{</span> method <span class="function">}}</span><span class="string">'</span> <span class="keyword">AS</span> payment_method
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_'</span> ~ method ~ <span class="string">'_payments'</span>) <span class="function">}}</span>
+
+<span class="function">{%</span> <span class="keyword">if</span> <span class="keyword">not</span> loop.last <span class="function">%}</span> <span class="keyword">UNION ALL</span> <span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+
+<span class="function">{%</span> <span class="keyword">endfor</span> <span class="function">%}</span></code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Adding a 5th payment method?</strong> Without Jinja, you'd copy-paste a whole SELECT block and manually add UNION ALL. With Jinja, you just add <code>'venmo'</code> to the list. One word change instead of 6 lines. Now imagine doing this with 20 payment methods — Jinja saves you from writing 120+ lines of repetitive SQL!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: Writing Your Own Macros
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🛠️ Writing Your Own Macros</h2>
+
+        <div class="eli5-box">
+            <p>A macro is like a <strong>cooking shortcut</strong>. Instead of writing "preheat oven to 350°F, grease the pan, line with parchment paper" every time you bake, you just say <strong>"prep_oven()"</strong> and it does all three steps automatically.</p>
+            <p style="margin-top:12px;">In dbt, a macro is a <strong>reusable Jinja function</strong>. You define it once, and call it from any model. It's the ultimate DRY (Don't Repeat Yourself) tool.</p>
+        </div>
+
+        <h3>Where Do Macros Live?</h3>
+
+        <div class="folder-tree">
+            <span class="folder">📁 my_dbt_project/</span>
+            <span class="indent"><span class="folder">📁 models/</span></span>
+            <span class="indent-2"><span class="file-sql">📄 fct_orders.sql</span></span>
+            <span class="indent-2"><span class="file-sql">📄 dim_customers.sql</span></span>
+            <span class="indent"><span class="folder">📁 macros/</span> ← <span style="color:#86efac;font-weight:700;">Your macros go here!</span></span>
+            <span class="indent-2"><span class="file-sql">📄 cents_to_dollars.sql</span></span>
+            <span class="indent-2"><span class="file-sql">📄 generate_schema_name.sql</span></span>
+            <span class="indent-2"><span class="file-sql">📄 limit_data_in_dev.sql</span></span>
+            <span class="indent"><span class="file-yml">📄 dbt_project.yml</span></span>
+        </div>
+
+        <h3>Example 1: cents_to_dollars</h3>
+        <p>Many payment systems store amounts in <strong>cents</strong> (e.g., $49.99 = 4999). You constantly need to convert:</p>
+
+        <div class="code-block">
+            <span class="label">macros/cents_to_dollars.sql — Define the macro</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">macro</span> cents_to_dollars(column_name, decimal_places=2) <span class="function">%}</span>
+    <span class="function">ROUND</span>( <span class="function">{{</span> column_name <span class="function">}}</span> / <span class="number">100.0</span>, <span class="function">{{</span> decimal_places <span class="function">}}</span> )
+<span class="function">{%</span> <span class="keyword">endmacro</span> <span class="function">%}</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders.sql — Call the macro</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    <span class="function">{{</span> cents_to_dollars(<span class="string">'amount_cents'</span>) <span class="function">}}</span> <span class="keyword">AS</span> amount_usd,
+    <span class="function">{{</span> cents_to_dollars(<span class="string">'tax_cents'</span>) <span class="function">}}</span> <span class="keyword">AS</span> tax_usd,
+    <span class="function">{{</span> cents_to_dollars(<span class="string">'shipping_cents'</span>) <span class="function">}}</span> <span class="keyword">AS</span> shipping_usd
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_orders'</span>) <span class="function">}}</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Compiled SQL — What the database sees</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    <span class="function">ROUND</span>( amount_cents / <span class="number">100.0</span>, <span class="number">2</span> ) <span class="keyword">AS</span> amount_usd,
+    <span class="function">ROUND</span>( tax_cents / <span class="number">100.0</span>, <span class="number">2</span> ) <span class="keyword">AS</span> tax_usd,
+    <span class="function">ROUND</span>( shipping_cents / <span class="number">100.0</span>, <span class="number">2</span> ) <span class="keyword">AS</span> shipping_usd
+<span class="keyword">FROM</span>
+    analytics.staging.stg_orders</code></pre>
+        </div>
+
+        <h3>Example 2: limit_data_in_dev</h3>
+        <p>Remember the if/else for dev vs prod? Let's turn that into a reusable macro:</p>
+
+        <div class="code-block">
+            <span class="label">macros/limit_data_in_dev.sql</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">macro</span> limit_data_in_dev(column_name, dev_days=3) <span class="function">%}</span>
+
+<span class="function">{%</span> <span class="keyword">if</span> target.name == <span class="string">'dev'</span> <span class="function">%}</span>
+<span class="keyword">WHERE</span> <span class="function">{{</span> column_name <span class="function">}}</span> >= <span class="function">DATEADD</span>(<span class="string">'day'</span>, -<span class="function">{{</span> dev_days <span class="function">}}</span>, <span class="function">CURRENT_DATE</span>)
+<span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+
+<span class="function">{%</span> <span class="keyword">endmacro</span> <span class="function">%}</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_orders.sql — Now every model can use it!</span>
+            <pre><code><span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    amount,
+    order_date
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_orders'</span>) <span class="function">}}</span>
+
+<span class="function">{{</span> limit_data_in_dev(<span class="string">'order_date'</span>) <span class="function">}}</span></code></pre>
+        </div>
+
+        <div class="visual-example">
+            <p style="color:#065f46;"><strong>Without macros vs. with macros:</strong></p>
+            <p style="color:#065f46;margin-top:8px;">❌ Copy-paste the same WHERE clause into 30 models → change the logic? Update 30 files</p>
+            <p style="color:#065f46;">✅ One macro, called in 30 models → change the logic? Update 1 file</p>
+            <p style="color:#065f46;margin-top:8px;">That's the power of DRY (Don't Repeat Yourself)!</p>
+        </div>
+
+        <h3>Example 3: generate_schema_name (Override)</h3>
+        <p>dbt has a built-in macro called <code>generate_schema_name</code> that decides which schema a model is built in. You can <strong>override</strong> it:</p>
+
+        <div class="code-block">
+            <span class="label">macros/generate_schema_name.sql</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">macro</span> generate_schema_name(custom_schema_name, node) <span class="function">%}</span>
+
+    <span class="function">{%</span> <span class="keyword">if</span> custom_schema_name <span class="keyword">is</span> none <span class="function">%}</span>
+        <span class="function">{{</span> target.schema <span class="function">}}</span>
+    <span class="function">{%</span> <span class="keyword">elif</span> target.name == <span class="string">'prod'</span> <span class="function">%}</span>
+        <span class="function">{{</span> custom_schema_name | trim <span class="function">}}</span>
+    <span class="function">{%</span> <span class="keyword">else</span> <span class="function">%}</span>
+        <span class="function">{{</span> target.schema <span class="function">}}</span>_<span class="function">{{</span> custom_schema_name | trim <span class="function">}}</span>
+    <span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+
+<span class="function">{%</span> <span class="keyword">endmacro</span> <span class="function">%}</span>
+
+<span class="comment">{# In prod: models go to the exact schema name (e.g., "marts") #}</span>
+<span class="comment">{# In dev: models go to "dev_john_marts" — isolated per developer #}</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Start small! Your first macro should solve a <strong>real pain point</strong> — something you've copy-pasted more than 3 times. The cents_to_dollars and limit_data_in_dev macros are perfect first macros because they're simple, useful, and easy to understand.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Built-in dbt Macros
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📦 Built-in dbt Macros</h2>
+
+        <div class="eli5-box">
+            <p>dbt comes with a <strong>toolbox full of pre-built macros</strong> — like a kitchen that already has a blender, toaster, and microwave. You don't have to build these appliances yourself; they're ready to use on day one!</p>
+        </div>
+
+        <p>You've already been using some of these without realizing it. <code>ref()</code> and <code>source()</code> are macros!</p>
+
+        <h3>The Most Useful Built-in Macros</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Macro</th>
+                    <th>What It Does</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ref()</code></td>
+                    <td>References another model (builds the DAG)</td>
+                    <td><code>{{ ref('stg_orders') }}</code></td>
+                </tr>
+                <tr>
+                    <td><code>source()</code></td>
+                    <td>References a raw source table</td>
+                    <td><code>{{ source('raw_shop', 'orders') }}</code></td>
+                </tr>
+                <tr>
+                    <td><code>config()</code></td>
+                    <td>Sets model configuration (materialization, etc.)</td>
+                    <td><code>{{ config(materialized='table') }}</code></td>
+                </tr>
+                <tr>
+                    <td><code>var()</code></td>
+                    <td>Reads a project variable</td>
+                    <td><code>{{ var('start_date') }}</code></td>
+                </tr>
+                <tr>
+                    <td><code>run_query()</code></td>
+                    <td>Executes SQL and returns results at compile time</td>
+                    <td><code>{% set results = run_query(sql) %}</code></td>
+                </tr>
+                <tr>
+                    <td><code>log()</code></td>
+                    <td>Prints a message to the dbt log</td>
+                    <td><code>{{ log("Building model...", info=True) }}</code></td>
+                </tr>
+                <tr>
+                    <td><code>exceptions.raise_compiler_error()</code></td>
+                    <td>Stops compilation with a custom error</td>
+                    <td><code>{{ exceptions.raise_compiler_error("Bad config!") }}</code></td>
+                </tr>
+                <tr>
+                    <td><code>adapter.dispatch()</code></td>
+                    <td>Calls different SQL per database (Snowflake vs Postgres)</td>
+                    <td><code>{{ adapter.dispatch('my_macro')() }}</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>run_query() — SQL at Compile Time</h3>
+        <p>This is a powerful macro that lets you <strong>query the database while dbt is compiling</strong> your models. Use it to dynamically generate SQL based on actual data:</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/fct_pivoted_payments.sql</span>
+            <pre><code><span class="comment">{# Get all distinct payment methods from the database #}</span>
+<span class="function">{%</span> <span class="keyword">set</span> payment_query <span class="function">%}</span>
+    <span class="keyword">SELECT DISTINCT</span> payment_method
+    <span class="keyword">FROM</span> <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_payments'</span>) <span class="function">}}</span>
+    <span class="keyword">ORDER BY</span> <span class="number">1</span>
+<span class="function">{%</span> <span class="keyword">endset</span> <span class="function">%}</span>
+
+<span class="function">{%</span> <span class="keyword">set</span> results = <span class="function">run_query</span>(payment_query) <span class="function">%}</span>
+<span class="function">{%</span> <span class="keyword">set</span> methods = results.columns[<span class="number">0</span>].values() <span class="function">%}</span>
+
+<span class="keyword">SELECT</span>
+    order_id,
+    <span class="function">{%</span> <span class="keyword">for</span> method <span class="keyword">in</span> methods <span class="function">%}</span>
+    <span class="function">SUM</span>(<span class="keyword">CASE WHEN</span> payment_method = <span class="string">'</span><span class="function">{{</span> method <span class="function">}}</span><span class="string">'</span> <span class="keyword">THEN</span> amount <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>) <span class="keyword">AS</span> <span class="function">{{</span> method <span class="function">}}</span>_amount<span class="function">{%</span> <span class="keyword">if</span> <span class="keyword">not</span> loop.last <span class="function">%}</span>,<span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+    <span class="function">{%</span> <span class="keyword">endfor</span> <span class="function">%}</span>
+<span class="keyword">FROM</span>
+    <span class="function">{{</span> <span class="function">ref</span>(<span class="string">'stg_payments'</span>) <span class="function">}}</span>
+<span class="keyword">GROUP BY</span> order_id</code></pre>
+        </div>
+
+        <div class="real-life">
+            <p><strong>Why is this amazing?</strong> If someone adds a new payment method (say "crypto"), you don't need to change any code. The next time dbt runs, it queries the database, finds "crypto" in the list, and automatically generates a <code>crypto_amount</code> column. The SQL writes itself!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: Real-World Examples
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌍 Jinja + SQL: Real-World Examples</h2>
+
+        <div class="eli5-box">
+            <p>Let's see how Jinja transforms real, messy, copy-paste-heavy SQL into clean, maintainable code. These are patterns you'll use <strong>every single week</strong> as a dbt developer.</p>
+        </div>
+
+        <h3>Pattern 1: DRY Column Transformations</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ Before (Repetitive)</h4>
+                <p style="font-family:'Fira Code',monospace;font-size:0.8em;background:#fef2f2;padding:12px;border-radius:8px;margin-top:10px;line-height:1.8;">
+                    SELECT<br>
+                    &nbsp;&nbsp;LOWER(TRIM(first_name)) AS first_name,<br>
+                    &nbsp;&nbsp;LOWER(TRIM(last_name)) AS last_name,<br>
+                    &nbsp;&nbsp;LOWER(TRIM(email)) AS email,<br>
+                    &nbsp;&nbsp;LOWER(TRIM(city)) AS city,<br>
+                    &nbsp;&nbsp;LOWER(TRIM(state)) AS state<br>
+                    FROM raw_customers
+                </p>
+                <p style="font-size:0.85em;margin-top:8px;color:#dc2626;font-weight:600;">5 lines of nearly identical code</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ After (DRY with Jinja)</h4>
+                <p style="font-family:'Fira Code',monospace;font-size:0.8em;background:#f0fdf4;padding:12px;border-radius:8px;margin-top:10px;line-height:1.8;">
+                    {% set cols = ['first_name',<br>
+                    &nbsp;&nbsp;'last_name', 'email',<br>
+                    &nbsp;&nbsp;'city', 'state'] %}<br><br>
+                    SELECT<br>
+                    &nbsp;&nbsp;{% for col in cols %}<br>
+                    &nbsp;&nbsp;LOWER(TRIM({{ col }})) AS {{ col }}<br>
+                    &nbsp;&nbsp;{% if not loop.last %},{% endif %}<br>
+                    &nbsp;&nbsp;{% endfor %}<br>
+                    FROM raw_customers
+                </p>
+                <p style="font-size:0.85em;margin-top:8px;color:#16a34a;font-weight:600;">Add a column? Just add to the list!</p>
+            </div>
+        </div>
+
+        <h3>Pattern 2: Environment-Aware Queries</h3>
+
+        <div class="code-block">
+            <span class="label">macros/get_database.sql</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">macro</span> get_database() <span class="function">%}</span>
+    <span class="function">{%</span> <span class="keyword">if</span> target.name == <span class="string">'prod'</span> <span class="function">%}</span>
+        <span class="string">PRODUCTION_DB</span>
+    <span class="function">{%</span> <span class="keyword">elif</span> target.name == <span class="string">'staging'</span> <span class="function">%}</span>
+        <span class="string">STAGING_DB</span>
+    <span class="function">{%</span> <span class="keyword">else</span> <span class="function">%}</span>
+        <span class="string">DEV_DB</span>
+    <span class="function">{%</span> <span class="keyword">endif</span> <span class="function">%}</span>
+<span class="function">{%</span> <span class="keyword">endmacro</span> <span class="function">%}</span></code></pre>
+        </div>
+
+        <h3>Pattern 3: Grant Permissions Macro</h3>
+
+        <div class="code-block">
+            <span class="label">macros/grant_select.sql</span>
+            <pre><code><span class="function">{%</span> <span class="keyword">macro</span> grant_select(schema, role) <span class="function">%}</span>
+
+    <span class="function">{%</span> <span class="keyword">set</span> grant_sql <span class="function">%}</span>
+        <span class="keyword">GRANT SELECT ON ALL TABLES IN SCHEMA</span> <span class="function">{{</span> schema <span class="function">}}</span>
+        <span class="keyword">TO ROLE</span> <span class="function">{{</span> role <span class="function">}}</span>;
+    <span class="function">{%</span> <span class="keyword">endset</span> <span class="function">%}</span>
+
+    <span class="function">{{</span> <span class="function">log</span>(<span class="string">"Granting SELECT to "</span> ~ role, info=True) <span class="function">}}</span>
+    <span class="function">{%</span> <span class="keyword">do</span> <span class="function">run_query</span>(grant_sql) <span class="function">%}</span>
+
+<span class="function">{%</span> <span class="keyword">endmacro</span> <span class="function">%}</span></code></pre>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number">80%</div>
+                <div class="stat-label">Less Copy-Paste</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">Macros eliminate most repetitive SQL</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Place to Update</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">Change logic once, it updates everywhere</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Reusability</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">Use the same macro in every model</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Common Jinja Mistakes
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>⚠️ Common Jinja Mistakes</h2>
+
+        <div class="eli5-box">
+            <p>Even experienced dbt developers trip over these. Learning the common pitfalls now will save you <strong>hours of debugging</strong> later. Think of this as the "don't touch the hot stove" section — learn from others' burns!</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:16px;">🐛 Mistake #1: Forgetting {% endif %} or {% endfor %}</p>
+            <p>Every <code>{% if %}</code> needs an <code>{% endif %}</code>. Every <code>{% for %}</code> needs an <code>{% endfor %}</code>. Forget one and dbt gives you a cryptic error like <em>"unexpected end of template"</em>.</p>
+            <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:rgba(255,255,255,0.5);padding:10px;border-radius:8px;margin-top:10px;">
+                ❌ {% if target.name == 'dev' %}<br>
+                &nbsp;&nbsp;&nbsp;WHERE date > '2024-01-01'<br>
+                <span style="color:#dc2626;font-weight:700;">&nbsp;&nbsp;&nbsp;{# Missing {% endif %}! #}</span>
+            </p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:16px;">🐛 Mistake #2: Whitespace Issues</p>
+            <p>Jinja blocks can add unwanted blank lines to your compiled SQL. Use the <strong>dash syntax</strong> <code>{%- -%}</code> to trim whitespace:</p>
+            <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:rgba(255,255,255,0.5);padding:10px;border-radius:8px;margin-top:10px;">
+                <span style="color:#dc2626;">{% for col in columns %}</span> ← Adds blank lines<br>
+                <span style="color:#16a34a;">{%- for col in columns -%}</span> ← Clean output, no extra whitespace
+            </p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:16px;">🐛 Mistake #3: Trailing Commas in Loops</p>
+            <p>When generating comma-separated lists, the last item shouldn't have a trailing comma. Always use <code>loop.last</code>:</p>
+            <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:rgba(255,255,255,0.5);padding:10px;border-radius:8px;margin-top:10px;">
+                <span style="color:#dc2626;">❌ {{ col }},</span> ← Last item gets a trailing comma → SQL error!<br>
+                <span style="color:#16a34a;">✅ {{ col }}{% if not loop.last %},{% endif %}</span> ← No trailing comma
+            </p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:16px;">🐛 Mistake #4: Using Jinja in .yml Where It's Not Supported</p>
+            <p>Jinja works in <code>.sql</code> files and <strong>some</strong> parts of <code>.yml</code> files (like descriptions and test arguments). But it does <strong>not</strong> work in all YAML fields. If your Jinja isn't rendering, check whether that YAML field supports it.</p>
+            <p style="font-family:'Fira Code',monospace;font-size:0.85em;background:rgba(255,255,255,0.5);padding:10px;border-radius:8px;margin-top:10px;">
+                <span style="color:#16a34a;">✅ description: "{{ doc('my_doc') }}"</span> ← Works!<br>
+                <span style="color:#16a34a;">✅ to: ref('stg_customers')</span> ← Works in test args!<br>
+                <span style="color:#dc2626;">❌ name: "{{ var('model_name') }}"</span> ← Does NOT work
+            </p>
+        </div>
+
+        <div class="pro-tip">
+            <p><strong>Debugging tip:</strong> When your Jinja isn't working, run <code>dbt compile</code> and check the output in <code>target/compiled/</code>. This shows you the exact SQL that dbt generated. If the Jinja didn't render, you'll see the raw <code>{{ }}</code> tags still there — that's your clue!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you've unlocked the Jinja superpower. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: What does <code>{{ }}</code> do in Jinja?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Defines a for loop
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> Outputs (prints) a value into the compiled SQL
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> Creates a comment that won't appear in the output
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Defines a macro function
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: What is a dbt macro?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> A type of database table that stores temporary data
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> A YAML configuration file for model settings
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> A reusable Jinja function defined in the macros/ folder
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> A built-in SQL function provided by your database
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: How do you avoid a trailing comma in a Jinja for loop?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Use <code>{% break %}</code> on the last iteration
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> dbt automatically removes trailing commas
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Use <code>{% if not loop.last %},{% endif %}</code> to conditionally add the comma
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Put the comma before the column name instead of after
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 10: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Can you explain to a colleague what Jinja is and why dbt uses it? Can you write a simple macro and call it from a model? Can you use a for loop to generate dynamic columns? If yes — you've unlocked the Jinja superpower!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Jinja basics</strong> — <code>{{ }}</code> for expressions, <code>{% %}</code> for logic, <code>{# #}</code> for comments</li>
+                <li><strong>Variables</strong> — <code>var('name')</code> reads project variables from dbt_project.yml</li>
+                <li><strong>if/else</strong> — Conditional SQL, especially for dev vs prod behavior</li>
+                <li><strong>for loops</strong> — Generate repetitive SQL dynamically (columns, UNION ALL, etc.)</li>
+                <li><strong>Macros</strong> — Reusable Jinja functions in the <code>macros/</code> folder</li>
+                <li><strong>Built-in macros</strong> — <code>ref()</code>, <code>source()</code>, <code>config()</code>, <code>var()</code></li>
+                <li><strong>dbt compile</strong> — See the compiled SQL to debug Jinja issues</li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Jinja filters</strong> — <code>| upper</code>, <code>| lower</code>, <code>| trim</code>, <code>| replace</code>, <code>| default</code></li>
+                <li><strong>run_query()</strong> — Execute SQL at compile time for dynamic model generation</li>
+                <li><strong>adapter.dispatch()</strong> — Write database-agnostic macros</li>
+                <li><strong>generate_schema_name</strong> — Override dbt's default schema naming</li>
+                <li><strong>Whitespace control</strong> — <code>{%- -%}</code> for clean compiled output</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="documentation.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Documentation & Lineage
+        </a>
+        <a href="packages-seeds.html" class="nav-btn-next">
+            Packages & Seeds <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

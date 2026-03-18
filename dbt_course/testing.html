@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing & Data Quality | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 7 · CORE</span>
+    <h1>🧪 Testing — Catch Bugs Before Your Boss Does</h1>
+    <p class="subtitle">dbt tests are your data's immune system. Let's build one.</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="sources-refs.html"><i class="fas fa-arrow-left"></i> Sources & Refs</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="documentation.html">Documentation <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: Why Test Data?
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🤔 Why Test Data?</h2>
+
+        <div class="eli5-box">
+            <p>Imagine you're a chef serving 1,000 customers tonight. Would you serve food without tasting it first? <strong>Absolutely not!</strong> One bad dish and your restaurant gets a 1-star review.</p>
+            <p style="margin-top:12px;">Data tests are like <strong>taste-testing every dish</strong> before it goes out to the dining room. Without tests, bad data reaches dashboards, and people make wrong decisions — like ordering 10,000 umbrellas because a broken query said it was raining everywhere.</p>
+        </div>
+
+        <h3>Real-World Horror Stories</h3>
+        <p>Think bad data can't hurt? Think again:</p>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">💸 The $10 Million NULL</p>
+            <p>A company's <code>customer_id</code> column had NULL values. Their revenue query joined orders to customers, and every NULL matched every other NULL — <strong>duplicating revenue by 3x</strong>. The board approved a $10M expansion based on fake numbers. A simple <code>not_null</code> test would have caught it in seconds.</p>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">📊 The Dashboard That Lied</p>
+            <p>A marketing team ran a campaign based on a dashboard showing 50,000 new users. Turns out, a broken ETL pipeline was inserting duplicate rows. The real number was 12,000. They'd already spent $200K on ads targeting "growth" that didn't exist.</p>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number">60%</div>
+                <div class="stat-label">of data issues are caught by <strong>users</strong>, not engineers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">$12.9M</div>
+                <div class="stat-label">average annual cost of poor data quality per company</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3.1x</div>
+                <div class="stat-label">more expensive to fix data bugs found in production vs development</div>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>The goal of testing isn't perfection — it's <strong>catching problems before your stakeholders do</strong>. A test that runs automatically every morning is worth more than a human checking dashboards manually. Your boss should never be the one to find the bug!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: Schema Tests (Built-in)
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🛡️ Schema Tests (Built-in)</h2>
+
+        <div class="eli5-box">
+            <p>dbt comes with <strong>4 built-in tests</strong> right out of the box — no installation needed. Think of them as the <strong>4 basic health checks</strong> every doctor does: temperature, blood pressure, heart rate, and breathing. They catch the most common problems.</p>
+        </div>
+
+        <p>You define these tests in a YAML file (usually <code>schema.yml</code>) next to your models. Let's meet each one:</p>
+
+        <h3>1. <code>unique</code> — No Duplicates Allowed</h3>
+
+        <div class="real-life">
+            <p><strong>No two customers should have the same ID</strong>, just like no two people should have the same passport number. If two people show up at the airport with passport #12345, something is very wrong!</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">What unique checks</span>
+            <pre><code><span class="comment">-- dbt runs something like this behind the scenes:</span>
+
+<span class="keyword">SELECT</span> customer_id
+<span class="keyword">FROM</span> your_model
+<span class="keyword">GROUP BY</span> customer_id
+<span class="keyword">HAVING</span> <span class="function">COUNT</span>(*) > <span class="number">1</span>
+
+<span class="comment">-- If this returns ANY rows → TEST FAILS (duplicates found!)</span>
+<span class="comment">-- If this returns 0 rows  → TEST PASSES ✅</span></code></pre>
+        </div>
+
+        <h3>2. <code>not_null</code> — Every Row Must Have a Value</h3>
+
+        <div class="real-life">
+            <p><strong>Every order must have a customer.</strong> An order with no customer is like a letter with no address — it's going nowhere, and nobody knows who sent it. NULL values in critical columns cause joins to break and calculations to silently return wrong answers.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">What not_null checks</span>
+            <pre><code><span class="comment">-- dbt runs something like this behind the scenes:</span>
+
+<span class="keyword">SELECT</span> *
+<span class="keyword">FROM</span> your_model
+<span class="keyword">WHERE</span> customer_id <span class="keyword">IS NULL</span>
+
+<span class="comment">-- If this returns ANY rows → TEST FAILS (nulls found!)</span>
+<span class="comment">-- If this returns 0 rows  → TEST PASSES ✅</span></code></pre>
+        </div>
+
+        <h3>3. <code>accepted_values</code> — Only These Values Are Allowed</h3>
+
+        <div class="real-life">
+            <p><strong>Status can only be 'active', 'inactive', or 'suspended'.</strong> Anything else — like 'actve' (typo!) or 'deleted' (not a valid status) — is a data quality issue. It's like a traffic light: only red, yellow, or green. If it turns purple, something is broken.</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">What accepted_values checks</span>
+            <pre><code><span class="comment">-- dbt runs something like this behind the scenes:</span>
+
+<span class="keyword">SELECT</span> status
+<span class="keyword">FROM</span> your_model
+<span class="keyword">WHERE</span> status <span class="keyword">NOT IN</span> (<span class="string">'active'</span>, <span class="string">'inactive'</span>, <span class="string">'suspended'</span>)
+
+<span class="comment">-- If this returns ANY rows → TEST FAILS (unexpected values!)</span>
+<span class="comment">-- If this returns 0 rows  → TEST PASSES ✅</span></code></pre>
+        </div>
+
+        <h3>4. <code>relationships</code> — Foreign Keys Must Exist</h3>
+
+        <div class="real-life">
+            <p><strong>Every order's customer_id must exist in the customers table.</strong> It's like checking that every student in a classroom is actually enrolled in the school. If you find a kid who isn't in the system, something went wrong during registration!</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">What relationships checks</span>
+            <pre><code><span class="comment">-- dbt runs something like this behind the scenes:</span>
+
+<span class="keyword">SELECT</span> o.customer_id
+<span class="keyword">FROM</span> orders o
+<span class="keyword">LEFT JOIN</span> customers c
+    <span class="keyword">ON</span> o.customer_id = c.customer_id
+<span class="keyword">WHERE</span> c.customer_id <span class="keyword">IS NULL</span>
+
+<span class="comment">-- If this returns ANY rows → TEST FAILS (orphan records!)</span>
+<span class="comment">-- If this returns 0 rows  → TEST PASSES ✅</span></code></pre>
+        </div>
+
+        <h3>Putting It All Together in schema.yml</h3>
+        <p>Here's how you define all 4 tests for your models in a single YAML file:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/schema.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">stg_customers</span>
+    <span class="keyword">description</span>: <span class="string">"Cleaned customer data from raw source"</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">description</span>: <span class="string">"Primary key — unique identifier for each customer"</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">unique</span>           <span class="comment"># No duplicate customer IDs</span>
+          - <span class="string">not_null</span>         <span class="comment"># Every row must have an ID</span>
+
+      - <span class="keyword">name</span>: <span class="string">email</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">not_null</span>         <span class="comment"># Every customer must have an email</span>
+
+      - <span class="keyword">name</span>: <span class="string">status</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">accepted_values</span>:
+              <span class="keyword">values</span>: [<span class="string">'active'</span>, <span class="string">'inactive'</span>, <span class="string">'suspended'</span>]
+
+  - <span class="keyword">name</span>: <span class="string">stg_orders</span>
+    <span class="keyword">description</span>: <span class="string">"Cleaned order data"</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">order_id</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">unique</span>
+          - <span class="string">not_null</span>
+
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">not_null</span>
+          - <span class="string">relationships</span>:    <span class="comment"># Every order's customer must exist!</span>
+              <span class="keyword">to</span>: <span class="string">ref('stg_customers')</span>
+              <span class="keyword">field</span>: <span class="string">customer_id</span></code></pre>
+        </div>
+
+        <h3>Running Your Tests</h3>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="comment"># Run ALL tests in your project</span>
+<span class="function">$</span> dbt test
+
+<span class="output">Running tests...</span>
+<span class="string">PASS</span>  unique_stg_customers_customer_id          <span class="comment"># ✅ No duplicates</span>
+<span class="string">PASS</span>  not_null_stg_customers_customer_id        <span class="comment"># ✅ No nulls</span>
+<span class="string">PASS</span>  not_null_stg_customers_email              <span class="comment"># ✅ All have emails</span>
+<span class="string">PASS</span>  accepted_values_stg_customers_status      <span class="comment"># ✅ Valid statuses only</span>
+<span class="string">PASS</span>  unique_stg_orders_order_id                <span class="comment"># ✅ No duplicates</span>
+<span class="string">PASS</span>  not_null_stg_orders_customer_id           <span class="comment"># ✅ No orphan orders</span>
+<span class="string">PASS</span>  relationships_stg_orders_customer_id      <span class="comment"># ✅ All customers exist</span>
+
+<span class="output">Completed successfully. 7 passed, 0 failed.</span>
+
+<span class="comment"># Run tests for a specific model only</span>
+<span class="function">$</span> dbt test --select stg_customers
+
+<span class="comment"># Run tests for everything downstream of a model</span>
+<span class="function">$</span> dbt test --select stg_customers+</code></pre>
+        </div>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🧠 How dbt Tests Work</p>
+            <p style="color:#4c1d95;">Every test is just a SQL query. If the query returns <strong>zero rows</strong>, the test passes. If it returns <strong>any rows</strong>, the test fails. That's it! The rows returned are the "bad" records that violated the rule.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: Custom SQL Tests (Singular Tests)
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔧 Custom SQL Tests (Singular Tests)</h2>
+
+        <div class="eli5-box">
+            <p>Sometimes the 4 built-in tests aren't enough. What if you need to check that <strong>all order amounts are positive</strong>? Or that <strong>no orders have dates in the future</strong>? The built-in tests can't do that.</p>
+            <p style="margin-top:12px;">Custom tests let you write <strong>any check you want</strong> — like a chef inventing a new taste test for a special dish. If you can write a SQL query, you can write a custom test!</p>
+        </div>
+
+        <p>Custom tests (also called <strong>singular tests</strong>) live in the <code>tests/</code> folder at the root of your dbt project. Each test is a single <code>.sql</code> file.</p>
+
+        <h3>The Golden Rule of Custom Tests</h3>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">📐 The Rule</p>
+            <p style="color:#4c1d95;font-size:1.05em;">Write a query that returns the <strong>bad rows</strong>. If the query returns <strong>any rows</strong>, the test <strong>FAILS</strong>. If it returns <strong>zero rows</strong>, the test <strong>PASSES</strong>.</p>
+        </div>
+
+        <h3>Example 1: No Negative Order Amounts</h3>
+
+        <div class="code-block">
+            <span class="label">tests/assert_positive_order_values.sql</span>
+            <pre><code><span class="comment">-- This test FAILS if any order has a negative or zero amount.</span>
+<span class="comment">-- Think about it: can you buy something for -$50? Nope!</span>
+
+<span class="keyword">SELECT</span>
+    order_id,
+    customer_id,
+    amount
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}
+<span class="keyword">WHERE</span>
+    amount <= <span class="number">0</span>
+
+<span class="comment">-- If this returns rows like:</span>
+<span class="comment">--   order_id=9912, customer_id=45, amount=-12.50</span>
+<span class="comment">-- → TEST FAILS ❌ (we found bad data!)</span>
+<span class="comment">--</span>
+<span class="comment">-- If this returns 0 rows → TEST PASSES ✅</span></code></pre>
+        </div>
+
+        <h3>Example 2: No Future Dates</h3>
+
+        <div class="code-block">
+            <span class="label">tests/assert_no_future_dates.sql</span>
+            <pre><code><span class="comment">-- Orders can't be placed in the future!</span>
+<span class="comment">-- If we see order_date > today, something is wrong with our ETL.</span>
+
+<span class="keyword">SELECT</span>
+    order_id,
+    order_date
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}
+<span class="keyword">WHERE</span>
+    order_date > <span class="function">CURRENT_DATE</span>
+
+<span class="comment">-- Found an order dated 2030-01-01? That's a time traveler.</span>
+<span class="comment">-- Or more likely, a bug. TEST FAILS ❌</span></code></pre>
+        </div>
+
+        <h3>Example 3: Revenue Sanity Check</h3>
+
+        <div class="code-block">
+            <span class="label">tests/assert_reasonable_daily_revenue.sql</span>
+            <pre><code><span class="comment">-- If daily revenue suddenly jumps to $10M when it's usually $50K,</span>
+<span class="comment">-- something is probably duplicated. This is a "sanity check" test.</span>
+
+<span class="keyword">SELECT</span>
+    order_date,
+    <span class="function">SUM</span>(amount) <span class="keyword">AS</span> daily_revenue
+<span class="keyword">FROM</span>
+    {{ <span class="function">ref</span>(<span class="string">'stg_orders'</span>) }}
+<span class="keyword">GROUP BY</span> order_date
+<span class="keyword">HAVING</span>
+    <span class="function">SUM</span>(amount) > <span class="number">1000000</span>   <span class="comment">-- Flag days with > $1M revenue</span>
+
+<span class="comment">-- If your business normally does $50K/day, a $1M day is suspicious.</span>
+<span class="comment">-- Investigate before it reaches the dashboard!</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Custom tests are incredibly powerful. Any business rule you can express in SQL can become an automated test. "No customer should have more than 100 orders in a single day," "All email addresses should contain an @ symbol," "Total debits should equal total credits" — if you can query it, you can test it!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: Source Freshness
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>⏰ Source Freshness — Is Your Data Up to Date?</h2>
+
+        <div class="eli5-box">
+            <p>Freshness is like <strong>checking the expiration date on milk</strong>. You open the fridge, look at the carton, and check: "Was this delivered today? Yesterday? Last week?" If your source data hasn't been updated in 6 hours, something might be wrong upstream — maybe your ETL pipeline crashed at 3 AM and nobody noticed.</p>
+        </div>
+
+        <p>Source freshness checks answer one simple question: <strong>"When was this data last updated?"</strong> If the answer is "too long ago," dbt raises a warning or error.</p>
+
+        <h3>Configuring Freshness in YAML</h3>
+
+        <div class="code-block">
+            <span class="label">models/staging/_sources.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">sources</span>:
+  - <span class="keyword">name</span>: <span class="string">raw_shop</span>
+    <span class="keyword">database</span>: <span class="string">raw_production</span>
+    <span class="keyword">schema</span>: <span class="string">public</span>
+
+    <span class="keyword">freshness</span>:                          <span class="comment"># Default for ALL tables in this source</span>
+      <span class="keyword">warn_after</span>: {<span class="keyword">count</span>: <span class="number">12</span>, <span class="keyword">period</span>: <span class="string">hour</span>}  <span class="comment"># ⚠️ Warn if > 12 hours old</span>
+      <span class="keyword">error_after</span>: {<span class="keyword">count</span>: <span class="number">24</span>, <span class="keyword">period</span>: <span class="string">hour</span>} <span class="comment"># ❌ Error if > 24 hours old</span>
+    <span class="keyword">loaded_at_field</span>: <span class="string">_etl_loaded_at</span>      <span class="comment"># The timestamp column dbt checks</span>
+
+    <span class="keyword">tables</span>:
+      - <span class="keyword">name</span>: <span class="string">customers</span>
+        <span class="comment"># Inherits the default freshness above</span>
+
+      - <span class="keyword">name</span>: <span class="string">orders</span>
+        <span class="keyword">freshness</span>:                        <span class="comment"># Override for this specific table</span>
+          <span class="keyword">warn_after</span>: {<span class="keyword">count</span>: <span class="number">6</span>, <span class="keyword">period</span>: <span class="string">hour</span>}   <span class="comment"># Orders should be fresher!</span>
+          <span class="keyword">error_after</span>: {<span class="keyword">count</span>: <span class="number">12</span>, <span class="keyword">period</span>: <span class="string">hour</span>}
+
+      - <span class="keyword">name</span>: <span class="string">payments</span>
+        <span class="keyword">loaded_at_field</span>: <span class="string">updated_at</span>       <span class="comment"># Different timestamp column</span></code></pre>
+        </div>
+
+        <h3>Running Freshness Checks</h3>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="function">$</span> dbt source freshness
+
+<span class="output">Running source freshness checks...</span>
+
+<span class="string">PASS</span>   source raw_shop.customers    <span class="comment"># Last loaded 2 hours ago  ✅ Fresh!</span>
+<span class="keyword">WARN</span>   source raw_shop.orders       <span class="comment"># Last loaded 8 hours ago  ⚠️ Getting stale...</span>
+<span class="output">ERROR</span>  source raw_shop.payments     <span class="comment"># Last loaded 30 hours ago ❌ STALE!</span>
+
+<span class="output">Done. PASS=1  WARN=1  ERROR=1</span></code></pre>
+        </div>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ PASS</h4>
+                <p>Data is fresh. Last update is within the <code>warn_after</code> threshold. Everything is healthy!</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>⚠️ WARN</h4>
+                <p>Data is getting stale. Past <code>warn_after</code> but not yet <code>error_after</code>. Investigate soon.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ ERROR</h4>
+                <p>Data is too old. Past <code>error_after</code>. Something is broken upstream. Fix it now!</p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>Schedule <code>dbt source freshness</code> to run every morning before your team starts work. If a pipeline broke overnight, you'll know before anyone opens a dashboard. Pair it with Slack or email alerts for maximum protection!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: The dbt_expectations Package
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📦 The dbt_expectations Package — Advanced Testing</h2>
+
+        <div class="eli5-box">
+            <p>The 4 built-in tests are like a basic health check. But what if you need a <strong>full medical exam</strong>? That's where <code>dbt_expectations</code> comes in. It's like hiring a <strong>professional food inspector</strong> instead of just tasting the food yourself. It has dozens of specialized tests for every situation.</p>
+        </div>
+
+        <h3>Step 1: Install the Package</h3>
+        <p>Add it to your <code>packages.yml</code> file in the root of your dbt project:</p>
+
+        <div class="code-block">
+            <span class="label">packages.yml</span>
+            <pre><code><span class="keyword">packages</span>:
+  - <span class="keyword">package</span>: <span class="string">calogica/dbt_expectations</span>
+    <span class="keyword">version</span>: [<span class="string">">=0.10.0"</span>, <span class="string">"<0.11.0"</span>]</code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="comment"># Install the package</span>
+<span class="function">$</span> dbt deps
+
+<span class="output">Installing calogica/dbt_expectations...</span>
+<span class="string">Successfully installed 1 package.</span></code></pre>
+        </div>
+
+        <h3>Step 2: Use the Advanced Tests</h3>
+        <p>Now you can use powerful tests in your <code>schema.yml</code>:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/schema.yml (with dbt_expectations)</span>
+            <pre><code><span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">stg_orders</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">amount</span>
+        <span class="keyword">tests</span>:
+          - <span class="string">dbt_expectations.expect_column_values_to_be_between</span>:
+              <span class="keyword">min_value</span>: <span class="number">0</span>        <span class="comment"># No negative amounts</span>
+              <span class="keyword">max_value</span>: <span class="number">100000</span>   <span class="comment"># No absurdly high amounts</span>
+
+          - <span class="string">dbt_expectations.expect_column_mean_to_be_between</span>:
+              <span class="keyword">min_value</span>: <span class="number">10</span>       <span class="comment"># Average order should be at least $10</span>
+              <span class="keyword">max_value</span>: <span class="number">500</span>      <span class="comment"># ...and no more than $500</span>
+
+    <span class="keyword">tests</span>:
+      - <span class="string">dbt_expectations.expect_table_row_count_to_be_between</span>:
+          <span class="keyword">min_value</span>: <span class="number">1000</span>     <span class="comment"># We should have at least 1,000 orders</span>
+          <span class="keyword">max_value</span>: <span class="number">10000000</span> <span class="comment"># ...but not 10 million (probably dupes)</span></code></pre>
+        </div>
+
+        <h3>Popular dbt_expectations Tests</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Test Name</th>
+                    <th>What It Checks</th>
+                    <th>Example Use Case</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>expect_column_values_to_be_between</code></td>
+                    <td>Values fall within a range</td>
+                    <td>Order amounts between $0 and $100K</td>
+                </tr>
+                <tr>
+                    <td><code>expect_column_mean_to_be_between</code></td>
+                    <td>Average is within expected range</td>
+                    <td>Avg order value between $10 and $500</td>
+                </tr>
+                <tr>
+                    <td><code>expect_table_row_count_to_be_between</code></td>
+                    <td>Table has expected number of rows</td>
+                    <td>Catch massive duplications or data loss</td>
+                </tr>
+                <tr>
+                    <td><code>expect_column_values_to_match_regex</code></td>
+                    <td>Values match a pattern</td>
+                    <td>Email addresses contain @</td>
+                </tr>
+                <tr>
+                    <td><code>expect_column_values_to_be_of_type</code></td>
+                    <td>Column has correct data type</td>
+                    <td>Dates are actually dates, not strings</td>
+                </tr>
+                <tr>
+                    <td><code>expect_row_values_to_have_recent_data</code></td>
+                    <td>Table has recent rows</td>
+                    <td>At least one order in the last 24 hours</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pro-tip">
+            <p>Start with the 4 built-in tests. Once you're comfortable, add <code>dbt_expectations</code> for the tricky stuff. You don't need to use every test — pick the ones that match your business rules. Quality over quantity!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Testing Workflow
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔄 Testing Workflow — From Code to Confidence</h2>
+
+        <div class="eli5-box">
+            <p>Testing isn't something you do once and forget. It's a <strong>continuous cycle</strong> — like brushing your teeth. You do it every day, not just when you have a dentist appointment. Here's the workflow every dbt developer follows:</p>
+        </div>
+
+        <h3>The 5-Step Testing Cycle</h3>
+
+        <!-- Animated pipeline diagram -->
+        <div class="pipeline-diagram">
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;">✏️</div>
+                <div class="pipeline-label">Write<br>Model<br><small style="color:var(--dbt-text-light);">Step 1</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;">🛡️</div>
+                <div class="pipeline-label">Add Tests<br>in YAML<br><small style="color:var(--dbt-text-light);">Step 2</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🧪</div>
+                <div class="pipeline-label">Run<br>dbt test<br><small style="color:var(--dbt-text-light);">Step 3</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;">🔧</div>
+                <div class="pipeline-label">Fix<br>Failures<br><small style="color:var(--dbt-text-light);">Step 4</small></div>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="pipeline-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">🚀</div>
+                <div class="pipeline-label">Deploy<br><small style="color:var(--dbt-text-light);">Step 5</small></div>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <p style="font-weight:800;color:#1e40af;font-size:1.1em;margin-bottom:12px;">Step-by-Step Breakdown</p>
+            <p><strong>1. Write Model</strong> — Create your SQL model in the <code>models/</code> folder</p>
+            <p><strong>2. Add Tests</strong> — Define schema tests in <code>schema.yml</code> and/or write custom tests in <code>tests/</code></p>
+            <p><strong>3. Run <code>dbt test</code></strong> — Execute all tests and review results</p>
+            <p><strong>4. Fix Failures</strong> — If tests fail, investigate the root cause. Is it bad source data? A bug in your SQL? Fix it and re-run</p>
+            <p><strong>5. Deploy</strong> — Once all tests pass, merge your code and deploy to production</p>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Terminal — The typical dev loop</span>
+            <pre><code><span class="comment"># Build your model</span>
+<span class="function">$</span> dbt run --select my_new_model
+
+<span class="comment"># Test it immediately</span>
+<span class="function">$</span> dbt test --select my_new_model
+
+<span class="comment"># Or do both at once with "build" (run + test)</span>
+<span class="function">$</span> dbt build --select my_new_model
+
+<span class="output">Running model my_new_model... OK</span>
+<span class="output">Running tests...</span>
+<span class="string">PASS</span>  unique_my_new_model_id
+<span class="string">PASS</span>  not_null_my_new_model_id
+<span class="output">ERROR</span> accepted_values_my_new_model_status  <span class="comment"># ← Uh oh!</span>
+
+<span class="comment"># Fix the issue, then re-run</span>
+<span class="function">$</span> dbt build --select my_new_model</code></pre>
+        </div>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.1em;margin-bottom:12px;">🚨 Pro Tip: Tests in CI/CD</p>
+            <p>The best teams run <code>dbt test</code> automatically in their CI/CD pipeline (like GitHub Actions). Every time someone opens a pull request, tests run automatically. If any test fails, the PR is <strong>blocked from merging</strong>. This means bad data literally <em>cannot</em> reach production!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: Testing Best Practices
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏆 Testing Best Practices</h2>
+
+        <div class="eli5-box">
+            <p>You don't need to test <em>everything</em>, but you should test the <strong>important things</strong>. It's like locking your front door and car — you don't need to lock every drawer in your house, but the main entry points? Absolutely.</p>
+        </div>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>🔑 Test Every Primary Key</h4>
+                <p>Add <code>unique</code> + <code>not_null</code> to every primary key column. This is the #1 most important test. If your primary key has duplicates or nulls, every downstream model is wrong.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #8b5cf6;">
+                <h4>🔗 Test Every Foreign Key</h4>
+                <p>Use <code>relationships</code> to verify that foreign keys actually point to existing records. Orphan records (orders with no customer) cause silent data loss in joins.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>📏 Test Business Rules</h4>
+                <p>Write custom tests for domain-specific rules: "amounts must be positive," "dates can't be in the future," "each customer has at most one active subscription."</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>⏰ Use Source Freshness</h4>
+                <p>Always configure <code>freshness</code> on your sources. Stale data is invisible — your dashboards look fine, but the numbers are from yesterday (or last week!).</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>🗄️ Store Failures for Debugging</h4>
+                <p>Use <code>store_failures: true</code> in your test config. When a test fails, dbt saves the failing rows to a table so you can investigate exactly what went wrong.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #0ea5e9;">
+                <h4>📊 Test Row Counts</h4>
+                <p>Use <code>expect_table_row_count_to_be_between</code> to catch data loss (table suddenly has 0 rows) or duplication (table has 10x the expected rows).</p>
+            </div>
+        </div>
+
+        <h3>Storing Failures for Debugging</h3>
+        <p>When a test fails, you want to know <em>which</em> rows failed. Add <code>store_failures</code> to save them:</p>
+
+        <div class="code-block">
+            <span class="label">dbt_project.yml</span>
+            <pre><code><span class="keyword">tests</span>:
+  <span class="keyword">my_project</span>:
+    +<span class="keyword">store_failures</span>: <span class="string">true</span>    <span class="comment"># Save failing rows to a table</span>
+    +<span class="keyword">severity</span>: <span class="string">warn</span>          <span class="comment"># Warn instead of error (optional)</span></code></pre>
+        </div>
+
+        <div class="code-block">
+            <span class="label">Terminal — Querying stored failures</span>
+            <pre><code><span class="comment">-- After a test fails, dbt creates a table with the bad rows:</span>
+<span class="keyword">SELECT</span> *
+<span class="keyword">FROM</span> <span class="string">your_schema_dbt_test__audit.not_null_stg_orders_customer_id</span>
+
+<span class="comment">-- Result:</span>
+<span class="comment">-- order_id | customer_id</span>
+<span class="comment">-- 9912     | NULL          ← This order has no customer!</span>
+<span class="comment">-- 10045    | NULL          ← This one too!</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>A good rule of thumb: <strong>every model should have at least 2 tests</strong> (unique + not_null on the primary key). Critical models (revenue, user counts, anything on a dashboard) should have 5-10 tests. The more important the data, the more tests it deserves.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see if you can catch the bugs before your boss does. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: A dbt test query returns 5 rows. What happens?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> The test passes — 5 rows means 5 things are correct
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> The test fails — any rows returned means bad data was found
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> The test warns — it only fails if more than 10 rows are returned
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> It depends on which test — some pass with rows, some don't
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: Which two tests should you ALWAYS add to a primary key?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> accepted_values + relationships
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> not_null + accepted_values
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> unique + not_null
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> unique + relationships
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: What does <code>dbt source freshness</code> check?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Whether your dbt models have been run recently
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Whether your SQL syntax is correct
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Whether your raw source data has been updated recently
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Whether your dbt version is up to date
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Can you explain to a friend why data testing matters? Can you name the 4 built-in tests and give an example of each? Can you write a custom test that checks for negative values? If yes, you've nailed this lesson!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Why test</strong> — Bad data causes wrong decisions; tests catch problems before stakeholders do</li>
+                <li><strong>unique</strong> — Ensures no duplicate values in a column (primary keys!)</li>
+                <li><strong>not_null</strong> — Ensures every row has a value (no missing data)</li>
+                <li><strong>accepted_values</strong> — Ensures only valid values appear (e.g., status = active/inactive)</li>
+                <li><strong>relationships</strong> — Ensures foreign keys point to existing records</li>
+                <li><strong>Custom tests</strong> — SQL files in <code>tests/</code> that return bad rows (0 rows = pass)</li>
+                <li><strong>dbt test</strong> — Command to run all tests; <code>dbt build</code> runs models + tests together</li>
+                <li><strong>Source freshness</strong> — Checks if raw data is stale with <code>dbt source freshness</code></li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>dbt_expectations</strong> — Advanced testing package with dozens of specialized tests</li>
+                <li><strong>store_failures</strong> — Saves failing rows to a table for debugging</li>
+                <li><strong>CI/CD integration</strong> — Running tests automatically on pull requests</li>
+                <li><strong>Severity levels</strong> — Configuring tests to warn vs error</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="sources-refs.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Sources, Refs & Lineage
+        </a>
+        <a href="documentation.html" class="nav-btn-next">
+            Documentation <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>

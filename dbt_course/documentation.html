@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation & Lineage | dbt Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background Particles -->
+<div class="page-bg-particles">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- Hero Header -->
+<div class="lesson-hero">
+    <span class="badge">LESSON 8 · INTERMEDIATE</span>
+    <h1>📖 Documentation & Lineage — Your Data's Wikipedia</h1>
+    <p class="subtitle">Auto-generated docs that never go stale. Plus the magical lineage graph.</p>
+</div>
+
+<!-- Lesson Container -->
+<div class="lesson-container">
+
+    <!-- Sticky Nav -->
+    <nav class="lesson-nav">
+        <a href="testing.html"><i class="fas fa-arrow-left"></i> Testing</a>
+        <a href="hub.html"><i class="fas fa-th-large"></i> Hub</a>
+        <a href="jinja-macros.html">Jinja & Macros <i class="fas fa-arrow-right"></i></a>
+    </nav>
+
+    <!-- ============================================================
+         SECTION 1: Why Document?
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🤔 Why Document?</h2>
+
+        <div class="eli5-box">
+            <p>Imagine joining a new job and finding <strong>500 SQL files with no explanation</strong>. No comments. No descriptions. No clue what anything does. You'd feel like you walked into a library where every book cover is blank.</p>
+            <p style="margin-top:12px;">Documentation is like leaving a <strong>trail of breadcrumbs</strong> so the next person (or future you in 6 months) doesn't get lost in the forest of SQL files.</p>
+        </div>
+
+        <h3>The "Hit by a Bus" Test</h3>
+        <p>Every data team should ask themselves this uncomfortable question:</p>
+
+        <div class="important-box">
+            <p style="font-weight:800;font-size:1.15em;margin-bottom:12px;">If the person who built this model disappears tomorrow, can someone else understand it?</p>
+            <p>If the answer is "no" — you have a documentation problem. And it's not a matter of <em>if</em> someone will leave, it's <em>when</em>. People switch jobs, go on vacation, or simply forget what they built 3 months ago.</p>
+        </div>
+
+        <h3>The Numbers Don't Lie</h3>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number">5x</div>
+                <div class="stat-label">Faster Onboarding</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">Teams with good docs onboard new members 5x faster</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">60%</div>
+                <div class="stat-label">Less "What Does This Do?"</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">Fewer Slack messages asking about model logic</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Stale Docs</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">dbt auto-generates docs from your actual code</p>
+            </div>
+        </div>
+
+        <div class="real-life">
+            <p><strong>The magic of dbt documentation:</strong> Unlike a Google Doc or Confluence page that someone writes once and never updates, dbt docs are <strong>generated from your actual project</strong>. Column names, data types, test results — all pulled directly from the code. The docs can never drift from reality because they <em>are</em> reality.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 2: schema.yml — The Heart of Documentation
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📋 schema.yml — The Heart of Documentation</h2>
+
+        <div class="eli5-box">
+            <p><code>schema.yml</code> is like the <strong>label on a food container</strong> in your fridge. It tells you what's inside, when it was made, and what ingredients were used. Without the label, you're opening mystery containers and hoping for the best.</p>
+        </div>
+
+        <p>You've already seen YAML files for tests and sources. The same files are where you add <strong>descriptions</strong> — the human-readable explanations that turn cryptic column names into understandable documentation.</p>
+
+        <h3>Model Descriptions</h3>
+        <p>At the top level, you describe <strong>what the model does</strong> and <strong>why it exists</strong>:</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/_schema.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">fct_customer_ltv</span>
+    <span class="keyword">description</span>: <span class="string">"</span>
+<span class="string">      Customer lifetime value (LTV) fact table.</span>
+<span class="string">      One row per customer, showing their total spend,</span>
+<span class="string">      order count, and first/last order dates.</span>
+<span class="string">      Used by the Marketing team for segmentation</span>
+<span class="string">      and the Finance team for revenue forecasting.</span>
+<span class="string">    "</span></code></pre>
+        </div>
+
+        <h3>Column Descriptions</h3>
+        <p>Go deeper — describe <strong>every column</strong> so anyone can understand the data without reading SQL:</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/_schema.yml (continued)</span>
+            <pre><code>    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">description</span>: <span class="string">"Unique identifier for each customer. Sourced from raw_shop.customers.id"</span>
+        <span class="keyword">tests</span>:
+          - <span class="function">unique</span>
+          - <span class="function">not_null</span>
+
+      - <span class="keyword">name</span>: <span class="string">lifetime_value</span>
+        <span class="keyword">description</span>: <span class="string">"</span>
+<span class="string">          Total amount (in USD) the customer has spent across all orders.</span>
+<span class="string">          Calculated as SUM(order_amount). NULL if the customer has</span>
+<span class="string">          never placed an order.</span>
+<span class="string">        "</span>
+
+      - <span class="keyword">name</span>: <span class="string">first_order_date</span>
+        <span class="keyword">description</span>: <span class="string">"Date of the customer's very first order. NULL if never ordered."</span>
+
+      - <span class="keyword">name</span>: <span class="string">total_orders</span>
+        <span class="keyword">description</span>: <span class="string">"Count of distinct orders placed by this customer. 0 if never ordered."</span>
+        <span class="keyword">tests</span>:
+          - <span class="function">not_null</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p><strong>Good descriptions answer three questions:</strong></p>
+            <p style="margin-top:8px;">1. <strong>What</strong> is this? (a customer ID, a dollar amount, a date)</p>
+            <p>2. <strong>Where</strong> does it come from? (sourced from X table, calculated as Y)</p>
+            <p>3. <strong>What are the edge cases?</strong> (NULL if never ordered, 0 for new customers)</p>
+        </div>
+
+        <h3>The Full Picture</h3>
+        <p>Here's a complete, annotated YAML file showing models, columns, descriptions, and tests all working together:</p>
+
+        <div class="code-block">
+            <span class="label">models/staging/_schema.yml — Full Example</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">stg_customers</span>
+    <span class="keyword">description</span>: <span class="string">"Cleaned customer data. One row per customer. Renames raw columns to standard naming."</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">description</span>: <span class="string">"Primary key — maps to raw_shop.customers.id"</span>
+        <span class="keyword">tests</span>: [<span class="function">unique</span>, <span class="function">not_null</span>]
+      - <span class="keyword">name</span>: <span class="string">email</span>
+        <span class="keyword">description</span>: <span class="string">"Customer email address. Renamed from email_addr."</span>
+      - <span class="keyword">name</span>: <span class="string">signup_date</span>
+        <span class="keyword">description</span>: <span class="string">"Date the customer registered. Cast from timestamp to date."</span>
+
+  - <span class="keyword">name</span>: <span class="string">stg_orders</span>
+    <span class="keyword">description</span>: <span class="string">"Cleaned order data. One row per order. Filters out cancelled orders."</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">order_id</span>
+        <span class="keyword">description</span>: <span class="string">"Primary key for orders"</span>
+        <span class="keyword">tests</span>: [<span class="function">unique</span>, <span class="function">not_null</span>]
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">description</span>: <span class="string">"Foreign key to stg_customers"</span>
+        <span class="keyword">tests</span>:
+          - <span class="function">not_null</span>
+          - <span class="function">relationships</span>:
+              <span class="keyword">to</span>: <span class="string">ref('stg_customers')</span>
+              <span class="keyword">field</span>: <span class="string">customer_id</span></code></pre>
+        </div>
+
+        <div class="visual-example">
+            <p style="color:#065f46;"><strong>Think of schema.yml as a nutrition label:</strong></p>
+            <p style="color:#065f46;margin-top:8px;">🏷️ <strong>Model name</strong> = Product name ("Organic Tomato Soup")</p>
+            <p style="color:#065f46;">📝 <strong>Model description</strong> = What it is ("A hearty soup made from...")</p>
+            <p style="color:#065f46;">📊 <strong>Column descriptions</strong> = Ingredients list (each ingredient explained)</p>
+            <p style="color:#065f46;">✅ <strong>Tests</strong> = Quality certifications (organic, non-GMO, etc.)</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 3: Doc Blocks — Reusable Documentation
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>📦 Doc Blocks — Reusable Documentation</h2>
+
+        <div class="eli5-box">
+            <p>Doc blocks are like <strong>templates</strong>. Instead of writing the same description for <code>customer_id</code> in 20 different YAML files, you write it <strong>once</strong> and reference it everywhere. It's like having a dictionary — you define a word once, and everyone looks it up when they need it.</p>
+        </div>
+
+        <p>When you have columns that appear in many models (like <code>customer_id</code>, <code>created_at</code>, or <code>amount</code>), writing the same description over and over is tedious and error-prone. Doc blocks solve this.</p>
+
+        <h3>Step 1: Create a Markdown File</h3>
+        <p>Create a <code>.md</code> file anywhere in your <code>models/</code> directory:</p>
+
+        <div class="code-block">
+            <span class="label">models/docs/common_columns.md</span>
+            <pre><code><span class="comment">{% docs customer_id %}</span>
+
+<span class="string">Unique identifier for a customer. This is the primary key</span>
+<span class="string">in `stg_customers` and appears as a foreign key in most</span>
+<span class="string">downstream models.</span>
+
+<span class="string">**Source:** `raw_shop.customers.id`</span>
+<span class="string">**Type:** INTEGER</span>
+<span class="string">**Example:** 10042</span>
+
+<span class="comment">{% enddocs %}</span>
+
+<span class="comment">{% docs amount_usd %}</span>
+
+<span class="string">A monetary amount in US Dollars (USD). Always stored as</span>
+<span class="string">DECIMAL(10,2). Negative values indicate refunds.</span>
+
+<span class="string">**Example:** 49.99, -12.50</span>
+
+<span class="comment">{% enddocs %}</span>
+
+<span class="comment">{% docs created_at_date %}</span>
+
+<span class="string">The date a record was created, cast from the original</span>
+<span class="string">timestamp to DATE. Timezone is UTC.</span>
+
+<span class="comment">{% enddocs %}</span></code></pre>
+        </div>
+
+        <h3>Step 2: Reference Doc Blocks in YAML</h3>
+        <p>Now use <code>{{ doc('block_name') }}</code> in your descriptions:</p>
+
+        <div class="code-block">
+            <span class="label">models/marts/_schema.yml</span>
+            <pre><code><span class="keyword">version</span>: <span class="number">2</span>
+
+<span class="keyword">models</span>:
+  - <span class="keyword">name</span>: <span class="string">fct_customer_ltv</span>
+    <span class="keyword">description</span>: <span class="string">"Customer lifetime value fact table"</span>
+    <span class="keyword">columns</span>:
+      - <span class="keyword">name</span>: <span class="string">customer_id</span>
+        <span class="keyword">description</span>: <span class="string">"{{ doc('customer_id') }}"</span>
+        <span class="comment">#  ↑ Pulls from the markdown file!</span>
+
+      - <span class="keyword">name</span>: <span class="string">lifetime_value</span>
+        <span class="keyword">description</span>: <span class="string">"{{ doc('amount_usd') }}"</span>
+
+      - <span class="keyword">name</span>: <span class="string">signup_date</span>
+        <span class="keyword">description</span>: <span class="string">"{{ doc('created_at_date') }}"</span></code></pre>
+        </div>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #ef4444;">
+                <h4>❌ Without Doc Blocks</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Same description copy-pasted in 20 files. Update one? You have to find and update all 20.</p>
+                <p style="font-family:'Fira Code',monospace;font-size:0.8em;background:#fef2f2;padding:10px;border-radius:8px;margin-top:10px;">description: "Unique customer ID..."<br>description: "Unique customer ID..."<br>description: "Unique customer ID..."<br><span style="color:#999;">× 20 files</span></p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>✅ With Doc Blocks</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Define once in a .md file. Reference everywhere. Update once, changes propagate automatically.</p>
+                <p style="font-family:'Fira Code',monospace;font-size:0.8em;background:#f0fdf4;padding:10px;border-radius:8px;margin-top:10px;">description: "{{ doc('customer_id') }}"<br>description: "{{ doc('customer_id') }}"<br>description: "{{ doc('customer_id') }}"<br><span style="color:#16a34a;">✓ All point to one source</span></p>
+            </div>
+        </div>
+
+        <div class="pro-tip">
+            <p>Doc blocks support <strong>full Markdown</strong> — bold, italic, links, lists, even tables. Your documentation can be as rich as a wiki page, but it lives right next to your code and is always in sync.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 4: dbt docs generate & serve
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🚀 dbt docs generate & serve</h2>
+
+        <div class="eli5-box">
+            <p>It's like pressing a <strong>magic button</strong> that turns all your recipe cards, ingredient labels, and cooking notes into a <strong>beautiful cookbook website</strong>. One command, and you get a fully searchable, interactive documentation site — no extra work needed!</p>
+        </div>
+
+        <h3>Step 1: Generate the Docs</h3>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="function">$</span> dbt docs generate
+
+<span class="output">Running with dbt=1.7.0</span>
+<span class="output">Found 12 models, 6 sources, 24 tests, 3 doc blocks</span>
+<span class="output">Building catalog...</span>
+<span class="string">Catalog written to /target/catalog.json</span>
+<span class="string">Manifest written to /target/manifest.json</span></code></pre>
+        </div>
+
+        <h3>Step 2: Serve the Docs</h3>
+
+        <div class="code-block">
+            <span class="label">Terminal</span>
+            <pre><code><span class="function">$</span> dbt docs serve
+
+<span class="output">Serving docs at</span> <span class="string">http://localhost:8080</span>
+<span class="output">Press Ctrl+C to exit.</span></code></pre>
+        </div>
+
+        <p>Open your browser and you'll see a <strong>full documentation website</strong> — automatically generated from your project!</p>
+
+        <h3>What Gets Generated?</h3>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">📄</div>
+                <div class="stat-label">manifest.json</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">Your entire project: models, sources, tests, macros, dependencies — everything dbt knows</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">📊</div>
+                <div class="stat-label">catalog.json</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">Column names, data types, row counts — pulled directly from your warehouse</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="font-size:1.5em;">🌐</div>
+                <div class="stat-label">index.html</div>
+                <p style="font-size:0.8em;color:var(--dbt-text-light);margin-top:4px;">A single-page app that combines both JSON files into a beautiful, searchable UI</p>
+            </div>
+        </div>
+
+        <h3>What You'll See in the Docs Site</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>What It Shows</th>
+                    <th>Why It's Useful</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Model list</strong></td><td>Every model with its description</td><td>Find any model instantly</td></tr>
+                <tr><td><strong>Column details</strong></td><td>Name, type, description, tests</td><td>Understand data without reading SQL</td></tr>
+                <tr><td><strong>Source info</strong></td><td>Raw tables, freshness, schemas</td><td>Know where data originates</td></tr>
+                <tr><td><strong>Compiled SQL</strong></td><td>The actual SQL that runs</td><td>Debug without running dbt compile</td></tr>
+                <tr><td><strong>Lineage graph</strong></td><td>Visual DAG of all dependencies</td><td>See how data flows end-to-end</td></tr>
+                <tr><td><strong>Search</strong></td><td>Full-text search across everything</td><td>Find anything in seconds</td></tr>
+            </tbody>
+        </table>
+
+        <div class="real-life">
+            <p><strong>Think of it this way:</strong> You know how Google Maps doesn't just show you streets — it shows restaurants, gas stations, traffic, and reviews? dbt docs is like Google Maps for your data warehouse. It shows you every table, every column, every relationship, and every test — all in one interactive place.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 5: The Lineage Graph — The Crown Jewel
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🌳 The Lineage Graph — The Crown Jewel</h2>
+
+        <div class="eli5-box">
+            <p>The lineage graph is like a <strong>family tree for your data</strong>. Just like you can trace your ancestry back through parents, grandparents, and great-grandparents, you can trace any number on a dashboard back to its <strong>original source</strong>.</p>
+            <p style="margin-top:12px;">"Why does this revenue number look wrong?" → Follow the lineage graph backwards and find exactly where the problem is!</p>
+        </div>
+
+        <h3>What Does the Lineage Graph Show?</h3>
+        <p>It visualizes how data flows from raw sources, through transformations, to final tables that power dashboards:</p>
+
+        <!-- Animated SVG Lineage Graph -->
+        <div class="dag-container">
+            <svg viewBox="0 0 860 350" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+                <!-- Edges (animated dashed lines) -->
+                <line x1="140" y1="70" x2="280" y2="70" class="dag-edge" stroke="#67e8f9" stroke-width="2.5" />
+                <line x1="140" y1="170" x2="280" y2="170" class="dag-edge" stroke="#67e8f9" stroke-width="2.5" />
+                <line x1="140" y1="270" x2="280" y2="240" class="dag-edge" stroke="#67e8f9" stroke-width="2.5" />
+
+                <line x1="410" y1="70" x2="530" y2="120" class="dag-edge" stroke="#c084fc" stroke-width="2.5" />
+                <line x1="410" y1="170" x2="530" y2="140" class="dag-edge" stroke="#c084fc" stroke-width="2.5" />
+                <line x1="410" y1="240" x2="530" y2="260" class="dag-edge" stroke="#c084fc" stroke-width="2.5" />
+
+                <line x1="650" y1="130" x2="760" y2="180" class="dag-edge" stroke="#86efac" stroke-width="2.5" />
+                <line x1="650" y1="260" x2="760" y2="200" class="dag-edge" stroke="#86efac" stroke-width="2.5" />
+
+                <!-- Layer labels -->
+                <text x="75" y="25" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">SOURCES</text>
+                <text x="345" y="25" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">STAGING</text>
+                <text x="590" y="85" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">INTERMEDIATE</text>
+                <text x="790" y="155" text-anchor="middle" fill="#64748b" font-size="11" font-weight="800" font-family="Nunito">MARTS</text>
+
+                <!-- Source nodes (left) -->
+                <g class="dag-node">
+                    <rect x="15" y="45" width="125" height="50" rx="10" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="77" y="68" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600" font-family="Nunito">📦 raw</text>
+                    <text x="77" y="83" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700" font-family="Nunito">customers</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="15" y="145" width="125" height="50" rx="10" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="77" y="168" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600" font-family="Nunito">📦 raw</text>
+                    <text x="77" y="183" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700" font-family="Nunito">orders</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="15" y="245" width="125" height="50" rx="10" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="77" y="268" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="600" font-family="Nunito">📦 raw</text>
+                    <text x="77" y="283" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700" font-family="Nunito">payments</text>
+                </g>
+
+                <!-- Staging nodes -->
+                <g class="dag-node">
+                    <rect x="280" y="45" width="130" height="50" rx="10" fill="#1a1a2e" stroke="#67e8f9" stroke-width="2"/>
+                    <text x="345" y="75" text-anchor="middle" fill="#67e8f9" font-size="12" font-weight="700" font-family="Nunito">stg_customers</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="280" y="145" width="130" height="50" rx="10" fill="#1a1a2e" stroke="#67e8f9" stroke-width="2"/>
+                    <text x="345" y="175" text-anchor="middle" fill="#67e8f9" font-size="12" font-weight="700" font-family="Nunito">stg_orders</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="280" y="215" width="130" height="50" rx="10" fill="#1a1a2e" stroke="#67e8f9" stroke-width="2"/>
+                    <text x="345" y="245" text-anchor="middle" fill="#67e8f9" font-size="12" font-weight="700" font-family="Nunito">stg_payments</text>
+                </g>
+
+                <!-- Intermediate nodes -->
+                <g class="dag-node">
+                    <rect x="530" y="100" width="120" height="55" rx="10" fill="#1a1a2e" stroke="#c084fc" stroke-width="2"/>
+                    <text x="590" y="124" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">int_customer</text>
+                    <text x="590" y="142" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">_orders</text>
+                </g>
+                <g class="dag-node">
+                    <rect x="530" y="235" width="120" height="55" rx="10" fill="#1a1a2e" stroke="#c084fc" stroke-width="2"/>
+                    <text x="590" y="259" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">int_order</text>
+                    <text x="590" y="277" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" font-family="Nunito">_payments</text>
+                </g>
+
+                <!-- Mart node (right) -->
+                <g class="dag-node">
+                    <rect x="740" y="165" width="105" height="50" rx="10" fill="#0f2e1f" stroke="#86efac" stroke-width="2"/>
+                    <text x="792" y="188" text-anchor="middle" fill="#86efac" font-size="11" font-weight="700" font-family="Nunito">fct_customer</text>
+                    <text x="792" y="205" text-anchor="middle" fill="#86efac" font-size="11" font-weight="700" font-family="Nunito">_ltv</text>
+                </g>
+
+                <!-- Direction arrow at bottom -->
+                <text x="430" y="335" text-anchor="middle" fill="#475569" font-size="12" font-weight="700" font-family="Nunito">← Raw Data                                                              Final Tables →</text>
+            </svg>
+        </div>
+
+        <h3>How to Read the Lineage Graph</h3>
+
+        <div class="comparison-cards">
+            <div class="comparison-card" style="border-top:4px solid #3b82f6;">
+                <h4>⬅️ Left Side = Sources</h4>
+                <p>Raw data from external systems. This is where data <strong>enters</strong> your warehouse. You don't control these tables — they're loaded by ETL tools.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #67e8f9;">
+                <h4>🔄 Middle = Transformations</h4>
+                <p>Staging, intermediate, and other models that <strong>clean, join, and reshape</strong> the data. This is where dbt does its work.</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #86efac;">
+                <h4>➡️ Right Side = Final Models</h4>
+                <p>Marts and fact tables that <strong>power dashboards</strong> and reports. This is what business users actually see.</p>
+            </div>
+        </div>
+
+        <h3>Filtering the Graph</h3>
+        <p>With hundreds of models, the full graph can be overwhelming. Use filters to focus on what matters:</p>
+
+        <div class="code-block">
+            <span class="label">Lineage Graph Filters (in the docs UI search bar)</span>
+            <pre><code><span class="comment"># Show only a specific model and everything upstream</span>
+<span class="string">+fct_customer_ltv</span>       <span class="comment">← "What feeds into this model?"</span>
+
+<span class="comment"># Show a model and everything downstream</span>
+<span class="string">fct_customer_ltv+</span>       <span class="comment">← "What depends on this model?"</span>
+
+<span class="comment"># Show 2 levels upstream of a model</span>
+<span class="string">2+fct_customer_ltv</span>      <span class="comment">← "Show me parents and grandparents"</span>
+
+<span class="comment"># Show a specific model and its immediate neighbors</span>
+<span class="string">+fct_customer_ltv+</span>      <span class="comment">← "Show upstream AND downstream"</span>
+
+<span class="comment"># Show all models in a specific directory</span>
+<span class="string">path:models/marts</span>       <span class="comment">← "Show me all mart models"</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>The lineage graph is your <strong>most powerful debugging tool</strong>. When a dashboard number looks wrong, click on the final model in the graph, then trace backwards through each parent. You'll find the bug much faster than reading SQL files one by one. It's like following a river upstream to find where the pollution started!</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 6: Column-Level Lineage
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🔬 Column-Level Lineage</h2>
+
+        <div class="eli5-box">
+            <p>Regular lineage tells you that your cake came from the kitchen. Column-level lineage tells you that the <strong>eggs came from Farm A</strong>, the <strong>flour came from Mill B</strong>, and the <strong>sugar came from Plantation C</strong>. It tracks individual ingredients, not just the dish!</p>
+        </div>
+
+        <p>Standard lineage shows connections between <strong>models</strong> (tables). Column-level lineage goes deeper — it shows which <strong>specific source columns</strong> feed into which <strong>specific final columns</strong>.</p>
+
+        <h3>Why Does This Matter?</h3>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Scenario</th>
+                    <th>Without Column Lineage</th>
+                    <th>With Column Lineage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>"Revenue looks wrong"</td>
+                    <td>Check every model manually 😰</td>
+                    <td>Click on revenue → see it comes from orders.amount → check that column ✅</td>
+                </tr>
+                <tr>
+                    <td>"Can I rename this column?"</td>
+                    <td>Grep through 200 SQL files 😱</td>
+                    <td>See every downstream model that uses it instantly ✅</td>
+                </tr>
+                <tr>
+                    <td>"What feeds into this metric?"</td>
+                    <td>Read SQL, follow the chain 😤</td>
+                    <td>One click → full column ancestry ✅</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>How It Works</h3>
+
+        <!-- Column lineage visual -->
+        <div class="dag-container">
+            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+                <!-- Source columns -->
+                <rect x="10" y="20" width="180" height="160" rx="12" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+                <text x="100" y="45" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="800" font-family="Nunito">raw_orders</text>
+                <rect x="25" y="60" width="150" height="24" rx="6" fill="#2d4a6f"/>
+                <text x="100" y="77" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="Fira Code">order_id</text>
+                <rect x="25" y="92" width="150" height="24" rx="6" fill="#2d4a6f"/>
+                <text x="100" y="109" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="Fira Code">amount</text>
+                <rect x="25" y="124" width="150" height="24" rx="6" fill="#2d4a6f"/>
+                <text x="100" y="141" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="Fira Code">customer_id</text>
+
+                <!-- Final columns -->
+                <rect x="510" y="20" width="180" height="160" rx="12" fill="#0f2e1f" stroke="#86efac" stroke-width="2"/>
+                <text x="600" y="45" text-anchor="middle" fill="#86efac" font-size="12" font-weight="800" font-family="Nunito">fct_customer_ltv</text>
+                <rect x="525" y="60" width="150" height="24" rx="6" fill="#1a3d2a"/>
+                <text x="600" y="77" text-anchor="middle" fill="#bbf7d0" font-size="10" font-family="Fira Code">total_orders</text>
+                <rect x="525" y="92" width="150" height="24" rx="6" fill="#1a3d2a"/>
+                <text x="600" y="109" text-anchor="middle" fill="#bbf7d0" font-size="10" font-family="Fira Code">lifetime_value</text>
+                <rect x="525" y="124" width="150" height="24" rx="6" fill="#1a3d2a"/>
+                <text x="600" y="141" text-anchor="middle" fill="#bbf7d0" font-size="10" font-family="Fira Code">customer_id</text>
+
+                <!-- Column-level edges -->
+                <line x1="175" y1="72" x2="525" y2="72" class="dag-edge" stroke="#67e8f9" stroke-width="2" />
+                <line x1="175" y1="104" x2="525" y2="104" class="dag-edge" stroke="#fbbf24" stroke-width="2" />
+                <line x1="175" y1="136" x2="525" y2="136" class="dag-edge" stroke="#c084fc" stroke-width="2" />
+
+                <!-- Labels on edges -->
+                <text x="350" y="65" text-anchor="middle" fill="#67e8f9" font-size="9" font-weight="700" font-family="Nunito">COUNT(order_id)</text>
+                <text x="350" y="97" text-anchor="middle" fill="#fbbf24" font-size="9" font-weight="700" font-family="Nunito">SUM(amount)</text>
+                <text x="350" y="129" text-anchor="middle" fill="#c084fc" font-size="9" font-weight="700" font-family="Nunito">GROUP BY</text>
+            </svg>
+        </div>
+
+        <div class="formula-box">
+            <p style="font-weight:800;color:#6d28d9;font-size:1.1em;margin-bottom:8px;">🔑 Availability</p>
+            <p style="color:#4c1d95;">Column-level lineage is available in <strong>dbt Cloud</strong> (Explorer). For dbt Core (open source), you can use third-party tools like <strong>SQLLineage</strong>, <strong>dbt-osmosis</strong>, or <strong>Elementary</strong> to get similar functionality.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 7: Hosting Your Docs
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🏠 Hosting Your Docs</h2>
+
+        <p><code>dbt docs serve</code> is great for local development, but how do you share docs with your whole team? Here are the most popular options:</p>
+
+        <div class="comparison-cards" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+            <div class="comparison-card" style="border-top:4px solid #ff694a;">
+                <h4>☁️ dbt Cloud</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Built-in hosting. Docs auto-update on every run. Zero setup.</p>
+                <p style="margin-top:12px;font-size:0.85em;"><strong>Best for:</strong> Teams already using dbt Cloud</p>
+                <p style="font-size:0.85em;color:var(--dbt-accent);font-weight:700;">Easiest ✨</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #6366f1;">
+                <h4>📄 GitHub Pages</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Push the generated files to a GitHub Pages branch. Free and version-controlled.</p>
+                <p style="margin-top:12px;font-size:0.85em;"><strong>Best for:</strong> Open-source projects or small teams</p>
+                <p style="font-size:0.85em;color:#6366f1;font-weight:700;">Free 🆓</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #f59e0b;">
+                <h4>🪣 S3 / GCS Static</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Upload to an S3 bucket or GCS bucket with static website hosting enabled.</p>
+                <p style="margin-top:12px;font-size:0.85em;"><strong>Best for:</strong> Enterprise teams with cloud infrastructure</p>
+                <p style="font-size:0.85em;color:#f59e0b;font-weight:700;">Flexible 🔧</p>
+            </div>
+            <div class="comparison-card" style="border-top:4px solid #22c55e;">
+                <h4>📚 Internal Wiki</h4>
+                <p style="font-size:0.9em;color:var(--dbt-text-light);margin-top:8px;">Embed in Confluence, Notion, or your company wiki. Link to the hosted docs site.</p>
+                <p style="margin-top:12px;font-size:0.85em;"><strong>Best for:</strong> Teams with existing wiki culture</p>
+                <p style="font-size:0.85em;color:#22c55e;font-weight:700;">Integrated 🔗</p>
+            </div>
+        </div>
+
+        <h3>Quick GitHub Pages Setup</h3>
+
+        <div class="code-block">
+            <span class="label">Terminal — Deploy docs to GitHub Pages</span>
+            <pre><code><span class="comment"># 1. Generate the docs</span>
+<span class="function">$</span> dbt docs generate
+
+<span class="comment"># 2. Copy the generated files</span>
+<span class="function">$</span> cp target/manifest.json target/catalog.json target/index.html docs/
+
+<span class="comment"># 3. Commit and push</span>
+<span class="function">$</span> git add docs/
+<span class="function">$</span> git commit -m <span class="string">"Update dbt docs"</span>
+<span class="function">$</span> git push
+
+<span class="comment"># 4. Enable GitHub Pages in repo settings → Source: /docs folder</span>
+<span class="comment"># Your docs are now live at https://yourorg.github.io/your-repo/ 🎉</span></code></pre>
+        </div>
+
+        <div class="pro-tip">
+            <p>Automate this! Add <code>dbt docs generate</code> to your CI/CD pipeline so docs are updated on every merge to main. Your documentation will <strong>never be stale</strong> because it's regenerated from the actual code every time.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 8: Interactive Quiz
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <h2>🧠 Quick Quiz — Test Your Understanding!</h2>
+
+        <p>Let's see how well you absorbed this lesson. Click the answer you think is correct:</p>
+
+        <div class="interactive-quiz">
+            <h3>Question 1: What is the purpose of schema.yml descriptions?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> They make dbt run faster by caching query results
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>B)</strong> They provide human-readable explanations of models and columns that appear in auto-generated docs
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>C)</strong> They define the SQL logic for each model
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> They are only used for testing, not documentation
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 2: What do doc blocks ({% docs %}) allow you to do?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Write SQL inside Markdown files
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Generate PDF reports from your models
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Write reusable documentation once and reference it in multiple YAML files
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Block certain users from viewing documentation
+            </div>
+        </div>
+
+        <div class="interactive-quiz">
+            <h3>Question 3: In the lineage graph, what does the left side represent?</h3>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>A)</strong> Final dashboard tables (marts)
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>B)</strong> Intermediate transformations
+            </div>
+            <div class="quiz-option" data-correct="true" onclick="checkQuiz(this)">
+                <strong>C)</strong> Raw source data from external systems
+            </div>
+            <div class="quiz-option" onclick="checkQuiz(this)">
+                <strong>D)</strong> Test results and data quality checks
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION 9: Core / Non-Core + Nav
+         ============================================================ -->
+    <div class="section fade-in-section">
+        <div class="reflection-prompt">
+            <p>Can you explain to a colleague why dbt documentation is better than a manually maintained wiki? Can you describe what the lineage graph shows and how to filter it? If yes — you've mastered this lesson!</p>
+        </div>
+
+        <div class="core-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>schema.yml descriptions</strong> — Add human-readable explanations to models and columns</li>
+                <li><strong>Doc blocks</strong> — Write reusable descriptions in .md files, reference with <code>{{ doc('name') }}</code></li>
+                <li><strong>dbt docs generate</strong> — Creates manifest.json + catalog.json from your project</li>
+                <li><strong>dbt docs serve</strong> — Launches a local documentation website</li>
+                <li><strong>Lineage graph</strong> — Visual DAG showing data flow from sources to final models</li>
+                <li><strong>Graph filters</strong> — Use <code>+model</code>, <code>model+</code>, <code>+model+</code> to focus the lineage view</li>
+            </ul>
+        </div>
+
+        <div class="noncore-box">
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Column-level lineage</strong> — Track individual columns through transformations (dbt Cloud)</li>
+                <li><strong>Hosting options</strong> — GitHub Pages, S3, GCS, or internal wiki integration</li>
+                <li><strong>manifest.json vs catalog.json</strong> — Project metadata vs warehouse metadata</li>
+                <li><strong>CI/CD automation</strong> — Auto-regenerate docs on every merge</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         Navigation Buttons
+         ============================================================ -->
+    <div class="nav-buttons">
+        <a href="testing.html" class="nav-btn-prev">
+            <i class="fas fa-arrow-left"></i> Testing & Data Quality
+        </a>
+        <a href="jinja-macros.html" class="nav-btn-next">
+            Jinja & Macros <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div><!-- end .lesson-container -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script>
+(function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in-section').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+        if (btn) btn.classList.toggle('show', window.pageYOffset > 300);
+    });
+})();
+
+function checkQuiz(el) {
+    var parent = el.closest('.interactive-quiz');
+    var options = parent.querySelectorAll('.quiz-option');
+    var alreadyAnswered = false;
+    options.forEach(function(opt) {
+        if (opt.classList.contains('correct') || opt.classList.contains('wrong')) alreadyAnswered = true;
+    });
+    if (alreadyAnswered) return;
+
+    if (el.getAttribute('data-correct') === 'true') {
+        el.classList.add('correct');
+        el.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">✅ Correct!</span>';
+    } else {
+        el.classList.add('wrong');
+        el.innerHTML += ' <span style="margin-left:8px;color:#dc2626;font-weight:700;">❌ Try again next time!</span>';
+        options.forEach(function(opt) {
+            if (opt.getAttribute('data-correct') === 'true') {
+                opt.classList.add('correct');
+                opt.innerHTML += ' <span style="margin-left:8px;color:#16a34a;font-weight:700;">← Correct answer</span>';
+            }
+        });
+    }
+}
+</script>
+<script src="../js/code-copy.js"></script>
+<script src="../js/analytics-tracker.js"></script>
+</body>
+</html>
