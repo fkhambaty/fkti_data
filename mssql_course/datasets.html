@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Datasets &amp; Scripts | SQL Server Course | FKTI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e3a5f 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .nav { background: rgba(30, 41, 59, 0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #475569; }
+        .nav a { color: #60a5fa; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #93c5fd; }
+        .header { text-align: center; padding: 40px 20px; margin-bottom: 30px; }
+        .header h1 { font-size: 2em; margin-bottom: 10px; color: white; }
+        .header p { color: #94a3b8; }
+        .tip { background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 16px 20px; border-radius: 0 12px 12px 0; margin-bottom: 28px; color: #e2e8f0; }
+        .card { background: rgba(30, 41, 59, 0.8); border-radius: 16px; padding: 20px 24px; margin-bottom: 16px; border: 2px solid #475569; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; transition: all 0.3s; }
+        .card:hover { border-color: #3b82f6; }
+        .card-info h3 { font-size: 1.1em; margin-bottom: 6px; color: white; }
+        .card-info p { color: #94a3b8; font-size: 0.95em; }
+        .card a { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .card a:hover { opacity: 0.9; transform: translateY(-1px); }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 600; margin-left: 8px; }
+        .badge-sql { background: #3b82f6; color: white; }
+        .badge-csv { background: #22c55e; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i> Main Website</a>
+            <a href="index.html"><i class="fas fa-book"></i> SQL Server Course Hub</a>
+        </nav>
+        <div class="header">
+            <h1><i class="fas fa-database"></i> Download Course Datasets &amp; Scripts</h1>
+            <p>Use these in SQL Server Management Studio (SSMS). Create a new database, then run the .sql scripts to create tables and load sample data. CSV files can be imported via SSMS or used for practice.</p>
+        </div>
+        <div class="tip">
+            <strong>👶 In simple terms:</strong> Each .sql file is a script you can run in SSMS. It will create tables and insert sample rows so you can practice SELECT, JOINs, and more. Put the file somewhere you can find it (e.g. Desktop or Documents), then open it in SSMS and click Execute (F5).
+        </div>
+
+        <div class="card">
+            <div class="card-info">
+                <h3>SampleDB_CreateAndLoad.sql <span class="badge badge-sql">.sql</span></h3>
+                <p>Creates a small database with Customers, Orders, and Products tables plus sample rows. Use with Modules 5–8 (Creating Tables, SELECT, Joins, Aggregations).</p>
+            </div>
+            <a href="datasets/SampleDB_CreateAndLoad.sql" download="SampleDB_CreateAndLoad.sql"><i class="fas fa-download"></i> Download</a>
+        </div>
+
+        <div class="card">
+            <div class="card-info">
+                <h3>Employees_Dept_Sample.sql <span class="badge badge-sql">.sql</span></h3>
+                <p>Creates Employees and Departments tables with sample data. Perfect for practicing JOINs and GROUP BY.</p>
+            </div>
+            <a href="datasets/Employees_Dept_Sample.sql" download="Employees_Dept_Sample.sql"><i class="fas fa-download"></i> Download</a>
+        </div>
+
+        <div class="card">
+            <div class="card-info">
+                <h3>Sales_Data_Sample.sql <span class="badge badge-sql">.sql</span></h3>
+                <p>Sales transactions with dates and amounts. Use for aggregations (SUM, AVG), dates, and HAVING.</p>
+            </div>
+            <a href="datasets/Sales_Data_Sample.sql" download="Sales_Data_Sample.sql"><i class="fas fa-download"></i> Download</a>
+        </div>
+
+        <div class="card">
+            <div class="card-info">
+                <h3>Practice_Exercises_Module6.sql <span class="badge badge-sql">.sql</span></h3>
+                <p>Empty script with comments: exercises for SELECT, WHERE, ORDER BY. Write your answers in the same file.</p>
+            </div>
+            <a href="datasets/Practice_Exercises_Module6.sql" download="Practice_Exercises_Module6.sql"><i class="fas fa-download"></i> Download</a>
+        </div>
+
+        <div class="card">
+            <div class="card-info">
+                <h3>customers_orders_sample.csv <span class="badge badge-csv">.csv</span></h3>
+                <p>CSV sample for import practice. Use SSMS Import Data Wizard (right-click database → Tasks → Import Data) to load into a table.</p>
+            </div>
+            <a href="datasets/customers_orders_sample.csv" download="customers_orders_sample.csv"><i class="fas fa-download"></i> Download</a>
+        </div>
+    </div>
+</body>
+</html>

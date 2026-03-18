@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: Creating Tables & Data Types | FKTI SQL Server Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.8; font-size: 18px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #2563eb; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%); border-radius: 25px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(37,99,235,0.3); }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge { background: rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .tab-nav { display: flex; gap: 5px; background: white; padding: 8px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); flex-wrap: wrap; position: sticky; top: 10px; z-index: 100; }
+        .tab-btn { flex: 1; min-width: 120px; padding: 14px 20px; border: none; background: transparent; border-radius: 15px; font-family: 'Nunito', sans-serif; font-size: 0.95em; font-weight: 700; cursor: pointer; transition: all 0.3s; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tab-btn:hover { background: #eff6ff; color: #2563eb; }
+        .tab-btn.active { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section { background: white; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #bfdbfe; }
+        .section h2 { color: #1e40af; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #dbeafe; }
+        .section h3 { color: #2563eb; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #3b82f6; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px dashed #f59e0b; }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        .step-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #3b82f6; }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .key-point { background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border-radius: 20px; padding: 25px; margin: 25px 0; border: 3px solid #14b8a6; }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+        .code-block { background: #1e293b; border-radius: 20px; padding: 30px; margin: 25px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 25px 0; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .data-table th { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; padding: 18px 15px; text-align: left; font-weight: 700; }
+        .data-table td { padding: 15px; border-bottom: 2px solid #f1f5f9; }
+        .data-table tr:nth-child(even) { background: #f0f9ff; }
+        .interactive-quiz { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 20px; padding: 28px; margin: 25px 0; border: 2px solid #2563eb; }
+        .interactive-quiz h4 { color: #1e40af; margin-bottom: 15px; }
+        .quiz-option { display: block; padding: 14px 20px; margin: 10px 0; background: white; border: 2px solid #93c5fd; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .quiz-option:hover { border-color: #2563eb; background: #f0f9ff; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) { .header h1 { font-size: 1.8em; } .section { padding: 25px 20px; } .tab-btn { min-width: 90px; font-size: 0.85em; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="tsql-basics.html"><i class="fas fa-arrow-left"></i> Module 4</a>
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="select-where-order.html">Module 6 <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 5 OF 12</span>
+            <h1><i class="fas fa-table"></i> Creating Tables & Data Types</h1>
+            <p>Define tables with CREATE TABLE: column names, data types, PRIMARY KEY, and NOT NULL.</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <div class="tab-content active" id="tab-learn">
+            <div class="section">
+                <h2><i class="fas fa-table"></i> CREATE TABLE</h2>
+                <p>Use <strong>CREATE TABLE</strong> to define a new table: give it a name and list each column with a name and data type.</p>
+                <h3>Column names</h3>
+                <p>Column names must be unique within the table. Use descriptive names (e.g. <code>CustomerId</code>, <code>OrderDate</code>). Avoid spaces; use PascalCase or snake_case.</p>
+                <h3>Data types</h3>
+                <table class="data-table">
+                    <thead><tr><th>Type</th><th>Use for</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>INT</strong></td><td>Whole numbers (e.g. IDs, counts)</td></tr>
+                        <tr><td><strong>VARCHAR(n)</strong></td><td>Variable-length text, max n characters</td></tr>
+                        <tr><td><strong>DATE</strong></td><td>Date only (no time)</td></tr>
+                        <tr><td><strong>DECIMAL(p,s)</strong></td><td>Exact numbers (p = total digits, s = decimal places)</td></tr>
+                    </tbody>
+                </table>
+                <h3>PRIMARY KEY & NOT NULL</h3>
+                <p><strong>PRIMARY KEY</strong> identifies each row uniquely. Only one primary key per table; it implies NOT NULL and unique values. <strong>NOT NULL</strong> means the column cannot store NULL—every row must have a value.</p>
+                <div class="key-point">
+                    <h4><i class="fas fa-key"></i> Key Takeaway</h4>
+                    <p>Always define a primary key for your main tables. Use NOT NULL on columns that must always have a value.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-visual">
+            <div class="section">
+                <h2><i class="fas fa-sitemap"></i> Table structure</h2>
+                <p>A table is like a spreadsheet: columns (name + type) and rows. PRIMARY KEY marks the column(s) that uniquely identify each row.</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-code">
+            <div class="section">
+                <h2><i class="fas fa-code"></i> CREATE TABLE example</h2>
+                <div class="code-block">
+                    <pre><span class="comment">-- Table with 3 columns: Id (PK), Name, BirthDate</span>
+<span class="keyword">CREATE TABLE</span> Customers (
+    Id        <span class="keyword">INT</span> <span class="keyword">PRIMARY KEY</span>,
+    Name      <span class="keyword">VARCHAR</span>(100) <span class="keyword">NOT NULL</span>,
+    BirthDate <span class="keyword">DATE</span> <span class="keyword">NULL</span>
+);</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-practice">
+            <div class="section">
+                <h2><i class="fas fa-pencil-alt"></i> Practice</h2>
+                <p>Create a table <code>Products</code> with columns: <code>ProductId</code> (INT, PRIMARY KEY), <code>ProductName</code> (VARCHAR(200), NOT NULL), and <code>Price</code> (DECIMAL(10,2)).</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-quiz">
+            <div class="section">
+                <h2><i class="fas fa-check-circle"></i> Quiz</h2>
+                <div class="interactive-quiz">
+                    <h4>1. What is PRIMARY KEY?</h4>
+                    <div class="quiz-option" data-correct="1">A column that can be empty</div>
+                    <div class="quiz-option" data-correct="0">A column (or set) that uniquely identifies each row</div>
+                    <div class="quiz-option" data-correct="1">A column that stores text</div>
+                    <div class="quiz-option" data-correct="1">A backup of the table</div>
+                    <p class="quiz-feedback correct-msg">Correct! PRIMARY KEY uniquely identifies each row.</p>
+                    <p class="quiz-feedback wrong-msg">PRIMARY KEY is the column(s) that uniquely identify each row in the table.</p>
+                </div>
+                <div class="interactive-quiz">
+                    <h4>2. What is VARCHAR?</h4>
+                    <div class="quiz-option" data-correct="0">A variable-length character/string type</div>
+                    <div class="quiz-option" data-correct="1">A number type</div>
+                    <div class="quiz-option" data-correct="1">A date type</div>
+                    <div class="quiz-option" data-correct="1">A primary key constraint</div>
+                    <p class="quiz-feedback correct-msg">Correct! VARCHAR stores variable-length text.</p>
+                    <p class="quiz-feedback wrong-msg">VARCHAR is a data type for variable-length character strings.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="tsql-basics.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 4</a>
+            <a href="select-where-order.html" class="nav-btn next">Module 6: SELECT, WHERE & ORDER BY <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelector('.tab-btn[onclick="showTab(\'' + tabId + '\')"]').classList.add('active');
+        }
+        window.addEventListener('scroll', function() { document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400); });
+        document.querySelectorAll('.interactive-quiz').forEach(quiz => {
+            const options = quiz.querySelectorAll('.quiz-option');
+            const correctMsg = quiz.querySelector('.correct-msg');
+            const wrongMsg = quiz.querySelector('.wrong-msg');
+            options.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    options.forEach(o => { o.classList.remove('correct', 'wrong'); });
+                    correctMsg.classList.remove('show'); wrongMsg.classList.remove('show');
+                    const isCorrect = opt.getAttribute('data-correct') === '0';
+                    opt.classList.add(isCorrect ? 'correct' : 'wrong');
+                    (isCorrect ? correctMsg : wrongMsg).classList.add('show');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

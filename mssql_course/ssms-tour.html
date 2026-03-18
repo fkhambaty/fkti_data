@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: SSMS Tour &amp; First Database | FKTI SQL Server Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.8; font-size: 18px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .nav a { color: #2563eb; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%); border-radius: 25px; color: white; margin-bottom: 40px; box-shadow: 0 10px 40px rgba(37,99,235,0.3); }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.2em; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+        .module-badge { background: rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 25px; font-weight: 700; display: inline-block; margin-bottom: 20px; font-size: 0.9em; }
+        .tab-nav { display: flex; gap: 5px; background: white; padding: 8px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); flex-wrap: wrap; position: sticky; top: 10px; z-index: 100; }
+        .tab-btn { flex: 1; min-width: 120px; padding: 14px 20px; border: none; background: transparent; border-radius: 15px; font-family: 'Nunito', sans-serif; font-size: 0.95em; font-weight: 700; cursor: pointer; transition: all 0.3s; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tab-btn:hover { background: #eff6ff; color: #2563eb; }
+        .tab-btn.active { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section { background: white; border-radius: 25px; padding: 45px; margin-bottom: 35px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); border: 3px solid #bfdbfe; }
+        .section h2 { color: #1e40af; font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 3px solid #dbeafe; }
+        .section h3 { color: #2563eb; font-size: 1.4em; margin: 35px 0 20px 0; padding-left: 20px; border-left: 5px solid #3b82f6; }
+        .section p { font-size: 1.1em; color: #334155; margin-bottom: 20px; }
+        .eli5-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px dashed #f59e0b; }
+        .eli5-box h4 { color: #92400e; font-size: 1.3em; margin-bottom: 15px; }
+        .eli5-box p { color: #78350f; font-size: 1.15em; margin-bottom: 10px; }
+        .step-box { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 20px; padding: 30px; margin: 25px 0; border: 3px solid #3b82f6; }
+        .step-box h4 { color: #1e40af; font-size: 1.2em; margin-bottom: 20px; }
+        .step { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 20px; background: white; padding: 20px; border-radius: 15px; }
+        .step-number { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2em; flex-shrink: 0; }
+        .step-content h5 { color: #1e40af; margin-bottom: 8px; }
+        .step-content p { color: #334155; margin: 0; font-size: 1em; }
+        .important-box { background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 20px; padding: 25px; margin: 25px 0; border: 3px solid #ef4444; }
+        .important-box h4 { color: #b91c1c; margin-bottom: 10px; }
+        .important-box p { color: #7f1d1d; margin: 0; }
+        .key-point { background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border-radius: 20px; padding: 25px; margin: 25px 0; border: 3px solid #14b8a6; }
+        .key-point h4 { color: #0f766e; margin-bottom: 10px; }
+        .key-point p { color: #134e4a; margin: 0; }
+        .code-block { background: #1e293b; border-radius: 20px; padding: 30px; margin: 25px 0; overflow-x: auto; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.95em; color: #e2e8f0; line-height: 1.8; }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .function { color: #38bdf8; }
+        .screenshot-placeholder { background: #f1f5f9; border: 2px dashed #94a3b8; border-radius: 16px; padding: 30px; margin: 25px 0; color: #475569; }
+        .interactive-quiz { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 20px; padding: 28px; margin: 25px 0; border: 2px solid #2563eb; }
+        .interactive-quiz h4 { color: #1e40af; margin-bottom: 15px; }
+        .quiz-option { display: block; padding: 14px 20px; margin: 10px 0; background: white; border: 2px solid #93c5fd; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .quiz-option:hover { border-color: #2563eb; background: #f0f9ff; }
+        .quiz-option.correct { border-color: #22c55e; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #ef4444; background: #fee2e2; }
+        .quiz-feedback { margin-top: 10px; font-weight: 600; display: none; }
+        .quiz-feedback.correct-msg { color: #16a34a; display: block; }
+        .quiz-feedback.wrong-msg { color: #dc2626; display: block; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 50px; gap: 20px; flex-wrap: wrap; }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+        .nav-btn.prev { background: #f1f5f9; color: #475569; }
+        .nav-btn.next { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 22px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .back-to-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 768px) { .header h1 { font-size: 1.8em; } .section { padding: 25px 20px; } .tab-btn { min-width: 90px; font-size: 0.85em; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="installation-ssms.html"><i class="fas fa-arrow-left"></i> Module 2</a>
+            <a href="index.html"><i class="fas fa-th-large"></i> Course Hub</a>
+            <a href="tsql-basics.html">Module 4 <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="module-badge">MODULE 3 OF 12</span>
+            <h1><i class="fas fa-desktop"></i> SSMS Tour &amp; First Database</h1>
+            <p>Learn the SSMS interface, create your first database, and run your first T-SQL command!</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('learn')"><i class="fas fa-book-open"></i> Learn</button>
+            <button class="tab-btn" onclick="showTab('visual')"><i class="fas fa-eye"></i> Visual</button>
+            <button class="tab-btn" onclick="showTab('code')"><i class="fas fa-code"></i> Code</button>
+            <button class="tab-btn" onclick="showTab('practice')"><i class="fas fa-pencil-alt"></i> Practice</button>
+            <button class="tab-btn" onclick="showTab('quiz')"><i class="fas fa-check-circle"></i> Quiz</button>
+        </div>
+
+        <div class="tab-content active" id="tab-learn">
+            <div class="section">
+                <h2><i class="fas fa-th-list"></i> SSMS Overview</h2>
+                <p>When you connect to SQL Server in SSMS, you see:</p>
+                <ul style="margin: 20px 0; padding-left: 30px; color: #334155;">
+                    <li style="margin-bottom: 10px;"><strong>Object Explorer</strong> (left) — Browse databases, tables, columns, and other objects. Expand folders to see what's on the server.</li>
+                    <li style="margin-bottom: 10px;"><strong>Query window</strong> — Where you type T-SQL. Open it with <strong>New Query</strong> or by right‑clicking a database and choosing New Query.</li>
+                    <li style="margin-bottom: 10px;"><strong>Execute button</strong> (or <strong>F5</strong>) — Runs the T-SQL in the current query window. Results appear below.</li>
+                    <li style="margin-bottom: 10px;"><strong>Database dropdown</strong> — Shows which database your query runs against. Always pick the right one; don't run exercises in <code>master</code>!</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-database"></i> Create Your First Database</h2>
+                <p><strong>master</strong> is a system database. Don't use it for your own data—if it gets corrupted or full, the whole server can be at risk. Create a separate database for your work.</p>
+                <div class="step-box">
+                    <h4>Create a database</h4>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Right‑click Databases</h5>
+                            <p>In Object Explorer, right‑click <strong>Databases</strong> and choose <strong>New Database…</strong></p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Name it</h5>
+                            <p>Enter a name (e.g. <strong>MyFirstDB</strong> or <strong>PracticeDB</strong>). Leave other options default. Click <strong>OK</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Open a query window for that database</h5>
+                            <p>Expand <strong>Databases</strong>, right‑click your new database, and select <strong>New Query</strong>. The query window will use this database by default.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="important-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Don't Use master for Practice</h4>
+                    <p>Always create and use your own database for assignments and practice. <strong>master</strong> holds server configuration; messing with it can break the instance.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-play"></i> Run Your First Command</h2>
+                <p>In the new query window, type:</p>
+                <div class="code-block">
+                    <pre><span class="keyword">SELECT</span> <span class="function">DB_NAME</span>() <span class="keyword">AS</span> DatabaseName;</pre>
+                </div>
+                <p>Click <strong>Execute</strong> (or press <strong>F5</strong>). The result shows the name of the database you're connected to. If you see the name you gave (e.g. MyFirstDB), you're all set!</p>
+                <div class="eli5-box">
+                    <h4><i class="fas fa-child"></i> Explain Like I'm 5</h4>
+                    <p><code>DB_NAME()</code> is a function that asks: "What database am I in?" SQL Server answers with one row showing that name. It's a simple way to confirm you're in the right place before you start creating tables and writing real queries.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-visual">
+            <div class="section">
+                <h2><i class="fas fa-eye"></i> SSMS Layout</h2>
+                <div class="screenshot-placeholder">
+                    <p><strong>Left:</strong> Object Explorer — Servers → Databases → YourDB → Tables, etc.</p>
+                    <p><strong>Center:</strong> Query window — type T-SQL here.</p>
+                    <p><strong>Bottom:</strong> Results — rows returned by SELECT (or "Commands completed" for other statements).</p>
+                    <p><strong>Top toolbar:</strong> New Query, Execute (▶), database dropdown.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-code">
+            <div class="section">
+                <h2><i class="fas fa-code"></i> Commands to Try</h2>
+                <div class="code-block">
+                    <pre><span class="comment">-- Which database am I using?</span>
+<span class="keyword">SELECT</span> <span class="function">DB_NAME</span>() <span class="keyword">AS</span> DatabaseName;
+
+<span class="comment">-- List all databases on the server (run in any database context)</span>
+<span class="keyword">SELECT</span> name <span class="keyword">FROM</span> sys.databases <span class="keyword">ORDER BY</span> name;</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-practice">
+            <div class="section">
+                <h2><i class="fas fa-pencil-alt"></i> Practice</h2>
+                <div class="step-box">
+                    <h4>Checklist</h4>
+                    <p>□ Create a new database (e.g. PracticeDB) via Object Explorer → Databases → New Database.</p>
+                    <p>□ Right‑click that database → New Query.</p>
+                    <p>□ Run <code>SELECT DB_NAME() AS DatabaseName;</code> and confirm the result shows your database name.</p>
+                    <p>□ Run <code>SELECT name FROM sys.databases ORDER BY name;</code> and see the list of databases.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-quiz">
+            <div class="section">
+                <h2><i class="fas fa-check-circle"></i> Quiz</h2>
+                <div class="interactive-quiz">
+                    <h4>1. Where do you type T-SQL in SSMS?</h4>
+                    <div class="quiz-option" data-correct="0">In the Query window</div>
+                    <div class="quiz-option" data-correct="1">In Object Explorer</div>
+                    <div class="quiz-option" data-correct="1">In the Results pane only</div>
+                    <div class="quiz-option" data-correct="1">In the database dropdown</div>
+                    <p class="quiz-feedback correct-msg">Correct! The query window is where you type and run T-SQL.</p>
+                    <p class="quiz-feedback wrong-msg">You type T-SQL in the Query window, then run it with Execute (F5).</p>
+                </div>
+                <div class="interactive-quiz">
+                    <h4>2. Why shouldn't you use the master database for your own tables?</h4>
+                    <div class="quiz-option" data-correct="0">It's a system database; damaging it can affect the whole server</div>
+                    <div class="quiz-option" data-correct="1">It's too slow</div>
+                    <div class="quiz-option" data-correct="1">It doesn't support tables</div>
+                    <div class="quiz-option" data-correct="1">It's read-only</div>
+                    <p class="quiz-feedback correct-msg">Correct! master holds server configuration; use your own database for practice.</p>
+                    <p class="quiz-feedback wrong-msg">master is critical for the server; create a separate database for your work.</p>
+                </div>
+                <div class="interactive-quiz">
+                    <h4>3. What does DB_NAME() return?</h4>
+                    <div class="quiz-option" data-correct="1">The server name</div>
+                    <div class="quiz-option" data-correct="0">The name of the current database</div>
+                    <div class="quiz-option" data-correct="1">The list of all databases</div>
+                    <div class="quiz-option" data-correct="1">The current user name</div>
+                    <p class="quiz-feedback correct-msg">Correct! DB_NAME() returns the name of the database you're connected to.</p>
+                    <p class="quiz-feedback wrong-msg">DB_NAME() returns the current database name, not the server or user.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="installation-ssms.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 2</a>
+            <a href="tsql-basics.html" class="nav-btn next">Module 4: T-SQL Basics <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelector('.tab-btn[onclick="showTab(\'' + tabId + '\')"]').classList.add('active');
+        }
+        window.addEventListener('scroll', function() { document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400); });
+        document.querySelectorAll('.interactive-quiz').forEach(quiz => {
+            const options = quiz.querySelectorAll('.quiz-option');
+            const correctMsg = quiz.querySelector('.correct-msg');
+            const wrongMsg = quiz.querySelector('.wrong-msg');
+            options.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    options.forEach(o => { o.classList.remove('correct', 'wrong'); });
+                    correctMsg.classList.remove('show'); wrongMsg.classList.remove('show');
+                    const isCorrect = opt.getAttribute('data-correct') === '0';
+                    opt.classList.add(isCorrect ? 'correct' : 'wrong');
+                    (isCorrect ? correctMsg : wrongMsg).classList.add('show');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
