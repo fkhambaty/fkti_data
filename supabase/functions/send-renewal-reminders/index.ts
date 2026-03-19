@@ -1,7 +1,7 @@
 /**
- * Send renewal reminder emails to subscribers whose subscription expires within 24 hours.
- * Intended to be called daily via cron (Supabase pg_cron or external scheduler).
- * Requires: RESEND_API_KEY, ADMIN_PASSCODE (for manual trigger auth).
+ * Send "Do not miss out on Pro bro!" reminder to subscribers whose subscription ends tomorrow.
+ * Call daily via cron (e.g. 9:00 AM) so users get the email one day before expiry.
+ * Requires: RESEND_API_KEY. Optional: ADMIN_PASSCODE for manual trigger auth.
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -24,23 +24,23 @@ async function sendReminderEmail(email: string, plan: string, expiresAt: string)
       body: JSON.stringify({
         from: 'Data For Dummies <noreply@datafordummies.in>',
         to: [email],
-        subject: 'Your Data For Dummies Pro renews tomorrow',
+        subject: 'Do not miss out on Pro bro! — your subscription renews tomorrow',
         html: `
           <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#1d1d1f;">
-            <h1 style="font-size:24px;margin:0 0 16px;">Heads up — your Pro renews tomorrow! 🔄</h1>
+            <h1 style="font-size:24px;margin:0 0 16px;">Do not miss out on Pro bro! 🔔</h1>
             <p style="font-size:15px;color:#374151;line-height:1.7;">
-              Your <strong>Data For Dummies Pro</strong> subscription (${planLabel}) will automatically renew on <strong>${expiryDate}</strong>.
+              Your <strong>Pro</strong> subscription (${planLabel}) will automatically renew on <strong>${expiryDate}</strong>. You're all set — no action needed.
             </p>
-            <div style="background:#fffbeb;border:1px solid #fbbf24;border-radius:12px;padding:16px;margin:20px 0;">
-              <p style="margin:0;font-size:14px;color:#92400e;">
-                <strong>No action needed</strong> — your payment method will be charged automatically and your Pro access continues uninterrupted.
+            <div style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1px solid rgba(99,102,241,0.3);border-radius:12px;padding:16px;margin:20px 0;">
+              <p style="margin:0;font-size:14px;color:#4338ca;">
+                <strong>Pro bro benefits:</strong> All courses, projects, certifications, and datasets. Your payment method will be charged automatically so you don't lose access.
               </p>
             </div>
             <p style="font-size:15px;color:#374151;line-height:1.7;">
-              Want to make changes? You can manage your subscription from your <a href="https://datafordummies.in/auth/profile.html" style="color:#4f46e5;font-weight:600;">profile page</a>.
+              Want to change payment or cancel? <a href="https://datafordummies.in/auth/profile.html" style="color:#4f46e5;font-weight:600;">Manage subscription</a>
             </p>
             <p style="font-size:13px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:16px;margin-top:32px;">
-              Questions? Email us at <a href="mailto:fktiindia@gmail.com" style="color:#6366f1;">fktiindia@gmail.com</a>
+              Questions? <a href="mailto:fktiindia@gmail.com" style="color:#6366f1;">fktiindia@gmail.com</a>
             </p>
           </div>`,
       }),
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
 
   if (req.method === 'POST') {
     try {
-      const body = await req.json();
+      const body = (await req.json().catch(() => ({}))) as { passcode?: string };
       if (ADMIN_PASSCODE && body.passcode !== ADMIN_PASSCODE) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
           status: 401,
@@ -73,6 +73,7 @@ Deno.serve(async (req) => {
       });
     }
   }
+  // GET allowed for cron (no body). If ADMIN_PASSCODE is set, cron can use POST with {"passcode":"..."}.
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     return new Response(JSON.stringify({ error: 'Missing config' }), {
@@ -83,17 +84,22 @@ Deno.serve(async (req) => {
 
   const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+  // Subscriptions expiring *tomorrow* (next calendar day) — email = "one day before"
   const now = new Date();
-  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-  const todayIso = now.toISOString();
-  const tomorrowIso = tomorrow.toISOString();
+  const tomorrowStart = new Date(now);
+  tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+  tomorrowStart.setHours(0, 0, 0, 0);
+  const tomorrowEnd = new Date(tomorrowStart);
+  tomorrowEnd.setHours(23, 59, 59, 999);
+  const tomorrowStartIso = tomorrowStart.toISOString();
+  const tomorrowEndIso = tomorrowEnd.toISOString();
 
   const { data: expiring, error } = await sb
     .from('profiles')
     .select('id,email,subscription_plan,subscription_end_date')
     .eq('subscription_status', 'pro')
-    .gte('subscription_end_date', todayIso)
-    .lte('subscription_end_date', tomorrowIso);
+    .gte('subscription_end_date', tomorrowStartIso)
+    .lte('subscription_end_date', tomorrowEndIso);
 
   if (error) {
     console.error('[renewal-reminder] Query error:', error);

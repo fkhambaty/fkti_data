@@ -34,11 +34,11 @@ async function sendWelcomeEmail(email: string, plan: string): Promise<void> {
       body: JSON.stringify({
         from: 'Data For Dummies <noreply@datafordummies.in>',
         to: [email],
-        subject: 'Welcome to Data For Dummies Pro! 🎉',
+        subject: 'Welcome to Pro bro! 🎉',
         html: `
           <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#1d1d1f;">
             <div style="text-align:center;margin-bottom:32px;">
-              <h1 style="font-size:28px;margin:0 0 8px;">Welcome to Pro! 🚀</h1>
+              <h1 style="font-size:28px;margin:0 0 8px;">Welcome to Pro bro! 🚀</h1>
               <p style="color:#6e6e73;font-size:16px;margin:0;">You're now a Data For Dummies Pro member.</p>
             </div>
             <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;padding:24px;color:#fff;text-align:center;margin-bottom:24px;">
