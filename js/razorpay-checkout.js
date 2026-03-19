@@ -55,7 +55,8 @@
             var baseUrl = (typeof window !== 'undefined' && window.location && window.location.origin)
                 ? window.location.origin.replace(/\/$/, '')
                 : '';
-            var callbackUrl = baseUrl ? (baseUrl + '/auth/profile.html?subscription=success') : (authPageUrl('profile.html') + '?subscription=success');
+            var callbackUrl = (supabaseUrl + '/functions/v1/razorpay-callback') +
+                (baseUrl ? '?redirect=' + encodeURIComponent(baseUrl) : '');
 
             fetch(supabaseUrl + '/functions/v1/create-subscription', {
                 method: 'POST',

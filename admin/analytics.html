@@ -112,6 +112,7 @@
         .kpi-card:nth-child(4)::before { background: linear-gradient(90deg, #10b981, #34d399); }
         .kpi-card:nth-child(5)::before { background: linear-gradient(90deg, #ef4444, #f87171); }
         .kpi-card:nth-child(6)::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .kpi-card:nth-child(7)::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
         .kpi-icon { font-size: 1.6rem; margin-bottom: 8px; }
         .kpi-value { font-size: 2rem; font-weight: 800; line-height: 1.1; }
         .kpi-label { font-size: 0.8rem; color: #6e6e73; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
@@ -246,6 +247,7 @@
             <div class="kpi-card"><div class="kpi-icon">🌍</div><div class="kpi-value" id="kpiCountries">--</div><div class="kpi-label">Countries</div></div>
             <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-value" id="kpiPricingViews">--</div><div class="kpi-label">Pricing Page Views</div></div>
             <div class="kpi-card"><div class="kpi-icon">🛒</div><div class="kpi-value" id="kpiCheckoutClicks">--</div><div class="kpi-label">Checkout Clicks</div></div>
+            <div class="kpi-card"><div class="kpi-icon">👑</div><div class="kpi-value" id="kpiActiveSubscribers">--</div><div class="kpi-label">Active Subscribers</div></div>
         </div>
 
         <!-- Row 1: Top Pages + Countries -->
@@ -344,7 +346,8 @@
                     var pv = result.data.page_views || [];
                     var ev = result.data.analytics_events || [];
                     var vis = result.data.site_visitors || [];
-                    renderAll(pv, ev, vis);
+                    var totalSubs = result.data.total_active_subscribers;
+                    renderAll(pv, ev, vis, totalSubs);
                 } else {
                     var errMsg = (result.data && result.data.error) ? result.data.error : 'Invalid passcode. Try again.';
                     document.getElementById('authError').textContent = errMsg;
@@ -395,7 +398,8 @@
                 var pvData = result.data.page_views || [];
                 var evData = result.data.analytics_events || [];
                 var visData = result.data.site_visitors || [];
-                renderAll(pvData, evData, visData);
+                var totalSubs = result.data.total_active_subscribers;
+                renderAll(pvData, evData, visData, totalSubs);
             })
             .catch(function (err) {
                 var msg = err && err.message ? err.message : 'Failed to load analytics.';
@@ -410,8 +414,8 @@
             });
     };
 
-    function renderAll(pvData, evData, visData) {
-        renderKPIs(pvData, evData, visData);
+    function renderAll(pvData, evData, visData, totalActiveSubscribers) {
+        renderKPIs(pvData, evData, visData, totalActiveSubscribers);
         renderTopPages(pvData);
         renderCountries(pvData);
         renderDevices(pvData);
@@ -431,7 +435,7 @@
         });
     }
 
-    function renderKPIs(pv, ev, vis) {
+    function renderKPIs(pv, ev, vis, totalActiveSubscribers) {
         document.getElementById('kpiPageViews').textContent = pv.length.toLocaleString();
         var uniqueVis = new Set(pv.map(function (r) { return r.visitor_id; }));
         document.getElementById('kpiUniqueVisitors').textContent = uniqueVis.size.toLocaleString();
@@ -444,6 +448,8 @@
         document.getElementById('kpiPricingViews').textContent = pricingViews.length.toLocaleString();
         var checkouts = ev.filter(function (r) { return r.event_type === 'checkout_click'; });
         document.getElementById('kpiCheckoutClicks').textContent = checkouts.length.toLocaleString();
+        var subsEl = document.getElementById('kpiActiveSubscribers');
+        if (subsEl) subsEl.textContent = typeof totalActiveSubscribers === 'number' ? totalActiveSubscribers.toLocaleString() : '0';
     }
 
     function countBy(arr, key) {

@@ -67,18 +67,28 @@ Deno.serve(async (req) => {
   }
 
   const sb = createClient(supabaseUrl, serviceRoleKey);
+  const nowIso = new Date().toISOString();
 
-  const [pvRes, evRes, visRes] = await Promise.all([
+  const [pvRes, evRes, visRes, subRes] = await Promise.all([
     sb.from('page_views').select('*').gte('created_at', since).order('created_at', { ascending: false }).limit(5000),
     sb.from('analytics_events').select('*').gte('created_at', since).order('created_at', { ascending: false }).limit(3000),
     sb.from('site_visitors').select('*').order('last_seen', { ascending: false }).limit(1000),
+    sb.from('profiles').select('id', { count: 'exact', head: true }).eq('subscription_status', 'pro').gte('subscription_end_date', nowIso),
   ]);
+
+  let totalActiveSubscribers = 0;
+  if (subRes.error) {
+    console.error('[get-analytics] profiles count error:', subRes.error);
+  } else if (typeof (subRes as { count?: number }).count === 'number') {
+    totalActiveSubscribers = (subRes as { count: number }).count;
+  }
 
   return new Response(
     JSON.stringify({
       page_views: pvRes.data || [],
       analytics_events: evRes.data || [],
       site_visitors: visRes.data || [],
+      total_active_subscribers: totalActiveSubscribers,
     }),
     { headers: cors }
   );
