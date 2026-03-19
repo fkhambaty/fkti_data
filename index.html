@@ -172,6 +172,7 @@
                 <a href="#" onclick="scrollToTop()" class="logo-link home-icon-btn" title="Home">
                     <i class="fas fa-house-chimney"></i>
                 </a>
+                <span id="proBadgeBanner" class="nav-pro-badge" style="display:none;" title="You're a Pro">👑 Pro</span>
             </div>
             <div class="nav-links">
                 <div class="nav-dropdown">
@@ -204,16 +205,21 @@
         </div>
     </nav>
 
-    <!-- Pro Badge (only visible for Pro users) -->
-    <div id="proBadgeBanner" style="display:none;text-align:center;padding:16px 12px 8px;">
-        <div style="display:inline-block;background:linear-gradient(145deg,#fbbf24,#f59e0b,#d97706);border-radius:20px;padding:14px 32px;box-shadow:0 8px 32px rgba(245,158,11,0.35),0 2px 8px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.4);transform:perspective(600px) rotateX(3deg);animation:proBadgeFloat 3s ease-in-out infinite;">
-            <span style="font-size:1.1rem;font-weight:800;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.15);letter-spacing:0.02em;">👑 You're a Pro bro!</span>
-        </div>
-    </div>
     <style>
-        @keyframes proBadgeFloat {
-            0%,100%{transform:perspective(600px) rotateX(3deg) translateY(0);}
-            50%{transform:perspective(600px) rotateX(3deg) translateY(-4px);}
+        .nav-pro-badge {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 3px;
+            margin-left: 8px;
+            padding: 4px 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 8px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(217,119,6,0.3);
+            line-height: 1;
         }
     </style>
 
@@ -1470,7 +1476,7 @@
                         var end = p.subscription_end_date && new Date(p.subscription_end_date);
                         if (!end || end >= new Date()) {
                             var badge = document.getElementById('proBadgeBanner');
-                            if (badge) badge.style.display = 'block';
+                            if (badge) badge.style.display = 'inline-flex';
                         }
                     }
                 }).catch(function () {});
