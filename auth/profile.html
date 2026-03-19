@@ -117,7 +117,32 @@
 
         var profileErrorEl = document.getElementById('profileError');
         var params = new URLSearchParams(window.location.search);
-        if (params.get('error') === 'subscription_unavailable') {
+
+        var razorpayError = params.get('razorpay_error') || params.get('error_description') || (params.get('error') && params.get('error') !== 'subscription_unavailable' ? params.get('error') : null);
+        if (razorpayError) {
+            if (profileErrorEl) {
+                profileErrorEl.innerHTML = '';
+                var msgP = document.createElement('p');
+                msgP.style.cssText = 'margin:0 0 10px;';
+                msgP.textContent = 'Payment could not be completed. You can try again or use a different payment method.';
+                profileErrorEl.appendChild(msgP);
+                var retryBtn = document.createElement('button');
+                retryBtn.type = 'button';
+                retryBtn.textContent = 'Try again';
+                retryBtn.style.cssText = 'background:#4f46e5;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-weight:600;cursor:pointer;font-size:0.85rem;margin-right:8px;';
+                retryBtn.addEventListener('click', function () {
+                    profileErrorEl.style.display = 'none';
+                    if (window.FKTI_RazorpayCheckout && window.FKTI_RazorpayCheckout.openProCheckout) {
+                        window.FKTI_RazorpayCheckout.openProCheckout();
+                    }
+                });
+                profileErrorEl.appendChild(retryBtn);
+                profileErrorEl.style.display = 'block';
+            }
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        } else if (params.get('error') === 'subscription_unavailable') {
             if (profileErrorEl) {
                 var rawMsg = params.get('msg') || '';
                 var friendlyMsg = rawMsg || 'Could not start subscription. Please try again.';
@@ -146,11 +171,14 @@
             }
             if (window.history && window.history.replaceState) window.history.replaceState({}, '', window.location.pathname);
         }
-        if (params.get('subscription') === 'success') {
+        if (params.get('subscription') === 'success' && !razorpayError) {
             if (profileErrorEl) profileErrorEl.style.display = 'none';
+            var hasRazorpayIds = params.get('razorpay_payment_id') || params.get('razorpay_subscription_id');
             var successEl = document.createElement('div');
             successEl.style.cssText = 'background:#ecfdf5;border:1px solid #6ee7b7;border-radius:12px;padding:14px 18px;margin-bottom:12px;color:#065f46;font-size:0.875rem;font-weight:600;';
-            successEl.textContent = 'Payment successful! Your Pro access is being activated. It may take a moment to reflect.';
+            successEl.textContent = hasRazorpayIds
+                ? 'Payment successful! Your Pro access is being activated. It may take a moment to reflect.'
+                : 'If you just completed payment, your access will update shortly. If something went wrong, use the button below to try again.';
             var card = document.querySelector('.auth-profile-card');
             if (card) card.insertBefore(successEl, card.children[1] || null);
             if (window.history && window.history.replaceState) window.history.replaceState({}, '', window.location.pathname);

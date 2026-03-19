@@ -6,11 +6,31 @@
 // Global variables
 let mobileMenuOpen = false;
 
+// Reset Learn dropdown when page is shown (fixes bfcache / back-forward cache layout bug)
+function resetNavDropdown() {
+    var nav = document.querySelector('.main-nav, .top-nav');
+    if (!nav) return;
+    var active = document.activeElement;
+    if (active && nav.contains(active)) {
+        active.blur();
+    }
+    // Force reflow so layout is recalculated after navigation
+    nav.offsetHeight;
+}
+
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
+    resetNavDropdown();
     initializeHub();
     setupEventListeners();
     setupScrollEffects();
+});
+
+// When page is restored from back-forward cache, reset dropdown so menu doesn't stay stuck
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        resetNavDropdown();
+    }
 });
 
 /**

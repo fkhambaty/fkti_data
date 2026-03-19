@@ -154,7 +154,10 @@ serve(async (req) => {
   }
 
   return new Response(
-    JSON.stringify({ subscription_id: data.id }),
+    JSON.stringify({
+      subscription_id: data.id,
+      key_id: RAZORPAY_KEY_ID,
+    }),
     { headers: { ...cors, 'Content-Type': 'application/json' } }
   );
 });

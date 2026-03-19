@@ -52,7 +52,10 @@
                 ? (user.user_metadata.country_code || '') + (user.user_metadata.phone || '')
                 : '';
 
-            var callbackUrl = authPageUrl('profile.html') + '?subscription=success';
+            var baseUrl = (typeof window !== 'undefined' && window.location && window.location.origin)
+                ? window.location.origin.replace(/\/$/, '')
+                : '';
+            var callbackUrl = baseUrl ? (baseUrl + '/auth/profile.html?subscription=success') : (authPageUrl('profile.html') + '?subscription=success');
 
             fetch(supabaseUrl + '/functions/v1/create-subscription', {
                 method: 'POST',
@@ -73,7 +76,8 @@
                 .then(function (result) {
                     var data = result.data;
                     if (result.ok && data.subscription_id) {
-                        openRazorpay(keyId, data.subscription_id, name, email, contact, callbackUrl, userId);
+                        var checkoutKey = (data.key_id && data.key_id.trim()) ? data.key_id.trim() : keyId;
+                        openRazorpay(checkoutKey, data.subscription_id, name, email, contact, callbackUrl, userId);
                     } else {
                         var userMsg = (data && data.error) || '';
                         var isFatalConfig = result.status === 503 || result.status === 502
@@ -122,20 +126,25 @@
         }
 
         function doOpen() {
+            var imgUrl = (typeof window !== 'undefined' && window.location && window.location.origin)
+                ? window.location.origin.replace(/\/$/, '') + '/logo.png'
+                : '';
+            var prefill = { name: name || 'Customer', email: email || '' };
+            if (contact && /^[\d+]/.test(String(contact).replace(/\s/g, ''))) {
+                prefill.contact = String(contact).replace(/\s/g, '');
+            }
             var options = {
                 key: keyId,
                 subscription_id: subscriptionId,
                 name: 'Data For Dummies',
                 description: 'Pro — ₹99/week',
-                image: window.location.origin + '/logo.png',
                 callback_url: callbackUrl,
-                prefill: { name: name, email: email, contact: contact },
+                prefill: prefill,
                 notes: { user_id: userId },
                 theme: { color: '#4f46e5' },
-                modal: {
-                    ondismiss: function () {}
-                }
+                modal: { ondismiss: function () {} }
             };
+            if (imgUrl) options.image = imgUrl;
             try {
                 var rzp = new Razorpay(options);
                 rzp.on('payment.failed', function (response) {
