@@ -6,33 +6,67 @@
     <title>SQL & Database Interview | Data For Dummies</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; line-height: 1.8; }
-        .container { max-width: 900px; margin: 0 auto; }
-        .nav { background: rgba(30,41,59,0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(139,92,246,0.2); }
-        .nav a { color: #a78bfa; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(99,102,241,0.15)); border-radius: 25px; margin-bottom: 40px; border: 1px solid rgba(139,92,246,0.2); }
-        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; background: linear-gradient(135deg, #a78bfa, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header p { font-size: 1.2em; color: #cbd5e1; }
-        .section-label { display: flex; align-items: center; gap: 10px; margin: 30px 0 20px; }
-        .section-label h2 { font-size: 1.5em; }
-        .badge { padding: 4px 12px; border-radius: 8px; font-size: 0.8em; font-weight: 700; }
-        .badge-free { background: #22c55e; color: white; }
-        .badge-pro { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
-        .qa-card { display: flex; gap: 20px; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08); }
-        .qa-number { width: 40px; height: 40px; background: linear-gradient(135deg, #7c3aed, #6366f1); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
-        .qa-question { color: #e2e8f0; font-size: 1.1em; margin-bottom: 12px; }
-        .qa-answer { color: #94a3b8; }
-        .qa-card.locked { opacity: 0.6; }
-        .blur-text { filter: blur(4px); user-select: none; }
-        .pro-wall { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(217,119,6,0.08)); border: 2px solid rgba(245,158,11,0.3); border-radius: 20px; padding: 40px; text-align: center; margin: 30px 0; }
-        .pro-wall h3 { color: #f59e0b; font-size: 1.5em; margin-bottom: 15px; }
-        .pro-wall p { color: #cbd5e1; margin-bottom: 20px; }
-        .pro-wall a { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #1e293b; border-radius: 12px; text-decoration: none; font-weight: 700; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(160deg, #f0f4ff 0%, #e8eef9 40%, #f8fafc 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.7; }
+        .container { max-width: 920px; margin: 0 auto; }
+        .nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); padding: 15px 30px; border-radius: 16px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(99,102,241,0.15); box-shadow: 0 4px 20px rgba(99,102,241,0.06); }
+        .nav a { color: #4f46e5; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #7c3aed; }
+        .header { text-align: center; padding: 48px 40px; background: linear-gradient(135deg, #fff 0%, #f5f3ff 50%, #ede9fe 100%); border-radius: 24px; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(99,102,241,0.12), 0 0 0 1px rgba(255,255,255,0.8); }
+        .header h1 { font-size: 2.2em; margin-bottom: 12px; color: #312e81; font-weight: 800; }
+        .header p { color: #475569; font-size: 1.05em; }
+        .section-title { font-size: 1.35em; color: #4338ca; margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid rgba(99,102,241,0.2); display: flex; align-items: center; gap: 10px; }
+        .section-title i { opacity: 0.9; }
+        .q-type-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.75em; font-weight: 700; margin-left: 8px; }
+        .q-type-normal { background: #dbeafe; color: #1d4ed8; }
+        .q-type-code { background: #d1fae5; color: #047857; }
+        .q-type-logic { background: #fef3c7; color: #b45309; }
+        .qa-card { display: flex; gap: 20px; background: #fff; border-radius: 16px; padding: 24px; margin-bottom: 20px; border: 1px solid rgba(99,102,241,0.12); box-shadow: 0 2px 12px rgba(99,102,241,0.06); }
+        .qa-card.locked { background: #f8fafc; border-color: rgba(245,158,11,0.25); position: relative; }
+        .qa-number { width: 42px; height: 42px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+        .qa-card.locked .qa-number { background: linear-gradient(135deg, #94a3b8, #64748b); }
+        .qa-question { color: #1e293b; font-size: 1.08em; margin-bottom: 12px; font-weight: 600; }
+        .qa-answer { color: #475569; }
+        .qa-answer .code-snippet { background: #f1f5f9; padding: 12px; border-radius: 10px; font-family: 'Fira Code', monospace; font-size: 0.88em; margin: 10px 0; overflow-x: auto; white-space: pre; }
+        .qa-answer table.sample-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 10px 0; }
+        .qa-answer table.sample-table th, .qa-answer table.sample-table td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; }
+        .qa-answer table.sample-table th { background: #f1f5f9; font-weight: 700; color: #475569; }
+        .try-it-box { background: #f0fdf4; border: 2px solid #86efac; border-radius: 14px; padding: 20px; margin-top: 16px; }
+        .try-it-box h4 { color: #166534; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .try-it-box textarea { width: 100%; min-height: 120px; padding: 12px; border: 2px solid #bbf7d0; border-radius: 10px; font-family: 'Fira Code', monospace; font-size: 0.9rem; resize: vertical; }
+        .try-it-box textarea:focus { outline: none; border-color: #22c55e; }
+        .try-it-box .try-actions { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+        .try-it-box button { padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.9rem; border: none; }
+        .try-it-box button.validate-btn { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; }
+        .try-it-box button.validate-btn:hover { opacity: 0.95; }
+        .try-it-box .result-msg { margin-top: 12px; padding: 12px; border-radius: 10px; font-weight: 600; display: none; }
+        .try-it-box .result-msg.correct { background: #dcfce7; color: #166534; display: block; }
+        .try-it-box .result-msg.incorrect { background: #fee2e2; color: #b91c1c; display: block; }
+        .try-it-box .result-msg.error { background: #fef3c7; color: #b45309; display: block; }
+        .try-it-box .result-msg.partial { background: #fef9c3; color: #854d0e; display: block; }
+        .solution-block { margin: 12px 0; }
+        .reveal-answer-btn { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: #fff; padding: 8px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 0.9rem; margin-bottom: 12px; }
+        .reveal-answer-btn:hover { opacity: 0.95; }
+        .reveal-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .reveal-modal-overlay.show { display: flex; }
+        .reveal-modal { background: #fff; border-radius: 20px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; padding: 24px; }
+        .reveal-modal h4 { color: #312e81; margin-bottom: 12px; font-size: 1.15rem; }
+        .reveal-modal p { color: #475569; margin-bottom: 20px; line-height: 1.6; }
+        .reveal-modal .modal-actions { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; }
+        .reveal-modal .modal-actions button { padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 0.9rem; }
+        .reveal-modal .modal-actions .btn-cancel { background: #e2e8f0; color: #475569; }
+        .reveal-modal .modal-actions .btn-confirm { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+        .blur-text { filter: blur(5px); user-select: none; pointer-events: none; }
+        .pro-wall { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 2px solid rgba(245,158,11,0.4); border-radius: 20px; padding: 40px; text-align: center; margin: 32px 0; box-shadow: 0 8px 30px rgba(245,158,11,0.15); }
+        .pro-wall h3 { color: #b45309; font-size: 1.4em; margin-bottom: 12px; }
+        .pro-wall p { color: #57534e; margin-bottom: 20px; }
+        .pro-wall a { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; }
+        .lock-badge { position: absolute; top: 16px; right: 16px; color: #f59e0b; font-size: 1.1em; }
         .footer { text-align: center; padding: 30px; color: #64748b; }
-        .footer a { color: #a78bfa; text-decoration: none; }
-        @media (max-width: 768px) { .header h1 { font-size: 2em; } .qa-card { flex-direction: column; gap: 10px; } }
+        .footer a { color: #6366f1; text-decoration: none; }
+        @media (max-width: 768px) { .header h1 { font-size: 1.75em; } .qa-card { flex-direction: column; gap: 12px; } }
     </style>
 </head>
 <body>
@@ -42,131 +76,575 @@
             <a href="../pricing.html">Pricing <i class="fas fa-arrow-right"></i></a>
         </nav>
         <div class="header">
-            <div style="font-size: 3em; margin-bottom: 15px;">🗄️</div>
+            <div style="font-size: 3em; margin-bottom: 12px;">🗄️</div>
             <h1>SQL & Database Interview Questions</h1>
-            <p>5 free samples below. Upgrade to Pro for all questions with detailed answers.</p>
-        </div>
-        <div class="section-label">
-            <h2 style="color: #4ade80;">Free Samples</h2>
-            <span class="badge badge-free">FREE</span>
+            <p>All questions from the Data Analyst interview pack (DAint). Try writing your SQL in the green “Try your SQL” boxes and use "Reveal answer" if you're stuck. Validate checks your result (we're lenient on spacing and show accuracy if you're close).</p>
         </div>
 
-            <div class="qa-card">
-                <div class="qa-number">1</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">JOIN types?</h3>
-                    <div class="qa-answer"><p>INNER: matching rows only. LEFT: all left + matching right. FULL OUTER: all from both. Think Venn diagram.</p></div>
+        <!-- ========== FREE: 2 questions (from DAint.pdf) ========== -->
+        <div class="section-title"><i class="fas fa-gift"></i> Free sample</div>
+
+        <!-- Q1: Second highest salary -->
+        <div class="qa-card" data-q="1">
+            <div class="qa-number">1</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Find the second highest salary without using LIMIT, OFFSET, or TOP <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p><strong>Input table: Employees</strong></p>
+                    <table class="sample-table">
+                        <tr><th>EmpID</th><th>Name</th><th>Salary</th></tr>
+                        <tr><td>1</td><td>Alice</td><td>60000</td></tr>
+                        <tr><td>2</td><td>Bob</td><td>80000</td></tr>
+                        <tr><td>3</td><td>Charlie</td><td>75000</td></tr>
+                        <tr><td>4</td><td>David</td><td>80000</td></tr>
+                        <tr><td>5</td><td>Eve</td><td>90000</td></tr>
+                    </table>
+                    <p><strong>Expected output:</strong> Second_Highest_Salary = 80000</p>
+                    <div class="solution-block" id="solutionQ1" style="display:none;">
+                        <p><strong>Solution:</strong></p>
+                        <div class="code-snippet">SELECT MAX(Salary) AS Second_Highest_Salary
+FROM Employees
+WHERE Salary < (SELECT MAX(Salary) FROM Employees);</div>
+                    </div>
+                    <button type="button" class="reveal-answer-btn" onclick="promptRevealAnswer('1')">Reveal answer</button>
+                    <div class="try-it-box">
+                        <h4><i class="fas fa-keyboard"></i> Try your SQL</h4>
+                        <textarea id="tryQ1" placeholder="Write your SELECT here..."></textarea>
+                        <div class="try-actions">
+                            <button type="button" class="validate-btn" onclick="validateSQL('1')">Validate</button>
+                        </div>
+                        <div id="resultQ1" class="result-msg"></div>
+                    </div>
                 </div>
             </div>
-            <div class="qa-card">
-                <div class="qa-number">2</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">Window functions?</h3>
-                    <div class="qa-answer"><p>Compute across rows without collapsing. ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC). Keeps all rows unlike GROUP BY.</p></div>
-                </div>
-            </div>
-            <div class="qa-card">
-                <div class="qa-number">3</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">WHERE vs HAVING?</h3>
-                    <div class="qa-answer"><p>WHERE filters before grouping. HAVING filters after GROUP BY. WHERE on rows, HAVING on groups.</p></div>
-                </div>
-            </div>
-            <div class="qa-card">
-                <div class="qa-number">4</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">What is a CTE?</h3>
-                    <div class="qa-answer"><p>Common Table Expression using WITH clause. Temporary named result for readable complex queries. Can be recursive.</p></div>
-                </div>
-            </div>
-            <div class="qa-card">
-                <div class="qa-number">5</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">Nth highest salary?</h3>
-                    <div class="qa-answer"><p>DENSE_RANK() OVER (ORDER BY salary DESC) as rnk, then WHERE rnk = N. Handles ties correctly.</p></div>
-                </div>
-            </div>
-        <div class="pro-wall">
-            <h3><i class="fas fa-lock"></i> Unlock All Questions</h3>
-            <p>15+ questions with detailed answers.</p>
-            <a href="../pricing.html"><i class="fas fa-crown"></i> Upgrade to Pro</a>
-        </div>
-        <div class="section-label">
-            <h2 style="color: #f59e0b;">Pro Questions</h2>
-            <span class="badge badge-pro">PRO</span>
         </div>
 
-                <div class="qa-card locked">
-                    <div class="qa-number">6</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Normalization (1NF, 2NF, 3NF)?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
+        <!-- Q2: Running total -->
+        <div class="qa-card" data-q="2">
+            <div class="qa-number">2</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Given a table of orders, find the running total (cumulative sum) of revenue for each day <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p><strong>Input table: Orders</strong></p>
+                    <table class="sample-table">
+                        <tr><th>OrderID</th><th>OrderDate</th><th>Revenue</th></tr>
+                        <tr><td>101</td><td>2024-01-01</td><td>100</td></tr>
+                        <tr><td>102</td><td>2024-01-01</td><td>200</td></tr>
+                        <tr><td>103</td><td>2024-01-02</td><td>150</td></tr>
+                        <tr><td>104</td><td>2024-01-03</td><td>300</td></tr>
+                        <tr><td>105</td><td>2024-01-03</td><td>100</td></tr>
+                    </table>
+                    <p style="font-size:0.9em; color:#64748b; margin-top:6px;">In the try-it below (SQLite), use a CTE: first <code>SELECT OrderDate, SUM(Revenue) AS Daily_Revenue ... GROUP BY OrderDate</code>, then <code>SUM(Daily_Revenue) OVER (ORDER BY OrderDate)</code> in the outer query.</p>
+                    <div class="solution-block" id="solutionQ2" style="display:none;">
+                        <p><strong>Solution (MySQL/PostgreSQL style):</strong></p>
+                        <div class="code-snippet">SELECT OrderDate, SUM(Revenue) AS Daily_Revenue,
+       SUM(SUM(Revenue)) OVER (ORDER BY OrderDate) AS Running_Total_Revenue
+FROM Orders
+GROUP BY OrderDate
+ORDER BY OrderDate;</div>
+                    </div>
+                    <button type="button" class="reveal-answer-btn" onclick="promptRevealAnswer('2')">Reveal answer</button>
+                    <div class="try-it-box">
+                        <h4><i class="fas fa-keyboard"></i> Try your SQL</h4>
+                        <textarea id="tryQ2" placeholder="Write your SELECT here..."></textarea>
+                        <div class="try-actions">
+                            <button type="button" class="validate-btn" onclick="validateSQL('2')">Validate</button>
+                        </div>
+                        <div id="resultQ2" class="result-msg"></div>
                     </div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">7</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Index types and usage?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION: JOINs & self join (DAint Q3, Q9, Q11) ========== -->
+        <div class="section-title"><i class="fas fa-project-diagram"></i> JOINs & self join</div>
+
+        <div class="qa-card" data-q="3">
+            <div class="qa-number">3</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Write an SQL query to identify employees who earn more than their managers <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p><strong>Input table: Employees</strong></p>
+                    <table class="sample-table">
+                        <tr><th>EmpID</th><th>Name</th><th>Salary</th><th>ManagerID</th></tr>
+                        <tr><td>1</td><td>Alice</td><td>70000</td><td>NULL</td></tr>
+                        <tr><td>2</td><td>Bob</td><td>80000</td><td>1</td></tr>
+                        <tr><td>3</td><td>Charlie</td><td>60000</td><td>1</td></tr>
+                        <tr><td>4</td><td>David</td><td>90000</td><td>2</td></tr>
+                        <tr><td>5</td><td>Eve</td><td>85000</td><td>2</td></tr>
+                    </table>
+                    <p><strong>Output:</strong> Bob 80000, David 90000, Eve 85000.</p>
+                    <div class="solution-block" id="solutionQ3" style="display:none;">
+                        <p><strong>Solution:</strong></p>
+                        <div class="code-snippet">SELECT e.EmpID, e.Name, e.Salary, e.ManagerID
+FROM Employees e
+JOIN Employees m ON e.ManagerID = m.EmpID
+WHERE e.Salary > m.Salary;</div>
+                    </div>
+                    <button type="button" class="reveal-answer-btn" onclick="promptRevealAnswer('3')">Reveal answer</button>
+                    <div class="try-it-box">
+                        <h4><i class="fas fa-keyboard"></i> Try your SQL</h4>
+                        <textarea id="tryQ3" placeholder="Write your SELECT here..."></textarea>
+                        <div class="try-actions"><button type="button" class="validate-btn" onclick="validateSQL('3')">Validate</button></div>
+                        <div id="resultQ3" class="result-msg"></div>
                     </div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">8</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Deadlock prevention?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
+            </div>
+        </div>
+
+        <div class="qa-card" data-q="4">
+            <div class="qa-number">4</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Find products that were never purchased by any customer <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p><strong>Tables:</strong> Products (ProductID, ProductName); OrderItems (OrderID, ProductID, Quantity). Sample: Products 1–4 (Shoes, Bag, Watch, Hat); OrderItems has 101→1, 102→3, 103→1.</p>
+                    <p><strong>Output:</strong> 2 Bag, 4 Hat.</p>
+                    <div class="solution-block" id="solutionQ4" style="display:none;">
+                        <p><strong>Solution:</strong></p>
+                        <div class="code-snippet">SELECT p.ProductID, p.ProductName
+FROM Products p
+LEFT JOIN OrderItems o ON p.ProductID = o.ProductID
+WHERE o.ProductID IS NULL;</div>
+                    </div>
+                    <button type="button" class="reveal-answer-btn" onclick="promptRevealAnswer('4')">Reveal answer</button>
+                    <div class="try-it-box">
+                        <h4><i class="fas fa-keyboard"></i> Try your SQL</h4>
+                        <textarea id="tryQ4" placeholder="Write your SELECT here..."></textarea>
+                        <div class="try-actions"><button type="button" class="validate-btn" onclick="validateSQL('4')">Validate</button></div>
+                        <div id="resultQ4" class="result-msg"></div>
                     </div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">9</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Query optimization?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">5</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Find employees who have the same salary as another employee in the same department <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p><strong>Input:</strong> Employees (EmpID, EmpName, Department, Salary). Goal: list employees whose salary matches someone else’s in the same department.</p>
+                    <div class="code-snippet">SELECT e1.EmpID, e1.EmpName, e1.Department, e1.Salary
+FROM Employees e1
+JOIN Employees e2 ON e1.Department = e2.Department AND e1.Salary = e2.Salary AND e1.EmpID <> e2.EmpID;</div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">10</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">EXPLAIN ANALYZE?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION: Window functions — ranking & totals ========== -->
+        <div class="section-title"><i class="fas fa-window-maximize"></i> Window functions — ranking & totals</div>
+
+        <div class="qa-card">
+            <div class="qa-number">6</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Find the top N customers by purchase amount; ensure no duplicates for same amount (use DENSE_RANK) <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p><strong>Input:</strong> Purchases (CustomerID, CustomerName, PurchaseAmount). Goal: top N distinct purchase amounts and corresponding customers. N=2 → Bob 7000, Charlie 7000, David 6500.</p>
+                    <div class="code-snippet">WITH RankedPurchases AS (
+  SELECT CustomerID, CustomerName, PurchaseAmount,
+         DENSE_RANK() OVER (ORDER BY PurchaseAmount DESC) AS Rank
+  FROM Purchases
+)
+SELECT CustomerID, CustomerName, PurchaseAmount
+FROM RankedPurchases WHERE Rank <= 2;</div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">11</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">DELETE vs TRUNCATE vs DROP?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">7</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Retrieve the first order for each customer, handling ties (same earliest date) correctly <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p>Use <strong>RANK()</strong> so ties all get rank 1. <strong>ROW_NUMBER()</strong> would pick only one row per customer.</p>
+                    <div class="code-snippet">WITH RankedOrders AS (
+  SELECT *, RANK() OVER (PARTITION BY CustomerID ORDER BY OrderDate ASC) AS rnk
+  FROM Orders
+)
+SELECT OrderID, CustomerID, OrderDate, Amount FROM RankedOrders WHERE rnk = 1;</div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">12</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Materialized views?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">8</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Rank orders by value per customer and return only the top 3 orders per customer <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">WITH RankedOrders AS (
+  SELECT *, RANK() OVER (PARTITION BY CustomerID ORDER BY OrderValue DESC) AS rnk
+  FROM Orders
+)
+SELECT OrderID, CustomerID, OrderValue FROM RankedOrders WHERE rnk <= 3;</div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">13</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">NULL handling?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">9</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Find the median salary using SQL (without built-in median) <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p>Middle value (odd count) or average of two middle values (even count).</p>
+                    <div class="code-snippet">WITH RankedSalaries AS (
+  SELECT Salary, ROW_NUMBER() OVER (ORDER BY Salary) AS rn, COUNT(*) OVER () AS total_count
+  FROM Employees
+),
+MedianCalc AS (
+  SELECT Salary FROM RankedSalaries
+  WHERE rn IN ((total_count + 1) / 2, total_count / 2, total_count / 2 + 1)
+)
+SELECT ROUND(AVG(Salary), 2) AS MedianSalary FROM MedianCalc;</div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">14</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Finding duplicates?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">10</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Find the moving average of sales for the last 7 days for each product <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">SELECT ProductID, SaleDate,
+  ROUND(AVG(SaleAmount) OVER (
+    PARTITION BY ProductID ORDER BY SaleDate
+    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+  ), 2) AS MovingAvg7Days
+FROM Sales;</div>
                 </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">15</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Transactions and isolation levels?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">11</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Rank products by total sales per year (reset ranking each year) <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">WITH YearlySales AS (
+  SELECT EXTRACT(YEAR FROM SaleDate) AS SalesYear, ProductID, SUM(SaleAmount) AS TotalSales
+  FROM Sales GROUP BY EXTRACT(YEAR FROM SaleDate), ProductID
+),
+RankedProducts AS (
+  SELECT *, RANK() OVER (PARTITION BY SalesYear ORDER BY TotalSales DESC) AS SalesRank
+  FROM YearlySales
+)
+SELECT * FROM RankedProducts ORDER BY SalesYear, SalesRank;</div>
                 </div>
-        <div class="footer"><p>2026 <a href="../index.html">Data For Dummies</a></p></div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION: Date logic & streaks ========== -->
+        <div class="section-title"><i class="fas fa-calendar-alt"></i> Date logic & streaks</div>
+
+        <div class="qa-card">
+            <div class="qa-number">12</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Identify consecutive login streaks (at least 3 consecutive days) <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p>Use ROW_NUMBER; then LoginDate − rn gives a constant for consecutive days. Group by UserID and that constant, then HAVING COUNT(*) ≥ 3.</p>
+                    <div class="code-snippet">WITH RankedLogins AS (
+  SELECT UserID, LoginDate, ROW_NUMBER() OVER (PARTITION BY UserID ORDER BY LoginDate) AS rn
+  FROM UserLogins
+),
+Streaks AS (
+  SELECT UserID, LoginDate, DATE(LoginDate, '-' || rn || ' days') AS StreakGroup
+  FROM RankedLogins
+),
+GroupedStreaks AS (
+  SELECT UserID, MIN(LoginDate) AS StartDate, MAX(LoginDate) AS EndDate, COUNT(*) AS StreakLength
+  FROM Streaks GROUP BY UserID, StreakGroup
+)
+SELECT * FROM GroupedStreaks WHERE StreakLength >= 3;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">13</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Find customers who made transactions in every month of the year <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">SELECT CustomerID
+FROM (
+  SELECT CustomerID, EXTRACT(MONTH FROM TransactionDate) AS txn_month
+  FROM Transactions
+  WHERE EXTRACT(YEAR FROM TransactionDate) = 2024
+  GROUP BY CustomerID, EXTRACT(MONTH FROM TransactionDate)
+) AS monthly_txns
+GROUP BY CustomerID
+HAVING COUNT(DISTINCT txn_month) = 12;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">14</div>
+            <div class="qa-content">
+                <h3 class="qa-question">First and last occurrence of each event per user <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">SELECT UserID, EventName,
+  MIN(EventTime) AS FirstOccurrence,
+  MAX(EventTime) AS LastOccurrence
+FROM Events
+GROUP BY UserID, EventName;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">15</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Users who ordered in two consecutive months but not in the third <span class="q-type-badge q-type-logic">Logic</span></h3>
+                <div class="qa-answer">
+                    <p>Extract year-month, use LAG/LEAD to get prev/next month; filter where prev is consecutive and next has a gap.</p>
+                    <div class="code-snippet">WITH MonthData AS (
+  SELECT UserID, DATE_TRUNC('month', OrderDate) AS MonthStart
+  FROM Orders GROUP BY UserID, DATE_TRUNC('month', OrderDate)
+),
+WithLagLead AS (
+  SELECT UserID, MonthStart,
+    LAG(MonthStart) OVER (PARTITION BY UserID ORDER BY MonthStart) AS PrevMonth,
+    LEAD(MonthStart) OVER (PARTITION BY UserID ORDER BY MonthStart) AS NextMonth
+  FROM MonthData
+)
+SELECT DISTINCT UserID FROM WithLagLead
+WHERE (NextMonth IS NULL OR (NextMonth - MonthStart) > INTERVAL '1 month')
+  AND (MonthStart - PrevMonth) = INTERVAL '1 month';</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION: Duplicates, optimization & pivot ========== -->
+        <div class="section-title"><i class="fas fa-cogs"></i> Duplicates, optimization & pivot</div>
+
+        <div class="qa-card">
+            <div class="qa-number">16</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Detect duplicate records and delete extra copies, keeping one <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <p><strong>MySQL/Postgres:</strong> DELETE WHERE CustomerID NOT IN (SELECT MIN(CustomerID) FROM Customers GROUP BY Name, Email). <strong>With CTE (Postgres):</strong></p>
+                    <div class="code-snippet">WITH Duplicates AS (
+  SELECT *, ROW_NUMBER() OVER (PARTITION BY Name, Email ORDER BY CustomerID) AS rn
+  FROM Customers
+)
+DELETE FROM Customers
+WHERE CustomerID IN (SELECT CustomerID FROM Duplicates WHERE rn > 1);</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">17</div>
+            <div class="qa-content">
+                <h3 class="qa-question">How would you optimize a slow query with multiple joins and aggregations? <span class="q-type-badge q-type-normal">Normal</span></h3>
+                <div class="qa-answer">
+                    <p><strong>Techniques:</strong> (1) Add indexes on JOIN and WHERE columns. (2) Use EXPLAIN ANALYZE to find full scans and missing indexes. (3) Avoid SELECT *; project only needed columns. (4) Use CTEs or temp tables for intermediate results. (5) Join smaller filtered sets first. (6) Partitioning and batch deletes/inserts. (7) Materialized views or summary tables for precomputed aggregations. (8) Prefer window functions over correlated subqueries where applicable.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">18</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Department with the highest total salary <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">SELECT Department, SUM(Salary) AS TotalSalary
+FROM Employees GROUP BY Department
+ORDER BY TotalSalary DESC LIMIT 1;</div>
+                    <p>Without LIMIT: use a CTE with RANK() OVER (ORDER BY TotalSalary DESC) and WHERE rnk = 1.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">19</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Pivot sales: one row per customer, columns Jan, Feb, Mar <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">SELECT CustomerID,
+  SUM(CASE WHEN strftime('%m', SaleDate) = '01' THEN SaleAmount ELSE 0 END) AS Jan,
+  SUM(CASE WHEN strftime('%m', SaleDate) = '02' THEN SaleAmount ELSE 0 END) AS Feb,
+  SUM(CASE WHEN strftime('%m', SaleDate) = '03' THEN SaleAmount ELSE 0 END) AS Mar
+FROM Sales GROUP BY CustomerID;</div>
+                    <p>Use MONTH(SaleDate) or EXTRACT(MONTH FROM SaleDate) in MySQL/Postgres.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">20</div>
+            <div class="qa-content">
+                <h3 class="qa-question">Most frequently purchased product category per user <span class="q-type-badge q-type-code">Code</span></h3>
+                <div class="qa-answer">
+                    <div class="code-snippet">WITH LastYearOrders AS (
+  SELECT * FROM Orders WHERE OrderDate >= CURRENT_DATE - INTERVAL '12 months'
+),
+CategoryCounts AS (
+  SELECT UserID, Category, COUNT(*) AS CategoryCount
+  FROM LastYearOrders GROUP BY UserID, Category
+),
+Ranked AS (
+  SELECT *, RANK() OVER (PARTITION BY UserID ORDER BY CategoryCount DESC) AS rnk
+  FROM CategoryCounts
+)
+SELECT UserID, Category, CategoryCount FROM Ranked WHERE rnk = 1;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer"><p>© 2026 <a href="../index.html">Data For Dummies</a>. Questions adapted from real data analyst interview material.</p></div>
     </div>
+
+    <!-- Reveal answer confirmation modal -->
+    <div class="reveal-modal-overlay" id="revealModal">
+        <div class="reveal-modal">
+            <h4>🛑 Wait! Are you sure?</h4>
+            <p>Your future SQL-legend self might judge you. The best learning happens when your brain sweats a little—have you really given it a proper fight? If you reveal now, the answer will just sit there, judging you silently.</p>
+            <p><strong>Still want to peek?</strong></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeRevealModal()">Nope, I'll try again!</button>
+                <button type="button" class="btn-confirm" onclick="confirmRevealAnswer()">Yes, show me the answer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+    <script>
+(function() {
+    var SQL = null;
+    window.initSqlJs({ locateFile: function() { return 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.wasm'; } })
+        .then(function(Sql) { SQL = Sql; })
+        .catch(function() { console.warn('sql.js failed to load'); });
+
+    function normalizeRows(rows) {
+        if (!rows || !rows.length) return [];
+        return rows.map(function(r) { return r.map(function(c) { return String(c == null ? '' : c).trim(); }).join('\t'); }).sort();
+    }
+
+    var pendingRevealQid = null;
+    window.promptRevealAnswer = function(qid) {
+        pendingRevealQid = qid;
+        var el = document.getElementById('revealModal');
+        if (el) el.classList.add('show');
+    };
+    window.closeRevealModal = function() {
+        pendingRevealQid = null;
+        var el = document.getElementById('revealModal');
+        if (el) el.classList.remove('show');
+    };
+    window.confirmRevealAnswer = function() {
+        if (pendingRevealQid) {
+            var block = document.getElementById('solutionQ' + pendingRevealQid);
+            if (block) block.style.display = 'block';
+            closeRevealModal();
+            pendingRevealQid = null;
+        }
+    };
+
+    function runQuery(db, sql) {
+        try {
+            var stmt = db.prepare(sql);
+            var cols = stmt.getColumnNames();
+            var rows = [];
+            while (stmt.step()) rows.push(stmt.get());
+            stmt.free();
+            return { cols: cols, rows: rows };
+        } catch (e) {
+            return { error: e.message };
+        }
+    }
+
+    window.validateSQL = function(qid) {
+        var resultEl = document.getElementById('resultQ' + qid);
+        var textarea = document.getElementById('tryQ' + qid);
+        if (!resultEl || !textarea) return;
+        resultEl.className = 'result-msg';
+        resultEl.textContent = '';
+        resultEl.style.display = 'none';
+
+        var sql = (textarea.value || '').trim().replace(/;+\s*$/, '').replace(/\s+/g, ' ').trim();
+        if (!sql) {
+            resultEl.className = 'result-msg error';
+            resultEl.textContent = 'Enter a query first.';
+            resultEl.style.display = 'block';
+            return;
+        }
+
+        if (!SQL) {
+            resultEl.className = 'result-msg error';
+            resultEl.textContent = 'SQL engine loading… Try again in a moment.';
+            resultEl.style.display = 'block';
+            return;
+        }
+
+        var db = new SQL.Database();
+        var expected = '';
+        var setup = '';
+
+        if (qid === '1') {
+            setup = "CREATE TABLE Employees(EmpID INT, Name TEXT, Salary INT);" +
+                "INSERT INTO Employees VALUES(1,'Alice',60000),(2,'Bob',80000),(3,'Charlie',75000),(4,'David',80000),(5,'Eve',90000);";
+            expected = "SELECT MAX(Salary) AS Second_Highest_Salary FROM Employees WHERE Salary < (SELECT MAX(Salary) FROM Employees);";
+        } else if (qid === '2') {
+            setup = "CREATE TABLE Orders(OrderID INT, OrderDate TEXT, Revenue INT);" +
+                "INSERT INTO Orders VALUES(101,'2024-01-01',100),(102,'2024-01-01',200),(103,'2024-01-02',150),(104,'2024-01-03',300),(105,'2024-01-03',100);";
+            expected = "WITH daily AS (SELECT OrderDate, SUM(Revenue) AS Daily_Revenue FROM Orders GROUP BY OrderDate) SELECT OrderDate, Daily_Revenue, SUM(Daily_Revenue) OVER (ORDER BY OrderDate) AS Running_Total_Revenue FROM daily ORDER BY OrderDate";
+        } else if (qid === '3') {
+            setup = "CREATE TABLE Employees(EmpID INT, Name TEXT, Salary INT, ManagerID INT);" +
+                "INSERT INTO Employees VALUES(1,'Alice',70000,NULL),(2,'Bob',80000,1),(3,'Charlie',60000,1),(4,'David',90000,2),(5,'Eve',85000,2);";
+            expected = "SELECT e.EmpID, e.Name, e.Salary, e.ManagerID FROM Employees e JOIN Employees m ON e.ManagerID = m.EmpID WHERE e.Salary > m.Salary ORDER BY e.EmpID";
+        } else if (qid === '4') {
+            setup = "CREATE TABLE Products(ProductID INT, ProductName TEXT);" +
+                "INSERT INTO Products VALUES(1,'Shoes'),(2,'Bag'),(3,'Watch'),(4,'Hat');" +
+                "CREATE TABLE OrderItems(OrderID INT, ProductID INT, Quantity INT);" +
+                "INSERT INTO OrderItems VALUES(101,1,2),(102,3,1),(103,1,1);";
+            expected = "SELECT p.ProductID, p.ProductName FROM Products p LEFT JOIN OrderItems o ON p.ProductID = o.ProductID WHERE o.ProductID IS NULL ORDER BY p.ProductID";
+        }
+
+        try {
+            db.exec(setup);
+        } catch (e) {
+            resultEl.className = 'result-msg error';
+            resultEl.textContent = 'Setup failed: ' + e.message;
+            resultEl.style.display = 'block';
+            return;
+        }
+
+        var userRes = runQuery(db, sql);
+        if (userRes.error) {
+            resultEl.className = 'result-msg incorrect';
+            resultEl.textContent = 'Error: ' + userRes.error;
+            resultEl.style.display = 'block';
+            return;
+        }
+
+        var expRes = runQuery(db, expected);
+        if (expRes.error) {
+            resultEl.className = 'result-msg error';
+            resultEl.textContent = 'Expected query failed.';
+            resultEl.style.display = 'block';
+            return;
+        }
+
+        var userRows = normalizeRows(userRes.rows);
+        var expRows = normalizeRows(expRes.rows);
+        var expSet = {};
+        expRows.forEach(function(r) { expSet[r] = true; });
+        var matchCount = 0;
+        userRows.forEach(function(r) { if (expSet[r]) matchCount++; });
+        var pct = expRows.length ? Math.round((matchCount / expRows.length) * 100) : 0;
+        if (userRows.length === expRows.length && userRows.every(function(r, i) { return r === expRows[i]; })) {
+            resultEl.className = 'result-msg correct';
+            resultEl.textContent = 'Correct! Your result matches the expected output.';
+        } else if (pct >= 50 && matchCount > 0) {
+            resultEl.className = 'result-msg partial';
+            resultEl.textContent = 'Close! ' + pct + '% match (' + matchCount + '/' + expRows.length + ' rows correct). Tweak column names, order, or logic to get the rest.';
+        } else {
+            resultEl.className = 'result-msg incorrect';
+            resultEl.textContent = expRows.length ? 'Result does not match. Expected ' + expRows.length + ' row(s). You got ' + matchCount + ' matching (' + pct + '%). Check column names, order, and logic.' : 'Result does not match. Check your query.';
+        }
+        resultEl.style.display = 'block';
+        db.close();
+    };
+})();
+    </script>
 </body>
 </html>

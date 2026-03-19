@@ -6,33 +6,37 @@
     <title>dbt Interview | Data For Dummies</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; line-height: 1.8; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(160deg, #f0f4ff 0%, #e8eef9 40%, #f8fafc 100%); min-height: 100vh; padding: 20px; color: #1e293b; line-height: 1.7; }
         .container { max-width: 900px; margin: 0 auto; }
-        .nav { background: rgba(30,41,59,0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(139,92,246,0.2); }
-        .nav a { color: #a78bfa; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .header { text-align: center; padding: 50px 40px; background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(99,102,241,0.15)); border-radius: 25px; margin-bottom: 40px; border: 1px solid rgba(139,92,246,0.2); }
-        .header h1 { font-size: 2.5em; margin-bottom: 15px; font-weight: 900; background: linear-gradient(135deg, #a78bfa, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header p { font-size: 1.2em; color: #cbd5e1; }
-        .section-label { display: flex; align-items: center; gap: 10px; margin: 30px 0 20px; }
-        .section-label h2 { font-size: 1.5em; }
-        .badge { padding: 4px 12px; border-radius: 8px; font-size: 0.8em; font-weight: 700; }
-        .badge-free { background: #22c55e; color: white; }
-        .badge-pro { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
-        .qa-card { display: flex; gap: 20px; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08); }
-        .qa-number { width: 40px; height: 40px; background: linear-gradient(135deg, #7c3aed, #6366f1); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
-        .qa-question { color: #e2e8f0; font-size: 1.1em; margin-bottom: 12px; }
-        .qa-answer { color: #94a3b8; }
-        .qa-card.locked { opacity: 0.6; }
-        .blur-text { filter: blur(4px); user-select: none; }
-        .pro-wall { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(217,119,6,0.08)); border: 2px solid rgba(245,158,11,0.3); border-radius: 20px; padding: 40px; text-align: center; margin: 30px 0; }
-        .pro-wall h3 { color: #f59e0b; font-size: 1.5em; margin-bottom: 15px; }
-        .pro-wall p { color: #cbd5e1; margin-bottom: 20px; }
-        .pro-wall a { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #1e293b; border-radius: 12px; text-decoration: none; font-weight: 700; }
+        .nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); padding: 15px 30px; border-radius: 16px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(99,102,241,0.15); box-shadow: 0 4px 20px rgba(99,102,241,0.06); }
+        .nav a { color: #4f46e5; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #7c3aed; }
+        .header { text-align: center; padding: 48px 40px; background: linear-gradient(135deg, #fff 0%, #f5f3ff 50%, #ede9fe 100%); border-radius: 24px; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(99,102,241,0.12), 0 0 0 1px rgba(255,255,255,0.8); }
+        .header h1 { font-size: 2.2em; margin-bottom: 12px; color: #312e81; font-weight: 800; }
+        .header p { color: #475569; font-size: 1.05em; }
+        .section-title { font-size: 1.35em; color: #4338ca; margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid rgba(99,102,241,0.2); display: flex; align-items: center; gap: 10px; }
+        .q-type-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.75em; font-weight: 700; margin-left: 8px; }
+        .q-type-normal { background: #dbeafe; color: #1d4ed8; }
+        .q-type-code { background: #d1fae5; color: #047857; }
+        .q-type-logic { background: #fef3c7; color: #b45309; }
+        .qa-card { display: flex; gap: 20px; background: #fff; border-radius: 16px; padding: 24px; margin-bottom: 16px; border: 1px solid rgba(99,102,241,0.12); box-shadow: 0 2px 12px rgba(99,102,241,0.06); }
+        .qa-card.locked { background: #f8fafc; border-color: rgba(245,158,11,0.25); position: relative; }
+        .qa-number { width: 42px; height: 42px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+        .qa-card.locked .qa-number { background: linear-gradient(135deg, #94a3b8, #64748b); }
+        .qa-question { color: #1e293b; font-size: 1.08em; margin-bottom: 12px; font-weight: 600; }
+        .qa-answer { color: #475569; }
+        .blur-text { filter: blur(5px); user-select: none; pointer-events: none; }
+        .pro-wall { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 2px solid rgba(245,158,11,0.4); border-radius: 20px; padding: 40px; text-align: center; margin: 32px 0; box-shadow: 0 8px 30px rgba(245,158,11,0.15); }
+        .pro-wall h3 { color: #b45309; font-size: 1.4em; margin-bottom: 12px; }
+        .pro-wall p { color: #57534e; margin-bottom: 20px; }
+        .pro-wall a { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; }
+        .lock-badge { position: absolute; top: 16px; right: 16px; color: #f59e0b; font-size: 1.1em; }
         .footer { text-align: center; padding: 30px; color: #64748b; }
-        .footer a { color: #a78bfa; text-decoration: none; }
-        @media (max-width: 768px) { .header h1 { font-size: 2em; } .qa-card { flex-direction: column; gap: 10px; } }
+        .footer a { color: #6366f1; text-decoration: none; }
+        @media (max-width: 768px) { .header h1 { font-size: 1.75em; } .qa-card { flex-direction: column; gap: 12px; } }
     </style>
 </head>
 <body>
@@ -42,117 +46,60 @@
             <a href="../pricing.html">Pricing <i class="fas fa-arrow-right"></i></a>
         </nav>
         <div class="header">
-            <div style="font-size: 3em; margin-bottom: 15px;">🔄</div>
+            <div style="font-size: 3em; margin-bottom: 12px;">🔄</div>
             <h1>dbt Interview Questions</h1>
-            <p>5 free samples below. Upgrade to Pro for all questions with detailed answers.</p>
-        </div>
-        <div class="section-label">
-            <h2 style="color: #4ade80;">Free Samples</h2>
-            <span class="badge badge-free">FREE</span>
+            <p><strong>2 free questions</strong> to get you started. Unlock all sections (Normal, Code & Logic) with Pro.</p>
         </div>
 
-            <div class="qa-card">
-                <div class="qa-number">1</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">What is dbt?</h3>
-                    <div class="qa-answer"><p>Data build tool for SQL transformations in-warehouse. Adds version control, testing, docs to SQL. The T in ELT.</p></div>
+        <div class="section-title"><i class="fas fa-gift"></i> Free sample — easy bait</div>
+
+        <div class="qa-card">
+            <div class="qa-number">1</div>
+            <div class="qa-content">
+                <h3 class="qa-question">What is dbt and where does it fit in the data stack? <span class="q-type-badge q-type-normal">Normal</span></h3>
+                <div class="qa-answer">
+                    <p><strong>dbt</strong> (data build tool) is used for the “T” in ELT: it runs SQL transformations inside your data warehouse. You write SQL in models, use <code>ref()</code> to build a DAG of dependencies, and dbt handles run order, testing, and documentation. It doesn’t move data from source to warehouse—an orchestrator (e.g. Airflow) does that. dbt runs in the warehouse (Snowflake, BigQuery, Redshift, etc.) and produces tables/views that analytics and BI use.</p>
                 </div>
             </div>
-            <div class="qa-card">
-                <div class="qa-number">2</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">Materialization types?</h3>
-                    <div class="qa-answer"><p>View: virtual. Table: physical, rebuilt. Incremental: only new rows. Ephemeral: CTE. Choose by volume and freshness.</p></div>
+        </div>
+
+        <div class="qa-card">
+            <div class="qa-number">2</div>
+            <div class="qa-content">
+                <h3 class="qa-question">What are the main materialization types in dbt? <span class="q-type-badge q-type-normal">Normal</span></h3>
+                <div class="qa-answer">
+                    <p><strong>View</strong>: Model is built as a view (no physical table; always fresh, can be slower). <strong>Table</strong>: Full rebuild each run; good for smaller datasets. <strong>Incremental</strong>: Only new/changed rows are processed after the first run; good for large fact tables. <strong>Ephemeral</strong>: Not materialized in the warehouse; compiled into a CTE in dependent models. Choose by data volume and how often you need to refresh.</p>
                 </div>
             </div>
-            <div class="qa-card">
-                <div class="qa-number">3</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">What is ref()?</h3>
-                    <div class="qa-answer"><p>Creates model dependencies. ref("stg_orders") tells dbt the build order and uses correct schema. Enables DAG.</p></div>
-                </div>
-            </div>
-            <div class="qa-card">
-                <div class="qa-number">4</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">How does testing work?</h3>
-                    <div class="qa-answer"><p>Schema tests in YAML (unique, not_null). Custom SQL tests in tests/ folder. Any query returning rows = failure.</p></div>
-                </div>
-            </div>
-            <div class="qa-card">
-                <div class="qa-number">5</div>
-                <div class="qa-content">
-                    <h3 class="qa-question">Staging/Intermediate/Marts pattern?</h3>
-                    <div class="qa-answer"><p>Staging: 1:1 source, light cleaning. Intermediate: business logic. Marts: final BI tables by domain.</p></div>
-                </div>
-            </div>
+        </div>
+
         <div class="pro-wall">
-            <h3><i class="fas fa-lock"></i> Unlock All Questions</h3>
-            <p>13+ questions with detailed answers.</p>
+            <h3><i class="fas fa-lock"></i> Unlock all dbt interview questions</h3>
+            <p>25+ questions across models, testing, incremental, macros, and project design — with full answers.</p>
             <a href="../pricing.html"><i class="fas fa-crown"></i> Upgrade to Pro</a>
         </div>
-        <div class="section-label">
-            <h2 style="color: #f59e0b;">Pro Questions</h2>
-            <span class="badge badge-pro">PRO</span>
-        </div>
 
-                <div class="qa-card locked">
-                    <div class="qa-number">6</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Incremental models?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">7</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Macros usage?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">8</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">dbt packages?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">9</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Production deployment?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">10</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Semantic Layer?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">11</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">SCD in dbt?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">12</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Exposures?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-                <div class="qa-card locked">
-                    <div class="qa-number">13</div>
-                    <div class="qa-content">
-                        <h3 class="qa-question">Performance optimization?</h3>
-                        <div class="qa-answer"><p class="blur-text">Unlock with Pro subscription for detailed answer.</p></div>
-                    </div>
-                </div>
-        <div class="footer"><p>2026 <a href="../index.html">Data For Dummies</a></p></div>
+        <div class="section-title"><i class="fas fa-cube"></i> Models & refs</div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">3</div><div class="qa-content"><h3 class="qa-question">What is ref() and why use it instead of raw table names? <span class="q-type-badge q-type-normal">Normal</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">4</div><div class="qa-content"><h3 class="qa-question">Write a staging model that selects from source and renames columns. <span class="q-type-badge q-type-code">Code</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the code.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">5</div><div class="qa-content"><h3 class="qa-question">Staging vs intermediate vs marts — how do you structure a dbt project? <span class="q-type-badge q-type-logic">Logic</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+
+        <div class="section-title"><i class="fas fa-vial"></i> Testing & documentation</div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">6</div><div class="qa-content"><h3 class="qa-question">How does dbt testing work (schema tests vs custom tests)? <span class="q-type-badge q-type-normal">Normal</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">7</div><div class="qa-content"><h3 class="qa-question">Add unique and not_null tests to a model in YAML. <span class="q-type-badge q-type-code">Code</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the YAML.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">8</div><div class="qa-content"><h3 class="qa-question">When would you use a singular test vs a generic test? <span class="q-type-badge q-type-logic">Logic</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+
+        <div class="section-title"><i class="fas fa-forward"></i> Incremental & performance</div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">9</div><div class="qa-content"><h3 class="qa-question">How do incremental models work? What is the incremental_strategy? <span class="q-type-badge q-type-normal">Normal</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">10</div><div class="qa-content"><h3 class="qa-question">Write an incremental model that appends new rows based on a date column. <span class="q-type-badge q-type-code">Code</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the code.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">11</div><div class="qa-content"><h3 class="qa-question">How would you implement SCD Type 2 in dbt? <span class="q-type-badge q-type-logic">Logic</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+
+        <div class="section-title"><i class="fas fa-magic"></i> Macros, packages & deployment</div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">12</div><div class="qa-content"><h3 class="qa-question">What are dbt macros and when do you use them? <span class="q-type-badge q-type-normal">Normal</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">13</div><div class="qa-content"><h3 class="qa-question">How do you run only a subset of models (e.g. select or exclude)? <span class="q-type-badge q-type-code">Code</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+        <div class="qa-card locked"><span class="lock-badge"><i class="fas fa-lock"></i></span><div class="qa-number">14</div><div class="qa-content"><h3 class="qa-question">How would you deploy dbt in CI/CD with Slim CI? <span class="q-type-badge q-type-logic">Logic</span></h3><div class="qa-answer"><p class="blur-text">Unlock with Pro for the answer.</p></div></div></div>
+
+        <div class="footer"><p>© 2026 <a href="../index.html">Data For Dummies</a></p></div>
     </div>
 </body>
 </html>

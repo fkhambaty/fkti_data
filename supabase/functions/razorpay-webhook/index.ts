@@ -66,7 +66,7 @@ serve(async (req) => {
   const subId = payload.payload?.subscription?.entity?.id || null;
 
   const endDate = new Date();
-  endDate.setMonth(endDate.getMonth() + 1);
+  endDate.setDate(endDate.getDate() + 7);
 
   const { error } = await supabase
     .from('profiles')

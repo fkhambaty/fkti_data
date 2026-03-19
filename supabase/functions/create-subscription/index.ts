@@ -106,7 +106,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         plan_id: RAZORPAY_PLAN_ID,
-        total_count: 12,
+        total_count: 52,
         quantity: 1,
         notes: { user_id: userId },
       }),

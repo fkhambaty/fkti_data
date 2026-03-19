@@ -2,9 +2,11 @@
     var facts = [
         "\ud83d\udcca 90% of the world\u2019s data was created in the last 2 years",
         "\ud83e\udde0 Netflix saves $1B/year using data pipelines like these",
+        "\ud83d\udc40 We explain SQL like you're five. No PhD required.",
         "\u26a1 ClickHouse can scan 1 billion rows per second per core",
         "\ud83d\udc0d Python is the #1 language for data science worldwide",
         "\ud83d\udce6 SQL was invented in 1974 \u2014 older than Star Wars!",
+        "\ud83d\ude0a From 'what's a JOIN?' to 'I built a pipeline' \u2014 we got you.",
         "\ud83c\udf0d 1 exabyte = 1 billion gigabytes of data",
         "\ud83d\ude80 Airflow orchestrates pipelines at Airbnb, Uber & Spotify",
         "\ud83d\udca1 DBT is used by 30,000+ companies for data transforms",
@@ -23,7 +25,9 @@
         "\u23f1\ufe0f Redshift can query petabytes in under 5 seconds",
         "\ud83c\udf10 There are 5 billion internet users generating data right now",
         "\ud83d\udccb Metabase has 50,000+ active installations worldwide",
-        "\ud83c\udfd7\ufe0f The medallion architecture (Bronze\u2192Silver\u2192Gold) is industry standard"
+        "\ud83c\udfd7\ufe0f The medallion architecture (Bronze\u2192Silver\u2192Gold) is industry standard",
+        "\ud83d\udc4b Real projects, real skills. No fake it till you make it.",
+        "\u2705 Pro = full courses + certs. Less than a chai a day. We did the math."
     ];
     var el = document.getElementById('tickerText');
     var iconEl = document.querySelector('.ticker-icon');

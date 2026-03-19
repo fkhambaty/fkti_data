@@ -1,5 +1,6 @@
 // Return analytics data for admin dashboard. Auth is by passcode only (no Supabase Auth).
-// Optional: set ADMIN_PASSCODE in Edge Function secrets for a fixed passcode; otherwise passcode = today's date ddmmyyyy (IST).
+// Set ADMIN_PASSCODE in Edge Function secrets (Supabase Dashboard > Project Settings > Edge Functions > secrets).
+// Do not rely on the date fallback in production; it is only for backward compatibility.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const cors = {
@@ -8,15 +9,21 @@ const cors = {
   'Content-Type': 'application/json',
 };
 
+/** IST = UTC+5:30. Returns today's date in IST as DDMMYYYY (reliable across server timezones). */
+function getTodayISTDDMMYYYY(): string {
+  const utcMs = Date.now();
+  const istMs = utcMs + 5.5 * 60 * 60 * 1000;
+  const d = new Date(istMs);
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const yyyy = d.getUTCFullYear();
+  return dd + mm + yyyy;
+}
+
 function getExpectedPasscode(): string {
   const adminPasscode = Deno.env.get('ADMIN_PASSCODE');
-  if (adminPasscode) return adminPasscode;
-  const now = new Date();
-  const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-  const dd = String(ist.getDate()).padStart(2, '0');
-  const mm = String(ist.getMonth() + 1).padStart(2, '0');
-  const yyyy = ist.getFullYear();
-  return dd + mm + yyyy;
+  if (adminPasscode && adminPasscode.trim()) return adminPasscode.trim();
+  return getTodayISTDDMMYYYY();
 }
 
 Deno.serve(async (req) => {

@@ -82,4 +82,23 @@ The code is ready but needs a backend to be deployed. Currently, it falls back t
 - Add authentication to protect the analytics endpoint
 - Consider rate limiting to prevent abuse
 
+---
+
+## Admin Analytics Dashboard (Supabase)
+
+The **Admin Analytics** page (`admin/analytics.html`) shows page views, events, and visitors. It is protected by a passcode and calls the Supabase Edge Function `get-analytics`.
+
+### Securing the passcode (required for production)
+
+**Do not rely on the default behaviour.** Set a secret passcode so only you can access the dashboard:
+
+1. Open [Supabase Dashboard](https://supabase.com/dashboard) → your project.
+2. Go to **Project Settings** → **Edge Functions** (or **Settings** → **Edge Functions**).
+3. Add a secret: **Name** = `ADMIN_PASSCODE`, **Value** = a strong passphrase only you know (e.g. a long random string or a password you keep in a password manager).
+4. Redeploy the `get-analytics` Edge Function if needed so it picks up the new secret.
+
+After this, only that passcode will grant access. The dashboard login screen does **not** reveal how the passcode is generated; share the passcode only through a secure channel. Keep `ADMIN_PASSCODE` confidential and do not commit it to the repo.
+
+**If you have not set `ADMIN_PASSCODE` yet:** The Edge Function accepts today's date in **DDMMYYYY** (Indian Standard Time) as a temporary passcode so you can access the dashboard. Set `ADMIN_PASSCODE` and use that passcode instead for production.
+
 

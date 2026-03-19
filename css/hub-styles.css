@@ -667,7 +667,7 @@ li {
 }
 .top-offset-for-nav { padding-top: 72px !important; }
 
-/* App download */
+/* App download - keep visible in nav */
 .app-download-nav {
     display: inline-flex;
     align-items: center;
@@ -682,6 +682,7 @@ li {
     text-decoration: none;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 2px;
+    flex-shrink: 0;
 }
 .app-download-nav:hover {
     background: rgba(99, 102, 241, 0.1);
@@ -1795,14 +1796,101 @@ li {
     }
 }
 
-/* Nav links - tight, no dead space */
+/* Nav links - dropdown + auth + app; no overflow clip so dropdown panel is visible */
 .nav-links {
     display: flex;
     align-items: center;
     gap: 0;
-    flex-shrink: 1;
+    flex: 1 1 auto;
     min-width: 0;
+    overflow: visible;
+    padding: 0 4px;
+    justify-content: flex-end;
 }
+.nav-links::-webkit-scrollbar {
+    display: none;
+}
+
+/* Nav dropdown - one "Menu" trigger, hover shows submenu */
+.nav-dropdown {
+    position: relative;
+    flex-shrink: 0;
+}
+.nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: #4f46e5;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: -0.01em;
+}
+.nav-dropdown-trigger:hover {
+    background: rgba(79, 70, 229, 0.1);
+    color: #4338ca;
+    transform: translateY(-1px);
+}
+.nav-dropdown-icon {
+    font-size: 0.65rem;
+    opacity: 0.85;
+    transition: transform 0.25s ease;
+}
+.nav-dropdown:hover .nav-dropdown-icon {
+    transform: rotate(180deg);
+}
+.nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 200px;
+    padding: 8px 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(99, 102, 241, 0.08);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    z-index: 1001;
+}
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown:focus-within .nav-dropdown-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.nav-dropdown-trigger:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+}
+.nav-dropdown-link {
+    display: block;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+    border-radius: 10px;
+    margin: 0 6px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-dropdown-link:hover {
+    background: rgba(99, 102, 241, 0.08);
+    color: #4338ca;
+}
+.nav-dropdown-link:first-child { margin-top: 0; }
+.nav-dropdown-link:last-child { margin-bottom: 0; }
 
 .nav-link {
     text-decoration: none;
@@ -1841,11 +1929,17 @@ li {
 .nav-link[onclick*="showContactInfo"] { color: #0d9488; }
 .nav-link[onclick*="showContactInfo"]:hover { background: rgba(13, 148, 136, 0.1); color: #0f766e; }
 
-/* Auth nav slot: always show Login / Sign Up or My Account */
+/* Auth nav slot: always show Login / Sign Up or My Account - keep visible, no shrink */
 #auth-nav-slot {
     display: inline-flex;
     align-items: center;
     gap: 2px;
+    flex-shrink: 0;
+}
+#auth-nav-slot .auth-nav-account,
+#auth-nav-slot .auth-logout-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .auth-nav-login { color: #4f46e5 !important; }
 .auth-nav-login:hover { background: rgba(79, 70, 229, 0.12) !important; color: #4338ca !important; }
