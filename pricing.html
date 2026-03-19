@@ -35,9 +35,9 @@
                         <a href="distributed-computing.html" class="nav-dropdown-link" role="menuitem">Distributed Computing</a>
                         <a href="interviews/index.html" class="nav-dropdown-link" role="menuitem">Interviews</a>
                         <a href="certifications.html" class="nav-dropdown-link" role="menuitem">Certifications</a>
+                        <a href="pipeline-designer.html" class="nav-dropdown-link" role="menuitem">Pipeline Designer</a>
                     </div>
                 </div>
-                <a href="pipeline-designer.html" class="nav-link">Pipeline Designer</a>
                 <a href="projects.html" class="nav-link">Projects</a>
                 <a href="pricing.html" class="nav-link">Pricing</a>
                 <a href="founder.html" class="nav-link">Founder</a>
@@ -59,13 +59,13 @@
         <div class="pricing-grid">
             <div class="pricing-card">
                 <h2>Free</h2>
-                <p class="pricing-card-desc">Taste every course—first ~5% of each is free. No card, no catch. We're nice like that.</p>
+                <p class="pricing-card-desc">Taste every course—first ~5% of each is free. No card, no catch.</p>
                 <div class="pricing-amount">
                     <div class="price">₹0</div>
                     <div class="period">forever (yes, really)</div>
                 </div>
                 <ul class="pricing-features">
-                    <li>First ~5% of every course free (Python, SQL, Data Science, Airflow, DBT, LLM, and more)</li>
+                    <li>First ~5% of every course free</li>
                     <li>Data Modelling, Bus Matrix & Pipeline Designer (view)</li>
                     <li>Data Adventure & Learning Path</li>
                     <li>Community access</li>
@@ -76,23 +76,43 @@
             </div>
 
             <div class="pricing-card pricing-card-featured">
-                <h2>Pro</h2>
-                <p class="pricing-card-desc">Full access to every course, exports, certifications & real projects. The good stuff.</p>
+                <h2>Pro Weekly</h2>
+                <p class="pricing-card-desc">Full access, billed weekly. Cancel anytime — less than a chai a day.</p>
                 <div class="pricing-amount">
                     <div class="price">₹99 <span>/ week</span></div>
-                    <div class="period">Cancel anytime · Less than a chai a day (we did the math)</div>
+                    <div class="period">Auto-renewing · Cancel anytime</div>
                 </div>
                 <ul class="pricing-features">
-                    <li>Python, Airflow, DBT, Redshift, MSSQL, Metabase, ClickHouse</li>
-                    <li>Data Science (ML, DL, NLP, SVM, KNN) and LLM course</li>
+                    <li>All courses — Python, SQL, Airflow, DBT, Data Science, LLM & more</li>
                     <li>Pipeline Designer export (SVG, PNG, PDF)</li>
-                    <li>Code walkthroughs and dataset downloads</li>
+                    <li>Code walkthroughs & dataset downloads</li>
                     <li>Assignments and certifications</li>
-                    <li><strong>Pro works on web and Android app</strong> — learn anywhere, same progress on both.</li>
+                    <li><strong>Pro works on web + Android app</strong></li>
                 </ul>
                 <div class="pricing-cta">
-                    <button type="button" class="ds-btn ds-btn-primary" id="proCheckoutBtn">Unlock full access</button>
-                    <div id="proCurrentBadge" class="pricing-current" style="display:none;">You're on Pro — nice!</div>
+                    <button type="button" class="ds-btn ds-btn-primary" id="proWeeklyBtn">Subscribe Weekly</button>
+                    <div id="proWeeklyBadge" class="pricing-current" style="display:none;">You're on Pro — nice!</div>
+                </div>
+            </div>
+
+            <div class="pricing-card" style="--glass-bg:rgba(255,255,255,0.55);--glass-border:rgba(16,185,129,0.3);border-color:var(--glass-border);box-shadow:0 0 0 1px rgba(16,185,129,0.15),0 12px 40px rgba(16,185,129,0.1),0 4px 12px rgba(0,0,0,0.04),inset 0 1px 0 rgba(255,255,255,0.8);">
+                <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-size:0.75rem;font-weight:700;padding:6px 18px;border-radius:999px;text-transform:uppercase;letter-spacing:0.06em;box-shadow:0 4px 14px rgba(16,185,129,0.4);white-space:nowrap;">Best Value</div>
+                <h2>Pro Monthly</h2>
+                <p class="pricing-card-desc">Full access, billed monthly. Save ₹47 vs weekly — best deal.</p>
+                <div class="pricing-amount">
+                    <div class="price">₹349 <span>/ month</span></div>
+                    <div class="period">Auto-renewing · Cancel anytime</div>
+                </div>
+                <ul class="pricing-features">
+                    <li>Everything in Pro Weekly</li>
+                    <li>Save ₹47/month compared to weekly</li>
+                    <li>All courses, projects, certifications</li>
+                    <li>Priority support</li>
+                    <li><strong>Pro works on web + Android app</strong></li>
+                </ul>
+                <div class="pricing-cta">
+                    <button type="button" class="ds-btn ds-btn-primary" style="background:linear-gradient(135deg,#059669,#10b981);" id="proMonthlyBtn">Subscribe Monthly</button>
+                    <div id="proMonthlyBadge" class="pricing-current" style="display:none;">You're on Pro — nice!</div>
                 </div>
             </div>
         </div>
@@ -125,13 +145,15 @@
     <script src="js/hub-script.js"></script>
     <script src="js/razorpay-checkout.js"></script>
     <script>
-        document.getElementById('proCheckoutBtn').addEventListener('click', function () {
+        function checkout(plan) {
             if (window.FKTI_RazorpayCheckout && window.FKTI_RazorpayCheckout.openProCheckout) {
-                window.FKTI_RazorpayCheckout.openProCheckout();
+                window.FKTI_RazorpayCheckout.openProCheckout(plan);
             } else {
                 window.location.href = 'auth/login.html?returnTo=' + encodeURIComponent('pricing.html');
             }
-        });
+        }
+        document.getElementById('proWeeklyBtn').addEventListener('click', function () { checkout('weekly'); });
+        document.getElementById('proMonthlyBtn').addEventListener('click', function () { checkout('monthly'); });
         if (window.FKTI_Auth && window.FKTI_Auth.getSession) {
             window.FKTI_Auth.getSession().then(function (res) {
                 var session = res.data && res.data.session;
@@ -141,8 +163,10 @@
                     if (p && p.subscription_status === 'pro') {
                         var end = p.subscription_end_date && new Date(p.subscription_end_date);
                         if (!end || end >= new Date()) {
-                            document.getElementById('proCheckoutBtn').style.display = 'none';
-                            document.getElementById('proCurrentBadge').style.display = 'block';
+                            document.getElementById('proWeeklyBtn').style.display = 'none';
+                            document.getElementById('proWeeklyBadge').style.display = 'block';
+                            document.getElementById('proMonthlyBtn').style.display = 'none';
+                            document.getElementById('proMonthlyBadge').style.display = 'block';
                         }
                     }
                 });

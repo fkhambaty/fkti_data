@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON & Arrays | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>JSON &amp; Arrays | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,846 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="transactions.html">Transactions & ACID <i class="fas fa-arrow-right"></i></a>
+            <a href="transactions.html"><i class="fas fa-arrow-left"></i> Transactions &amp; Concurrency</a>
+            <a href="production.html">Production PostgreSQL <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>JSON & Arrays</h1>
-            <p>PostgreSQL's killer feature — native JSON/JSONB support and array operations.</p>
+            <h1>&#128230; JSON &amp; Arrays</h1>
+            <p>PostgreSQL is also a document database! Store, query, and index JSON. Plus arrays for multi-value columns.</p>
         </div>
-        <div class="section visible">
-            <h2>📚 JSON & Arrays</h2>
-            <p>PostgreSQL's killer feature — native JSON/JSONB support and array operations.</p>
+
+        <!-- ===================== 1. JSON vs JSONB ===================== -->
+        <div class="section visible" id="json-vs-jsonb">
+            <h2>1&#65039;&#8419; JSON vs JSONB &mdash; What&rsquo;s the Difference?</h2>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers json & arrays with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>&#129490; ELI5 &mdash; The Photo Album vs the Digital Gallery</h4>
+                <p>Imagine you write a letter and photocopy it. The photocopy is <strong>JSON</strong> &mdash; it stores the exact text you wrote, character for character, including extra spaces and the order you put things. Every time someone wants to read one sentence, they have to scan through the whole letter from the beginning.</p>
+                <p style="margin-top:10px;">Now imagine you type that same letter into a computer and it gets <strong>organized into a searchable database</strong>. That&rsquo;s <strong>JSONB</strong> (the &ldquo;B&rdquo; stands for <em>Binary</em>). It parses your text, throws away useless whitespace, sorts the keys, and stores it in a special binary format that&rsquo;s lightning-fast to search. You can even build an index on it!</p>
+                <p style="margin-top:10px; color:#4ade80;"><strong>Bottom line:</strong> Almost always use <code>JSONB</code>. It&rsquo;s faster to query, supports indexing, and only costs a tiny bit more storage.</p>
+            </div>
+
+            <h3>Head-to-Head Comparison</h3>
+            <table class="comparison-table">
+                <tr><th>Feature</th><th>JSON</th><th>JSONB</th></tr>
+                <tr><td>Storage format</td><td>Raw text (exact copy)</td><td>Decomposed binary</td></tr>
+                <tr><td>Preserves key order?</td><td style="color:#4ade80;">Yes</td><td style="color:#f87171;">No (sorts keys)</td></tr>
+                <tr><td>Preserves whitespace?</td><td style="color:#4ade80;">Yes</td><td style="color:#f87171;">No (strips it)</td></tr>
+                <tr><td>Duplicate keys?</td><td style="color:#4ade80;">Keeps all</td><td style="color:#f87171;">Keeps last value</td></tr>
+                <tr><td>Write speed</td><td style="color:#4ade80;">Slightly faster</td><td>Slightly slower (must parse)</td></tr>
+                <tr><td>Read/query speed</td><td style="color:#f87171;">Slower (must re-parse)</td><td style="color:#4ade80;">Much faster</td></tr>
+                <tr><td>Supports GIN index?</td><td style="color:#f87171;">No</td><td style="color:#4ade80;">Yes!</td></tr>
+                <tr><td>Containment operators (@&gt;)?</td><td style="color:#f87171;">No</td><td style="color:#4ade80;">Yes</td></tr>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Quick demo: JSON stores your exact text</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#4ade80">'{"b": 2,   "a": 1}'</span>::<span style="color:#38bdf8">json</span>;
+<span style="color:#94a3b8">-- Result: {"b": 2,   "a": 1}  (exact text preserved)</span>
+
+<span style="color:#94a3b8">-- JSONB parses, sorts keys, strips whitespace</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#4ade80">'{"b": 2,   "a": 1}'</span>::<span style="color:#38bdf8">jsonb</span>;
+<span style="color:#94a3b8">-- Result: {"a": 1, "b": 2}  (sorted, clean)</span></pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; When to Use Plain JSON?</h4>
+                <p>Only use <code>JSON</code> (not JSONB) if you need to <strong>preserve the exact original text</strong> &mdash; for example, logging raw API responses where byte-for-byte fidelity matters. In every other case, <strong>use JSONB</strong>.</p>
             </div>
         </div>
+
+        <!-- ===================== 2. STORING JSON ===================== -->
+        <div class="section" id="storing">
+            <h2>2&#65039;&#8419; Storing JSON Data</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; The Junk Drawer That&rsquo;s Actually Organized</h4>
+                <p>Every house has a junk drawer where random stuff goes &mdash; batteries, tape, keys, weird cables. A JSONB column is like that drawer, except PostgreSQL secretly organizes everything inside so you can find anything instantly. You throw in whatever structure you want, and PostgreSQL handles the rest.</p>
+            </div>
+
+            <h3>Creating a Table with JSONB</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> products (
+    id          <span style="color:#38bdf8">SERIAL PRIMARY KEY</span>,
+    name        <span style="color:#38bdf8">VARCHAR(200)</span> <span style="color:#c084fc">NOT NULL</span>,
+    category    <span style="color:#38bdf8">VARCHAR(100)</span>,
+    price       <span style="color:#38bdf8">NUMERIC(10,2)</span>,
+    attributes  <span style="color:#38bdf8">JSONB</span>        <span style="color:#94a3b8">-- flexible attributes column!</span>
+);</pre></div>
+
+            <h3>Inserting JSON Data</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- A laptop has screen_size, ram, storage</span>
+<span style="color:#c084fc">INSERT INTO</span> products (name, category, price, attributes) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'MacBook Pro 16'</span>, <span style="color:#4ade80">'Laptops'</span>, <span style="color:#fb923c">2499.00</span>,
+ <span style="color:#4ade80">'{"screen_size": "16 inch", "ram": "32GB", "storage": "1TB SSD", "color": "Space Gray"}'</span>);
+
+<span style="color:#94a3b8">-- A t-shirt has size, material, pattern &mdash; completely different attributes!</span>
+<span style="color:#c084fc">INSERT INTO</span> products (name, category, price, attributes) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'Cotton T-Shirt'</span>, <span style="color:#4ade80">'Clothing'</span>, <span style="color:#fb923c">29.99</span>,
+ <span style="color:#4ade80">'{"size": "L", "material": "100% Cotton", "pattern": "Striped", "washable": true}'</span>);
+
+<span style="color:#94a3b8">-- A blender has wattage, speeds, capacity</span>
+<span style="color:#c084fc">INSERT INTO</span> products (name, category, price, attributes) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'Pro Blender 3000'</span>, <span style="color:#4ade80">'Kitchen'</span>, <span style="color:#fb923c">149.99</span>,
+ <span style="color:#4ade80">'{"wattage": 1200, "speeds": 10, "capacity_liters": 2.5, "bpa_free": true}'</span>);</pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Why This Is Powerful</h4>
+                <p>In a traditional relational design, you&rsquo;d need separate columns for <code>screen_size</code>, <code>ram</code>, <code>size</code>, <code>material</code>, <code>wattage</code>, etc. &mdash; most of which would be NULL for most products. With JSONB, each product stores <strong>only the attributes that apply to it</strong>. This is exactly how Amazon, Shopify, and eBay handle their product catalogs.</p>
+            </div>
+
+            <h3>Nested JSON &mdash; JSON Inside JSON</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">INSERT INTO</span> products (name, category, price, attributes) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'Gaming Monitor'</span>, <span style="color:#4ade80">'Monitors'</span>, <span style="color:#fb923c">599.99</span>,
+ <span style="color:#4ade80">'{
+    "resolution": "4K",
+    "refresh_rate": "144Hz",
+    "panel": "IPS",
+    "ports": ["HDMI 2.1", "DisplayPort 1.4", "USB-C"],
+    "dimensions": {
+        "width": "27 inch",
+        "height": "16 inch",
+        "weight_kg": 6.5
+    }
+}'</span>);</pre></div>
+            <p>Notice how <code>ports</code> is a JSON <strong>array</strong> and <code>dimensions</code> is a <strong>nested object</strong>. JSONB handles both beautifully.</p>
+        </div>
+
+        <!-- ===================== 3. JSON OPERATORS ===================== -->
+        <div class="section" id="operators">
+            <h2>3&#65039;&#8419; JSON Operators &mdash; Your Query Toolkit</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Reaching Into the Drawer</h4>
+                <p>Think of JSON operators as different <strong>hands</strong> you can reach into the junk drawer with. Some grab the whole item (still in its wrapper), some unwrap it first, some can reach deep into nested compartments, and some just check if something&rsquo;s in there without grabbing it.</p>
+            </div>
+
+            <h3>The Six Essential Operators</h3>
+            <table class="comparison-table">
+                <tr><th>Operator</th><th>What It Does</th><th>Returns</th></tr>
+                <tr><td><code>-&gt;</code></td><td>Get JSON object field by key</td><td>JSON / JSONB</td></tr>
+                <tr><td><code>-&gt;&gt;</code></td><td>Get JSON object field by key</td><td><strong>TEXT</strong></td></tr>
+                <tr><td><code>#&gt;</code></td><td>Get value at a nested path</td><td>JSON / JSONB</td></tr>
+                <tr><td><code>#&gt;&gt;</code></td><td>Get value at a nested path</td><td><strong>TEXT</strong></td></tr>
+                <tr><td><code>@&gt;</code></td><td>Does left contain right?</td><td>BOOLEAN</td></tr>
+                <tr><td><code>?</code></td><td>Does the key exist?</td><td>BOOLEAN</td></tr>
+            </table>
+
+            <h3><code>-&gt;</code> vs <code>-&gt;&gt;</code> &mdash; JSON vs Text</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- -> returns the value as JSONB (still wrapped)</span>
+<span style="color:#c084fc">SELECT</span> name, attributes-><span style="color:#4ade80">'ram'</span> <span style="color:#c084fc">AS</span> ram_jsonb
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Laptops'</span>;
+<span style="color:#94a3b8">-- Result: "32GB"  (with quotes &mdash; it's still JSONB type)</span>
+
+<span style="color:#94a3b8">-- ->> returns the value as plain TEXT (unwrapped)</span>
+<span style="color:#c084fc">SELECT</span> name, attributes->><span style="color:#4ade80">'ram'</span> <span style="color:#c084fc">AS</span> ram_text
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Laptops'</span>;
+<span style="color:#94a3b8">-- Result: 32GB  (no quotes &mdash; plain text)</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Single Arrow vs Double Arrow</h4>
+                <p>Use <code>-&gt;</code> (single arrow) when you need to chain operators or keep the JSON type. Use <code>-&gt;&gt;</code> (double arrow) when you need the final text value for display, comparison, or casting to another type. Think: single = still JSON, double = <strong>text</strong>.</p>
+            </div>
+
+            <h3><code>#&gt;</code> and <code>#&gt;&gt;</code> &mdash; Path Navigation</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Reach into nested JSON using a path</span>
+<span style="color:#94a3b8">-- Get the "width" from the nested "dimensions" object</span>
+<span style="color:#c084fc">SELECT</span> name,
+       attributes#><span style="color:#4ade80">'{dimensions, width}'</span> <span style="color:#c084fc">AS</span> width_jsonb,
+       attributes#>><span style="color:#4ade80">'{dimensions, width}'</span> <span style="color:#c084fc">AS</span> width_text
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Gaming Monitor'</span>;
+<span style="color:#94a3b8">-- width_jsonb: "27 inch"   (JSONB)</span>
+<span style="color:#94a3b8">-- width_text:  27 inch     (TEXT)</span>
+
+<span style="color:#94a3b8">-- Get the second port from the "ports" array (0-indexed!)</span>
+<span style="color:#c084fc">SELECT</span> attributes#>><span style="color:#4ade80">'{ports, 1}'</span> <span style="color:#c084fc">AS</span> second_port
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Gaming Monitor'</span>;
+<span style="color:#94a3b8">-- Result: DisplayPort 1.4</span></pre></div>
+
+            <h3><code>@&gt;</code> Containment &mdash; &ldquo;Does This JSON Contain...?&rdquo;</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find all products where attributes contain {"bpa_free": true}</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> attributes @> <span style="color:#4ade80">'{"bpa_free": true}'</span>;
+<span style="color:#94a3b8">-- Finds the blender! This operator is VERY fast with a GIN index.</span>
+
+<span style="color:#94a3b8">-- Find laptops with specific RAM</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> attributes @> <span style="color:#4ade80">'{"ram": "32GB"}'</span>;</pre></div>
+
+            <h3><code>?</code> Existence &mdash; &ldquo;Does This Key Exist?&rdquo;</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find all products that HAVE a "screen_size" attribute</span>
+<span style="color:#c084fc">SELECT</span> name, category
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> attributes ? <span style="color:#4ade80">'screen_size'</span>;
+<span style="color:#94a3b8">-- Returns laptops and monitors (not t-shirts or blenders)</span>
+
+<span style="color:#94a3b8">-- ? also has variants:</span>
+<span style="color:#94a3b8">-- ?|  (ANY of these keys exist)</span>
+<span style="color:#c084fc">SELECT</span> name <span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> attributes ?| <span style="color:#c084fc">ARRAY</span>[<span style="color:#4ade80">'wattage'</span>, <span style="color:#4ade80">'screen_size'</span>];
+
+<span style="color:#94a3b8">-- ?&amp;  (ALL of these keys exist)</span>
+<span style="color:#c084fc">SELECT</span> name <span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> attributes ?& <span style="color:#c084fc">ARRAY</span>[<span style="color:#4ade80">'ram'</span>, <span style="color:#4ade80">'storage'</span>];</pre></div>
+        </div>
+
+        <!-- ===================== 4. QUERYING JSON ===================== -->
+        <div class="section" id="querying">
+            <h2>4&#65039;&#8419; Querying JSON &mdash; Advanced Techniques</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Being a Detective</h4>
+                <p>Now you know how to reach into the drawer. But what if you want to dump the whole drawer onto the table and examine each item one by one? Or find all drawers that contain a specific type of item? That&rsquo;s what JSON functions do &mdash; they let you <strong>unpack, transform, and analyze</strong> JSON data in powerful ways.</p>
+            </div>
+
+            <h3>Filtering with JSON in WHERE</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find products with wattage greater than 1000</span>
+<span style="color:#c084fc">SELECT</span> name, price,
+       (attributes->><span style="color:#4ade80">'wattage'</span>)::<span style="color:#38bdf8">INTEGER</span> <span style="color:#c084fc">AS</span> watts
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> (attributes->><span style="color:#4ade80">'wattage'</span>)::<span style="color:#38bdf8">INTEGER</span> > <span style="color:#fb923c">1000</span>;
+
+<span style="color:#94a3b8">-- Find products that are washable</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> (attributes->><span style="color:#4ade80">'washable'</span>)::<span style="color:#38bdf8">BOOLEAN</span> = <span style="color:#c084fc">TRUE</span>;
+
+<span style="color:#94a3b8">-- Partial text match inside JSON</span>
+<span style="color:#c084fc">SELECT</span> name, attributes->><span style="color:#4ade80">'material'</span> <span style="color:#c084fc">AS</span> material
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> attributes->><span style="color:#4ade80">'material'</span> <span style="color:#c084fc">LIKE</span> <span style="color:#4ade80">'%Cotton%'</span>;</pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; Casting Is Important!</h4>
+                <p>The <code>-&gt;&gt;</code> operator always returns <strong>TEXT</strong>. If you need to compare numbers or booleans, you <strong>must cast</strong> using <code>::INTEGER</code>, <code>::NUMERIC</code>, <code>::BOOLEAN</code>, etc. Otherwise <code>'1000' > '200'</code> would be <code>false</code> because it compares text alphabetically!</p>
+            </div>
+
+            <h3>GIN Index on JSONB &mdash; Making It Fast</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Create a GIN index on the entire JSONB column</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_products_attributes
+<span style="color:#c084fc">ON</span> products <span style="color:#c084fc">USING</span> <span style="color:#38bdf8">GIN</span> (attributes);
+
+<span style="color:#94a3b8">-- Now these queries are FAST (use the GIN index):</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> products <span style="color:#c084fc">WHERE</span> attributes @> <span style="color:#4ade80">'{"ram": "32GB"}'</span>;
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> products <span style="color:#c084fc">WHERE</span> attributes ? <span style="color:#4ade80">'wattage'</span>;
+
+<span style="color:#94a3b8">-- For targeting a SPECIFIC path (more efficient if you only query one key):</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_products_category_attr
+<span style="color:#c084fc">ON</span> products <span style="color:#c084fc">USING</span> <span style="color:#38bdf8">GIN</span> ((attributes-><span style="color:#4ade80">'ports'</span>));</pre></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">GIN</div>
+                    <div class="stat-label">Generalized Inverted Index</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">@&gt;</div>
+                    <div class="stat-label">Containment uses GIN</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">?</div>
+                    <div class="stat-label">Key-exists uses GIN</div>
+                </div>
+            </div>
+
+            <h3>jsonb_each &mdash; Unpack All Key-Value Pairs</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Turn each JSON key-value pair into a row</span>
+<span style="color:#c084fc">SELECT</span> p.name,
+       kv.key   <span style="color:#c084fc">AS</span> attribute_name,
+       kv.value <span style="color:#c084fc">AS</span> attribute_value
+<span style="color:#c084fc">FROM</span> products p,
+     jsonb_each(p.attributes) <span style="color:#c084fc">AS</span> kv(key, value)
+<span style="color:#c084fc">WHERE</span> p.name = <span style="color:#4ade80">'MacBook Pro 16'</span>;
+
+<span style="color:#94a3b8">-- Result:</span>
+<span style="color:#94a3b8">-- name           | attribute_name | attribute_value</span>
+<span style="color:#94a3b8">-- MacBook Pro 16 | color          | "Space Gray"</span>
+<span style="color:#94a3b8">-- MacBook Pro 16 | ram            | "32GB"</span>
+<span style="color:#94a3b8">-- MacBook Pro 16 | screen_size    | "16 inch"</span>
+<span style="color:#94a3b8">-- MacBook Pro 16 | storage        | "1TB SSD"</span></pre></div>
+
+            <h3>jsonb_array_elements &mdash; Explode a JSON Array</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Expand the "ports" array into individual rows</span>
+<span style="color:#c084fc">SELECT</span> p.name,
+       port.value <span style="color:#c084fc">AS</span> port_name
+<span style="color:#c084fc">FROM</span> products p,
+     jsonb_array_elements(p.attributes-><span style="color:#4ade80">'ports'</span>) <span style="color:#c084fc">AS</span> port(value)
+<span style="color:#c084fc">WHERE</span> p.name = <span style="color:#4ade80">'Gaming Monitor'</span>;
+
+<span style="color:#94a3b8">-- Result:</span>
+<span style="color:#94a3b8">-- name           | port_name</span>
+<span style="color:#94a3b8">-- Gaming Monitor | "HDMI 2.1"</span>
+<span style="color:#94a3b8">-- Gaming Monitor | "DisplayPort 1.4"</span>
+<span style="color:#94a3b8">-- Gaming Monitor | "USB-C"</span>
+
+<span style="color:#94a3b8">-- Use jsonb_array_elements_text to get TEXT instead of JSONB:</span>
+<span style="color:#c084fc">SELECT</span> p.name,
+       port <span style="color:#c084fc">AS</span> port_name
+<span style="color:#c084fc">FROM</span> products p,
+     jsonb_array_elements_text(p.attributes-><span style="color:#4ade80">'ports'</span>) <span style="color:#c084fc">AS</span> port
+<span style="color:#c084fc">WHERE</span> p.name = <span style="color:#4ade80">'Gaming Monitor'</span>;</pre></div>
+
+            <h3>jsonb_to_record &mdash; JSON to Table Columns</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Convert JSON attributes to proper typed columns</span>
+<span style="color:#c084fc">SELECT</span> p.name, p.price, attr.*
+<span style="color:#c084fc">FROM</span> products p,
+     jsonb_to_record(p.attributes) <span style="color:#c084fc">AS</span> attr(
+         ram <span style="color:#38bdf8">TEXT</span>,
+         storage <span style="color:#38bdf8">TEXT</span>,
+         screen_size <span style="color:#38bdf8">TEXT</span>
+     )
+<span style="color:#c084fc">WHERE</span> p.category = <span style="color:#4ade80">'Laptops'</span>;
+
+<span style="color:#94a3b8">-- Result:</span>
+<span style="color:#94a3b8">-- name           | price   | ram  | storage | screen_size</span>
+<span style="color:#94a3b8">-- MacBook Pro 16 | 2499.00 | 32GB | 1TB SSD | 16 inch</span></pre></div>
+        </div>
+
+        <!-- ===================== 5. MODIFYING JSON ===================== -->
+        <div class="section" id="modifying">
+            <h2>5&#65039;&#8419; Modifying JSON Data</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Editing a Sticker on a Package</h4>
+                <p>You can&rsquo;t erase one word on a printed sticker, but you CAN peel off the old sticker and put on a new one with the word changed. That&rsquo;s how JSONB modification works: PostgreSQL creates a <strong>new version</strong> of the JSON with your changes applied. It feels like editing in-place, but under the hood it&rsquo;s replace-and-swap.</p>
+            </div>
+
+            <h3>jsonb_set &mdash; Update a Specific Key</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Change the RAM of a laptop from 32GB to 64GB</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = jsonb_set(attributes, <span style="color:#4ade80">'{ram}'</span>, <span style="color:#4ade80">'"64GB"'</span>)
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'MacBook Pro 16'</span>;
+
+<span style="color:#94a3b8">-- Update a nested value (change the weight)</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = jsonb_set(attributes, <span style="color:#4ade80">'{dimensions, weight_kg}'</span>, <span style="color:#4ade80">'5.8'</span>)
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Gaming Monitor'</span>;
+
+<span style="color:#94a3b8">-- Add a NEW key (create_missing = true by default)</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = jsonb_set(attributes, <span style="color:#4ade80">'{warranty_years}'</span>, <span style="color:#4ade80">'3'</span>)
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'MacBook Pro 16'</span>;</pre></div>
+
+            <h3>|| Concatenation &mdash; Merge JSON Objects</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Add multiple new keys at once by merging</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = attributes || <span style="color:#4ade80">'{"on_sale": true, "discount_pct": 15}'</span>::<span style="color:#38bdf8">jsonb</span>
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Cotton T-Shirt'</span>;
+
+<span style="color:#94a3b8">-- If a key already exists, || overwrites it with the new value</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = attributes || <span style="color:#4ade80">'{"price_note": "Holiday sale!"}'</span>::<span style="color:#38bdf8">jsonb</span>
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Clothing'</span>;</pre></div>
+
+            <h3>- (Minus) &mdash; Remove a Key</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Remove a single key</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = attributes - <span style="color:#4ade80">'on_sale'</span>
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Cotton T-Shirt'</span>;
+
+<span style="color:#94a3b8">-- Remove multiple keys at once</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = attributes - <span style="color:#4ade80">'discount_pct'</span> - <span style="color:#4ade80">'price_note'</span>
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Cotton T-Shirt'</span>;
+
+<span style="color:#94a3b8">-- Remove a nested path</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = attributes #- <span style="color:#4ade80">'{dimensions, weight_kg}'</span>
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Gaming Monitor'</span>;</pre></div>
+
+            <h3>jsonb_strip_nulls &mdash; Clean Up Nulls</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Remove all keys that have null values</span>
+<span style="color:#c084fc">SELECT</span> jsonb_strip_nulls(
+    <span style="color:#4ade80">'{"name": "Widget", "color": null, "size": "M", "note": null}'</span>::<span style="color:#38bdf8">jsonb</span>
+);
+<span style="color:#94a3b8">-- Result: {"name": "Widget", "size": "M"}</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Atomic JSON Updates</h4>
+                <p>All JSONB modifications happen within a transaction, so they&rsquo;re atomic. If you need to update multiple JSON keys, chain them: <code>jsonb_set(jsonb_set(attributes, '{a}', '"x"'), '{b}', '"y"')</code>. Or use the <code>||</code> operator to merge an entire object of changes at once &mdash; it&rsquo;s cleaner.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 6. ARRAY TYPES ===================== -->
+        <div class="section" id="arrays">
+            <h2>6&#65039;&#8419; Array Types &mdash; Multi-Value Columns</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; A Box That Holds Many Things</h4>
+                <p>Normally, a column holds <strong>one value</strong> per row &mdash; like one name, one price, one date. But what if a blog post has multiple tags? Or a recipe has multiple ingredients? You COULD create a separate &ldquo;tags&rdquo; table... but sometimes an <strong>array column</strong> is simpler. It&rsquo;s like a cell in a spreadsheet that can hold a comma-separated list, except PostgreSQL actually understands and can search inside it.</p>
+            </div>
+
+            <h3>Declaring Array Columns</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> articles (
+    id       <span style="color:#38bdf8">SERIAL PRIMARY KEY</span>,
+    title    <span style="color:#38bdf8">VARCHAR(300)</span> <span style="color:#c084fc">NOT NULL</span>,
+    tags     <span style="color:#38bdf8">TEXT[]</span>,           <span style="color:#94a3b8">-- array of text strings</span>
+    ratings  <span style="color:#38bdf8">INTEGER[]</span>,        <span style="color:#94a3b8">-- array of integers</span>
+    scores   <span style="color:#38bdf8">NUMERIC(5,2)[]</span>   <span style="color:#94a3b8">-- array of decimals</span>
+);</pre></div>
+
+            <h3>Inserting Array Data</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Method 1: ARRAY constructor</span>
+<span style="color:#c084fc">INSERT INTO</span> articles (title, tags, ratings) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'PostgreSQL JSON Guide'</span>,
+ <span style="color:#c084fc">ARRAY</span>[<span style="color:#4ade80">'postgresql'</span>, <span style="color:#4ade80">'json'</span>, <span style="color:#4ade80">'database'</span>, <span style="color:#4ade80">'tutorial'</span>],
+ <span style="color:#c084fc">ARRAY</span>[<span style="color:#fb923c">5</span>, <span style="color:#fb923c">4</span>, <span style="color:#fb923c">5</span>, <span style="color:#fb923c">3</span>, <span style="color:#fb923c">5</span>]);
+
+<span style="color:#94a3b8">-- Method 2: Curly-brace syntax</span>
+<span style="color:#c084fc">INSERT INTO</span> articles (title, tags, ratings) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'Learning SQL Joins'</span>,
+ <span style="color:#4ade80">'{sql, joins, beginner}'</span>,
+ <span style="color:#4ade80">'{4, 5, 4, 4}'</span>);
+
+<span style="color:#94a3b8">-- Method 3: Cast a string</span>
+<span style="color:#c084fc">INSERT INTO</span> articles (title, tags, ratings) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'Advanced Indexing'</span>,
+ <span style="color:#4ade80">'{indexing, performance, b-tree, gin}'</span>::<span style="color:#38bdf8">TEXT[]</span>,
+ <span style="color:#4ade80">'{5, 5, 4, 5, 5}'</span>::<span style="color:#38bdf8">INTEGER[]</span>);</pre></div>
+
+            <h3>Array Operators</h3>
+            <table class="comparison-table">
+                <tr><th>Operator / Function</th><th>What It Does</th><th>Example</th></tr>
+                <tr><td><code>ANY(array)</code></td><td>Value equals any element</td><td><code>WHERE 'sql' = ANY(tags)</code></td></tr>
+                <tr><td><code>ALL(array)</code></td><td>Value matches all elements</td><td><code>WHERE 5 = ALL(ratings)</code></td></tr>
+                <tr><td><code>@&gt;</code></td><td>Array contains another array</td><td><code>WHERE tags @&gt; ARRAY['sql']</code></td></tr>
+                <tr><td><code>&lt;@</code></td><td>Array is contained by another</td><td><code>WHERE ARRAY['sql'] &lt;@ tags</code></td></tr>
+                <tr><td><code>&amp;&amp;</code></td><td>Arrays overlap (any common element)</td><td><code>WHERE tags &amp;&amp; ARRAY['json','sql']</code></td></tr>
+                <tr><td><code>array_length</code></td><td>Length of the array</td><td><code>array_length(tags, 1)</code></td></tr>
+                <tr><td><code>unnest</code></td><td>Expand array into rows</td><td><code>SELECT unnest(tags)</code></td></tr>
+                <tr><td><code>array_agg</code></td><td>Aggregate rows into array</td><td><code>SELECT array_agg(name)</code></td></tr>
+            </table>
+
+            <h3>Querying Arrays</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find articles tagged with 'postgresql'</span>
+<span style="color:#c084fc">SELECT</span> title, tags
+<span style="color:#c084fc">FROM</span> articles
+<span style="color:#c084fc">WHERE</span> <span style="color:#4ade80">'postgresql'</span> = <span style="color:#c084fc">ANY</span>(tags);
+
+<span style="color:#94a3b8">-- Find articles tagged with BOTH 'sql' AND 'beginner'</span>
+<span style="color:#c084fc">SELECT</span> title, tags
+<span style="color:#c084fc">FROM</span> articles
+<span style="color:#c084fc">WHERE</span> tags @> <span style="color:#c084fc">ARRAY</span>[<span style="color:#4ade80">'sql'</span>, <span style="color:#4ade80">'beginner'</span>];
+
+<span style="color:#94a3b8">-- Find articles with ANY overlap with these tags</span>
+<span style="color:#c084fc">SELECT</span> title, tags
+<span style="color:#c084fc">FROM</span> articles
+<span style="color:#c084fc">WHERE</span> tags && <span style="color:#c084fc">ARRAY</span>[<span style="color:#4ade80">'json'</span>, <span style="color:#4ade80">'performance'</span>];
+
+<span style="color:#94a3b8">-- Access specific array element (1-indexed!)</span>
+<span style="color:#c084fc">SELECT</span> title, tags[<span style="color:#fb923c">1</span>] <span style="color:#c084fc">AS</span> first_tag
+<span style="color:#c084fc">FROM</span> articles;
+
+<span style="color:#94a3b8">-- Get array length</span>
+<span style="color:#c084fc">SELECT</span> title, array_length(tags, <span style="color:#fb923c">1</span>) <span style="color:#c084fc">AS</span> num_tags
+<span style="color:#c084fc">FROM</span> articles;</pre></div>
+
+            <h3>unnest &mdash; Expand Array to Rows</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Turn each tag into its own row</span>
+<span style="color:#c084fc">SELECT</span> a.title, t.tag
+<span style="color:#c084fc">FROM</span> articles a,
+     unnest(a.tags) <span style="color:#c084fc">AS</span> t(tag);
+
+<span style="color:#94a3b8">-- Count how many articles use each tag</span>
+<span style="color:#c084fc">SELECT</span> tag, <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> article_count
+<span style="color:#c084fc">FROM</span> articles, unnest(tags) <span style="color:#c084fc">AS</span> tag
+<span style="color:#c084fc">GROUP BY</span> tag
+<span style="color:#c084fc">ORDER BY</span> article_count <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <h3>array_agg &mdash; Rows Back to Array</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Combine all employee names in each department into one array</span>
+<span style="color:#c084fc">SELECT</span> department,
+       array_agg(name <span style="color:#c084fc">ORDER BY</span> name) <span style="color:#c084fc">AS</span> employees
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">GROUP BY</span> department;
+
+<span style="color:#94a3b8">-- Result:</span>
+<span style="color:#94a3b8">-- department  | employees</span>
+<span style="color:#94a3b8">-- Engineering | {Alice, Bob, Carol}</span>
+<span style="color:#94a3b8">-- Marketing   | {Dave, Eve}</span></pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; Arrays Are 1-Indexed!</h4>
+                <p>Unlike most programming languages (where arrays start at 0), PostgreSQL arrays start at index <strong>1</strong>. So <code>tags[1]</code> is the first element, <code>tags[2]</code> is the second, and so on. This catches many programmers off guard!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 7. REAL-WORLD PATTERNS ===================== -->
+        <div class="section" id="patterns">
+            <h2>7&#65039;&#8419; Real-World Patterns</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Recipes from the Real Kitchen</h4>
+                <p>Knowing JSON operators is like knowing how to chop, saut&eacute;, and boil. But real cooking means combining techniques into actual dishes. Here are <strong>battle-tested patterns</strong> that professional developers use every day with JSON and arrays in PostgreSQL.</p>
+            </div>
+
+            <h3>Pattern 1: Tags System</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> blog_posts (
+    id        <span style="color:#38bdf8">SERIAL PRIMARY KEY</span>,
+    title     <span style="color:#38bdf8">TEXT</span> <span style="color:#c084fc">NOT NULL</span>,
+    content   <span style="color:#38bdf8">TEXT</span>,
+    tags      <span style="color:#38bdf8">TEXT[]</span> <span style="color:#c084fc">DEFAULT</span> <span style="color:#4ade80">'{}'</span>
+);
+
+<span style="color:#94a3b8">-- GIN index for fast tag queries</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_posts_tags <span style="color:#c084fc">ON</span> blog_posts <span style="color:#c084fc">USING</span> <span style="color:#38bdf8">GIN</span> (tags);
+
+<span style="color:#94a3b8">-- Find posts with a specific tag</span>
+<span style="color:#c084fc">SELECT</span> title <span style="color:#c084fc">FROM</span> blog_posts <span style="color:#c084fc">WHERE</span> <span style="color:#4ade80">'python'</span> = <span style="color:#c084fc">ANY</span>(tags);
+
+<span style="color:#94a3b8">-- Add a tag to an existing post</span>
+<span style="color:#c084fc">UPDATE</span> blog_posts
+<span style="color:#c084fc">SET</span> tags = array_append(tags, <span style="color:#4ade80">'featured'</span>)
+<span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;
+
+<span style="color:#94a3b8">-- Remove a tag</span>
+<span style="color:#c084fc">UPDATE</span> blog_posts
+<span style="color:#c084fc">SET</span> tags = array_remove(tags, <span style="color:#4ade80">'draft'</span>)
+<span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;</pre></div>
+
+            <h3>Pattern 2: User Preferences</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> users (
+    id          <span style="color:#38bdf8">SERIAL PRIMARY KEY</span>,
+    email       <span style="color:#38bdf8">VARCHAR(255)</span> <span style="color:#c084fc">UNIQUE NOT NULL</span>,
+    preferences <span style="color:#38bdf8">JSONB</span> <span style="color:#c084fc">DEFAULT</span> <span style="color:#4ade80">'{
+        "theme": "light",
+        "notifications": true,
+        "language": "en",
+        "timezone": "UTC"
+    }'</span>::<span style="color:#38bdf8">jsonb</span>
+);
+
+<span style="color:#94a3b8">-- Update just the theme preference</span>
+<span style="color:#c084fc">UPDATE</span> users
+<span style="color:#c084fc">SET</span> preferences = jsonb_set(preferences, <span style="color:#4ade80">'{theme}'</span>, <span style="color:#4ade80">'"dark"'</span>)
+<span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;
+
+<span style="color:#94a3b8">-- Toggle notifications off</span>
+<span style="color:#c084fc">UPDATE</span> users
+<span style="color:#c084fc">SET</span> preferences = jsonb_set(preferences, <span style="color:#4ade80">'{notifications}'</span>, <span style="color:#4ade80">'false'</span>)
+<span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;
+
+<span style="color:#94a3b8">-- Find users who prefer dark theme</span>
+<span style="color:#c084fc">SELECT</span> email <span style="color:#c084fc">FROM</span> users
+<span style="color:#c084fc">WHERE</span> preferences @> <span style="color:#4ade80">'{"theme": "dark"}'</span>;</pre></div>
+
+            <h3>Pattern 3: API Response Logging</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> api_logs (
+    id           <span style="color:#38bdf8">BIGSERIAL PRIMARY KEY</span>,
+    endpoint     <span style="color:#38bdf8">VARCHAR(500)</span>,
+    method       <span style="color:#38bdf8">VARCHAR(10)</span>,
+    status_code  <span style="color:#38bdf8">INTEGER</span>,
+    request_body <span style="color:#38bdf8">JSONB</span>,
+    response_body <span style="color:#38bdf8">JSONB</span>,
+    created_at   <span style="color:#38bdf8">TIMESTAMPTZ</span> <span style="color:#c084fc">DEFAULT NOW</span>()
+);
+
+<span style="color:#94a3b8">-- Find all failed API calls that had a specific error code in the response</span>
+<span style="color:#c084fc">SELECT</span> endpoint, status_code,
+       response_body->><span style="color:#4ade80">'error_message'</span> <span style="color:#c084fc">AS</span> error
+<span style="color:#c084fc">FROM</span> api_logs
+<span style="color:#c084fc">WHERE</span> status_code >= <span style="color:#fb923c">400</span>
+  <span style="color:#c084fc">AND</span> response_body ? <span style="color:#4ade80">'error_message'</span>
+<span style="color:#c084fc">ORDER BY</span> created_at <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">20</span>;</pre></div>
+
+            <h3>Pattern 4: Flexible Product Attributes</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- The "hybrid" approach: fixed columns for common fields,</span>
+<span style="color:#94a3b8">-- JSONB for variable attributes</span>
+<span style="color:#c084fc">CREATE TABLE</span> catalog (
+    id          <span style="color:#38bdf8">SERIAL PRIMARY KEY</span>,
+    sku         <span style="color:#38bdf8">VARCHAR(50)</span> <span style="color:#c084fc">UNIQUE NOT NULL</span>,
+    name        <span style="color:#38bdf8">VARCHAR(300)</span> <span style="color:#c084fc">NOT NULL</span>,
+    category    <span style="color:#38bdf8">VARCHAR(100)</span> <span style="color:#c084fc">NOT NULL</span>,
+    price       <span style="color:#38bdf8">NUMERIC(12,2)</span> <span style="color:#c084fc">NOT NULL</span>,
+    in_stock    <span style="color:#38bdf8">BOOLEAN</span> <span style="color:#c084fc">DEFAULT TRUE</span>,
+    specs       <span style="color:#38bdf8">JSONB</span> <span style="color:#c084fc">DEFAULT</span> <span style="color:#4ade80">'{}'</span>,   <span style="color:#94a3b8">-- variable attributes</span>
+    images      <span style="color:#38bdf8">TEXT[]</span> <span style="color:#c084fc">DEFAULT</span> <span style="color:#4ade80">'{}'</span>,   <span style="color:#94a3b8">-- multiple image URLs</span>
+    created_at  <span style="color:#38bdf8">TIMESTAMPTZ</span> <span style="color:#c084fc">DEFAULT NOW</span>()
+);
+
+<span style="color:#c084fc">CREATE INDEX</span> idx_catalog_specs <span style="color:#c084fc">ON</span> catalog <span style="color:#c084fc">USING</span> <span style="color:#38bdf8">GIN</span> (specs);
+
+<span style="color:#94a3b8">-- Search for laptops with at least 16GB RAM under $2000</span>
+<span style="color:#c084fc">SELECT</span> name, price, specs->><span style="color:#4ade80">'ram'</span> <span style="color:#c084fc">AS</span> ram
+<span style="color:#c084fc">FROM</span> catalog
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Laptops'</span>
+  <span style="color:#c084fc">AND</span> specs @> <span style="color:#4ade80">'{"ram": "16GB"}'</span>
+  <span style="color:#c084fc">AND</span> price < <span style="color:#fb923c">2000</span>;</pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; This Is How the Giants Do It</h4>
+                <p><strong>Amazon</strong> and <strong>Shopify</strong> use this exact hybrid pattern. Core product data (name, price, SKU) lives in normal columns with proper types and indexes. Category-specific specs (screen size for monitors, thread count for sheets, engine size for cars) live in JSONB. It&rsquo;s the best of both worlds: relational structure where it matters, flexibility where you need it.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. WHEN NOT TO USE JSON ===================== -->
+        <div class="section" id="when-not">
+            <h2>8&#65039;&#8419; When NOT to Use JSON</h2>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; The #1 Mistake with JSON in PostgreSQL</h4>
+                <p>The biggest mistake developers make is storing <strong>everything</strong> in JSON because it feels easy. &ldquo;Just throw it all in a JSONB column!&rdquo; This turns your relational database into a slow, unstructured mess. JSON is powerful, but it&rsquo;s a tool, not a crutch.</p>
+            </div>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Suitcases vs. Wardrobes</h4>
+                <p>A suitcase (JSON) is great for travel &mdash; you throw in whatever you need, it&rsquo;s flexible. But you don&rsquo;t use a suitcase as your permanent closet at home. For everyday clothes, a <strong>wardrobe with organized shelves</strong> (regular columns) is much better &mdash; you can find things faster, things stay neat, and you know exactly what&rsquo;s in each drawer. Use suitcases for trips (variable data), wardrobes for daily life (fixed-structure data).</p>
+            </div>
+
+            <h3>Use Regular Columns When:</h3>
+            <table class="comparison-table">
+                <tr><th>Scenario</th><th>Use JSON?</th><th>Why</th></tr>
+                <tr><td>Every user has a name, email, birthday</td><td style="color:#f87171;">&#10007; No</td><td>Fixed structure &mdash; use VARCHAR, DATE columns</td></tr>
+                <tr><td>Every order has a total, status, created_at</td><td style="color:#f87171;">&#10007; No</td><td>Known fields that need constraints &amp; indexing</td></tr>
+                <tr><td>You frequently JOIN on or GROUP BY the field</td><td style="color:#f87171;">&#10007; No</td><td>JOINs on JSON fields are slow and awkward</td></tr>
+                <tr><td>The field needs UNIQUE or FOREIGN KEY constraints</td><td style="color:#f87171;">&#10007; No</td><td>JSON fields can&rsquo;t have FK/UNIQUE constraints</td></tr>
+                <tr><td>Product specs vary wildly by category</td><td style="color:#4ade80;">&#10004; Yes</td><td>Different products have different attributes</td></tr>
+                <tr><td>Storing user preferences/settings</td><td style="color:#4ade80;">&#10004; Yes</td><td>Highly variable, rarely JOINed on</td></tr>
+                <tr><td>Logging raw API requests/responses</td><td style="color:#4ade80;">&#10004; Yes</td><td>Unpredictable structure, mostly for auditing</td></tr>
+                <tr><td>Metadata that changes frequently</td><td style="color:#4ade80;">&#10004; Yes</td><td>Avoids constant ALTER TABLE migrations</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; The Hybrid Approach</h4>
+                <p>The best practice is the <strong>hybrid approach</strong>: use regular typed columns for data that&rsquo;s well-defined and frequently queried (name, price, status, dates). Use JSONB for truly variable, supplementary data (custom attributes, preferences, raw logs). This gives you the speed and integrity of relational columns where it counts, and the flexibility of JSON where you need it.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">&#9989;</div>
+                    <div class="stat-label">Fixed data = Regular columns</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&#9989;</div>
+                    <div class="stat-label">Variable data = JSONB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&#10060;</div>
+                    <div class="stat-label">Everything in JSON = Bad idea</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== 9. PRACTICE + QUIZ ===================== -->
+        <div class="section" id="practice">
+            <h2>&#127947;&#65039; Practice Exercises</h2>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: Create a JSON Table</h4>
+                <p>Create a table called <code>events</code> with columns: <code>id</code> (SERIAL PK), <code>event_name</code> (VARCHAR), <code>metadata</code> (JSONB), and <code>tags</code> (TEXT[]). Insert an event named "Tech Conference" with metadata <code>{"location": "NYC", "capacity": 500, "virtual": true}</code> and tags <code>['tech', 'conference', '2025']</code>.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> events (
+    id         <span style="color:#38bdf8">SERIAL PRIMARY KEY</span>,
+    event_name <span style="color:#38bdf8">VARCHAR(300)</span>,
+    metadata   <span style="color:#38bdf8">JSONB</span>,
+    tags       <span style="color:#38bdf8">TEXT[]</span>
+);
+
+<span style="color:#c084fc">INSERT INTO</span> events (event_name, metadata, tags) <span style="color:#c084fc">VALUES</span>
+(<span style="color:#4ade80">'Tech Conference'</span>,
+ <span style="color:#4ade80">'{"location": "NYC", "capacity": 500, "virtual": true}'</span>,
+ <span style="color:#c084fc">ARRAY</span>[<span style="color:#4ade80">'tech'</span>, <span style="color:#4ade80">'conference'</span>, <span style="color:#4ade80">'2025'</span>]);</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: Query JSON Fields</h4>
+                <p>Write a query that finds all products where the <code>attributes</code> JSONB column contains <code>{"bpa_free": true}</code>. Also select the product name and price.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> attributes @> <span style="color:#4ade80">'{"bpa_free": true}'</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: Modify JSON</h4>
+                <p>Update the "Gaming Monitor" product to add a key <code>"hdr"</code> with value <code>true</code> to its attributes. Then remove the <code>"panel"</code> key from its attributes.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#94a3b8">-- Add the "hdr" key</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = jsonb_set(attributes, <span style="color:#4ade80">'{hdr}'</span>, <span style="color:#4ade80">'true'</span>)
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Gaming Monitor'</span>;
+
+<span style="color:#94a3b8">-- Remove the "panel" key</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> attributes = attributes - <span style="color:#4ade80">'panel'</span>
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Gaming Monitor'</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: Array Queries</h4>
+                <p>Find all articles that have the tag <code>'postgresql'</code>. Then write a query that counts how many articles each tag appears in, ordered by popularity.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#94a3b8">-- Articles with 'postgresql' tag</span>
+<span style="color:#c084fc">SELECT</span> title, tags
+<span style="color:#c084fc">FROM</span> articles
+<span style="color:#c084fc">WHERE</span> <span style="color:#4ade80">'postgresql'</span> = <span style="color:#c084fc">ANY</span>(tags);
+
+<span style="color:#94a3b8">-- Tag popularity</span>
+<span style="color:#c084fc">SELECT</span> tag, <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> article_count
+<span style="color:#c084fc">FROM</span> articles, unnest(tags) <span style="color:#c084fc">AS</span> tag
+<span style="color:#c084fc">GROUP BY</span> tag
+<span style="color:#c084fc">ORDER BY</span> article_count <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== QUIZ ===================== -->
+        <div class="section">
+            <h2>&#128221; Quiz &mdash; Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What does the "B" in JSONB stand for?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Big</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Binary</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Better</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Buffered</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: Which operator returns a JSON field as plain TEXT?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>-&gt;</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)"><code>-&gt;&gt;</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>@&gt;</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>?</code></button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: Which index type should you use on a JSONB column for containment queries?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B-tree</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Hash</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">GIN</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">BRIN</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: How do you remove a key called "old_field" from a JSONB column?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>DELETE FROM attributes WHERE key = 'old_field'</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)"><code>attributes - 'old_field'</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>jsonb_remove(attributes, 'old_field')</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>attributes.drop('old_field')</code></button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: PostgreSQL arrays are...</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">0-indexed (first element is [0])</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">1-indexed (first element is [1])</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Accessed by key name, not index</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Not supported in PostgreSQL</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: Which function expands an array into individual rows?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">array_expand()</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">array_to_rows()</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">unnest()</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">explode()</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: When should you NOT use JSON in PostgreSQL?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">When storing variable product attributes</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">When logging raw API responses</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">When all rows have the same fixed set of fields that need constraints</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">When storing user preferences</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 8: What does the <code>@&gt;</code> operator do for JSONB?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Compares two JSON values for equality</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Checks if the left JSONB contains the right JSONB</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Concatenates two JSONB values</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Returns the value at the given path</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>&#127881; What&rsquo;s Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">JSON operators mastered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">JSONB functions learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Array operators &amp; functions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Real-world patterns</div>
+                </div>
+            </div>
+
+            <p>You now have the skills to use PostgreSQL as both a <strong>relational</strong> and a <strong>document</strong> database. Here&rsquo;s what you learned:</p>
+
+            <table class="comparison-table">
+                <tr><th>Topic</th><th>Key Takeaway</th></tr>
+                <tr><td>JSON vs JSONB</td><td>Almost always use JSONB &mdash; faster queries, supports indexing</td></tr>
+                <tr><td>Storing JSON</td><td>Perfect for flexible, variable-structure data like product attributes</td></tr>
+                <tr><td>JSON Operators</td><td><code>-&gt;</code> (JSON), <code>-&gt;&gt;</code> (text), <code>@&gt;</code> (containment), <code>?</code> (key exists)</td></tr>
+                <tr><td>Querying</td><td>GIN index + containment operators = blazing-fast JSON queries</td></tr>
+                <tr><td>Modifying</td><td><code>jsonb_set</code>, <code>||</code> (merge), <code>-</code> (remove key)</td></tr>
+                <tr><td>Arrays</td><td><code>ANY</code>, <code>@&gt;</code>, <code>&amp;&amp;</code>, <code>unnest</code>, <code>array_agg</code> &mdash; multi-value columns</td></tr>
+                <tr><td>Best Practice</td><td>Hybrid approach: regular columns for fixed data, JSONB for variable data</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>&#128302; Coming Up Next: Production PostgreSQL (The Capstone!)</h4>
+                <p>You&rsquo;ve learned how to <strong>build</strong> databases. Now it&rsquo;s time to learn how to <strong>run</strong> them in the real world. The next module covers VACUUM (cleaning dead rows), WAL (crash recovery), backup &amp; restore, replication (database clones), security (roles &amp; permissions), and performance tuning. This is the module that turns you from a SQL developer into a <strong>database administrator</strong>.</p>
+            </div>
+        </div>
+
         <div class="lesson-nav">
-            <a href="indexes.html" class="secondary"><i class="fas fa-arrow-left"></i> Indexes & Performance</a>
-            <a href="transactions.html">Transactions & ACID <i class="fas fa-arrow-right"></i></a>
+            <a href="transactions.html" class="secondary"><i class="fas fa-arrow-left"></i> Transactions &amp; Concurrency</a>
+            <a href="production.html">Production PostgreSQL <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">&#10003; Correct!</strong> <span style="color:#94a3b8;">Great job!</span>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">&#10007; Not quite!</strong> <span style="color:#94a3b8;">Check the correct answer above.</span>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

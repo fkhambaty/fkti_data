@@ -142,6 +142,15 @@
             40% { opacity: 0.3; }
         }
 
+        .quiz-box{background:rgba(30,41,59,0.5);border-radius:16px;padding:24px;margin:20px 0;border:1px solid rgba(139,92,246,0.15);}
+        .quiz-q{color:#c4b5fd;margin-bottom:14px;font-size:1.15em;}
+        .quiz-opt{display:block;width:100%;text-align:left;padding:12px 18px;margin:8px 0;background:rgba(124,58,237,0.08);border:2px solid rgba(139,92,246,0.15);border-radius:10px;color:#e2e8f0;cursor:pointer;font-family:inherit;font-size:0.95em;transition:all 0.2s;}
+        .quiz-opt:hover{border-color:rgba(139,92,246,0.4);background:rgba(124,58,237,0.15);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.1);}
+        .quiz-opt:disabled{cursor:default;opacity:0.7;}
+        .quiz-fb{display:none;margin-top:10px;padding:12px;border-radius:8px;font-weight:600;}
+
         @media (max-width: 768px) {
             body { padding: 10px; font-size: 16px; }
             .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
@@ -816,6 +825,124 @@ losses = []
         </div>
     </div>
 
+    <!-- ========== QUIZ ========== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-question-circle"></i> Quiz — Test Your Understanding</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: How does a neural network learn?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) By following pre-programmed rules written by a human engineer</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) By memorizing a single mathematical formula that never changes</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) By seeing thousands of examples and discovering patterns on its own</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) By randomly guessing outputs that are never refined or corrected</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What is the main purpose of an activation function like ReLU?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To convert text data into numerical vectors for the input layer</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) To slow down training so the model doesn't skip important patterns</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) To randomly remove neurons during training (dropout)</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) To add non-linearity so the network can learn complex, non-linear patterns</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: What does backpropagation do during training?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) It sends error signals backward through the network to compute how much each weight contributed to the mistake</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It feeds data forward through the network to produce a prediction</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It randomly reinitializes all the weights to escape local minima</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It permanently removes neurons that produced incorrect outputs</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: What is the key advantage of PyTorch tensors over regular NumPy arrays?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) PyTorch tensors can only store integers, making them more memory-efficient</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) PyTorch tensors can run on GPUs and automatically compute gradients for backpropagation</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) PyTorch tensors are always smaller in memory than equivalent NumPy arrays</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) PyTorch tensors don't support element-wise operations or matrix multiplication</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: What does the loss function measure?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) How fast the network processes each batch of data</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) The total number of trainable parameters in the model</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) The amount of GPU memory consumed during training</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) How wrong the network's prediction is compared to the correct answer</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: A model performs great on training data but poorly on new, unseen data. What is this called?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Underfitting — the model is too simple to capture any meaningful patterns</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Convergence — the model has successfully finished its training</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Overfitting — the model memorized the training data instead of learning general patterns</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Gradient explosion — the weight updates became too large during training</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
+    <!-- ========== QUIZ ========== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-question-circle"></i> Quiz — Test Your Knowledge</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: What is a neural network fundamentally?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) A database that stores every possible answer and looks them up when asked</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) A set of hard-coded if/else rules written by a programmer</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Layers of neurons that learn patterns from data by adjusting weights during training</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) A simulation of the human brain that thinks and reasons like a person</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What is the main purpose of the ReLU activation function?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To normalize all outputs to a value between 0 and 1</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) To randomly drop neurons during training to prevent overfitting</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) To convert text data into numerical vectors the network can process</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) To introduce non-linearity by outputting max(0, x), letting the network learn complex patterns</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: What does backpropagation do?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It feeds input data forward through the network to produce a prediction</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) It sends error signals backward through the network, computing how much each weight contributed to the loss</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It randomly reinitializes weights that are performing poorly</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It removes neurons that have zero output to make the network smaller</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: What is the key advantage of PyTorch tensors over NumPy arrays?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Tensors can only hold integer values, which makes them faster than NumPy floats</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Tensors are always stored on the GPU, while NumPy arrays are always on the CPU</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Tensors can run on GPUs and automatically track gradients for backpropagation</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Tensors use less memory because they compress data using a special encoding</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: What does the loss function measure?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) How many neurons are active in each layer of the network</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) The total number of training epochs completed so far</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) How far the model's prediction is from the correct answer</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) The speed at which the model processes each batch of data</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: A model scores 99% on training data but only 55% on new data it hasn't seen. What is this called?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) Overfitting — the model memorized the training data instead of learning general patterns</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Underfitting — the model is too simple to capture the patterns in the data</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Convergence — the model has finished learning and reached its best performance</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Gradient explosion — the weights grew too large during backpropagation</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
     <div class="nav-buttons">
         <a href="text-to-numbers.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Prev: Text to Numbers</a>
         <a href="attention.html" class="nav-btn next">Next: Attention <i class="fas fa-arrow-right"></i></a>
@@ -935,6 +1062,12 @@ function resetTraining() {
 }
 
 initData();
+</script>
+<script>
+function checkQ(btn,ok){var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');opts.forEach(function(o){o.disabled=true;});if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#4ade80';fb.textContent='✅ Correct!';}else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#f87171';fb.textContent='❌ Not quite — check the green answer!';opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}}
+</script>
+<script>
+function checkQ(btn,ok){var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');opts.forEach(function(o){o.disabled=true;});if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#4ade80';fb.textContent='✅ Correct!';}else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#f87171';fb.textContent='❌ Not quite — check the green answer!';opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/supabase-config.js"></script>

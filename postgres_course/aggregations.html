@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregations &amp; Grouping | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="querying.html"><i class="fas fa-arrow-left"></i> Querying Data</a>
+            <a href="joins.html">JOINs <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="lesson-hero">
+            <h1>📊 Aggregations &amp; Grouping</h1>
+            <p>COUNT, SUM, AVG, MIN, MAX — then GROUP BY and HAVING to slice data any way you want.</p>
+        </div>
+
+        <!-- ===================== SAMPLE DATASET ===================== -->
+        <div class="section visible">
+            <h2>📦 Our Practice Dataset — The Orders Table</h2>
+            <p>Throughout this entire lesson we'll work with a single <strong>orders</strong> table that tracks purchases in an online store. Think of it like the receipt drawer at a shop — every sale gets a row.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Why One Table for Everything?</h4>
+                <p>Imagine you run a lemonade stand. Every time somebody buys something, you write it down on a piece of paper: <em>who</em> bought it, <em>what</em> they bought, <em>how many</em>, and <em>how much</em> they paid. At the end of the day you have a long list. That list is our <code>orders</code> table! Later in this lesson we'll learn how to answer questions like "How much money did I make today?" or "Which flavour sold the most?" — all from that one list.</p>
+            </div>
+
+            <p>Run the following SQL to create and populate the table:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Step 1: Create the orders table</span>
+<span style="color:#c084fc">CREATE TABLE</span> orders (
+    id          <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    customer    <span style="color:#38bdf8">VARCHAR(100)</span>,
+    product     <span style="color:#38bdf8">VARCHAR(100)</span>,
+    category    <span style="color:#38bdf8">VARCHAR(50)</span>,
+    amount      <span style="color:#38bdf8">DECIMAL(10,2)</span>,
+    quantity    <span style="color:#38bdf8">INTEGER</span>,
+    order_date  <span style="color:#38bdf8">DATE</span>
+);
+
+<span style="color:#94a3b8">-- Step 2: Insert 18 sample orders</span>
+<span style="color:#c084fc">INSERT INTO</span> orders (customer, product, category, amount, quantity, order_date) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#4ade80">'Alice'</span>,   <span style="color:#4ade80">'Laptop'</span>,          <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">1200.00</span>, <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-01-15'</span>),
+    (<span style="color:#4ade80">'Alice'</span>,   <span style="color:#4ade80">'Wireless Mouse'</span>,   <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">25.99</span>,   <span style="color:#fb923c">2</span>,  <span style="color:#4ade80">'2024-01-15'</span>),
+    (<span style="color:#4ade80">'Alice'</span>,   <span style="color:#4ade80">'Python Book'</span>,      <span style="color:#4ade80">'Books'</span>,       <span style="color:#fb923c">39.99</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-02-10'</span>),
+    (<span style="color:#4ade80">'Bob'</span>,     <span style="color:#4ade80">'Headphones'</span>,       <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">79.99</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-01-20'</span>),
+    (<span style="color:#4ade80">'Bob'</span>,     <span style="color:#4ade80">'Running Shoes'</span>,    <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">89.99</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-02-05'</span>),
+    (<span style="color:#4ade80">'Bob'</span>,     <span style="color:#4ade80">'SQL Book'</span>,         <span style="color:#4ade80">'Books'</span>,       <span style="color:#fb923c">29.99</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-02-14'</span>),
+    (<span style="color:#4ade80">'Bob'</span>,     <span style="color:#4ade80">'T-Shirt'</span>,          <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">19.99</span>,   <span style="color:#fb923c">3</span>,  <span style="color:#4ade80">'2024-03-01'</span>),
+    (<span style="color:#4ade80">'Charlie'</span>, <span style="color:#4ade80">'Keyboard'</span>,         <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">149.99</span>,  <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-01-25'</span>),
+    (<span style="color:#4ade80">'Charlie'</span>, <span style="color:#4ade80">'Monitor'</span>,          <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">349.99</span>,  <span style="color:#fb923c">2</span>,  <span style="color:#4ade80">'2024-02-18'</span>),
+    (<span style="color:#4ade80">'Charlie'</span>, <span style="color:#4ade80">'Desk Lamp'</span>,        <span style="color:#4ade80">'Home'</span>,        <span style="color:#fb923c">45.00</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-03-10'</span>),
+    (<span style="color:#4ade80">'Diana'</span>,   <span style="color:#4ade80">'Yoga Mat'</span>,         <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">29.99</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-01-08'</span>),
+    (<span style="color:#4ade80">'Diana'</span>,   <span style="color:#4ade80">'Water Bottle'</span>,     <span style="color:#4ade80">'Home'</span>,        <span style="color:#fb923c">15.00</span>,   <span style="color:#fb923c">4</span>,  <span style="color:#4ade80">'2024-02-22'</span>),
+    (<span style="color:#4ade80">'Diana'</span>,   <span style="color:#4ade80">'Backpack'</span>,         <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">59.99</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-03-05'</span>),
+    (<span style="color:#4ade80">'Diana'</span>,   <span style="color:#4ade80">'Coffee Beans'</span>,     <span style="color:#4ade80">'Food'</span>,        <span style="color:#fb923c">14.99</span>,   <span style="color:#fb923c">2</span>,  <span style="color:#4ade80">'2024-03-12'</span>),
+    (<span style="color:#4ade80">'Eve'</span>,     <span style="color:#4ade80">'Tablet'</span>,           <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">499.99</span>,  <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-02-01'</span>),
+    (<span style="color:#4ade80">'Eve'</span>,     <span style="color:#4ade80">'Phone Case'</span>,       <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">12.99</span>,   <span style="color:#fb923c">2</span>,  <span style="color:#4ade80">'2024-02-01'</span>),
+    (<span style="color:#4ade80">'Eve'</span>,     <span style="color:#4ade80">'Cookbook'</span>,          <span style="color:#4ade80">'Books'</span>,       <span style="color:#c084fc">NULL</span>,    <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-03-15'</span>),
+    (<span style="color:#4ade80">'Alice'</span>,   <span style="color:#4ade80">'Sneakers'</span>,         <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">75.00</span>,   <span style="color:#fb923c">1</span>,  <span style="color:#4ade80">'2024-03-20'</span>);</pre></div>
+
+            <p>Here's what our data looks like:</p>
+
+            <table class="comparison-table">
+                <tr><th>id</th><th>customer</th><th>product</th><th>category</th><th>amount</th><th>qty</th><th>order_date</th></tr>
+                <tr><td>1</td><td>Alice</td><td>Laptop</td><td>Electronics</td><td>1200.00</td><td>1</td><td>2024-01-15</td></tr>
+                <tr><td>2</td><td>Alice</td><td>Wireless Mouse</td><td>Electronics</td><td>25.99</td><td>2</td><td>2024-01-15</td></tr>
+                <tr><td>3</td><td>Alice</td><td>Python Book</td><td>Books</td><td>39.99</td><td>1</td><td>2024-02-10</td></tr>
+                <tr><td>4</td><td>Bob</td><td>Headphones</td><td>Electronics</td><td>79.99</td><td>1</td><td>2024-01-20</td></tr>
+                <tr><td>5</td><td>Bob</td><td>Running Shoes</td><td>Clothing</td><td>89.99</td><td>1</td><td>2024-02-05</td></tr>
+                <tr><td>6</td><td>Bob</td><td>SQL Book</td><td>Books</td><td>29.99</td><td>1</td><td>2024-02-14</td></tr>
+                <tr><td>7</td><td>Bob</td><td>T-Shirt</td><td>Clothing</td><td>19.99</td><td>3</td><td>2024-03-01</td></tr>
+                <tr><td>8</td><td>Charlie</td><td>Keyboard</td><td>Electronics</td><td>149.99</td><td>1</td><td>2024-01-25</td></tr>
+                <tr><td>9</td><td>Charlie</td><td>Monitor</td><td>Electronics</td><td>349.99</td><td>2</td><td>2024-02-18</td></tr>
+                <tr><td>10</td><td>Charlie</td><td>Desk Lamp</td><td>Home</td><td>45.00</td><td>1</td><td>2024-03-10</td></tr>
+                <tr><td>11</td><td>Diana</td><td>Yoga Mat</td><td>Clothing</td><td>29.99</td><td>1</td><td>2024-01-08</td></tr>
+                <tr><td>12</td><td>Diana</td><td>Water Bottle</td><td>Home</td><td>15.00</td><td>4</td><td>2024-02-22</td></tr>
+                <tr><td>13</td><td>Diana</td><td>Backpack</td><td>Clothing</td><td>59.99</td><td>1</td><td>2024-03-05</td></tr>
+                <tr><td>14</td><td>Diana</td><td>Coffee Beans</td><td>Food</td><td>14.99</td><td>2</td><td>2024-03-12</td></tr>
+                <tr><td>15</td><td>Eve</td><td>Tablet</td><td>Electronics</td><td>499.99</td><td>1</td><td>2024-02-01</td></tr>
+                <tr><td>16</td><td>Eve</td><td>Phone Case</td><td>Electronics</td><td>12.99</td><td>2</td><td>2024-02-01</td></tr>
+                <tr><td>17</td><td>Eve</td><td>Cookbook</td><td>Books</td><td style="color:#94a3b8">NULL</td><td>1</td><td>2024-03-15</td></tr>
+                <tr><td>18</td><td>Alice</td><td>Sneakers</td><td>Clothing</td><td>75.00</td><td>1</td><td>2024-03-20</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Notice the NULL!</h4>
+                <p>Order #17 (the Cookbook) has a <code>NULL</code> amount — maybe it was a free promotional copy or the price hasn't been entered yet. We deliberately included this because aggregate functions treat NULLs in surprising ways. Keep an eye on it throughout the lesson!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 1. WHAT ARE AGGREGATE FUNCTIONS? ===================== -->
+        <div class="section">
+            <h2>1️⃣ What Are Aggregate Functions?</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Summarising vs. Listing</h4>
+                <p>Your teacher asks: <em>"How many students are in this class?"</em> You answer <strong>"30"</strong>. That's a <strong>summary</strong> — one number that describes the whole group. Now your teacher asks: <em>"Tell me every student's name."</em> Now you have to read 30 names. That's a <strong>list</strong>. Regular <code>SELECT</code> gives you the list. <strong>Aggregate functions</strong> give you the summary. They crunch many rows down into a single answer.</p>
+            </div>
+
+            <p>PostgreSQL has five core aggregate functions. Think of them as five super-powers for summarising data:</p>
+
+            <table class="comparison-table">
+                <tr><th>Function</th><th>What It Does</th><th>Layman Translation</th></tr>
+                <tr><td><code>COUNT()</code></td><td>Counts rows</td><td>"How many?"</td></tr>
+                <tr><td><code>SUM()</code></td><td>Adds up values</td><td>"What's the total?"</td></tr>
+                <tr><td><code>AVG()</code></td><td>Calculates the mean</td><td>"What's the average?"</td></tr>
+                <tr><td><code>MIN()</code></td><td>Finds the smallest value</td><td>"What's the lowest?"</td></tr>
+                <tr><td><code>MAX()</code></td><td>Finds the largest value</td><td>"What's the highest?"</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Imagine a basket of apples. <strong>COUNT</strong> = "How many apples are in the basket?" <strong>SUM</strong> = "What's the total weight of all the apples?" <strong>AVG</strong> = "What's the average weight per apple?" <strong>MIN</strong> = "Which apple weighs the least?" <strong>MAX</strong> = "Which apple weighs the most?" One basket, five completely different questions — and aggregate functions answer all of them.</p>
+            </div>
+
+            <p>Let's start with the simplest one and build up.</p>
+        </div>
+
+        <!-- ===================== 2. COUNT ===================== -->
+        <div class="section">
+            <h2>2️⃣ COUNT — How Many Rows?</h2>
+
+            <p><code>COUNT</code> is probably the aggregate function you'll use the most. It answers one simple question: <em>"How many?"</em></p>
+
+            <h3>COUNT(*) — Count All Rows</h3>
+            <p>The asterisk <code>*</code> means "everything." <code>COUNT(*)</code> counts every row in the result set, including rows with NULLs.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How many orders do we have in total?</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>total_orders</th></tr>
+                <tr><td>18</td></tr>
+            </table>
+
+            <h3>COUNT(column) — Count Non-NULL Values</h3>
+            <p>When you give COUNT a specific column name, it counts only the rows where <strong>that column is not NULL</strong>.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How many orders have an amount recorded?</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">COUNT</span>(amount) <span style="color:#c084fc">AS</span> orders_with_amount
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>orders_with_amount</th></tr>
+                <tr><td>17</td></tr>
+            </table>
+
+            <p>We get 17 instead of 18 because order #17 (the Cookbook) has a NULL amount. <code>COUNT(amount)</code> silently skips it!</p>
+
+            <h3>COUNT(DISTINCT column) — Count Unique Values</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How many unique customers have placed orders?</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> customer) <span style="color:#c084fc">AS</span> unique_customers
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>unique_customers</th></tr>
+                <tr><td>5</td></tr>
+            </table>
+
+            <p>Even though there are 18 rows, only 5 different customers placed those orders: Alice, Bob, Charlie, Diana, and Eve.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How many different categories do we sell?</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> category) <span style="color:#c084fc">AS</span> category_count
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category_count</th></tr>
+                <tr><td>5</td></tr>
+            </table>
+
+            <p>Five categories: Electronics, Books, Clothing, Home, and Food.</p>
+
+            <div class="important-box">
+                <h4>⚠️ COUNT(*) vs COUNT(column) — The Classic Trap!</h4>
+                <p><code>COUNT(*)</code> counts <strong>all rows</strong>, including those with NULLs. <code>COUNT(column)</code> counts only rows where <strong>that column is not NULL</strong>. This difference trips up beginners constantly. When in doubt, use <code>COUNT(*)</code> to count rows, and <code>COUNT(column)</code> only when you intentionally want to skip NULLs.</p>
+            </div>
+
+            <h3>Quick Comparison</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- See all three COUNTs side by side</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">COUNT</span>(*)               <span style="color:#c084fc">AS</span> all_rows,
+    <span style="color:#c084fc">COUNT</span>(amount)           <span style="color:#c084fc">AS</span> rows_with_amount,
+    <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> customer) <span style="color:#c084fc">AS</span> unique_customers
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>all_rows</th><th>rows_with_amount</th><th>unique_customers</th></tr>
+                <tr><td>18</td><td>17</td><td>5</td></tr>
+            </table>
+        </div>
+
+        <!-- ===================== 3. SUM & AVG ===================== -->
+        <div class="section">
+            <h2>3️⃣ SUM &amp; AVG — Totals and Averages</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Adding Up and Sharing Equally</h4>
+                <p>You and your friends each bring some candy to a party. <strong>SUM</strong> answers: <em>"If we dump all our candy into one pile, how many pieces do we have?"</em> <strong>AVG</strong> answers: <em>"If we split all the candy equally among everyone, how many pieces does each person get?"</em> SUM = the whole pile. AVG = each person's fair share.</p>
+            </div>
+
+            <h3>SUM — What's the Total?</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- What is the total revenue from all orders?</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_revenue
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>total_revenue</th></tr>
+                <tr><td>2738.84</td></tr>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How many total items were ordered? (sum of all quantities)</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">SUM</span>(quantity) <span style="color:#c084fc">AS</span> total_items
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>total_items</th></tr>
+                <tr><td>28</td></tr>
+            </table>
+
+            <h3>AVG — What's the Average?</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- What is the average order amount?</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">AVG</span>(amount) <span style="color:#c084fc">AS</span> avg_order_value
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>avg_order_value</th></tr>
+                <tr><td>161.11</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ AVG Ignores NULLs — This Can Surprise You!</h4>
+                <p>The Cookbook order has <code>NULL</code> for amount. <code>AVG</code> silently skips it! It calculates 2738.84 ÷ <strong>17</strong> (not 18). This means AVG gives you the average of <em>known</em> values, not the average across <em>all</em> rows. If you want NULLs treated as 0, wrap the column: <code>AVG(COALESCE(amount, 0))</code>.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- AVG with NULLs treated as 0</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">AVG</span>(amount)                      <span style="color:#c084fc">AS</span> avg_ignoring_nulls,
+    <span style="color:#c084fc">AVG</span>(<span style="color:#c084fc">COALESCE</span>(amount, <span style="color:#fb923c">0</span>))         <span style="color:#c084fc">AS</span> avg_treating_null_as_zero
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>avg_ignoring_nulls</th><th>avg_treating_null_as_zero</th></tr>
+                <tr><td>161.11</td><td>152.16</td></tr>
+            </table>
+
+            <p>See the difference? The second number is lower because it divides by 18 instead of 17.</p>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — ROUND for Clean Output</h4>
+                <p>AVG often produces long decimal numbers. Wrap it with <code>ROUND()</code> for clean reports: <code>ROUND(AVG(amount), 2)</code> gives you exactly 2 decimal places. Your boss will thank you when the report doesn't show 161.108235294117647.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Clean, rounded averages</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_order,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(quantity), <span style="color:#fb923c">1</span>) <span style="color:#c084fc">AS</span> avg_items
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>avg_order</th><th>avg_items</th></tr>
+                <tr><td>161.11</td><td>1.6</td></tr>
+            </table>
+        </div>
+
+        <!-- ===================== 4. MIN & MAX ===================== -->
+        <div class="section">
+            <h2>4️⃣ MIN &amp; MAX — Finding Extremes</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Tallest and Shortest Kid</h4>
+                <p>The gym teacher lines everyone up and asks: <em>"Who is the tallest?"</em> and <em>"Who is the shortest?"</em> That's MIN and MAX! They scan through all the values and pick out the absolute smallest and the absolute biggest. And here's the cool part — they work on <strong>numbers, dates, and even text!</strong></p>
+            </div>
+
+            <h3>MIN &amp; MAX on Numbers</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Cheapest and most expensive orders</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">MIN</span>(amount) <span style="color:#c084fc">AS</span> cheapest_order,
+    <span style="color:#c084fc">MAX</span>(amount) <span style="color:#c084fc">AS</span> biggest_order
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>cheapest_order</th><th>biggest_order</th></tr>
+                <tr><td>12.99</td><td>1200.00</td></tr>
+            </table>
+
+            <h3>MIN &amp; MAX on Dates</h3>
+            <p>Dates are compared chronologically — earlier dates are "smaller."</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- When was the first and last order placed?</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">MIN</span>(order_date) <span style="color:#c084fc">AS</span> first_order,
+    <span style="color:#c084fc">MAX</span>(order_date) <span style="color:#c084fc">AS</span> latest_order
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>first_order</th><th>latest_order</th></tr>
+                <tr><td>2024-01-08</td><td>2024-03-20</td></tr>
+            </table>
+
+            <h3>MIN &amp; MAX on Text</h3>
+            <p>Text is compared alphabetically (A comes before Z, like a dictionary).</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Alphabetically first and last customer names</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">MIN</span>(customer) <span style="color:#c084fc">AS</span> first_alphabetically,
+    <span style="color:#c084fc">MAX</span>(customer) <span style="color:#c084fc">AS</span> last_alphabetically
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>first_alphabetically</th><th>last_alphabetically</th></tr>
+                <tr><td>Alice</td><td>Eve</td></tr>
+            </table>
+
+            <h3>Combining All Five Aggregates in One Query</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- The complete summary dashboard</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">COUNT</span>(*)              <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount)            <span style="color:#c084fc">AS</span> total_revenue,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_order_value,
+    <span style="color:#c084fc">MIN</span>(amount)            <span style="color:#c084fc">AS</span> smallest_order,
+    <span style="color:#c084fc">MAX</span>(amount)            <span style="color:#c084fc">AS</span> largest_order
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>total_orders</th><th>total_revenue</th><th>avg_order_value</th><th>smallest_order</th><th>largest_order</th></tr>
+                <tr><td>18</td><td>2738.84</td><td>161.11</td><td>12.99</td><td>1200.00</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>This is exactly what you'd see on a store manager's daily dashboard. Every morning they glance at one screen: "How many orders came in? What's total revenue? What's the average order? What's our cheapest sale? What was the biggest sale?" Five numbers. Five aggregate functions. One glance and you know how the business is doing.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 5. GROUP BY ===================== -->
+        <div class="section">
+            <h2>5️⃣ GROUP BY — The Magic of Summarising by Category</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Sorting M&amp;Ms by Colour</h4>
+                <p>You dump a big bag of M&amp;Ms onto the table. Right now they're all mixed together. You separate them into piles: <strong>red pile, blue pile, green pile, yellow pile</strong>. Then you count each pile separately. <em>"I have 12 reds, 8 blues, 15 greens, and 10 yellows."</em> That's <code>GROUP BY</code>! You're splitting the data into groups and running an aggregate function on <strong>each group separately</strong>.</p>
+            </div>
+
+            <p>Without GROUP BY, aggregate functions look at <em>all</em> rows at once and return a single number. With GROUP BY, they look at each group independently and return <em>one row per group</em>.</p>
+
+            <h3>Example 1: Orders per Category</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How many orders in each category?</span>
+<span style="color:#c084fc">SELECT</span>
+    category,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> order_count
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> category
+<span style="color:#c084fc">ORDER BY</span> order_count <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th><th>order_count</th></tr>
+                <tr><td>Electronics</td><td>7</td></tr>
+                <tr><td>Clothing</td><td>5</td></tr>
+                <tr><td>Books</td><td>3</td></tr>
+                <tr><td>Home</td><td>2</td></tr>
+                <tr><td>Food</td><td>1</td></tr>
+            </table>
+
+            <p>PostgreSQL split the 18 rows into 5 groups (one per category), counted each pile, and gave us a nice summary.</p>
+
+            <h3>Example 2: Revenue per Category</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Total spending in each category</span>
+<span style="color:#c084fc">SELECT</span>
+    category,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_revenue,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_order_value,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> order_count
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> category
+<span style="color:#c084fc">ORDER BY</span> total_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th><th>total_revenue</th><th>avg_order_value</th><th>order_count</th></tr>
+                <tr><td>Electronics</td><td>2318.94</td><td>331.28</td><td>7</td></tr>
+                <tr><td>Clothing</td><td>274.96</td><td>54.99</td><td>5</td></tr>
+                <tr><td>Books</td><td>69.98</td><td>34.99</td><td>3</td></tr>
+                <tr><td>Home</td><td>60.00</td><td>30.00</td><td>2</td></tr>
+                <tr><td>Food</td><td>14.99</td><td>14.99</td><td>1</td></tr>
+            </table>
+
+            <h3>Example 3: Orders per Customer</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How much has each customer spent?</span>
+<span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_spent,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_order
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">ORDER BY</span> total_spent <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>customer</th><th>total_orders</th><th>total_spent</th><th>avg_order</th></tr>
+                <tr><td>Alice</td><td>4</td><td>1340.98</td><td>335.25</td></tr>
+                <tr><td>Charlie</td><td>3</td><td>544.98</td><td>181.66</td></tr>
+                <tr><td>Eve</td><td>3</td><td>512.98</td><td>256.49</td></tr>
+                <tr><td>Bob</td><td>4</td><td>219.96</td><td>54.99</td></tr>
+                <tr><td>Diana</td><td>4</td><td>119.97</td><td>29.99</td></tr>
+            </table>
+
+            <h3>Example 4: Orders per Month</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Monthly order summary</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">TO_CHAR</span>(order_date, <span style="color:#4ade80">'YYYY-MM'</span>) <span style="color:#c084fc">AS</span> month,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> order_count,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> revenue
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> <span style="color:#c084fc">TO_CHAR</span>(order_date, <span style="color:#4ade80">'YYYY-MM'</span>)
+<span style="color:#c084fc">ORDER BY</span> month;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>month</th><th>order_count</th><th>revenue</th></tr>
+                <tr><td>2024-01</td><td>5</td><td>1485.96</td></tr>
+                <tr><td>2024-02</td><td>6</td><td>944.94</td></tr>
+                <tr><td>2024-03</td><td>7</td><td>259.96</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ The Golden Rule of GROUP BY</h4>
+                <p>Every column in your <code>SELECT</code> must either be <strong>inside an aggregate function</strong> (COUNT, SUM, AVG, etc.) or <strong>listed in GROUP BY</strong>. If you write <code>SELECT customer, product, COUNT(*) FROM orders GROUP BY customer</code>, PostgreSQL will throw an error because <code>product</code> isn't aggregated or grouped. Think of it this way: if there are 4 orders for Alice, which <em>one</em> product should PostgreSQL show? It doesn't know — so it complains.</p>
+            </div>
+
+            <h3>Grouping by Multiple Columns</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Spending per customer per category</span>
+<span style="color:#c084fc">SELECT</span>
+    customer,
+    category,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> order_count,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer, category
+<span style="color:#c084fc">ORDER BY</span> customer, total_spent <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result (first rows):</strong></p>
+            <table class="comparison-table">
+                <tr><th>customer</th><th>category</th><th>order_count</th><th>total_spent</th></tr>
+                <tr><td>Alice</td><td>Electronics</td><td>2</td><td>1225.99</td></tr>
+                <tr><td>Alice</td><td>Clothing</td><td>1</td><td>75.00</td></tr>
+                <tr><td>Alice</td><td>Books</td><td>1</td><td>39.99</td></tr>
+                <tr><td>Bob</td><td>Clothing</td><td>2</td><td>109.98</td></tr>
+                <tr><td>Bob</td><td>Electronics</td><td>1</td><td>79.99</td></tr>
+                <tr><td style="color:#94a3b8">... more rows ...</td><td style="color:#94a3b8">...</td><td style="color:#94a3b8">...</td><td style="color:#94a3b8">...</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Grouping by multiple columns is like a school report card. You don't just want "average grade across all subjects" — you want it broken down by <strong>student AND subject</strong>. "Alice got 92 in Math, 88 in English. Bob got 75 in Math, 91 in English." Each unique <em>combination</em> of student + subject gets its own row.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 6. HAVING ===================== -->
+        <div class="section">
+            <h2>6️⃣ HAVING — Filtering Groups</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — WHERE vs. HAVING</h4>
+                <p>You're the teacher dividing students into study groups. <strong>WHERE</strong> is like saying <em>"Only students taller than 5 feet can participate"</em> — you filter <strong>individual people</strong> before making groups. <strong>HAVING</strong> is like saying <em>"After the groups are formed, only keep groups with more than 3 members"</em> — you filter <strong>entire groups</strong> after they've been created. WHERE filters <strong>rows</strong>. HAVING filters <strong>groups</strong>.</p>
+            </div>
+
+            <h3>The Execution Order</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">FROM — Pick the table</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">WHERE — Filter individual rows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">GROUP BY — Form groups</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">HAVING — Filter groups</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">SELECT — Pick columns</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">ORDER BY — Sort results</div>
+                </div>
+            </div>
+
+            <h3>Example 1: Customers With 4+ Orders</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Which customers have placed 4 or more orders?</span>
+<span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> order_count
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">COUNT</span>(*) &gt;= <span style="color:#fb923c">4</span>
+<span style="color:#c084fc">ORDER BY</span> order_count <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>customer</th><th>order_count</th></tr>
+                <tr><td>Alice</td><td>4</td></tr>
+                <tr><td>Bob</td><td>4</td></tr>
+                <tr><td>Diana</td><td>4</td></tr>
+            </table>
+
+            <p>Charlie and Eve only have 3 orders each, so HAVING filtered them out.</p>
+
+            <h3>Example 2: Categories With Over $100 in Revenue</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Which categories generated more than $100 total?</span>
+<span style="color:#c084fc">SELECT</span>
+    category,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_revenue
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> category
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">SUM</span>(amount) &gt; <span style="color:#fb923c">100</span>
+<span style="color:#c084fc">ORDER BY</span> total_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th><th>total_revenue</th></tr>
+                <tr><td>Electronics</td><td>2318.94</td></tr>
+                <tr><td>Clothing</td><td>274.96</td></tr>
+            </table>
+
+            <p>Books ($69.98), Home ($60.00), and Food ($14.99) all fell below the $100 threshold.</p>
+
+            <h3>Example 3: WHERE + HAVING Together</h3>
+            <p>This is where the real power lives — filter rows first, then filter the resulting groups.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Among orders placed in 2024 Q1 (Jan-Mar),</span>
+<span style="color:#94a3b8">-- which customers spent more than $200 total?</span>
+<span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> q1_spending
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">WHERE</span> order_date <span style="color:#c084fc">BETWEEN</span> <span style="color:#4ade80">'2024-01-01'</span> <span style="color:#c084fc">AND</span> <span style="color:#4ade80">'2024-03-31'</span>
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">SUM</span>(amount) &gt; <span style="color:#fb923c">200</span>
+<span style="color:#c084fc">ORDER BY</span> q1_spending <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>customer</th><th>q1_spending</th></tr>
+                <tr><td>Alice</td><td>1340.98</td></tr>
+                <tr><td>Charlie</td><td>544.98</td></tr>
+                <tr><td>Eve</td><td>512.98</td></tr>
+                <tr><td>Bob</td><td>219.96</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ Common Mistake — Using WHERE With Aggregates!</h4>
+                <p>This is <strong>wrong</strong> and will throw an error:</p>
+                <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ WRONG — You can't use WHERE with aggregate functions!</span>
+<span style="color:#c084fc">SELECT</span> customer, <span style="color:#c084fc">COUNT</span>(*)
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">WHERE</span> <span style="color:#c084fc">COUNT</span>(*) &gt;= <span style="color:#fb923c">4</span>   <span style="color:#94a3b8">-- ERROR!</span>
+<span style="color:#c084fc">GROUP BY</span> customer;
+
+<span style="color:#94a3b8">-- ✅ CORRECT — Use HAVING for aggregate conditions</span>
+<span style="color:#c084fc">SELECT</span> customer, <span style="color:#c084fc">COUNT</span>(*)
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">COUNT</span>(*) &gt;= <span style="color:#fb923c">4</span>;  <span style="color:#94a3b8">-- Works!</span></pre></div>
+                <p>Remember: <code>WHERE</code> runs <em>before</em> grouping — at that point, the groups don't exist yet, so there's nothing to count. <code>HAVING</code> runs <em>after</em> grouping, when the counts are available.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 7. DISTINCT ===================== -->
+        <div class="section">
+            <h2>7️⃣ DISTINCT — Removing Duplicates</h2>
+
+            <p>We touched on <code>COUNT(DISTINCT ...)</code> earlier, but let's explore DISTINCT more fully inside aggregate functions.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- List all unique categories</span>
+<span style="color:#c084fc">SELECT DISTINCT</span> category
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">ORDER BY</span> category;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th></tr>
+                <tr><td>Books</td></tr>
+                <tr><td>Clothing</td></tr>
+                <tr><td>Electronics</td></tr>
+                <tr><td>Food</td></tr>
+                <tr><td>Home</td></tr>
+            </table>
+
+            <h3>DISTINCT Inside Aggregates</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- For each category: how many unique customers ordered?</span>
+<span style="color:#c084fc">SELECT</span>
+    category,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> customer) <span style="color:#c084fc">AS</span> unique_customers
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> category
+<span style="color:#c084fc">ORDER BY</span> unique_customers <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th><th>total_orders</th><th>unique_customers</th></tr>
+                <tr><td>Electronics</td><td>7</td><td>4</td></tr>
+                <tr><td>Clothing</td><td>5</td><td>3</td></tr>
+                <tr><td>Books</td><td>3</td><td>3</td></tr>
+                <tr><td>Home</td><td>2</td><td>2</td></tr>
+                <tr><td>Food</td><td>1</td><td>1</td></tr>
+            </table>
+
+            <p>Electronics has 7 orders but only 4 unique buyers — so some customers ordered electronics more than once.</p>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — SUM(DISTINCT ...) Exists But Is Rare</h4>
+                <p>You can use DISTINCT with SUM too: <code>SUM(DISTINCT amount)</code> would add up only unique amounts, skipping duplicates. This is rarely useful in practice, but it's good to know it exists. The most common combo by far is <code>COUNT(DISTINCT column)</code>.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. COMBINING EVERYTHING ===================== -->
+        <div class="section">
+            <h2>8️⃣ Combining Everything — Building Complex Queries</h2>
+
+            <p>Now let's put all the pieces together. We'll build a real business question step by step.</p>
+
+            <h3>The Question</h3>
+            <p><strong>"Find the top 3 customers by total spending, who have ordered more than 3 times, sorted by total amount descending."</strong></p>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Step 1: Start with GROUP BY to get per-customer totals</h4>
+                <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer;</pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4>Step 2: Add HAVING to keep only customers with 3+ orders</h4>
+                <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">COUNT</span>(*) &gt; <span style="color:#fb923c">3</span>;</pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4>Step 3: Add ORDER BY and LIMIT for the final result</h4>
+                <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">COUNT</span>(*) &gt; <span style="color:#fb923c">3</span>
+<span style="color:#c084fc">ORDER BY</span> total_spent <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">3</span>;</pre></div>
+            </div>
+
+            <p><strong>Final Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>customer</th><th>total_orders</th><th>total_spent</th></tr>
+                <tr><td>Alice</td><td>4</td><td>1340.98</td></tr>
+                <tr><td>Bob</td><td>4</td><td>219.96</td></tr>
+                <tr><td>Diana</td><td>4</td><td>119.97</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>This is how a marketing team finds their <strong>VIP customers</strong>. They don't just want the biggest spenders — they want people who are <em>consistently</em> buying (more than 3 orders) AND spending the most. That's how you decide who gets the loyalty discount or the thank-you email.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 9. REAL-WORLD ANALYTICS ===================== -->
+        <div class="section">
+            <h2>9️⃣ Real-World Analytics Examples</h2>
+
+            <p>Let's solve some questions that come up in real businesses every day. These are the kinds of queries you'll write in your job.</p>
+
+            <h3>Monthly Revenue Report</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Monthly revenue with running comparison</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">TO_CHAR</span>(order_date, <span style="color:#4ade80">'Month YYYY'</span>) <span style="color:#c084fc">AS</span> month_name,
+    <span style="color:#c084fc">COUNT</span>(*)                             <span style="color:#c084fc">AS</span> orders,
+    <span style="color:#c084fc">SUM</span>(quantity)                         <span style="color:#c084fc">AS</span> items_sold,
+    <span style="color:#c084fc">SUM</span>(amount)                           <span style="color:#c084fc">AS</span> revenue,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>)                <span style="color:#c084fc">AS</span> avg_order_value
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">WHERE</span> amount <span style="color:#c084fc">IS NOT NULL</span>
+<span style="color:#c084fc">GROUP BY</span> <span style="color:#c084fc">TO_CHAR</span>(order_date, <span style="color:#4ade80">'Month YYYY'</span>),
+         <span style="color:#c084fc">DATE_TRUNC</span>(<span style="color:#4ade80">'month'</span>, order_date)
+<span style="color:#c084fc">ORDER BY</span> <span style="color:#c084fc">DATE_TRUNC</span>(<span style="color:#4ade80">'month'</span>, order_date);</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>month_name</th><th>orders</th><th>items_sold</th><th>revenue</th><th>avg_order_value</th></tr>
+                <tr><td>January 2024</td><td>5</td><td>6</td><td>1485.96</td><td>297.19</td></tr>
+                <tr><td>February 2024</td><td>6</td><td>8</td><td>944.94</td><td>157.49</td></tr>
+                <tr><td>March 2024</td><td>6</td><td>9</td><td>259.96</td><td>43.33</td></tr>
+            </table>
+
+            <h3>Most Popular Products (by Quantity Sold)</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Which products sell the most units?</span>
+<span style="color:#c084fc">SELECT</span>
+    product,
+    <span style="color:#c084fc">SUM</span>(quantity) <span style="color:#c084fc">AS</span> total_units_sold,
+    <span style="color:#c084fc">SUM</span>(amount)   <span style="color:#c084fc">AS</span> total_revenue
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">WHERE</span> amount <span style="color:#c084fc">IS NOT NULL</span>
+<span style="color:#c084fc">GROUP BY</span> product
+<span style="color:#c084fc">ORDER BY</span> total_units_sold <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">5</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>product</th><th>total_units_sold</th><th>total_revenue</th></tr>
+                <tr><td>Water Bottle</td><td>4</td><td>15.00</td></tr>
+                <tr><td>T-Shirt</td><td>3</td><td>19.99</td></tr>
+                <tr><td>Wireless Mouse</td><td>2</td><td>25.99</td></tr>
+                <tr><td>Monitor</td><td>2</td><td>349.99</td></tr>
+                <tr><td>Phone Case</td><td>2</td><td>12.99</td></tr>
+            </table>
+
+            <h3>Customer Lifetime Value (CLV)</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Full customer profile: spending, frequency, date range</span>
+<span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> lifetime_value,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_order_value,
+    <span style="color:#c084fc">MIN</span>(order_date) <span style="color:#c084fc">AS</span> first_order,
+    <span style="color:#c084fc">MAX</span>(order_date) <span style="color:#c084fc">AS</span> last_order,
+    <span style="color:#c084fc">MAX</span>(order_date) - <span style="color:#c084fc">MIN</span>(order_date) <span style="color:#c084fc">AS</span> days_active,
+    <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> category) <span style="color:#c084fc">AS</span> categories_shopped
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">ORDER BY</span> lifetime_value <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>customer</th><th>orders</th><th>lifetime_value</th><th>avg_order</th><th>first</th><th>last</th><th>days</th><th>categories</th></tr>
+                <tr><td>Alice</td><td>4</td><td>1340.98</td><td>335.25</td><td>Jan 15</td><td>Mar 20</td><td>65</td><td>3</td></tr>
+                <tr><td>Charlie</td><td>3</td><td>544.98</td><td>181.66</td><td>Jan 25</td><td>Mar 10</td><td>45</td><td>2</td></tr>
+                <tr><td>Eve</td><td>3</td><td>512.98</td><td>256.49</td><td>Feb 01</td><td>Mar 15</td><td>43</td><td>2</td></tr>
+                <tr><td>Bob</td><td>4</td><td>219.96</td><td>54.99</td><td>Jan 20</td><td>Mar 01</td><td>41</td><td>3</td></tr>
+                <tr><td>Diana</td><td>4</td><td>119.97</td><td>29.99</td><td>Jan 08</td><td>Mar 12</td><td>64</td><td>3</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>This CLV query is exactly what companies like Amazon, Netflix, and Spotify run every day. They want to know: <em>"Which customers are most valuable? Who buys frequently? Who shops across many categories?"</em> This single query gives you a full customer profile you could put on a dashboard.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 10. PRACTICE EXERCISES ===================== -->
+        <div class="section">
+            <h2>🏋️ Practice Exercises</h2>
+            <p>Time to practice! Solve these yourself before peeking at the answers. Use the <code>orders</code> table from the beginning.</p>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: Total Revenue Calculator</h4>
+                <p>Write a query that returns the total revenue (sum of all amounts) and the total number of items sold (sum of all quantities).</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_revenue,
+    <span style="color:#c084fc">SUM</span>(quantity) <span style="color:#c084fc">AS</span> total_items_sold
+<span style="color:#c084fc">FROM</span> orders;</pre></div>
+                    <p>Returns: total_revenue = 2738.84, total_items_sold = 28</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: Category Breakdown</h4>
+                <p>For each category, show the number of orders, total revenue, and average order value (rounded to 2 decimal places). Sort by total revenue descending.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    category,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> order_count,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_revenue,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_order_value
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> category
+<span style="color:#c084fc">ORDER BY</span> total_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: Big Spenders Only</h4>
+                <p>Find customers who have spent more than $500 in total. Show their name, total orders, and total spent.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">SUM</span>(amount) &gt; <span style="color:#fb923c">500</span>
+<span style="color:#c084fc">ORDER BY</span> total_spent <span style="color:#c084fc">DESC</span>;</pre></div>
+                    <p>Returns: Alice ($1340.98), Charlie ($544.98), Eve ($512.98)</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: Unique Buyer Report</h4>
+                <p>For each category, count the number of unique customers who ordered. Only include categories with at least 2 unique buyers.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    category,
+    <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> customer) <span style="color:#c084fc">AS</span> unique_buyers
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> category
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> customer) &gt;= <span style="color:#fb923c">2</span>
+<span style="color:#c084fc">ORDER BY</span> unique_buyers <span style="color:#c084fc">DESC</span>;</pre></div>
+                    <p>Returns: Electronics (4), Clothing (3), Books (3), Home (2)</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 5: February Only</h4>
+                <p>Show the total revenue per customer for orders placed <strong>only in February 2024</strong>. Sort by revenue descending.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    customer,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> feb_revenue
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">WHERE</span> order_date <span style="color:#c084fc">BETWEEN</span> <span style="color:#4ade80">'2024-02-01'</span> <span style="color:#c084fc">AND</span> <span style="color:#4ade80">'2024-02-29'</span>
+<span style="color:#c084fc">GROUP BY</span> customer
+<span style="color:#c084fc">ORDER BY</span> feb_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 6: The Full Dashboard (Challenge!)</h4>
+                <p>Create a comprehensive category report showing: category name, total orders, total revenue, average order value (rounded), min order, max order, and number of unique customers. Only include categories with total revenue over $50. Sort by revenue descending.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    category,
+    <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_revenue,
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(amount), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_order,
+    <span style="color:#c084fc">MIN</span>(amount) <span style="color:#c084fc">AS</span> min_order,
+    <span style="color:#c084fc">MAX</span>(amount) <span style="color:#c084fc">AS</span> max_order,
+    <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> customer) <span style="color:#c084fc">AS</span> unique_customers
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> category
+<span style="color:#c084fc">HAVING</span> <span style="color:#c084fc">SUM</span>(amount) &gt; <span style="color:#fb923c">50</span>
+<span style="color:#c084fc">ORDER BY</span> total_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== 11. QUIZ ===================== -->
+        <div class="section">
+            <h2>📝 Quiz — Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What's the difference between <code>COUNT(*)</code> and <code>COUNT(column)</code>?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">They're identical — both count all rows</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">COUNT(*) counts all rows; COUNT(column) skips rows where that column is NULL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">COUNT(*) is faster; COUNT(column) is more accurate</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">COUNT(*) counts columns; COUNT(column) counts rows</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: What does <code>AVG</code> do with NULL values?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Treats NULLs as 0</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Returns an error if any NULLs exist</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Silently ignores NULLs — only averages non-NULL values</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Replaces NULLs with the column's average before calculating</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: When do you use HAVING instead of WHERE?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">HAVING is just an alias for WHERE — use either one</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Use HAVING when filtering text columns, WHERE when filtering numbers</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Use HAVING to filter groups (with aggregate conditions); WHERE filters individual rows before grouping</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">HAVING is used only with JOINs, WHERE is used with single tables</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: What happens if you SELECT a column that isn't in GROUP BY and isn't inside an aggregate?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">PostgreSQL picks a random value from the group</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It returns NULL for that column</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">PostgreSQL throws an error</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It shows all values comma-separated</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: What is the correct SQL order of execution?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">FROM → GROUP BY → WHERE → SELECT → HAVING → ORDER BY</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">SELECT → WHERE → FROM → GROUP BY → ORDER BY → HAVING</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: Which query finds categories with more than 3 orders?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>SELECT category FROM orders WHERE COUNT(*) &gt; 3 GROUP BY category;</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)"><code>SELECT category FROM orders GROUP BY category HAVING COUNT(*) &gt; 3;</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>SELECT category FROM orders GROUP BY category WHERE COUNT(*) &gt; 3;</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>SELECT category, COUNT(*) FROM orders HAVING COUNT(*) &gt; 3;</code></button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: What does <code>COUNT(DISTINCT category)</code> return for our orders table?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">18 — one for each order</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">3 — Electronics, Clothing, Books</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">5 — Electronics, Clothing, Books, Home, Food</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It returns a list of category names, not a number</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== 12. WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>🎉 What's Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Aggregate functions mastered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">SQL examples practiced</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Quiz questions conquered</div>
+                </div>
+            </div>
+
+            <p>You've just unlocked one of the most important skill sets in SQL — the ability to <strong>summarise</strong> data instead of just listing it. Here's what you conquered:</p>
+
+            <table class="comparison-table">
+                <tr><th>Concept</th><th>What It Does</th><th>Key Syntax</th></tr>
+                <tr><td>COUNT</td><td>Counts rows</td><td><code>COUNT(*), COUNT(col), COUNT(DISTINCT col)</code></td></tr>
+                <tr><td>SUM</td><td>Adds up values</td><td><code>SUM(amount)</code></td></tr>
+                <tr><td>AVG</td><td>Calculates the mean</td><td><code>ROUND(AVG(amount), 2)</code></td></tr>
+                <tr><td>MIN / MAX</td><td>Finds extremes</td><td><code>MIN(date), MAX(price)</code></td></tr>
+                <tr><td>GROUP BY</td><td>Splits into groups</td><td><code>GROUP BY category</code></td></tr>
+                <tr><td>HAVING</td><td>Filters groups</td><td><code>HAVING COUNT(*) &gt; 3</code></td></tr>
+                <tr><td>DISTINCT</td><td>Removes duplicates</td><td><code>COUNT(DISTINCT customer)</code></td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🔮 Coming Up Next: JOINs</h4>
+                <p>So far, all our data has lived in <strong>one table</strong>. But real databases have many tables — customers in one, orders in another, products in a third. In the next module you'll learn how to <strong>combine tables</strong> using JOINs. It's like connecting puzzle pieces to see the full picture. Imagine being able to say: <em>"Show me each customer's name, their order details, AND the product reviews — all from three different tables in one query."</em> That's the power of JOINs!</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="querying.html" class="secondary"><i class="fas fa-arrow-left"></i> Querying Data</a>
+            <a href="joins.html">JOINs <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">Correct!</strong>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">Not quite!</strong>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

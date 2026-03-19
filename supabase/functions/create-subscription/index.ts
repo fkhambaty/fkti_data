@@ -1,5 +1,5 @@
 // Create Razorpay subscription and return subscription_id for Checkout.
-// Required secrets (exact names, case-sensitive): RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_PLAN_ID
+// Supports weekly (RAZORPAY_PLAN_ID) and monthly (RAZORPAY_MONTHLY_PLAN_ID) plans.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 const cors = {
@@ -33,12 +33,13 @@ serve(async (req) => {
 
   const RAZORPAY_KEY_ID = getSecret('RAZORPAY_KEY_ID');
   const RAZORPAY_KEY_SECRET = getSecret('RAZORPAY_KEY_SECRET');
-  const RAZORPAY_PLAN_ID = getSecret('RAZORPAY_PLAN_ID');
+  const WEEKLY_PLAN_ID = getSecret('RAZORPAY_PLAN_ID');
+  const MONTHLY_PLAN_ID = getSecret('RAZORPAY_MONTHLY_PLAN_ID');
 
   const missing: string[] = [];
   if (!RAZORPAY_KEY_ID) missing.push('RAZORPAY_KEY_ID');
   if (!RAZORPAY_KEY_SECRET) missing.push('RAZORPAY_KEY_SECRET');
-  if (!RAZORPAY_PLAN_ID) missing.push('RAZORPAY_PLAN_ID');
+  if (!WEEKLY_PLAN_ID && !MONTHLY_PLAN_ID) missing.push('RAZORPAY_PLAN_ID or RAZORPAY_MONTHLY_PLAN_ID');
   if (missing.length > 0) {
     console.error('[create-subscription] Missing secrets:', missing.join(', '));
     return new Response(
@@ -46,38 +47,11 @@ serve(async (req) => {
         error: 'Payment is temporarily unavailable. Please try again later or contact support.',
         admin_hint: `Missing secret(s): ${missing.join(', ')}`,
       }),
-      {
-        status: 503,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      }
+      { status: 503, headers: { ...cors, 'Content-Type': 'application/json' } }
     );
   }
 
-  const configErrors: string[] = [];
-  if (!RAZORPAY_KEY_ID.startsWith('rzp_live_') && !RAZORPAY_KEY_ID.startsWith('rzp_test_')) {
-    configErrors.push('RAZORPAY_KEY_ID must start with rzp_live_ or rzp_test_');
-  }
-  if (!RAZORPAY_PLAN_ID.startsWith('plan_')) {
-    configErrors.push('RAZORPAY_PLAN_ID must start with plan_ (current value looks like a variable name, not a plan ID)');
-  }
-  if (RAZORPAY_KEY_SECRET.startsWith('rzp_') || RAZORPAY_KEY_SECRET === RAZORPAY_KEY_ID) {
-    configErrors.push('RAZORPAY_KEY_SECRET looks like a Key ID — it should be the secret, not the key');
-  }
-  if (configErrors.length > 0) {
-    console.error('[create-subscription] Config errors:', configErrors.join('; '));
-    return new Response(
-      JSON.stringify({
-        error: 'Payment is temporarily unavailable. Please try again later or contact support.',
-        admin_hint: configErrors.join('; '),
-      }),
-      {
-        status: 503,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      }
-    );
-  }
-
-  let body: { user_id?: string } = {};
+  let body: { user_id?: string; plan?: string; email?: string } = {};
   try {
     body = await req.json();
   } catch {
@@ -95,6 +69,28 @@ serve(async (req) => {
     });
   }
 
+  const planChoice = (body.plan || 'weekly').toLowerCase();
+  let planId: string;
+  let totalCount: number;
+
+  if (planChoice === 'monthly') {
+    if (!MONTHLY_PLAN_ID) {
+      return new Response(JSON.stringify({ error: 'Monthly plan not configured. Please contact support.' }), {
+        status: 503, headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+    planId = MONTHLY_PLAN_ID;
+    totalCount = 12;
+  } else {
+    if (!WEEKLY_PLAN_ID) {
+      return new Response(JSON.stringify({ error: 'Weekly plan not configured. Please contact support.' }), {
+        status: 503, headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+    planId = WEEKLY_PLAN_ID;
+    totalCount = 52;
+  }
+
   const basic = btoa(RAZORPAY_KEY_ID + ':' + RAZORPAY_KEY_SECRET);
   let createRes: Response;
   try {
@@ -105,10 +101,11 @@ serve(async (req) => {
         'Authorization': 'Basic ' + basic,
       },
       body: JSON.stringify({
-        plan_id: RAZORPAY_PLAN_ID,
-        total_count: 52,
+        plan_id: planId,
+        total_count: totalCount,
         quantity: 1,
-        notes: { user_id: userId },
+        customer_notify: 1,
+        notes: { user_id: userId, plan: planChoice, email: body.email || '' },
       }),
     });
   } catch (fetchErr) {
@@ -128,8 +125,7 @@ serve(async (req) => {
 
     console.error(
       `[create-subscription] Razorpay ${createRes.status}: ${razorpayDesc}`,
-      `key=${RAZORPAY_KEY_ID.slice(0, 12)}…`,
-      `plan=${RAZORPAY_PLAN_ID.slice(0, 12)}…`,
+      `plan=${planId.slice(0, 12)}…`,
     );
 
     let userMsg: string;
@@ -142,14 +138,8 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({
-        error: userMsg,
-        admin_hint: `razorpay_status=${createRes.status}, description=${razorpayDesc}`,
-      }),
-      {
-        status: 400,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      }
+      JSON.stringify({ error: userMsg, admin_hint: `razorpay_status=${createRes.status}, description=${razorpayDesc}` }),
+      { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
     );
   }
 
@@ -157,6 +147,7 @@ serve(async (req) => {
     JSON.stringify({
       subscription_id: data.id,
       key_id: RAZORPAY_KEY_ID,
+      plan: planChoice,
     }),
     { headers: { ...cors, 'Content-Type': 'application/json' } }
   );

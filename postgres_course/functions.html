@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Functions & Triggers | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Functions & Procedures | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,865 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="replication.html">Replication & HA <i class="fas fa-arrow-right"></i></a>
+            <a href="indexes.html"><i class="fas fa-arrow-left"></i> Indexes &amp; Performance</a>
+            <a href="transactions.html">Transactions &amp; Concurrency <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Functions & Triggers</h1>
-            <p>PL/pgSQL functions, stored procedures, triggers, and event-driven logic.</p>
+            <h1>&#9881;&#65039; Functions &amp; Procedures</h1>
+            <p>PostgreSQL's Swiss Army knife of built-in functions, plus how to create your own reusable SQL tools.</p>
         </div>
+
+        <!-- ===================== 1. BUILT-IN STRING FUNCTIONS ===================== -->
         <div class="section visible">
-            <h2>📚 Functions & Triggers</h2>
-            <p>PL/pgSQL functions, stored procedures, triggers, and event-driven logic.</p>
+            <h2>1&#65039;&#8419; Built-in String Functions</h2>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers functions & triggers with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>&#129490; ELI5 &mdash; What Are String Functions?</h4>
+                <p>Imagine you have a box of fridge magnets &mdash; each magnet is a letter. String functions are like a set of magic tools for those magnets: one tool makes every letter UPPERCASE, another trims off blank magnets from the edges, another slices out just the first three letters. PostgreSQL ships with dozens of these built-in text-manipulation tools so you never have to do the work in your application code.</p>
+            </div>
+
+            <h3>UPPER &amp; LOWER &mdash; Change Case</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">UPPER</span>(<span style="color:#4ade80">'hello world'</span>) <span style="color:#c084fc">AS</span> uppered,
+       <span style="color:#c084fc">LOWER</span>(<span style="color:#4ade80">'HELLO WORLD'</span>) <span style="color:#c084fc">AS</span> lowered;</pre></div>
+            <table class="comparison-table">
+                <tr><th>uppered</th><th>lowered</th></tr>
+                <tr><td>HELLO WORLD</td><td>hello world</td></tr>
+            </table>
+
+            <h3>LENGTH &mdash; Count Characters</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">LENGTH</span>(<span style="color:#4ade80">'PostgreSQL'</span>) <span style="color:#c084fc">AS</span> char_count;
+<span style="color:#94a3b8">-- Result: 10</span></pre></div>
+
+            <h3>SUBSTRING &mdash; Extract a Piece</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- SUBSTRING(string FROM start FOR length)</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">SUBSTRING</span>(<span style="color:#4ade80">'PostgreSQL'</span> <span style="color:#c084fc">FROM</span> <span style="color:#fb923c">1</span> <span style="color:#c084fc">FOR</span> <span style="color:#fb923c">8</span>) <span style="color:#c084fc">AS</span> result;
+<span style="color:#94a3b8">-- Result: PostgreS</span>
+
+<span style="color:#94a3b8">-- Also works with standard syntax</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">SUBSTRING</span>(<span style="color:#4ade80">'PostgreSQL'</span>, <span style="color:#fb923c">8</span>, <span style="color:#fb923c">3</span>) <span style="color:#c084fc">AS</span> result;
+<span style="color:#94a3b8">-- Result: SQL</span></pre></div>
+
+            <h3>CONCAT &amp; || &mdash; Join Strings Together</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">CONCAT</span>(<span style="color:#4ade80">'Hello'</span>, <span style="color:#4ade80">' '</span>, <span style="color:#4ade80">'World'</span>) <span style="color:#c084fc">AS</span> greeting;
+<span style="color:#94a3b8">-- Result: Hello World</span>
+
+<span style="color:#94a3b8">-- PostgreSQL also supports the || operator</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#4ade80">'Hello'</span> || <span style="color:#4ade80">' '</span> || <span style="color:#4ade80">'World'</span> <span style="color:#c084fc">AS</span> greeting;
+<span style="color:#94a3b8">-- Result: Hello World</span></pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; CONCAT vs || &mdash; NULL Handling Difference!</h4>
+                <p><code>CONCAT</code> treats NULL as an empty string: <code>CONCAT('Hi', NULL, '!')</code> &rarr; <code>'Hi!'</code>. But <code>||</code> propagates NULL: <code>'Hi' || NULL || '!'</code> &rarr; <code>NULL</code>. Use <code>CONCAT</code> when your data might have NULLs!</p>
+            </div>
+
+            <h3>TRIM, LTRIM, RTRIM &mdash; Remove Whitespace</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">TRIM</span>(<span style="color:#4ade80">'   hello   '</span>)  <span style="color:#c084fc">AS</span> trimmed,
+       <span style="color:#c084fc">LTRIM</span>(<span style="color:#4ade80">'   hello   '</span>) <span style="color:#c084fc">AS</span> left_trimmed,
+       <span style="color:#c084fc">RTRIM</span>(<span style="color:#4ade80">'   hello   '</span>) <span style="color:#c084fc">AS</span> right_trimmed;</pre></div>
+            <table class="comparison-table">
+                <tr><th>trimmed</th><th>left_trimmed</th><th>right_trimmed</th></tr>
+                <tr><td>'hello'</td><td>'hello&nbsp;&nbsp;&nbsp;'</td><td>'&nbsp;&nbsp;&nbsp;hello'</td></tr>
+            </table>
+
+            <h3>REPLACE &mdash; Swap Text</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">REPLACE</span>(<span style="color:#4ade80">'Hello World'</span>, <span style="color:#4ade80">'World'</span>, <span style="color:#4ade80">'PostgreSQL'</span>) <span style="color:#c084fc">AS</span> result;
+<span style="color:#94a3b8">-- Result: Hello PostgreSQL</span></pre></div>
+
+            <h3>SPLIT_PART &mdash; Split on a Delimiter</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- SPLIT_PART(string, delimiter, position)</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">SPLIT_PART</span>(<span style="color:#4ade80">'john.doe@gmail.com'</span>, <span style="color:#4ade80">'@'</span>, <span style="color:#fb923c">1</span>) <span style="color:#c084fc">AS</span> username,
+       <span style="color:#c084fc">SPLIT_PART</span>(<span style="color:#4ade80">'john.doe@gmail.com'</span>, <span style="color:#4ade80">'@'</span>, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> domain;</pre></div>
+            <table class="comparison-table">
+                <tr><th>username</th><th>domain</th></tr>
+                <tr><td>john.doe</td><td>gmail.com</td></tr>
+            </table>
+
+            <h3>LEFT, RIGHT &mdash; Grab From an End</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">LEFT</span>(<span style="color:#4ade80">'PostgreSQL'</span>, <span style="color:#fb923c">4</span>)  <span style="color:#c084fc">AS</span> first_four,
+       <span style="color:#c084fc">RIGHT</span>(<span style="color:#4ade80">'PostgreSQL'</span>, <span style="color:#fb923c">3</span>) <span style="color:#c084fc">AS</span> last_three;</pre></div>
+            <table class="comparison-table">
+                <tr><th>first_four</th><th>last_three</th></tr>
+                <tr><td>Post</td><td>SQL</td></tr>
+            </table>
+
+            <h3>POSITION &mdash; Find Where a Substring Starts</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">POSITION</span>(<span style="color:#4ade80">'SQL'</span> <span style="color:#c084fc">IN</span> <span style="color:#4ade80">'PostgreSQL'</span>) <span style="color:#c084fc">AS</span> found_at;
+<span style="color:#94a3b8">-- Result: 8  (1-based index)</span></pre></div>
+
+            <h3>LPAD &amp; RPAD &mdash; Pad Strings to a Fixed Width</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">LPAD</span>(<span style="color:#4ade80">'42'</span>, <span style="color:#fb923c">5</span>, <span style="color:#4ade80">'0'</span>)  <span style="color:#c084fc">AS</span> invoice_num,
+       <span style="color:#c084fc">RPAD</span>(<span style="color:#4ade80">'Hi'</span>, <span style="color:#fb923c">10</span>, <span style="color:#4ade80">'.'</span>) <span style="color:#c084fc">AS</span> dotted;</pre></div>
+            <table class="comparison-table">
+                <tr><th>invoice_num</th><th>dotted</th></tr>
+                <tr><td>00042</td><td>Hi........</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>&#127758; Real-Life Use Case</h4>
+                <p>Imagine you run an e-commerce store and customers type their names in all sorts of crazy ways: "  jOhN   dOe  ". You'd chain functions like this: <code>INITCAP(TRIM(name))</code> to get "John Doe". String functions are essential for data cleaning.</p>
+            </div>
+
+            <h3>Quick Reference: All String Functions</h3>
+            <table class="comparison-table">
+                <tr><th>Function</th><th>What It Does</th><th>Example &rarr; Result</th></tr>
+                <tr><td><code>UPPER(s)</code></td><td>All uppercase</td><td><code>UPPER('hi')</code> &rarr; HI</td></tr>
+                <tr><td><code>LOWER(s)</code></td><td>All lowercase</td><td><code>LOWER('HI')</code> &rarr; hi</td></tr>
+                <tr><td><code>INITCAP(s)</code></td><td>Capitalize first letters</td><td><code>INITCAP('hello world')</code> &rarr; Hello World</td></tr>
+                <tr><td><code>LENGTH(s)</code></td><td>Character count</td><td><code>LENGTH('abc')</code> &rarr; 3</td></tr>
+                <tr><td><code>TRIM(s)</code></td><td>Remove leading/trailing spaces</td><td><code>TRIM(' hi ')</code> &rarr; hi</td></tr>
+                <tr><td><code>REPLACE(s,a,b)</code></td><td>Replace a with b</td><td><code>REPLACE('abc','b','X')</code> &rarr; aXc</td></tr>
+                <tr><td><code>SPLIT_PART(s,d,n)</code></td><td>Split by delimiter, get nth</td><td><code>SPLIT_PART('a-b-c','-',2)</code> &rarr; b</td></tr>
+                <tr><td><code>LEFT(s,n)</code></td><td>First n chars</td><td><code>LEFT('abcde',3)</code> &rarr; abc</td></tr>
+                <tr><td><code>RIGHT(s,n)</code></td><td>Last n chars</td><td><code>RIGHT('abcde',2)</code> &rarr; de</td></tr>
+                <tr><td><code>LPAD(s,n,c)</code></td><td>Pad from left</td><td><code>LPAD('5',3,'0')</code> &rarr; 005</td></tr>
+                <tr><td><code>REVERSE(s)</code></td><td>Reverse the string</td><td><code>REVERSE('abc')</code> &rarr; cba</td></tr>
+            </table>
+        </div>
+
+        <!-- ===================== 2. BUILT-IN MATH FUNCTIONS ===================== -->
+        <div class="section">
+            <h2>2&#65039;&#8419; Built-in Math Functions</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; What Are Math Functions?</h4>
+                <p>Remember the calculator app on your phone? It can do addition, square roots, rounding, etc. PostgreSQL has its own built-in calculator! You can do math right inside your SQL queries without pulling data into Python or Excel first. Need to round prices to 2 decimal places? Calculate a 15% tip? Find the square root of something? PostgreSQL has a function for that.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">ROUND</span>(<span style="color:#fb923c">3.14159</span>, <span style="color:#fb923c">2</span>)   <span style="color:#c084fc">AS</span> rounded,       <span style="color:#94a3b8">-- 3.14</span>
+    <span style="color:#c084fc">CEIL</span>(<span style="color:#fb923c">3.2</span>)            <span style="color:#c084fc">AS</span> ceiling,       <span style="color:#94a3b8">-- 4  (round UP)</span>
+    <span style="color:#c084fc">FLOOR</span>(<span style="color:#fb923c">3.9</span>)           <span style="color:#c084fc">AS</span> floored,       <span style="color:#94a3b8">-- 3  (round DOWN)</span>
+    <span style="color:#c084fc">ABS</span>(<span style="color:#fb923c">-42</span>)             <span style="color:#c084fc">AS</span> absolute,      <span style="color:#94a3b8">-- 42</span>
+    <span style="color:#c084fc">MOD</span>(<span style="color:#fb923c">17</span>, <span style="color:#fb923c">5</span>)          <span style="color:#c084fc">AS</span> remainder,     <span style="color:#94a3b8">-- 2  (17 / 5 = 3 remainder 2)</span>
+    <span style="color:#c084fc">POWER</span>(<span style="color:#fb923c">2</span>, <span style="color:#fb923c">10</span>)        <span style="color:#c084fc">AS</span> two_to_ten,    <span style="color:#94a3b8">-- 1024</span>
+    <span style="color:#c084fc">SQRT</span>(<span style="color:#fb923c">144</span>)            <span style="color:#c084fc">AS</span> square_root,   <span style="color:#94a3b8">-- 12</span>
+    <span style="color:#c084fc">RANDOM</span>()             <span style="color:#c084fc">AS</span> random_num;    <span style="color:#94a3b8">-- 0.7291... (random 0-1)</span></pre></div>
+
+            <h3>Practical Example: Calculating Sales Tax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name,
+       price,
+       <span style="color:#c084fc">ROUND</span>(price * <span style="color:#fb923c">0.18</span>, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> gst,
+       <span style="color:#c084fc">ROUND</span>(price * <span style="color:#fb923c">1.18</span>, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> total_with_gst
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> price <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">5</span>;</pre></div>
+
+            <h3>Practical Example: Random Sampling</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Pick 3 random products for a daily deal</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> <span style="color:#c084fc">RANDOM</span>()
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">3</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; ROUND vs TRUNC</h4>
+                <p><code>ROUND(2.555, 2)</code> gives <code>2.56</code> (rounds up). <code>TRUNC(2.559, 2)</code> gives <code>2.55</code> (chops off, no rounding). Use TRUNC when you need to always round down, like calculating maximum discounts.</p>
             </div>
         </div>
+
+        <!-- ===================== 3. BUILT-IN DATE/TIME FUNCTIONS ===================== -->
+        <div class="section">
+            <h2>3&#65039;&#8419; Built-in Date/Time Functions</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Why Date Functions Matter</h4>
+                <p>Imagine you run a pizza delivery business. You need to answer questions like: "How many orders did we get <em>this week</em>?" or "How many days has it been since this customer's last order?" or "What's the busiest <em>hour</em> of the day?" All of those require taking dates apart, comparing them, and doing math on them. That's what date/time functions do.</p>
+            </div>
+
+            <h3>Getting the Current Date &amp; Time</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">NOW</span>()                <span style="color:#c084fc">AS</span> current_timestamp,  <span style="color:#94a3b8">-- 2026-03-19 14:30:15.123+05:30</span>
+    <span style="color:#c084fc">CURRENT_DATE</span>         <span style="color:#c084fc">AS</span> today,              <span style="color:#94a3b8">-- 2026-03-19</span>
+    <span style="color:#c084fc">CURRENT_TIME</span>         <span style="color:#c084fc">AS</span> time_now,           <span style="color:#94a3b8">-- 14:30:15.123+05:30</span>
+    <span style="color:#c084fc">CURRENT_TIMESTAMP</span>    <span style="color:#c084fc">AS</span> same_as_now;        <span style="color:#94a3b8">-- same as NOW()</span></pre></div>
+
+            <h3>EXTRACT &mdash; Pull Out Parts of a Date</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">EXTRACT</span>(<span style="color:#38bdf8">YEAR</span>   <span style="color:#c084fc">FROM</span> <span style="color:#c084fc">NOW</span>()) <span style="color:#c084fc">AS</span> year,    <span style="color:#94a3b8">-- 2026</span>
+    <span style="color:#c084fc">EXTRACT</span>(<span style="color:#38bdf8">MONTH</span>  <span style="color:#c084fc">FROM</span> <span style="color:#c084fc">NOW</span>()) <span style="color:#c084fc">AS</span> month,   <span style="color:#94a3b8">-- 3</span>
+    <span style="color:#c084fc">EXTRACT</span>(<span style="color:#38bdf8">DAY</span>    <span style="color:#c084fc">FROM</span> <span style="color:#c084fc">NOW</span>()) <span style="color:#c084fc">AS</span> day,     <span style="color:#94a3b8">-- 19</span>
+    <span style="color:#c084fc">EXTRACT</span>(<span style="color:#38bdf8">DOW</span>    <span style="color:#c084fc">FROM</span> <span style="color:#c084fc">NOW</span>()) <span style="color:#c084fc">AS</span> weekday, <span style="color:#94a3b8">-- 0=Sun, 1=Mon ... 6=Sat</span>
+    <span style="color:#c084fc">EXTRACT</span>(<span style="color:#38bdf8">HOUR</span>   <span style="color:#c084fc">FROM</span> <span style="color:#c084fc">NOW</span>()) <span style="color:#c084fc">AS</span> hour;    <span style="color:#94a3b8">-- 14</span></pre></div>
+
+            <h3>DATE_TRUNC &mdash; Truncate to a Time Unit</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Truncate to the beginning of the month</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">DATE_TRUNC</span>(<span style="color:#4ade80">'month'</span>, <span style="color:#c084fc">NOW</span>()) <span style="color:#c084fc">AS</span> month_start;
+<span style="color:#94a3b8">-- Result: 2026-03-01 00:00:00+05:30</span>
+
+<span style="color:#94a3b8">-- Great for grouping orders by month</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">DATE_TRUNC</span>(<span style="color:#4ade80">'month'</span>, order_date) <span style="color:#c084fc">AS</span> month,
+       <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> total_orders
+<span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">GROUP BY</span> <span style="color:#c084fc">DATE_TRUNC</span>(<span style="color:#4ade80">'month'</span>, order_date)
+<span style="color:#c084fc">ORDER BY</span> month;</pre></div>
+
+            <h3>AGE &mdash; Difference Between Two Dates</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- How old is this order?</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">AGE</span>(<span style="color:#c084fc">NOW</span>(), <span style="color:#4ade80">'2024-06-15'</span>::<span style="color:#38bdf8">timestamp</span>) <span style="color:#c084fc">AS</span> order_age;
+<span style="color:#94a3b8">-- Result: 1 year 9 mons 4 days 14:30:15.123</span>
+
+<span style="color:#94a3b8">-- How long has each employee been with us?</span>
+<span style="color:#c084fc">SELECT</span> name,
+       hire_date,
+       <span style="color:#c084fc">AGE</span>(<span style="color:#c084fc">NOW</span>(), hire_date) <span style="color:#c084fc">AS</span> tenure
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">ORDER BY</span> hire_date;</pre></div>
+
+            <h3>TO_CHAR &mdash; Format Dates as Strings</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">TO_CHAR</span>(<span style="color:#c084fc">NOW</span>(), <span style="color:#4ade80">'DD-Mon-YYYY'</span>)          <span style="color:#c084fc">AS</span> formatted1,  <span style="color:#94a3b8">-- 19-Mar-2026</span>
+    <span style="color:#c084fc">TO_CHAR</span>(<span style="color:#c084fc">NOW</span>(), <span style="color:#4ade80">'Day, DD Month YYYY'</span>)  <span style="color:#c084fc">AS</span> formatted2,  <span style="color:#94a3b8">-- Thursday , 19 March 2026</span>
+    <span style="color:#c084fc">TO_CHAR</span>(<span style="color:#c084fc">NOW</span>(), <span style="color:#4ade80">'HH12:MI AM'</span>)           <span style="color:#c084fc">AS</span> formatted3;  <span style="color:#94a3b8">-- 02:30 PM</span></pre></div>
+
+            <h3>Interval Arithmetic &mdash; Adding/Subtracting Time</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">NOW</span>() + <span style="color:#c084fc">INTERVAL</span> <span style="color:#4ade80">'7 days'</span>    <span style="color:#c084fc">AS</span> next_week,
+    <span style="color:#c084fc">NOW</span>() - <span style="color:#c084fc">INTERVAL</span> <span style="color:#4ade80">'3 months'</span>  <span style="color:#c084fc">AS</span> three_months_ago,
+    <span style="color:#c084fc">NOW</span>() + <span style="color:#c084fc">INTERVAL</span> <span style="color:#4ade80">'2 hours'</span>   <span style="color:#c084fc">AS</span> in_two_hours;
+
+<span style="color:#94a3b8">-- Practical: Find orders from the last 30 days</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> orders
+<span style="color:#c084fc">WHERE</span> order_date &gt;= <span style="color:#c084fc">NOW</span>() - <span style="color:#c084fc">INTERVAL</span> <span style="color:#4ade80">'30 days'</span>;</pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Real-Life Use Case</h4>
+                <p>Subscription services use date functions constantly: "When does this user's trial expire?" &rarr; <code>signup_date + INTERVAL '14 days'</code>. "Has the subscription lapsed?" &rarr; <code>WHERE expiry_date &lt; NOW()</code>. "Show monthly revenue trends" &rarr; <code>GROUP BY DATE_TRUNC('month', payment_date)</code>.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 4. CONDITIONAL FUNCTIONS ===================== -->
+        <div class="section">
+            <h2>4&#65039;&#8419; Conditional Functions</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Smart Defaults and Choices</h4>
+                <p>Imagine you&rsquo;re ordering food online. If your favourite dish is available, you order that. If not, you pick your backup. If that&rsquo;s gone too, you just get pizza. Conditional functions work the same way &mdash; they make smart choices based on the data they see.</p>
+            </div>
+
+            <h3>COALESCE &mdash; First Non-NULL Value</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name,
+       <span style="color:#c084fc">COALESCE</span>(phone, email, <span style="color:#4ade80">'No contact info'</span>) <span style="color:#c084fc">AS</span> contact
+<span style="color:#c084fc">FROM</span> customers;</pre></div>
+
+            <h3>NULLIF &mdash; Return NULL If Values Match</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Avoid division by zero</span>
+<span style="color:#c084fc">SELECT</span> total_revenue / <span style="color:#c084fc">NULLIF</span>(total_orders, <span style="color:#fb923c">0</span>) <span style="color:#c084fc">AS</span> avg_order_value
+<span style="color:#c084fc">FROM</span> monthly_stats;</pre></div>
+
+            <h3>GREATEST &amp; LEAST &mdash; Find Max/Min Among Values</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">GREATEST</span>(<span style="color:#fb923c">10</span>, <span style="color:#fb923c">25</span>, <span style="color:#fb923c">5</span>, <span style="color:#fb923c">30</span>) <span style="color:#c084fc">AS</span> biggest,    <span style="color:#94a3b8">-- 30</span>
+    <span style="color:#c084fc">LEAST</span>(<span style="color:#fb923c">10</span>, <span style="color:#fb923c">25</span>, <span style="color:#fb923c">5</span>, <span style="color:#fb923c">30</span>)    <span style="color:#c084fc">AS</span> smallest;   <span style="color:#94a3b8">-- 5</span>
+
+<span style="color:#94a3b8">-- Practical: Ensure price is never below the minimum</span>
+<span style="color:#c084fc">SELECT</span> name,
+       <span style="color:#c084fc">GREATEST</span>(price, <span style="color:#fb923c">9.99</span>) <span style="color:#c084fc">AS</span> final_price
+<span style="color:#c084fc">FROM</span> products;</pre></div>
+
+            <h3>CASE (Recap) &mdash; SQL's If-Then-Else</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, salary,
+       <span style="color:#c084fc">CASE</span>
+           <span style="color:#c084fc">WHEN</span> salary &gt;= <span style="color:#fb923c">90000</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'Senior'</span>
+           <span style="color:#c084fc">WHEN</span> salary &gt;= <span style="color:#fb923c">70000</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'Mid-Level'</span>
+           <span style="color:#c084fc">ELSE</span> <span style="color:#4ade80">'Junior'</span>
+       <span style="color:#c084fc">END</span> <span style="color:#c084fc">AS</span> level
+<span style="color:#c084fc">FROM</span> employees;</pre></div>
+        </div>
+
+        <!-- ===================== 5. CREATE FUNCTION ===================== -->
+        <div class="section">
+            <h2>5&#65039;&#8419; CREATE FUNCTION &mdash; Your Own Reusable Tools</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; What Is a User-Defined Function?</h4>
+                <p>Think of a function like a <strong>recipe card</strong>. Instead of remembering all the steps to bake chocolate chip cookies every single time, you write them on a card once. From now on, you just say "follow the cookie recipe" and you get cookies! A PostgreSQL function is the same &mdash; you write the SQL logic once, give it a name, and then call it whenever you want. Less repetition, fewer mistakes.</p>
+            </div>
+
+            <h3>SQL Language Functions &mdash; The Simple Kind</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- A function to calculate 18% GST on any price</span>
+<span style="color:#c084fc">CREATE FUNCTION</span> calculate_gst(price <span style="color:#38bdf8">NUMERIC</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">NUMERIC</span>
+<span style="color:#c084fc">LANGUAGE</span> sql
+<span style="color:#c084fc">AS</span> $$
+    <span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">ROUND</span>(price * <span style="color:#fb923c">0.18</span>, <span style="color:#fb923c">2</span>);
+$$;</pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; What Is $$ Dollar-Quoting?</h4>
+                <p>In PostgreSQL, the body of a function must be a string. Instead of wrapping it in single quotes (which gets messy when your SQL itself uses single quotes), PostgreSQL lets you use <code>$$</code> as the string delimiter. Everything between <code>$$</code> and <code>$$</code> is the function body. Think of <code>$$</code> as "super quotes."</p>
+            </div>
+
+            <h3>Using the Function</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name,
+       price,
+       calculate_gst(price) <span style="color:#c084fc">AS</span> gst,
+       price + calculate_gst(price) <span style="color:#c084fc">AS</span> total
+<span style="color:#c084fc">FROM</span> products;</pre></div>
+
+            <h3>Function to Format Currency</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> format_inr(amount <span style="color:#38bdf8">NUMERIC</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">TEXT</span>
+<span style="color:#c084fc">LANGUAGE</span> sql
+<span style="color:#c084fc">AS</span> $$
+    <span style="color:#c084fc">SELECT</span> <span style="color:#4ade80">'&#8377;'</span> || <span style="color:#c084fc">TO_CHAR</span>(amount, <span style="color:#4ade80">'FM99,99,999.00'</span>);
+$$;
+
+<span style="color:#94a3b8">-- Usage</span>
+<span style="color:#c084fc">SELECT</span> format_inr(<span style="color:#fb923c">1250000.50</span>);
+<span style="color:#94a3b8">-- Result: &#8377;12,50,000.50</span></pre></div>
+
+            <h3>Function to Validate Email (Basic)</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> is_valid_email(email <span style="color:#38bdf8">TEXT</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">BOOLEAN</span>
+<span style="color:#c084fc">LANGUAGE</span> sql
+<span style="color:#c084fc">AS</span> $$
+    <span style="color:#c084fc">SELECT</span> email ~ <span style="color:#4ade80">'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'</span>;
+$$;
+
+<span style="color:#94a3b8">-- Usage</span>
+<span style="color:#c084fc">SELECT</span> is_valid_email(<span style="color:#4ade80">'john@example.com'</span>);  <span style="color:#94a3b8">-- true</span>
+<span style="color:#c084fc">SELECT</span> is_valid_email(<span style="color:#4ade80">'not-an-email'</span>);      <span style="color:#94a3b8">-- false</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; LANGUAGE sql vs LANGUAGE plpgsql</h4>
+                <p><code>LANGUAGE sql</code> functions are simple: they contain one or more SQL statements and return the result of the last one. They're fast because PostgreSQL can inline them. Use <code>LANGUAGE plpgsql</code> when you need variables, IF/ELSE logic, loops, or error handling. We'll cover plpgsql next!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 6. PL/pgSQL BASICS ===================== -->
+        <div class="section">
+            <h2>6&#65039;&#8419; PL/pgSQL Basics &mdash; Real Programming Inside PostgreSQL</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; What Is PL/pgSQL?</h4>
+                <p>Regular SQL is like a <strong>vending machine</strong> &mdash; you press a button and get one thing. PL/pgSQL is like a <strong>robot chef</strong> &mdash; it can check ingredients (IF/THEN), repeat steps (LOOP), adjust the recipe based on what it finds, and even shout a warning if something goes wrong (RAISE NOTICE). It's a full programming language that lives inside PostgreSQL.</p>
+            </div>
+
+            <h3>Structure of a PL/pgSQL Function</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> function_name(params)
+<span style="color:#c084fc">RETURNS</span> return_type
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">DECLARE</span>
+    <span style="color:#94a3b8">-- Variables go here</span>
+    my_variable <span style="color:#38bdf8">INTEGER</span>;
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#94a3b8">-- Logic goes here</span>
+    <span style="color:#c084fc">RETURN</span> result;
+<span style="color:#c084fc">END</span>;
+$$;</pre></div>
+
+            <h3>Variables</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> greet(person_name <span style="color:#38bdf8">TEXT</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">TEXT</span>
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">DECLARE</span>
+    greeting <span style="color:#38bdf8">TEXT</span>;
+<span style="color:#c084fc">BEGIN</span>
+    greeting := <span style="color:#4ade80">'Hello, '</span> || person_name || <span style="color:#4ade80">'! Welcome to PostgreSQL.'</span>;
+    <span style="color:#c084fc">RETURN</span> greeting;
+<span style="color:#c084fc">END</span>;
+$$;
+
+<span style="color:#c084fc">SELECT</span> greet(<span style="color:#4ade80">'Alice'</span>);
+<span style="color:#94a3b8">-- Result: Hello, Alice! Welcome to PostgreSQL.</span></pre></div>
+
+            <h3>IF / THEN / ELSE</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> classify_customer(total_spending <span style="color:#38bdf8">NUMERIC</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">TEXT</span>
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">DECLARE</span>
+    tier <span style="color:#38bdf8">TEXT</span>;
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#c084fc">IF</span> total_spending &gt;= <span style="color:#fb923c">100000</span> <span style="color:#c084fc">THEN</span>
+        tier := <span style="color:#4ade80">'&#128142; Platinum'</span>;
+    <span style="color:#c084fc">ELSIF</span> total_spending &gt;= <span style="color:#fb923c">50000</span> <span style="color:#c084fc">THEN</span>
+        tier := <span style="color:#4ade80">'&#129351; Gold'</span>;
+    <span style="color:#c084fc">ELSIF</span> total_spending &gt;= <span style="color:#fb923c">10000</span> <span style="color:#c084fc">THEN</span>
+        tier := <span style="color:#4ade80">'&#129352; Silver'</span>;
+    <span style="color:#c084fc">ELSE</span>
+        tier := <span style="color:#4ade80">'&#129353; Bronze'</span>;
+    <span style="color:#c084fc">END IF</span>;
+
+    <span style="color:#c084fc">RETURN</span> tier;
+<span style="color:#c084fc">END</span>;
+$$;
+
+<span style="color:#94a3b8">-- Usage: Classify all customers</span>
+<span style="color:#c084fc">SELECT</span> name,
+       total_spending,
+       classify_customer(total_spending) <span style="color:#c084fc">AS</span> tier
+<span style="color:#c084fc">FROM</span> customers
+<span style="color:#c084fc">ORDER BY</span> total_spending <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <h3>LOOP &amp; RAISE NOTICE</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> countdown(start_num <span style="color:#38bdf8">INTEGER</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">VOID</span>
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">DECLARE</span>
+    i <span style="color:#38bdf8">INTEGER</span> := start_num;
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#c084fc">WHILE</span> i &gt; <span style="color:#fb923c">0</span> <span style="color:#c084fc">LOOP</span>
+        <span style="color:#c084fc">RAISE NOTICE</span> <span style="color:#4ade80">'% ...'</span>, i;
+        i := i - <span style="color:#fb923c">1</span>;
+    <span style="color:#c084fc">END LOOP</span>;
+    <span style="color:#c084fc">RAISE NOTICE</span> <span style="color:#4ade80">'Liftoff! &#128640;'</span>;
+<span style="color:#c084fc">END</span>;
+$$;
+
+<span style="color:#c084fc">SELECT</span> countdown(<span style="color:#fb923c">3</span>);
+<span style="color:#94a3b8">-- NOTICE:  3 ...</span>
+<span style="color:#94a3b8">-- NOTICE:  2 ...</span>
+<span style="color:#94a3b8">-- NOTICE:  1 ...</span>
+<span style="color:#94a3b8">-- NOTICE:  Liftoff! &#128640;</span></pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Real-Life Analogy</h4>
+                <p><code>RAISE NOTICE</code> is like <code>console.log()</code> in JavaScript or <code>print()</code> in Python. It's your debugging friend &mdash; it outputs messages to the PostgreSQL log so you can see what your function is doing step by step. There's also <code>RAISE WARNING</code> and <code>RAISE EXCEPTION</code> (which stops the function with an error).</p>
+            </div>
+
+            <h3>FOR Loop &mdash; Loop Through Query Results</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> list_expensive_products(min_price <span style="color:#38bdf8">NUMERIC</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">TEXT</span>
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">DECLARE</span>
+    product <span style="color:#38bdf8">RECORD</span>;
+    result <span style="color:#38bdf8">TEXT</span> := <span style="color:#4ade80">''</span>;
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#c084fc">FOR</span> product <span style="color:#c084fc">IN</span>
+        <span style="color:#c084fc">SELECT</span> name, price <span style="color:#c084fc">FROM</span> products
+        <span style="color:#c084fc">WHERE</span> price &gt;= min_price
+        <span style="color:#c084fc">ORDER BY</span> price <span style="color:#c084fc">DESC</span>
+    <span style="color:#c084fc">LOOP</span>
+        result := result || product.name || <span style="color:#4ade80">' ($'</span> || product.price || <span style="color:#4ade80">'), '</span>;
+    <span style="color:#c084fc">END LOOP</span>;
+
+    <span style="color:#c084fc">RETURN</span> <span style="color:#c084fc">RTRIM</span>(result, <span style="color:#4ade80">', '</span>);
+<span style="color:#c084fc">END</span>;
+$$;</pre></div>
+        </div>
+
+        <!-- ===================== 7. STORED PROCEDURES ===================== -->
+        <div class="section">
+            <h2>7&#65039;&#8419; Stored Procedures</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Functions vs Procedures</h4>
+                <p>A <strong>function</strong> is like a blender &mdash; you put ingredients in, you get a smoothie out (a return value). A <strong>procedure</strong> is like a dishwasher &mdash; you press start and it does a bunch of work (washing, rinsing, drying) but it doesn't "return" anything to your hand. The key difference: procedures can <strong>commit and rollback transactions</strong> in the middle of their work. Functions cannot.</p>
+            </div>
+
+            <h3>CREATE PROCEDURE</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE PROCEDURE</span> transfer_funds(
+    sender_id <span style="color:#38bdf8">INTEGER</span>,
+    receiver_id <span style="color:#38bdf8">INTEGER</span>,
+    amount <span style="color:#38bdf8">NUMERIC</span>
+)
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#94a3b8">-- Deduct from sender</span>
+    <span style="color:#c084fc">UPDATE</span> accounts
+    <span style="color:#c084fc">SET</span> balance = balance - amount
+    <span style="color:#c084fc">WHERE</span> id = sender_id;
+
+    <span style="color:#94a3b8">-- Add to receiver</span>
+    <span style="color:#c084fc">UPDATE</span> accounts
+    <span style="color:#c084fc">SET</span> balance = balance + amount
+    <span style="color:#c084fc">WHERE</span> id = receiver_id;
+
+    <span style="color:#c084fc">COMMIT</span>;
+<span style="color:#c084fc">END</span>;
+$$;</pre></div>
+
+            <h3>CALL &mdash; How to Run a Procedure</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Transfer $500 from account 1 to account 2</span>
+<span style="color:#c084fc">CALL</span> transfer_funds(<span style="color:#fb923c">1</span>, <span style="color:#fb923c">2</span>, <span style="color:#fb923c">500.00</span>);</pre></div>
+
+            <h3>Functions vs Procedures &mdash; Quick Comparison</h3>
+            <table class="comparison-table">
+                <tr><th>Feature</th><th>Function</th><th>Procedure</th></tr>
+                <tr><td>Returns a value?</td><td>Yes (always)</td><td>No (use OUT params)</td></tr>
+                <tr><td>Can be used in SELECT?</td><td>Yes</td><td>No</td></tr>
+                <tr><td>Can COMMIT/ROLLBACK?</td><td>No</td><td>Yes</td></tr>
+                <tr><td>How to call?</td><td><code>SELECT func()</code></td><td><code>CALL proc()</code></td></tr>
+                <tr><td>Introduced in PG</td><td>Always existed</td><td>PostgreSQL 11+</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; When to Use Procedures</h4>
+                <p>Use procedures for multi-step operations that need transaction control: bank transfers, batch updates, end-of-day processing, data migration scripts. Use functions for calculations, transformations, and anything you want to call inside a SELECT statement.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. TRIGGERS ===================== -->
+        <div class="section">
+            <h2>8&#65039;&#8419; Triggers &mdash; Automatic Actions</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; What Is a Trigger?</h4>
+                <p>Imagine a doorbell. Nobody has to stand outside and watch for visitors &mdash; when someone presses the button (an event), the bell rings automatically (an action). A trigger is a database doorbell: when something happens to a table (INSERT, UPDATE, DELETE), PostgreSQL automatically runs a function you defined. No human intervention needed.</p>
+            </div>
+
+            <h3>When Triggers Fire</h3>
+            <table class="comparison-table">
+                <tr><th>Timing</th><th>Meaning</th><th>Use Case</th></tr>
+                <tr><td>BEFORE</td><td>Runs before the change is saved</td><td>Validate/modify data before it's written</td></tr>
+                <tr><td>AFTER</td><td>Runs after the change is saved</td><td>Log the change, send notifications</td></tr>
+                <tr><td>INSTEAD OF</td><td>Replaces the action (views only)</td><td>Make views updatable</td></tr>
+            </table>
+
+            <h3>Special Variables in Triggers</h3>
+            <table class="comparison-table">
+                <tr><th>Variable</th><th>What It Holds</th></tr>
+                <tr><td><code>NEW</code></td><td>The new row being inserted or updated</td></tr>
+                <tr><td><code>OLD</code></td><td>The old row before update or deletion</td></tr>
+                <tr><td><code>TG_OP</code></td><td>The operation: 'INSERT', 'UPDATE', or 'DELETE'</td></tr>
+                <tr><td><code>TG_TABLE_NAME</code></td><td>Name of the table that fired the trigger</td></tr>
+            </table>
+
+            <h3>Example: Auto-Update "updated_at" Timestamp</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Step 1: Create the trigger function</span>
+<span style="color:#c084fc">CREATE FUNCTION</span> set_updated_at()
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">TRIGGER</span>
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">BEGIN</span>
+    NEW.updated_at := <span style="color:#c084fc">NOW</span>();
+    <span style="color:#c084fc">RETURN</span> NEW;
+<span style="color:#c084fc">END</span>;
+$$;
+
+<span style="color:#94a3b8">-- Step 2: Attach the trigger to a table</span>
+<span style="color:#c084fc">CREATE TRIGGER</span> trg_employees_updated_at
+    <span style="color:#c084fc">BEFORE UPDATE ON</span> employees
+    <span style="color:#c084fc">FOR EACH ROW</span>
+    <span style="color:#c084fc">EXECUTE FUNCTION</span> set_updated_at();</pre></div>
+
+            <p>Now, every time you <code>UPDATE</code> any employee row, the <code>updated_at</code> column is automatically set to the current time. You never have to remember to do it manually!</p>
+
+            <h3>Example: Audit Log Trigger</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- First, create an audit log table</span>
+<span style="color:#c084fc">CREATE TABLE</span> audit_log (
+    id          <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    table_name  <span style="color:#38bdf8">TEXT</span>,
+    operation   <span style="color:#38bdf8">TEXT</span>,
+    old_data    <span style="color:#38bdf8">JSONB</span>,
+    new_data    <span style="color:#38bdf8">JSONB</span>,
+    changed_at  <span style="color:#38bdf8">TIMESTAMP</span> <span style="color:#c084fc">DEFAULT NOW</span>(),
+    changed_by  <span style="color:#38bdf8">TEXT</span> <span style="color:#c084fc">DEFAULT</span> <span style="color:#c084fc">CURRENT_USER</span>
+);
+
+<span style="color:#94a3b8">-- Create the audit trigger function</span>
+<span style="color:#c084fc">CREATE FUNCTION</span> log_changes()
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">TRIGGER</span>
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#c084fc">IF</span> TG_OP = <span style="color:#4ade80">'DELETE'</span> <span style="color:#c084fc">THEN</span>
+        <span style="color:#c084fc">INSERT INTO</span> audit_log (table_name, operation, old_data)
+        <span style="color:#c084fc">VALUES</span> (TG_TABLE_NAME, <span style="color:#4ade80">'DELETE'</span>, to_jsonb(OLD));
+        <span style="color:#c084fc">RETURN</span> OLD;
+    <span style="color:#c084fc">ELSIF</span> TG_OP = <span style="color:#4ade80">'UPDATE'</span> <span style="color:#c084fc">THEN</span>
+        <span style="color:#c084fc">INSERT INTO</span> audit_log (table_name, operation, old_data, new_data)
+        <span style="color:#c084fc">VALUES</span> (TG_TABLE_NAME, <span style="color:#4ade80">'UPDATE'</span>, to_jsonb(OLD), to_jsonb(NEW));
+        <span style="color:#c084fc">RETURN</span> NEW;
+    <span style="color:#c084fc">ELSIF</span> TG_OP = <span style="color:#4ade80">'INSERT'</span> <span style="color:#c084fc">THEN</span>
+        <span style="color:#c084fc">INSERT INTO</span> audit_log (table_name, operation, new_data)
+        <span style="color:#c084fc">VALUES</span> (TG_TABLE_NAME, <span style="color:#4ade80">'INSERT'</span>, to_jsonb(NEW));
+        <span style="color:#c084fc">RETURN</span> NEW;
+    <span style="color:#c084fc">END IF</span>;
+<span style="color:#c084fc">END</span>;
+$$;
+
+<span style="color:#94a3b8">-- Attach it to the employees table</span>
+<span style="color:#c084fc">CREATE TRIGGER</span> trg_employees_audit
+    <span style="color:#c084fc">AFTER INSERT OR UPDATE OR DELETE ON</span> employees
+    <span style="color:#c084fc">FOR EACH ROW</span>
+    <span style="color:#c084fc">EXECUTE FUNCTION</span> log_changes();</pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Real-Life Use Case</h4>
+                <p>Audit triggers are used by banks, hospitals, and any regulated industry. If a nurse changes a patient's medication record, the audit log captures exactly what changed, when, and by whom. This is often a <strong>legal requirement</strong>. PostgreSQL triggers make this automatic and tamper-proof.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; Trigger Performance Warning</h4>
+                <p>Triggers run for <strong>every single row</strong> affected by the operation. If you UPDATE 1 million rows, the trigger function executes 1 million times. Keep trigger functions fast and lightweight. For heavy work, consider using AFTER triggers with deferred processing or a message queue.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 9. VIEWS ===================== -->
+        <div class="section">
+            <h2>9&#65039;&#8419; Views &mdash; Virtual Tables</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; What Is a View?</h4>
+                <p>Imagine you look out your bedroom window. You see a beautiful garden, but you don't own the garden &mdash; it belongs to the park next door. The window gives you a <strong>view</strong> of something that exists elsewhere. A database view is the same: it's a saved query that looks and behaves like a table, but it doesn't store any data itself. Every time you query the view, it runs the underlying query and shows you fresh results.</p>
+            </div>
+
+            <h3>CREATE VIEW</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- A view that shows only Engineering employees</span>
+<span style="color:#c084fc">CREATE VIEW</span> engineering_team <span style="color:#c084fc">AS</span>
+<span style="color:#c084fc">SELECT</span> id, name, salary, hire_date
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> department = <span style="color:#4ade80">'Engineering'</span>;
+
+<span style="color:#94a3b8">-- Now query it like a regular table!</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> engineering_team;</pre></div>
+
+            <h3>Simplifying Complex Queries</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- A view that joins orders with customers and calculates totals</span>
+<span style="color:#c084fc">CREATE VIEW</span> order_summary <span style="color:#c084fc">AS</span>
+<span style="color:#c084fc">SELECT</span>
+    c.name <span style="color:#c084fc">AS</span> customer_name,
+    <span style="color:#c084fc">COUNT</span>(o.id) <span style="color:#c084fc">AS</span> total_orders,
+    <span style="color:#c084fc">SUM</span>(o.amount) <span style="color:#c084fc">AS</span> total_spent,
+    <span style="color:#c084fc">MAX</span>(o.order_date) <span style="color:#c084fc">AS</span> last_order
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">JOIN</span> orders o <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">GROUP BY</span> c.name;
+
+<span style="color:#94a3b8">-- Now anyone can run this simple query instead of the complex one</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> order_summary
+<span style="color:#c084fc">WHERE</span> total_spent &gt; <span style="color:#fb923c">10000</span>;</pre></div>
+
+            <h3>Updatable Views</h3>
+            <p>Simple views (no JOINs, no GROUP BY, no DISTINCT) are automatically updatable:</p>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- You can INSERT/UPDATE/DELETE through the view!</span>
+<span style="color:#c084fc">UPDATE</span> engineering_team
+<span style="color:#c084fc">SET</span> salary = <span style="color:#fb923c">95000</span>
+<span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Alice Johnson'</span>;
+<span style="color:#94a3b8">-- This actually updates the employees table</span></pre></div>
+
+            <h3>WITH CHECK OPTION &mdash; Prevent Sneaky Inserts</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE VIEW</span> engineering_team <span style="color:#c084fc">AS</span>
+<span style="color:#c084fc">SELECT</span> id, name, department, salary
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> department = <span style="color:#4ade80">'Engineering'</span>
+<span style="color:#c084fc">WITH CHECK OPTION</span>;
+
+<span style="color:#94a3b8">-- This will FAIL because 'Sales' doesn't match the view's WHERE</span>
+<span style="color:#c084fc">INSERT INTO</span> engineering_team (name, department, salary)
+<span style="color:#c084fc">VALUES</span> (<span style="color:#4ade80">'Sneaky Pete'</span>, <span style="color:#4ade80">'Sales'</span>, <span style="color:#fb923c">50000</span>);
+<span style="color:#94a3b8">-- ERROR: new row violates check option for view "engineering_team"</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Views for Security</h4>
+                <p>Views are great for access control. You can give a junior analyst access to a view that only shows non-sensitive columns (no salary, no SSN) while the underlying table contains everything. The analyst doesn't even need to know the full table exists!</p>
+            </div>
+
+            <h3>CREATE OR REPLACE VIEW</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Modify an existing view without dropping it first</span>
+<span style="color:#c084fc">CREATE OR REPLACE VIEW</span> engineering_team <span style="color:#c084fc">AS</span>
+<span style="color:#c084fc">SELECT</span> id, name, salary, hire_date,
+       <span style="color:#c084fc">AGE</span>(<span style="color:#c084fc">NOW</span>(), hire_date) <span style="color:#c084fc">AS</span> tenure
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> department = <span style="color:#4ade80">'Engineering'</span>;</pre></div>
+
+            <h3>Dropping a View</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">DROP VIEW IF EXISTS</span> engineering_team;</pre></div>
+        </div>
+
+        <!-- ===================== 10. PRACTICE + QUIZ ===================== -->
+        <div class="section">
+            <h2>&#127947;&#65039; Practice Exercises</h2>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: String Manipulation</h4>
+                <p>Write a query that takes the email <code>'john.doe@company.com'</code> and extracts just the username (before the @), converts it to title case, and replaces the dot with a space. Expected result: <code>John Doe</code>.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">INITCAP</span>(
+    <span style="color:#c084fc">REPLACE</span>(
+        <span style="color:#c084fc">SPLIT_PART</span>(<span style="color:#4ade80">'john.doe@company.com'</span>, <span style="color:#4ade80">'@'</span>, <span style="color:#fb923c">1</span>),
+        <span style="color:#4ade80">'.'</span>,
+        <span style="color:#4ade80">' '</span>
+    )
+) <span style="color:#c084fc">AS</span> full_name;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: Create a Tax Calculator Function</h4>
+                <p>Create a function <code>calc_total(price NUMERIC, tax_rate NUMERIC DEFAULT 0.18)</code> that returns the price including tax, rounded to 2 decimal places.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> calc_total(price <span style="color:#38bdf8">NUMERIC</span>, tax_rate <span style="color:#38bdf8">NUMERIC</span> <span style="color:#c084fc">DEFAULT</span> <span style="color:#fb923c">0.18</span>)
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">NUMERIC</span>
+<span style="color:#c084fc">LANGUAGE</span> sql
+<span style="color:#c084fc">AS</span> $$
+    <span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">ROUND</span>(price * (<span style="color:#fb923c">1</span> + tax_rate), <span style="color:#fb923c">2</span>);
+$$;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: Build an Audit Trigger</h4>
+                <p>Create a trigger on the <code>products</code> table that automatically sets <code>updated_at</code> to NOW() whenever a product's price changes.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">CREATE FUNCTION</span> update_product_timestamp()
+<span style="color:#c084fc">RETURNS</span> <span style="color:#38bdf8">TRIGGER</span>
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#c084fc">IF</span> OLD.price &lt;&gt; NEW.price <span style="color:#c084fc">THEN</span>
+        NEW.updated_at := <span style="color:#c084fc">NOW</span>();
+    <span style="color:#c084fc">END IF</span>;
+    <span style="color:#c084fc">RETURN</span> NEW;
+<span style="color:#c084fc">END</span>;
+$$;
+
+<span style="color:#c084fc">CREATE TRIGGER</span> trg_product_price_change
+    <span style="color:#c084fc">BEFORE UPDATE ON</span> products
+    <span style="color:#c084fc">FOR EACH ROW</span>
+    <span style="color:#c084fc">EXECUTE FUNCTION</span> update_product_timestamp();</pre></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== QUIZ ===================== -->
+        <div class="section">
+            <h2>&#128221; Quiz &mdash; Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What does <code>SPLIT_PART('a-b-c', '-', 2)</code> return?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">a</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">b</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">c</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">a-b</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: What is the main difference between a FUNCTION and a PROCEDURE?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Functions are faster than procedures</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Procedures can accept parameters, functions cannot</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Procedures can COMMIT/ROLLBACK transactions; functions cannot</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Functions are written in PL/pgSQL; procedures use plain SQL</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: When does a BEFORE UPDATE trigger fire?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Before the row change is saved to disk</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">After the row change is saved to disk</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Instead of the UPDATE operation</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Only when the table is empty</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: What does <code>$$</code> (dollar-quoting) do in a function definition?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It declares a variable that holds money values</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">It acts as a string delimiter for the function body, avoiding single-quote escaping issues</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It marks the function as a paid/premium feature</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It starts a transaction inside the function</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: What is a VIEW?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A copy of a table stored in memory</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A backup of the original table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">A saved query that behaves like a virtual table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A special type of index</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: What does the trigger variable <code>NEW</code> represent?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">The most recently created table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">The new row being inserted or the updated version of a row</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A newly created trigger</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">The next auto-increment value</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: What does <code>WITH CHECK OPTION</code> do on a view?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It makes the view read-only</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It adds an index to the view for faster queries</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">It prevents inserting/updating rows through the view that wouldn't be visible in the view</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It checks for NULL values before inserting</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>&#127881; What's Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">12+</div>
+                    <div class="stat-label">String functions learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Math functions mastered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Date/time tools explored</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Trigger & view patterns built</div>
+                </div>
+            </div>
+
+            <p>You&rsquo;ve leveled up from a SQL user to a SQL <em>programmer</em>. Here&rsquo;s what you accomplished:</p>
+
+            <table class="comparison-table">
+                <tr><th>Topic</th><th>Key Takeaway</th></tr>
+                <tr><td>String Functions</td><td>UPPER, LOWER, TRIM, REPLACE, SPLIT_PART, LPAD &mdash; clean and transform text</td></tr>
+                <tr><td>Math Functions</td><td>ROUND, CEIL, FLOOR, POWER, RANDOM &mdash; do calculations in the database</td></tr>
+                <tr><td>Date/Time Functions</td><td>NOW, EXTRACT, DATE_TRUNC, AGE, intervals &mdash; master time-based queries</td></tr>
+                <tr><td>Conditional Functions</td><td>COALESCE, NULLIF, GREATEST, LEAST, CASE &mdash; smart defaults and choices</td></tr>
+                <tr><td>User-Defined Functions</td><td>CREATE FUNCTION with SQL and PL/pgSQL &mdash; reusable logic</td></tr>
+                <tr><td>Procedures</td><td>CREATE PROCEDURE + CALL &mdash; multi-step operations with transaction control</td></tr>
+                <tr><td>Triggers</td><td>BEFORE/AFTER triggers &mdash; automatic auditing and timestamp updates</td></tr>
+                <tr><td>Views</td><td>Virtual tables that simplify complex queries and enhance security</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>&#128302; Coming Up Next: Transactions &amp; Concurrency</h4>
+                <p>What happens when two people try to buy the last item in stock at the exact same time? How does a bank ensure money doesn&rsquo;t vanish during a transfer? In the next module, you&rsquo;ll learn about <strong>transactions, ACID properties, isolation levels, and MVCC</strong> &mdash; the technology that keeps your data safe when thousands of users hit the database at once. It&rsquo;s one of the most important topics in all of database engineering!</p>
+            </div>
+        </div>
+
         <div class="lesson-nav">
-            <a href="transactions.html" class="secondary"><i class="fas fa-arrow-left"></i> Transactions & ACID</a>
-            <a href="replication.html">Replication & HA <i class="fas fa-arrow-right"></i></a>
+            <a href="indexes.html" class="secondary"><i class="fas fa-arrow-left"></i> Indexes &amp; Performance</a>
+            <a href="transactions.html">Transactions &amp; Concurrency <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">&#10003; Correct!</strong> <span style="color:#94a3b8;">Great job!</span>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">&#10007; Not quite!</strong> <span style="color:#94a3b8;">Check the correct answer above.</span>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

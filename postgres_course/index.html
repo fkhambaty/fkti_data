@@ -3,530 +3,537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PostgreSQL with DBeaver | Fakhruddin Khambaty's Learning Hub</title>
-    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <title>PostgreSQL Mastery Course | Fakhruddin Khambaty's Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Course-specific styles */
-        :root {
-            --postgres-blue: #336791;
-            --postgres-light: #4a90c7;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(160deg, #f0f4ff 0%, #e8eeff 40%, #eef2ff 70%, #f5f3ff 100%);
             min-height: 100vh;
+            padding: 20px;
+            color: #1e293b;
         }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        .course-nav {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,0,0,0.08);
-            padding: 12px 20px;
-        }
-
-        .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
+        .nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-        }
-
-        .nav-hub {
-            display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            color: #1d1d1f;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 3px 0 #d1d5db, 0 4px 8px rgba(0,0,0,0.08);
-            transition: all 0.15s;
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
         }
+        .nav a { color: #336791; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #4169E1; }
 
-        .nav-hub:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 0 #d1d5db, 0 7px 14px rgba(0,0,0,0.1);
-        }
-
-        .course-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .course-logo {
-            font-size: 32px;
-        }
-
-        .course-title-nav {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--postgres-blue);
-        }
-
-        /* Hero Section */
-        .course-hero {
-            padding: 80px 20px;
+        .header {
             text-align: center;
-            background: linear-gradient(135deg, rgba(51, 103, 145, 0.05) 0%, rgba(74, 144, 199, 0.05) 100%);
+            padding: 70px 40px;
+            background: linear-gradient(135deg, #336791, #4169E1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(51,103,145,0.3);
+            color: #fff;
+            border-radius: 25px;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
         }
-
-        .hero-icon {
-            font-size: 80px;
-            margin-bottom: 24px;
-            animation: bounce 2s ease-in-out infinite;
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(51,103,145,0.1) 0%, transparent 60%);
+            animation: pulse 10s ease-in-out infinite;
         }
+        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .hero-title {
-            font-size: 48px;
+        .header-badge {
+            background: rgba(51,103,145,0.3);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 30px;
             font-weight: 700;
-            color: var(--postgres-blue);
-            margin-bottom: 16px;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 1px solid rgba(51,103,145,0.4);
+            position: relative;
+        }
+        .header h1 { font-size: 3em; margin-bottom: 15px; font-weight: 900; position: relative; }
+        .header h1 .elephant { display: inline-block; animation: bounce 2s ease-in-out infinite; }
+        @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+        .header p { font-size: 1.3em; opacity: 0.9; max-width: 750px; margin: 0 auto 20px; position: relative; }
+        .header-stats {
+            display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 25px; position: relative;
+        }
+        .header-stat {
+            background: rgba(255,255,255,0.08);
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        .header-stat i { margin-right: 6px; color: #60a5fa; }
+
+        .roadmap-title {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: #336791;
         }
 
-        .hero-subtitle {
-            font-size: 20px;
-            color: #6e6e73;
-            max-width: 700px;
-            margin: 0 auto 32px;
-            line-height: 1.6;
-        }
-
-        .hero-badges {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
             margin-bottom: 40px;
         }
-
-        .badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: white;
+        .module-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            font-size: 14px;
+            padding: 30px;
+            border: 1px solid rgba(51,103,145,0.15);
+            transition: all 0.3s;
+            position: relative;
+            overflow: visible;
+        }
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, var(--module-color, #336791) 0%, var(--module-color-2, #60a5fa) 100%);
+            border-radius: 20px 20px 0 0;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border-color: rgba(51,103,145,0.35);
+        }
+        .module-icon { font-size: 3em; margin-bottom: 15px; }
+        .module-card h3 { font-size: 1.4em; margin-bottom: 12px; color: #1e293b; }
+        .module-card p { color: #64748b; margin-bottom: 20px; line-height: 1.6; }
+        .module-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
         }
-
-        .badge i {
-            color: var(--postgres-blue);
-        }
-
-        /* Content Sections */
-        .content-wrapper {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-
-        .section-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1d1d1f;
-            margin-bottom: 12px;
-        }
-
-        .section-subtitle {
-            font-size: 18px;
-            color: #6e6e73;
-        }
-
-        /* Lesson Cards */
-        .lessons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-        }
-
-        .lesson-card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid #e5e5e5;
-            transition: all 0.25s;
-            cursor: pointer;
-        }
-
-        .lesson-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(51, 103, 145, 0.15);
-            border-color: var(--postgres-blue);
-        }
-
-        .lesson-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--postgres-blue), var(--postgres-light));
-            color: white;
-            border-radius: 50%;
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .lesson-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1d1d1f;
-            margin-bottom: 8px;
-        }
-
-        .lesson-desc {
-            font-size: 14px;
-            color: #6e6e73;
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
-
-        .lesson-topics {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .topic-tag {
-            padding: 4px 10px;
-            background: #f5f5f7;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #6e6e73;
+        .status-ready { background: #22c55e; color: white; }
+        .status-coming { background: #f59e0b; color: #1e293b; }
+        .module-lessons { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(51,103,145,0.15); }
+        .lesson-link {
+            display: block;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: rgba(51,103,145,0.1);
+            border-radius: 10px;
+            color: #336791;
+            text-decoration: none;
             font-weight: 500;
+            transition: all 0.2s;
         }
+        .lesson-link:hover { background: rgba(51,103,145,0.2); transform: translateX(5px); }
+        .lesson-link i { margin-right: 8px; }
+        .lesson-link-pro { background: rgba(99,102,241,0.04) !important; color: #64748b !important; }
+        .lesson-link-pro:hover { background: rgba(99,102,241,0.08) !important; }
+        .lesson-link-pro i.fa-lock { margin-right: 8px; color: #f59e0b; }
+        .lesson-link-pro .pro-badge { font-size: 0.7em; margin-left: 8px; padding: 2px 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 6px; font-weight: 700; }
 
-        /* Fun Section */
-        .fun-section {
-            background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);
-            border-radius: 24px;
-            padding: 48px;
-            margin-top: 60px;
+        .journey {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .journey h3 { color: #336791; text-align: center; font-size: 1.5em; margin-bottom: 30px; }
+        .journey-steps {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+        }
+        .j-step { text-align: center; min-width: 100px; flex-shrink: 0; }
+        .j-icon {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center; justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.4em; color: white;
+        }
+        .j-step p { font-size: 0.78em; color: #64748b; font-weight: 600; }
+        .j-arrow { color: #1e3a5f; font-size: 1.4em; align-self: center; flex-shrink: 0; margin-top: -20px; }
+
+        .footer {
             text-align: center;
+            padding: 30px;
+            color: #64748b;
+            border-top: 1px solid rgba(51,103,145,0.1);
+            margin-top: 40px;
         }
-
-        .robot-container {
-            font-size: 80px;
-            margin-bottom: 24px;
-        }
-
-        .fun-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1d1d1f;
-            margin-bottom: 16px;
-        }
-
-        .fun-desc {
-            font-size: 16px;
-            color: #6e6e73;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* CTA */
-        .cta-section {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .btn-start {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 16px 32px;
-            background: linear-gradient(180deg, var(--postgres-blue) 0%, #2a5478 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #1e3d56, 0 6px 16px rgba(51, 103, 145, 0.35);
-            transition: all 0.15s;
-        }
-
-        .btn-start:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #1e3d56, 0 10px 24px rgba(51, 103, 145, 0.4);
-        }
-
-        .btn-start:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #1e3d56, 0 3px 8px rgba(51, 103, 145, 0.3);
-        }
-
-        /* Coming Soon Banner */
-        .coming-soon {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border: 2px solid #f59e0b;
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-            margin: 40px 0;
-        }
-
-        .coming-soon h3 {
-            font-size: 24px;
-            color: #92400e;
-            margin-bottom: 12px;
-        }
-
-        .coming-soon p {
-            color: #a16207;
-            font-size: 16px;
-        }
-
-        /* Footer */
-        .course-footer {
-            text-align: center;
-            padding: 32px;
-            border-top: 1px solid #e5e5e5;
-            font-size: 14px;
-            color: #86868b;
-        }
+        .footer a { color: #336791; text-decoration: none; font-weight: 600; }
 
         @media (max-width: 768px) {
-            .hero-title { font-size: 32px; }
-            .hero-subtitle { font-size: 16px; }
-            .lessons-grid { grid-template-columns: 1fr; }
-            .fun-section { padding: 32px 20px; }
+            .header h1 { font-size: 2em; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .journey-steps { flex-direction: column; align-items: center; }
+            .j-arrow { transform: rotate(90deg); }
+            .header-stats { gap: 10px; }
         }
     </style>
 </head>
-<body data-access="pro">
-    <!-- Navigation -->
-    <nav class="course-nav">
-        <div class="nav-inner">
-            <a href="../index.html" class="nav-hub">
-                <span>←</span> FKTI Hub
-            </a>
-            <div class="course-brand">
-                <span class="course-logo">🐘</span>
-                <span class="course-title-nav">PostgreSQL & DBeaver</span>
-            </div>
-            <div style="width: 120px;"></div>
-        </div>
-    </nav>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+            <span style="color: #93c5fd; font-weight: 800;"><i class="fas fa-database"></i> PostgreSQL Mastery</span>
+        </nav>
 
-    <!-- Hero -->
-    <section class="course-hero">
-        <div class="hero-icon">🐘</div>
-        <h1 class="hero-title">PostgreSQL with DBeaver</h1>
-        <p class="hero-subtitle">
-            Master the world's most advanced open-source database! Learn PostgreSQL from absolute zero 
-            using DBeaver - the friendliest database explorer. No experience needed, just curiosity! 🎯
-        </p>
-        <div class="hero-badges">
-            <div class="badge"><i class="fas fa-clock"></i> 14 Weeks</div>
-            <div class="badge"><i class="fas fa-book"></i> 35+ Lessons</div>
-            <div class="badge"><i class="fas fa-smile"></i> Beginner Friendly</div>
-            <div class="badge"><i class="fas fa-certificate"></i> FKTI Certificate</div>
-        </div>
-    </section>
-
-    <!-- Coming Soon -->
-    <div class="content-wrapper">
-        <div class="coming-soon">
-            <h3>🚧 Course Under Construction!</h3>
-            <p>Our database experts are crafting the most beginner-friendly PostgreSQL course ever. Stay tuned!</p>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 20px; padding: 28px; margin: 24px 0; border: 2px solid #3b82f6;">
-            <h3 style="color: #1e40af;">👶 In one sentence</h3>
-            <p style="color: #1e3a8a; margin: 0;"><strong>PostgreSQL</strong> is a free, powerful database that stores your data in tables and lets you query it with SQL—it supports complex queries, JSON, and extensions so you can build anything from apps to analytics.</p>
-        </div>
-        <div style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 20px; padding: 28px; margin: 24px 0; border: 2px solid #ef4444;">
-            <h3 style="color: #b91c1c;">🚫 Common Mistakes in PostgreSQL</h3>
-            <ul style="margin-left: 20px; color: #7f1d1d;">
-                <li><strong>No indexes on filter/join columns</strong> — Add indexes on columns you WHERE or JOIN on; otherwise big tables get full scans.</li>
-                <li><strong>N+1 queries in app code</strong> — Fetch related rows in one or few queries (JOINs or IN) instead of one query per row.</li>
-                <li><strong>Not using EXPLAIN for slow queries</strong> — Use EXPLAIN ANALYZE to see where time goes and fix missing indexes or bad plans.</li>
-            </ul>
-        </div>
-
-        <!-- What You'll Learn -->
-        <div class="section-header">
-            <h2 class="section-title">🎓 What You'll Learn</h2>
-            <p class="section-subtitle">From "what's a database?" to "I can optimize queries in my sleep!"</p>
-        </div>
-
-        <div class="lessons-grid">
-            <!-- Module 1 -->
-            <div class="lesson-card">
-                <div class="lesson-number">1</div>
-                <h3 class="lesson-title">What's a Database Anyway?</h3>
-                <p class="lesson-desc">
-                    Imagine a super-organized filing cabinet that never loses anything! We'll explain databases 
-                    using grocery stores, libraries, and your phone contacts. No jargon, just fun!
-                </p>
-                <div class="lesson-topics">
-                    <span class="topic-tag">Tables = Spreadsheets</span>
-                    <span class="topic-tag">Rows = Records</span>
-                    <span class="topic-tag">Why Databases?</span>
-                </div>
-            </div>
-
-            <!-- Module 2 -->
-            <div class="lesson-card">
-                <div class="lesson-number">2</div>
-                <h3 class="lesson-title">Installing Your Magic Tools</h3>
-                <p class="lesson-desc">
-                    Let's install PostgreSQL (the engine) and DBeaver (the steering wheel). 
-                    Step-by-step with screenshots. If your grandma can follow it, you can too! 👵
-                </p>
-                <div class="lesson-topics">
-                    <span class="topic-tag">PostgreSQL Setup</span>
-                    <span class="topic-tag">DBeaver Install</span>
-                    <span class="topic-tag">First Connection</span>
-                </div>
-            </div>
-
-            <!-- Module 3 -->
-            <div class="lesson-card">
-                <div class="lesson-number">3</div>
-                <h3 class="lesson-title">Your First SELECT Query</h3>
-                <p class="lesson-desc">
-                    "SELECT * FROM happiness WHERE you = 'learning'" - Your first SQL query! 
-                    We'll start simple and build up. By lesson end, you'll feel like a hacker! 🕵️
-                </p>
-                <div class="lesson-topics">
-                    <span class="topic-tag">SELECT</span>
-                    <span class="topic-tag">FROM</span>
-                    <span class="topic-tag">WHERE</span>
-                </div>
-            </div>
-
-            <!-- Module 4 -->
-            <div class="lesson-card">
-                <div class="lesson-number">4</div>
-                <h3 class="lesson-title">Creating Your Own Tables</h3>
-                <p class="lesson-desc">
-                    Build tables like building LEGO! Define columns, set data types, 
-                    and create your first real database. It's like creating a spreadsheet, but cooler! 🏗️
-                </p>
-                <div class="lesson-topics">
-                    <span class="topic-tag">CREATE TABLE</span>
-                    <span class="topic-tag">Data Types</span>
-                    <span class="topic-tag">Constraints</span>
-                </div>
-            </div>
-
-            <!-- Module 5 -->
-            <div class="lesson-card">
-                <div class="lesson-number">5</div>
-                <h3 class="lesson-title">JOINs - The Dating Game</h3>
-                <p class="lesson-desc">
-                    JOINs are like matchmaking for tables! INNER JOIN = mutual matches, 
-                    LEFT JOIN = you like them but they might not like you back. SQL romance! 💕
-                </p>
-                <div class="lesson-topics">
-                    <span class="topic-tag">INNER JOIN</span>
-                    <span class="topic-tag">LEFT JOIN</span>
-                    <span class="topic-tag">RIGHT JOIN</span>
-                </div>
-            </div>
-
-            <!-- Module 6 -->
-            <div class="lesson-card">
-                <div class="lesson-number">6</div>
-                <h3 class="lesson-title">Indexes - The Speed Boost</h3>
-                <p class="lesson-desc">
-                    Indexes are like the index in a book! Instead of reading every page (slow), 
-                    you jump straight to what you need (FAST!). Make your queries zoom! 🚀
-                </p>
-                <div class="lesson-topics">
-                    <span class="topic-tag">CREATE INDEX</span>
-                    <span class="topic-tag">Query Plans</span>
-                    <span class="topic-tag">Performance</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Fun Section -->
-        <div class="fun-section">
-            <div class="robot-container">🤖🐘</div>
-            <h3 class="fun-title">DataBot Says...</h3>
-            <p class="fun-desc">
-                "PostgreSQL is like having a super-organized assistant who never forgets anything! 
-                And DBeaver is like having X-ray vision to see inside any database. Together, they're unstoppable! 
-                By the end of this course, you'll be querying data like a pro!" 🎉
+        <div class="header">
+            <div class="header-badge"><i class="fas fa-database"></i> From Zero to Database Hero</div>
+            <h1><span class="elephant">🐘</span> PostgreSQL Mastery</h1>
+            <p>
+                Master the world's most advanced open-source database. Every concept explained like you're five,
+                then we build real stuff. No experience needed — just curiosity!
             </p>
+            <p style="font-size: 0.95em; color: rgba(255,255,255,0.7); position: relative;">
+                Curated by <a href="https://www.linkedin.com/in/fakhruddinkhambaty/" target="_blank" style="color: #93c5fd; text-decoration: none; font-weight: 700; border-bottom: 2px solid #93c5fd;">Fakhruddin Khambaty</a>
+            </p>
+            <div class="header-stats">
+                <span class="header-stat"><i class="fas fa-book-open"></i> 13 Modules</span>
+                <span class="header-stat"><i class="fas fa-clock"></i> 40+ Lessons</span>
+                <span class="header-stat"><i class="fas fa-code"></i> 100+ SQL Examples</span>
+                <span class="header-stat"><i class="fas fa-smile"></i> Absolute Beginner OK</span>
+            </div>
+        </div>
+
+        <!-- Learning Journey -->
+        <div class="journey">
+            <h3>Your PostgreSQL Journey: From "What's a Database?" to Production DBA</h3>
+            <div class="journey-steps">
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">🐘</div><p>Meet<br>PostgreSQL</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">🛠️</div><p>Install<br>& Setup</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">📝</div><p>SQL<br>Basics</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#f97316,#ea580c);">🧱</div><p>Data<br>Types</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);">🔍</div><p>Querying<br>Data</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#eab308,#ca8a04);">📊</div><p>Aggreg-<br>ations</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">🤝</div><p>JOINs</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">🔄</div><p>Sub-<br>queries</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#a855f7,#9333ea);">⚡</div><p>Indexes</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#14b8a6,#0d9488);">⚙️</div><p>Func-<br>tions</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#f43f5e,#e11d48);">🔒</div><p>Trans-<br>actions</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#84cc16,#65a30d);">📦</div><p>JSON &<br>Arrays</p></div>
+                <div class="j-arrow">→</div>
+                <div class="j-step"><div class="j-icon" style="background:linear-gradient(135deg,#336791,#4169E1);">🚀</div><p>Prod-<br>uction</p></div>
+            </div>
+        </div>
+
+        <h2 class="roadmap-title">Course Modules</h2>
+
+        <div class="modules-grid">
+
+            <!-- Module 1: Meet PostgreSQL -->
+            <div class="module-card" style="--module-color:#3b82f6; --module-color-2:#60a5fa;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🐘</div>
+                <h3>Module 1: Meet PostgreSQL</h3>
+                <p>What even is a database? Why does PostgreSQL exist? Who uses it and why should you care? We answer every beginner question with fun analogies.</p>
+                <div class="module-lessons">
+                    <a href="meet-postgresql.html" class="lesson-link"><i class="fas fa-play-circle"></i> What Is a Database? (The Filing Cabinet Analogy)</a>
+                    <a href="meet-postgresql.html#history" class="lesson-link"><i class="fas fa-play-circle"></i> PostgreSQL's Story: From Berkeley to the World</a>
+                    <a href="meet-postgresql.html#why" class="lesson-link"><i class="fas fa-play-circle"></i> Why PostgreSQL? (vs MySQL, SQLite, MongoDB)</a>
+                    <a href="meet-postgresql.html#who" class="lesson-link"><i class="fas fa-play-circle"></i> Who Uses PostgreSQL? (Apple, Netflix, Spotify...)</a>
+                </div>
+            </div>
+
+            <!-- Module 2: Installation & Setup -->
+            <div class="module-card" style="--module-color:#8b5cf6; --module-color-2:#a78bfa;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🛠️</div>
+                <h3>Module 2: Installation &amp; Setup</h3>
+                <p>Install PostgreSQL and DBeaver step-by-step with screenshots so clear your grandma could follow. Connect, create your first database, and run your very first query!</p>
+                <div class="module-lessons">
+                    <a href="installation.html" class="lesson-link"><i class="fas fa-play-circle"></i> Installing PostgreSQL (Windows / Mac / Linux)</a>
+                    <a href="installation.html#dbeaver" class="lesson-link"><i class="fas fa-play-circle"></i> Installing DBeaver (Your Database Steering Wheel)</a>
+                    <a href="installation.html#connect" class="lesson-link"><i class="fas fa-play-circle"></i> Your First Connection (Hello, Database!)</a>
+                    <a href="installation.html#first-db" class="lesson-link"><i class="fas fa-play-circle"></i> Create Your First Database &amp; Run a Query</a>
+                </div>
+            </div>
+
+            <!-- Module 3: SQL Basics -->
+            <div class="module-card" style="--module-color:#ec4899; --module-color-2:#f472b6;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📝</div>
+                <h3>Module 3: SQL Basics — CRUD</h3>
+                <p>The bread and butter of databases! CREATE tables, INSERT data, SELECT what you need, UPDATE records, and DELETE what you don't. The four magic words of SQL.</p>
+                <div class="module-lessons">
+                    <a href="sql-basics.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> What is SQL? (Talking to Your Database)<span class="pro-badge">Pro</span></a>
+                    <a href="sql-basics.html#create" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> CREATE TABLE (Building Your Filing Cabinet)<span class="pro-badge">Pro</span></a>
+                    <a href="sql-basics.html#insert" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> INSERT — Adding Data (Filling the Cabinet)<span class="pro-badge">Pro</span></a>
+                    <a href="sql-basics.html#select" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> SELECT — Reading Data (Finding Your Files)<span class="pro-badge">Pro</span></a>
+                    <a href="sql-basics.html#update" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> UPDATE &amp; DELETE (Editing &amp; Shredding)<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 4: Data Types & Constraints -->
+            <div class="module-card" style="--module-color:#f97316; --module-color-2:#fb923c;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🧱</div>
+                <h3>Module 4: Data Types &amp; Constraints</h3>
+                <p>Numbers, text, dates, booleans, JSON — PostgreSQL has a type for everything. Plus constraints that act as bouncers, keeping bad data out of your tables.</p>
+                <div class="module-lessons">
+                    <a href="data-types.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Numeric Types (INTEGER, BIGINT, DECIMAL...)<span class="pro-badge">Pro</span></a>
+                    <a href="data-types.html#text" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Text Types (VARCHAR, TEXT, CHAR)<span class="pro-badge">Pro</span></a>
+                    <a href="data-types.html#dates" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Dates &amp; Times (TIMESTAMP, INTERVAL)<span class="pro-badge">Pro</span></a>
+                    <a href="data-types.html#other" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Boolean, UUID, ENUM &amp; More<span class="pro-badge">Pro</span></a>
+                    <a href="data-types.html#constraints" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Constraints: The Data Bouncers (PK, FK, UNIQUE, CHECK)<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 5: Querying Data -->
+            <div class="module-card" style="--module-color:#22c55e; --module-color-2:#4ade80;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔍</div>
+                <h3>Module 5: Querying Data</h3>
+                <p>WHERE, ORDER BY, LIMIT, LIKE, BETWEEN, IN, NULL handling — everything you need to find exactly the data you want, fast. Think of it as becoming a data detective!</p>
+                <div class="module-lessons">
+                    <a href="querying.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> WHERE — Filtering Rows (The Bouncer Again)<span class="pro-badge">Pro</span></a>
+                    <a href="querying.html#operators" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Operators: =, &lt;&gt;, &gt;, &lt;, AND, OR, NOT<span class="pro-badge">Pro</span></a>
+                    <a href="querying.html#order" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> ORDER BY, LIMIT &amp; OFFSET (Sorting &amp; Paging)<span class="pro-badge">Pro</span></a>
+                    <a href="querying.html#patterns" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> LIKE, BETWEEN, IN (Pattern Matching)<span class="pro-badge">Pro</span></a>
+                    <a href="querying.html#nulls" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> NULL — The "I Don't Know" Value<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 6: Aggregations & Grouping -->
+            <div class="module-card" style="--module-color:#eab308; --module-color-2:#fbbf24;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📊</div>
+                <h3>Module 6: Aggregations &amp; Grouping</h3>
+                <p>COUNT how many, SUM the totals, AVG the average, find the MIN and MAX. Then GROUP BY to summarise and HAVING to filter groups. Data analytics starts here!</p>
+                <div class="module-lessons">
+                    <a href="aggregations.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> COUNT, SUM, AVG, MIN, MAX<span class="pro-badge">Pro</span></a>
+                    <a href="aggregations.html#groupby" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> GROUP BY (Sorting Into Buckets)<span class="pro-badge">Pro</span></a>
+                    <a href="aggregations.html#having" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> HAVING vs WHERE (Filtering Groups)<span class="pro-badge">Pro</span></a>
+                    <a href="aggregations.html#distinct" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> DISTINCT &amp; Practical Analytics Queries<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 7: JOINs -->
+            <div class="module-card" style="--module-color:#ef4444; --module-color-2:#f87171;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🤝</div>
+                <h3>Module 7: JOINs — Combining Tables</h3>
+                <p>JOINs are like matchmaking for tables! INNER JOIN = mutual matches, LEFT JOIN = you like them even if they don't like you back. The heart of relational databases.</p>
+                <div class="module-lessons">
+                    <a href="joins.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Why JOINs? (The Pizza Order Problem)<span class="pro-badge">Pro</span></a>
+                    <a href="joins.html#inner" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> INNER JOIN (Only Mutual Matches)<span class="pro-badge">Pro</span></a>
+                    <a href="joins.html#left" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> LEFT &amp; RIGHT JOIN (Keep Everyone From One Side)<span class="pro-badge">Pro</span></a>
+                    <a href="joins.html#full" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> FULL OUTER, CROSS &amp; Self JOIN<span class="pro-badge">Pro</span></a>
+                    <a href="joins.html#practice" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> JOIN Practice: Real-World Scenarios<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 8: Subqueries & CTEs -->
+            <div class="module-card" style="--module-color:#06b6d4; --module-color-2:#22d3ee;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔄</div>
+                <h3>Module 8: Subqueries &amp; CTEs</h3>
+                <p>Queries inside queries! Like Russian nesting dolls, but for data. Then CTEs — the "sticky notes" that make complex queries readable. Plus recursive CTEs for hierarchies!</p>
+                <div class="module-lessons">
+                    <a href="subqueries-ctes.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Subqueries in WHERE &amp; FROM<span class="pro-badge">Pro</span></a>
+                    <a href="subqueries-ctes.html#correlated" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Correlated Subqueries (The Dependent Child)<span class="pro-badge">Pro</span></a>
+                    <a href="subqueries-ctes.html#cte" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> CTEs: WITH Clause (Named Sticky Notes)<span class="pro-badge">Pro</span></a>
+                    <a href="subqueries-ctes.html#recursive" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Recursive CTEs (Org Charts &amp; Trees)<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 9: Indexes & Performance -->
+            <div class="module-card" style="--module-color:#a855f7; --module-color-2:#c084fc;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚡</div>
+                <h3>Module 9: Indexes &amp; Performance</h3>
+                <p>Make your queries FAST! Indexes are like the index in a book — instead of reading every page, you jump straight to what you need. Plus EXPLAIN ANALYZE to diagnose slow queries.</p>
+                <div class="module-lessons">
+                    <a href="indexes.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> What Are Indexes? (The Phone Book Analogy)<span class="pro-badge">Pro</span></a>
+                    <a href="indexes.html#types" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> B-tree, Hash, GIN, GiST, BRIN<span class="pro-badge">Pro</span></a>
+                    <a href="indexes.html#explain" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> EXPLAIN ANALYZE (X-Ray for Queries)<span class="pro-badge">Pro</span></a>
+                    <a href="indexes.html#optimize" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Query Optimization Tips &amp; Tricks<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 10: Functions & Procedures -->
+            <div class="module-card" style="--module-color:#14b8a6; --module-color-2:#2dd4bf;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚙️</div>
+                <h3>Module 10: Functions &amp; Procedures</h3>
+                <p>PostgreSQL's built-in Swiss Army knife of functions, plus how to create your own. String functions, math functions, date functions, and user-defined powerhouses.</p>
+                <div class="module-lessons">
+                    <a href="functions.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Built-in Functions (String, Math, Date)<span class="pro-badge">Pro</span></a>
+                    <a href="functions.html#custom" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> CREATE FUNCTION (Your Own Tools)<span class="pro-badge">Pro</span></a>
+                    <a href="functions.html#procedures" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Stored Procedures &amp; DO Blocks<span class="pro-badge">Pro</span></a>
+                    <a href="functions.html#triggers" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Triggers (Automatic Reactions)<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 11: Transactions & Concurrency -->
+            <div class="module-card" style="--module-color:#f43f5e; --module-color-2:#fb7185;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔒</div>
+                <h3>Module 11: Transactions &amp; Concurrency</h3>
+                <p>ACID properties, BEGIN/COMMIT/ROLLBACK, isolation levels, MVCC — the secret sauce that keeps your data safe even when 1000 users hit the database at the same time.</p>
+                <div class="module-lessons">
+                    <a href="transactions.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> What Are Transactions? (The Bank Transfer Story)<span class="pro-badge">Pro</span></a>
+                    <a href="transactions.html#acid" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> ACID Properties (The Four Promises)<span class="pro-badge">Pro</span></a>
+                    <a href="transactions.html#isolation" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Isolation Levels &amp; MVCC<span class="pro-badge">Pro</span></a>
+                    <a href="transactions.html#deadlocks" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Deadlocks &amp; How to Avoid Them<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 12: JSON & Arrays -->
+            <div class="module-card" style="--module-color:#84cc16; --module-color-2:#a3e635;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📦</div>
+                <h3>Module 12: JSON &amp; Arrays</h3>
+                <p>PostgreSQL is also a document database! Store JSON, query it, index it. Plus arrays for when one column needs to hold multiple values. Best of both worlds.</p>
+                <div class="module-lessons">
+                    <a href="json-arrays.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> JSON vs JSONB (When to Use Which)<span class="pro-badge">Pro</span></a>
+                    <a href="json-arrays.html#operators" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> JSON Operators (-&gt;, -&gt;&gt;, @&gt;, #&gt;)<span class="pro-badge">Pro</span></a>
+                    <a href="json-arrays.html#arrays" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Array Types &amp; Functions<span class="pro-badge">Pro</span></a>
+                    <a href="json-arrays.html#practice" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Real-World: E-commerce Product Attributes<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <!-- Module 13: Production PostgreSQL -->
+            <div class="module-card" style="--module-color:#336791; --module-color-2:#4169E1; border: 2px solid rgba(51,103,145,0.4);">
+                <span class="module-status" style="background: linear-gradient(135deg, #336791, #4169E1); color: white;">🏆 CAPSTONE</span>
+                <div class="module-icon">🚀</div>
+                <h3>Module 13: Production PostgreSQL</h3>
+                <p>Take PostgreSQL to production! VACUUM, WAL, backup &amp; restore, replication, security &amp; roles, monitoring, and configuration tuning. The real DBA skills.</p>
+                <div class="module-lessons">
+                    <a href="production.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> VACUUM &amp; Autovacuum (Spring Cleaning)<span class="pro-badge">Pro</span></a>
+                    <a href="production.html#wal" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> WAL — Write-Ahead Log (The Black Box)<span class="pro-badge">Pro</span></a>
+                    <a href="production.html#backup" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Backup &amp; Restore (pg_dump, pg_restore)<span class="pro-badge">Pro</span></a>
+                    <a href="production.html#replication" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Replication (Clones of Your Database)<span class="pro-badge">Pro</span></a>
+                    <a href="production.html#security" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Security: Roles, Permissions &amp; RLS<span class="pro-badge">Pro</span></a>
+                    <a href="production.html#tuning" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Configuration Tuning &amp; Monitoring<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Prerequisites -->
+        <h2 class="roadmap-title" style="margin-top:50px;">🛠️ What You Need Before Starting</h2>
+
+        <div class="journey" style="border:2px solid rgba(234,179,8,0.3);">
+            <h3 style="color:#fbbf24;">📋 Prerequisites (Almost Nothing!)</h3>
+            <p style="color:#94a3b8; text-align:center; margin-bottom:20px;">This course starts from absolute zero. Here's what helps but isn't required:</p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:15px;">
+                <div style="background:rgba(30,41,59,0.5); border:1px solid rgba(34,197,94,0.3); border-radius:16px; padding:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <span style="font-size:1.5em;">💻</span>
+                        <strong style="color:white; font-size:1.1em;">A Computer</strong>
+                    </div>
+                    <p style="color:#94a3b8; font-size:0.92em; margin:0;">Windows, Mac, or Linux — all work perfectly. We guide you through installation on every platform.</p>
+                </div>
+                <div style="background:rgba(30,41,59,0.5); border:1px solid rgba(34,197,94,0.3); border-radius:16px; padding:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <span style="font-size:1.5em;">🧠</span>
+                        <strong style="color:white; font-size:1.1em;">Basic Computer Skills</strong>
+                    </div>
+                    <p style="color:#94a3b8; font-size:0.92em; margin:0;">If you can download an app and type into a text box, you're ready. Seriously. No programming experience needed.</p>
+                </div>
+                <div style="background:rgba(30,41,59,0.5); border:1px solid rgba(34,197,94,0.3); border-radius:16px; padding:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <span style="font-size:1.5em;">😃</span>
+                        <strong style="color:white; font-size:1.1em;">Curiosity</strong>
+                    </div>
+                    <p style="color:#94a3b8; font-size:0.92em; margin:0;">The desire to learn how the world stores and retrieves data. From Instagram's photos to your bank's transactions — it's all databases!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- What You'll Be Able To Do -->
+        <div class="journey" style="border:2px solid rgba(51,103,145,0.3);">
+            <h3 style="color:#60a5fa;">🎯 By The End of This Course, You'll Be Able To...</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; margin-top:20px;">
+                <div style="background:rgba(51,103,145,0.1); border:1px solid rgba(51,103,145,0.2); border-radius:12px; padding:16px;">
+                    <div style="font-size:1.3em; margin-bottom:6px;">✅</div>
+                    <strong style="color:#93c5fd; font-size:0.92em;">Design databases</strong>
+                    <p style="color:#64748b; font-size:0.82em; margin:4px 0 0;">Create tables with proper types, keys, and relationships</p>
+                </div>
+                <div style="background:rgba(51,103,145,0.1); border:1px solid rgba(51,103,145,0.2); border-radius:12px; padding:16px;">
+                    <div style="font-size:1.3em; margin-bottom:6px;">✅</div>
+                    <strong style="color:#93c5fd; font-size:0.92em;">Write complex queries</strong>
+                    <p style="color:#64748b; font-size:0.82em; margin:4px 0 0;">JOINs, subqueries, CTEs, window functions, aggregations</p>
+                </div>
+                <div style="background:rgba(51,103,145,0.1); border:1px solid rgba(51,103,145,0.2); border-radius:12px; padding:16px;">
+                    <div style="font-size:1.3em; margin-bottom:6px;">✅</div>
+                    <strong style="color:#93c5fd; font-size:0.92em;">Optimise performance</strong>
+                    <p style="color:#64748b; font-size:0.82em; margin:4px 0 0;">Use indexes, EXPLAIN, and know when to tune</p>
+                </div>
+                <div style="background:rgba(51,103,145,0.1); border:1px solid rgba(51,103,145,0.2); border-radius:12px; padding:16px;">
+                    <div style="font-size:1.3em; margin-bottom:6px;">✅</div>
+                    <strong style="color:#93c5fd; font-size:0.92em;">Handle JSON like a pro</strong>
+                    <p style="color:#64748b; font-size:0.82em; margin:4px 0 0;">Store and query JSON/JSONB — use Postgres as a document DB</p>
+                </div>
+                <div style="background:rgba(51,103,145,0.1); border:1px solid rgba(51,103,145,0.2); border-radius:12px; padding:16px;">
+                    <div style="font-size:1.3em; margin-bottom:6px;">✅</div>
+                    <strong style="color:#93c5fd; font-size:0.92em;">Manage production DBs</strong>
+                    <p style="color:#64748b; font-size:0.82em; margin:4px 0 0;">Backup, restore, replicate, secure, and monitor like a real DBA</p>
+                </div>
+                <div style="background:rgba(51,103,145,0.1); border:1px solid rgba(51,103,145,0.2); border-radius:12px; padding:16px;">
+                    <div style="font-size:1.3em; margin-bottom:6px;">✅</div>
+                    <strong style="color:#93c5fd; font-size:0.92em;">Ace SQL interviews</strong>
+                    <p style="color:#64748b; font-size:0.82em; margin:4px 0 0;">Every concept companies test: JOINs, window functions, CTEs, transactions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Setup -->
+        <div class="journey" style="border:2px solid rgba(34,197,94,0.3);">
+            <h3 style="color:#86efac;">⚡ Quick Setup (One Command Each)</h3>
+            <p style="color:#94a3b8; text-align:center; margin-bottom:15px;">Module 2 walks you through this in extreme detail, but here's the cheat sheet:</p>
+            <div style="background:rgba(15,23,42,0.8); border-radius:14px; padding:20px 24px; font-family:'Fira Code',monospace; font-size:0.88em; color:#4ade80; overflow-x:auto; line-height:1.8;">
+                <span style="color:#94a3b8;"># macOS (Homebrew)</span><br>
+                brew install postgresql@16<br>
+                brew services start postgresql@16<br><br>
+                <span style="color:#94a3b8;"># Ubuntu / Debian</span><br>
+                sudo apt install postgresql postgresql-contrib<br>
+                sudo systemctl start postgresql<br><br>
+                <span style="color:#94a3b8;"># Windows: Download installer from postgresql.org</span><br>
+                <span style="color:#94a3b8;"># DBeaver: Download from dbeaver.io (all platforms)</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Part of <a href="../index.html">Fakhruddin Khambaty's Learning Hub</a></p>
         </div>
     </div>
-
-    <div class="reflection-prompt" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 24px; margin: 25px 0; border-left: 5px solid #3b82f6; max-width: 900px; margin-left: auto; margin-right: auto;">
-        <h4 style="color: #1e40af;">💭 Short reflection</h4>
-        <p style="color: #1e3a8a;">In one sentence: why is it important to use indexes on columns you frequently filter or join on in PostgreSQL?</p>
-    </div>
-    <div class="core-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 24px; margin: 20px 0; max-width: 900px; margin-left: auto; margin-right: auto;">
-        <h4 style="color: #166534;">✅ CORE (Must know)</h4>
-        <ul style="margin-left: 20px;">
-            <li>PostgreSQL: CREATE TABLE, SELECT, JOINs, WHERE, GROUP BY, ORDER BY; data types and constraints.</li>
-            <li>Indexes (B-tree, etc.); EXPLAIN to inspect plans; transactions (BEGIN, COMMIT, ROLLBACK).</li>
-            <li>DBeaver or psql: connect, run SQL, browse schema.</li>
-        </ul>
-    </div>
-    <div class="noncore-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; margin: 20px 0; max-width: 900px; margin-left: auto; margin-right: auto;">
-        <h4 style="color: #92400e;">📚 NON-CORE (Good to know)</h4>
-        <ul style="margin-left: 20px;">
-            <li>Window functions; triggers; pg_dump/pg_restore; extensions.</li>
-        </ul>
-    </div>
-
-    <!-- CTA -->
-    <section class="cta-section">
-        <button class="btn-start" onclick="alert('Course coming soon! 🚧')">
-            <i class="fas fa-bell"></i>
-            Notify Me When Ready
-        </button>
-    </section>
-
-    <!-- Footer -->
-    <footer class="course-footer">
-        <p>© 2024 Fakhruddin Khambaty's Learning Hub | PostgreSQL & DBeaver Course</p>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Back to top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-    <script>
-        const backToTopBtn = document.getElementById('backToTop');
-        if (backToTopBtn) {
-            window.addEventListener('scroll', () => {
-                backToTopBtn.classList.toggle('show', window.pageYOffset > 300);
-            });
-        }
-    </script>
-    <script src="../js/analytics-tracker.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/supabase-config.js"></script>
-<script src="../js/supabase-auth.js"></script>
-<script src="../js/paywall.js"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
 </body>
 </html>
-

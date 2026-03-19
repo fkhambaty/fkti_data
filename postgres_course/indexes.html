@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indexes & Performance | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Indexes &amp; Performance | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,771 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="json-arrays.html">JSON & Arrays <i class="fas fa-arrow-right"></i></a>
+            <a href="subqueries-ctes.html"><i class="fas fa-arrow-left"></i> Subqueries &amp; CTEs</a>
+            <a href="functions.html">Functions <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Indexes & Performance</h1>
-            <p>B-tree, GIN, GiST indexes. EXPLAIN ANALYZE, query optimization, and VACUUM.</p>
+            <h1>⚡ Indexes &amp; Performance</h1>
+            <p>Make your queries blazing fast! From full table scans to instant lookups.</p>
         </div>
+
+        <!-- ===================== 1. WHAT IS AN INDEX? ===================== -->
         <div class="section visible">
-            <h2>📚 Indexes & Performance</h2>
-            <p>B-tree, GIN, GiST indexes. EXPLAIN ANALYZE, query optimization, and VACUUM.</p>
+            <h2>1️⃣ What Is an Index?</h2>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers indexes & performance with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>🧒 ELI5 — The Book Index Analogy</h4>
+                <p>Imagine you have a 500-page textbook and you need to find every mention of "photosynthesis." You have <strong>two choices</strong>: (1) Start on page 1 and read every single page until the end — this is what PostgreSQL does <em>without</em> an index (called a <strong>sequential scan</strong>). Or (2) flip to the <strong>index at the back of the book</strong>, look up "photosynthesis," and it tells you: "pages 42, 87, 156." You jump straight there — done in seconds! A database index works exactly the same way. It's a separate data structure that tells PostgreSQL <em>exactly where</em> to find the rows you're looking for, without reading the entire table.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">🐌</div>
+                    <div class="stat-label"><strong>Without Index</strong><br>Read ALL 10 million rows<br>~30 seconds</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">⚡</div>
+                    <div class="stat-label"><strong>With Index</strong><br>Jump straight to the answer<br>~2 milliseconds</div>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy — The Phone Book</h4>
+                <p>Old-school phone books were organized alphabetically by last name. If you wanted to find "Smith, John," you'd flip to the S section and find it in seconds. But if someone asked: <em>"Find everyone on Maple Street"</em> — you'd have to read the ENTIRE phone book because it's not organized by street. That's why the <strong>choice of which columns to index</strong> matters so much. You can only look things up fast if there's an index on that particular column.</p>
+            </div>
+
+            <h3>Your First Index</h3>
+            <p>PostgreSQL automatically creates indexes on <code>PRIMARY KEY</code> and <code>UNIQUE</code> columns. But for other columns you query often, you create indexes yourself:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Basic syntax</span>
+<span style="color:#c084fc">CREATE INDEX</span> index_name <span style="color:#c084fc">ON</span> table_name (column_name);
+
+<span style="color:#94a3b8">-- Example: index on the email column of a users table</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_users_email <span style="color:#c084fc">ON</span> users (email);
+
+<span style="color:#94a3b8">-- Now this query will be FAST:</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users <span style="color:#c084fc">WHERE</span> email = <span style="color:#4ade80">'alice@example.com'</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Naming Convention</h4>
+                <p>Use the pattern <code>idx_tablename_columnname</code> for index names. For multi-column indexes: <code>idx_orders_customer_id_date</code>. Clear names make it easy to know what an index is for when you're debugging performance months later.</p>
+            </div>
+
+            <h3>Let's Create a Big Table to Test With</h3>
+            <p>Small tables don't show performance differences. Let's create a table with 1 million rows to see the dramatic difference indexes make:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Create a big table</span>
+<span style="color:#c084fc">CREATE TABLE</span> big_orders (
+    id          <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    customer_id <span style="color:#38bdf8">INTEGER</span>,
+    amount      <span style="color:#38bdf8">DECIMAL(10,2)</span>,
+    status      <span style="color:#38bdf8">VARCHAR(20)</span>,
+    created_at  <span style="color:#38bdf8">TIMESTAMP</span>
+);
+
+<span style="color:#94a3b8">-- Insert 1 million rows of random data</span>
+<span style="color:#c084fc">INSERT INTO</span> big_orders (customer_id, amount, status, created_at)
+<span style="color:#c084fc">SELECT</span>
+    (<span style="color:#c084fc">RANDOM</span>() * <span style="color:#fb923c">10000</span>)::<span style="color:#38bdf8">INTEGER</span>,
+    (<span style="color:#c084fc">RANDOM</span>() * <span style="color:#fb923c">1000</span>)::<span style="color:#38bdf8">DECIMAL(10,2)</span>,
+    <span style="color:#c084fc">CASE</span> (<span style="color:#c084fc">RANDOM</span>() * <span style="color:#fb923c">3</span>)::<span style="color:#38bdf8">INTEGER</span>
+        <span style="color:#c084fc">WHEN</span> <span style="color:#fb923c">0</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'pending'</span>
+        <span style="color:#c084fc">WHEN</span> <span style="color:#fb923c">1</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'completed'</span>
+        <span style="color:#c084fc">WHEN</span> <span style="color:#fb923c">2</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'cancelled'</span>
+        <span style="color:#c084fc">ELSE</span> <span style="color:#4ade80">'refunded'</span>
+    <span style="color:#c084fc">END</span>,
+    <span style="color:#c084fc">NOW</span>() - (<span style="color:#c084fc">RANDOM</span>() * <span style="color:#fb923c">365</span>)::<span style="color:#38bdf8">INTEGER</span> * <span style="color:#c084fc">INTERVAL</span> <span style="color:#4ade80">'1 day'</span>
+<span style="color:#c084fc">FROM</span> <span style="color:#c084fc">generate_series</span>(<span style="color:#fb923c">1</span>, <span style="color:#fb923c">1000000</span>);</pre></div>
+        </div>
+
+        <!-- ===================== 2. HOW B-TREE INDEXES WORK ===================== -->
+        <div class="section">
+            <h2>2️⃣ How B-tree Indexes Work</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Guessing Game</h4>
+                <p>Remember the "guess a number between 1 and 100" game? You don't start at 1 and count up. You start in the middle: <em>"Is it higher or lower than 50?"</em> Then: <em>"Higher or lower than 75?"</em> Then: <em>"Higher or lower than 62?"</em> In just 7 guesses, you can find any number from 1 to 100. That's called <strong>binary search</strong>, and it's exactly how a B-tree index works! Instead of checking every row, it narrows down by half at each step. For 1 million rows, that's only about <strong>20 steps</strong> instead of 1,000,000.</p>
+            </div>
+
+            <h3>The B-tree Structure (Visual)</h3>
+            <p>A B-tree (Balanced tree) organizes data like a family tree where every branch is the same height:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">                         [50]                    ← Root node</span>
+<span style="color:#94a3b8">                       /      \</span>
+<span style="color:#94a3b8">                   [25]        [75]               ← Internal nodes</span>
+<span style="color:#94a3b8">                  /    \      /    \</span>
+<span style="color:#94a3b8">              [10,20] [30,40] [60,70] [80,90]      ← Leaf nodes (point to actual rows)</span>
+
+<span style="color:#94a3b8">Looking for customer_id = 70:</span>
+<span style="color:#94a3b8">  1. Root: 70 > 50 → go right</span>
+<span style="color:#94a3b8">  2. Node: 70 < 75 → go left</span>
+<span style="color:#94a3b8">  3. Leaf: found 70! → points to the actual row on disk</span>
+<span style="color:#94a3b8">  Only 3 steps instead of scanning 1,000,000 rows!</span></pre></div>
+
+            <h3>B-tree Is the Default</h3>
+            <p>When you write <code>CREATE INDEX</code> without specifying a type, PostgreSQL creates a <strong>B-tree</strong> index. It's the most versatile and handles these operations efficiently:</p>
+
+            <table class="comparison-table">
+                <tr><th>Operation</th><th>Example</th><th>B-tree Can Help?</th></tr>
+                <tr><td>Equality</td><td><code>WHERE email = 'alice@test.com'</code></td><td>✅ Yes</td></tr>
+                <tr><td>Range (less/greater)</td><td><code>WHERE price &gt; 100</code></td><td>✅ Yes</td></tr>
+                <tr><td>BETWEEN</td><td><code>WHERE age BETWEEN 20 AND 30</code></td><td>✅ Yes</td></tr>
+                <tr><td>ORDER BY</td><td><code>ORDER BY created_at DESC</code></td><td>✅ Yes (avoids sorting!)</td></tr>
+                <tr><td>IS NULL</td><td><code>WHERE deleted_at IS NULL</code></td><td>✅ Yes</td></tr>
+                <tr><td>LIKE prefix</td><td><code>WHERE name LIKE 'Al%'</code></td><td>✅ Yes</td></tr>
+                <tr><td>LIKE middle/suffix</td><td><code>WHERE name LIKE '%ice'</code></td><td>❌ No</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ LIKE '%pattern' Can't Use B-tree Indexes!</h4>
+                <p>A B-tree works like a phone book — organized from left to right. <code>LIKE 'Al%'</code> works because you can flip to the "Al" section. But <code>LIKE '%ice'</code> is like asking "find all names ending in 'ice'" — you'd have to read the entire book. For suffix/contains searches, you need a different index type (GIN with trigrams).</p>
+            </div>
+
+            <h3>Seeing the Speed Difference</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- BEFORE creating an index (slow!)</span>
+<span style="color:#c084fc">EXPLAIN ANALYZE</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders <span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span>;
+<span style="color:#94a3b8">-- Seq Scan on big_orders  (cost=0.00..20834.00 rows=100 width=52)</span>
+<span style="color:#94a3b8">--   Filter: (customer_id = 42)</span>
+<span style="color:#94a3b8">--   Execution Time: 85.432 ms  ← SLOW!</span>
+
+<span style="color:#94a3b8">-- Create the index</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_big_orders_customer_id <span style="color:#c084fc">ON</span> big_orders (customer_id);
+
+<span style="color:#94a3b8">-- AFTER creating the index (fast!)</span>
+<span style="color:#c084fc">EXPLAIN ANALYZE</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders <span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span>;
+<span style="color:#94a3b8">-- Index Scan using idx_big_orders_customer_id  (cost=0.42..8.87 rows=100 width=52)</span>
+<span style="color:#94a3b8">--   Index Cond: (customer_id = 42)</span>
+<span style="color:#94a3b8">--   Execution Time: 0.215 ms  ← 400x FASTER!</span></pre></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" style="color:#ef4444">85 ms</div>
+                    <div class="stat-label">Without index (Seq Scan)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color:#22c55e">0.2 ms</div>
+                    <div class="stat-label">With index (Index Scan)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">400x</div>
+                    <div class="stat-label">Faster!</div>
+                </div>
             </div>
         </div>
+
+        <!-- ===================== 3. OTHER INDEX TYPES ===================== -->
+        <div class="section">
+            <h2>3️⃣ Other Index Types</h2>
+
+            <p>B-tree is the Swiss Army knife, but PostgreSQL has specialized index types for specific use cases:</p>
+
+            <h3>Hash Index — Equality Only</h3>
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Coat Check</h4>
+                <p>When you check your coat at a restaurant, they give you a ticket number. To get your coat back, you hand in the number and they go straight to that hook. They can't help you find "all coats that are darker than navy blue" — it's <em>exact match only</em>. That's a hash index: incredibly fast for <code>=</code> checks, but useless for ranges, sorting, or anything else.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE INDEX</span> idx_users_uuid <span style="color:#c084fc">ON</span> users <span style="color:#c084fc">USING HASH</span> (uuid);
+
+<span style="color:#94a3b8">-- ✅ Fast:</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users <span style="color:#c084fc">WHERE</span> uuid = <span style="color:#4ade80">'abc-123-def'</span>;
+
+<span style="color:#94a3b8">-- ❌ Cannot use this index:</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users <span style="color:#c084fc">WHERE</span> uuid &gt; <span style="color:#4ade80">'abc'</span>;
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users <span style="color:#c084fc">ORDER BY</span> uuid;</pre></div>
+
+            <h3>GIN Index — Full-Text, Arrays, JSONB</h3>
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Keyword Concordance</h4>
+                <p>In a textbook concordance, each keyword has a list of every page where it appears: "photosynthesis: 42, 87, 156." GIN (Generalized Inverted Index) works the same way — for each value or keyword, it stores a list of all rows that contain it. Perfect when a single column contains <em>multiple values</em> (arrays, JSONB, or full-text documents).</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Full-text search on articles</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_articles_search <span style="color:#c084fc">ON</span> articles <span style="color:#c084fc">USING GIN</span> (
+    <span style="color:#c084fc">to_tsvector</span>(<span style="color:#4ade80">'english'</span>, title || <span style="color:#4ade80">' '</span> || body)
+);
+
+<span style="color:#94a3b8">-- Search for articles about "database performance"</span>
+<span style="color:#c084fc">SELECT</span> title <span style="color:#c084fc">FROM</span> articles
+<span style="color:#c084fc">WHERE</span> <span style="color:#c084fc">to_tsvector</span>(<span style="color:#4ade80">'english'</span>, title || <span style="color:#4ade80">' '</span> || body)
+   @@ <span style="color:#c084fc">to_tsquery</span>(<span style="color:#4ade80">'database &amp; performance'</span>);
+
+<span style="color:#94a3b8">-- JSONB index for flexible schemas</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_events_data <span style="color:#c084fc">ON</span> events <span style="color:#c084fc">USING GIN</span> (metadata <span style="color:#38bdf8">jsonb_path_ops</span>);
+
+<span style="color:#94a3b8">-- Array containment</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_products_tags <span style="color:#c084fc">ON</span> products <span style="color:#c084fc">USING GIN</span> (tags);
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> products <span style="color:#c084fc">WHERE</span> tags @&gt; <span style="color:#c084fc">ARRAY</span>[<span style="color:#4ade80">'organic'</span>, <span style="color:#4ade80">'vegan'</span>];</pre></div>
+
+            <h3>GiST Index — Geometry &amp; Ranges</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Spatial data (PostGIS)</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_locations_geom <span style="color:#c084fc">ON</span> locations <span style="color:#c084fc">USING GIST</span> (geom);
+
+<span style="color:#94a3b8">-- Range types</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_reservations_period <span style="color:#c084fc">ON</span> reservations <span style="color:#c084fc">USING GIST</span> (date_range);</pre></div>
+
+            <h3>BRIN Index — Huge Sorted Tables</h3>
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The City Block Map</h4>
+                <p>Instead of indexing every single house, BRIN (Block Range INdex) just remembers: <em>"Block 1 has addresses 1–100, Block 2 has 101–200."</em> Super tiny and fast to maintain. Works brilliantly when data is <strong>naturally sorted</strong> — like a log table where rows are always inserted in order of timestamp.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Perfect for time-series data where rows arrive in order</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_logs_created_at <span style="color:#c084fc">ON</span> server_logs <span style="color:#c084fc">USING BRIN</span> (created_at);
+
+<span style="color:#94a3b8">-- Tiny index size: ~50 KB instead of ~200 MB for a B-tree on 100M rows!</span></pre></div>
+
+            <h3>Index Type Cheat Sheet</h3>
+            <table class="comparison-table">
+                <tr><th>Index Type</th><th>Best For</th><th>Size</th><th>Supports</th></tr>
+                <tr><td><strong>B-tree</strong></td><td>General purpose</td><td>Medium</td><td>=, &lt;, &gt;, BETWEEN, ORDER BY, LIKE 'prefix%'</td></tr>
+                <tr><td><strong>Hash</strong></td><td>Exact equality only</td><td>Small</td><td>= only</td></tr>
+                <tr><td><strong>GIN</strong></td><td>Full-text, arrays, JSONB</td><td>Large</td><td>Contains, search, @&gt;, @@</td></tr>
+                <tr><td><strong>GiST</strong></td><td>Geometry, ranges</td><td>Medium</td><td>Overlaps, contains, nearest-neighbor</td></tr>
+                <tr><td><strong>BRIN</strong></td><td>Huge sorted tables</td><td>Tiny</td><td>=, &lt;, &gt; on naturally ordered data</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — When in Doubt, Use B-tree</h4>
+                <p>B-tree handles 90% of use cases. Only reach for specialized types when you have a specific need: GIN for full-text/JSONB, GiST for spatial, BRIN for append-only time-series. Don't over-optimize — start with B-tree and switch only when you measure a problem.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 4. EXPLAIN ANALYZE ===================== -->
+        <div class="section">
+            <h2>4️⃣ EXPLAIN ANALYZE — X-Ray for Queries</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Doctor's X-Ray</h4>
+                <p>When you're sick, the doctor doesn't just guess — they take an X-ray to see what's happening inside your body. <code>EXPLAIN ANALYZE</code> is an X-ray for your SQL queries. It shows you <em>exactly</em> what PostgreSQL does to find your data: which tables it scans, which indexes it uses, how many rows it processes, and how long each step takes. Instead of guessing why a query is slow, you can <strong>see</strong> the bottleneck.</p>
+            </div>
+
+            <h3>EXPLAIN vs. EXPLAIN ANALYZE</h3>
+            <table class="comparison-table">
+                <tr><th>Command</th><th>What It Does</th><th>Runs the Query?</th></tr>
+                <tr><td><code>EXPLAIN</code></td><td>Shows the <em>plan</em> (estimated costs and rows)</td><td>❌ No — just estimates</td></tr>
+                <tr><td><code>EXPLAIN ANALYZE</code></td><td>Shows the plan AND <em>actual</em> timing/row counts</td><td>✅ Yes — actually runs it</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ EXPLAIN ANALYZE Actually Executes the Query!</h4>
+                <p>Be careful with <code>EXPLAIN ANALYZE</code> on <code>DELETE</code> or <code>UPDATE</code> statements — they will actually modify your data! Wrap them in a transaction and rollback: <code>BEGIN; EXPLAIN ANALYZE DELETE ...; ROLLBACK;</code></p>
+            </div>
+
+            <h3>Reading an Execution Plan</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">EXPLAIN ANALYZE</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders
+<span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span> <span style="color:#c084fc">AND</span> status = <span style="color:#4ade80">'completed'</span>;</pre></div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Sample output (with index on customer_id):</span>
+
+<span style="color:#4ade80">Index Scan using idx_big_orders_customer_id on big_orders</span>
+<span style="color:#4ade80">  (cost=0.42..12.55 rows=25 width=52)</span>
+<span style="color:#4ade80">  (actual time=0.035..0.128 rows=23 loops=1)</span>
+<span style="color:#4ade80">  Index Cond: (customer_id = 42)</span>
+<span style="color:#4ade80">  Filter: (status = 'completed'::text)</span>
+<span style="color:#4ade80">  Rows Removed by Filter: 77</span>
+<span style="color:#4ade80">Planning Time: 0.125 ms</span>
+<span style="color:#4ade80">Execution Time: 0.168 ms</span></pre></div>
+
+            <p>Let's decode each piece:</p>
+
+            <table class="comparison-table">
+                <tr><th>Part</th><th>Meaning</th></tr>
+                <tr><td><code>Index Scan using idx_...</code></td><td>PostgreSQL used an index — great!</td></tr>
+                <tr><td><code>cost=0.42..12.55</code></td><td>Estimated startup cost..total cost (abstract units)</td></tr>
+                <tr><td><code>rows=25</code> (estimated)</td><td>PostgreSQL guessed 25 rows would match</td></tr>
+                <tr><td><code>actual time=0.035..0.128</code></td><td>Real time: 0.035ms to first row, 0.128ms to all rows</td></tr>
+                <tr><td><code>rows=23</code> (actual)</td><td>Actually found 23 rows (close to the estimate!)</td></tr>
+                <tr><td><code>Index Cond</code></td><td>The condition that used the index</td></tr>
+                <tr><td><code>Filter</code></td><td>Additional filtering done AFTER the index lookup</td></tr>
+                <tr><td><code>Rows Removed by Filter: 77</code></td><td>Found 100 rows via index, then filtered out 77</td></tr>
+                <tr><td><code>Execution Time</code></td><td>Total wall-clock time — the number that matters!</td></tr>
+            </table>
+
+            <h3>Common Scan Types</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.2em">Seq Scan</div>
+                    <div class="stat-label">Reads <strong>every row</strong>. Slowest for large tables. Often means a missing index.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.2em">Index Scan</div>
+                    <div class="stat-label">Uses index to find rows, then fetches full rows from table. Fast!</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.2em">Index Only Scan</div>
+                    <div class="stat-label">Gets ALL needed data from the index itself. Fastest!</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.2em">Bitmap Scan</div>
+                    <div class="stat-label">Builds a bitmap of matching pages, then reads them. Good for many matches.</div>
+                </div>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Use EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)</h4>
+                <p>Adding <code>BUFFERS</code> shows disk I/O (cache hits vs. actual reads): <code>EXPLAIN (ANALYZE, BUFFERS) SELECT ...</code>. High <code>Buffers: shared read</code> means data wasn't cached. High <code>shared hit</code> means PostgreSQL read from memory cache — much faster.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 5. WHEN NOT TO INDEX ===================== -->
+        <div class="section">
+            <h2>5️⃣ When NOT to Index</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Too Many Bookmarks</h4>
+                <p>Imagine putting a sticky bookmark on <em>every single page</em> of a book. Now the book is twice as thick, the bookmarks don't help you find anything faster, and every time you add a new page you have to add a new bookmark too. That's what happens when you create too many indexes! Indexes have a <strong>cost</strong> — storage space and slower writes. They're only worth it when they actually speed up your reads.</p>
+            </div>
+
+            <h3>When Indexes DON'T Help</h3>
+            <table class="comparison-table">
+                <tr><th>Situation</th><th>Why Index Doesn't Help</th><th>Example</th></tr>
+                <tr><td><strong>Very small tables</strong></td><td>Reading 100 rows is already instant — an index adds overhead for no benefit</td><td>A <code>countries</code> table with 200 rows</td></tr>
+                <tr><td><strong>Low-cardinality columns</strong></td><td>If only 3 unique values exist, the index can't narrow things down much</td><td>A <code>status</code> column with values: active, inactive, pending</td></tr>
+                <tr><td><strong>Write-heavy tables</strong></td><td>Every INSERT/UPDATE/DELETE must also update the index — slows writes</td><td>A high-volume logging table with 10,000 inserts/second</td></tr>
+                <tr><td><strong>Columns rarely queried</strong></td><td>An index on a column nobody searches is pure waste</td><td>An internal <code>notes</code> field nobody filters on</td></tr>
+                <tr><td><strong>Queries returning most rows</strong></td><td>If 80% of rows match, a sequential scan is faster than using an index</td><td><code>WHERE active = true</code> when 95% of users are active</td></tr>
+            </table>
+
+            <h3>The Cost of Indexes</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">💾</div>
+                    <div class="stat-label"><strong>Storage</strong><br>Each index can be 10-50% of the table size</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🐢</div>
+                    <div class="stat-label"><strong>Slower Writes</strong><br>INSERT/UPDATE must update every index</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔧</div>
+                    <div class="stat-label"><strong>Maintenance</strong><br>VACUUM must maintain index pages too</div>
+                </div>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Check the size of all indexes on a table</span>
+<span style="color:#c084fc">SELECT</span> indexname,
+       pg_size_pretty(pg_relation_size(indexname::<span style="color:#38bdf8">regclass</span>)) <span style="color:#c084fc">AS</span> index_size
+<span style="color:#c084fc">FROM</span> pg_indexes
+<span style="color:#c084fc">WHERE</span> tablename = <span style="color:#4ade80">'big_orders'</span>;</pre></div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find unused indexes (waste of space!)</span>
+<span style="color:#c084fc">SELECT</span> schemaname, relname <span style="color:#c084fc">AS</span> table_name,
+       indexrelname <span style="color:#c084fc">AS</span> index_name,
+       idx_scan <span style="color:#c084fc">AS</span> times_used,
+       pg_size_pretty(pg_relation_size(indexrelid)) <span style="color:#c084fc">AS</span> index_size
+<span style="color:#c084fc">FROM</span> pg_stat_user_indexes
+<span style="color:#c084fc">WHERE</span> idx_scan = <span style="color:#fb923c">0</span>
+<span style="color:#c084fc">ORDER BY</span> pg_relation_size(indexrelid) <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Think of a small coffee shop menu with 5 items. Does it need an alphabetical index? Absolutely not — you can read the whole thing in 2 seconds. But a 200-page restaurant menu at a food court? Yes, you'd want a "Cuisine Type" index! Size matters when deciding whether to index.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 6. PARTIAL & EXPRESSION INDEXES ===================== -->
+        <div class="section">
+            <h2>6️⃣ Partial Indexes &amp; Expression Indexes</h2>
+
+            <p>These are PostgreSQL power features that let you create smarter, smaller indexes.</p>
+
+            <h3>Partial Indexes — Index Only Some Rows</h3>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The VIP List</h4>
+                <p>Instead of putting everyone's name in a phone book, imagine you only put <strong>VIP customers</strong> in a special booklet. It's much smaller, faster to search, and only contains the people you actually care about looking up. A <strong>partial index</strong> does the same — it indexes only rows that match a condition.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Only index active orders (ignore completed/cancelled ones)</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_active
+<span style="color:#c084fc">ON</span> big_orders (customer_id)
+<span style="color:#c084fc">WHERE</span> status = <span style="color:#4ade80">'pending'</span>;
+
+<span style="color:#94a3b8">-- This query uses the partial index:</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders
+<span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span> <span style="color:#c084fc">AND</span> status = <span style="color:#4ade80">'pending'</span>;
+
+<span style="color:#94a3b8">-- This query does NOT use it (different status):</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders
+<span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span> <span style="color:#c084fc">AND</span> status = <span style="color:#4ade80">'completed'</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Partial Indexes Save Space!</h4>
+                <p>If only 5% of orders are "pending," a partial index is <strong>20x smaller</strong> than a full index. Smaller index = fits in memory = faster lookups. This is one of PostgreSQL's most underused superpowers.</p>
+            </div>
+
+            <h3>Expression Indexes — Index a Computed Value</h3>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Nickname Directory</h4>
+                <p>Imagine a school directory sorted by students' nicknames instead of full names. Even though "nickname" isn't stored anywhere, the directory computes it and sorts by it. Expression indexes let you index the <em>result of a function or expression</em>, not just a raw column.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Index on LOWER(email) for case-insensitive email lookups</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_users_email_lower
+<span style="color:#c084fc">ON</span> users (<span style="color:#c084fc">LOWER</span>(email));
+
+<span style="color:#94a3b8">-- This query now uses the index:</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users
+<span style="color:#c084fc">WHERE</span> <span style="color:#c084fc">LOWER</span>(email) = <span style="color:#4ade80">'alice@example.com'</span>;
+
+<span style="color:#94a3b8">-- ❌ This does NOT use it (no LOWER function):</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users
+<span style="color:#c084fc">WHERE</span> email = <span style="color:#4ade80">'alice@example.com'</span>;</pre></div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Index on extracted year from a timestamp</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_year
+<span style="color:#c084fc">ON</span> big_orders (<span style="color:#c084fc">EXTRACT</span>(<span style="color:#c084fc">YEAR FROM</span> created_at));
+
+<span style="color:#94a3b8">-- Fast lookup of all 2024 orders</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders
+<span style="color:#c084fc">WHERE</span> <span style="color:#c084fc">EXTRACT</span>(<span style="color:#c084fc">YEAR FROM</span> created_at) = <span style="color:#fb923c">2024</span>;</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ The Query Must Match the Index Expression Exactly!</h4>
+                <p>If the index is on <code>LOWER(email)</code>, your <code>WHERE</code> clause must also use <code>LOWER(email)</code>. Using <code>email ILIKE</code> or just <code>email =</code> won't match the index. The expression in the query must be <strong>identical</strong> to the expression in the index definition.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 7. MULTI-COLUMN INDEXES ===================== -->
+        <div class="section">
+            <h2>7️⃣ Multi-Column Indexes</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Phone Book, Again</h4>
+                <p>A phone book is sorted by <strong>Last Name</strong> first, then by <strong>First Name</strong> within the same last name. So you can quickly find "Smith" (last name only), or "Smith, John" (both names). But can you find everyone named "John" regardless of last name? Nope — you'd have to read the whole book, because it's not organized by first name first. Multi-column indexes work the same way. The <strong>order of columns matters!</strong></p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Create a multi-column index</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_cust_status
+<span style="color:#c084fc">ON</span> big_orders (customer_id, status);</pre></div>
+
+            <h3>The Left-Prefix Rule</h3>
+            <p>A multi-column index on <code>(A, B, C)</code> can be used for queries on:</p>
+
+            <table class="comparison-table">
+                <tr><th>Query Filters On</th><th>Uses Index?</th><th>Why</th></tr>
+                <tr><td><code>WHERE A = ?</code></td><td>✅ Yes</td><td>Leftmost column</td></tr>
+                <tr><td><code>WHERE A = ? AND B = ?</code></td><td>✅ Yes</td><td>First two columns (left prefix)</td></tr>
+                <tr><td><code>WHERE A = ? AND B = ? AND C = ?</code></td><td>✅ Yes</td><td>All three columns</td></tr>
+                <tr><td><code>WHERE B = ?</code></td><td>❌ No</td><td>Skips the leftmost column!</td></tr>
+                <tr><td><code>WHERE C = ?</code></td><td>❌ No</td><td>Skips A and B</td></tr>
+                <tr><td><code>WHERE A = ? AND C = ?</code></td><td>⚠️ Partial</td><td>Uses index for A, then filters C</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>It's like a filing cabinet organized by: <strong>Year → Month → Day</strong>. You can quickly find "all files from 2024" (Year only), or "all files from March 2024" (Year + Month). But "all files from the 15th of any month in any year"? You'd have to check every drawer — the cabinet isn't organized that way.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ✅ Uses the index (customer_id is the leftmost column)</span>
+<span style="color:#c084fc">EXPLAIN ANALYZE</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders
+<span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span> <span style="color:#c084fc">AND</span> status = <span style="color:#4ade80">'pending'</span>;
+
+<span style="color:#94a3b8">-- ❌ Cannot use the index (status is NOT the leftmost column)</span>
+<span style="color:#c084fc">EXPLAIN ANALYZE</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders
+<span style="color:#c084fc">WHERE</span> status = <span style="color:#4ade80">'pending'</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Column Order Strategy</h4>
+                <p>Put the most <strong>selective</strong> (most unique values) column first. If <code>customer_id</code> has 10,000 unique values and <code>status</code> has only 4, put <code>customer_id</code> first. This narrows down the results most quickly at the first level of the tree.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. COMMON PERFORMANCE MISTAKES ===================== -->
+        <div class="section">
+            <h2>8️⃣ Common Performance Mistakes</h2>
+
+            <p>Here are the pitfalls that trip up even experienced developers:</p>
+
+            <h3>Mistake 1: Missing Index on JOIN Columns</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ SLOW: If orders.customer_id has no index, this scans the entire orders table for EVERY customer</span>
+<span style="color:#c084fc">SELECT</span> c.name, o.amount
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">JOIN</span> orders o <span style="color:#c084fc">ON</span> o.customer_id = c.id;
+
+<span style="color:#94a3b8">-- ✅ FIX: Create an index on the foreign key</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_customer_id <span style="color:#c084fc">ON</span> orders (customer_id);</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ PostgreSQL Does NOT Auto-Index Foreign Keys!</h4>
+                <p>Unlike some other databases, PostgreSQL does <strong>not</strong> automatically create indexes on foreign key columns. It only auto-creates indexes on PRIMARY KEY and UNIQUE constraints. You must create FK indexes yourself! This is the #1 performance mistake in PostgreSQL.</p>
+            </div>
+
+            <h3>Mistake 2: Functions on Indexed Columns</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ SLOW: UPPER() wraps the column, so the index on "email" can't be used</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users
+<span style="color:#c084fc">WHERE</span> <span style="color:#c084fc">UPPER</span>(email) = <span style="color:#4ade80">'ALICE@EXAMPLE.COM'</span>;
+
+<span style="color:#94a3b8">-- ✅ FIX Option A: Create an expression index</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_users_email_upper <span style="color:#c084fc">ON</span> users (<span style="color:#c084fc">UPPER</span>(email));
+
+<span style="color:#94a3b8">-- ✅ FIX Option B: Store data normalized, query without function</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users <span style="color:#c084fc">WHERE</span> email = <span style="color:#4ade80">'alice@example.com'</span>;</pre></div>
+
+            <h3>Mistake 3: Leading Wildcard in LIKE</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ SLOW: Leading % means "anything before" — can't use B-tree</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">LIKE</span> <span style="color:#4ade80">'%phone%'</span>;
+
+<span style="color:#94a3b8">-- ✅ FIX: Use a GIN trigram index</span>
+<span style="color:#c084fc">CREATE EXTENSION IF NOT EXISTS</span> pg_trgm;
+<span style="color:#c084fc">CREATE INDEX</span> idx_products_name_trgm
+<span style="color:#c084fc">ON</span> products <span style="color:#c084fc">USING GIN</span> (name gin_trgm_ops);
+
+<span style="color:#94a3b8">-- Now '%phone%' can use the GIN index!</span></pre></div>
+
+            <h3>Mistake 4: Too Many Indexes</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ BAD: Indexing every column wastes space and slows writes</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx1 <span style="color:#c084fc">ON</span> orders (customer_id);
+<span style="color:#c084fc">CREATE INDEX</span> idx2 <span style="color:#c084fc">ON</span> orders (status);
+<span style="color:#c084fc">CREATE INDEX</span> idx3 <span style="color:#c084fc">ON</span> orders (amount);
+<span style="color:#c084fc">CREATE INDEX</span> idx4 <span style="color:#c084fc">ON</span> orders (created_at);
+<span style="color:#c084fc">CREATE INDEX</span> idx5 <span style="color:#c084fc">ON</span> orders (customer_id, status);
+<span style="color:#c084fc">CREATE INDEX</span> idx6 <span style="color:#c084fc">ON</span> orders (customer_id, created_at);
+<span style="color:#94a3b8">-- 6 indexes on one table! Each INSERT now updates 6 indexes + the table.</span>
+
+<span style="color:#94a3b8">-- ✅ BETTER: Identify actual query patterns and create only what's needed</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_cust_status <span style="color:#c084fc">ON</span> orders (customer_id, status);
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_created <span style="color:#c084fc">ON</span> orders (created_at);
+<span style="color:#94a3b8">-- 2 indexes that cover the real query patterns</span></pre></div>
+
+            <h3>Mistake 5: SELECT * When You Don't Need All Columns</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ Fetches ALL columns — can't use "Index Only Scan"</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> big_orders <span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span>;
+
+<span style="color:#94a3b8">-- ✅ Only fetch what you need — might enable "Index Only Scan"</span>
+<span style="color:#c084fc">SELECT</span> id, amount <span style="color:#c084fc">FROM</span> big_orders <span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">42</span>;</pre></div>
+
+            <h3>Performance Checklist</h3>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Index foreign key columns</h4>
+                <p>Every column used in a JOIN or WHERE that references another table should have an index.</p>
+            </div>
+            <div class="step-box">
+                <h4>Check with EXPLAIN ANALYZE</h4>
+                <p>Don't guess — measure! Run EXPLAIN ANALYZE on slow queries to find sequential scans.</p>
+            </div>
+            <div class="step-box">
+                <h4>Avoid functions on indexed columns</h4>
+                <p>Use expression indexes if you must filter by <code>LOWER(col)</code> or <code>EXTRACT(... FROM col)</code>.</p>
+            </div>
+            <div class="step-box">
+                <h4>Use partial indexes for filtered queries</h4>
+                <p>If you always query <code>WHERE status = 'active'</code>, a partial index is smaller and faster.</p>
+            </div>
+            <div class="step-box">
+                <h4>Remove unused indexes</h4>
+                <p>Check <code>pg_stat_user_indexes</code> for indexes with <code>idx_scan = 0</code>. Drop them to save space and speed up writes.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 9. PRACTICE ===================== -->
+        <div class="section">
+            <h2>🏋️ Practice Exercises</h2>
+            <p>Time to apply your indexing knowledge!</p>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: Diagnose the Slow Query</h4>
+                <p>You have a <code>users</code> table with 5 million rows. This query takes 4 seconds: <code>SELECT * FROM users WHERE email = 'test@example.com';</code>. What's the likely problem and how do you fix it?</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <p>The <code>email</code> column likely has no index, so PostgreSQL does a sequential scan of all 5 million rows.</p>
+                    <div class="code-block"><pre><span style="color:#94a3b8">-- First, confirm with EXPLAIN ANALYZE</span>
+<span style="color:#c084fc">EXPLAIN ANALYZE</span>
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> users <span style="color:#c084fc">WHERE</span> email = <span style="color:#4ade80">'test@example.com'</span>;
+<span style="color:#94a3b8">-- Look for "Seq Scan" in the output</span>
+
+<span style="color:#94a3b8">-- Fix: Create an index (UNIQUE if emails are unique)</span>
+<span style="color:#c084fc">CREATE UNIQUE INDEX</span> idx_users_email <span style="color:#c084fc">ON</span> users (email);</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: Choose the Right Index Type</h4>
+                <p>You need to search a <code>products</code> table for items where the <code>description</code> column contains the word "organic". Which index type would you use and why?</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <p>A <strong>GIN</strong> index with full-text search, because you need to search inside text content:</p>
+                    <div class="code-block"><pre><span style="color:#c084fc">CREATE INDEX</span> idx_products_description
+<span style="color:#c084fc">ON</span> products <span style="color:#c084fc">USING GIN</span> (
+    <span style="color:#c084fc">to_tsvector</span>(<span style="color:#4ade80">'english'</span>, description)
+);
+
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> <span style="color:#c084fc">to_tsvector</span>(<span style="color:#4ade80">'english'</span>, description)
+   @@ <span style="color:#c084fc">to_tsquery</span>(<span style="color:#4ade80">'organic'</span>);</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: Multi-Column Index Design</h4>
+                <p>Your app always queries orders like: <code>WHERE customer_id = ? AND created_at > ?</code>. Design the optimal index.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#94a3b8">-- customer_id first (equality), then created_at (range)</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_cust_date
+<span style="color:#c084fc">ON</span> orders (customer_id, created_at);</pre></div>
+                    <p>Put the equality column (<code>customer_id = ?</code>) first, and the range column (<code>created_at &gt; ?</code>) second. This lets PostgreSQL narrow down by customer first, then efficiently scan dates within that customer.</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: Partial Index Challenge</h4>
+                <p>Your <code>orders</code> table has 10 million rows. Only 50,000 are <code>status = 'pending'</code>. You frequently query pending orders by customer. Create the most efficient index possible.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#94a3b8">-- Partial index: only index the 50K pending rows!</span>
+<span style="color:#c084fc">CREATE INDEX</span> idx_orders_pending_customer
+<span style="color:#c084fc">ON</span> orders (customer_id)
+<span style="color:#c084fc">WHERE</span> status = <span style="color:#4ade80">'pending'</span>;
+
+<span style="color:#94a3b8">-- This index is ~200x smaller than a full index</span>
+<span style="color:#94a3b8">-- and perfectly matches: WHERE customer_id = ? AND status = 'pending'</span></pre></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== 10. QUIZ ===================== -->
+        <div class="section">
+            <h2>📝 Quiz — Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What is the default index type in PostgreSQL?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Hash</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B-tree</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">GIN</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">BRIN</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: What does <code>EXPLAIN ANALYZE</code> do differently than <code>EXPLAIN</code>?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It shows the table schema</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It only shows estimated costs</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">It actually runs the query and shows real timing and row counts</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It creates an index automatically</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: Does PostgreSQL automatically create indexes on foreign key columns?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">No — you must create them yourself</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Yes — it always creates a B-tree index</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Yes — but only for SERIAL columns</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It depends on the PostgreSQL version</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: You have an index on <code>(A, B, C)</code>. Which query can use it?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>WHERE B = 5</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>WHERE C = 10</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)"><code>WHERE A = 1 AND B = 5</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>WHERE B = 5 AND C = 10</code></button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: Why does <code>WHERE UPPER(email) = 'TEST'</code> not use an index on <code>email</code>?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">UPPER is not a valid function</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">The function wraps the column, so the index on the raw column can't be used</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">String comparisons never use indexes</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">PostgreSQL doesn't support expression indexes</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: What is a partial index?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">An index on some columns of a multi-column table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">An incomplete index that hasn't finished building</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">An index that only covers rows matching a WHERE condition</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">An index that only stores half the data</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: Which index type is best for full-text search and JSONB queries?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B-tree</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Hash</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">GIN</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">BRIN</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>🎉 What's Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Index types learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">400x</div>
+                    <div class="stat-label">Speedup demonstrated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Quiz questions conquered</div>
+                </div>
+            </div>
+
+            <p>You now have the tools to make any PostgreSQL query blazing fast. Here's what you learned:</p>
+
+            <table class="comparison-table">
+                <tr><th>Concept</th><th>What It Does</th><th>Key Syntax</th></tr>
+                <tr><td>B-tree Index</td><td>General-purpose index for =, &lt;, &gt;, ORDER BY</td><td><code>CREATE INDEX idx ON tbl (col)</code></td></tr>
+                <tr><td>Hash Index</td><td>Equality-only lookups</td><td><code>CREATE INDEX ... USING HASH (col)</code></td></tr>
+                <tr><td>GIN Index</td><td>Full-text, arrays, JSONB</td><td><code>CREATE INDEX ... USING GIN (col)</code></td></tr>
+                <tr><td>BRIN Index</td><td>Huge naturally-sorted tables</td><td><code>CREATE INDEX ... USING BRIN (col)</code></td></tr>
+                <tr><td>EXPLAIN ANALYZE</td><td>X-ray for query performance</td><td><code>EXPLAIN ANALYZE SELECT ...</code></td></tr>
+                <tr><td>Partial Index</td><td>Index only matching rows</td><td><code>CREATE INDEX ... WHERE condition</code></td></tr>
+                <tr><td>Expression Index</td><td>Index a computed value</td><td><code>CREATE INDEX ... ON tbl (LOWER(col))</code></td></tr>
+                <tr><td>Multi-Column Index</td><td>Index on multiple columns</td><td><code>CREATE INDEX ... ON tbl (a, b)</code></td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🔮 Coming Up Next: Functions</h4>
+                <p>Now that you can write fast queries, it's time to learn about PostgreSQL's built-in functions and how to create your own! You'll master string functions, date/time manipulation, mathematical operations, and even write custom stored functions in PL/pgSQL. Think of functions as reusable mini-programs that live inside your database — ready to transform data on demand!</p>
+            </div>
+        </div>
+
         <div class="lesson-nav">
-            <a href="querying.html" class="secondary"><i class="fas fa-arrow-left"></i> Advanced Querying</a>
-            <a href="json-arrays.html">JSON & Arrays <i class="fas fa-arrow-right"></i></a>
+            <a href="subqueries-ctes.html" class="secondary"><i class="fas fa-arrow-left"></i> Subqueries &amp; CTEs</a>
+            <a href="functions.html">Functions <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">Correct!</strong>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">Not quite!</strong>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

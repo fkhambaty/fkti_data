@@ -3,39 +3,614 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meet PostgreSQL | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Meet PostgreSQL — Your New Best Friend | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="installation.html">Installation & Setup <i class="fas fa-arrow-right"></i></a>
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Course Home</a>
+            <a href="installation.html">Installation &amp; Setup <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Meet PostgreSQL</h1>
-            <p>The world's most advanced open-source database. Why PostgreSQL powers everything from startups to Fortune 500.</p>
+            <h1>🐘 Meet PostgreSQL</h1>
+            <p>The world's most advanced open-source database — explained like you're five years old, then like you're a pro.</p>
         </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 1: WHAT IS A DATABASE?             -->
+        <!-- ═══════════════════════════════════════════ -->
         <div class="section visible">
-            <h2>📚 Meet PostgreSQL</h2>
-            <p>The world's most advanced open-source database. Why PostgreSQL powers everything from startups to Fortune 500.</p>
+            <h2>📚 What Is a Database?</h2>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers meet postgresql with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>🧒 ELI5 — Explain Like I'm 5</h4>
+                <p>Imagine you have a giant room full of filing cabinets. Each cabinet is labelled: "Customers", "Orders", "Products". Inside each cabinet, there are folders — one per customer, one per order. Each folder has a sheet of paper with information written in nice, neat columns.</p>
+                <p><strong>That's a database!</strong> It's an organized collection of information that a computer can search through in milliseconds — even if there are billions of folders.</p>
+            </div>
+
+            <p>Before databases existed, people stored data in flat files — like one massive Excel spreadsheet. Imagine a company with 10 million customers, all in one spreadsheet. Finding "John Smith's phone number" would mean scrolling through millions of rows. 😱</p>
+
+            <p>A <strong>database</strong> solves this by organizing data into <strong>tables</strong> (like spreadsheets), with <strong>rows</strong> (records) and <strong>columns</strong> (fields). But unlike spreadsheets, databases can:</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">🔍</div>
+                    <div class="stat-label">Search billions of rows in milliseconds</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">👥</div>
+                    <div class="stat-label">Handle thousands of users at the same time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔒</div>
+                    <div class="stat-label">Keep data safe even if the power goes out</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔗</div>
+                    <div class="stat-label">Link related data together (customers ↔ orders)</div>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy: The Library</h4>
+                <p>Think of a library. Books are organized by genre (Fiction, Science, History) — those are <strong>tables</strong>. Each book is a <strong>row</strong>. The book's title, author, ISBN, and shelf number are <strong>columns</strong>. The Dewey Decimal System is like an <strong>index</strong> — it helps you find any book instantly without searching every shelf.</p>
+                <p>A database works the same way, but for <em>any</em> kind of data — users, transactions, sensor readings, cat photos, whatever you need!</p>
+            </div>
+
+            <h3>Relational vs Non-Relational Databases</h3>
+
+            <p>There are two big families of databases:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Relational (SQL)</th>
+                        <th>Non-Relational (NoSQL)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Structure</strong></td>
+                        <td>Fixed tables with rows & columns</td>
+                        <td>Flexible documents, key-value pairs, graphs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Language</strong></td>
+                        <td>SQL (Structured Query Language)</td>
+                        <td>Varies (MongoDB uses JSON-like queries)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Best for</strong></td>
+                        <td>Structured data with relationships</td>
+                        <td>Unstructured data, rapid prototyping</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Examples</strong></td>
+                        <td>PostgreSQL, MySQL, SQL Server, Oracle</td>
+                        <td>MongoDB, Redis, Cassandra, DynamoDB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Think of it as</strong></td>
+                        <td>📊 A well-organized spreadsheet</td>
+                        <td>📝 A flexible notebook</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip</h4>
+                <p><strong>PostgreSQL is a relational database</strong> — but here's the plot twist: it <em>also</em> supports JSON/JSONB storage, making it a hybrid! You get the best of both worlds. That's one reason it's so popular.</p>
             </div>
         </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 2: WHAT IS POSTGRESQL?             -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible" id="history">
+            <h2>🐘 What Is PostgreSQL?</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>PostgreSQL (pronounced "post-gres-Q-L", or just "Postgres") is a free, super-powerful database that's been around since the 1980s. Think of it as the Swiss Army Knife of databases — it does everything, and it does it really well.</p>
+                <p>It's like having a personal assistant who never forgets anything, can find any piece of information in a split second, and works 24/7 without breaks.</p>
+            </div>
+
+            <h3>The Origin Story: Born at UC Berkeley</h3>
+
+            <p>Every superhero has an origin story. PostgreSQL's begins at the <strong>University of California, Berkeley</strong> in 1986:</p>
+
+            <div class="step-box">
+                <h4>📅 1986 — The POSTGRES Project</h4>
+                <p>Professor <strong>Michael Stonebraker</strong> (who later won the Turing Award — the "Nobel Prize of Computer Science") led a team to build a new database that went beyond what existed. They called it <strong>POSTGRES</strong> (Post-Ingres, because it came after another database called Ingres).</p>
+            </div>
+            <div class="step-box">
+                <h4>📅 1994 — SQL Comes Along</h4>
+                <p>Two grad students, <strong>Andrew Yu</strong> and <strong>Jolly Chen</strong>, added SQL support (the standard language for talking to databases). The project was renamed <strong>Postgres95</strong>.</p>
+            </div>
+            <div class="step-box">
+                <h4>📅 1996 — PostgreSQL Is Born</h4>
+                <p>The community renamed it to <strong>PostgreSQL</strong> to reflect its SQL support. The open-source community took over development, and it's been community-driven ever since — no single company controls it.</p>
+            </div>
+            <div class="step-box">
+                <h4>📅 Today — The World's Most Advanced Open-Source DB</h4>
+                <p>Version 16+ with 35+ years of active development, thousands of contributors, and used by the biggest companies on Earth. It gets a major release every year with awesome new features.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🎯 Fun Fact</h4>
+                <p>The PostgreSQL elephant mascot is named <strong>Slonik</strong> (Russian for "little elephant" 🐘). Why an elephant? Because elephants never forget — and neither does PostgreSQL! Your data is safe.</p>
+            </div>
+
+            <h3>Key Features That Make PostgreSQL Special</h3>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">🆓</div>
+                    <div class="stat-label"><strong>100% Free & Open Source</strong> — No licensing fees, ever. Use it for personal projects or Fortune 500 companies.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔒</div>
+                    <div class="stat-label"><strong>ACID Compliant</strong> — Your data is always consistent and safe, even during crashes.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">📦</div>
+                    <div class="stat-label"><strong>JSON/JSONB Support</strong> — Store and query JSON documents natively. SQL + NoSQL in one!</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔌</div>
+                    <div class="stat-label"><strong>Extensions</strong> — PostGIS (maps), TimescaleDB (time-series), pgvector (AI embeddings), and 100+ more.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">📏</div>
+                    <div class="stat-label"><strong>Standards Compliant</strong> — Follows the SQL standard more closely than any other database.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🚀</div>
+                    <div class="stat-label"><strong>Handles Massive Scale</strong> — Databases with terabytes of data and thousands of concurrent users.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 3: WHY POSTGRESQL?                 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible" id="why">
+            <h2>🏆 Why PostgreSQL? (The Comparison)</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>Imagine you're choosing a car. MySQL is like a Toyota Corolla — reliable, gets the job done, everywhere. SQLite is like a bicycle — great for short trips but can't carry heavy loads. MongoDB is like a pickup truck — flexible but not great for everything. PostgreSQL? It's a Tesla — modern, powerful, free to refuel (open source!), and does things other cars can't even dream of.</p>
+            </div>
+
+            <h3>PostgreSQL vs MySQL</h3>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>🐘 PostgreSQL</th>
+                        <th>🐬 MySQL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>SQL Standard Compliance</strong></td>
+                        <td>✅ Excellent — follows the standard closely</td>
+                        <td>⚠️ Good but takes shortcuts</td>
+                    </tr>
+                    <tr>
+                        <td><strong>JSON Support</strong></td>
+                        <td>✅ Native JSONB with indexing</td>
+                        <td>⚠️ Basic JSON support</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Full-Text Search</strong></td>
+                        <td>✅ Built-in, powerful</td>
+                        <td>⚠️ Limited</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Concurrency</strong></td>
+                        <td>✅ MVCC — readers never block writers</td>
+                        <td>⚠️ Depends on storage engine</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Extensions</strong></td>
+                        <td>✅ Huge ecosystem (PostGIS, pgvector...)</td>
+                        <td>⚠️ Limited plugin system</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Window Functions</strong></td>
+                        <td>✅ Full support since forever</td>
+                        <td>⚠️ Added in MySQL 8.0 (2018)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Owned By</strong></td>
+                        <td>✅ Community (no single owner)</td>
+                        <td>⚠️ Oracle Corporation</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>PostgreSQL vs SQLite</h3>
+
+            <p><strong>SQLite</strong> is fantastic for mobile apps, embedded systems, and small projects. But it's a single-file database — only one person can write at a time. PostgreSQL is a full server that handles thousands of users simultaneously. Think of SQLite as your personal diary, and PostgreSQL as a library that everyone can use at once.</p>
+
+            <h3>PostgreSQL vs MongoDB</h3>
+
+            <p><strong>MongoDB</strong> is a document database — great for storing flexible, schema-less data. But PostgreSQL's JSONB support gives you the same flexibility PLUS the power of SQL, transactions, and relational integrity. Why choose one when you can have both?</p>
+
+            <div class="important-box">
+                <h4>⚡ The Bottom Line</h4>
+                <p>PostgreSQL is the <strong>"you can't go wrong"</strong> choice. Whether you're building a startup, enterprise system, data warehouse, or AI application — PostgreSQL handles it all. That's why it's the #1 most-loved database by developers (Stack Overflow Survey, DB-Engines ranking).</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 4: WHO USES POSTGRESQL?            -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible" id="who">
+            <h2>🌍 Who Uses PostgreSQL?</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>Remember when we said PostgreSQL is like a Tesla? Well, imagine every cool company in the world driving Teslas. That's literally what's happening with PostgreSQL. The biggest names in tech trust their most important data to this elephant.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">🍎</div>
+                    <div class="stat-label"><strong>Apple</strong> — Uses PostgreSQL for various internal systems and services.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">📺</div>
+                    <div class="stat-label"><strong>Netflix</strong> — Manages content metadata and user data for 230M+ subscribers.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">🎵</div>
+                    <div class="stat-label"><strong>Spotify</strong> — Stores playlists, user preferences, and music metadata.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">📸</div>
+                    <div class="stat-label"><strong>Instagram</strong> — One of the largest PostgreSQL deployments in the world.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">🛒</div>
+                    <div class="stat-label"><strong>Shopify</strong> — Powers millions of online stores worldwide.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">🐙</div>
+                    <div class="stat-label"><strong>GitHub</strong> — Stores repository metadata, issues, PRs for 100M+ developers.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">🔴</div>
+                    <div class="stat-label"><strong>Reddit</strong> — Handles billions of posts, comments, and upvotes.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size:1.5em;">💬</div>
+                    <div class="stat-label"><strong>Discord</strong> — Real-time messaging for 150M+ monthly active users.</div>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <h4>🎓 Why This Matters for Your Career</h4>
+                <p>PostgreSQL is the <strong>#1 database skill employers are hiring for</strong>. Data engineers, backend developers, data analysts, DevOps engineers — all need PostgreSQL. Learning it opens doors everywhere. Whether you want to work at a FAANG company, a startup, or as a freelancer — PostgreSQL is your ticket.</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 5: HOW POSTGRESQL WORKS (HIGH LEVEL) -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>⚙️ How Does PostgreSQL Work? (10,000 Foot View)</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>Imagine a restaurant. You (the customer) tell the waiter (your application) what you want. The waiter walks to the kitchen (PostgreSQL server) and gives your order to the chef (the query engine). The chef grabs ingredients from the pantry (disk storage), cooks the dish (processes the query), and sends it back to you through the waiter. All of this happens in milliseconds!</p>
+            </div>
+
+            <h3>The Client-Server Model</h3>
+
+            <p>PostgreSQL uses a <strong>client-server architecture</strong>:</p>
+
+            <div style="background:rgba(51,103,145,0.08); border-radius:20px; padding:30px; margin:20px 0; text-align:center;">
+                <div style="display:flex; justify-content:center; align-items:center; gap:30px; flex-wrap:wrap; font-size:1.1em;">
+                    <div style="background:rgba(59,130,246,0.15); padding:20px 30px; border-radius:16px; border:2px solid rgba(59,130,246,0.3);">
+                        <div style="font-size:2em; margin-bottom:8px;">👤</div>
+                        <strong style="color:#60a5fa;">You (Client)</strong><br>
+                        <span style="color:#94a3b8; font-size:0.85em;">DBeaver, psql, your app</span>
+                    </div>
+                    <div style="font-size:2em; color:#336791;">→ SQL →</div>
+                    <div style="background:rgba(51,103,145,0.15); padding:20px 30px; border-radius:16px; border:2px solid rgba(51,103,145,0.3);">
+                        <div style="font-size:2em; margin-bottom:8px;">🐘</div>
+                        <strong style="color:#93c5fd;">PostgreSQL Server</strong><br>
+                        <span style="color:#94a3b8; font-size:0.85em;">Listens on port 5432</span>
+                    </div>
+                    <div style="font-size:2em; color:#336791;">→ Data →</div>
+                    <div style="background:rgba(34,197,94,0.15); padding:20px 30px; border-radius:16px; border:2px solid rgba(34,197,94,0.3);">
+                        <div style="font-size:2em; margin-bottom:8px;">💾</div>
+                        <strong style="color:#86efac;">Disk Storage</strong><br>
+                        <span style="color:#94a3b8; font-size:0.85em;">Your actual data files</span>
+                    </div>
+                </div>
+            </div>
+
+            <p>Here's what happens when you run a query like <code style="background:rgba(51,103,145,0.15); padding:2px 8px; border-radius:6px; font-family:'Fira Code',monospace;">SELECT * FROM customers WHERE city = 'Mumbai'</code>:</p>
+
+            <div class="step-box">
+                <h4>Step 1: Parse</h4>
+                <p>PostgreSQL checks if your SQL is valid. Like a grammar checker for database language. If you write <code>SELCT</code> instead of <code>SELECT</code>, it catches the mistake here.</p>
+            </div>
+            <div class="step-box">
+                <h4>Step 2: Plan</h4>
+                <p>The <strong>query planner</strong> figures out the fastest way to find your data. Should it scan the entire table? Use an index? It considers all options and picks the winner. (We'll master this in Module 9!)</p>
+            </div>
+            <div class="step-box">
+                <h4>Step 3: Execute</h4>
+                <p>PostgreSQL follows the plan, fetches the matching rows from disk (or memory cache), and sends the results back to you. Done!</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Shared Memory & Caching</h4>
+                <p>PostgreSQL keeps frequently accessed data in RAM (called <strong>shared buffers</strong>). So the second time you ask for the same data, it's lightning fast because it doesn't need to read from disk! Think of it as the chef keeping popular ingredients on the counter instead of in the pantry.</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 6: KEY TERMINOLOGY                 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>📖 Key Terms You'll Use Every Day</h2>
+
+            <p>Before we install anything, let's build your vocabulary. Here are the terms you'll see constantly in this course:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Term</th>
+                        <th>Plain English</th>
+                        <th>Analogy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Database</strong></td>
+                        <td>A named collection of tables</td>
+                        <td>📁 A filing cabinet</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Table</strong></td>
+                        <td>Data organized in rows and columns</td>
+                        <td>📊 A spreadsheet tab</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Row (Record/Tuple)</strong></td>
+                        <td>One entry in a table</td>
+                        <td>📝 One line in the spreadsheet</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Column (Field/Attribute)</strong></td>
+                        <td>A category of data (name, age, email)</td>
+                        <td>📋 A column header in Excel</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Schema</strong></td>
+                        <td>A namespace/folder for organizing tables</td>
+                        <td>🗂️ A folder inside the filing cabinet</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Query</strong></td>
+                        <td>A question you ask the database (in SQL)</td>
+                        <td>❓ "Hey database, find me all customers in Mumbai"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Index</strong></td>
+                        <td>A shortcut for finding data faster</td>
+                        <td>📑 The index at the back of a textbook</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Primary Key</strong></td>
+                        <td>A unique ID for each row</td>
+                        <td>🪪 Your Aadhaar/SSN — unique to you</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Foreign Key</strong></td>
+                        <td>A link from one table to another</td>
+                        <td>🔗 "This order belongs to customer #42"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Transaction</strong></td>
+                        <td>A group of operations that all succeed or all fail</td>
+                        <td>💳 Bank transfer: debit AND credit, or neither</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="real-life">
+                <h4>🎯 Don't Memorize — Understand</h4>
+                <p>You don't need to memorize all these terms right now. As we go through each module, you'll use them so often they'll become second nature. It's like learning to drive — at first, "clutch", "gear stick", "RPM" sound scary, but after a week of driving, you don't even think about them!</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 7: YOUR FIRST LOOK AT SQL          -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>👀 A Sneak Peek at SQL</h2>
+
+            <p>You won't learn SQL properly until Module 3, but let's peek at what talking to PostgreSQL looks like. This is the language you'll master:</p>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;">-- Create a table to store students</span>
+<span style="color:#c084fc;">CREATE TABLE</span> students (
+    id       <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name     <span style="color:#38bdf8;">VARCHAR</span>(100) <span style="color:#c084fc;">NOT NULL</span>,
+    age      <span style="color:#38bdf8;">INTEGER</span>,
+    city     <span style="color:#38bdf8;">VARCHAR</span>(50),
+    gpa      <span style="color:#38bdf8;">DECIMAL</span>(3,2)
+);
+
+<span style="color:#94a3b8;">-- Add some students</span>
+<span style="color:#c084fc;">INSERT INTO</span> students (name, age, city, gpa) <span style="color:#c084fc;">VALUES</span>
+    (<span style="color:#4ade80;">'Aarav Patel'</span>,    <span style="color:#fb923c;">20</span>, <span style="color:#4ade80;">'Mumbai'</span>,    <span style="color:#fb923c;">3.85</span>),
+    (<span style="color:#4ade80;">'Priya Sharma'</span>,   <span style="color:#fb923c;">22</span>, <span style="color:#4ade80;">'Delhi'</span>,     <span style="color:#fb923c;">3.92</span>),
+    (<span style="color:#4ade80;">'Rohan Gupta'</span>,    <span style="color:#fb923c;">21</span>, <span style="color:#4ade80;">'Bangalore'</span>, <span style="color:#fb923c;">3.45</span>),
+    (<span style="color:#4ade80;">'Sneha Reddy'</span>,    <span style="color:#fb923c;">23</span>, <span style="color:#4ade80;">'Hyderabad'</span>, <span style="color:#fb923c;">3.78</span>),
+    (<span style="color:#4ade80;">'Vikram Singh'</span>,   <span style="color:#fb923c;">20</span>, <span style="color:#4ade80;">'Mumbai'</span>,    <span style="color:#fb923c;">3.60</span>);
+
+<span style="color:#94a3b8;">-- Find students in Mumbai with GPA above 3.5</span>
+<span style="color:#c084fc;">SELECT</span> name, gpa
+<span style="color:#c084fc;">FROM</span> students
+<span style="color:#c084fc;">WHERE</span> city = <span style="color:#4ade80;">'Mumbai'</span> <span style="color:#c084fc;">AND</span> gpa > <span style="color:#fb923c;">3.5</span>
+<span style="color:#c084fc;">ORDER BY</span> gpa <span style="color:#c084fc;">DESC</span>;</pre>
+            </div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <thead><tr><th>name</th><th>gpa</th></tr></thead>
+                <tbody>
+                    <tr><td>Aarav Patel</td><td>3.85</td></tr>
+                    <tr><td>Vikram Singh</td><td>3.60</td></tr>
+                </tbody>
+            </table>
+
+            <div class="eli5-box">
+                <h4>🧒 Reading That SQL Like English</h4>
+                <p><strong>SELECT</strong> name, gpa → "I want to see the name and GPA..."</p>
+                <p><strong>FROM</strong> students → "...from the students table..."</p>
+                <p><strong>WHERE</strong> city = 'Mumbai' AND gpa > 3.5 → "...but only students in Mumbai with a GPA above 3.5..."</p>
+                <p><strong>ORDER BY</strong> gpa DESC → "...sorted from highest GPA to lowest."</p>
+                <p>See? SQL reads almost like English! That's by design. It was made for humans, not just computers. 🎉</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 8: QUIZ                            -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>🧪 Quick Quiz — Test Your Understanding!</h2>
+
+            <div class="quiz-section">
+                <h3>Question 1: What is PostgreSQL?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">A) A free, open-source relational database management system</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) A programming language like Python</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) A web browser</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) An operating system</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 2: Where was PostgreSQL originally developed?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Google</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) MIT</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) University of California, Berkeley</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Stanford University</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 3: Which of these is NOT a PostgreSQL advantage over MySQL?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Better JSON support</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) Community-owned (no single corporate owner)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) It's a NoSQL database</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Better SQL standard compliance</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 4: What does the elephant mascot represent?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) PostgreSQL is slow and heavy</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) Elephants never forget — your data is safe</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) The founder's favorite animal</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) It was chosen randomly</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 5: In the restaurant analogy, what does the "chef" represent?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) The user</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) The application code</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) The PostgreSQL query engine</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) The disk storage</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 9: WHAT'S NEXT                     -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>🚀 What's Next?</h2>
+
+            <p>You now know:</p>
+            <ul style="margin-left:20px; margin-bottom:20px; line-height:2.2;">
+                <li>✅ What a database is (an organized filing cabinet for data)</li>
+                <li>✅ What PostgreSQL is (the world's most advanced free database)</li>
+                <li>✅ Its origin story (born at UC Berkeley in 1986)</li>
+                <li>✅ Why it beats alternatives (SQL standard, JSON, extensions, community)</li>
+                <li>✅ Who uses it (Apple, Netflix, Instagram, and basically everyone)</li>
+                <li>✅ How it works at a high level (client-server, parse-plan-execute)</li>
+                <li>✅ Key terms (table, row, column, schema, query, index, key)</li>
+                <li>✅ What SQL looks like (almost like English!)</li>
+            </ul>
+
+            <div class="important-box">
+                <h4>👉 In the next module, we'll install PostgreSQL and DBeaver on your machine and run your very first real query. It takes about 10 minutes, and it's going to feel amazing!</h4>
+            </div>
+        </div>
+
+        <!-- Lesson Navigation -->
         <div class="lesson-nav">
-            <a href="hub.html" class="secondary"><i class="fas fa-arrow-left"></i> Hub</a>
-            <a href="installation.html">Installation & Setup <i class="fas fa-arrow-right"></i></a>
+            <a href="index.html" class="secondary"><i class="fas fa-arrow-left"></i> Course Home</a>
+            <a href="installation.html">Installation &amp; Setup <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+
+        options.forEach(function(opt) {
+            opt.disabled = true;
+            opt.style.opacity = '0.7';
+            opt.style.cursor = 'default';
+        });
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            btn.style.opacity = '1';
+            feedback.style.display = 'block';
+            feedback.style.background = 'rgba(34,197,94,0.15)';
+            feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">✅ Correct!</strong> <span style="color:#94a3b8;">Great job! You\'re getting this.</span>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block';
+            feedback.style.background = 'rgba(239,68,68,0.15)';
+            feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">❌ Not quite!</strong> <span style="color:#94a3b8;">Look at the highlighted correct answer above.</span>';
+            options.forEach(function(opt) {
+                if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) {
+                    opt.classList.add('correct');
+                    opt.style.opacity = '1';
+                }
+            });
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) {
+                if (e[0].isIntersecting) e[0].target.classList.add('visible');
+            }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

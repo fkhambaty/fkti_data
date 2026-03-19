@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subqueries &amp; CTEs | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="joins.html"><i class="fas fa-arrow-left"></i> Joins</a>
+            <a href="indexes.html">Indexes &amp; Performance <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="lesson-hero">
+            <h1>🔄 Subqueries &amp; CTEs</h1>
+            <p>Queries inside queries! Like Russian nesting dolls for data. Then CTEs — the sticky notes that make complex queries readable.</p>
+        </div>
+
+        <!-- ===================== SAMPLE DATASET ===================== -->
+        <div class="section visible">
+            <h2>📦 Our Practice Dataset</h2>
+            <p>Before we dive into subqueries and CTEs, let's set up some tables to work with. We'll use an <strong>employees</strong> table, a <strong>departments</strong> table, and an <strong>orders</strong> table — the kind of data you'd find at any real company.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Create departments</span>
+<span style="color:#c084fc">CREATE TABLE</span> departments (
+    id    <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    name  <span style="color:#38bdf8">VARCHAR(50)</span>
+);
+
+<span style="color:#c084fc">INSERT INTO</span> departments (name) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#4ade80">'Engineering'</span>),
+    (<span style="color:#4ade80">'Marketing'</span>),
+    (<span style="color:#4ade80">'Sales'</span>),
+    (<span style="color:#4ade80">'HR'</span>);
+
+<span style="color:#94a3b8">-- Create employees</span>
+<span style="color:#c084fc">CREATE TABLE</span> employees (
+    id            <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    name          <span style="color:#38bdf8">VARCHAR(100)</span>,
+    department_id <span style="color:#38bdf8">INTEGER</span> <span style="color:#c084fc">REFERENCES</span> departments(id),
+    salary        <span style="color:#38bdf8">DECIMAL(10,2)</span>,
+    manager_id    <span style="color:#38bdf8">INTEGER</span> <span style="color:#c084fc">REFERENCES</span> employees(id),
+    hire_date     <span style="color:#38bdf8">DATE</span>
+);
+
+<span style="color:#c084fc">INSERT INTO</span> employees (name, department_id, salary, manager_id, hire_date) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#4ade80">'Alice Chen'</span>,     <span style="color:#fb923c">1</span>, <span style="color:#fb923c">120000</span>, <span style="color:#c084fc">NULL</span>, <span style="color:#4ade80">'2019-03-15'</span>),
+    (<span style="color:#4ade80">'Bob Martinez'</span>,   <span style="color:#fb923c">1</span>, <span style="color:#fb923c">95000</span>,  <span style="color:#fb923c">1</span>,    <span style="color:#4ade80">'2020-07-01'</span>),
+    (<span style="color:#4ade80">'Carol White'</span>,    <span style="color:#fb923c">1</span>, <span style="color:#fb923c">105000</span>, <span style="color:#fb923c">1</span>,    <span style="color:#4ade80">'2020-01-10'</span>),
+    (<span style="color:#4ade80">'Diana Lopez'</span>,    <span style="color:#fb923c">2</span>, <span style="color:#fb923c">88000</span>,  <span style="color:#c084fc">NULL</span>, <span style="color:#4ade80">'2018-11-20'</span>),
+    (<span style="color:#4ade80">'Eve Johnson'</span>,    <span style="color:#fb923c">2</span>, <span style="color:#fb923c">72000</span>,  <span style="color:#fb923c">4</span>,    <span style="color:#4ade80">'2021-06-05'</span>),
+    (<span style="color:#4ade80">'Frank Kim'</span>,      <span style="color:#fb923c">3</span>, <span style="color:#fb923c">110000</span>, <span style="color:#c084fc">NULL</span>, <span style="color:#4ade80">'2017-09-12'</span>),
+    (<span style="color:#4ade80">'Grace Patel'</span>,    <span style="color:#fb923c">3</span>, <span style="color:#fb923c">68000</span>,  <span style="color:#fb923c">6</span>,    <span style="color:#4ade80">'2022-02-28'</span>),
+    (<span style="color:#4ade80">'Henry Davis'</span>,    <span style="color:#fb923c">3</span>, <span style="color:#fb923c">75000</span>,  <span style="color:#fb923c">6</span>,    <span style="color:#4ade80">'2021-08-15'</span>),
+    (<span style="color:#4ade80">'Irene Nguyen'</span>,   <span style="color:#fb923c">4</span>, <span style="color:#fb923c">92000</span>,  <span style="color:#c084fc">NULL</span>, <span style="color:#4ade80">'2019-05-01'</span>),
+    (<span style="color:#4ade80">'Jack Robinson'</span>,  <span style="color:#fb923c">4</span>, <span style="color:#fb923c">65000</span>,  <span style="color:#fb923c">9</span>,    <span style="color:#4ade80">'2023-01-15'</span>);
+
+<span style="color:#94a3b8">-- Create orders</span>
+<span style="color:#c084fc">CREATE TABLE</span> orders (
+    id          <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    employee_id <span style="color:#38bdf8">INTEGER</span> <span style="color:#c084fc">REFERENCES</span> employees(id),
+    amount      <span style="color:#38bdf8">DECIMAL(10,2)</span>,
+    category    <span style="color:#38bdf8">VARCHAR(50)</span>,
+    order_date  <span style="color:#38bdf8">DATE</span>
+);
+
+<span style="color:#c084fc">INSERT INTO</span> orders (employee_id, amount, category, order_date) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#fb923c">6</span>, <span style="color:#fb923c">5000</span>,  <span style="color:#4ade80">'Software'</span>,  <span style="color:#4ade80">'2024-01-15'</span>),
+    (<span style="color:#fb923c">6</span>, <span style="color:#fb923c">12000</span>, <span style="color:#4ade80">'Hardware'</span>,  <span style="color:#4ade80">'2024-02-20'</span>),
+    (<span style="color:#fb923c">7</span>, <span style="color:#fb923c">3500</span>,  <span style="color:#4ade80">'Software'</span>,  <span style="color:#4ade80">'2024-01-25'</span>),
+    (<span style="color:#fb923c">8</span>, <span style="color:#fb923c">8000</span>,  <span style="color:#4ade80">'Hardware'</span>,  <span style="color:#4ade80">'2024-03-10'</span>),
+    (<span style="color:#fb923c">7</span>, <span style="color:#fb923c">2500</span>,  <span style="color:#4ade80">'Services'</span>, <span style="color:#4ade80">'2024-02-14'</span>),
+    (<span style="color:#fb923c">6</span>, <span style="color:#fb923c">15000</span>, <span style="color:#4ade80">'Software'</span>,  <span style="color:#4ade80">'2024-03-01'</span>),
+    (<span style="color:#fb923c">8</span>, <span style="color:#fb923c">4500</span>,  <span style="color:#4ade80">'Services'</span>, <span style="color:#4ade80">'2024-03-22'</span>),
+    (<span style="color:#fb923c">2</span>, <span style="color:#fb923c">9500</span>,  <span style="color:#4ade80">'Hardware'</span>,  <span style="color:#4ade80">'2024-01-30'</span>);</pre></div>
+
+            <p>Here's a quick look at our <code>employees</code> data:</p>
+
+            <table class="comparison-table">
+                <tr><th>id</th><th>name</th><th>department_id</th><th>salary</th><th>manager_id</th></tr>
+                <tr><td>1</td><td>Alice Chen</td><td>1 (Engineering)</td><td>120,000</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td>2</td><td>Bob Martinez</td><td>1 (Engineering)</td><td>95,000</td><td>1</td></tr>
+                <tr><td>3</td><td>Carol White</td><td>1 (Engineering)</td><td>105,000</td><td>1</td></tr>
+                <tr><td>4</td><td>Diana Lopez</td><td>2 (Marketing)</td><td>88,000</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td>5</td><td>Eve Johnson</td><td>2 (Marketing)</td><td>72,000</td><td>4</td></tr>
+                <tr><td>6</td><td>Frank Kim</td><td>3 (Sales)</td><td>110,000</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td>7</td><td>Grace Patel</td><td>3 (Sales)</td><td>68,000</td><td>6</td></tr>
+                <tr><td>8</td><td>Henry Davis</td><td>3 (Sales)</td><td>75,000</td><td>6</td></tr>
+                <tr><td>9</td><td>Irene Nguyen</td><td>4 (HR)</td><td>92,000</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td>10</td><td>Jack Robinson</td><td>4 (HR)</td><td>65,000</td><td>9</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Notice the manager_id Column!</h4>
+                <p>See how <code>manager_id</code> points back to the same <code>employees</code> table? That's called a <strong>self-referencing foreign key</strong>. Employees with <code>NULL</code> manager_id are the top-level managers (department heads). This structure will be perfect for our recursive CTE example later!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 1. WHAT IS A SUBQUERY? ===================== -->
+        <div class="section">
+            <h2>1️⃣ What Is a Subquery?</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Questions Inside Questions</h4>
+                <p>Imagine your teacher asks: <em>"Who scored higher than the class average?"</em> To answer that, you need to do <strong>two things</strong>: first figure out what the class average <em>is</em>, then find everyone who beat it. A <strong>subquery</strong> is exactly that — a question (query) inside another question (query). The inner question runs first and feeds its answer into the outer question.</p>
+            </div>
+
+            <p>A subquery is a <code>SELECT</code> statement nested inside another SQL statement. It's wrapped in parentheses and can appear in <code>WHERE</code>, <code>FROM</code>, <code>SELECT</code>, or even <code>HAVING</code> clauses.</p>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Think of it like ordering food at a restaurant. You say: <em>"I'll have whatever the most popular dish is."</em> The waiter first has to go check what the most popular dish is (inner query), then bring it to you (outer query). You asked one question, but the waiter had to answer a hidden question first to fulfill your request.</p>
+            </div>
+
+            <p>Here's the simplest possible subquery — finding employees who earn more than the company average:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, salary
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> salary &gt; (
+    <span style="color:#c084fc">SELECT AVG</span>(salary) <span style="color:#c084fc">FROM</span> employees
+);</pre></div>
+
+            <p><strong>How PostgreSQL runs this:</strong></p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">Step 1</div>
+                    <div class="stat-label">Inner query runs first: AVG(salary) = 89,000</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">Step 2</div>
+                    <div class="stat-label">Outer query becomes: WHERE salary > 89000</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">Result</div>
+                    <div class="stat-label">Returns employees beating the average</div>
+                </div>
+            </div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>salary</th></tr>
+                <tr><td>Alice Chen</td><td>120,000</td></tr>
+                <tr><td>Bob Martinez</td><td>95,000</td></tr>
+                <tr><td>Carol White</td><td>105,000</td></tr>
+                <tr><td>Frank Kim</td><td>110,000</td></tr>
+                <tr><td>Irene Nguyen</td><td>92,000</td></tr>
+            </table>
+        </div>
+
+        <!-- ===================== 2. SUBQUERIES IN WHERE ===================== -->
+        <div class="section">
+            <h2>2️⃣ Subqueries in WHERE</h2>
+
+            <p>The most common place for subqueries is inside the <code>WHERE</code> clause. There are two flavors:</p>
+
+            <h3>Scalar Subqueries — Return ONE Value</h3>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — One Answer</h4>
+                <p>A <strong>scalar subquery</strong> returns a single number or value — like asking "What's the highest score?" The answer is just one number, say 98. Then you can use that number in a comparison like <code>WHERE score &gt; 98</code>. If a subquery returns more than one value when you expected one, PostgreSQL will throw an error!</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find the employee(s) with the highest salary</span>
+<span style="color:#c084fc">SELECT</span> name, salary
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> salary = (
+    <span style="color:#c084fc">SELECT MAX</span>(salary) <span style="color:#c084fc">FROM</span> employees
+);</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>salary</th></tr>
+                <tr><td>Alice Chen</td><td>120,000</td></tr>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find employees in the same department as Alice Chen</span>
+<span style="color:#c084fc">SELECT</span> name, department_id
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> department_id = (
+    <span style="color:#c084fc">SELECT</span> department_id
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">WHERE</span> name = <span style="color:#4ade80">'Alice Chen'</span>
+)
+<span style="color:#c084fc">AND</span> name &lt;&gt; <span style="color:#4ade80">'Alice Chen'</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>department_id</th></tr>
+                <tr><td>Bob Martinez</td><td>1</td></tr>
+                <tr><td>Carol White</td><td>1</td></tr>
+            </table>
+
+            <h3>IN Subqueries — Return a LIST of Values</h3>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — A Whole List</h4>
+                <p>Instead of one answer, imagine the inner question returns a <strong>list</strong>. Like: "Which departments have more than 2 employees?" The answer is a list: (1, 3). Then the outer query says: "Give me all employees in departments (1, 3)." The <code>IN</code> keyword checks if a value is anywhere in that list.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find employees in departments that have 3 or more people</span>
+<span style="color:#c084fc">SELECT</span> name, department_id
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> department_id <span style="color:#c084fc">IN</span> (
+    <span style="color:#c084fc">SELECT</span> department_id
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">GROUP BY</span> department_id
+    <span style="color:#c084fc">HAVING COUNT</span>(*) &gt;= <span style="color:#fb923c">3</span>
+);</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>department_id</th></tr>
+                <tr><td>Alice Chen</td><td>1</td></tr>
+                <tr><td>Bob Martinez</td><td>1</td></tr>
+                <tr><td>Carol White</td><td>1</td></tr>
+                <tr><td>Frank Kim</td><td>3</td></tr>
+                <tr><td>Grace Patel</td><td>3</td></tr>
+                <tr><td>Henry Davis</td><td>3</td></tr>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find employees who have placed at least one order</span>
+<span style="color:#c084fc">SELECT</span> name
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> id <span style="color:#c084fc">IN</span> (
+    <span style="color:#c084fc">SELECT DISTINCT</span> employee_id <span style="color:#c084fc">FROM</span> orders
+);</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th></tr>
+                <tr><td>Bob Martinez</td></tr>
+                <tr><td>Frank Kim</td></tr>
+                <tr><td>Grace Patel</td></tr>
+                <tr><td>Henry Davis</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ Scalar vs. List — Don't Mix Them Up!</h4>
+                <p>If you use <code>=</code> with a subquery that returns multiple rows, PostgreSQL throws an error: <em>"more than one row returned by a subquery used as an expression."</em> Use <code>=</code> only when the subquery returns exactly ONE value. Use <code>IN</code> when it might return multiple values.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 3. SUBQUERIES IN FROM ===================== -->
+        <div class="section">
+            <h2>3️⃣ Subqueries in FROM — Derived Tables</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Temporary Pretend Tables</h4>
+                <p>Imagine you do some math homework and write the answers on a sticky note. Now you use <em>that sticky note</em> as if it were a page in your textbook — you look things up from it, compare numbers on it, etc. A <strong>derived table</strong> is exactly that: you write a query that creates a temporary result, and then you treat that result like it's a real table you can query from.</p>
+            </div>
+
+            <p>When you put a subquery in the <code>FROM</code> clause, the result becomes a temporary table. You <strong>must</strong> give it an alias (a name).</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find the top spender in each order category</span>
+<span style="color:#c084fc">SELECT</span> category_totals.category,
+       e.name,
+       category_totals.total_spent
+<span style="color:#c084fc">FROM</span> (
+    <span style="color:#94a3b8">-- This subquery becomes a temporary table called "category_totals"</span>
+    <span style="color:#c084fc">SELECT</span> employee_id,
+           category,
+           <span style="color:#c084fc">SUM</span>(amount) <span style="color:#c084fc">AS</span> total_spent
+    <span style="color:#c084fc">FROM</span> orders
+    <span style="color:#c084fc">GROUP BY</span> employee_id, category
+) <span style="color:#c084fc">AS</span> category_totals
+<span style="color:#c084fc">JOIN</span> employees e <span style="color:#c084fc">ON</span> e.id = category_totals.employee_id
+<span style="color:#c084fc">ORDER BY</span> category_totals.category, category_totals.total_spent <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th><th>name</th><th>total_spent</th></tr>
+                <tr><td>Hardware</td><td>Frank Kim</td><td>12,000</td></tr>
+                <tr><td>Hardware</td><td>Bob Martinez</td><td>9,500</td></tr>
+                <tr><td>Hardware</td><td>Henry Davis</td><td>8,000</td></tr>
+                <tr><td>Services</td><td>Henry Davis</td><td>4,500</td></tr>
+                <tr><td>Services</td><td>Grace Patel</td><td>2,500</td></tr>
+                <tr><td>Software</td><td>Frank Kim</td><td>20,000</td></tr>
+                <tr><td>Software</td><td>Grace Patel</td><td>3,500</td></tr>
+            </table>
+
+            <h3>Another Example — Department Salary Stats</h3>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Compare each employee's salary to their department average</span>
+<span style="color:#c084fc">SELECT</span> e.name,
+       e.salary,
+       dept_avg.avg_salary,
+       <span style="color:#c084fc">ROUND</span>(e.salary - dept_avg.avg_salary, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> diff_from_avg
+<span style="color:#c084fc">FROM</span> employees e
+<span style="color:#c084fc">JOIN</span> (
+    <span style="color:#c084fc">SELECT</span> department_id,
+           <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(salary), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_salary
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">GROUP BY</span> department_id
+) <span style="color:#c084fc">AS</span> dept_avg <span style="color:#c084fc">ON</span> e.department_id = dept_avg.department_id
+<span style="color:#c084fc">ORDER BY</span> e.department_id, e.salary <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ Always Alias Your Derived Tables!</h4>
+                <p>PostgreSQL <strong>requires</strong> an alias for subqueries in <code>FROM</code>. Without one you'll get: <em>"subquery in FROM must have an alias."</em> Just add <code>AS some_name</code> after the closing parenthesis.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 4. CORRELATED SUBQUERIES ===================== -->
+        <div class="section">
+            <h2>4️⃣ Correlated Subqueries — The Dependent Child</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Clingy Question</h4>
+                <p>In a normal subquery, the inner question runs <strong>once</strong> and hands its answer to the outer query. But a <strong>correlated subquery</strong> is like a clingy little sibling — it asks the outer query for help on <em>every single row</em>. Imagine going through a class roster and for each student asking: <em>"Is THIS student's score higher than THEIR class average?"</em> The "their class" part changes per student, so you have to recalculate each time.</p>
+            </div>
+
+            <p>A correlated subquery <strong>references columns from the outer query</strong>. This means it must run once for every row the outer query processes.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- For each employee, compare salary to their OWN department average</span>
+<span style="color:#c084fc">SELECT</span> e.name,
+       e.salary,
+       e.department_id,
+       (
+           <span style="color:#c084fc">SELECT ROUND</span>(<span style="color:#c084fc">AVG</span>(e2.salary), <span style="color:#fb923c">2</span>)
+           <span style="color:#c084fc">FROM</span> employees e2
+           <span style="color:#c084fc">WHERE</span> e2.department_id = e.department_id  <span style="color:#94a3b8">-- references outer query!</span>
+       ) <span style="color:#c084fc">AS</span> dept_avg_salary
+<span style="color:#c084fc">FROM</span> employees e
+<span style="color:#c084fc">ORDER BY</span> e.department_id;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>salary</th><th>department_id</th><th>dept_avg_salary</th></tr>
+                <tr><td>Alice Chen</td><td>120,000</td><td>1</td><td>106,666.67</td></tr>
+                <tr><td>Bob Martinez</td><td>95,000</td><td>1</td><td>106,666.67</td></tr>
+                <tr><td>Carol White</td><td>105,000</td><td>1</td><td>106,666.67</td></tr>
+                <tr><td>Diana Lopez</td><td>88,000</td><td>2</td><td>80,000.00</td></tr>
+                <tr><td>Eve Johnson</td><td>72,000</td><td>2</td><td>80,000.00</td></tr>
+                <tr><td>Frank Kim</td><td>110,000</td><td>3</td><td>84,333.33</td></tr>
+                <tr><td>Grace Patel</td><td>68,000</td><td>3</td><td>84,333.33</td></tr>
+                <tr><td>Henry Davis</td><td>75,000</td><td>3</td><td>84,333.33</td></tr>
+                <tr><td>Irene Nguyen</td><td>92,000</td><td>4</td><td>78,500.00</td></tr>
+                <tr><td>Jack Robinson</td><td>65,000</td><td>4</td><td>78,500.00</td></tr>
+            </table>
+
+            <h3>How Does This Work Under the Hood?</h3>
+            <p>PostgreSQL processes it row by row:</p>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Row 1: Alice Chen (dept 1)</h4>
+                <p>Inner query calculates AVG for department_id = 1 → 106,666.67</p>
+            </div>
+            <div class="step-box">
+                <h4>Row 2: Bob Martinez (dept 1)</h4>
+                <p>Inner query calculates AVG for department_id = 1 → 106,666.67 (same dept, same result)</p>
+            </div>
+            <div class="step-box">
+                <h4>Row 4: Diana Lopez (dept 2)</h4>
+                <p>Inner query recalculates AVG for department_id = 2 → 80,000.00 (different dept!)</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ Performance Warning — Correlated Subqueries Can Be Slow!</h4>
+                <p>Because the inner query runs <strong>once per row</strong>, correlated subqueries can be painfully slow on large tables. If you have 1 million rows, the inner query runs 1 million times! In many cases, you can rewrite a correlated subquery as a <code>JOIN</code> with a derived table (like we did in the previous section) for much better performance. PostgreSQL's optimizer sometimes does this automatically, but don't count on it.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 5. EXISTS & NOT EXISTS ===================== -->
+        <div class="section">
+            <h2>5️⃣ EXISTS &amp; NOT EXISTS</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Does It Exist?</h4>
+                <p>Imagine you're a teacher checking homework. For each student, you peek into the homework box and ask: <em>"Is there ANY homework from this student in here?"</em> You don't care <em>what</em> the homework says — you just want a YES or NO. That's <code>EXISTS</code>. It doesn't return data; it returns true/false — "does at least one matching row exist?"</p>
+            </div>
+
+            <h3>EXISTS — Check If Related Data Exists</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find employees who have placed at least one order</span>
+<span style="color:#c084fc">SELECT</span> e.name
+<span style="color:#c084fc">FROM</span> employees e
+<span style="color:#c084fc">WHERE EXISTS</span> (
+    <span style="color:#c084fc">SELECT</span> <span style="color:#fb923c">1</span>
+    <span style="color:#c084fc">FROM</span> orders o
+    <span style="color:#c084fc">WHERE</span> o.employee_id = e.id
+);</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th></tr>
+                <tr><td>Bob Martinez</td></tr>
+                <tr><td>Frank Kim</td></tr>
+                <tr><td>Grace Patel</td></tr>
+                <tr><td>Henry Davis</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — SELECT 1 Inside EXISTS</h4>
+                <p>Inside <code>EXISTS</code>, it doesn't matter what you SELECT — PostgreSQL only checks if <em>any row</em> is returned, not what columns it has. Writing <code>SELECT 1</code> or <code>SELECT *</code> or even <code>SELECT 'banana'</code> all work identically. Convention is <code>SELECT 1</code> to signal "I only care about existence."</p>
+            </div>
+
+            <h3>NOT EXISTS — Find Rows WITHOUT Related Data</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find employees who have NEVER placed an order</span>
+<span style="color:#c084fc">SELECT</span> e.name
+<span style="color:#c084fc">FROM</span> employees e
+<span style="color:#c084fc">WHERE NOT EXISTS</span> (
+    <span style="color:#c084fc">SELECT</span> <span style="color:#fb923c">1</span>
+    <span style="color:#c084fc">FROM</span> orders o
+    <span style="color:#c084fc">WHERE</span> o.employee_id = e.id
+);</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th></tr>
+                <tr><td>Alice Chen</td></tr>
+                <tr><td>Carol White</td></tr>
+                <tr><td>Diana Lopez</td></tr>
+                <tr><td>Eve Johnson</td></tr>
+                <tr><td>Irene Nguyen</td></tr>
+                <tr><td>Jack Robinson</td></tr>
+            </table>
+
+            <h3>EXISTS vs. IN — Which Is Better?</h3>
+            <table class="comparison-table">
+                <tr><th>Feature</th><th>IN (subquery)</th><th>EXISTS</th></tr>
+                <tr><td>How it works</td><td>Runs inner query first, builds a list, then checks each outer row against the list</td><td>For each outer row, checks if at least one inner row matches</td></tr>
+                <tr><td>NULL safety</td><td>NOT IN breaks with NULLs!</td><td>NOT EXISTS handles NULLs correctly</td></tr>
+                <tr><td>Performance (large inner result)</td><td>Slower — must materialize entire list</td><td>Faster — can stop at first match</td></tr>
+                <tr><td>Performance (small inner result)</td><td>Usually similar</td><td>Usually similar</td></tr>
+                <tr><td>Readability</td><td>Simpler syntax</td><td>Slightly more verbose</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p><code>IN</code> is like getting a full guest list and checking if your name is on it. <code>EXISTS</code> is like walking up to the bouncer who checks one name at a time. For a short guest list, both are fast. For a list with 100,000 names, the bouncer (EXISTS) can be faster because he stops the moment he finds your name — he doesn't need to read the whole list first.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 6. CTEs ===================== -->
+        <div class="section">
+            <h2>6️⃣ Common Table Expressions (CTEs)</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Sticky Notes for SQL</h4>
+                <p>Imagine you're solving a big math problem. Instead of writing one enormous equation, you grab some <strong>sticky notes</strong>. On the first note you write: <em>"Step A answer = 42."</em> On the second note: <em>"Step B answer = 15."</em> Then for the final answer, you just look at your sticky notes: <em>"Final = Step A + Step B = 57."</em> CTEs are those sticky notes! You name each piece, calculate it, and then use those names in your final query. It's way cleaner than stuffing everything into one giant nested mess.</p>
+            </div>
+
+            <p>A CTE is defined using the <code>WITH</code> keyword. It creates a named temporary result that you can reference in the main query.</p>
+
+            <h3>Basic CTE Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">WITH</span> cte_name <span style="color:#c084fc">AS</span> (
+    <span style="color:#94a3b8">-- Your query here (the "sticky note")</span>
+    <span style="color:#c084fc">SELECT</span> ...
+)
+<span style="color:#94a3b8">-- Main query uses the CTE like a regular table</span>
+<span style="color:#c084fc">SELECT</span> ... <span style="color:#c084fc">FROM</span> cte_name;</pre></div>
+
+            <h3>Example 1 — High Earners Report</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">WITH</span> avg_salary <span style="color:#c084fc">AS</span> (
+    <span style="color:#c084fc">SELECT ROUND</span>(<span style="color:#c084fc">AVG</span>(salary), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> company_avg
+    <span style="color:#c084fc">FROM</span> employees
+)
+<span style="color:#c084fc">SELECT</span> e.name,
+       e.salary,
+       a.company_avg,
+       e.salary - a.company_avg <span style="color:#c084fc">AS</span> above_avg_by
+<span style="color:#c084fc">FROM</span> employees e, avg_salary a
+<span style="color:#c084fc">WHERE</span> e.salary &gt; a.company_avg
+<span style="color:#c084fc">ORDER BY</span> above_avg_by <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>salary</th><th>company_avg</th><th>above_avg_by</th></tr>
+                <tr><td>Alice Chen</td><td>120,000</td><td>89,000</td><td>31,000</td></tr>
+                <tr><td>Frank Kim</td><td>110,000</td><td>89,000</td><td>21,000</td></tr>
+                <tr><td>Carol White</td><td>105,000</td><td>89,000</td><td>16,000</td></tr>
+                <tr><td>Bob Martinez</td><td>95,000</td><td>89,000</td><td>6,000</td></tr>
+                <tr><td>Irene Nguyen</td><td>92,000</td><td>89,000</td><td>3,000</td></tr>
+            </table>
+
+            <h3>Example 2 — Multiple CTEs (Multiple Sticky Notes!)</h3>
+            <p>You can chain multiple CTEs together separated by commas:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc">WITH</span> dept_stats <span style="color:#c084fc">AS</span> (
+    <span style="color:#94a3b8">-- Sticky note 1: department salary stats</span>
+    <span style="color:#c084fc">SELECT</span> department_id,
+           <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> emp_count,
+           <span style="color:#c084fc">ROUND</span>(<span style="color:#c084fc">AVG</span>(salary), <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_salary,
+           <span style="color:#c084fc">MAX</span>(salary) <span style="color:#c084fc">AS</span> max_salary
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">GROUP BY</span> department_id
+),
+order_stats <span style="color:#c084fc">AS</span> (
+    <span style="color:#94a3b8">-- Sticky note 2: total orders per department</span>
+    <span style="color:#c084fc">SELECT</span> e.department_id,
+           <span style="color:#c084fc">COUNT</span>(o.id) <span style="color:#c084fc">AS</span> total_orders,
+           <span style="color:#c084fc">COALESCE</span>(<span style="color:#c084fc">SUM</span>(o.amount), <span style="color:#fb923c">0</span>) <span style="color:#c084fc">AS</span> total_revenue
+    <span style="color:#c084fc">FROM</span> employees e
+    <span style="color:#c084fc">LEFT JOIN</span> orders o <span style="color:#c084fc">ON</span> o.employee_id = e.id
+    <span style="color:#c084fc">GROUP BY</span> e.department_id
+)
+<span style="color:#94a3b8">-- Main query: combine both sticky notes</span>
+<span style="color:#c084fc">SELECT</span> d.name <span style="color:#c084fc">AS</span> department,
+       ds.emp_count,
+       ds.avg_salary,
+       ds.max_salary,
+       os.total_orders,
+       os.total_revenue
+<span style="color:#c084fc">FROM</span> dept_stats ds
+<span style="color:#c084fc">JOIN</span> departments d <span style="color:#c084fc">ON</span> d.id = ds.department_id
+<span style="color:#c084fc">JOIN</span> order_stats os <span style="color:#c084fc">ON</span> os.department_id = ds.department_id
+<span style="color:#c084fc">ORDER BY</span> os.total_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>department</th><th>emp_count</th><th>avg_salary</th><th>max_salary</th><th>total_orders</th><th>total_revenue</th></tr>
+                <tr><td>Sales</td><td>3</td><td>84,333.33</td><td>110,000</td><td>7</td><td>50,500</td></tr>
+                <tr><td>Engineering</td><td>3</td><td>106,666.67</td><td>120,000</td><td>1</td><td>9,500</td></tr>
+                <tr><td>Marketing</td><td>2</td><td>80,000.00</td><td>88,000</td><td>0</td><td>0</td></tr>
+                <tr><td>HR</td><td>2</td><td>78,500.00</td><td>92,000</td><td>0</td><td>0</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — CTEs Can Reference Earlier CTEs!</h4>
+                <p>In a chain of CTEs, each one can reference any CTE defined <em>before</em> it. So <code>order_stats</code> could use <code>dept_stats</code> if needed. This lets you build up complex logic step by step, like a recipe where each step builds on the previous one.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 7. RECURSIVE CTEs ===================== -->
+        <div class="section">
+            <h2>7️⃣ Recursive CTEs — Climbing Trees!</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Family Tree</h4>
+                <p>Imagine you want to draw your family tree. You start with yourself. Then you ask: <em>"Who are my parents?"</em> For each parent, you ask: <em>"Who are THEIR parents?"</em> And you keep asking until you run out of ancestors. A <strong>recursive CTE</strong> does the same thing — it starts with a base case (you), then keeps expanding by finding related rows, until there's nothing more to find. It's perfect for any tree-like or hierarchical data: org charts, category trees, file systems, etc.</p>
+            </div>
+
+            <h3>Recursive CTE Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">WITH RECURSIVE</span> cte_name <span style="color:#c084fc">AS</span> (
+    <span style="color:#94a3b8">-- BASE CASE: the starting point (the "root")</span>
+    <span style="color:#c084fc">SELECT</span> ...
+    <span style="color:#c084fc">FROM</span> table
+    <span style="color:#c084fc">WHERE</span> ... <span style="color:#94a3b8">-- condition to find the root(s)</span>
+
+    <span style="color:#c084fc">UNION ALL</span>
+
+    <span style="color:#94a3b8">-- RECURSIVE CASE: find children of the current level</span>
+    <span style="color:#c084fc">SELECT</span> ...
+    <span style="color:#c084fc">FROM</span> table
+    <span style="color:#c084fc">JOIN</span> cte_name <span style="color:#c084fc">ON</span> ... <span style="color:#94a3b8">-- join back to itself!</span>
+)
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> cte_name;</pre></div>
+
+            <h3>Example — Employee Org Chart (Who Reports to Whom?)</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">WITH RECURSIVE</span> org_chart <span style="color:#c084fc">AS</span> (
+    <span style="color:#94a3b8">-- BASE CASE: start with top-level managers (no manager)</span>
+    <span style="color:#c084fc">SELECT</span> id,
+           name,
+           manager_id,
+           <span style="color:#fb923c">1</span> <span style="color:#c084fc">AS</span> level,
+           name::<span style="color:#38bdf8">TEXT</span> <span style="color:#c084fc">AS</span> path
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">WHERE</span> manager_id <span style="color:#c084fc">IS NULL</span>
+
+    <span style="color:#c084fc">UNION ALL</span>
+
+    <span style="color:#94a3b8">-- RECURSIVE CASE: find employees managed by the current level</span>
+    <span style="color:#c084fc">SELECT</span> e.id,
+           e.name,
+           e.manager_id,
+           oc.level + <span style="color:#fb923c">1</span>,
+           oc.path || <span style="color:#4ade80">' → '</span> || e.name
+    <span style="color:#c084fc">FROM</span> employees e
+    <span style="color:#c084fc">JOIN</span> org_chart oc <span style="color:#c084fc">ON</span> e.manager_id = oc.id
+)
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">REPEAT</span>(<span style="color:#4ade80">'  '</span>, level - <span style="color:#fb923c">1</span>) || name <span style="color:#c084fc">AS</span> org_tree,
+       level,
+       path
+<span style="color:#c084fc">FROM</span> org_chart
+<span style="color:#c084fc">ORDER BY</span> path;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>org_tree</th><th>level</th><th>path</th></tr>
+                <tr><td>Alice Chen</td><td>1</td><td>Alice Chen</td></tr>
+                <tr><td>&nbsp;&nbsp;Bob Martinez</td><td>2</td><td>Alice Chen → Bob Martinez</td></tr>
+                <tr><td>&nbsp;&nbsp;Carol White</td><td>2</td><td>Alice Chen → Carol White</td></tr>
+                <tr><td>Diana Lopez</td><td>1</td><td>Diana Lopez</td></tr>
+                <tr><td>&nbsp;&nbsp;Eve Johnson</td><td>2</td><td>Diana Lopez → Eve Johnson</td></tr>
+                <tr><td>Frank Kim</td><td>1</td><td>Frank Kim</td></tr>
+                <tr><td>&nbsp;&nbsp;Grace Patel</td><td>2</td><td>Frank Kim → Grace Patel</td></tr>
+                <tr><td>&nbsp;&nbsp;Henry Davis</td><td>2</td><td>Frank Kim → Henry Davis</td></tr>
+                <tr><td>Irene Nguyen</td><td>1</td><td>Irene Nguyen</td></tr>
+                <tr><td>&nbsp;&nbsp;Jack Robinson</td><td>2</td><td>Irene Nguyen → Jack Robinson</td></tr>
+            </table>
+
+            <h3>How Recursion Works — Step by Step</h3>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Iteration 0 — Base Case</h4>
+                <p>Finds 4 rows: Alice, Diana, Frank, Irene (manager_id IS NULL). These are level 1.</p>
+            </div>
+            <div class="step-box">
+                <h4>Iteration 1 — First Recursion</h4>
+                <p>Finds employees whose manager_id matches the ids from iteration 0. Bob & Carol (under Alice), Eve (under Diana), Grace & Henry (under Frank), Jack (under Irene). These are level 2.</p>
+            </div>
+            <div class="step-box">
+                <h4>Iteration 2 — Second Recursion</h4>
+                <p>Looks for employees managed by level 2 employees. Finds NOTHING — no one reports to Bob, Carol, Eve, etc. Recursion stops!</p>
+            </div>
+
+            <h3>Bonus — Number Sequence Generator</h3>
+            <p>Recursive CTEs can generate data from nothing — no table needed!</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Generate numbers 1 to 10</span>
+<span style="color:#c084fc">WITH RECURSIVE</span> nums <span style="color:#c084fc">AS</span> (
+    <span style="color:#c084fc">SELECT</span> <span style="color:#fb923c">1</span> <span style="color:#c084fc">AS</span> n          <span style="color:#94a3b8">-- Base case: start at 1</span>
+    <span style="color:#c084fc">UNION ALL</span>
+    <span style="color:#c084fc">SELECT</span> n + <span style="color:#fb923c">1</span>            <span style="color:#94a3b8">-- Recursive case: add 1</span>
+    <span style="color:#c084fc">FROM</span> nums
+    <span style="color:#c084fc">WHERE</span> n &lt; <span style="color:#fb923c">10</span>            <span style="color:#94a3b8">-- Stop condition!</span>
+)
+<span style="color:#c084fc">SELECT</span> n <span style="color:#c084fc">FROM</span> nums;</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ Always Include a Stop Condition!</h4>
+                <p>Without a <code>WHERE</code> clause to stop the recursion, your query will run <strong>forever</strong> (until PostgreSQL's <code>max_recursion</code> limit kicks in, defaulting to about 100 iterations, and throws an error). Always make sure the recursive case has a condition that will eventually return zero rows.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. CTE VS SUBQUERY ===================== -->
+        <div class="section">
+            <h2>8️⃣ CTE vs. Subquery — When to Use Which?</h2>
+
+            <p>Both CTEs and subqueries can solve the same problems. So when should you use each?</p>
+
+            <table class="comparison-table">
+                <tr><th>Criteria</th><th>Subquery</th><th>CTE (WITH)</th></tr>
+                <tr><td><strong>Readability</strong></td><td>Gets messy with nesting</td><td>Clean, top-down, named blocks</td></tr>
+                <tr><td><strong>Reuse</strong></td><td>Must duplicate the subquery</td><td>Define once, reference multiple times</td></tr>
+                <tr><td><strong>Debugging</strong></td><td>Hard to test inner queries alone</td><td>Easy — comment out the main query and run the CTE</td></tr>
+                <tr><td><strong>Recursion</strong></td><td>Not possible</td><td>Only CTEs support recursion</td></tr>
+                <tr><td><strong>Performance (PG 12+)</strong></td><td>Always inlined</td><td>Inlined by default (same as subquery)</td></tr>
+                <tr><td><strong>Force materialization</strong></td><td>Not possible</td><td><code>WITH ... AS MATERIALIZED</code></td></tr>
+            </table>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — When to Use Which</h4>
+                <p><strong>Subqueries:</strong> Great for simple, one-off "questions inside questions." If it's a single line or small enough to read at a glance, a subquery is fine.</p>
+                <p><strong>CTEs:</strong> Use when the query is complex, when you need to reference the same result more than once, or when you need recursion. Think of it as: "If I need a sticky note to keep track of things, I should use a CTE."</p>
+            </div>
+
+            <h3>The Same Query — Both Ways</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- SUBQUERY VERSION: nested and harder to read</span>
+<span style="color:#c084fc">SELECT</span> e.name, e.salary
+<span style="color:#c084fc">FROM</span> employees e
+<span style="color:#c084fc">WHERE</span> e.salary &gt; (
+    <span style="color:#c084fc">SELECT AVG</span>(salary) <span style="color:#c084fc">FROM</span> employees
+)
+<span style="color:#c084fc">AND</span> e.department_id <span style="color:#c084fc">IN</span> (
+    <span style="color:#c084fc">SELECT</span> department_id <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">GROUP BY</span> department_id <span style="color:#c084fc">HAVING COUNT</span>(*) &gt;= <span style="color:#fb923c">3</span>
+);
+
+<span style="color:#94a3b8">-- CTE VERSION: clean and readable</span>
+<span style="color:#c084fc">WITH</span> company_avg <span style="color:#c084fc">AS</span> (
+    <span style="color:#c084fc">SELECT AVG</span>(salary) <span style="color:#c084fc">AS</span> avg_sal <span style="color:#c084fc">FROM</span> employees
+),
+big_departments <span style="color:#c084fc">AS</span> (
+    <span style="color:#c084fc">SELECT</span> department_id
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">GROUP BY</span> department_id
+    <span style="color:#c084fc">HAVING COUNT</span>(*) &gt;= <span style="color:#fb923c">3</span>
+)
+<span style="color:#c084fc">SELECT</span> e.name, e.salary
+<span style="color:#c084fc">FROM</span> employees e, company_avg c
+<span style="color:#c084fc">WHERE</span> e.salary &gt; c.avg_sal
+<span style="color:#c084fc">AND</span> e.department_id <span style="color:#c084fc">IN</span> (<span style="color:#c084fc">SELECT</span> department_id <span style="color:#c084fc">FROM</span> big_departments);</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — The Professional Default</h4>
+                <p>In professional codebases, CTEs are the preferred choice for anything beyond trivial subqueries. They make SQL code self-documenting because each CTE has a meaningful name. When you come back to a query 6 months later, <code>WITH monthly_revenue AS (...)</code> is infinitely clearer than a mysterious nested subquery buried three levels deep.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Subqueries are like whispering an instruction mid-sentence: <em>"Give me employees who earn more than (quick — what's the average salary?) the average."</em> CTEs are like writing notes on a whiteboard first: <em>"Step 1: Average salary = $89K. Step 2: Find employees above $89K."</em> Both get you the same answer, but the whiteboard version is what you'd use in a presentation.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 9. PRACTICE ===================== -->
+        <div class="section">
+            <h2>🏋️ Practice Exercises</h2>
+            <p>Time to put it all together! Try these yourself before revealing the solutions.</p>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: Above-Average Earners</h4>
+                <p>Using a subquery, find all employees who earn more than the average salary of the <strong>Sales</strong> department (department_id = 3). Show their name, salary, and department_id.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, salary, department_id
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">WHERE</span> salary &gt; (
+    <span style="color:#c084fc">SELECT AVG</span>(salary)
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">WHERE</span> department_id = <span style="color:#fb923c">3</span>
+);</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: Departments With Orders</h4>
+                <p>Using EXISTS, find departments that have at least one employee who has placed an order. Show the department name.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> d.name
+<span style="color:#c084fc">FROM</span> departments d
+<span style="color:#c084fc">WHERE EXISTS</span> (
+    <span style="color:#c084fc">SELECT</span> <span style="color:#fb923c">1</span>
+    <span style="color:#c084fc">FROM</span> employees e
+    <span style="color:#c084fc">JOIN</span> orders o <span style="color:#c084fc">ON</span> o.employee_id = e.id
+    <span style="color:#c084fc">WHERE</span> e.department_id = d.id
+);</pre></div>
+                    <p>Returns: Engineering, Sales</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: CTE Dashboard</h4>
+                <p>Write a query using two CTEs: one for department headcount and one for department order totals. Join them to show department name, headcount, and total order amount.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">WITH</span> headcount <span style="color:#c084fc">AS</span> (
+    <span style="color:#c084fc">SELECT</span> department_id, <span style="color:#c084fc">COUNT</span>(*) <span style="color:#c084fc">AS</span> emp_count
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">GROUP BY</span> department_id
+),
+dept_orders <span style="color:#c084fc">AS</span> (
+    <span style="color:#c084fc">SELECT</span> e.department_id,
+           <span style="color:#c084fc">COALESCE</span>(<span style="color:#c084fc">SUM</span>(o.amount), <span style="color:#fb923c">0</span>) <span style="color:#c084fc">AS</span> total_amount
+    <span style="color:#c084fc">FROM</span> employees e
+    <span style="color:#c084fc">LEFT JOIN</span> orders o <span style="color:#c084fc">ON</span> o.employee_id = e.id
+    <span style="color:#c084fc">GROUP BY</span> e.department_id
+)
+<span style="color:#c084fc">SELECT</span> d.name,
+       h.emp_count,
+       do.total_amount
+<span style="color:#c084fc">FROM</span> departments d
+<span style="color:#c084fc">JOIN</span> headcount h <span style="color:#c084fc">ON</span> h.department_id = d.id
+<span style="color:#c084fc">JOIN</span> dept_orders do <span style="color:#c084fc">ON</span> do.department_id = d.id
+<span style="color:#c084fc">ORDER BY</span> do.total_amount <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: Recursive Challenge — Management Chain</h4>
+                <p>Using a recursive CTE, find the full management chain for <strong>Grace Patel</strong> (id = 7). Start from Grace and walk UP to her manager, then her manager's manager, etc.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">WITH RECURSIVE</span> chain <span style="color:#c084fc">AS</span> (
+    <span style="color:#94a3b8">-- Start with Grace</span>
+    <span style="color:#c084fc">SELECT</span> id, name, manager_id, <span style="color:#fb923c">1</span> <span style="color:#c084fc">AS</span> level
+    <span style="color:#c084fc">FROM</span> employees
+    <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">7</span>
+
+    <span style="color:#c084fc">UNION ALL</span>
+
+    <span style="color:#94a3b8">-- Walk UP to the manager</span>
+    <span style="color:#c084fc">SELECT</span> e.id, e.name, e.manager_id, c.level + <span style="color:#fb923c">1</span>
+    <span style="color:#c084fc">FROM</span> employees e
+    <span style="color:#c084fc">JOIN</span> chain c <span style="color:#c084fc">ON</span> e.id = c.manager_id
+)
+<span style="color:#c084fc">SELECT</span> name, level <span style="color:#c084fc">FROM</span> chain;</pre></div>
+                    <p>Returns: Grace Patel (1), Frank Kim (2)</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== 10. QUIZ ===================== -->
+        <div class="section">
+            <h2>📝 Quiz — Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What is a scalar subquery?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A subquery that returns multiple rows and columns</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">A subquery that returns exactly one value (one row, one column)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A subquery that references the outer query</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A subquery used only in the FROM clause</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: What makes a correlated subquery different from a regular subquery?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It uses the WITH keyword</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It always runs faster</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">It references columns from the outer query and re-executes for each outer row</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It can only be used in the SELECT clause</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: Why is NOT EXISTS safer than NOT IN?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">NOT EXISTS is always faster</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">NOT IN returns no rows if the subquery result contains a NULL, while NOT EXISTS handles NULLs correctly</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">NOT IN doesn't work in PostgreSQL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">There is no difference — they are interchangeable</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: What keyword introduces a CTE?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>TEMP</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>CREATE VIEW</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)"><code>WITH</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>AS TABLE</code></button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: What are the two parts of a recursive CTE?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">SELECT and INSERT</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">INNER JOIN and OUTER JOIN</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">A base case (anchor) and a recursive case, joined by UNION ALL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A WHERE clause and an ORDER BY clause</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: Subqueries in the FROM clause are also called…</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Virtual tables</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Derived tables</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Temporary tables</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Materialized views</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: When should you prefer a CTE over a subquery?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">When the query is very simple</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">When the query is complex, you need to reuse the result, or you need readability</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Never — subqueries are always better</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Only when using aggregate functions</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>🎉 What's Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Techniques mastered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">SQL examples explored</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Quiz questions conquered</div>
+                </div>
+            </div>
+
+            <p>You now know how to write queries inside queries, name them with CTEs for clarity, and even walk hierarchical data with recursive CTEs. Here's a summary:</p>
+
+            <table class="comparison-table">
+                <tr><th>Concept</th><th>What It Does</th><th>Key Syntax</th></tr>
+                <tr><td>Scalar Subquery</td><td>Returns one value</td><td><code>WHERE col = (SELECT ...)</code></td></tr>
+                <tr><td>IN Subquery</td><td>Returns a list of values</td><td><code>WHERE col IN (SELECT ...)</code></td></tr>
+                <tr><td>Derived Table</td><td>Subquery as a table in FROM</td><td><code>FROM (SELECT ...) AS alias</code></td></tr>
+                <tr><td>Correlated Subquery</td><td>References outer query per row</td><td><code>WHERE col = (SELECT ... WHERE inner.x = outer.x)</code></td></tr>
+                <tr><td>EXISTS / NOT EXISTS</td><td>Checks for existence of rows</td><td><code>WHERE EXISTS (SELECT 1 ...)</code></td></tr>
+                <tr><td>CTE</td><td>Named temporary result</td><td><code>WITH name AS (SELECT ...)</code></td></tr>
+                <tr><td>Recursive CTE</td><td>Walks hierarchies</td><td><code>WITH RECURSIVE name AS (...)</code></td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🔮 Coming Up Next: Indexes &amp; Performance</h4>
+                <p>You've learned to write powerful, complex queries. But how do you make them <em>fast</em>? In the next module, you'll learn about indexes — the secret weapon that turns slow queries taking 30 seconds into lightning-fast lookups completing in milliseconds. You'll also learn to read execution plans with EXPLAIN ANALYZE, so you can see exactly what PostgreSQL does behind the scenes. It's like getting X-ray vision for your database!</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="joins.html" class="secondary"><i class="fas fa-arrow-left"></i> Joins</a>
+            <a href="indexes.html">Indexes &amp; Performance <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">Correct!</strong>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">Not quite!</strong>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

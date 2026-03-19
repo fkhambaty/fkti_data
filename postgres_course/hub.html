@@ -3,62 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PostgreSQL Course Hub | Data For Dummies</title>
+    <title>PostgreSQL Course Hub | Fakhruddin Khambaty's Learning Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/hub-light.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .nav { background: rgba(30, 41, 59, 0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.08); }
-        .nav a { color: #336791; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .header { text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #336791, #4169E1); border-radius: 25px; margin-bottom: 50px; color: white; }
-        .header h1 { font-size: 3em; margin-bottom: 15px; font-weight: 800; }
-        .header p { font-size: 1.3em; opacity: 0.9; max-width: 700px; margin: 0 auto; }
-        .header-badge { background: rgba(0,0,0,0.15); padding: 10px 25px; border-radius: 30px; font-weight: 700; display: inline-block; margin-bottom: 20px; }
-        .module-card { background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 28px; border: 2px solid #475569; margin-bottom: 25px; }
-        .module-card h3 { font-size: 1.4em; margin-bottom: 15px; color: white; }
-        .module-lessons { margin-top: 15px; padding-top: 15px; border-top: 1px solid #475569; }
-        .lesson-link { display: block; padding: 10px 15px; margin: 8px 0; background: rgba(255,255,255,0.05); border-radius: 10px; color: #e2e8f0; text-decoration: none; font-weight: 500; transition: all 0.2s; }
-        .lesson-link:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
+        :root { --hub-color: #336791; --hub-color2: #4169E1; --hub-bg: linear-gradient(160deg, #f0f4ff 0%, #e8eeff 40%, #eef2ff 100%); }
         .lesson-link i { margin-right: 8px; }
-        .lesson-link-pro { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
-        .lesson-link-pro:hover { background: rgba(148, 163, 184, 0.25); }
+        .lesson-link-pro { background: rgba(99,102,241,0.04); color: #64748b; }
+        .lesson-link-pro:hover { background: rgba(99,102,241,0.08); }
         .lesson-link-pro i.fa-lock { color: #f59e0b; }
-        .lesson-link-pro .pro-badge { font-size: 0.7em; margin-left: 8px; padding: 2px 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 6px; font-weight: 700; }
-        .footer { text-align: center; padding: 30px; color: #64748b; }
-        .footer a { color: #336791; text-decoration: none; }
-        @media (max-width: 768px) { .header h1 { font-size: 2em; } }
+        .lesson-link-pro .pro-badge { font-size: 0.65em; margin-left: 6px; padding: 2px 7px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 5px; font-weight: 700; }
     </style>
 </head>
 <body>
     <div class="container">
         <nav class="nav">
             <a href="../index.html"><i class="fas fa-home"></i> Main Website</a>
-            <a href="../metabase_course/hub.html">Metabase Course <i class="fas fa-arrow-right"></i></a>
+            <a href="index.html">Full Course Page <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="header">
-            <span class="header-badge">📚 THE COMPLETE POSTGRESQL CURRICULUM</span>
-            <h1>PostgreSQL Course Hub</h1>
-            <p>Every concept explained like you're 5 years old with animations, real-world examples, and hands-on exercises.</p>
+            <span class="header-badge">🐘 13 MODULES · 40+ LESSONS · 100+ SQL EXAMPLES</span>
+            <h1>PostgreSQL Mastery Hub</h1>
+            <p>Every module at a glance. Click any lesson to jump right in!</p>
         </div>
-        <div class="module-card">
-            <h3>All Lessons</h3>
-            <div class="module-lessons">
-                    <a href="meet-postgresql.html" class="lesson-link"><i class="fas fa-play-circle"></i> Meet PostgreSQL</a>
-                    <a href="installation.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Installation & Setup<span class="pro-badge">Pro</span></a>
-                    <a href="sql-basics.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> SQL Basics<span class="pro-badge">Pro</span></a>
-                    <a href="data-types.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Data Types & Constraints<span class="pro-badge">Pro</span></a>
-                    <a href="querying.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Advanced Querying<span class="pro-badge">Pro</span></a>
-                    <a href="indexes.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Indexes & Performance<span class="pro-badge">Pro</span></a>
-                    <a href="json-arrays.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> JSON & Arrays<span class="pro-badge">Pro</span></a>
-                    <a href="transactions.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Transactions & ACID<span class="pro-badge">Pro</span></a>
-                    <a href="functions.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Functions & Triggers<span class="pro-badge">Pro</span></a>
-                    <a href="replication.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Replication & HA<span class="pro-badge">Pro</span></a>
-                    <a href="production.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Production Best Practices<span class="pro-badge">Pro</span></a>
+
+        <div class="modules-grid">
+
+            <div class="module-card" style="--mc:#3b82f6;--mc2:#60a5fa;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🐘</div>
+                <h3>1. Meet PostgreSQL</h3>
+                <p>What is a database? Why PostgreSQL? History, comparisons, and who uses it.</p>
+                <div class="module-lessons">
+                    <a href="meet-postgresql.html" class="lesson-link"><i class="fas fa-play-circle"></i> Start Here</a>
+                </div>
             </div>
+
+            <div class="module-card" style="--mc:#8b5cf6;--mc2:#a78bfa;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🛠️</div>
+                <h3>2. Installation &amp; Setup</h3>
+                <p>Install PostgreSQL + DBeaver, connect, and run your first query.</p>
+                <div class="module-lessons">
+                    <a href="installation.html" class="lesson-link"><i class="fas fa-play-circle"></i> Install Guide</a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#ec4899;--mc2:#f472b6;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📝</div>
+                <h3>3. SQL Basics — CRUD</h3>
+                <p>CREATE, INSERT, SELECT, UPDATE, DELETE — the foundation of everything.</p>
+                <div class="module-lessons">
+                    <a href="sql-basics.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> CRUD Operations<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#f97316;--mc2:#fb923c;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🧱</div>
+                <h3>4. Data Types &amp; Constraints</h3>
+                <p>Numbers, text, dates, booleans, JSON, and the constraint bouncers.</p>
+                <div class="module-lessons">
+                    <a href="data-types.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Types &amp; Constraints<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#22c55e;--mc2:#4ade80;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔍</div>
+                <h3>5. Querying Data</h3>
+                <p>WHERE, ORDER BY, LIMIT, LIKE, BETWEEN, IN, NULL handling.</p>
+                <div class="module-lessons">
+                    <a href="querying.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Data Detective<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#eab308;--mc2:#fbbf24;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📊</div>
+                <h3>6. Aggregations &amp; Grouping</h3>
+                <p>COUNT, SUM, AVG, GROUP BY, HAVING — data analytics starts here.</p>
+                <div class="module-lessons">
+                    <a href="aggregations.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Aggregate Functions<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#ef4444;--mc2:#f87171;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🤝</div>
+                <h3>7. JOINs</h3>
+                <p>INNER, LEFT, RIGHT, FULL, CROSS, Self — combining tables.</p>
+                <div class="module-lessons">
+                    <a href="joins.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Combining Tables<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#06b6d4;--mc2:#22d3ee;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔄</div>
+                <h3>8. Subqueries &amp; CTEs</h3>
+                <p>Queries inside queries, WITH clause, recursive CTEs.</p>
+                <div class="module-lessons">
+                    <a href="subqueries-ctes.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Nested Queries<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#a855f7;--mc2:#c084fc;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚡</div>
+                <h3>9. Indexes &amp; Performance</h3>
+                <p>B-tree, GIN, EXPLAIN ANALYZE, query optimization.</p>
+                <div class="module-lessons">
+                    <a href="indexes.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Speed It Up<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#14b8a6;--mc2:#2dd4bf;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚙️</div>
+                <h3>10. Functions &amp; Procedures</h3>
+                <p>Built-in functions, custom functions, triggers, views.</p>
+                <div class="module-lessons">
+                    <a href="functions.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Functions &amp; More<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#f43f5e;--mc2:#fb7185;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🔒</div>
+                <h3>11. Transactions</h3>
+                <p>ACID, BEGIN/COMMIT/ROLLBACK, MVCC, isolation levels.</p>
+                <div class="module-lessons">
+                    <a href="transactions.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Data Safety<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#84cc16;--mc2:#a3e635;">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📦</div>
+                <h3>12. JSON &amp; Arrays</h3>
+                <p>JSONB, JSON operators, arrays — PostgreSQL as a document DB.</p>
+                <div class="module-lessons">
+                    <a href="json-arrays.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> JSON Power<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card" style="--mc:#336791;--mc2:#4169E1;">
+                <span class="module-status status-ready">🏆 CAPSTONE</span>
+                <div class="module-icon">🚀</div>
+                <h3>13. Production PostgreSQL</h3>
+                <p>VACUUM, WAL, backup, replication, security, tuning.</p>
+                <div class="module-lessons">
+                    <a href="production.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Go Live<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
         </div>
-        <div class="footer"><p>&copy; 2026 <a href="../index.html">Data For Dummies</a> | PostgreSQL Course</p></div>
+
+        <div class="footer">
+            <p>Part of <a href="../index.html">Fakhruddin Khambaty's Learning Hub</a> · <a href="index.html">Full Course Page</a></p>
+        </div>
     </div>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
 </body>
 </html>

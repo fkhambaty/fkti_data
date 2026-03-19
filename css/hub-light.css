@@ -1,0 +1,146 @@
+/* ═══════════════════════════════════════════════════════════
+   COURSE HUB — Light Theme (shared across all hub.html)
+   Set --hub-color and --hub-color2 in a <style> block.
+   ═══════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--hub-bg, linear-gradient(160deg, #f8fafc 0%, #eef2ff 40%, #f5f3ff 70%, #fce7f3 100%));
+    min-height: 100vh;
+    padding: 20px;
+    color: #1e293b;
+}
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+.nav {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 15px 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.nav a {
+    color: var(--hub-color, #6366f1);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+.nav a:hover { opacity: 0.8; }
+
+.header {
+    text-align: center;
+    padding: 50px 40px;
+    background: linear-gradient(135deg, var(--hub-color, #6366f1), var(--hub-color2, #8b5cf6));
+    border-radius: 25px;
+    margin-bottom: 40px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    color: #fff;
+}
+.header h1 { font-size: 2.8em; margin-bottom: 15px; font-weight: 800; }
+.header p { font-size: 1.2em; opacity: 0.92; max-width: 700px; margin: 0 auto 20px; }
+.header-badge {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.module-card {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid rgba(0,0,0,0.06);
+    position: relative;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.module-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+}
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 4px;
+    background: linear-gradient(90deg, var(--mc, var(--hub-color, #6366f1)), var(--mc2, var(--hub-color2, #8b5cf6)));
+    border-radius: 20px 20px 0 0;
+}
+
+.module-icon { font-size: 2.5em; margin-bottom: 12px; }
+.module-card h3 { font-size: 1.3em; margin-bottom: 10px; color: #1e293b; }
+.module-card p { color: #64748b; margin-bottom: 16px; line-height: 1.6; font-size: 0.95em; }
+
+.module-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+.status-ready { background: #22c55e; color: white; }
+
+.module-lessons {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.lesson-link {
+    display: block;
+    padding: 10px 15px;
+    margin: 6px 0;
+    background: rgba(99,102,241,0.04);
+    border-radius: 10px;
+    color: var(--hub-color, #6366f1);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.92em;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+.lesson-link:hover {
+    background: rgba(99,102,241,0.08);
+    transform: translateX(5px);
+    border-color: rgba(99,102,241,0.1);
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #94a3b8;
+    font-size: 0.9em;
+}
+footer a { color: var(--hub-color, #6366f1); text-decoration: none; font-weight: 600; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 2em; }
+    .modules-grid { grid-template-columns: 1fr; }
+    body { padding: 12px; }
+}

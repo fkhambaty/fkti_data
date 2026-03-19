@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Production Best Practices | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Production PostgreSQL | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,951 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="hub.html">Hub <i class="fas fa-arrow-right"></i></a>
+            <a href="json-arrays.html"><i class="fas fa-arrow-left"></i> JSON &amp; Arrays</a>
+            <a href="index.html">Course Home <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Production Best Practices</h1>
-            <p>Security, backups (pg_dump, pg_basebackup), monitoring, and tuning for production.</p>
+            <h1>&#128640; Production PostgreSQL</h1>
+            <p>Take your database to the real world! VACUUM, WAL, backup, replication, security, and performance tuning.</p>
         </div>
-        <div class="section visible">
-            <h2>📚 Production Best Practices</h2>
-            <p>Security, backups (pg_dump, pg_basebackup), monitoring, and tuning for production.</p>
+
+        <!-- ===================== 1. VACUUM & AUTOVACUUM ===================== -->
+        <div class="section visible" id="vacuum">
+            <h2>1&#65039;&#8419; VACUUM &amp; Autovacuum &mdash; Spring Cleaning</h2>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers production best practices with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>&#129490; ELI5 &mdash; The Messy Roommate</h4>
+                <p>Imagine you live with a roommate who never throws anything away. Every time they update their shopping list, they don&rsquo;t erase the old one &mdash; they write a <strong>brand new list</strong> and leave the old one on the table. After a few months, you have <em>thousands</em> of old shopping lists piling up everywhere.</p>
+                <p style="margin-top:10px;">That&rsquo;s PostgreSQL with MVCC! Remember from Module 11: when you <code>UPDATE</code> or <code>DELETE</code> a row, the old version isn&rsquo;t immediately removed. It stays there as a <strong>&ldquo;dead tuple&rdquo;</strong> (dead row) taking up space. Over time, these dead rows pile up, making your tables bloated and slow.</p>
+                <p style="margin-top:10px;"><code>VACUUM</code> is the <strong>spring cleaning service</strong>. It walks through the table, identifies dead rows that no active transaction can see anymore, and marks that space as reusable. <code>AUTOVACUUM</code> is the <strong>robot vacuum</strong> that runs automatically in the background so you don&rsquo;t have to clean manually.</p>
+            </div>
+
+            <h3>Dead Tuples &mdash; The Problem</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- See how many dead tuples (dead rows) each table has</span>
+<span style="color:#c084fc">SELECT</span> relname <span style="color:#c084fc">AS</span> table_name,
+       n_live_tup <span style="color:#c084fc">AS</span> live_rows,
+       n_dead_tup <span style="color:#c084fc">AS</span> dead_rows,
+       <span style="color:#c084fc">ROUND</span>(n_dead_tup::numeric / <span style="color:#c084fc">NULLIF</span>(n_live_tup + n_dead_tup, <span style="color:#fb923c">0</span>) * <span style="color:#fb923c">100</span>, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> dead_pct,
+       last_vacuum,
+       last_autovacuum
+<span style="color:#c084fc">FROM</span> pg_stat_user_tables
+<span style="color:#c084fc">ORDER BY</span> n_dead_tup <span style="color:#c084fc">DESC</span>;
+
+<span style="color:#94a3b8">-- Result:</span>
+<span style="color:#94a3b8">-- table_name | live_rows | dead_rows | dead_pct | last_vacuum | last_autovacuum</span>
+<span style="color:#94a3b8">-- orders     | 1000000   | 250000    | 20.00    | NULL        | 2025-03-18 03:00</span>
+<span style="color:#94a3b8">-- products   | 50000     | 1200      | 2.34     | NULL        | 2025-03-18 03:15</span></pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; 20% Dead Rows Is a Warning Sign</h4>
+                <p>If a table has more than 10-20% dead rows, autovacuum might not be keeping up. This causes <strong>table bloat</strong> (wasted disk space) and <strong>slower queries</strong> (PostgreSQL has to skip over dead rows). Check your autovacuum settings!</p>
+            </div>
+
+            <h3>Manual VACUUM</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Regular VACUUM: marks dead space as reusable, doesn't lock the table</span>
+<span style="color:#c084fc">VACUUM</span> orders;
+
+<span style="color:#94a3b8">-- VACUUM VERBOSE: shows detailed stats about what it did</span>
+<span style="color:#c084fc">VACUUM VERBOSE</span> orders;
+<span style="color:#94a3b8">-- INFO: "orders": removed 250000 dead row versions in 1847 pages</span>
+<span style="color:#94a3b8">-- INFO: "orders": found 250000 removable, 1000000 nonremovable row versions</span>
+
+<span style="color:#94a3b8">-- VACUUM ANALYZE: vacuum + update statistics (helps query planner)</span>
+<span style="color:#c084fc">VACUUM ANALYZE</span> orders;</pre></div>
+
+            <h3>VACUUM vs VACUUM FULL</h3>
+            <table class="comparison-table">
+                <tr><th>Feature</th><th>VACUUM (Regular)</th><th>VACUUM FULL</th></tr>
+                <tr><td>Locks the table?</td><td style="color:#4ade80;">No (runs alongside queries)</td><td style="color:#f87171;">Yes! (exclusive lock)</td></tr>
+                <tr><td>Reclaims disk space to OS?</td><td style="color:#f87171;">No (only marks reusable)</td><td style="color:#4ade80;">Yes (rewrites entire table)</td></tr>
+                <tr><td>Speed</td><td style="color:#4ade80;">Fast</td><td style="color:#f87171;">Slow (rewrites everything)</td></tr>
+                <tr><td>Downtime required?</td><td style="color:#4ade80;">No</td><td style="color:#f87171;">Effectively yes</td></tr>
+                <tr><td>When to use</td><td>Routine maintenance</td><td>Emergency: severe bloat only</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>&#127758; The Rule of Thumb</h4>
+                <p>Use regular <code>VACUUM</code> 99.9% of the time (or just let autovacuum handle it). Only use <code>VACUUM FULL</code> as a last resort when a table has extreme bloat (e.g., after a massive DELETE of millions of rows) and you need to reclaim disk space to the operating system. It&rsquo;s like tearing down your house and rebuilding it vs. just tidying up the rooms.</p>
+            </div>
+
+            <h3>Autovacuum &mdash; The Robot Vacuum</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Check if autovacuum is enabled (it should be!)</span>
+<span style="color:#c084fc">SHOW</span> autovacuum;
+<span style="color:#94a3b8">-- Result: on</span>
+
+<span style="color:#94a3b8">-- Key autovacuum settings</span>
+<span style="color:#c084fc">SHOW</span> autovacuum_vacuum_threshold;
+<span style="color:#94a3b8">-- Default: 50 (minimum dead rows before vacuum kicks in)</span>
+
+<span style="color:#c084fc">SHOW</span> autovacuum_vacuum_scale_factor;
+<span style="color:#94a3b8">-- Default: 0.2 (vacuum when 20% of rows are dead)</span>
+
+<span style="color:#94a3b8">-- The formula: vacuum triggers when dead rows > threshold + (scale_factor × total rows)</span>
+<span style="color:#94a3b8">-- For a 1M-row table: 50 + (0.2 × 1,000,000) = 200,050 dead rows triggers vacuum</span>
+
+<span style="color:#94a3b8">-- For high-write tables, you can tune per-table:</span>
+<span style="color:#c084fc">ALTER TABLE</span> orders <span style="color:#c084fc">SET</span> (
+    autovacuum_vacuum_scale_factor = <span style="color:#fb923c">0.05</span>,   <span style="color:#94a3b8">-- trigger at 5% dead</span>
+    autovacuum_vacuum_threshold = <span style="color:#fb923c">1000</span>       <span style="color:#94a3b8">-- minimum 1000 dead rows</span>
+);</pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Never Disable Autovacuum</h4>
+                <p>Some people disable autovacuum to &ldquo;improve performance.&rdquo; This is a <strong>terrible idea</strong>. Without autovacuum, dead rows pile up endlessly, your tables bloat, queries slow to a crawl, and eventually you might hit transaction ID wraparound &mdash; a catastrophic situation where PostgreSQL <em>refuses to accept any new writes</em> until you vacuum. Just leave it on and tune the settings if needed.</p>
             </div>
         </div>
+
+        <!-- ===================== 2. WAL ===================== -->
+        <div class="section" id="wal">
+            <h2>2&#65039;&#8419; WAL &mdash; Write-Ahead Log</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; The Airplane&rsquo;s Black Box</h4>
+                <p>You know the &ldquo;black box&rdquo; on an airplane? It records every single thing that happens during a flight. If the plane crashes, investigators can replay the black box recording to understand exactly what happened and reconstruct the sequence of events.</p>
+                <p style="margin-top:10px;">The <strong>Write-Ahead Log (WAL)</strong> is PostgreSQL&rsquo;s black box. Before PostgreSQL writes any change to the actual data files on disk, it <strong>first</strong> writes a record of that change to the WAL. This is the &ldquo;write-ahead&rdquo; part &mdash; the log entry is written <em>ahead of</em> (before) the actual data change.</p>
+                <p style="margin-top:10px;">If PostgreSQL crashes, it simply replays the WAL from the last checkpoint to <strong>recover all committed transactions</strong>. No data loss. It&rsquo;s what makes the &ldquo;D&rdquo; in ACID (Durability) possible.</p>
+            </div>
+
+            <h3>How WAL Works (Step by Step)</h3>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4 style="color:#60a5fa;">You execute: <code>UPDATE accounts SET balance = 500 WHERE id = 1;</code></h4>
+                <p>PostgreSQL receives your command and figures out what data needs to change.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">WAL record is written to disk FIRST</h4>
+                <p>A description of the change (&ldquo;set row 1 balance to 500&rdquo;) is appended to the WAL file on disk. This is a sequential write &mdash; very fast!</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Data change happens in memory (shared buffers)</h4>
+                <p>The actual table data is modified in RAM. The disk version of the table is NOT updated yet &mdash; it&rsquo;s now &ldquo;dirty&rdquo; (out of sync with disk).</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">COMMIT confirms success</h4>
+                <p>PostgreSQL tells the client &ldquo;COMMIT successful&rdquo; as soon as the WAL record is safely on disk. Even if a crash happens now, the WAL has the record.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Background writer eventually flushes to data files</h4>
+                <p>Later, the <code>bgwriter</code> and <code>checkpointer</code> processes write the dirty data from RAM to the actual table files on disk. This happens at their own pace.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">WAL</div>
+                    <div class="stat-label">Write-Ahead Log</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&#128190;</div>
+                    <div class="stat-label">Sequential writes = Fast</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&#128737;&#65039;</div>
+                    <div class="stat-label">Crash recovery guaranteed</div>
+                </div>
+            </div>
+
+            <h3>Key WAL Settings</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Check the current WAL level</span>
+<span style="color:#c084fc">SHOW</span> wal_level;
+<span style="color:#94a3b8">-- Default: replica (supports streaming replication)</span>
+<span style="color:#94a3b8">-- Options: minimal, replica, logical</span>
+
+<span style="color:#94a3b8">-- See where WAL files are stored</span>
+<span style="color:#c084fc">SHOW</span> data_directory;
+<span style="color:#94a3b8">-- WAL files live in: {data_directory}/pg_wal/</span>
+
+<span style="color:#94a3b8">-- Current WAL position (useful for replication monitoring)</span>
+<span style="color:#c084fc">SELECT</span> pg_current_wal_lsn();
+<span style="color:#94a3b8">-- Result: 0/16B3748  (Log Sequence Number)</span>
+
+<span style="color:#94a3b8">-- How much WAL has been generated?</span>
+<span style="color:#c084fc">SELECT</span> pg_size_pretty(pg_wal_lsn_diff(
+    pg_current_wal_lsn(),
+    <span style="color:#4ade80">'0/0'</span>
+)) <span style="color:#c084fc">AS</span> total_wal_generated;</pre></div>
+
+            <h3>Checkpoints &mdash; The Sync Point</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- A checkpoint flushes all dirty data from RAM to disk</span>
+<span style="color:#94a3b8">-- After a checkpoint, all WAL before that point can be recycled</span>
+
+<span style="color:#c084fc">SHOW</span> checkpoint_timeout;
+<span style="color:#94a3b8">-- Default: 5min (checkpoint at least every 5 minutes)</span>
+
+<span style="color:#c084fc">SHOW</span> max_wal_size;
+<span style="color:#94a3b8">-- Default: 1GB (force checkpoint if WAL exceeds this)</span>
+
+<span style="color:#94a3b8">-- Force a manual checkpoint (rarely needed)</span>
+<span style="color:#c084fc">CHECKPOINT</span>;</pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Why WAL Matters for You</h4>
+                <p>WAL is the foundation of three critical features: <strong>crash recovery</strong> (replay WAL after restart), <strong>replication</strong> (stream WAL to replicas), and <strong>point-in-time recovery</strong> (replay WAL up to a specific moment to undo a mistake). If you understand WAL, you understand how PostgreSQL stays reliable, how backups work, and how replication is even possible.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 3. BACKUP & RESTORE ===================== -->
+        <div class="section" id="backup">
+            <h2>3&#65039;&#8419; Backup &amp; Restore</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Photocopying Your Diary</h4>
+                <p>Imagine your diary contains every important memory of your life. What if your house catches fire? You&rsquo;d want a <strong>photocopy stored somewhere safe</strong>. Database backups are exactly that &mdash; copies of your data stored somewhere safe so you can recover from disasters like hardware failure, accidental deletions, or ransomware attacks.</p>
+                <p style="margin-top:10px;">PostgreSQL gives you two types of backups: <strong>logical backups</strong> (like photocopying each page &mdash; produces SQL scripts) and <strong>physical backups</strong> (like cloning the entire diary including the binding &mdash; copies raw data files).</p>
+            </div>
+
+            <h3>pg_dump &mdash; Logical Backup (Most Common)</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8"># Backup a single database to a SQL file</span>
+pg_dump -U postgres -d mystore > mystore_backup.sql
+
+<span style="color:#94a3b8"># Backup in custom format (compressed, supports selective restore)</span>
+pg_dump -U postgres -d mystore -Fc -f mystore_backup.dump
+
+<span style="color:#94a3b8"># Backup only specific tables</span>
+pg_dump -U postgres -d mystore -t orders -t products -Fc -f orders_products.dump
+
+<span style="color:#94a3b8"># Backup schema only (no data &mdash; just table definitions)</span>
+pg_dump -U postgres -d mystore --schema-only -f mystore_schema.sql
+
+<span style="color:#94a3b8"># Backup data only (no table definitions)</span>
+pg_dump -U postgres -d mystore --data-only -f mystore_data.sql</pre></div>
+
+            <h3>Backup Formats Compared</h3>
+            <table class="comparison-table">
+                <tr><th>Format</th><th>Flag</th><th>Compressed?</th><th>Selective Restore?</th><th>Best For</th></tr>
+                <tr><td>Plain SQL</td><td>(default)</td><td style="color:#f87171;">No</td><td style="color:#f87171;">No</td><td>Simple, readable backups</td></tr>
+                <tr><td>Custom</td><td><code>-Fc</code></td><td style="color:#4ade80;">Yes</td><td style="color:#4ade80;">Yes</td><td>Production backups (recommended)</td></tr>
+                <tr><td>Directory</td><td><code>-Fd</code></td><td style="color:#4ade80;">Yes</td><td style="color:#4ade80;">Yes</td><td>Parallel backup/restore</td></tr>
+                <tr><td>Tar</td><td><code>-Ft</code></td><td style="color:#f87171;">No</td><td style="color:#4ade80;">Yes</td><td>Archive-compatible format</td></tr>
+            </table>
+
+            <h3>pg_restore &mdash; Restoring Backups</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8"># Restore a plain SQL backup</span>
+psql -U postgres -d mystore_new < mystore_backup.sql
+
+<span style="color:#94a3b8"># Restore a custom-format backup</span>
+pg_restore -U postgres -d mystore_new mystore_backup.dump
+
+<span style="color:#94a3b8"># Restore only specific tables from a custom backup</span>
+pg_restore -U postgres -d mystore_new -t orders mystore_backup.dump
+
+<span style="color:#94a3b8"># Restore with --clean (drops objects before recreating)</span>
+pg_restore -U postgres -d mystore_new --clean mystore_backup.dump
+
+<span style="color:#94a3b8"># List contents of a backup without restoring</span>
+pg_restore -l mystore_backup.dump</pre></div>
+
+            <h3>pg_dumpall &mdash; Backup Everything</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8"># Backup ALL databases, roles, and tablespaces</span>
+pg_dumpall -U postgres > full_cluster_backup.sql
+
+<span style="color:#94a3b8"># Backup only roles (users &amp; permissions)</span>
+pg_dumpall -U postgres --roles-only > roles_backup.sql</pre></div>
+
+            <h3>pg_basebackup &mdash; Physical Backup</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8"># Physical backup: copies the entire data directory</span>
+<span style="color:#94a3b8"># This is the foundation for PITR and setting up replicas</span>
+pg_basebackup -U replicator -h localhost -D /backups/base_backup -Fp -Xs -P
+
+<span style="color:#94a3b8"># Flags explained:</span>
+<span style="color:#94a3b8"># -D : destination directory</span>
+<span style="color:#94a3b8"># -Fp : plain format (raw files)</span>
+<span style="color:#94a3b8"># -Xs : stream WAL during backup</span>
+<span style="color:#94a3b8"># -P  : show progress</span></pre></div>
+
+            <h3>Automated Backup Script</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">#!/bin/bash</span>
+<span style="color:#94a3b8"># Daily backup script &mdash; add to crontab</span>
+<span style="color:#94a3b8"># crontab: 0 2 * * * /scripts/daily_backup.sh</span>
+
+BACKUP_DIR=<span style="color:#4ade80">"/backups/postgres"</span>
+DATE=$(<span style="color:#c084fc">date</span> +%Y%m%d_%H%M%S)
+DB_NAME=<span style="color:#4ade80">"mystore"</span>
+RETENTION_DAYS=<span style="color:#fb923c">7</span>
+
+<span style="color:#94a3b8"># Create backup</span>
+pg_dump -U postgres -d $DB_NAME -Fc -f "$BACKUP_DIR/${DB_NAME}_${DATE}.dump"
+
+<span style="color:#94a3b8"># Delete backups older than retention period</span>
+find $BACKUP_DIR -name "*.dump" -mtime +$RETENTION_DAYS -delete
+
+<span style="color:#94a3b8"># Log the result</span>
+echo "$(date): Backup completed &mdash; ${DB_NAME}_${DATE}.dump" >> /var/log/pg_backup.log</pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; The #1 Backup Rule: TEST YOUR RESTORES</h4>
+                <p>A backup that you&rsquo;ve never tested restoring is <strong>NOT a backup</strong>. It&rsquo;s a hope and a prayer. Regularly restore your backups to a test server to verify they actually work. Many teams have learned this the hard way &mdash; their &ldquo;backup&rdquo; files were corrupt or incomplete, and they only discovered this during an actual disaster.</p>
+            </div>
+
+            <h3>Point-in-Time Recovery (PITR) &mdash; The Time Machine</h3>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4 style="color:#60a5fa;">Take a base backup with pg_basebackup</h4>
+                <p>This is your starting point &mdash; a full copy of the data directory.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Archive WAL files continuously</h4>
+                <p>Configure <code>archive_mode = on</code> and <code>archive_command</code> to copy WAL files to a safe location as they&rsquo;re completed.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Disaster strikes! Someone drops a table at 3:42 PM</h4>
+                <p>Don&rsquo;t panic. You have a base backup and all the WAL files since that backup.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Restore base backup + replay WAL up to 3:41 PM</h4>
+                <p>Set <code>recovery_target_time = '2025-03-18 15:41:00'</code> and PostgreSQL replays every change up to one minute <em>before</em> the disaster. Your data is back!</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Backup Strategy</h4>
+                <p>For production databases, use a <strong>3-2-1 backup strategy</strong>: <strong>3</strong> copies of your data, on <strong>2</strong> different storage types, with <strong>1</strong> copy offsite (cloud storage, different data center). Combine daily <code>pg_dump</code> for quick table restores with continuous WAL archiving for point-in-time recovery.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 4. REPLICATION ===================== -->
+        <div class="section" id="replication">
+            <h2>4&#65039;&#8419; Replication &mdash; Cloning Your Database</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Twins That Stay in Sync</h4>
+                <p>Imagine you&rsquo;re a teacher with 30 students and only one textbook. Everyone has to wait their turn to read it &mdash; very slow! But what if you made <strong>exact copies</strong> of the textbook and gave one to every table? Now everyone can read at the same time. That&rsquo;s replication.</p>
+                <p style="margin-top:10px;">You have one <strong>primary</strong> (the original textbook) where all changes happen. Then you have one or more <strong>replicas</strong> (copies) that automatically stay in sync. Reads can go to any copy, but writes always go to the primary. This lets you handle 10x more read traffic without the primary breaking a sweat.</p>
+            </div>
+
+            <h3>Types of Replication</h3>
+            <table class="comparison-table">
+                <tr><th>Type</th><th>How It Works</th><th>Use Case</th></tr>
+                <tr><td><strong>Streaming Replication</strong></td><td>Primary streams WAL to replicas in real-time</td><td>High availability, read scaling</td></tr>
+                <tr><td><strong>Logical Replication</strong></td><td>Replicates specific tables using publish/subscribe</td><td>Selective sync, cross-version migration</td></tr>
+                <tr><td><strong>Synchronous</strong></td><td>Primary waits for replica to confirm write</td><td>Zero data loss (slower writes)</td></tr>
+                <tr><td><strong>Asynchronous</strong></td><td>Primary doesn&rsquo;t wait (default)</td><td>Better performance (tiny lag OK)</td></tr>
+            </table>
+
+            <h3>Streaming Replication (Most Common)</h3>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4 style="color:#60a5fa;">Configure the Primary Server</h4>
+                <div class="code-block"><pre><span style="color:#94a3b8">-- In postgresql.conf on the PRIMARY:</span>
+wal_level = replica
+max_wal_senders = <span style="color:#fb923c">5</span>           <span style="color:#94a3b8">-- how many replicas can connect</span>
+wal_keep_size = <span style="color:#4ade80">'1GB'</span>          <span style="color:#94a3b8">-- keep WAL around for slow replicas</span>
+
+<span style="color:#94a3b8">-- Create a replication user</span>
+<span style="color:#c084fc">CREATE ROLE</span> replicator <span style="color:#c084fc">WITH</span> REPLICATION LOGIN PASSWORD <span style="color:#4ade80">'secure_password_here'</span>;</pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Allow Replication Connections (pg_hba.conf)</h4>
+                <div class="code-block"><pre><span style="color:#94a3b8"># In pg_hba.conf on the PRIMARY:</span>
+<span style="color:#94a3b8"># TYPE  DATABASE        USER          ADDRESS         METHOD</span>
+host    replication     replicator    192.168.1.0/24  scram-sha-256</pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Create the Replica with pg_basebackup</h4>
+                <div class="code-block"><pre><span style="color:#94a3b8"># On the REPLICA server:</span>
+pg_basebackup -h primary-server -U replicator -D /var/lib/postgresql/16/main -Fp -Xs -P -R
+
+<span style="color:#94a3b8"># The -R flag creates standby.signal and sets primary_conninfo</span>
+<span style="color:#94a3b8"># This tells the replica "I'm a replica, connect to this primary"</span></pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Start the Replica &mdash; It Automatically Streams WAL</h4>
+                <div class="code-block"><pre><span style="color:#94a3b8"># Start PostgreSQL on the replica</span>
+sudo systemctl start postgresql
+
+<span style="color:#94a3b8"># On the PRIMARY &mdash; check connected replicas:</span>
+<span style="color:#c084fc">SELECT</span> client_addr, state, sent_lsn, write_lsn, replay_lsn
+<span style="color:#c084fc">FROM</span> pg_stat_replication;</pre></div>
+            </div>
+
+            <h3>Monitoring Replication Lag</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- On the PRIMARY: check how far behind each replica is</span>
+<span style="color:#c084fc">SELECT</span> client_addr,
+       state,
+       pg_size_pretty(pg_wal_lsn_diff(sent_lsn, replay_lsn)) <span style="color:#c084fc">AS</span> replay_lag,
+       <span style="color:#c084fc">NOW</span>() - backend_start <span style="color:#c084fc">AS</span> connection_duration
+<span style="color:#c084fc">FROM</span> pg_stat_replication;
+
+<span style="color:#94a3b8">-- On the REPLICA: check lag from replica's perspective</span>
+<span style="color:#c084fc">SELECT</span> <span style="color:#c084fc">NOW</span>() - pg_last_xact_replay_timestamp() <span style="color:#c084fc">AS</span> replication_lag;</pre></div>
+
+            <h3>Logical Replication (Selective Table Sync)</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- On the PRIMARY: create a publication</span>
+<span style="color:#c084fc">CREATE PUBLICATION</span> orders_pub <span style="color:#c084fc">FOR TABLE</span> orders, products;
+
+<span style="color:#94a3b8">-- On the SUBSCRIBER (another PostgreSQL instance):</span>
+<span style="color:#c084fc">CREATE SUBSCRIPTION</span> orders_sub
+    <span style="color:#c084fc">CONNECTION</span> <span style="color:#4ade80">'host=primary-server dbname=mystore user=replicator password=...'</span>
+    <span style="color:#c084fc">PUBLICATION</span> orders_pub;</pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Real-World Replication Setup</h4>
+                <p><strong>Read replicas for scaling:</strong> Your web app sends all writes to the primary, but reads (which are usually 80-90% of traffic) go to replicas. This is how Netflix, Instagram, and Uber handle billions of database queries &mdash; lots of read replicas behind a load balancer.</p>
+                <p style="margin-top:10px;"><strong>High availability:</strong> If the primary dies, a replica can be promoted to become the new primary in seconds. Tools like <strong>Patroni</strong>, <strong>repmgr</strong>, and <strong>pg_auto_failover</strong> automate this failover process.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 5. SECURITY ===================== -->
+        <div class="section" id="security">
+            <h2>5&#65039;&#8419; Security: Roles &amp; Permissions</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Hotel Key Cards</h4>
+                <p>In a hotel, you get a key card that opens <strong>only your room</strong>. You can&rsquo;t open other guests&rsquo; rooms, the manager&rsquo;s office, or the server room. The front desk (admin) can program any key card to open any door. Housekeeping gets a card that opens all rooms but can&rsquo;t access the safe. That&rsquo;s exactly how PostgreSQL roles and permissions work.</p>
+                <p style="margin-top:10px;">Each person (or application) gets a <strong>role</strong> with specific permissions. The principle is simple: <strong>give the minimum permissions needed</strong> (principle of least privilege). Your app doesn&rsquo;t need to DROP tables in production, so don&rsquo;t give it that power!</p>
+            </div>
+
+            <h3>Creating Roles</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Create a role (user) with a password and login ability</span>
+<span style="color:#c084fc">CREATE ROLE</span> app_user <span style="color:#c084fc">WITH</span> LOGIN PASSWORD <span style="color:#4ade80">'strong_password_here'</span>;
+
+<span style="color:#94a3b8">-- Create a read-only role (no login &mdash; it's a group)</span>
+<span style="color:#c084fc">CREATE ROLE</span> readonly_group;
+
+<span style="color:#94a3b8">-- Create a read-write role (group)</span>
+<span style="color:#c084fc">CREATE ROLE</span> readwrite_group;
+
+<span style="color:#94a3b8">-- Create an admin role with CREATEDB ability</span>
+<span style="color:#c084fc">CREATE ROLE</span> db_admin <span style="color:#c084fc">WITH</span> LOGIN PASSWORD <span style="color:#4ade80">'admin_pass'</span> CREATEDB;</pre></div>
+
+            <h3>GRANT &amp; REVOKE Permissions</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Grant read-only access to the readonly_group</span>
+<span style="color:#c084fc">GRANT CONNECT ON DATABASE</span> mystore <span style="color:#c084fc">TO</span> readonly_group;
+<span style="color:#c084fc">GRANT USAGE ON SCHEMA</span> public <span style="color:#c084fc">TO</span> readonly_group;
+<span style="color:#c084fc">GRANT SELECT ON ALL TABLES IN SCHEMA</span> public <span style="color:#c084fc">TO</span> readonly_group;
+
+<span style="color:#94a3b8">-- Automatically grant SELECT on future tables too</span>
+<span style="color:#c084fc">ALTER DEFAULT PRIVILEGES IN SCHEMA</span> public
+<span style="color:#c084fc">GRANT SELECT ON TABLES TO</span> readonly_group;
+
+<span style="color:#94a3b8">-- Grant read-write access</span>
+<span style="color:#c084fc">GRANT CONNECT ON DATABASE</span> mystore <span style="color:#c084fc">TO</span> readwrite_group;
+<span style="color:#c084fc">GRANT USAGE ON SCHEMA</span> public <span style="color:#c084fc">TO</span> readwrite_group;
+<span style="color:#c084fc">GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA</span> public <span style="color:#c084fc">TO</span> readwrite_group;
+<span style="color:#c084fc">GRANT USAGE ON ALL SEQUENCES IN SCHEMA</span> public <span style="color:#c084fc">TO</span> readwrite_group;
+
+<span style="color:#94a3b8">-- Add a user to a group</span>
+<span style="color:#c084fc">GRANT</span> readonly_group <span style="color:#c084fc">TO</span> app_user;
+
+<span style="color:#94a3b8">-- Revoke a permission</span>
+<span style="color:#c084fc">REVOKE DELETE ON</span> orders <span style="color:#c084fc">FROM</span> readwrite_group;</pre></div>
+
+            <h3>Role Hierarchy Example</h3>
+            <table class="comparison-table">
+                <tr><th>Role</th><th>Can SELECT?</th><th>Can INSERT/UPDATE?</th><th>Can DELETE?</th><th>Can DROP?</th></tr>
+                <tr><td><code>readonly_group</code></td><td style="color:#4ade80;">&#10004;</td><td style="color:#f87171;">&#10007;</td><td style="color:#f87171;">&#10007;</td><td style="color:#f87171;">&#10007;</td></tr>
+                <tr><td><code>readwrite_group</code></td><td style="color:#4ade80;">&#10004;</td><td style="color:#4ade80;">&#10004;</td><td style="color:#4ade80;">&#10004;</td><td style="color:#f87171;">&#10007;</td></tr>
+                <tr><td><code>db_admin</code></td><td style="color:#4ade80;">&#10004;</td><td style="color:#4ade80;">&#10004;</td><td style="color:#4ade80;">&#10004;</td><td style="color:#4ade80;">&#10004;</td></tr>
+                <tr><td><code>analytics_team</code></td><td style="color:#4ade80;">&#10004;</td><td style="color:#f87171;">&#10007;</td><td style="color:#f87171;">&#10007;</td><td style="color:#f87171;">&#10007;</td></tr>
+            </table>
+
+            <h3>Row Level Security (RLS) &mdash; Row-by-Row Control</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- RLS lets you control which ROWS a user can see, not just which tables</span>
+
+<span style="color:#94a3b8">-- Enable RLS on the orders table</span>
+<span style="color:#c084fc">ALTER TABLE</span> orders <span style="color:#c084fc">ENABLE ROW LEVEL SECURITY</span>;
+
+<span style="color:#94a3b8">-- Policy: users can only see their own orders</span>
+<span style="color:#c084fc">CREATE POLICY</span> user_sees_own_orders <span style="color:#c084fc">ON</span> orders
+    <span style="color:#c084fc">FOR SELECT</span>
+    <span style="color:#c084fc">USING</span> (user_id = current_setting(<span style="color:#4ade80">'app.current_user_id'</span>)::<span style="color:#38bdf8">INTEGER</span>);
+
+<span style="color:#94a3b8">-- Policy: users can only insert orders for themselves</span>
+<span style="color:#c084fc">CREATE POLICY</span> user_inserts_own_orders <span style="color:#c084fc">ON</span> orders
+    <span style="color:#c084fc">FOR INSERT</span>
+    <span style="color:#c084fc">WITH CHECK</span> (user_id = current_setting(<span style="color:#4ade80">'app.current_user_id'</span>)::<span style="color:#38bdf8">INTEGER</span>);
+
+<span style="color:#94a3b8">-- Admin policy: admins can see everything</span>
+<span style="color:#c084fc">CREATE POLICY</span> admin_full_access <span style="color:#c084fc">ON</span> orders
+    <span style="color:#c084fc">FOR ALL</span>
+    <span style="color:#c084fc">TO</span> db_admin
+    <span style="color:#c084fc">USING</span> (<span style="color:#c084fc">TRUE</span>);</pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; RLS in Action: Supabase</h4>
+                <p>If you use <strong>Supabase</strong> (the popular open-source Firebase alternative), you&rsquo;re using RLS every day! Supabase&rsquo;s security model is built entirely on PostgreSQL&rsquo;s Row Level Security. When a user logs in and queries their data through the Supabase API, RLS policies ensure they can only see and modify their own data &mdash; even though they&rsquo;re hitting the database directly.</p>
+            </div>
+
+            <h3>pg_hba.conf &mdash; Connection Authentication</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8"># pg_hba.conf controls WHO can connect and HOW they authenticate</span>
+<span style="color:#94a3b8"># TYPE    DATABASE    USER          ADDRESS           METHOD</span>
+
+<span style="color:#94a3b8"># Local connections (Unix socket) &mdash; use peer auth</span>
+local   all         postgres                          peer
+
+<span style="color:#94a3b8"># Local network &mdash; password authentication</span>
+host    all         all           127.0.0.1/32        scram-sha-256
+host    all         all           ::1/128             scram-sha-256
+
+<span style="color:#94a3b8"># Application servers on the internal network</span>
+host    mystore     app_user      192.168.1.0/24      scram-sha-256
+
+<span style="color:#94a3b8"># Replication connections</span>
+host    replication replicator    192.168.1.0/24      scram-sha-256
+
+<span style="color:#94a3b8"># DANGER: never do this in production!</span>
+<span style="color:#94a3b8"># host  all         all           0.0.0.0/0           trust</span></pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; Security Best Practices</h4>
+                <ul style="color:#cbd5e1; padding-left:20px; line-height:2;">
+                    <li><strong>Never use the <code>postgres</code> superuser</strong> for application connections</li>
+                    <li><strong>Use <code>scram-sha-256</code></strong> authentication (not <code>md5</code> or <code>trust</code>)</li>
+                    <li><strong>Restrict IP addresses</strong> in pg_hba.conf &mdash; don&rsquo;t allow 0.0.0.0/0</li>
+                    <li><strong>Rotate passwords</strong> regularly and use secrets managers</li>
+                    <li><strong>Use SSL/TLS</strong> for all remote connections (<code>ssl = on</code> in postgresql.conf)</li>
+                    <li><strong>Principle of least privilege</strong>: give only the permissions each role actually needs</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ===================== 6. CONFIGURATION TUNING ===================== -->
+        <div class="section" id="tuning">
+            <h2>6&#65039;&#8419; Configuration Tuning</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Tuning a Race Car</h4>
+                <p>Out of the box, PostgreSQL is configured for a <strong>small laptop</strong> &mdash; like driving a Ferrari in first gear. The default settings are extremely conservative to work on any machine. For production, you need to adjust the settings to match your server&rsquo;s actual RAM, CPU, and storage. It&rsquo;s like adjusting the seat, mirrors, and gear ratios for the actual driver and track.</p>
+            </div>
+
+            <h3>The Big Five Settings (postgresql.conf)</h3>
+            <table class="comparison-table">
+                <tr><th>Setting</th><th>Default</th><th>What It Does</th><th>Recommended</th></tr>
+                <tr><td><code>shared_buffers</code></td><td>128MB</td><td>RAM for caching data pages</td><td>25% of total RAM</td></tr>
+                <tr><td><code>work_mem</code></td><td>4MB</td><td>RAM per sort/hash operation</td><td>50-256MB (depends on connections)</td></tr>
+                <tr><td><code>maintenance_work_mem</code></td><td>64MB</td><td>RAM for VACUUM, CREATE INDEX</td><td>512MB &ndash; 2GB</td></tr>
+                <tr><td><code>effective_cache_size</code></td><td>4GB</td><td>Planner&rsquo;s estimate of available cache</td><td>50-75% of total RAM</td></tr>
+                <tr><td><code>max_connections</code></td><td>100</td><td>Maximum concurrent connections</td><td>100-300 (use pooling!)</td></tr>
+            </table>
+
+            <h3>Example: Tuning for a 32GB RAM Server</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8"># postgresql.conf tuning for a 32GB RAM, SSD server</span>
+
+<span style="color:#94a3b8"># Memory</span>
+shared_buffers = <span style="color:#4ade80">'8GB'</span>              <span style="color:#94a3b8"># 25% of 32GB</span>
+work_mem = <span style="color:#4ade80">'128MB'</span>                  <span style="color:#94a3b8"># per sort/hash operation</span>
+maintenance_work_mem = <span style="color:#4ade80">'1GB'</span>        <span style="color:#94a3b8"># for VACUUM and CREATE INDEX</span>
+effective_cache_size = <span style="color:#4ade80">'24GB'</span>       <span style="color:#94a3b8"># 75% of 32GB</span>
+
+<span style="color:#94a3b8"># Connections</span>
+max_connections = <span style="color:#fb923c">200</span>               <span style="color:#94a3b8"># use connection pooling!</span>
+
+<span style="color:#94a3b8"># WAL</span>
+wal_buffers = <span style="color:#4ade80">'64MB'</span>                <span style="color:#94a3b8"># WAL buffer size</span>
+min_wal_size = <span style="color:#4ade80">'1GB'</span>
+max_wal_size = <span style="color:#4ade80">'4GB'</span>
+checkpoint_completion_target = <span style="color:#fb923c">0.9</span>  <span style="color:#94a3b8"># spread checkpoint over 90% of interval</span>
+
+<span style="color:#94a3b8"># Planner</span>
+random_page_cost = <span style="color:#fb923c">1.1</span>              <span style="color:#94a3b8"># SSD (default 4.0 is for spinning disks)</span>
+effective_io_concurrency = <span style="color:#fb923c">200</span>      <span style="color:#94a3b8"># SSD can handle parallel IO</span>
+
+<span style="color:#94a3b8"># Logging</span>
+log_min_duration_statement = <span style="color:#fb923c">1000</span>   <span style="color:#94a3b8"># log queries slower than 1 second</span>
+log_line_prefix = <span style="color:#4ade80">'%t [%p] %u@%d '</span> <span style="color:#94a3b8"># timestamp, pid, user, database</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Use PGTune</h4>
+                <p>Don&rsquo;t guess! Use <strong><a href="https://pgtune.leopard.in.ua/" style="color:#4ade80;" target="_blank">PGTune</a></strong> &mdash; a free online tool. Enter your server&rsquo;s RAM, CPU count, storage type, and application type. It generates optimal postgresql.conf settings instantly. It&rsquo;s what most PostgreSQL professionals use as a starting point.</p>
+            </div>
+
+            <h3>pg_stat_statements &mdash; Find Slow Queries</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Enable the extension (add to postgresql.conf first):</span>
+<span style="color:#94a3b8">-- shared_preload_libraries = 'pg_stat_statements'</span>
+
+<span style="color:#c084fc">CREATE EXTENSION IF NOT EXISTS</span> pg_stat_statements;
+
+<span style="color:#94a3b8">-- Top 10 slowest queries (by total time)</span>
+<span style="color:#c084fc">SELECT</span>
+    <span style="color:#c084fc">ROUND</span>(total_exec_time::numeric, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> total_ms,
+    calls,
+    <span style="color:#c084fc">ROUND</span>(mean_exec_time::numeric, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_ms,
+    <span style="color:#c084fc">ROUND</span>(rows::numeric / <span style="color:#c084fc">NULLIF</span>(calls, <span style="color:#fb923c">0</span>), <span style="color:#fb923c">0</span>) <span style="color:#c084fc">AS</span> avg_rows,
+    <span style="color:#c084fc">LEFT</span>(query, <span style="color:#fb923c">80</span>) <span style="color:#c084fc">AS</span> query_preview
+<span style="color:#c084fc">FROM</span> pg_stat_statements
+<span style="color:#c084fc">ORDER BY</span> total_exec_time <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">10</span>;
+
+<span style="color:#94a3b8">-- Top 10 most frequently called queries</span>
+<span style="color:#c084fc">SELECT</span>
+    calls,
+    <span style="color:#c084fc">ROUND</span>(mean_exec_time::numeric, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_ms,
+    <span style="color:#c084fc">LEFT</span>(query, <span style="color:#fb923c">80</span>) <span style="color:#c084fc">AS</span> query_preview
+<span style="color:#c084fc">FROM</span> pg_stat_statements
+<span style="color:#c084fc">ORDER BY</span> calls <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">10</span>;
+
+<span style="color:#94a3b8">-- Reset statistics (do this periodically)</span>
+<span style="color:#c084fc">SELECT</span> pg_stat_statements_reset();</pre></div>
+
+            <h3>Connection Pooling with PgBouncer</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- The problem: each PostgreSQL connection uses ~5-10MB of RAM</span>
+<span style="color:#94a3b8">-- 200 connections × 10MB = 2GB just for connections!</span>
+
+<span style="color:#94a3b8">-- The solution: PgBouncer sits between your app and PostgreSQL</span>
+<span style="color:#94a3b8">-- Your app opens 200 connections to PgBouncer</span>
+<span style="color:#94a3b8">-- PgBouncer uses only 20 connections to PostgreSQL</span>
+<span style="color:#94a3b8">-- Connections are reused and shared &mdash; like a carpool!</span>
+
+<span style="color:#94a3b8"># pgbouncer.ini (simplified)</span>
+[databases]
+mystore = host=127.0.0.1 port=5432 dbname=mystore
+
+[pgbouncer]
+listen_port = <span style="color:#fb923c">6432</span>
+listen_addr = <span style="color:#fb923c">0.0.0.0</span>
+auth_type = scram-sha-256
+pool_mode = transaction     <span style="color:#94a3b8"># release connection after each transaction</span>
+default_pool_size = <span style="color:#fb923c">20</span>      <span style="color:#94a3b8"># 20 actual PostgreSQL connections</span>
+max_client_conn = <span style="color:#fb923c">500</span>       <span style="color:#94a3b8"># 500 app connections allowed</span></pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Why Connection Pooling Matters</h4>
+                <p>Without PgBouncer, a spike to 500 simultaneous users means 500 PostgreSQL connections, eating up 5GB of RAM and causing the database to crawl. With PgBouncer in &ldquo;transaction mode,&rdquo; those 500 users share just 20-50 actual connections, because most connections are idle between queries. Amazon RDS, Supabase, and Railway all use connection pooling by default.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 7. MONITORING ===================== -->
+        <div class="section" id="monitoring">
+            <h2>7&#65039;&#8419; Monitoring &mdash; Watching Your Database</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; The Dashboard on Your Car</h4>
+                <p>When you drive a car, you have a dashboard showing speed, fuel level, engine temperature, and warning lights. You don&rsquo;t need to be a mechanic to notice when the temperature gauge is in the red zone. PostgreSQL has its own dashboard &mdash; system views that tell you what&rsquo;s happening right now, what&rsquo;s slow, and what needs attention.</p>
+            </div>
+
+            <h3>pg_stat_activity &mdash; Who&rsquo;s Doing What Right Now?</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- See all active connections and what they're doing</span>
+<span style="color:#c084fc">SELECT</span>
+    pid,
+    usename <span style="color:#c084fc">AS</span> user,
+    datname <span style="color:#c084fc">AS</span> database,
+    state,
+    <span style="color:#c084fc">NOW</span>() - query_start <span style="color:#c084fc">AS</span> duration,
+    wait_event_type,
+    <span style="color:#c084fc">LEFT</span>(query, <span style="color:#fb923c">60</span>) <span style="color:#c084fc">AS</span> query_preview
+<span style="color:#c084fc">FROM</span> pg_stat_activity
+<span style="color:#c084fc">WHERE</span> state != <span style="color:#4ade80">'idle'</span>
+<span style="color:#c084fc">ORDER BY</span> query_start;</pre></div>
+
+            <h3>Finding Long-Running Queries</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Queries running for more than 5 minutes</span>
+<span style="color:#c084fc">SELECT</span>
+    pid,
+    usename,
+    <span style="color:#c084fc">NOW</span>() - query_start <span style="color:#c084fc">AS</span> duration,
+    state,
+    query
+<span style="color:#c084fc">FROM</span> pg_stat_activity
+<span style="color:#c084fc">WHERE</span> state = <span style="color:#4ade80">'active'</span>
+  <span style="color:#c084fc">AND</span> query_start < <span style="color:#c084fc">NOW</span>() - <span style="color:#c084fc">INTERVAL</span> <span style="color:#4ade80">'5 minutes'</span>
+<span style="color:#c084fc">ORDER BY</span> query_start;
+
+<span style="color:#94a3b8">-- Kill a specific runaway query (use with caution!)</span>
+<span style="color:#c084fc">SELECT</span> pg_cancel_backend(<span style="color:#fb923c">12345</span>);    <span style="color:#94a3b8">-- graceful: cancel the query</span>
+<span style="color:#c084fc">SELECT</span> pg_terminate_backend(<span style="color:#fb923c">12345</span>); <span style="color:#94a3b8">-- forceful: terminate the connection</span></pre></div>
+
+            <h3>pg_stat_user_tables &mdash; Table Health</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Table health overview: reads, writes, dead rows, vacuums</span>
+<span style="color:#c084fc">SELECT</span>
+    relname <span style="color:#c084fc">AS</span> table_name,
+    seq_scan <span style="color:#c084fc">AS</span> full_scans,
+    idx_scan <span style="color:#c084fc">AS</span> index_scans,
+    n_tup_ins <span style="color:#c084fc">AS</span> inserts,
+    n_tup_upd <span style="color:#c084fc">AS</span> updates,
+    n_tup_del <span style="color:#c084fc">AS</span> deletes,
+    n_dead_tup <span style="color:#c084fc">AS</span> dead_rows,
+    last_autovacuum
+<span style="color:#c084fc">FROM</span> pg_stat_user_tables
+<span style="color:#c084fc">ORDER BY</span> n_dead_tup <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; Red Flag: seq_scan &gt;&gt; idx_scan</h4>
+                <p>If a table shows far more <strong>sequential scans</strong> (full table scans) than <strong>index scans</strong>, it means queries are reading the entire table instead of using indexes. This is the #1 indicator that you need to add an index. For example, if <code>orders</code> has 500,000 seq_scans and only 1,000 idx_scans, something is very wrong.</p>
+            </div>
+
+            <h3>Lock Monitoring</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find blocked queries (waiting for locks)</span>
+<span style="color:#c084fc">SELECT</span>
+    blocked.pid <span style="color:#c084fc">AS</span> blocked_pid,
+    blocked.usename <span style="color:#c084fc">AS</span> blocked_user,
+    <span style="color:#c084fc">LEFT</span>(blocked.query, <span style="color:#fb923c">50</span>) <span style="color:#c084fc">AS</span> blocked_query,
+    blocking.pid <span style="color:#c084fc">AS</span> blocking_pid,
+    blocking.usename <span style="color:#c084fc">AS</span> blocking_user,
+    <span style="color:#c084fc">LEFT</span>(blocking.query, <span style="color:#fb923c">50</span>) <span style="color:#c084fc">AS</span> blocking_query
+<span style="color:#c084fc">FROM</span> pg_stat_activity blocked
+<span style="color:#c084fc">JOIN</span> pg_locks bl <span style="color:#c084fc">ON</span> bl.pid = blocked.pid
+<span style="color:#c084fc">JOIN</span> pg_locks lk <span style="color:#c084fc">ON</span> lk.locktype = bl.locktype
+    <span style="color:#c084fc">AND</span> lk.database = bl.database
+    <span style="color:#c084fc">AND</span> lk.relation = bl.relation
+    <span style="color:#c084fc">AND</span> lk.pid != bl.pid
+<span style="color:#c084fc">JOIN</span> pg_stat_activity blocking <span style="color:#c084fc">ON</span> blocking.pid = lk.pid
+<span style="color:#c084fc">WHERE</span> bl.granted = <span style="color:#c084fc">FALSE</span>;</pre></div>
+
+            <h3>Database Size Monitoring</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Total database size</span>
+<span style="color:#c084fc">SELECT</span> pg_size_pretty(pg_database_size(<span style="color:#4ade80">'mystore'</span>)) <span style="color:#c084fc">AS</span> db_size;
+<span style="color:#94a3b8">-- Result: 2.4 GB</span>
+
+<span style="color:#94a3b8">-- Size of each table (including indexes and toast)</span>
+<span style="color:#c084fc">SELECT</span>
+    relname <span style="color:#c084fc">AS</span> table_name,
+    pg_size_pretty(pg_total_relation_size(relid)) <span style="color:#c084fc">AS</span> total_size,
+    pg_size_pretty(pg_relation_size(relid)) <span style="color:#c084fc">AS</span> table_size,
+    pg_size_pretty(pg_indexes_size(relid)) <span style="color:#c084fc">AS</span> index_size
+<span style="color:#c084fc">FROM</span> pg_stat_user_tables
+<span style="color:#c084fc">ORDER BY</span> pg_total_relation_size(relid) <span style="color:#c084fc">DESC</span>;
+
+<span style="color:#94a3b8">-- Unused indexes (candidates for removal)</span>
+<span style="color:#c084fc">SELECT</span>
+    indexrelname <span style="color:#c084fc">AS</span> index_name,
+    relname <span style="color:#c084fc">AS</span> table_name,
+    idx_scan <span style="color:#c084fc">AS</span> times_used,
+    pg_size_pretty(pg_relation_size(indexrelid)) <span style="color:#c084fc">AS</span> index_size
+<span style="color:#c084fc">FROM</span> pg_stat_user_indexes
+<span style="color:#c084fc">WHERE</span> idx_scan = <span style="color:#fb923c">0</span>
+<span style="color:#c084fc">ORDER BY</span> pg_relation_size(indexrelid) <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Monitoring Checklist</h4>
+                <p>Set up alerts for: <strong>(1)</strong> Connections approaching <code>max_connections</code>, <strong>(2)</strong> Queries running longer than 5 minutes, <strong>(3)</strong> Replication lag exceeding 1 minute, <strong>(4)</strong> Disk usage above 80%, <strong>(5)</strong> Dead rows exceeding 20% on any table. Tools like <strong>pgAdmin</strong>, <strong>Datadog</strong>, <strong>Grafana + Prometheus</strong>, and <strong>pg_stat_monitor</strong> make this easy.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. PRACTICE + QUIZ ===================== -->
+        <div class="section" id="practice">
+            <h2>&#127947;&#65039; Practice Exercises</h2>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: Check Dead Rows</h4>
+                <p>Write a query using <code>pg_stat_user_tables</code> to find tables with more than 10% dead rows. Show table name, live rows, dead rows, and dead percentage.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    relname <span style="color:#c084fc">AS</span> table_name,
+    n_live_tup <span style="color:#c084fc">AS</span> live_rows,
+    n_dead_tup <span style="color:#c084fc">AS</span> dead_rows,
+    <span style="color:#c084fc">ROUND</span>(
+        n_dead_tup::numeric / <span style="color:#c084fc">NULLIF</span>(n_live_tup + n_dead_tup, <span style="color:#fb923c">0</span>) * <span style="color:#fb923c">100</span>, <span style="color:#fb923c">2</span>
+    ) <span style="color:#c084fc">AS</span> dead_pct
+<span style="color:#c084fc">FROM</span> pg_stat_user_tables
+<span style="color:#c084fc">WHERE</span> n_dead_tup::numeric / <span style="color:#c084fc">NULLIF</span>(n_live_tup + n_dead_tup, <span style="color:#fb923c">0</span>) > <span style="color:#fb923c">0.1</span>
+<span style="color:#c084fc">ORDER BY</span> dead_pct <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: Backup and Restore</h4>
+                <p>Write the pg_dump command to backup a database called <code>shopdb</code> in custom format to <code>/backups/shopdb.dump</code>. Then write the command to restore it to a new database called <code>shopdb_restored</code>.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#94a3b8"># Backup</span>
+pg_dump -U postgres -d shopdb -Fc -f /backups/shopdb.dump
+
+<span style="color:#94a3b8"># Create the target database first</span>
+createdb -U postgres shopdb_restored
+
+<span style="color:#94a3b8"># Restore</span>
+pg_restore -U postgres -d shopdb_restored /backups/shopdb.dump</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: Create Roles</h4>
+                <p>Create a role called <code>analyst</code> that can only SELECT from all tables in the public schema. Create another role called <code>api_service</code> that can SELECT, INSERT, and UPDATE (but NOT DELETE).</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#94a3b8">-- Analyst role (read-only)</span>
+<span style="color:#c084fc">CREATE ROLE</span> analyst <span style="color:#c084fc">WITH</span> LOGIN PASSWORD <span style="color:#4ade80">'analyst_pass'</span>;
+<span style="color:#c084fc">GRANT CONNECT ON DATABASE</span> mystore <span style="color:#c084fc">TO</span> analyst;
+<span style="color:#c084fc">GRANT USAGE ON SCHEMA</span> public <span style="color:#c084fc">TO</span> analyst;
+<span style="color:#c084fc">GRANT SELECT ON ALL TABLES IN SCHEMA</span> public <span style="color:#c084fc">TO</span> analyst;
+
+<span style="color:#94a3b8">-- API service role (read-write, no delete)</span>
+<span style="color:#c084fc">CREATE ROLE</span> api_service <span style="color:#c084fc">WITH</span> LOGIN PASSWORD <span style="color:#4ade80">'api_pass'</span>;
+<span style="color:#c084fc">GRANT CONNECT ON DATABASE</span> mystore <span style="color:#c084fc">TO</span> api_service;
+<span style="color:#c084fc">GRANT USAGE ON SCHEMA</span> public <span style="color:#c084fc">TO</span> api_service;
+<span style="color:#c084fc">GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA</span> public <span style="color:#c084fc">TO</span> api_service;
+<span style="color:#c084fc">GRANT USAGE ON ALL SEQUENCES IN SCHEMA</span> public <span style="color:#c084fc">TO</span> api_service;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: Find Slow Queries</h4>
+                <p>Write a query using <code>pg_stat_statements</code> to find the top 5 queries by average execution time that have been called more than 100 times.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span>
+    calls,
+    <span style="color:#c084fc">ROUND</span>(mean_exec_time::numeric, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> avg_ms,
+    <span style="color:#c084fc">ROUND</span>(total_exec_time::numeric, <span style="color:#fb923c">2</span>) <span style="color:#c084fc">AS</span> total_ms,
+    <span style="color:#c084fc">LEFT</span>(query, <span style="color:#fb923c">100</span>) <span style="color:#c084fc">AS</span> query_preview
+<span style="color:#c084fc">FROM</span> pg_stat_statements
+<span style="color:#c084fc">WHERE</span> calls > <span style="color:#fb923c">100</span>
+<span style="color:#c084fc">ORDER BY</span> mean_exec_time <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">5</span>;</pre></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== QUIZ ===================== -->
+        <div class="section">
+            <h2>&#128221; Quiz &mdash; Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What does VACUUM do?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Deletes all data from a table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Reclaims space from dead rows left by UPDATE/DELETE operations</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Compresses the database files</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Removes unused indexes</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: What is the Write-Ahead Log (WAL)?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A log of user login attempts</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A file that stores table definitions</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">A log where every change is recorded BEFORE it&rsquo;s written to data files, enabling crash recovery</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A backup of the database created every night</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: Which pg_dump format is recommended for production backups?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Plain SQL (default)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Custom format (-Fc)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Tar format (-Ft)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">CSV format</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: In streaming replication, which server accepts writes?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Only the primary</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Only the replica</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Both primary and replica</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Neither &mdash; a separate write server is needed</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: What should <code>shared_buffers</code> typically be set to?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">128MB (the default)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">About 25% of total server RAM</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">100% of total server RAM</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It doesn&rsquo;t matter</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: What is the principle of least privilege?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Every user gets superuser access for convenience</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Give each role only the minimum permissions it needs to do its job</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Use the simplest password possible</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Disable authentication for faster connections</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: What does PgBouncer do?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Backs up the database automatically</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Monitors query performance</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Pools database connections so many app connections share fewer PostgreSQL connections</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Encrypts data at rest</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 8: Which view shows currently running queries?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">pg_stat_user_tables</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">pg_stat_activity</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">pg_stat_statements</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">pg_stat_replication</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== COURSE COMPLETION ===================== -->
+        <div class="section">
+            <h2>&#127942; Course Complete &mdash; You Made It!</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">13</div>
+                    <div class="stat-label">Modules completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">40+</div>
+                    <div class="stat-label">Lessons mastered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">SQL examples practiced</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&#127941;</div>
+                    <div class="stat-label">PostgreSQL Hero!</div>
+                </div>
+            </div>
+
+            <p>Congratulations! You&rsquo;ve gone from &ldquo;What&rsquo;s a database?&rdquo; to understanding production-grade PostgreSQL. Here&rsquo;s everything you&rsquo;ve learned across all 13 modules:</p>
+
+            <table class="comparison-table">
+                <tr><th>Module</th><th>What You Learned</th></tr>
+                <tr><td>1. Meet PostgreSQL</td><td>What databases are, why PostgreSQL, who uses it</td></tr>
+                <tr><td>2. Installation</td><td>Setting up PostgreSQL and DBeaver on any platform</td></tr>
+                <tr><td>3. SQL Basics</td><td>CREATE, INSERT, SELECT, UPDATE, DELETE &mdash; the CRUD operations</td></tr>
+                <tr><td>4. Data Types</td><td>INTEGER, VARCHAR, TIMESTAMP, BOOLEAN, constraints (PK, FK, UNIQUE, CHECK)</td></tr>
+                <tr><td>5. Querying</td><td>WHERE, ORDER BY, LIMIT, LIKE, BETWEEN, IN, NULL handling</td></tr>
+                <tr><td>6. Aggregations</td><td>COUNT, SUM, AVG, GROUP BY, HAVING</td></tr>
+                <tr><td>7. JOINs</td><td>INNER, LEFT, RIGHT, FULL OUTER, CROSS, Self JOIN</td></tr>
+                <tr><td>8. Subqueries &amp; CTEs</td><td>Nested queries, WITH clause, recursive CTEs</td></tr>
+                <tr><td>9. Indexes</td><td>B-tree, GIN, GiST, EXPLAIN ANALYZE, query optimization</td></tr>
+                <tr><td>10. Functions</td><td>Built-in functions, CREATE FUNCTION, stored procedures, triggers</td></tr>
+                <tr><td>11. Transactions</td><td>ACID, BEGIN/COMMIT/ROLLBACK, isolation levels, MVCC, deadlocks</td></tr>
+                <tr><td>12. JSON &amp; Arrays</td><td>JSONB operators, GIN indexes, arrays, hybrid data modeling</td></tr>
+                <tr><td>13. Production</td><td>VACUUM, WAL, backup, replication, security, tuning, monitoring</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>&#128302; Where to Go From Here</h4>
+                <p><strong>Practice:</strong> Build a real project &mdash; an e-commerce database, a blog platform, or a task management system. Nothing beats hands-on experience.</p>
+                <p style="margin-top:10px;"><strong>Advanced topics to explore:</strong> Window functions, partitioning, full-text search, PostGIS (geospatial), foreign data wrappers, pgvector (AI embeddings), and database design patterns.</p>
+                <p style="margin-top:10px;"><strong>Certifications:</strong> Consider the EDB PostgreSQL certification to validate your skills professionally.</p>
+                <p style="margin-top:10px;"><strong>Community:</strong> Join the PostgreSQL mailing lists, attend PGConf events, and contribute to the ecosystem. The PostgreSQL community is one of the most welcoming in all of tech.</p>
+            </div>
+
+            <div class="eli5-box">
+                <h4>&#129490; A Final Message</h4>
+                <p>Databases are the <strong>backbone of every application</strong> you use &mdash; from Instagram to banking to healthcare. By mastering PostgreSQL, you&rsquo;ve learned a skill that will serve you throughout your entire career, no matter which programming language, framework, or cloud provider you work with. PostgreSQL isn&rsquo;t going anywhere &mdash; it&rsquo;s been around since 1986 and it&rsquo;s only getting better. You&rsquo;ve made an excellent investment in yourself. Now go build something amazing! &#128640;</p>
+            </div>
+        </div>
+
         <div class="lesson-nav">
-            <a href="replication.html" class="secondary"><i class="fas fa-arrow-left"></i> Replication & HA</a>
-            <a href="hub.html">Hub <i class="fas fa-arrow-right"></i></a>
+            <a href="json-arrays.html" class="secondary"><i class="fas fa-arrow-left"></i> JSON &amp; Arrays</a>
+            <a href="index.html">Course Home <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">&#10003; Correct!</strong> <span style="color:#94a3b8;">Great job!</span>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">&#10007; Not quite!</strong> <span style="color:#94a3b8;">Check the correct answer above.</span>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

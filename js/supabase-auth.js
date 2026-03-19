@@ -104,6 +104,28 @@
         return supabase.from('profiles').upsert(profile, { onConflict: 'id' });
     }
 
+    function ensureProfile(user) {
+        if (!supabase || !user || !user.id) return Promise.resolve();
+        return supabase.from('profiles').select('id').eq('id', user.id).single().then(function (res) {
+            if (res.data) return;
+            return supabase.from('profiles').insert({
+                id: user.id,
+                email: user.email || null,
+                full_name: (user.user_metadata && user.user_metadata.full_name) || null,
+                subscription_status: 'free',
+                updated_at: new Date().toISOString()
+            });
+        }).catch(function () {});
+    }
+
+    if (supabase) {
+        supabase.auth.onAuthStateChange(function (event, session) {
+            if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session && session.user) {
+                ensureProfile(session.user);
+            }
+        });
+    }
+
     window.FKTI_Auth = {
         getSupabase: getSupabase,
         getSession: getSession,

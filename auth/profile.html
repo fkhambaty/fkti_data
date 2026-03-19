@@ -29,7 +29,10 @@
             <div class="auth-profile-block">
                 <h3 class="auth-profile-block-title">Subscription</h3>
                 <p class="auth-profile-block-text" id="subscriptionText">You’re on the Free plan. Unlock all courses and projects with Pro.</p>
-                <button type="button" class="ds-btn ds-btn-primary auth-upgrade-btn" id="upgradeBtn">Upgrade to Pro — ₹99/week</button>
+                <div id="upgradeBtns">
+                    <button type="button" class="ds-btn ds-btn-primary auth-upgrade-btn" id="upgradeWeekly" style="margin-bottom:8px;">Upgrade — ₹99/week</button>
+                    <button type="button" class="ds-btn auth-upgrade-btn" id="upgradeMonthly" style="display:block;text-align:center;margin-top:0;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:var(--ds-radius);padding:12px;font-weight:600;cursor:pointer;">Upgrade — ₹349/month (save ₹47)</button>
+                </div>
             </div>
             <div class="auth-profile-block" id="progressSection">
                 <h3 class="auth-profile-block-title">Continue learning</h3>
@@ -188,16 +191,15 @@
             profileLoading.style.display = 'none';
             profileLogin.style.display = 'none';
             profileContent.style.display = 'block';
-            var upgradeBtn = document.getElementById('upgradeBtn');
-            if (upgradeBtn) {
-                upgradeBtn.addEventListener('click', function () {
-                    if (window.FKTI_RazorpayCheckout && window.FKTI_RazorpayCheckout.openProCheckout) {
-                        window.FKTI_RazorpayCheckout.openProCheckout();
-                    } else {
-                        window.location.href = '../pricing.html';
-                    }
-                });
+            function doCheckout(plan) {
+                if (window.FKTI_RazorpayCheckout && window.FKTI_RazorpayCheckout.openProCheckout) {
+                    window.FKTI_RazorpayCheckout.openProCheckout(plan);
+                } else { window.location.href = '../pricing.html'; }
             }
+            var wBtn = document.getElementById('upgradeWeekly');
+            var mBtn = document.getElementById('upgradeMonthly');
+            if (wBtn) wBtn.addEventListener('click', function () { doCheckout('weekly'); });
+            if (mBtn) mBtn.addEventListener('click', function () { doCheckout('monthly'); });
             var user = session.user;
             var email = user.email || '';
             var name = (user.user_metadata && user.user_metadata.full_name) || email.split('@')[0] || 'User';
@@ -211,9 +213,10 @@
                     if (profile && profile.subscription_status === 'pro') {
                         subscriptionBadge.className = 'auth-badge auth-badge-pro';
                         subscriptionBadge.textContent = 'Pro';
-                        subscriptionText.textContent = 'You have full access to all courses and projects. Thank you for supporting Data For Dummies!';
-                        var next = subscriptionText.nextElementSibling;
-                        if (next) next.style.display = 'none';
+                        var planLabel = profile.subscription_plan === 'monthly' ? '₹349/month' : '₹99/week';
+                        subscriptionText.textContent = 'You have full Pro access (' + planLabel + ', auto-renewing). Thank you for supporting Data For Dummies!';
+                        var btns = document.getElementById('upgradeBtns');
+                        if (btns) btns.style.display = 'none';
                     }
                 }).catch(function () {});
             }

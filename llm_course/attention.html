@@ -118,6 +118,24 @@
             font-size: 0.95em; transition: all 0.3s;
         }
         .toggle-btn:hover, .toggle-btn.active { background: #f97316; color: white; }
+        .quiz-box{background:rgba(30,41,59,0.5);border-radius:16px;padding:24px;margin:20px 0;border:1px solid rgba(139,92,246,0.15);}
+        .quiz-q{color:#c4b5fd;margin-bottom:14px;font-size:1.15em;}
+        .quiz-opt{display:block;width:100%;text-align:left;padding:12px 18px;margin:8px 0;background:rgba(124,58,237,0.08);border:2px solid rgba(139,92,246,0.15);border-radius:10px;color:#e2e8f0;cursor:pointer;font-family:inherit;font-size:0.95em;transition:all 0.2s;}
+        .quiz-opt:hover{border-color:rgba(139,92,246,0.4);background:rgba(124,58,237,0.15);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.1);}
+        .quiz-opt:disabled{cursor:default;opacity:0.7;}
+        .quiz-fb{display:none;margin-top:10px;padding:12px;border-radius:8px;font-weight:600;}
+
+        .quiz-box{background:rgba(30,41,59,0.5);border-radius:16px;padding:24px;margin:20px 0;border:1px solid rgba(139,92,246,0.15);}
+        .quiz-q{color:#c4b5fd;margin-bottom:14px;font-size:1.15em;}
+        .quiz-opt{display:block;width:100%;text-align:left;padding:12px 18px;margin:8px 0;background:rgba(124,58,237,0.08);border:2px solid rgba(139,92,246,0.15);border-radius:10px;color:#e2e8f0;cursor:pointer;font-family:inherit;font-size:0.95em;transition:all 0.2s;}
+        .quiz-opt:hover{border-color:rgba(139,92,246,0.4);background:rgba(124,58,237,0.15);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.1);}
+        .quiz-opt:disabled{cursor:default;opacity:0.7;}
+        .quiz-fb{display:none;margin-top:10px;padding:12px;border-radius:8px;font-weight:600;}
+
         @media (max-width: 768px) {
             body { padding: 10px; font-size: 16px; }
             .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
@@ -556,6 +574,124 @@ output, attn_weights = mha(x)
         </div>
     </div>
 
+    <!-- ========== QUIZ ========== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-question-circle"></i> Quiz — Test Your Understanding</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: What fundamental problem with RNNs did the Attention mechanism solve?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) RNNs were too fast and needed to be slowed down for accuracy</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) RNNs could only process images, not text sequences</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) RNNs required too much GPU memory during inference</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) RNNs forgot earlier words in long sequences because information was processed serially and faded over time</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: In the attention mechanism, what does the Query (Q) represent?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) The question — "what am I looking for?" — used to determine relevance of other tokens</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) The stored information content that gets retrieved and returned</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) The positional encoding that tells the model where each word appears</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) The final weighted output of the attention layer</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: What is the correct formula for scaled dot-product attention?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Attention = ReLU(Q + K) × V</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Attention = sigmoid(Q × V) + K</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Attention = softmax(Q · K<sup>T</sup> / √d<sub>k</sub>) × V</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Attention = Q · K · V / sequence_length</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: Why do we divide by √d<sub>k</sub> in the attention formula?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To make the computation run faster on GPUs by reducing precision</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) To prevent dot products from getting too large, which would make softmax overly confident and peaky</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) To reduce the total number of trainable parameters in the model</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) To normalize the output so it always sums to exactly 1.0</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: Why does Multi-Head Attention use multiple heads instead of just one?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Multiple heads are required to process sentences longer than 10 words</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It's purely a mathematical convenience with no practical benefit</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Each head processes a different language, enabling multilingual support</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) Each head can learn to focus on different types of patterns — syntax, coreference, proximity, etc.</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: What is the key difference between self-attention and cross-attention?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Self-attention uses softmax but cross-attention uses sigmoid</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Self-attention is faster while cross-attention is more accurate</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) In self-attention, Q/K/V all come from the same sequence; in cross-attention, Q comes from one sequence and K/V from another</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Self-attention only works on English text, cross-attention supports any language</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
+    <!-- ========== QUIZ ========== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-question-circle"></i> Quiz — Test Your Knowledge</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: Why was the attention mechanism invented?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) RNNs were too fast and needed to be slowed down for accuracy</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Convolutional neural networks couldn't process images properly</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) RNNs processed words one-by-one and forgot earlier words in long sequences</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Neural networks couldn't handle numerical data without attention layers</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: In the Query-Key-Value framework, what role does the Key play?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It contains the final output that gets passed to the next layer</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) It acts like a label or title that gets compared against the Query to compute relevance scores</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It stores the gradient information needed for backpropagation</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It encrypts the Value so only the correct Query can decode it</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: What is the correct formula for scaled dot-product attention?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Attention(Q, K, V) = ReLU(Q + K) × V</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Attention(Q, K, V) = sigmoid(Q × K) + V</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Attention(Q, K, V) = softmax(Q · K<sup>T</sup> / √d<sub>k</sub>) × V</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Attention(Q, K, V) = softmax(Q + K + V) / d<sub>k</sub></button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: Why do we divide by √d<sub>k</sub> in the attention formula?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To make the model train faster by reducing the number of computations</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) To ensure the output dimension matches the input dimension</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) To prevent dot products from growing too large in high dimensions, which would make softmax too peaked</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) To convert the scores from floating-point to integer values for efficiency</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: Why does multi-head attention use multiple heads instead of one?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Each head processes a different language, enabling multilingual models</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Multiple heads are needed to make the attention matrix invertible</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Different heads can capture different types of patterns (syntax, coreference, semantics) in parallel</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Multiple heads reduce memory usage by splitting the computation across GPUs</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: What is the difference between self-attention and cross-attention?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Self-attention uses softmax while cross-attention uses sigmoid</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Self-attention only works on short sentences while cross-attention handles long ones</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Self-attention is used during training while cross-attention is used during inference</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) In self-attention Q, K, V come from the same sequence; in cross-attention Q comes from one sequence while K and V come from another</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
     <div class="nav-buttons">
         <a href="nn-refresher.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Module 3: Neural Networks</a>
         <a href="transformer.html" class="nav-btn next">Module 5: Transformer <i class="fas fa-arrow-right"></i></a>
@@ -635,6 +771,12 @@ function showPattern(idx, btn) {
 updateScale();
 showPattern(0, document.querySelector('.toggle-btn'));
 showAttn(1);
+</script>
+<script>
+function checkQ(btn,ok){var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');opts.forEach(function(o){o.disabled=true;});if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#4ade80';fb.textContent='✅ Correct!';}else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#f87171';fb.textContent='❌ Not quite — check the green answer!';opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}}
+</script>
+<script>
+function checkQ(btn,ok){var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');opts.forEach(function(o){o.disabled=true;});if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#4ade80';fb.textContent='✅ Correct!';}else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#f87171';fb.textContent='❌ Not quite — check the green answer!';opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/supabase-config.js"></script>

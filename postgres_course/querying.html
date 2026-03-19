@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Querying | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Querying Data | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,1135 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="indexes.html">Indexes & Performance <i class="fas fa-arrow-right"></i></a>
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Course Home</a>
+            <a href="aggregations.html">Aggregations &amp; Grouping <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Advanced Querying</h1>
-            <p>JOINs, subqueries, CTEs, window functions, and aggregate functions.</p>
+            <h1>🔍 Querying Data</h1>
+            <p>WHERE, ORDER BY, LIMIT, LIKE, BETWEEN, IN — become a data detective who can find anything!</p>
         </div>
+
+        <!-- ===================== SAMPLE DATASET ===================== -->
         <div class="section visible">
-            <h2>📚 Advanced Querying</h2>
-            <p>JOINs, subqueries, CTEs, window functions, and aggregate functions.</p>
+            <h2>📦 Our Practice Dataset</h2>
+            <p>Before we start querying, we need some data to play with! Think of this as setting up your toy box before you start playing. We'll create a <strong>products</strong> table and fill it with items you might find in an online store.</p>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers advanced querying with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>🧒 ELI5 — Why Do We Need Sample Data?</h4>
+                <p>Imagine you want to practice searching for things on Google, but the internet is completely empty — no websites, no pictures, nothing. That wouldn't be very useful, right? Same idea here! We need to put some data <em>into</em> our database first so we have something to search through. Think of it like filling a library with books before you start looking for your favorite author.</p>
+            </div>
+
+            <p>Run this SQL to create and populate our <code>products</code> table:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Step 1: Create the products table</span>
+<span style="color:#c084fc">CREATE TABLE</span> products (
+    id         <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    name       <span style="color:#38bdf8">VARCHAR(100)</span>,
+    category   <span style="color:#38bdf8">VARCHAR(50)</span>,
+    price      <span style="color:#38bdf8">DECIMAL(10,2)</span>,
+    stock      <span style="color:#38bdf8">INTEGER</span>,
+    rating     <span style="color:#38bdf8">DECIMAL(2,1)</span>,
+    created_at <span style="color:#38bdf8">TIMESTAMP</span> <span style="color:#c084fc">DEFAULT NOW</span>()
+);
+
+<span style="color:#94a3b8">-- Step 2: Insert sample products</span>
+<span style="color:#c084fc">INSERT INTO</span> products (name, category, price, stock, rating) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#4ade80">'Wireless Headphones'</span>,   <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">79.99</span>,  <span style="color:#fb923c">150</span>, <span style="color:#fb923c">4.5</span>),
+    (<span style="color:#4ade80">'USB-C Cable'</span>,            <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">12.99</span>,  <span style="color:#fb923c">500</span>, <span style="color:#fb923c">4.2</span>),
+    (<span style="color:#4ade80">'Smartphone Case'</span>,        <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">24.99</span>,  <span style="color:#fb923c">300</span>, <span style="color:#fb923c">3.8</span>),
+    (<span style="color:#4ade80">'Running Shoes'</span>,          <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">89.99</span>,  <span style="color:#fb923c">75</span>,  <span style="color:#fb923c">4.7</span>),
+    (<span style="color:#4ade80">'Cotton T-Shirt'</span>,         <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">19.99</span>,  <span style="color:#fb923c">200</span>, <span style="color:#fb923c">4.0</span>),
+    (<span style="color:#4ade80">'Winter Jacket'</span>,          <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">129.99</span>, <span style="color:#fb923c">45</span>,  <span style="color:#fb923c">4.8</span>),
+    (<span style="color:#4ade80">'Organic Coffee Beans'</span>,   <span style="color:#4ade80">'Food'</span>,        <span style="color:#fb923c">14.99</span>,  <span style="color:#fb923c">400</span>, <span style="color:#fb923c">4.6</span>),
+    (<span style="color:#4ade80">'Dark Chocolate Bar'</span>,     <span style="color:#4ade80">'Food'</span>,        <span style="color:#fb923c">5.99</span>,   <span style="color:#fb923c">600</span>, <span style="color:#fb923c">4.3</span>),
+    (<span style="color:#4ade80">'Almond Butter'</span>,          <span style="color:#4ade80">'Food'</span>,        <span style="color:#fb923c">9.49</span>,   <span style="color:#fb923c">180</span>, <span style="color:#fb923c">4.1</span>),
+    (<span style="color:#4ade80">'Python Crash Course'</span>,    <span style="color:#4ade80">'Books'</span>,       <span style="color:#fb923c">35.00</span>,  <span style="color:#fb923c">120</span>, <span style="color:#fb923c">4.9</span>),
+    (<span style="color:#4ade80">'SQL in 10 Minutes'</span>,      <span style="color:#4ade80">'Books'</span>,       <span style="color:#fb923c">22.50</span>,  <span style="color:#fb923c">95</span>,  <span style="color:#fb923c">4.4</span>),
+    (<span style="color:#4ade80">'Data Science Handbook'</span>,  <span style="color:#4ade80">'Books'</span>,       <span style="color:#fb923c">45.00</span>,  <span style="color:#fb923c">60</span>,  <span style="color:#c084fc">NULL</span>),
+    (<span style="color:#4ade80">'Bluetooth Speaker'</span>,      <span style="color:#4ade80">'Electronics'</span>, <span style="color:#fb923c">49.99</span>,  <span style="color:#fb923c">0</span>,   <span style="color:#fb923c">4.1</span>),
+    (<span style="color:#4ade80">'Yoga Mat'</span>,               <span style="color:#4ade80">'Clothing'</span>,    <span style="color:#fb923c">29.99</span>,  <span style="color:#fb923c">90</span>,  <span style="color:#c084fc">NULL</span>);</pre></div>
+
+            <p>Here's what our data looks like:</p>
+
+            <table class="comparison-table">
+                <tr><th>id</th><th>name</th><th>category</th><th>price</th><th>stock</th><th>rating</th></tr>
+                <tr><td>1</td><td>Wireless Headphones</td><td>Electronics</td><td>79.99</td><td>150</td><td>4.5</td></tr>
+                <tr><td>2</td><td>USB-C Cable</td><td>Electronics</td><td>12.99</td><td>500</td><td>4.2</td></tr>
+                <tr><td>3</td><td>Smartphone Case</td><td>Electronics</td><td>24.99</td><td>300</td><td>3.8</td></tr>
+                <tr><td>4</td><td>Running Shoes</td><td>Clothing</td><td>89.99</td><td>75</td><td>4.7</td></tr>
+                <tr><td>5</td><td>Cotton T-Shirt</td><td>Clothing</td><td>19.99</td><td>200</td><td>4.0</td></tr>
+                <tr><td>6</td><td>Winter Jacket</td><td>Clothing</td><td>129.99</td><td>45</td><td>4.8</td></tr>
+                <tr><td>7</td><td>Organic Coffee Beans</td><td>Food</td><td>14.99</td><td>400</td><td>4.6</td></tr>
+                <tr><td>8</td><td>Dark Chocolate Bar</td><td>Food</td><td>5.99</td><td>600</td><td>4.3</td></tr>
+                <tr><td>9</td><td>Almond Butter</td><td>Food</td><td>9.49</td><td>180</td><td>4.1</td></tr>
+                <tr><td>10</td><td>Python Crash Course</td><td>Books</td><td>35.00</td><td>120</td><td>4.9</td></tr>
+                <tr><td>11</td><td>SQL in 10 Minutes</td><td>Books</td><td>22.50</td><td>95</td><td>4.4</td></tr>
+                <tr><td>12</td><td>Data Science Handbook</td><td>Books</td><td>45.00</td><td>60</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td>13</td><td>Bluetooth Speaker</td><td>Electronics</td><td>49.99</td><td>0</td><td>4.1</td></tr>
+                <tr><td>14</td><td>Yoga Mat</td><td>Clothing</td><td>29.99</td><td>90</td><td style="color:#94a3b8">NULL</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Notice the NULLs!</h4>
+                <p>See how products 12 and 14 have <code>NULL</code> for their rating? That means "we don't know the rating yet" — maybe nobody has reviewed them. We deliberately included NULLs because they cause a <em>lot</em> of confusion and we'll learn exactly how to handle them later in this lesson.</p>
             </div>
         </div>
+
+        <!-- ===================== 1. THE WHERE CLAUSE ===================== -->
+        <div class="section">
+            <h2>1️⃣ The WHERE Clause — Filtering Rows</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is WHERE?</h4>
+                <p>Imagine you walk into a <strong>giant bookstore</strong> with thousands of books. You don't want to look at every single book — that would take forever! Instead you walk up to the counter and say: <em>"Show me only the mystery novels."</em> The clerk goes through the shelves, picks out only the mystery books, and hands them to you. That's <strong>exactly</strong> what <code>WHERE</code> does. It tells PostgreSQL: "Don't give me everything — only give me the rows that match this condition."</p>
+            </div>
+
+            <p>The basic syntax is:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> columns
+<span style="color:#c084fc">FROM</span> table_name
+<span style="color:#c084fc">WHERE</span> condition;</pre></div>
+
+            <h3>Comparison Operators</h3>
+            <p>These are the tools you use inside <code>WHERE</code> to compare values:</p>
+
+            <table class="comparison-table">
+                <tr><th>Operator</th><th>Meaning</th><th>Example</th></tr>
+                <tr><td><code>=</code></td><td>Equal to</td><td><code>price = 19.99</code></td></tr>
+                <tr><td><code>&lt;&gt;</code> or <code>!=</code></td><td>Not equal to</td><td><code>category &lt;&gt; 'Food'</code></td></tr>
+                <tr><td><code>&gt;</code></td><td>Greater than</td><td><code>price &gt; 50</code></td></tr>
+                <tr><td><code>&lt;</code></td><td>Less than</td><td><code>stock &lt; 100</code></td></tr>
+                <tr><td><code>&gt;=</code></td><td>Greater than or equal</td><td><code>rating &gt;= 4.5</code></td></tr>
+                <tr><td><code>&lt;=</code></td><td>Less than or equal</td><td><code>price &lt;= 25</code></td></tr>
+            </table>
+
+            <h3>Example 1: Find All Electronics</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Electronics'</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>category</th><th>price</th></tr>
+                <tr><td>Wireless Headphones</td><td>Electronics</td><td>79.99</td></tr>
+                <tr><td>USB-C Cable</td><td>Electronics</td><td>12.99</td></tr>
+                <tr><td>Smartphone Case</td><td>Electronics</td><td>24.99</td></tr>
+                <tr><td>Bluetooth Speaker</td><td>Electronics</td><td>49.99</td></tr>
+            </table>
+
+            <h3>Example 2: Find Products Under $20</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> price &lt; <span style="color:#fb923c">20</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th></tr>
+                <tr><td>USB-C Cable</td><td>12.99</td></tr>
+                <tr><td>Cotton T-Shirt</td><td>19.99</td></tr>
+                <tr><td>Organic Coffee Beans</td><td>14.99</td></tr>
+                <tr><td>Dark Chocolate Bar</td><td>5.99</td></tr>
+                <tr><td>Almond Butter</td><td>9.49</td></tr>
+            </table>
+
+            <h3>Example 3: Products That Are Out of Stock</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, stock
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> stock = <span style="color:#fb923c">0</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>stock</th></tr>
+                <tr><td>Bluetooth Speaker</td><td>0</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Think of <code>WHERE</code> like the <strong>search filters on Amazon</strong>. When you check "4 stars & up" or set a price range, you're building a WHERE clause! Amazon looks through millions of products and only shows you the ones matching your filters. PostgreSQL does the exact same thing with your data.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ Common Mistake — Strings Need Quotes!</h4>
+                <p>Text values (strings) must be wrapped in <strong>single quotes</strong>: <code>'Electronics'</code>. Numbers do <strong>not</strong> use quotes: <code>price &lt; 20</code>. If you forget the quotes around a string, PostgreSQL will think it's a column name and throw an error!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 2. LOGICAL OPERATORS ===================== -->
+        <div class="section">
+            <h2>2️⃣ Logical Operators: AND, OR, NOT</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Combining Conditions</h4>
+                <p>Back to the bookstore! Saying <em>"Show me mystery novels"</em> is one filter. But what if you want <em>"mystery novels AND under $20"</em>? Now you've combined TWO conditions. <strong>AND</strong> means <em>both</em> must be true. <strong>OR</strong> means <em>at least one</em> must be true. <strong>NOT</strong> flips a condition — it means <em>"give me the opposite."</em></p>
+            </div>
+
+            <h3>AND — Both Conditions Must Be True</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Cheap electronics: category is Electronics AND price under $30</span>
+<span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Electronics'</span>
+  <span style="color:#c084fc">AND</span> price &lt; <span style="color:#fb923c">30</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>category</th><th>price</th></tr>
+                <tr><td>USB-C Cable</td><td>Electronics</td><td>12.99</td></tr>
+                <tr><td>Smartphone Case</td><td>Electronics</td><td>24.99</td></tr>
+            </table>
+
+            <h3>OR — At Least One Condition Must Be True</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products that are Food OR Books</span>
+<span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Food'</span>
+   <span style="color:#c084fc">OR</span> category = <span style="color:#4ade80">'Books'</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>category</th><th>price</th></tr>
+                <tr><td>Organic Coffee Beans</td><td>Food</td><td>14.99</td></tr>
+                <tr><td>Dark Chocolate Bar</td><td>Food</td><td>5.99</td></tr>
+                <tr><td>Almond Butter</td><td>Food</td><td>9.49</td></tr>
+                <tr><td>Python Crash Course</td><td>Books</td><td>35.00</td></tr>
+                <tr><td>SQL in 10 Minutes</td><td>Books</td><td>22.50</td></tr>
+                <tr><td>Data Science Handbook</td><td>Books</td><td>45.00</td></tr>
+            </table>
+
+            <h3>NOT — Flip the Condition</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Everything EXCEPT clothing</span>
+<span style="color:#c084fc">SELECT</span> name, category
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE NOT</span> category = <span style="color:#4ade80">'Clothing'</span>;</pre></div>
+
+            <h3>⚡ Operator Precedence — AND Before OR!</h3>
+
+            <div class="important-box">
+                <h4>⚠️ This Is a Classic Trap!</h4>
+                <p>SQL evaluates <code>AND</code> before <code>OR</code> — just like multiplication before addition in math. This means <code>A OR B AND C</code> is actually <code>A OR (B AND C)</code>, NOT <code>(A OR B) AND C</code>. When in doubt, <strong>always use parentheses</strong> to make your intent crystal clear!</p>
+            </div>
+
+            <p>Watch this tricky example:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ CONFUSING: What does this actually do?</span>
+<span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Food'</span>
+   <span style="color:#c084fc">OR</span> category = <span style="color:#4ade80">'Books'</span>
+  <span style="color:#c084fc">AND</span> price &lt; <span style="color:#fb923c">30</span>;
+
+<span style="color:#94a3b8">-- PostgreSQL reads this as:</span>
+<span style="color:#94a3b8">-- WHERE category = 'Food' OR (category = 'Books' AND price &lt; 30)</span>
+<span style="color:#94a3b8">-- That gives ALL Food + only cheap Books!</span>
+
+<span style="color:#94a3b8">-- ✅ CLEAR: Use parentheses!</span>
+<span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> (category = <span style="color:#4ade80">'Food'</span> <span style="color:#c084fc">OR</span> category = <span style="color:#4ade80">'Books'</span>)
+  <span style="color:#c084fc">AND</span> price &lt; <span style="color:#fb923c">30</span>;
+
+<span style="color:#94a3b8">-- Now it means: (Food or Books) that are under $30</span></pre></div>
+
+            <h3>Truth Table — How AND, OR, NOT Work</h3>
+            <p>Let's use a real example. Say we have a product: <strong>Dark Chocolate Bar</strong> — category = 'Food', price = 5.99.</p>
+
+            <table class="comparison-table">
+                <tr><th>Condition A</th><th>Condition B</th><th>A AND B</th><th>A OR B</th></tr>
+                <tr><td>category = 'Food' ✅</td><td>price &lt; 10 ✅</td><td>✅ TRUE</td><td>✅ TRUE</td></tr>
+                <tr><td>category = 'Food' ✅</td><td>price &gt; 10 ❌</td><td>❌ FALSE</td><td>✅ TRUE</td></tr>
+                <tr><td>category = 'Books' ❌</td><td>price &lt; 10 ✅</td><td>❌ FALSE</td><td>✅ TRUE</td></tr>
+                <tr><td>category = 'Books' ❌</td><td>price &gt; 10 ❌</td><td>❌ FALSE</td><td>❌ FALSE</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Readability Matters</h4>
+                <p>When you have complex conditions, put each condition on its own line and use indentation. Future-you (and your teammates) will thank you! Also, parentheses never hurt — even when they're technically not needed, they make your intent obvious.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 3. ORDER BY ===================== -->
+        <div class="section">
+            <h2>3️⃣ ORDER BY — Sorting Results</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is ORDER BY?</h4>
+                <p>Imagine your music playlist is a total mess — songs from all different artists and years, all jumbled together. You tap the "Sort by Artist" button and suddenly everything is organized A–Z. Tap "Sort by Year" and the oldest songs come first. That's <code>ORDER BY</code>! It takes your query results and arranges them in whatever order you want.</p>
+            </div>
+
+            <h3>ASC (Ascending) — The Default</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Cheapest products first (ascending = lowest to highest)</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> price <span style="color:#c084fc">ASC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th></tr>
+                <tr><td>Dark Chocolate Bar</td><td>5.99</td></tr>
+                <tr><td>Almond Butter</td><td>9.49</td></tr>
+                <tr><td>USB-C Cable</td><td>12.99</td></tr>
+                <tr><td>Organic Coffee Beans</td><td>14.99</td></tr>
+                <tr><td>Cotton T-Shirt</td><td>19.99</td></tr>
+                <tr><td style="color:#94a3b8">... more rows ...</td><td style="color:#94a3b8">...</td></tr>
+            </table>
+
+            <h3>DESC (Descending) — Reverse Order</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Most expensive products first</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> price <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th></tr>
+                <tr><td>Winter Jacket</td><td>129.99</td></tr>
+                <tr><td>Running Shoes</td><td>89.99</td></tr>
+                <tr><td>Wireless Headphones</td><td>79.99</td></tr>
+                <tr><td>Bluetooth Speaker</td><td>49.99</td></tr>
+                <tr><td>Data Science Handbook</td><td>45.00</td></tr>
+                <tr><td style="color:#94a3b8">... more rows ...</td><td style="color:#94a3b8">...</td></tr>
+            </table>
+
+            <h3>Sorting by Multiple Columns</h3>
+            <p>You can sort by more than one column. PostgreSQL sorts by the first column first, then uses the second column to break ties.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Sort by category A–Z, then within each category by price (cheapest first)</span>
+<span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> category <span style="color:#c084fc">ASC</span>, price <span style="color:#c084fc">ASC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>category</th><th>price</th></tr>
+                <tr><td>SQL in 10 Minutes</td><td>Books</td><td>22.50</td></tr>
+                <tr><td>Python Crash Course</td><td>Books</td><td>35.00</td></tr>
+                <tr><td>Data Science Handbook</td><td>Books</td><td>45.00</td></tr>
+                <tr><td>Cotton T-Shirt</td><td>Clothing</td><td>19.99</td></tr>
+                <tr><td>Yoga Mat</td><td>Clothing</td><td>29.99</td></tr>
+                <tr><td style="color:#94a3b8">... more rows ...</td><td style="color:#94a3b8">...</td><td style="color:#94a3b8">...</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>This is like sorting your playlist by <strong>artist name</strong> first, then by <strong>year released</strong>. So all the Adele songs are together, and within Adele's songs, the oldest song comes first. Two levels of organization!</p>
+            </div>
+
+            <h3>NULLS FIRST / NULLS LAST — PostgreSQL Exclusive!</h3>
+            <p>By default, NULLs appear <strong>last</strong> in ASC order and <strong>first</strong> in DESC order. PostgreSQL lets you control this explicitly:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Put products without ratings at the top</span>
+<span style="color:#c084fc">SELECT</span> name, rating
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> rating <span style="color:#c084fc">ASC NULLS FIRST</span>;
+
+<span style="color:#94a3b8">-- Or push them to the bottom even in DESC order</span>
+<span style="color:#c084fc">SELECT</span> name, rating
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> rating <span style="color:#c084fc">DESC NULLS LAST</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — NULLS FIRST/LAST</h4>
+                <p><code>NULLS FIRST</code> and <code>NULLS LAST</code> are PostgreSQL-specific features — not all databases have them. It's incredibly handy when building reports and you want to handle missing data gracefully (for example, showing unrated products at the end).</p>
+            </div>
+        </div>
+
+        <!-- ===================== 4. LIMIT & OFFSET ===================== -->
+        <div class="section">
+            <h2>4️⃣ LIMIT &amp; OFFSET — Pagination</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Are LIMIT and OFFSET?</h4>
+                <p>When you Google something, you get millions of results — but Google only shows you <strong>10 at a time</strong>. You see results 1–10 on page 1, then click "Next" to see results 11–20 on page 2. <code>LIMIT</code> is "how many results per page" and <code>OFFSET</code> is "skip this many results" (to get to the right page).</p>
+            </div>
+
+            <h3>LIMIT — "Give Me Only N Rows"</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Top 3 most expensive products</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> price <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">3</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th></tr>
+                <tr><td>Winter Jacket</td><td>129.99</td></tr>
+                <tr><td>Running Shoes</td><td>89.99</td></tr>
+                <tr><td>Wireless Headphones</td><td>79.99</td></tr>
+            </table>
+
+            <h3>OFFSET — "Skip N Rows First"</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Page 1: first 5 products (sorted by name)</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> name
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">5</span> <span style="color:#c084fc">OFFSET</span> <span style="color:#fb923c">0</span>;
+
+<span style="color:#94a3b8">-- Page 2: next 5 products</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> name
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">5</span> <span style="color:#c084fc">OFFSET</span> <span style="color:#fb923c">5</span>;
+
+<span style="color:#94a3b8">-- Page 3: next 5 products</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> name
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">5</span> <span style="color:#c084fc">OFFSET</span> <span style="color:#fb923c">10</span>;</pre></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">Page 1</div>
+                    <div class="stat-label">LIMIT 5 OFFSET 0 → Rows 1–5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">Page 2</div>
+                    <div class="stat-label">LIMIT 5 OFFSET 5 → Rows 6–10</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">Page 3</div>
+                    <div class="stat-label">LIMIT 5 OFFSET 10 → Rows 11–14</div>
+                </div>
+            </div>
+
+            <p>The formula for any page: <code>OFFSET = (page_number - 1) × page_size</code></p>
+
+            <div class="important-box">
+                <h4>⚠️ Performance Warning — Large OFFSETs Are Slow!</h4>
+                <p>When you use <code>OFFSET 1000000</code>, PostgreSQL still has to read and skip through one million rows before giving you the results. It's like flipping through 10,000 pages of a book to get to page 10,001 — painfully slow! For large datasets, use <strong>keyset pagination</strong> instead (also called "cursor-based pagination") where you filter by <code>WHERE id &gt; last_seen_id</code>. We'll cover this in the advanced modules.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ Always Use ORDER BY With LIMIT!</h4>
+                <p>Without <code>ORDER BY</code>, the order of rows is <strong>not guaranteed</strong>. So <code>LIMIT 5</code> without <code>ORDER BY</code> might give you different 5 rows each time you run it! Always specify an order when using LIMIT.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 5. LIKE & ILIKE ===================== -->
+        <div class="section">
+            <h2>5️⃣ LIKE &amp; ILIKE — Pattern Matching</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is LIKE?</h4>
+                <p>Imagine you're playing a guessing game. You know the word starts with "ch" but you don't know the rest. You'd say: <em>"I'm looking for words that start with ch-something."</em> That's LIKE! The <code>%</code> symbol means "any characters can go here" and <code>_</code> means "exactly one character goes here." It's like a fill-in-the-blank puzzle for text!</p>
+            </div>
+
+            <h3>The Two Wildcards</h3>
+            <table class="comparison-table">
+                <tr><th>Wildcard</th><th>Meaning</th><th>Example</th><th>Matches</th></tr>
+                <tr><td><code>%</code></td><td>Any number of characters (0 or more)</td><td><code>'A%'</code></td><td>A, Apple, Avocado, A123</td></tr>
+                <tr><td><code>_</code></td><td>Exactly one character</td><td><code>'_at'</code></td><td>Cat, Bat, Hat (NOT Chat)</td></tr>
+            </table>
+
+            <h3>Example 1: Names Starting With a Letter</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products whose name starts with 'W'</span>
+<span style="color:#c084fc">SELECT</span> name
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">LIKE</span> <span style="color:#4ade80">'W%'</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th></tr>
+                <tr><td>Wireless Headphones</td></tr>
+                <tr><td>Winter Jacket</td></tr>
+            </table>
+
+            <h3>Example 2: Names Containing a Word</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products with 'Coffee' anywhere in the name</span>
+<span style="color:#c084fc">SELECT</span> name
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">LIKE</span> <span style="color:#4ade80">'%Coffee%'</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th></tr>
+                <tr><td>Organic Coffee Beans</td></tr>
+            </table>
+
+            <h3>Example 3: Names Ending With a Word</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products whose name ends with 'er'</span>
+<span style="color:#c084fc">SELECT</span> name
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">LIKE</span> <span style="color:#4ade80">'%er'</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th></tr>
+                <tr><td>Bluetooth Speaker</td></tr>
+                <tr><td>Almond Butter</td></tr>
+            </table>
+
+            <h3>Example 4: The Underscore Wildcard</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products with exactly 7-letter names starting with 'Y'</span>
+<span style="color:#c084fc">SELECT</span> name
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">LIKE</span> <span style="color:#4ade80">'Y______%'</span>;
+<span style="color:#94a3b8">-- 'Y' + six underscores + any remaining chars</span></pre></div>
+
+            <h3>ILIKE — Case-Insensitive LIKE (PostgreSQL Only!)</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- LIKE is case-SENSITIVE:</span>
+<span style="color:#c084fc">SELECT</span> name <span style="color:#c084fc">FROM</span> products <span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">LIKE</span> <span style="color:#4ade80">'%coffee%'</span>;
+<span style="color:#94a3b8">-- Returns: NOTHING (because our data has 'Coffee' with capital C)</span>
+
+<span style="color:#94a3b8">-- ILIKE ignores case:</span>
+<span style="color:#c084fc">SELECT</span> name <span style="color:#c084fc">FROM</span> products <span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">ILIKE</span> <span style="color:#4ade80">'%coffee%'</span>;
+<span style="color:#94a3b8">-- Returns: Organic Coffee Beans ✅</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — ILIKE Is Your Friend</h4>
+                <p>In the real world, user-entered data is messy — people type "NEW YORK", "New York", "new york", etc. Always use <code>ILIKE</code> when searching user data so you don't miss results just because of capitalization differences. This is a PostgreSQL superpower that most other databases don't have!</p>
+            </div>
+
+            <h3>Bonus: Regular Expressions with ~</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- PostgreSQL supports regex! The ~ operator is case-sensitive, ~* is case-insensitive</span>
+<span style="color:#c084fc">SELECT</span> name <span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name ~ <span style="color:#4ade80">'^[A-D]'</span>;
+<span style="color:#94a3b8">-- Names starting with A, B, C, or D</span></pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th></tr>
+                <tr><td>Cotton T-Shirt</td></tr>
+                <tr><td>Dark Chocolate Bar</td></tr>
+                <tr><td>Almond Butter</td></tr>
+                <tr><td>Data Science Handbook</td></tr>
+                <tr><td>Bluetooth Speaker</td></tr>
+            </table>
+        </div>
+
+        <!-- ===================== 6. BETWEEN ===================== -->
+        <div class="section">
+            <h2>6️⃣ BETWEEN — Range Queries</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is BETWEEN?</h4>
+                <p>Your mom says: <em>"You can pick any cereal that costs between $3 and $6."</em> That means $3 is OK, $6 is OK, and everything in between is OK — but $2.99 is too cheap and $6.01 is too expensive. <code>BETWEEN</code> works the same way. It checks if a value falls within a range, and <strong>both ends are included</strong>!</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products priced between $10 and $50 (inclusive)</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> price <span style="color:#c084fc">BETWEEN</span> <span style="color:#fb923c">10</span> <span style="color:#c084fc">AND</span> <span style="color:#fb923c">50</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th></tr>
+                <tr><td>USB-C Cable</td><td>12.99</td></tr>
+                <tr><td>Smartphone Case</td><td>24.99</td></tr>
+                <tr><td>Cotton T-Shirt</td><td>19.99</td></tr>
+                <tr><td>Organic Coffee Beans</td><td>14.99</td></tr>
+                <tr><td>Python Crash Course</td><td>35.00</td></tr>
+                <tr><td>SQL in 10 Minutes</td><td>22.50</td></tr>
+                <tr><td>Data Science Handbook</td><td>45.00</td></tr>
+                <tr><td>Bluetooth Speaker</td><td>49.99</td></tr>
+                <tr><td>Yoga Mat</td><td>29.99</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ BETWEEN Is Inclusive on BOTH Ends!</h4>
+                <p><code>BETWEEN 10 AND 50</code> is the same as <code>price &gt;= 10 AND price &lt;= 50</code>. Both 10 and 50 are included! This catches people off guard especially with dates. <code>BETWEEN '2024-01-01' AND '2024-01-31'</code> includes both January 1st and January 31st.</p>
+            </div>
+
+            <h3>BETWEEN With Dates</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products created in the last 7 days</span>
+<span style="color:#c084fc">SELECT</span> name, created_at
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> created_at <span style="color:#c084fc">BETWEEN</span> <span style="color:#c084fc">NOW</span>() - <span style="color:#c084fc">INTERVAL</span> <span style="color:#4ade80">'7 days'</span> <span style="color:#c084fc">AND</span> <span style="color:#c084fc">NOW</span>();</pre></div>
+
+            <h3>NOT BETWEEN — Exclude a Range</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products that are NOT in the $10–$50 range</span>
+<span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> price <span style="color:#c084fc">NOT BETWEEN</span> <span style="color:#fb923c">10</span> <span style="color:#c084fc">AND</span> <span style="color:#fb923c">50</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th></tr>
+                <tr><td>Wireless Headphones</td><td>79.99</td></tr>
+                <tr><td>Running Shoes</td><td>89.99</td></tr>
+                <tr><td>Winter Jacket</td><td>129.99</td></tr>
+                <tr><td>Dark Chocolate Bar</td><td>5.99</td></tr>
+                <tr><td>Almond Butter</td><td>9.49</td></tr>
+            </table>
+        </div>
+
+        <!-- ===================== 7. IN ===================== -->
+        <div class="section">
+            <h2>7️⃣ IN — Matching a List of Values</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is IN?</h4>
+                <p>Your teacher says: <em>"Raise your hand if your birthday is in January, March, or July."</em> She named a <strong>list</strong> of specific months, and you check if yours is in that list. <code>IN</code> works exactly the same — you give it a list of values, and PostgreSQL checks if each row's value is in your list.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products in specific categories</span>
+<span style="color:#c084fc">SELECT</span> name, category
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category <span style="color:#c084fc">IN</span> (<span style="color:#4ade80">'Food'</span>, <span style="color:#4ade80">'Books'</span>);</pre></div>
+
+            <p>This is <strong>much cleaner</strong> than writing:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Same result, but uglier and harder to maintain</span>
+<span style="color:#c084fc">SELECT</span> name, category
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Food'</span>
+   <span style="color:#c084fc">OR</span> category = <span style="color:#4ade80">'Books'</span>;</pre></div>
+
+            <h3>NOT IN — Exclude a List</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Everything EXCEPT Food and Books</span>
+<span style="color:#c084fc">SELECT</span> name, category
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category <span style="color:#c084fc">NOT IN</span> (<span style="color:#4ade80">'Food'</span>, <span style="color:#4ade80">'Books'</span>);</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>category</th></tr>
+                <tr><td>Wireless Headphones</td><td>Electronics</td></tr>
+                <tr><td>USB-C Cable</td><td>Electronics</td></tr>
+                <tr><td>Smartphone Case</td><td>Electronics</td></tr>
+                <tr><td>Running Shoes</td><td>Clothing</td></tr>
+                <tr><td>Cotton T-Shirt</td><td>Clothing</td></tr>
+                <tr><td>Winter Jacket</td><td>Clothing</td></tr>
+                <tr><td>Bluetooth Speaker</td><td>Electronics</td></tr>
+                <tr><td>Yoga Mat</td><td>Clothing</td></tr>
+            </table>
+
+            <h3>IN With Numbers</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find products with specific IDs</span>
+<span style="color:#c084fc">SELECT</span> name, id
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> id <span style="color:#c084fc">IN</span> (<span style="color:#fb923c">1</span>, <span style="color:#fb923c">5</span>, <span style="color:#fb923c">10</span>);</pre></div>
+
+            <h3>Sneak Preview: IN With a Subquery</h3>
+            <p>Here's where <code>IN</code> gets really powerful — you can use another query <em>inside</em> it:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Find products in categories that have items priced over $100</span>
+<span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category <span style="color:#c084fc">IN</span> (
+    <span style="color:#c084fc">SELECT DISTINCT</span> category
+    <span style="color:#c084fc">FROM</span> products
+    <span style="color:#c084fc">WHERE</span> price &gt; <span style="color:#fb923c">100</span>
+);</pre></div>
+
+            <p><strong>Result:</strong> All Clothing products (because Winter Jacket costs $129.99).</p>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — IN vs. Multiple ORs</h4>
+                <p>Always prefer <code>IN ('a', 'b', 'c')</code> over <code>x = 'a' OR x = 'b' OR x = 'c'</code>. It's shorter, easier to read, and PostgreSQL's optimizer handles them identically — so there's no performance difference. Just readability.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ NOT IN and NULLs Don't Mix!</h4>
+                <p>If the list in <code>NOT IN</code> contains a <code>NULL</code>, the entire result will be <strong>empty</strong>! This is because <code>x NOT IN (1, 2, NULL)</code> evaluates to UNKNOWN for every row. Use <code>NOT IN</code> only when you're 100% sure the list has no NULLs, or use <code>NOT EXISTS</code> instead (covered in the Joins module).</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. NULL HANDLING ===================== -->
+        <div class="section">
+            <h2>8️⃣ NULL Handling — The Trickiest Concept!</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is NULL?</h4>
+                <p>Imagine you ask your friend: <em>"How many pets does Sarah have?"</em> Your friend says: <em>"I don't know."</em> That's NULL! It's not zero (that would mean "Sarah has no pets"). It's not an empty string (that would mean "Sarah's pet name is blank"). NULL means <strong>"the answer is unknown."</strong> And here's the mind-bending part: if you don't know something, you can't compare it to anything! Is "I don't know" equal to 5? You don't know! Is "I don't know" equal to "I don't know"? You <em>still</em> don't know! Two unknowns might be different unknowns.</p>
+            </div>
+
+            <h3>NULL Is NOT Zero, NOT Empty String, NOT False</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">"I have zero cookies"<br>(a known quantity)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">''</div>
+                    <div class="stat-label">"My name is blank"<br>(a known empty value)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color:#94a3b8">NULL</div>
+                    <div class="stat-label">"I don't know"<br>(completely unknown)</div>
+                </div>
+            </div>
+
+            <h3>IS NULL and IS NOT NULL</h3>
+            <p>You <strong>cannot</strong> use <code>=</code> to check for NULL. You must use <code>IS NULL</code> or <code>IS NOT NULL</code>:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ WRONG — This will NEVER find NULLs!</span>
+<span style="color:#c084fc">SELECT</span> name, rating
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> rating = <span style="color:#c084fc">NULL</span>;
+<span style="color:#94a3b8">-- Returns: NOTHING (even though 2 products have NULL ratings!)</span>
+
+<span style="color:#94a3b8">-- ✅ CORRECT — Use IS NULL</span>
+<span style="color:#c084fc">SELECT</span> name, rating
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> rating <span style="color:#c084fc">IS NULL</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>rating</th></tr>
+                <tr><td>Data Science Handbook</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td>Yoga Mat</td><td style="color:#94a3b8">NULL</td></tr>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Products that DO have a rating</span>
+<span style="color:#c084fc">SELECT</span> name, rating
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> rating <span style="color:#c084fc">IS NOT NULL</span>
+<span style="color:#c084fc">ORDER BY</span> rating <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <h3>COALESCE — Provide a Default Value</h3>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is COALESCE?</h4>
+                <p>Your mom asks what you want for dinner. You say: <em>"Pizza. But if there's no pizza, then burgers. But if there are no burgers either, then just make pasta."</em> That's COALESCE! It goes through a list of values and returns the <strong>first one that isn't NULL</strong>.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Replace NULL ratings with 'Not rated'</span>
+<span style="color:#c084fc">SELECT</span> name,
+       <span style="color:#c084fc">COALESCE</span>(rating::text, <span style="color:#4ade80">'Not rated'</span>) <span style="color:#c084fc">AS</span> display_rating
+<span style="color:#c084fc">FROM</span> products;</pre></div>
+
+            <p><strong>Result (last few rows):</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>display_rating</th></tr>
+                <tr><td>SQL in 10 Minutes</td><td>4.4</td></tr>
+                <tr><td>Data Science Handbook</td><td>Not rated</td></tr>
+                <tr><td>Bluetooth Speaker</td><td>4.1</td></tr>
+                <tr><td>Yoga Mat</td><td>Not rated</td></tr>
+            </table>
+
+            <h3>NULLIF — The Opposite of COALESCE</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- NULLIF returns NULL if two values are equal</span>
+<span style="color:#94a3b8">-- Useful to avoid division by zero!</span>
+<span style="color:#c084fc">SELECT</span> name,
+       stock,
+       price / <span style="color:#c084fc">NULLIF</span>(stock, <span style="color:#fb923c">0</span>) <span style="color:#c084fc">AS</span> price_per_unit
+<span style="color:#c084fc">FROM</span> products;
+<span style="color:#94a3b8">-- For Bluetooth Speaker (stock = 0), NULLIF(0, 0) returns NULL</span>
+<span style="color:#94a3b8">-- So price / NULL = NULL instead of a division-by-zero error!</span></pre></div>
+
+            <h3>Three-Valued Logic — The Full Truth Table</h3>
+            <p>In most programming languages, things are either TRUE or FALSE. In SQL, there's a third option: <strong>UNKNOWN</strong> (anything involving NULL). This "three-valued logic" is the root of many SQL bugs.</p>
+
+            <table class="comparison-table">
+                <tr><th>Expression</th><th>Result</th><th>Why?</th></tr>
+                <tr><td><code>NULL = NULL</code></td><td style="color:#94a3b8">UNKNOWN</td><td>Two unknowns might be different</td></tr>
+                <tr><td><code>NULL &lt;&gt; NULL</code></td><td style="color:#94a3b8">UNKNOWN</td><td>Same reason</td></tr>
+                <tr><td><code>NULL &gt; 5</code></td><td style="color:#94a3b8">UNKNOWN</td><td>Can't compare unknown to 5</td></tr>
+                <tr><td><code>NULL AND TRUE</code></td><td style="color:#94a3b8">UNKNOWN</td><td>If one side is unknown, result is unknown</td></tr>
+                <tr><td><code>NULL AND FALSE</code></td><td>FALSE</td><td>FALSE always wins with AND</td></tr>
+                <tr><td><code>NULL OR TRUE</code></td><td>TRUE</td><td>TRUE always wins with OR</td></tr>
+                <tr><td><code>NULL OR FALSE</code></td><td style="color:#94a3b8">UNKNOWN</td><td>If one side is unknown, result is unknown</td></tr>
+                <tr><td><code>NOT NULL</code></td><td style="color:#94a3b8">UNKNOWN</td><td>The opposite of unknown is still unknown</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ WHERE Only Keeps TRUE Rows!</h4>
+                <p>The <code>WHERE</code> clause only returns rows where the condition is <strong>TRUE</strong>. Rows that evaluate to FALSE <em>or</em> UNKNOWN are both filtered out. This is why <code>WHERE rating = NULL</code> returns nothing — it evaluates to UNKNOWN for every row, and UNKNOWN is not TRUE.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Imagine a courtroom. The verdict can be <strong>Guilty</strong>, <strong>Not Guilty</strong>, or <strong>Insufficient Evidence</strong>. NULL is like "Insufficient Evidence" — it's not the same as "Not Guilty." You can't say someone is innocent just because there isn't enough information. SQL treats UNKNOWN the same way — it refuses to make assumptions.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 9. COLUMN ALIASES ===================== -->
+        <div class="section">
+            <h2>9️⃣ Column Aliases — Making Output Readable</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Are Aliases?</h4>
+                <p>Your real name might be "Alexander" but everyone calls you "Alex." An alias is just a <strong>nickname</strong> you give to a column. Instead of the result showing a ugly column header like <code>price * 1.1</code>, you can give it a friendly name like <code>price_with_tax</code>.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Without aliases — ugly column names</span>
+<span style="color:#c084fc">SELECT</span> name, price, price * <span style="color:#fb923c">1.1</span>
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">3</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th><th>?column?</th></tr>
+                <tr><td>Wireless Headphones</td><td>79.99</td><td>87.989</td></tr>
+                <tr><td>USB-C Cable</td><td>12.99</td><td>14.289</td></tr>
+                <tr><td>Smartphone Case</td><td>24.99</td><td>27.489</td></tr>
+            </table>
+
+            <p>Yuck — <code>?column?</code> is not helpful at all! Let's fix that with an alias:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- With aliases — clean, readable headers</span>
+<span style="color:#c084fc">SELECT</span> name <span style="color:#c084fc">AS</span> product_name,
+       price <span style="color:#c084fc">AS</span> original_price,
+       price * <span style="color:#fb923c">1.1</span> <span style="color:#c084fc">AS</span> price_with_tax,
+       stock * price <span style="color:#c084fc">AS</span> inventory_value
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">3</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>product_name</th><th>original_price</th><th>price_with_tax</th><th>inventory_value</th></tr>
+                <tr><td>Wireless Headphones</td><td>79.99</td><td>87.99</td><td>11998.50</td></tr>
+                <tr><td>USB-C Cable</td><td>12.99</td><td>14.29</td><td>6495.00</td></tr>
+                <tr><td>Smartphone Case</td><td>24.99</td><td>27.49</td><td>7497.00</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Aliases With Spaces</h4>
+                <p>Want spaces in your alias? Use double quotes: <code>price * 1.1 AS "Price With Tax"</code>. But in practice, stick to <code>snake_case</code> (underscores instead of spaces) because it's easier to work with in code.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ You Cannot Use Aliases in WHERE!</h4>
+                <p>The alias is assigned <em>after</em> the WHERE clause runs, so <code>WHERE price_with_tax &gt; 50</code> will cause an error. You must repeat the expression: <code>WHERE price * 1.1 &gt; 50</code>. You <em>can</em> use aliases in <code>ORDER BY</code>, though!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 10. DISTINCT ===================== -->
+        <div class="section">
+            <h2>🔟 DISTINCT — Removing Duplicates</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is DISTINCT?</h4>
+                <p>You ask your class: <em>"What colors are you wearing?"</em> People shout out: "Blue! Red! Blue! Green! Blue! Red!" You only want each <strong>unique</strong> color, not duplicates. So you write down: Blue, Red, Green. That's <code>DISTINCT</code> — it removes repeated values from your results.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Without DISTINCT — shows duplicates</span>
+<span style="color:#c084fc">SELECT</span> category <span style="color:#c084fc">FROM</span> products;
+<span style="color:#94a3b8">-- Returns: Electronics, Electronics, Electronics, Clothing, Clothing,</span>
+<span style="color:#94a3b8">--          Clothing, Food, Food, Food, Books, Books, Books, Electronics, Clothing</span>
+
+<span style="color:#94a3b8">-- With DISTINCT — unique values only</span>
+<span style="color:#c084fc">SELECT DISTINCT</span> category <span style="color:#c084fc">FROM</span> products;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th></tr>
+                <tr><td>Electronics</td></tr>
+                <tr><td>Clothing</td></tr>
+                <tr><td>Food</td></tr>
+                <tr><td>Books</td></tr>
+            </table>
+
+            <h3>DISTINCT ON — PostgreSQL Superpower!</h3>
+            <p>This is a PostgreSQL-exclusive feature that most databases don't have. <code>DISTINCT ON (column)</code> gives you the <strong>first row</strong> for each unique value of that column (based on your ORDER BY).</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Get the cheapest product in each category</span>
+<span style="color:#c084fc">SELECT DISTINCT ON</span> (category)
+       category, name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> category, price <span style="color:#c084fc">ASC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th><th>name</th><th>price</th></tr>
+                <tr><td>Books</td><td>SQL in 10 Minutes</td><td>22.50</td></tr>
+                <tr><td>Clothing</td><td>Cotton T-Shirt</td><td>19.99</td></tr>
+                <tr><td>Electronics</td><td>USB-C Cable</td><td>12.99</td></tr>
+                <tr><td>Food</td><td>Dark Chocolate Bar</td><td>5.99</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p><code>DISTINCT ON</code> is like asking: <em>"In each school subject, who scored the highest?"</em> You get one row per subject — the top student. Without DISTINCT ON, you'd need a much more complex query with subqueries or window functions to achieve the same result.</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — ORDER BY Must Match DISTINCT ON</h4>
+                <p>When using <code>DISTINCT ON (column)</code>, the <code>ORDER BY</code> must start with that same column. Otherwise PostgreSQL doesn't know which row to pick as the "first" one for each group. Think of it as: first group them, then within each group, pick the first one based on the remaining sort columns.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 11. CASE EXPRESSIONS ===================== -->
+        <div class="section">
+            <h2>1️⃣1️⃣ CASE Expressions — SQL's If-Then-Else</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — What Is CASE?</h4>
+                <p>Remember those "Choose Your Own Adventure" books? <em>If the dragon attacks, turn to page 50. If the dragon is sleeping, turn to page 75. Otherwise, turn to page 100.</em> The <code>CASE</code> expression does the same thing in SQL — it checks conditions one by one and returns different results depending on which condition is true.</p>
+            </div>
+
+            <h3>Searched CASE — Check Any Condition</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Categorize products by price range</span>
+<span style="color:#c084fc">SELECT</span> name,
+       price,
+       <span style="color:#c084fc">CASE</span>
+           <span style="color:#c084fc">WHEN</span> price &lt; <span style="color:#fb923c">15</span>  <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'Budget'</span>
+           <span style="color:#c084fc">WHEN</span> price &lt; <span style="color:#fb923c">50</span>  <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'Mid-Range'</span>
+           <span style="color:#c084fc">WHEN</span> price &lt; <span style="color:#fb923c">100</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'Premium'</span>
+           <span style="color:#c084fc">ELSE</span> <span style="color:#4ade80">'Luxury'</span>
+       <span style="color:#c084fc">END</span> <span style="color:#c084fc">AS</span> price_tier
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> price;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>price</th><th>price_tier</th></tr>
+                <tr><td>Dark Chocolate Bar</td><td>5.99</td><td>Budget</td></tr>
+                <tr><td>Almond Butter</td><td>9.49</td><td>Budget</td></tr>
+                <tr><td>USB-C Cable</td><td>12.99</td><td>Budget</td></tr>
+                <tr><td>Organic Coffee Beans</td><td>14.99</td><td>Budget</td></tr>
+                <tr><td>Cotton T-Shirt</td><td>19.99</td><td>Mid-Range</td></tr>
+                <tr><td>SQL in 10 Minutes</td><td>22.50</td><td>Mid-Range</td></tr>
+                <tr><td>Smartphone Case</td><td>24.99</td><td>Mid-Range</td></tr>
+                <tr><td>Yoga Mat</td><td>29.99</td><td>Mid-Range</td></tr>
+                <tr><td>Python Crash Course</td><td>35.00</td><td>Mid-Range</td></tr>
+                <tr><td>Data Science Handbook</td><td>45.00</td><td>Mid-Range</td></tr>
+                <tr><td>Bluetooth Speaker</td><td>49.99</td><td>Mid-Range</td></tr>
+                <tr><td>Wireless Headphones</td><td>79.99</td><td>Premium</td></tr>
+                <tr><td>Running Shoes</td><td>89.99</td><td>Premium</td></tr>
+                <tr><td>Winter Jacket</td><td>129.99</td><td>Luxury</td></tr>
+            </table>
+
+            <h3>Simple CASE — Match a Single Value</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Translate category names for a report</span>
+<span style="color:#c084fc">SELECT</span> name,
+       <span style="color:#c084fc">CASE</span> category
+           <span style="color:#c084fc">WHEN</span> <span style="color:#4ade80">'Electronics'</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'⚡ Tech Gadgets'</span>
+           <span style="color:#c084fc">WHEN</span> <span style="color:#4ade80">'Clothing'</span>    <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'👕 Apparel'</span>
+           <span style="color:#c084fc">WHEN</span> <span style="color:#4ade80">'Food'</span>        <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'🍕 Groceries'</span>
+           <span style="color:#c084fc">WHEN</span> <span style="color:#4ade80">'Books'</span>       <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'📚 Reading'</span>
+           <span style="color:#c084fc">ELSE</span> <span style="color:#4ade80">'❓ Other'</span>
+       <span style="color:#c084fc">END</span> <span style="color:#c084fc">AS</span> friendly_category
+<span style="color:#c084fc">FROM</span> products;</pre></div>
+
+            <h3>CASE in WHERE and ORDER BY</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Custom sort: show in-stock items first, then out-of-stock</span>
+<span style="color:#c084fc">SELECT</span> name, stock,
+       <span style="color:#c084fc">CASE WHEN</span> stock &gt; <span style="color:#fb923c">0</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'In Stock'</span> <span style="color:#c084fc">ELSE</span> <span style="color:#4ade80">'Out of Stock'</span> <span style="color:#c084fc">END</span> <span style="color:#c084fc">AS</span> availability
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span>
+    <span style="color:#c084fc">CASE WHEN</span> stock &gt; <span style="color:#fb923c">0</span> <span style="color:#c084fc">THEN</span> <span style="color:#fb923c">0</span> <span style="color:#c084fc">ELSE</span> <span style="color:#fb923c">1</span> <span style="color:#c084fc">END</span>,
+    name;</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ CASE Evaluates Top-to-Bottom!</h4>
+                <p>CASE checks conditions in order and stops at the <strong>first match</strong>. If a product has price = 5, it matches <code>WHEN price &lt; 15</code> and never reaches <code>WHEN price &lt; 50</code>. Order your conditions from most specific to least specific!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 12. PRACTICE EXERCISES ===================== -->
+        <div class="section">
+            <h2>🏋️ Practice Exercises</h2>
+            <p>Time to practice! Try solving these yourself before revealing the answers. Use the <code>products</code> table we created at the beginning.</p>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: The Bargain Hunter</h4>
+                <p>Find all products that are in the 'Food' category AND cost less than $10. Show the name and price, sorted by price ascending.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> category = <span style="color:#4ade80">'Food'</span>
+  <span style="color:#c084fc">AND</span> price &lt; <span style="color:#fb923c">10</span>
+<span style="color:#c084fc">ORDER BY</span> price <span style="color:#c084fc">ASC</span>;</pre></div>
+                    <p>Returns: Dark Chocolate Bar ($5.99), Almond Butter ($9.49)</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: The Category Explorer</h4>
+                <p>List all unique categories in our products table, sorted alphabetically.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT DISTINCT</span> category
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> category;</pre></div>
+                    <p>Returns: Books, Clothing, Electronics, Food</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: The Name Detective</h4>
+                <p>Find all products whose name contains the word "Chocolate" or "Coffee" (case-insensitive). Show name, category, and price.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, category, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> name <span style="color:#c084fc">ILIKE</span> <span style="color:#4ade80">'%chocolate%'</span>
+   <span style="color:#c084fc">OR</span> name <span style="color:#c084fc">ILIKE</span> <span style="color:#4ade80">'%coffee%'</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: The Paginator</h4>
+                <p>Show the 3rd page of products (3 per page), ordered by price from highest to lowest. Hint: page 3 means OFFSET = (3-1) × 3 = 6.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name, price
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> price <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">3</span> <span style="color:#c084fc">OFFSET</span> <span style="color:#fb923c">6</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 5: The NULL Wrangler</h4>
+                <p>Show all products with their rating. For products without a rating, display "Unrated" instead of NULL. Name the column <code>display_rating</code>. Sort by rating descending, with NULLs last.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name,
+       <span style="color:#c084fc">COALESCE</span>(rating::<span style="color:#38bdf8">text</span>, <span style="color:#4ade80">'Unrated'</span>) <span style="color:#c084fc">AS</span> display_rating
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">ORDER BY</span> rating <span style="color:#c084fc">DESC NULLS LAST</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 6: The Report Builder (Challenge!)</h4>
+                <p>Create a report showing each product's name, price, and a <code>stock_status</code> column that says: "Out of Stock" if stock = 0, "Low Stock" if stock &lt; 50, "In Stock" if stock &lt; 200, and "Well Stocked" for everything else. Only include products priced between $10 and $100. Sort by stock ascending.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> name,
+       price,
+       <span style="color:#c084fc">CASE</span>
+           <span style="color:#c084fc">WHEN</span> stock = <span style="color:#fb923c">0</span>   <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'Out of Stock'</span>
+           <span style="color:#c084fc">WHEN</span> stock &lt; <span style="color:#fb923c">50</span>  <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'Low Stock'</span>
+           <span style="color:#c084fc">WHEN</span> stock &lt; <span style="color:#fb923c">200</span> <span style="color:#c084fc">THEN</span> <span style="color:#4ade80">'In Stock'</span>
+           <span style="color:#c084fc">ELSE</span> <span style="color:#4ade80">'Well Stocked'</span>
+       <span style="color:#c084fc">END</span> <span style="color:#c084fc">AS</span> stock_status
+<span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> price <span style="color:#c084fc">BETWEEN</span> <span style="color:#fb923c">10</span> <span style="color:#c084fc">AND</span> <span style="color:#fb923c">100</span>
+<span style="color:#c084fc">ORDER BY</span> stock <span style="color:#c084fc">ASC</span>;</pre></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== 13. QUIZ ===================== -->
+        <div class="section">
+            <h2>📝 Quiz — Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What does <code>WHERE price BETWEEN 10 AND 50</code> do?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Returns rows where price &gt; 10 AND price &lt; 50</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Returns rows where price &gt;= 10 AND price &lt;= 50</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Returns rows where price = 10 OR price = 50</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Returns rows where price is either 10 or 50 only</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: Which is the correct way to check for NULL?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>WHERE rating = NULL</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>WHERE rating == NULL</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)"><code>WHERE rating IS NULL</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>WHERE rating EQUALS NULL</code></button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: What does <code>ILIKE</code> do that <code>LIKE</code> doesn't?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It works with numbers instead of text</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It searches faster than LIKE</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">It performs case-insensitive pattern matching</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It matches full words only, not partial strings</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: What is the result of <code>NULL = NULL</code> in SQL?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">TRUE — NULL equals NULL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">FALSE — NULLs are never equal</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">UNKNOWN — You can't compare two unknowns</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It causes an error</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: What is special about <code>DISTINCT ON</code> in PostgreSQL?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It removes all rows from the table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">It returns the first row for each unique value of the specified column</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It sorts results and removes empty values</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It works exactly like regular DISTINCT</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: Why should you always use <code>ORDER BY</code> with <code>LIMIT</code>?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Because LIMIT doesn't work without ORDER BY</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Because PostgreSQL requires it — you'll get an error otherwise</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Because without ORDER BY, the row order is not guaranteed, so LIMIT might return different rows each time</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Because ORDER BY makes the query faster</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: What does <code>COALESCE(rating, 0)</code> return?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Always returns 0</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Returns the rating if it's not NULL, otherwise returns 0</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Returns NULL if rating is 0</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Adds 0 to the rating</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== 14. WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>🎉 What's Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">11</div>
+                    <div class="stat-label">Query techniques learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">SQL examples practiced</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Quiz questions conquered</div>
+                </div>
+            </div>
+
+            <p>Congratulations! You've mastered the fundamentals of querying data in PostgreSQL. Here's a quick recap of what you learned:</p>
+
+            <table class="comparison-table">
+                <tr><th>Concept</th><th>What It Does</th><th>Key Syntax</th></tr>
+                <tr><td>WHERE</td><td>Filters rows</td><td><code>WHERE price &gt; 50</code></td></tr>
+                <tr><td>AND / OR / NOT</td><td>Combines conditions</td><td><code>WHERE a AND (b OR c)</code></td></tr>
+                <tr><td>ORDER BY</td><td>Sorts results</td><td><code>ORDER BY price DESC</code></td></tr>
+                <tr><td>LIMIT / OFFSET</td><td>Paginates results</td><td><code>LIMIT 10 OFFSET 20</code></td></tr>
+                <tr><td>LIKE / ILIKE</td><td>Pattern matching</td><td><code>WHERE name ILIKE '%phone%'</code></td></tr>
+                <tr><td>BETWEEN</td><td>Range queries</td><td><code>WHERE price BETWEEN 10 AND 50</code></td></tr>
+                <tr><td>IN</td><td>List matching</td><td><code>WHERE category IN ('A','B')</code></td></tr>
+                <tr><td>IS NULL</td><td>Check for NULL</td><td><code>WHERE rating IS NULL</code></td></tr>
+                <tr><td>COALESCE</td><td>Default for NULLs</td><td><code>COALESCE(rating, 0)</code></td></tr>
+                <tr><td>DISTINCT / DISTINCT ON</td><td>Remove duplicates</td><td><code>SELECT DISTINCT category</code></td></tr>
+                <tr><td>CASE</td><td>Conditional logic</td><td><code>CASE WHEN ... THEN ... END</code></td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🔮 Coming Up Next: Aggregations &amp; Grouping</h4>
+                <p>Now that you can <em>find</em> data, it's time to <em>summarize</em> it! In the next module, you'll learn how to count rows, calculate averages, find minimums and maximums, and group your data to create powerful summary reports. Think of it like going from "show me all the sales" to "what were the total sales per region this month?" — that's where the real insights live!</p>
+            </div>
+        </div>
+
         <div class="lesson-nav">
-            <a href="data-types.html" class="secondary"><i class="fas fa-arrow-left"></i> Data Types & Constraints</a>
-            <a href="indexes.html">Indexes & Performance <i class="fas fa-arrow-right"></i></a>
+            <a href="data-types.html" class="secondary"><i class="fas fa-arrow-left"></i> Data Types</a>
+            <a href="aggregations.html">Aggregations &amp; Grouping <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">Correct!</strong>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">Not quite!</strong>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

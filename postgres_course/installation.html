@@ -3,46 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Installation & Setup | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Installation &amp; Setup | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body data-access="pro">
+<body>
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Course Home</a>
             <a href="sql-basics.html">SQL Basics <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Installation & Setup</h1>
-            <p>Install PostgreSQL on any OS, configure pg_hba.conf, and connect with psql and pgAdmin.</p>
+            <h1>🛠️ Installation &amp; Setup</h1>
+            <p>Install PostgreSQL and DBeaver step-by-step. So clear, so detailed, your pet goldfish could follow along. Let's get your database running!</p>
         </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 1: WHAT WE'RE INSTALLING           -->
+        <!-- ═══════════════════════════════════════════ -->
         <div class="section visible">
-            <h2>📚 Installation & Setup</h2>
-            <p>Install PostgreSQL on any OS, configure pg_hba.conf, and connect with psql and pgAdmin.</p>
+            <h2>🎯 What We're Installing (And Why)</h2>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers installation & setup with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>🧒 ELI5 — Two Things, Two Jobs</h4>
+                <p>Think of it like a car. You need two things:</p>
+                <p>1. <strong>The Engine</strong> = <strong>PostgreSQL</strong> — This is the actual database. It stores your data, runs your queries, and does all the heavy lifting. But you can't see it — it runs in the background like a service.</p>
+                <p>2. <strong>The Steering Wheel + Dashboard</strong> = <strong>DBeaver</strong> — This is a visual tool that lets you see your databases, tables, and data in a friendly window. You type SQL here, click buttons, browse data — it's your control panel.</p>
+                <p>You COULD drive a car using only the engine (using the command line tool called <code>psql</code>), but having a dashboard makes everything easier, especially when learning!</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">🐘</div>
+                    <div class="stat-label"><strong>PostgreSQL 16</strong><br>The database engine<br>Free & open-source</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🦫</div>
+                    <div class="stat-label"><strong>DBeaver CE</strong><br>Visual database manager<br>Free Community Edition</div>
+                </div>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Why DBeaver?</h4>
+                <p>There are many database tools: pgAdmin, DataGrip, TablePlus, Postico. We chose <strong>DBeaver</strong> because:</p>
+                <ul style="margin-left:20px; margin-top:10px;">
+                    <li>✅ Completely free (Community Edition)</li>
+                    <li>✅ Works on Windows, Mac, AND Linux</li>
+                    <li>✅ Works with ANY database (PostgreSQL, MySQL, MongoDB, SQLite...)</li>
+                    <li>✅ Beautiful, intuitive interface</li>
+                    <li>✅ Built-in SQL autocompletion</li>
+                </ul>
             </div>
         </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 2: INSTALL POSTGRESQL              -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>🐘 Step 1: Install PostgreSQL</h2>
+
+            <p>Choose your operating system below. Each set of instructions is complete — follow every step and you'll be running in 10 minutes.</p>
+
+            <!-- WINDOWS -->
+            <h3 id="windows">🪟 Windows Installation</h3>
+
+            <div class="step-box">
+                <h4>Download the Installer</h4>
+                <p>Go to <a href="https://www.postgresql.org/download/windows/" target="_blank" style="color:#60a5fa; font-weight:700;">postgresql.org/download/windows</a> and click <strong>"Download the installer"</strong>. This takes you to EnterpriseDB's download page. Choose the latest version (16.x) for Windows x86-64.</p>
+            </div>
+            <div class="step-box">
+                <h4>Run the Installer</h4>
+                <p>Double-click the downloaded <code>.exe</code> file. If Windows asks "Do you want to allow this app to make changes?", click <strong>Yes</strong>.</p>
+            </div>
+            <div class="step-box">
+                <h4>Choose Components</h4>
+                <p>Keep all four checked: <strong>PostgreSQL Server</strong>, <strong>pgAdmin 4</strong>, <strong>Stack Builder</strong>, <strong>Command Line Tools</strong>. Click Next.</p>
+            </div>
+            <div class="step-box">
+                <h4>Choose Data Directory</h4>
+                <p>Leave the default (<code>C:\Program Files\PostgreSQL\16\data</code>). This is where your actual database files will live. Click Next.</p>
+            </div>
+            <div class="step-box">
+                <h4>Set the Password (IMPORTANT!)</h4>
+                <p>This is the password for the <code>postgres</code> superuser — the admin account. <strong>Write it down!</strong> You'll need it every time you connect. Use something simple for learning (like <code>postgres123</code>) — you can change it later.</p>
+            </div>
+            <div class="step-box">
+                <h4>Choose the Port</h4>
+                <p>Default is <strong>5432</strong>. Don't change it unless another PostgreSQL instance is already using this port. Click Next.</p>
+            </div>
+            <div class="step-box">
+                <h4>Finish Installation</h4>
+                <p>Click through the remaining screens and wait for installation to complete. Uncheck "Launch Stack Builder" at the end — you don't need it right now.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>✅ Verify It's Running</h4>
+                <p>Open Command Prompt (press <code>Win + R</code>, type <code>cmd</code>, hit Enter) and run:</p>
+            </div>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;">-- Check PostgreSQL version</span>
+psql --version
+
+<span style="color:#94a3b8;">-- Expected output:</span>
+<span style="color:#4ade80;">psql (PostgreSQL) 16.x</span></pre>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ "psql is not recognized" Error?</h4>
+                <p>This means PostgreSQL's <code>bin</code> folder isn't in your PATH. Fix: Search "Environment Variables" in Windows, edit the <code>Path</code> variable, and add: <code>C:\Program Files\PostgreSQL\16\bin</code>. Restart Command Prompt and try again.</p>
+            </div>
+
+            <!-- MAC -->
+            <h3 id="mac">🍎 macOS Installation</h3>
+
+            <p>The easiest way on Mac is using <strong>Homebrew</strong> (a package manager). If you don't have Homebrew, install it first:</p>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;"># Install Homebrew (if you don't have it)</span>
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+<span style="color:#94a3b8;"># Install PostgreSQL</span>
+brew install postgresql@16
+
+<span style="color:#94a3b8;"># Start the PostgreSQL service</span>
+brew services start postgresql@16
+
+<span style="color:#94a3b8;"># Verify it's running</span>
+psql --version
+<span style="color:#4ade80;">psql (PostgreSQL) 16.x</span></pre>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Mac Pro Tip</h4>
+                <p>After installing with Homebrew, PostgreSQL automatically creates a superuser with your Mac username (no password needed for local connections). You can connect instantly with: <code>psql postgres</code></p>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🧒 Alternative: Postgres.app</h4>
+                <p>If you prefer a visual approach, download <a href="https://postgresapp.com/" target="_blank" style="color:#336791; font-weight:700;">Postgres.app</a> — it's a one-click PostgreSQL installer for Mac. Just drag it to your Applications folder, open it, and click "Initialize." Done!</p>
+            </div>
+
+            <!-- LINUX -->
+            <h3 id="linux">🐧 Linux (Ubuntu/Debian) Installation</h3>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;"># Update package list</span>
+sudo apt update
+
+<span style="color:#94a3b8;"># Install PostgreSQL and utilities</span>
+sudo apt install postgresql postgresql-contrib
+
+<span style="color:#94a3b8;"># Check it's running</span>
+sudo systemctl status postgresql
+<span style="color:#4ade80;">● postgresql.service - PostgreSQL RDBMS</span>
+<span style="color:#4ade80;">     Active: active (exited)</span>
+
+<span style="color:#94a3b8;"># Switch to the postgres user and test</span>
+sudo -u postgres psql
+<span style="color:#4ade80;">postgres=# SELECT version();</span>
+<span style="color:#4ade80;">-- Shows: PostgreSQL 16.x on x86_64-pc-linux-gnu</span>
+<span style="color:#4ade80;">postgres=# \q</span></pre>
+            </div>
+
+            <div class="step-box">
+                <h4>Set a Password for the postgres User</h4>
+                <p>On Linux, the default <code>postgres</code> user has no password. Let's set one so DBeaver can connect:</p>
+            </div>
+
+            <div class="code-block">
+                <pre>sudo -u postgres psql
+<span style="color:#c084fc;">ALTER USER</span> postgres <span style="color:#c084fc;">PASSWORD</span> <span style="color:#4ade80;">'postgres123'</span>;
+\q</pre>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 3: INSTALL DBEAVER                 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible" id="dbeaver">
+            <h2>🦫 Step 2: Install DBeaver</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>DBeaver is like the "Finder" (Mac) or "File Explorer" (Windows) for databases. Instead of browsing folders and files, you browse databases, tables, and rows. It has a nice window where you can write SQL, see results, and explore your data visually.</p>
+            </div>
+
+            <div class="step-box">
+                <h4>Download DBeaver Community Edition</h4>
+                <p>Go to <a href="https://dbeaver.io/download/" target="_blank" style="color:#60a5fa; font-weight:700;">dbeaver.io/download</a> and download the <strong>Community Edition</strong> (it's free) for your operating system:</p>
+                <ul style="margin-left:20px; margin-top:10px;">
+                    <li><strong>Windows:</strong> Download the <code>.exe</code> installer</li>
+                    <li><strong>macOS:</strong> Download the <code>.dmg</code> file (or use <code>brew install --cask dbeaver-community</code>)</li>
+                    <li><strong>Linux:</strong> Download the <code>.deb</code> package (or use <code>sudo snap install dbeaver-ce</code>)</li>
+                </ul>
+            </div>
+            <div class="step-box">
+                <h4>Install It</h4>
+                <p><strong>Windows:</strong> Run the <code>.exe</code>, click Next through the wizard, leave defaults.</p>
+                <p><strong>Mac:</strong> Open the <code>.dmg</code>, drag DBeaver to Applications.</p>
+                <p><strong>Linux:</strong> <code>sudo dpkg -i dbeaver-ce_*.deb</code> or use Snap.</p>
+            </div>
+            <div class="step-box">
+                <h4>Open DBeaver</h4>
+                <p>Launch DBeaver. On first run, it might ask to download a sample database — you can skip this. You'll also see a "Tip of the Day" — close that too.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🎨 DBeaver's Interface</h4>
+                <p>When DBeaver opens, you'll see:</p>
+                <ul style="margin-left:20px; margin-top:10px;">
+                    <li><strong>Left Panel:</strong> Database Navigator — shows all your connections, databases, tables</li>
+                    <li><strong>Center:</strong> SQL Editor — where you write and run queries</li>
+                    <li><strong>Bottom:</strong> Results Panel — shows query results as a table</li>
+                </ul>
+                <p>Think of it like a code editor (VS Code), but specialized for databases.</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 4: FIRST CONNECTION                -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible" id="connect">
+            <h2>🔌 Step 3: Connect DBeaver to PostgreSQL</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>Right now, PostgreSQL is running on your computer like a chef in a kitchen. DBeaver is the dining room where you sit. We need to open the door between them so you can send orders (SQL queries) to the chef and get food (data) back. That "door" is called a <strong>connection</strong>.</p>
+            </div>
+
+            <div class="step-box" style="counter-reset: step-counter;">
+                <h4>Click "New Database Connection"</h4>
+                <p>In DBeaver, click the <strong>plug icon</strong> (🔌) in the top-left toolbar, OR go to <strong>Database → New Database Connection</strong>.</p>
+            </div>
+            <div class="step-box">
+                <h4>Choose PostgreSQL</h4>
+                <p>In the dialog that appears, you'll see a list of database types. Click <strong>PostgreSQL</strong> (the elephant icon 🐘), then click <strong>Next</strong>.</p>
+            </div>
+            <div class="step-box">
+                <h4>Fill In Connection Details</h4>
+                <p>Fill in these fields:</p>
+                <table class="comparison-table">
+                    <thead><tr><th>Field</th><th>Value</th><th>Why</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Host</strong></td><td><code>localhost</code></td><td>PostgreSQL is on YOUR computer</td></tr>
+                        <tr><td><strong>Port</strong></td><td><code>5432</code></td><td>Default PostgreSQL port</td></tr>
+                        <tr><td><strong>Database</strong></td><td><code>postgres</code></td><td>Default database that always exists</td></tr>
+                        <tr><td><strong>Username</strong></td><td><code>postgres</code></td><td>Default superuser account</td></tr>
+                        <tr><td><strong>Password</strong></td><td>The one you set during installation</td><td>Authentication</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="step-box">
+                <h4>Test the Connection</h4>
+                <p>Click <strong>"Test Connection"</strong> at the bottom. If it says <span style="color:#4ade80; font-weight:700;">"Connected"</span> with a green checkmark — you're in! Click <strong>Finish</strong>.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ Connection Failed? Common Fixes:</h4>
+                <ul style="margin-left:20px; margin-top:10px;">
+                    <li><strong>"Connection refused"</strong> → PostgreSQL service isn't running. Start it:
+                        <br>Windows: <code>net start postgresql-x64-16</code>
+                        <br>Mac: <code>brew services start postgresql@16</code>
+                        <br>Linux: <code>sudo systemctl start postgresql</code>
+                    </li>
+                    <li><strong>"Authentication failed"</strong> → Wrong password. Reset it via psql: <code>ALTER USER postgres PASSWORD 'newpass';</code></li>
+                    <li><strong>"Download driver" dialog</strong> → DBeaver needs the PostgreSQL JDBC driver. Click "Download" — it's automatic and one-time.</li>
+                </ul>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Save Your Password</h4>
+                <p>In the connection dialog, check <strong>"Save password locally"</strong> so you don't have to type it every time. For a learning environment, this is perfectly fine.</p>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 5: FIRST DATABASE & QUERY          -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible" id="first-db">
+            <h2>🎉 Step 4: Your First Database &amp; Query!</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>You're connected to PostgreSQL — the kitchen is open! Right now there's a default database called <code>postgres</code>, but it's like the chef's break room. Let's create our OWN database — our own restaurant — and run our very first query!</p>
+            </div>
+
+            <h3>Create Your First Database</h3>
+
+            <p>In DBeaver, click on your PostgreSQL connection in the left panel to expand it. Then open a new SQL editor: <strong>SQL Editor → New SQL Script</strong> (or press <code>Ctrl+]</code> / <code>Cmd+]</code>). Type:</p>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;">-- Create your very first database!</span>
+<span style="color:#c084fc;">CREATE DATABASE</span> my_first_db;</pre>
+            </div>
+
+            <p>Press <strong>Ctrl+Enter</strong> (or <strong>Cmd+Enter</strong> on Mac) to execute. You should see a success message at the bottom. 🎉</p>
+
+            <div class="real-life">
+                <h4>🎯 What Just Happened?</h4>
+                <p>You just created a brand new, empty database on your computer. It's like creating a new, empty folder in your file system — but this folder is designed to hold tables of data. Right-click your connection in the left panel and click <strong>"Refresh"</strong> to see <code>my_first_db</code> appear in the list!</p>
+            </div>
+
+            <h3>Connect to Your New Database</h3>
+
+            <p>DBeaver is still connected to the <code>postgres</code> database. To switch:</p>
+            <ol style="margin-left:20px; margin-bottom:20px; line-height:2;">
+                <li>In the left panel, double-click <strong>my_first_db</strong> to connect to it</li>
+                <li>Open a new SQL Script (make sure the dropdown at the top shows <code>my_first_db</code>)</li>
+            </ol>
+
+            <h3>Run Your Very First Query</h3>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;">-- Your first ever SQL query!</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'Hello, PostgreSQL! 🐘'</span> <span style="color:#c084fc;">AS</span> greeting;</pre>
+            </div>
+
+            <p>Press <strong>Ctrl+Enter</strong>. You should see:</p>
+
+            <table class="comparison-table">
+                <thead><tr><th>greeting</th></tr></thead>
+                <tbody><tr><td>Hello, PostgreSQL! 🐘</td></tr></tbody>
+            </table>
+
+            <p><strong>Congratulations! You just talked to a database!</strong> 🥳 That SELECT statement is SQL — the language databases understand. You'll master it in the next modules.</p>
+
+            <h3>Let's Do Something Real — Create a Table!</h3>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;">-- Create a table for your favorite movies</span>
+<span style="color:#c084fc;">CREATE TABLE</span> movies (
+    id      <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    title   <span style="color:#38bdf8;">VARCHAR</span>(200) <span style="color:#c084fc;">NOT NULL</span>,
+    year    <span style="color:#38bdf8;">INTEGER</span>,
+    rating  <span style="color:#38bdf8;">DECIMAL</span>(2,1)
+);
+
+<span style="color:#94a3b8;">-- Add some movies</span>
+<span style="color:#c084fc;">INSERT INTO</span> movies (title, year, rating) <span style="color:#c084fc;">VALUES</span>
+    (<span style="color:#4ade80;">'The Shawshank Redemption'</span>, <span style="color:#fb923c;">1994</span>, <span style="color:#fb923c;">9.3</span>),
+    (<span style="color:#4ade80;">'The Dark Knight'</span>,          <span style="color:#fb923c;">2008</span>, <span style="color:#fb923c;">9.0</span>),
+    (<span style="color:#4ade80;">'3 Idiots'</span>,                 <span style="color:#fb923c;">2009</span>, <span style="color:#fb923c;">8.4</span>),
+    (<span style="color:#4ade80;">'Inception'</span>,                <span style="color:#fb923c;">2010</span>, <span style="color:#fb923c;">8.8</span>),
+    (<span style="color:#4ade80;">'Dangal'</span>,                   <span style="color:#fb923c;">2016</span>, <span style="color:#fb923c;">8.3</span>);
+
+<span style="color:#94a3b8;">-- See all your movies!</span>
+<span style="color:#c084fc;">SELECT</span> * <span style="color:#c084fc;">FROM</span> movies;</pre>
+            </div>
+
+            <p><strong>Result:</strong></p>
+
+            <table class="comparison-table">
+                <thead><tr><th>id</th><th>title</th><th>year</th><th>rating</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>The Shawshank Redemption</td><td>1994</td><td>9.3</td></tr>
+                    <tr><td>2</td><td>The Dark Knight</td><td>2008</td><td>9.0</td></tr>
+                    <tr><td>3</td><td>3 Idiots</td><td>2009</td><td>8.4</td></tr>
+                    <tr><td>4</td><td>Inception</td><td>2010</td><td>8.8</td></tr>
+                    <tr><td>5</td><td>Dangal</td><td>2016</td><td>8.3</td></tr>
+                </tbody>
+            </table>
+
+            <div class="eli5-box">
+                <h4>🧒 What Did We Just Do?</h4>
+                <p><strong>CREATE TABLE</strong> = We built a filing cabinet called "movies" with 4 columns.</p>
+                <p><strong>INSERT INTO</strong> = We put 5 movie records into that cabinet.</p>
+                <p><strong>SELECT * FROM</strong> = We asked "Show me everything in the movies cabinet!"</p>
+                <p>That's it! You're already doing real database work. The next 11 modules will make you a master. 🚀</p>
+            </div>
+
+            <h3>One More Fun Query</h3>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;">-- Find movies with rating above 8.5</span>
+<span style="color:#c084fc;">SELECT</span> title, rating
+<span style="color:#c084fc;">FROM</span> movies
+<span style="color:#c084fc;">WHERE</span> rating > <span style="color:#fb923c;">8.5</span>
+<span style="color:#c084fc;">ORDER BY</span> rating <span style="color:#c084fc;">DESC</span>;</pre>
+            </div>
+
+            <table class="comparison-table">
+                <thead><tr><th>title</th><th>rating</th></tr></thead>
+                <tbody>
+                    <tr><td>The Shawshank Redemption</td><td>9.3</td></tr>
+                    <tr><td>The Dark Knight</td><td>9.0</td></tr>
+                    <tr><td>Inception</td><td>8.8</td></tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 DBeaver Keyboard Shortcuts</h4>
+                <table class="comparison-table">
+                    <thead><tr><th>Action</th><th>Windows</th><th>Mac</th></tr></thead>
+                    <tbody>
+                        <tr><td>Execute statement</td><td>Ctrl + Enter</td><td>Cmd + Enter</td></tr>
+                        <tr><td>Execute entire script</td><td>Ctrl + Shift + Enter</td><td>Cmd + Shift + Enter</td></tr>
+                        <tr><td>New SQL script</td><td>Ctrl + ]</td><td>Cmd + ]</td></tr>
+                        <tr><td>Auto-complete</td><td>Ctrl + Space</td><td>Ctrl + Space</td></tr>
+                        <tr><td>Format SQL</td><td>Ctrl + Shift + F</td><td>Cmd + Shift + F</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 6: UNDERSTANDING PSQL (COMMAND LINE) -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>⌨️ Bonus: The Command Line Tool (psql)</h2>
+
+            <p>DBeaver is great for visual work, but every PostgreSQL pro also knows <strong>psql</strong> — the command-line interface. It's like texting vs calling — sometimes the quick text (psql) is faster than opening the app (DBeaver).</p>
+
+            <div class="code-block">
+                <pre><span style="color:#94a3b8;"># Connect to your database</span>
+psql -U postgres -d my_first_db
+
+<span style="color:#94a3b8;"># You'll see the prompt:</span>
+<span style="color:#4ade80;">my_first_db=#</span>
+
+<span style="color:#94a3b8;"># Run a query</span>
+<span style="color:#c084fc;">SELECT</span> * <span style="color:#c084fc;">FROM</span> movies;
+
+<span style="color:#94a3b8;"># Useful psql commands (backslash commands):</span>
+\l              <span style="color:#94a3b8;">-- List all databases</span>
+\dt             <span style="color:#94a3b8;">-- List all tables in current database</span>
+\d movies       <span style="color:#94a3b8;">-- Describe the 'movies' table structure</span>
+\c other_db     <span style="color:#94a3b8;">-- Switch to another database</span>
+\q              <span style="color:#94a3b8;">-- Quit psql</span></pre>
+            </div>
+
+            <div class="real-life">
+                <h4>🎯 When to Use psql vs DBeaver</h4>
+                <table class="comparison-table">
+                    <thead><tr><th>Use psql When...</th><th>Use DBeaver When...</th></tr></thead>
+                    <tbody>
+                        <tr><td>Quick one-line queries</td><td>Exploring data visually</td></tr>
+                        <tr><td>Server administration via SSH</td><td>Writing multi-line queries</td></tr>
+                        <tr><td>Running scripts from files</td><td>Viewing table structures</td></tr>
+                        <tr><td>You want to feel like a hacker 😎</td><td>You want a nice GUI</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 7: QUIZ                            -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>🧪 Quick Quiz</h2>
+
+            <div class="quiz-section">
+                <h3>Question 1: What is DBeaver?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) A programming language</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) A visual tool for managing and querying databases</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) A type of database</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) A web browser plugin</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 2: What is the default port for PostgreSQL?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) 3306</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) 8080</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) 5432</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) 27017</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 3: What does <code>SELECT * FROM movies;</code> do?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Deletes all movies</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) Creates a new movie table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) Returns all rows and columns from the movies table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Updates movie ratings</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 4: What command lists all tables in psql?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) \l</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) \dt</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) SHOW TABLES;</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) \q</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+
+            <div class="quiz-section" style="margin-top:20px;">
+                <h3>Question 5: What is the default superuser in PostgreSQL?</h3>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) admin</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) root</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) postgres</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) superuser</button>
+                <div class="quiz-feedback" style="display:none; margin-top:12px; padding:15px; border-radius:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 8: WHAT'S NEXT                     -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div class="section visible">
+            <h2>🚀 What's Next?</h2>
+
+            <p>You now have a fully working PostgreSQL setup! Here's what you accomplished:</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">✅</div>
+                    <div class="stat-label">PostgreSQL installed &amp; running</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">✅</div>
+                    <div class="stat-label">DBeaver installed &amp; connected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">✅</div>
+                    <div class="stat-label">Created your first database</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">✅</div>
+                    <div class="stat-label">Ran your first SQL queries</div>
+                </div>
+            </div>
+
+            <div class="important-box">
+                <h4>👉 Next up: SQL Basics — CRUD Operations!</h4>
+                <p>You've already done a tiny taste of CREATE, INSERT, and SELECT. In the next module, we'll go DEEP into all the CRUD operations — CREATE, INSERT, SELECT, UPDATE, DELETE — with tons of examples, exercises, and quizzes. Get excited! 🔥</p>
+            </div>
+        </div>
+
+        <!-- Lesson Navigation -->
         <div class="lesson-nav">
             <a href="meet-postgresql.html" class="secondary"><i class="fas fa-arrow-left"></i> Meet PostgreSQL</a>
-            <a href="sql-basics.html">SQL Basics <i class="fas fa-arrow-right"></i></a>
+            <a href="sql-basics.html">SQL Basics — CRUD <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">✅ Correct!</strong> <span style="color:#94a3b8;">You\'re getting this!</span>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">❌ Not quite!</strong> <span style="color:#94a3b8;">Check the highlighted answer.</span>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>
     <script src="../js/code-copy.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/supabase-config.js"></script>
-    <script src="../js/supabase-auth.js"></script>
-    <script src="../js/paywall.js"></script>
 </body>
 </html>

@@ -117,6 +117,15 @@
         .nav-btn.next { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; box-shadow: 0 4px 20px rgba(109,40,217,0.25); }
         .nav-btn:hover { transform: translateY(-3px); }
 
+        .quiz-box { background: rgba(245,243,255,0.85); border-radius:16px; padding:24px; margin:20px 0; border:1px solid rgba(139,92,246,0.2); }
+        .quiz-q { color:#5b21b6; margin-bottom:14px; font-size:1.15em; font-weight:700; }
+        .quiz-opt { display:block; width:100%; text-align:left; padding:12px 18px; margin:8px 0; background:rgba(124,58,237,0.05); border:2px solid rgba(139,92,246,0.15); border-radius:10px; color:#334155; cursor:pointer; font-family:inherit; font-size:0.95em; transition:all 0.2s; }
+        .quiz-opt:hover { border-color:rgba(139,92,246,0.4); background:rgba(124,58,237,0.12); }
+        .quiz-opt.correct { border-color:#22c55e; background:rgba(34,197,94,0.15); color:#166534; }
+        .quiz-opt.wrong { border-color:#ef4444; background:rgba(239,68,68,0.1); color:#991b1b; }
+        .quiz-opt:disabled { cursor:default; opacity:0.7; }
+        .quiz-fb { display:none; margin-top:10px; padding:12px; border-radius:8px; font-weight:600; }
+
         @media (max-width: 768px) {
             body { padding: 10px; font-size: 16px; }
             .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
@@ -574,10 +583,80 @@
         </div>
     </div>
 
+    <!-- ======================================== -->
+    <!-- Quiz Section                              -->
+    <!-- ======================================== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-flask"></i> 🧪 Quiz — Test Your Understanding!</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: What is a language model at its core?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) A program that translates between human languages (like English to French)</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) A program that predicts the next word in a sequence based on statistical patterns</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) A database that stores every sentence ever written on the internet</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) A speech recognition system that converts voice to text</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What was the main limitation of N-gram language models (1950s–2000s) compared to modern neural models?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) They were too slow and required GPU hardware that didn't exist</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) They could only work with English text, not other languages</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) They could only track patterns across 2–3 words and failed on longer sentences</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) They required human experts to manually write all the grammar rules</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: What is the key architectural difference between GPT and BERT?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) GPT uses Transformers while BERT uses older RNN/LSTM networks</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) GPT is open-source while BERT is closed-source</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) GPT is a decoder that generates text left-to-right; BERT is an encoder that reads text in both directions</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) GPT was made by Google and BERT was made by OpenAI</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: Which company created the LLaMA family of open-source models?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) OpenAI</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Google DeepMind</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Meta (Facebook)</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Anthropic</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: How does ChatGPT generate a long, multi-sentence response?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It writes the entire answer at once in a single massive computation</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It searches the internet and assembles pre-written paragraphs</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) It predicts one word at a time, feeding each predicted word back as input for the next prediction</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It generates 100 different answers simultaneously and picks the longest one</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: In LLM text generation, what does the "temperature" parameter control?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) The speed at which the model generates tokens (higher = faster)</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) The maximum number of words the model can output</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) How random or creative the model's word choices are (higher = more surprising picks)</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) How many Transformer layers are active during generation</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
     <div class="nav-buttons">
         <a href="index.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Course Hub</a>
         <a href="text-to-numbers.html" class="nav-btn next">Next: Text to Numbers <i class="fas fa-arrow-right"></i></a>
     </div>
 </div>
+<script>
+function checkQ(btn,ok){
+    var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');
+    opts.forEach(function(o){o.disabled=true;});
+    if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#166534';fb.textContent='✅ Correct!';}
+    else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#991b1b';fb.textContent='❌ Not quite — check the green answer!';
+    opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}
+}
+</script>
 </body>
 </html>

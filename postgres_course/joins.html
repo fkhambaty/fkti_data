@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOINs — Combining Tables | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="aggregations.html"><i class="fas fa-arrow-left"></i> Aggregations &amp; Grouping</a>
+            <a href="subqueries-ctes.html">Subqueries &amp; CTEs <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="lesson-hero">
+            <h1>🤝 JOINs — Combining Tables</h1>
+            <p>The heart of relational databases. Link customers to orders, products to categories — JOINs make your data come alive!</p>
+        </div>
+
+        <!-- ===================== SAMPLE TABLES ===================== -->
+        <div class="section visible">
+            <h2>📦 Our Practice Tables</h2>
+            <p>JOINs are all about combining data from <strong>two or more tables</strong>. So we need at least two tables to play with! We'll create a <strong>customers</strong> table and an <strong>orders</strong> table, and use them throughout the entire lesson.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Why Two Tables?</h4>
+                <p>Imagine a school. One notebook has the <strong>student roster</strong> (names, ages, classes). Another notebook has the <strong>library checkout log</strong> (which student borrowed which book). The checkout log only writes down the student's ID number, not their whole name. To find out <em>"Who borrowed Harry Potter?"</em> you have to look at BOTH notebooks — match the ID from the checkout log to the ID in the roster. That's exactly what a JOIN does! It matches rows across two tables using a shared column.</p>
+            </div>
+
+            <p>Run this SQL to create and populate both tables:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- ==========================================</span>
+<span style="color:#94a3b8">-- TABLE 1: customers</span>
+<span style="color:#94a3b8">-- ==========================================</span>
+<span style="color:#c084fc">CREATE TABLE</span> customers (
+    id    <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    name  <span style="color:#38bdf8">VARCHAR(100)</span>,
+    city  <span style="color:#38bdf8">VARCHAR(50)</span>,
+    email <span style="color:#38bdf8">VARCHAR(100)</span>
+);
+
+<span style="color:#c084fc">INSERT INTO</span> customers (name, city, email) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#4ade80">'Alice Johnson'</span>,  <span style="color:#4ade80">'New York'</span>,      <span style="color:#4ade80">'alice@example.com'</span>),
+    (<span style="color:#4ade80">'Bob Smith'</span>,      <span style="color:#4ade80">'Los Angeles'</span>,   <span style="color:#4ade80">'bob@example.com'</span>),
+    (<span style="color:#4ade80">'Charlie Brown'</span>,  <span style="color:#4ade80">'Chicago'</span>,       <span style="color:#4ade80">'charlie@example.com'</span>),
+    (<span style="color:#4ade80">'Diana Prince'</span>,   <span style="color:#4ade80">'Houston'</span>,       <span style="color:#4ade80">'diana@example.com'</span>),
+    (<span style="color:#4ade80">'Eve Williams'</span>,   <span style="color:#4ade80">'Phoenix'</span>,       <span style="color:#4ade80">'eve@example.com'</span>),
+    (<span style="color:#4ade80">'Frank Miller'</span>,   <span style="color:#4ade80">'New York'</span>,      <span style="color:#4ade80">'frank@example.com'</span>),
+    (<span style="color:#4ade80">'Grace Lee'</span>,      <span style="color:#4ade80">'San Francisco'</span>, <span style="color:#4ade80">'grace@example.com'</span>),
+    (<span style="color:#4ade80">'Hank Davis'</span>,     <span style="color:#4ade80">'Seattle'</span>,       <span style="color:#4ade80">'hank@example.com'</span>);
+
+<span style="color:#94a3b8">-- ==========================================</span>
+<span style="color:#94a3b8">-- TABLE 2: orders</span>
+<span style="color:#94a3b8">-- ==========================================</span>
+<span style="color:#c084fc">CREATE TABLE</span> orders (
+    id          <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    customer_id <span style="color:#38bdf8">INTEGER</span> <span style="color:#c084fc">REFERENCES</span> customers(id),
+    product     <span style="color:#38bdf8">VARCHAR(100)</span>,
+    amount      <span style="color:#38bdf8">DECIMAL(10,2)</span>,
+    order_date  <span style="color:#38bdf8">DATE</span>
+);
+
+<span style="color:#c084fc">INSERT INTO</span> orders (customer_id, product, amount, order_date) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#fb923c">1</span>, <span style="color:#4ade80">'Laptop'</span>,          <span style="color:#fb923c">1200.00</span>, <span style="color:#4ade80">'2024-01-15'</span>),
+    (<span style="color:#fb923c">1</span>, <span style="color:#4ade80">'Mouse'</span>,           <span style="color:#fb923c">25.99</span>,   <span style="color:#4ade80">'2024-01-15'</span>),
+    (<span style="color:#fb923c">2</span>, <span style="color:#4ade80">'Headphones'</span>,      <span style="color:#fb923c">79.99</span>,   <span style="color:#4ade80">'2024-02-03'</span>),
+    (<span style="color:#fb923c">3</span>, <span style="color:#4ade80">'Keyboard'</span>,        <span style="color:#fb923c">149.99</span>,  <span style="color:#4ade80">'2024-02-10'</span>),
+    (<span style="color:#fb923c">3</span>, <span style="color:#4ade80">'Monitor'</span>,         <span style="color:#fb923c">399.99</span>,  <span style="color:#4ade80">'2024-02-10'</span>),
+    (<span style="color:#fb923c">3</span>, <span style="color:#4ade80">'USB Hub'</span>,         <span style="color:#fb923c">34.99</span>,   <span style="color:#4ade80">'2024-03-01'</span>),
+    (<span style="color:#fb923c">1</span>, <span style="color:#4ade80">'Webcam'</span>,          <span style="color:#fb923c">89.99</span>,   <span style="color:#4ade80">'2024-03-05'</span>),
+    (<span style="color:#fb923c">4</span>, <span style="color:#4ade80">'Tablet'</span>,          <span style="color:#fb923c">499.99</span>,  <span style="color:#4ade80">'2024-03-12'</span>),
+    (<span style="color:#fb923c">5</span>, <span style="color:#4ade80">'Phone Case'</span>,      <span style="color:#fb923c">19.99</span>,   <span style="color:#4ade80">'2024-03-20'</span>),
+    (<span style="color:#fb923c">5</span>, <span style="color:#4ade80">'Screen Protector'</span>, <span style="color:#fb923c">9.99</span>,    <span style="color:#4ade80">'2024-03-20'</span>),
+    (<span style="color:#fb923c">2</span>, <span style="color:#4ade80">'Laptop Stand'</span>,    <span style="color:#fb923c">59.99</span>,   <span style="color:#4ade80">'2024-04-01'</span>),
+    (<span style="color:#fb923c">4</span>, <span style="color:#4ade80">'Stylus Pen'</span>,      <span style="color:#fb923c">29.99</span>,   <span style="color:#4ade80">'2024-04-05'</span>);</pre></div>
+
+            <p>Here's what our <strong>customers</strong> table looks like:</p>
+
+            <table class="comparison-table">
+                <tr><th>id</th><th>name</th><th>city</th><th>email</th></tr>
+                <tr><td>1</td><td>Alice Johnson</td><td>New York</td><td>alice@example.com</td></tr>
+                <tr><td>2</td><td>Bob Smith</td><td>Los Angeles</td><td>bob@example.com</td></tr>
+                <tr><td>3</td><td>Charlie Brown</td><td>Chicago</td><td>charlie@example.com</td></tr>
+                <tr><td>4</td><td>Diana Prince</td><td>Houston</td><td>diana@example.com</td></tr>
+                <tr><td>5</td><td>Eve Williams</td><td>Phoenix</td><td>eve@example.com</td></tr>
+                <tr><td>6</td><td>Frank Miller</td><td>New York</td><td>frank@example.com</td></tr>
+                <tr><td>7</td><td>Grace Lee</td><td>San Francisco</td><td>grace@example.com</td></tr>
+                <tr><td>8</td><td>Hank Davis</td><td>Seattle</td><td>hank@example.com</td></tr>
+            </table>
+
+            <p>And here's the <strong>orders</strong> table:</p>
+
+            <table class="comparison-table">
+                <tr><th>id</th><th>customer_id</th><th>product</th><th>amount</th><th>order_date</th></tr>
+                <tr><td>1</td><td>1</td><td>Laptop</td><td>1200.00</td><td>2024-01-15</td></tr>
+                <tr><td>2</td><td>1</td><td>Mouse</td><td>25.99</td><td>2024-01-15</td></tr>
+                <tr><td>3</td><td>2</td><td>Headphones</td><td>79.99</td><td>2024-02-03</td></tr>
+                <tr><td>4</td><td>3</td><td>Keyboard</td><td>149.99</td><td>2024-02-10</td></tr>
+                <tr><td>5</td><td>3</td><td>Monitor</td><td>399.99</td><td>2024-02-10</td></tr>
+                <tr><td>6</td><td>3</td><td>USB Hub</td><td>34.99</td><td>2024-03-01</td></tr>
+                <tr><td>7</td><td>1</td><td>Webcam</td><td>89.99</td><td>2024-03-05</td></tr>
+                <tr><td>8</td><td>4</td><td>Tablet</td><td>499.99</td><td>2024-03-12</td></tr>
+                <tr><td>9</td><td>5</td><td>Phone Case</td><td>19.99</td><td>2024-03-20</td></tr>
+                <tr><td>10</td><td>5</td><td>Screen Protector</td><td>9.99</td><td>2024-03-20</td></tr>
+                <tr><td>11</td><td>2</td><td>Laptop Stand</td><td>59.99</td><td>2024-04-01</td></tr>
+                <tr><td>12</td><td>4</td><td>Stylus Pen</td><td>29.99</td><td>2024-04-05</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Notice the Key Relationship!</h4>
+                <p>The <code>customer_id</code> column in the <strong>orders</strong> table points to the <code>id</code> column in the <strong>customers</strong> table. This is called a <strong>foreign key</strong>. Also notice: customers 6, 7, and 8 (Frank, Grace, Hank) have <strong>no orders at all</strong>. We did this on purpose — these "orphan" customers are critical for understanding how different JOIN types behave!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 1. WHY JOINs? ===================== -->
+        <div class="section">
+            <h2>1️⃣ Why JOINs?</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Pizza Order Problem</h4>
+                <p>You work at a pizza shop. You have two lists taped to the wall:</p>
+                <p><strong>List A (Orders):</strong> "Order #101 → Customer #7, Pepperoni Pizza." "Order #102 → Customer #3, Margherita Pizza."</p>
+                <p><strong>List B (Customers):</strong> "Customer #7 = Sarah." "Customer #3 = Mike."</p>
+                <p>A delivery driver walks in and asks: <em>"Who ordered the Pepperoni?"</em> You can't answer from List A alone — it only says "Customer #7." You need to look up #7 on List B to find out it's Sarah. <strong>That's a JOIN!</strong> You're combining information from two separate lists using a matching ID.</p>
+            </div>
+
+            <p>In a relational database, data is split across multiple tables to avoid repetition. Instead of writing "Alice Johnson, New York, alice@example.com" on every single order, we just write her ID number (<code>1</code>). This saves space and keeps data consistent — if Alice moves to a new city, we update <strong>one</strong> row in the customers table instead of hundreds of order rows.</p>
+
+            <p>But this means to get a complete picture, we need to <strong>combine</strong> the tables back together. That's where JOINs come in.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Customers in our table</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Orders placed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Customers with NO orders</div>
+                </div>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ Without JOINs, Relational Databases Are Useless!</h4>
+                <p>If you can't combine tables, your data is locked in separate silos. You can see <em>what</em> was ordered but not <em>who</em> ordered it. You can see <em>who</em> your customers are but not <em>what</em> they bought. JOINs are the <strong>single most important concept</strong> in SQL. Master this and you can handle 90% of real-world database queries.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 2. INNER JOIN ===================== -->
+        <div class="section">
+            <h2>2️⃣ INNER JOIN — Only the Matches</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Buddy System</h4>
+                <p>Your teacher says: <em>"Everyone find a buddy! If you don't have a buddy, you sit out."</em> INNER JOIN works the same way. It looks at both tables and says: <em>"Only show me rows where there's a match in BOTH tables."</em> Customers who never placed an order? They sit out. Orders that (somehow) don't have a valid customer? They sit out too. Only matched pairs make it into the result.</p>
+                <p>Think of a Venn diagram — INNER JOIN gives you <strong>only the overlapping part</strong> in the middle.</p>
+            </div>
+
+            <h3>The Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> columns
+<span style="color:#c084fc">FROM</span> table_a
+<span style="color:#c084fc">INNER JOIN</span> table_b
+    <span style="color:#c084fc">ON</span> table_a.column = table_b.column;</pre></div>
+
+            <p>The <code>ON</code> clause tells PostgreSQL <strong>how</strong> to match rows. It's like saying: <em>"The customer_id in the orders table should match the id in the customers table."</em></p>
+
+            <h3>Example 1: Who Ordered What?</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name, o.product, o.amount, o.order_date
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">ORDER BY</span> c.name, o.order_date;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>product</th><th>amount</th><th>order_date</th></tr>
+                <tr><td>Alice Johnson</td><td>Laptop</td><td>1200.00</td><td>2024-01-15</td></tr>
+                <tr><td>Alice Johnson</td><td>Mouse</td><td>25.99</td><td>2024-01-15</td></tr>
+                <tr><td>Alice Johnson</td><td>Webcam</td><td>89.99</td><td>2024-03-05</td></tr>
+                <tr><td>Bob Smith</td><td>Headphones</td><td>79.99</td><td>2024-02-03</td></tr>
+                <tr><td>Bob Smith</td><td>Laptop Stand</td><td>59.99</td><td>2024-04-01</td></tr>
+                <tr><td>Charlie Brown</td><td>Keyboard</td><td>149.99</td><td>2024-02-10</td></tr>
+                <tr><td>Charlie Brown</td><td>Monitor</td><td>399.99</td><td>2024-02-10</td></tr>
+                <tr><td>Charlie Brown</td><td>USB Hub</td><td>34.99</td><td>2024-03-01</td></tr>
+                <tr><td>Diana Prince</td><td>Tablet</td><td>499.99</td><td>2024-03-12</td></tr>
+                <tr><td>Diana Prince</td><td>Stylus Pen</td><td>29.99</td><td>2024-04-05</td></tr>
+                <tr><td>Eve Williams</td><td>Phone Case</td><td>19.99</td><td>2024-03-20</td></tr>
+                <tr><td>Eve Williams</td><td>Screen Protector</td><td>9.99</td><td>2024-03-20</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ Where Did Frank, Grace, and Hank Go?</h4>
+                <p>Notice they're <strong>completely missing</strong> from the results! They exist in the customers table but have no matching rows in the orders table. INNER JOIN silently drops them. This is the #1 gotcha with INNER JOIN — you might lose data you didn't expect to lose. If you need to keep ALL customers (even those without orders), you need a LEFT JOIN instead.</p>
+            </div>
+
+            <h3>Example 2: Total Spent Per Customer</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name,
+       <span style="color:#c084fc">COUNT</span>(o.id) <span style="color:#c084fc">AS</span> total_orders,
+       <span style="color:#c084fc">SUM</span>(o.amount) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">GROUP BY</span> c.name
+<span style="color:#c084fc">ORDER BY</span> total_spent <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>total_orders</th><th>total_spent</th></tr>
+                <tr><td>Alice Johnson</td><td>3</td><td>1315.98</td></tr>
+                <tr><td>Charlie Brown</td><td>3</td><td>584.97</td></tr>
+                <tr><td>Diana Prince</td><td>2</td><td>529.98</td></tr>
+                <tr><td>Bob Smith</td><td>2</td><td>139.98</td></tr>
+                <tr><td>Eve Williams</td><td>2</td><td>29.98</td></tr>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Table Aliases Save Typing!</h4>
+                <p>Notice how we wrote <code>FROM customers c</code> instead of <code>FROM customers</code>? The <code>c</code> is an <strong>alias</strong> — a short nickname for the table. Then instead of writing <code>customers.name</code> everywhere, we just write <code>c.name</code>. When you're joining multiple tables, aliases go from "nice to have" to "absolutely essential" for readability.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>INNER JOIN is like a <strong>dance partner matchup</strong>. Only people who have a dance partner get on the floor. If you showed up alone, you sit on the sidelines — no matter how good a dancer you are. Both the lead and the follow must be present for a pair to appear in the results.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 3. LEFT JOIN ===================== -->
+        <div class="section">
+            <h2>3️⃣ LEFT JOIN (LEFT OUTER JOIN) — Keep All Left Rows</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Class Photo</h4>
+                <p>It's school photo day. The rule is: <strong>every student gets their photo taken</strong>, no exceptions. If a student brought a pet for "Pets & People Day," great — the pet is in the photo too! If a student <em>didn't</em> bring a pet, they still get their photo taken — just alone, with an empty spot where the pet would be. That empty spot is <strong>NULL</strong>.</p>
+                <p>LEFT JOIN means: <em>"Keep EVERY row from the left table (customers), and if there's a match on the right table (orders), include it. If there's no match, fill in NULLs."</em></p>
+            </div>
+
+            <h3>The Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> columns
+<span style="color:#c084fc">FROM</span> left_table
+<span style="color:#c084fc">LEFT JOIN</span> right_table
+    <span style="color:#c084fc">ON</span> left_table.column = right_table.column;</pre></div>
+
+            <h3>Example: All Customers + Their Orders (If Any)</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name, c.city, o.product, o.amount
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">LEFT JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">ORDER BY</span> c.id, o.id;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>city</th><th>product</th><th>amount</th></tr>
+                <tr><td>Alice Johnson</td><td>New York</td><td>Laptop</td><td>1200.00</td></tr>
+                <tr><td>Alice Johnson</td><td>New York</td><td>Mouse</td><td>25.99</td></tr>
+                <tr><td>Alice Johnson</td><td>New York</td><td>Webcam</td><td>89.99</td></tr>
+                <tr><td>Bob Smith</td><td>Los Angeles</td><td>Headphones</td><td>79.99</td></tr>
+                <tr><td>Bob Smith</td><td>Los Angeles</td><td>Laptop Stand</td><td>59.99</td></tr>
+                <tr><td>Charlie Brown</td><td>Chicago</td><td>Keyboard</td><td>149.99</td></tr>
+                <tr><td>Charlie Brown</td><td>Chicago</td><td>Monitor</td><td>399.99</td></tr>
+                <tr><td>Charlie Brown</td><td>Chicago</td><td>USB Hub</td><td>34.99</td></tr>
+                <tr><td>Diana Prince</td><td>Houston</td><td>Tablet</td><td>499.99</td></tr>
+                <tr><td>Diana Prince</td><td>Houston</td><td>Stylus Pen</td><td>29.99</td></tr>
+                <tr><td>Eve Williams</td><td>Phoenix</td><td>Phone Case</td><td>19.99</td></tr>
+                <tr><td>Eve Williams</td><td>Phoenix</td><td>Screen Protector</td><td>9.99</td></tr>
+                <tr><td style="color:#fbbf24">Frank Miller</td><td style="color:#fbbf24">New York</td><td style="color:#94a3b8">NULL</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td style="color:#fbbf24">Grace Lee</td><td style="color:#fbbf24">San Francisco</td><td style="color:#94a3b8">NULL</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td style="color:#fbbf24">Hank Davis</td><td style="color:#fbbf24">Seattle</td><td style="color:#94a3b8">NULL</td><td style="color:#94a3b8">NULL</td></tr>
+            </table>
+
+            <p>Frank, Grace, and Hank are <strong>back!</strong> They appear in the results with NULL for product and amount because they have no orders. This is the magic of LEFT JOIN.</p>
+
+            <h3>Killer Use Case: Find Customers Who NEVER Ordered</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- LEFT JOIN + WHERE ... IS NULL = "find unmatched rows"</span>
+<span style="color:#c084fc">SELECT</span> c.name, c.email
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">LEFT JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">WHERE</span> o.id <span style="color:#c084fc">IS NULL</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>name</th><th>email</th></tr>
+                <tr><td>Frank Miller</td><td>frank@example.com</td></tr>
+                <tr><td>Grace Lee</td><td>grace@example.com</td></tr>
+                <tr><td>Hank Davis</td><td>hank@example.com</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>This pattern (LEFT JOIN + IS NULL) is incredibly common in the real world. E-commerce companies use it to find <em>"registered users who never purchased anything"</em> so they can send them a discount code. SaaS companies use it to find <em>"signed-up users who never activated their account."</em> It's one of the most powerful patterns in SQL!</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — LEFT JOIN vs LEFT OUTER JOIN</h4>
+                <p><code>LEFT JOIN</code> and <code>LEFT OUTER JOIN</code> are <strong>exactly the same thing</strong>. The word "OUTER" is optional. Most people drop it for brevity. Same for RIGHT JOIN / RIGHT OUTER JOIN and FULL JOIN / FULL OUTER JOIN.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 4. RIGHT JOIN ===================== -->
+        <div class="section">
+            <h2>4️⃣ RIGHT JOIN — Keep All Right Rows</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Mirror Image</h4>
+                <p>RIGHT JOIN is just LEFT JOIN <strong>flipped around</strong>. Instead of keeping all rows from the <em>left</em> table, it keeps all rows from the <em>right</em> table. It's like looking at a LEFT JOIN in a mirror.</p>
+                <p>Imagine the same school photo scenario, but now the rule is: <em>"Every PET gets photographed, even if their owner didn't show up."</em> The pets are the right table — they all appear. Owners who are there get in the photo; missing owners become NULL.</p>
+            </div>
+
+            <h3>Example: All Orders + Customer Info (If Available)</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name, o.product, o.amount
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">RIGHT JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">ORDER BY</span> o.id;</pre></div>
+
+            <p><strong>Result:</strong> Since every order in our data has a valid <code>customer_id</code>, this produces the same 12 rows as INNER JOIN. RIGHT JOIN becomes different when the right table has rows that <em>don't</em> match the left table (for example, if an order had <code>customer_id = 99</code> and no customer #99 existed).</p>
+
+            <div class="important-box">
+                <h4>⚠️ RIGHT JOIN Is Rarely Used in Practice</h4>
+                <p>You can <strong>always</strong> rewrite a RIGHT JOIN as a LEFT JOIN by simply swapping the table order. Most SQL developers strongly prefer LEFT JOIN because it reads more naturally: <em>"Start with the main table, then optionally attach related data."</em> If you see a RIGHT JOIN in someone's code, you can mentally convert it: <code>A RIGHT JOIN B</code> is identical to <code>B LEFT JOIN A</code>.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- These two queries produce IDENTICAL results:</span>
+
+<span style="color:#94a3b8">-- Using RIGHT JOIN</span>
+<span style="color:#c084fc">SELECT</span> c.name, o.product
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">RIGHT JOIN</span> orders o <span style="color:#c084fc">ON</span> c.id = o.customer_id;
+
+<span style="color:#94a3b8">-- Same thing as LEFT JOIN with tables swapped</span>
+<span style="color:#c084fc">SELECT</span> c.name, o.product
+<span style="color:#c084fc">FROM</span> orders o
+<span style="color:#c084fc">LEFT JOIN</span> customers c <span style="color:#c084fc">ON</span> c.id = o.customer_id;</pre></div>
+        </div>
+
+        <!-- ===================== 5. FULL OUTER JOIN ===================== -->
+        <div class="section">
+            <h2>5️⃣ FULL OUTER JOIN — Everything From Both Sides</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Merging Two Party Guest Lists</h4>
+                <p>You and your friend are both throwing parties on the same day. You each have a guest list. Now you want to see <strong>everyone</strong> across both lists. Some people are on both lists (they were invited to both parties). Some are only on your list. Some are only on your friend's list. A FULL OUTER JOIN shows ALL of them — nobody gets left out.</p>
+                <p>For the people only on one list, the columns from the other list show up as NULL. It's the most inclusive JOIN type.</p>
+            </div>
+
+            <h3>The Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> columns
+<span style="color:#c084fc">FROM</span> table_a
+<span style="color:#c084fc">FULL OUTER JOIN</span> table_b
+    <span style="color:#c084fc">ON</span> table_a.column = table_b.column;</pre></div>
+
+            <h3>Example: Full Picture of Customers and Orders</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name, c.city, o.product, o.amount
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">FULL OUTER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">ORDER BY</span> c.id <span style="color:#c084fc">NULLS LAST</span>, o.id <span style="color:#c084fc">NULLS LAST</span>;</pre></div>
+
+            <p><strong>Result:</strong> All 12 matched rows (customers with orders) PLUS the 3 unmatched customers (Frank, Grace, Hank with NULL products). If we had "orphan" orders that didn't match any customer, they'd appear too with NULL names.</p>
+
+            <table class="comparison-table">
+                <tr><th>name</th><th>city</th><th>product</th><th>amount</th></tr>
+                <tr><td>Alice Johnson</td><td>New York</td><td>Laptop</td><td>1200.00</td></tr>
+                <tr><td>Alice Johnson</td><td>New York</td><td>Mouse</td><td>25.99</td></tr>
+                <tr><td>Alice Johnson</td><td>New York</td><td>Webcam</td><td>89.99</td></tr>
+                <tr><td>Bob Smith</td><td>Los Angeles</td><td>Headphones</td><td>79.99</td></tr>
+                <tr><td>Bob Smith</td><td>Los Angeles</td><td>Laptop Stand</td><td>59.99</td></tr>
+                <tr><td>Charlie Brown</td><td>Chicago</td><td>Keyboard</td><td>149.99</td></tr>
+                <tr><td>Charlie Brown</td><td>Chicago</td><td>Monitor</td><td>399.99</td></tr>
+                <tr><td>Charlie Brown</td><td>Chicago</td><td>USB Hub</td><td>34.99</td></tr>
+                <tr><td>Diana Prince</td><td>Houston</td><td>Tablet</td><td>499.99</td></tr>
+                <tr><td>Diana Prince</td><td>Houston</td><td>Stylus Pen</td><td>29.99</td></tr>
+                <tr><td>Eve Williams</td><td>Phoenix</td><td>Phone Case</td><td>19.99</td></tr>
+                <tr><td>Eve Williams</td><td>Phoenix</td><td>Screen Protector</td><td>9.99</td></tr>
+                <tr><td style="color:#fbbf24">Frank Miller</td><td style="color:#fbbf24">New York</td><td style="color:#94a3b8">NULL</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td style="color:#fbbf24">Grace Lee</td><td style="color:#fbbf24">San Francisco</td><td style="color:#94a3b8">NULL</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td style="color:#fbbf24">Hank Davis</td><td style="color:#fbbf24">Seattle</td><td style="color:#94a3b8">NULL</td><td style="color:#94a3b8">NULL</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>FULL OUTER JOIN is like a <strong>complete census</strong>. Imagine merging a "tax filers" list with a "property owners" list. Some people filed taxes AND own property (matched). Some filed taxes but don't own property (left only). Some own property but didn't file taxes (right only). A FULL OUTER JOIN gives you the complete picture of all citizens, regardless of which list they're on.</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — When to Use FULL OUTER JOIN</h4>
+                <p>FULL OUTER JOIN is less common than INNER or LEFT JOIN, but it's invaluable for <strong>data reconciliation</strong>. For example: comparing two data sources to find discrepancies, merging old and new systems, or finding records that exist in one system but not the other.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 6. CROSS JOIN ===================== -->
+        <div class="section">
+            <h2>6️⃣ CROSS JOIN — The Cartesian Product</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Every T-Shirt × Every Color</h4>
+                <p>Imagine you sell T-shirts in 3 sizes (S, M, L) and 4 colors (Red, Blue, Green, Black). You want to list <strong>every possible combination</strong>: S-Red, S-Blue, S-Green, S-Black, M-Red, M-Blue... and so on. That's 3 × 4 = 12 combinations. A CROSS JOIN does exactly this — it pairs <strong>every row</strong> from table A with <strong>every row</strong> from table B.</p>
+            </div>
+
+            <h3>The Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> columns
+<span style="color:#c084fc">FROM</span> table_a
+<span style="color:#c084fc">CROSS JOIN</span> table_b;</pre></div>
+
+            <p>Notice: <strong>no ON clause!</strong> There's no matching condition because every row is paired with every other row.</p>
+
+            <h3>Example: T-Shirt Combinations</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Create two tiny helper tables for this demo</span>
+<span style="color:#c084fc">SELECT</span> size, color
+<span style="color:#c084fc">FROM</span> (<span style="color:#c084fc">VALUES</span> (<span style="color:#4ade80">'S'</span>), (<span style="color:#4ade80">'M'</span>), (<span style="color:#4ade80">'L'</span>)) <span style="color:#c084fc">AS</span> sizes(size)
+<span style="color:#c084fc">CROSS JOIN</span>
+     (<span style="color:#c084fc">VALUES</span> (<span style="color:#4ade80">'Red'</span>), (<span style="color:#4ade80">'Blue'</span>), (<span style="color:#4ade80">'Green'</span>), (<span style="color:#4ade80">'Black'</span>)) <span style="color:#c084fc">AS</span> colors(color);</pre></div>
+
+            <p><strong>Result (12 rows):</strong></p>
+            <table class="comparison-table">
+                <tr><th>size</th><th>color</th></tr>
+                <tr><td>S</td><td>Red</td></tr>
+                <tr><td>S</td><td>Blue</td></tr>
+                <tr><td>S</td><td>Green</td></tr>
+                <tr><td>S</td><td>Black</td></tr>
+                <tr><td>M</td><td>Red</td></tr>
+                <tr><td>M</td><td>Blue</td></tr>
+                <tr><td>M</td><td>Green</td></tr>
+                <tr><td>M</td><td>Black</td></tr>
+                <tr><td>L</td><td>Red</td></tr>
+                <tr><td>L</td><td>Blue</td></tr>
+                <tr><td>L</td><td>Green</td></tr>
+                <tr><td>L</td><td>Black</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ WARNING — Explosive Result Size!</h4>
+                <p>CROSS JOIN multiplies the row counts. If table A has 1,000 rows and table B has 1,000 rows, the result has <strong>1,000,000 rows</strong>! With 10,000 × 10,000 tables, you get <strong>100 million rows</strong>. This can crash your database or eat all your server's memory. Always think carefully before using CROSS JOIN, and use it only with small tables.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>CROSS JOIN is like a <strong>round-robin tournament</strong> where every team plays against every other team. If you have 8 teams, that's 8 × 8 = 64 matchups (though some might be self-matches). In real-world SQL, CROSS JOINs are used for things like generating date calendars, building configuration matrices, or creating lookup grids.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 7. SELF JOIN ===================== -->
+        <div class="section">
+            <h2>7️⃣ Self JOIN — A Table Meets Itself</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Org Chart</h4>
+                <p>Your company has an <strong>employees</strong> table. Each employee has a <code>manager_id</code> that points to another employee in the <em>same</em> table. To find out "who manages whom," you need to join the employees table <strong>to itself</strong> — comparing each employee's <code>manager_id</code> to another employee's <code>id</code>.</p>
+                <p>It's like looking at the same phone book twice — once to find yourself and once to find your boss.</p>
+            </div>
+
+            <h3>Setup: An Employees Table</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> employees (
+    id         <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    name       <span style="color:#38bdf8">VARCHAR(100)</span>,
+    role       <span style="color:#38bdf8">VARCHAR(50)</span>,
+    manager_id <span style="color:#38bdf8">INTEGER</span> <span style="color:#c084fc">REFERENCES</span> employees(id)
+);
+
+<span style="color:#c084fc">INSERT INTO</span> employees (name, role, manager_id) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#4ade80">'Sara CEO'</span>,       <span style="color:#4ade80">'CEO'</span>,              <span style="color:#c084fc">NULL</span>),
+    (<span style="color:#4ade80">'Tom VP'</span>,         <span style="color:#4ade80">'VP Engineering'</span>,   <span style="color:#fb923c">1</span>),
+    (<span style="color:#4ade80">'Lisa VP'</span>,        <span style="color:#4ade80">'VP Marketing'</span>,     <span style="color:#fb923c">1</span>),
+    (<span style="color:#4ade80">'Jake Developer'</span>, <span style="color:#4ade80">'Senior Developer'</span>, <span style="color:#fb923c">2</span>),
+    (<span style="color:#4ade80">'Amy Designer'</span>,   <span style="color:#4ade80">'UI Designer'</span>,      <span style="color:#fb923c">2</span>),
+    (<span style="color:#4ade80">'Max Marketer'</span>,   <span style="color:#4ade80">'Content Writer'</span>,   <span style="color:#fb923c">3</span>);</pre></div>
+
+            <h3>Example: Who Reports to Whom?</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> e.name <span style="color:#c084fc">AS</span> employee,
+       e.role,
+       m.name <span style="color:#c084fc">AS</span> manager
+<span style="color:#c084fc">FROM</span> employees e
+<span style="color:#c084fc">LEFT JOIN</span> employees m
+    <span style="color:#c084fc">ON</span> e.manager_id = m.id
+<span style="color:#c084fc">ORDER BY</span> e.id;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>employee</th><th>role</th><th>manager</th></tr>
+                <tr><td>Sara CEO</td><td>CEO</td><td style="color:#94a3b8">NULL</td></tr>
+                <tr><td>Tom VP</td><td>VP Engineering</td><td>Sara CEO</td></tr>
+                <tr><td>Lisa VP</td><td>VP Marketing</td><td>Sara CEO</td></tr>
+                <tr><td>Jake Developer</td><td>Senior Developer</td><td>Tom VP</td></tr>
+                <tr><td>Amy Designer</td><td>UI Designer</td><td>Tom VP</td></tr>
+                <tr><td>Max Marketer</td><td>Content Writer</td><td>Lisa VP</td></tr>
+            </table>
+
+            <p>Notice how the same table appears <strong>twice</strong> in the query — once as <code>e</code> (the employee) and once as <code>m</code> (the manager). Aliases are <strong>mandatory</strong> here; without them, PostgreSQL wouldn't know which "employees" you're referring to!</p>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — LEFT JOIN for Self JOINs</h4>
+                <p>We used LEFT JOIN instead of INNER JOIN because the CEO (Sara) has <code>manager_id = NULL</code> — she doesn't report to anyone. An INNER JOIN would drop her from the results. LEFT JOIN keeps her and shows NULL for the manager column.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 8. MULTI-TABLE JOINs ===================== -->
+        <div class="section">
+            <h2>8️⃣ JOIN with Multiple Tables</h2>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Chain of Connections</h4>
+                <p>Think of it like a family tree. To find out <em>"What did Grandma's daughter's son order for lunch?"</em> you need to go through three connections: Grandma → Daughter → Grandson → Lunch Order. In SQL, you chain JOINs together to follow these relationships from one table to the next to the next.</p>
+            </div>
+
+            <h3>Setup: A Categories Table</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">CREATE TABLE</span> categories (
+    id   <span style="color:#38bdf8">SERIAL</span> <span style="color:#c084fc">PRIMARY KEY</span>,
+    name <span style="color:#38bdf8">VARCHAR(50)</span>
+);
+
+<span style="color:#c084fc">INSERT INTO</span> categories (name) <span style="color:#c084fc">VALUES</span>
+    (<span style="color:#4ade80">'Computers'</span>),
+    (<span style="color:#4ade80">'Accessories'</span>),
+    (<span style="color:#4ade80">'Mobile'</span>);
+
+<span style="color:#94a3b8">-- Add a category_id column to our orders table</span>
+<span style="color:#c084fc">ALTER TABLE</span> orders <span style="color:#c084fc">ADD COLUMN</span> category_id <span style="color:#38bdf8">INTEGER</span> <span style="color:#c084fc">REFERENCES</span> categories(id);
+
+<span style="color:#c084fc">UPDATE</span> orders <span style="color:#c084fc">SET</span> category_id = <span style="color:#fb923c">1</span> <span style="color:#c084fc">WHERE</span> product <span style="color:#c084fc">IN</span> (<span style="color:#4ade80">'Laptop'</span>, <span style="color:#4ade80">'Monitor'</span>);
+<span style="color:#c084fc">UPDATE</span> orders <span style="color:#c084fc">SET</span> category_id = <span style="color:#fb923c">2</span> <span style="color:#c084fc">WHERE</span> product <span style="color:#c084fc">IN</span> (<span style="color:#4ade80">'Mouse'</span>, <span style="color:#4ade80">'Keyboard'</span>, <span style="color:#4ade80">'USB Hub'</span>, <span style="color:#4ade80">'Webcam'</span>, <span style="color:#4ade80">'Headphones'</span>, <span style="color:#4ade80">'Laptop Stand'</span>);
+<span style="color:#c084fc">UPDATE</span> orders <span style="color:#c084fc">SET</span> category_id = <span style="color:#fb923c">3</span> <span style="color:#c084fc">WHERE</span> product <span style="color:#c084fc">IN</span> (<span style="color:#4ade80">'Tablet'</span>, <span style="color:#4ade80">'Phone Case'</span>, <span style="color:#4ade80">'Screen Protector'</span>, <span style="color:#4ade80">'Stylus Pen'</span>);</pre></div>
+
+            <h3>Example: Customer → Order → Category (3-Table JOIN)</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name <span style="color:#c084fc">AS</span> customer,
+       o.product,
+       o.amount,
+       cat.name <span style="color:#c084fc">AS</span> category
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">INNER JOIN</span> categories cat
+    <span style="color:#c084fc">ON</span> o.category_id = cat.id
+<span style="color:#c084fc">ORDER BY</span> cat.name, o.amount <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>customer</th><th>product</th><th>amount</th><th>category</th></tr>
+                <tr><td>Bob Smith</td><td>Headphones</td><td>79.99</td><td>Accessories</td></tr>
+                <tr><td>Bob Smith</td><td>Laptop Stand</td><td>59.99</td><td>Accessories</td></tr>
+                <tr><td>Charlie Brown</td><td>Keyboard</td><td>149.99</td><td>Accessories</td></tr>
+                <tr><td>Alice Johnson</td><td>Webcam</td><td>89.99</td><td>Accessories</td></tr>
+                <tr><td>Charlie Brown</td><td>USB Hub</td><td>34.99</td><td>Accessories</td></tr>
+                <tr><td>Alice Johnson</td><td>Mouse</td><td>25.99</td><td>Accessories</td></tr>
+                <tr><td>Alice Johnson</td><td>Laptop</td><td>1200.00</td><td>Computers</td></tr>
+                <tr><td>Charlie Brown</td><td>Monitor</td><td>399.99</td><td>Computers</td></tr>
+                <tr><td>Diana Prince</td><td>Tablet</td><td>499.99</td><td>Mobile</td></tr>
+                <tr><td>Diana Prince</td><td>Stylus Pen</td><td>29.99</td><td>Mobile</td></tr>
+                <tr><td>Eve Williams</td><td>Phone Case</td><td>19.99</td><td>Mobile</td></tr>
+                <tr><td>Eve Williams</td><td>Screen Protector</td><td>9.99</td><td>Mobile</td></tr>
+            </table>
+
+            <h3>Multi-Table JOIN with Aggregation</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Total revenue by category, showing who the top spender was</span>
+<span style="color:#c084fc">SELECT</span> cat.name <span style="color:#c084fc">AS</span> category,
+       <span style="color:#c084fc">COUNT</span>(o.id) <span style="color:#c084fc">AS</span> order_count,
+       <span style="color:#c084fc">SUM</span>(o.amount) <span style="color:#c084fc">AS</span> total_revenue
+<span style="color:#c084fc">FROM</span> categories cat
+<span style="color:#c084fc">INNER JOIN</span> orders o <span style="color:#c084fc">ON</span> cat.id = o.category_id
+<span style="color:#c084fc">INNER JOIN</span> customers c <span style="color:#c084fc">ON</span> o.customer_id = c.id
+<span style="color:#c084fc">GROUP BY</span> cat.name
+<span style="color:#c084fc">ORDER BY</span> total_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+
+            <p><strong>Result:</strong></p>
+            <table class="comparison-table">
+                <tr><th>category</th><th>order_count</th><th>total_revenue</th></tr>
+                <tr><td>Computers</td><td>2</td><td>1599.99</td></tr>
+                <tr><td>Mobile</td><td>4</td><td>559.96</td></tr>
+                <tr><td>Accessories</td><td>6</td><td>440.94</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ Each JOIN Needs Its Own ON Clause!</h4>
+                <p>A common mistake is forgetting the ON for one of the JOINs. Each JOIN must specify exactly how to match rows. Think of it as a chain: Table A links to Table B on one column, then Table B links to Table C on a different column. Every link in the chain needs its own rule.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 9. VISUAL COMPARISON ===================== -->
+        <div class="section">
+            <h2>9️⃣ Visual Comparison — All JOIN Types Side by Side</h2>
+
+            <p>Let's put all the JOIN types together so you can see the big picture. Using our <strong>8 customers</strong> and <strong>12 orders</strong> data:</p>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>JOIN Type</th>
+                    <th>What It Keeps</th>
+                    <th>Result Rows</th>
+                    <th>NULLs Appear?</th>
+                </tr>
+                <tr>
+                    <td><strong>INNER JOIN</strong></td>
+                    <td>Only rows that match in BOTH tables</td>
+                    <td>12</td>
+                    <td>No (unmatched rows are dropped)</td>
+                </tr>
+                <tr>
+                    <td><strong>LEFT JOIN</strong></td>
+                    <td>ALL rows from left + matches from right</td>
+                    <td>15</td>
+                    <td>Yes — right columns are NULL for unmatched left rows</td>
+                </tr>
+                <tr>
+                    <td><strong>RIGHT JOIN</strong></td>
+                    <td>ALL rows from right + matches from left</td>
+                    <td>12</td>
+                    <td>Yes — left columns are NULL for unmatched right rows</td>
+                </tr>
+                <tr>
+                    <td><strong>FULL OUTER JOIN</strong></td>
+                    <td>ALL rows from BOTH tables</td>
+                    <td>15</td>
+                    <td>Yes — on both sides for unmatched rows</td>
+                </tr>
+                <tr>
+                    <td><strong>CROSS JOIN</strong></td>
+                    <td>Every row × every row (no ON clause)</td>
+                    <td>96 (8 × 12)</td>
+                    <td>No — every combination is produced</td>
+                </tr>
+            </table>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">INNER</div>
+                    <div class="stat-label">The strict one<br>Only matched pairs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">LEFT</div>
+                    <div class="stat-label">The protective one<br>Keeps ALL left rows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">RIGHT</div>
+                    <div class="stat-label">The mirror of LEFT<br>Keeps ALL right rows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">FULL</div>
+                    <div class="stat-label">The inclusive one<br>Keeps EVERYTHING</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">CROSS</div>
+                    <div class="stat-label">The wild one<br>Every × every</div>
+                </div>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Venn Diagram Way</h4>
+                <p>Picture two overlapping circles. The left circle is the customers table. The right circle is the orders table. The overlap in the middle is where a customer <em>has</em> an order.</p>
+                <p><strong>INNER JOIN</strong> = Only the overlap (middle part).</p>
+                <p><strong>LEFT JOIN</strong> = The entire left circle + the overlap.</p>
+                <p><strong>RIGHT JOIN</strong> = The overlap + the entire right circle.</p>
+                <p><strong>FULL OUTER JOIN</strong> = Both entire circles, everything.</p>
+                <p><strong>CROSS JOIN</strong> = Doesn't use a Venn diagram at all — it's a completely different concept (every possible pair).</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Which JOIN Should I Use?</h4>
+                <p><strong>80% of the time:</strong> INNER JOIN or LEFT JOIN. Start with INNER JOIN when you only want matched data. Switch to LEFT JOIN when you need to keep all rows from the "main" table. Use FULL OUTER JOIN for data reconciliation. Avoid CROSS JOIN unless you specifically need all combinations. Self JOIN when you're looking at hierarchical data within the same table.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 10. COMMON MISTAKES ===================== -->
+        <div class="section">
+            <h2>🔟 Common JOIN Mistakes</h2>
+
+            <p>JOINs are powerful but tricky. Here are the mistakes that trip up beginners (and even experienced developers) the most.</p>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Mistake 1: Forgetting the ON Clause</h4>
+                <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ WRONG — No ON clause turns this into a CROSS JOIN!</span>
+<span style="color:#c084fc">SELECT</span> c.name, o.product
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o;
+<span style="color:#94a3b8">-- Result: 8 × 12 = 96 rows of nonsense!</span>
+
+<span style="color:#94a3b8">-- ✅ CORRECT — Always include ON</span>
+<span style="color:#c084fc">SELECT</span> c.name, o.product
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id;</pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4>Mistake 2: Joining on the Wrong Column</h4>
+                <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ WRONG — Joining customer.id to order.id (both are just sequential numbers)</span>
+<span style="color:#c084fc">SELECT</span> c.name, o.product
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.id;
+<span style="color:#94a3b8">-- This matches customer #1 with order #1, customer #2 with order #2</span>
+<span style="color:#94a3b8">-- That's completely WRONG — it's just coincidental number matching!</span>
+
+<span style="color:#94a3b8">-- ✅ CORRECT — Join on the foreign key relationship</span>
+<span style="color:#c084fc">SELECT</span> c.name, o.product
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id;</pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4>Mistake 3: Ambiguous Column Names</h4>
+                <div class="code-block"><pre><span style="color:#94a3b8">-- ❌ WRONG — Both tables have an "id" column. Which one do you mean?</span>
+<span style="color:#c084fc">SELECT</span> id, name, product
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o <span style="color:#c084fc">ON</span> c.id = o.customer_id;
+<span style="color:#94a3b8">-- ERROR: column reference "id" is ambiguous</span>
+
+<span style="color:#94a3b8">-- ✅ CORRECT — Always prefix with the table alias</span>
+<span style="color:#c084fc">SELECT</span> c.id <span style="color:#c084fc">AS</span> customer_id, c.name, o.product
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o <span style="color:#c084fc">ON</span> c.id = o.customer_id;</pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4>Mistake 4: Accidental Cartesian Product</h4>
+                <p>This happens when you join on a condition that matches too many rows, like joining on a column that has the same value in many rows (e.g., city = city).</p>
+                <div class="code-block"><pre><span style="color:#94a3b8">-- ⚠️ DANGEROUS — Joining on city creates duplicates</span>
+<span style="color:#c084fc">SELECT</span> c1.name, c2.name
+<span style="color:#c084fc">FROM</span> customers c1
+<span style="color:#c084fc">INNER JOIN</span> customers c2
+    <span style="color:#c084fc">ON</span> c1.city = c2.city
+<span style="color:#c084fc">WHERE</span> c1.id &lt;&gt; c2.id;
+<span style="color:#94a3b8">-- This finds customers in the SAME city</span>
+<span style="color:#94a3b8">-- Alice & Frank both live in New York, so they'll match</span></pre></div>
+            </div>
+
+            <div class="step-box">
+                <h4>Mistake 5: Using INNER JOIN When You Need LEFT JOIN</h4>
+                <p>If your report says "Show ALL customers and their order totals" but some customers have $0 in orders, an INNER JOIN will silently drop those customers. Always ask yourself: <em>"Do I need rows even if there's no match?"</em> If yes → LEFT JOIN.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ The Golden Rule of JOINs</h4>
+                <p>Before writing a JOIN, answer these three questions: <strong>(1)</strong> Which table is my "main" table? <strong>(2)</strong> Which column connects the two tables? <strong>(3)</strong> Do I need rows from the main table even when there's no match? If yes → LEFT JOIN. If no → INNER JOIN.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 11. PRACTICE EXERCISES ===================== -->
+        <div class="section">
+            <h2>🏋️ Practice Exercises</h2>
+            <p>Time to practice! Try solving these yourself using the <code>customers</code> and <code>orders</code> tables we created at the beginning. Click "Reveal Solution" after you've given it a try.</p>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: The Order Report</h4>
+                <p>Write a query that shows each order with the customer's name and city. Include the product, amount, and order_date. Sort by order_date ascending.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name, c.city, o.product, o.amount, o.order_date
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">ORDER BY</span> o.order_date <span style="color:#c084fc">ASC</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: The Lonely Customers</h4>
+                <p>Find all customers who have <strong>never placed an order</strong>. Show their name, city, and email.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name, c.city, c.email
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">LEFT JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">WHERE</span> o.id <span style="color:#c084fc">IS NULL</span>;</pre></div>
+                    <p>Returns: Frank Miller, Grace Lee, Hank Davis</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: The Big Spender</h4>
+                <p>Find the customer who has spent the <strong>most money</strong> in total. Show their name, total number of orders, and total amount spent.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name,
+       <span style="color:#c084fc">COUNT</span>(o.id) <span style="color:#c084fc">AS</span> total_orders,
+       <span style="color:#c084fc">SUM</span>(o.amount) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">INNER JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">GROUP BY</span> c.name
+<span style="color:#c084fc">ORDER BY</span> total_spent <span style="color:#c084fc">DESC</span>
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">1</span>;</pre></div>
+                    <p>Returns: Alice Johnson — 3 orders, $1,315.98 total</p>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: The Complete Customer Report</h4>
+                <p>Show ALL customers with their total spending. Customers with no orders should show <code>0</code> for total_spent and <code>0</code> for order_count. Sort by total_spent descending. (Hint: use COALESCE!)</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.name,
+       <span style="color:#c084fc">COUNT</span>(o.id) <span style="color:#c084fc">AS</span> order_count,
+       <span style="color:#c084fc">COALESCE</span>(<span style="color:#c084fc">SUM</span>(o.amount), <span style="color:#fb923c">0</span>) <span style="color:#c084fc">AS</span> total_spent
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">LEFT JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">GROUP BY</span> c.name
+<span style="color:#c084fc">ORDER BY</span> total_spent <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 5: The City Summary</h4>
+                <p>For each city, show the number of customers, the number of orders placed, and the total revenue. Include cities with zero orders. Sort by total revenue descending.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> c.city,
+       <span style="color:#c084fc">COUNT</span>(<span style="color:#c084fc">DISTINCT</span> c.id) <span style="color:#c084fc">AS</span> customer_count,
+       <span style="color:#c084fc">COUNT</span>(o.id) <span style="color:#c084fc">AS</span> order_count,
+       <span style="color:#c084fc">COALESCE</span>(<span style="color:#c084fc">SUM</span>(o.amount), <span style="color:#fb923c">0</span>) <span style="color:#c084fc">AS</span> total_revenue
+<span style="color:#c084fc">FROM</span> customers c
+<span style="color:#c084fc">LEFT JOIN</span> orders o
+    <span style="color:#c084fc">ON</span> c.id = o.customer_id
+<span style="color:#c084fc">GROUP BY</span> c.city
+<span style="color:#c084fc">ORDER BY</span> total_revenue <span style="color:#c084fc">DESC</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 6: Self JOIN Challenge</h4>
+                <p>Using the <code>employees</code> table, find all employees whose manager is a VP (role contains 'VP'). Show the employee name, their role, and their manager's name.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">SELECT</span> e.name <span style="color:#c084fc">AS</span> employee,
+       e.role,
+       m.name <span style="color:#c084fc">AS</span> manager
+<span style="color:#c084fc">FROM</span> employees e
+<span style="color:#c084fc">INNER JOIN</span> employees m
+    <span style="color:#c084fc">ON</span> e.manager_id = m.id
+<span style="color:#c084fc">WHERE</span> m.role <span style="color:#c084fc">ILIKE</span> <span style="color:#4ade80">'%VP%'</span>;</pre></div>
+                    <p>Returns: Jake Developer (managed by Tom VP), Amy Designer (managed by Tom VP), Max Marketer (managed by Lisa VP)</p>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== 12. QUIZ ===================== -->
+        <div class="section">
+            <h2>📝 Quiz — Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What does INNER JOIN do?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Keeps all rows from the left table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Returns only rows that have a match in BOTH tables</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Combines every row with every other row</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Keeps all rows from both tables, filling NULLs where needed</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: You want to find customers who have NEVER placed an order. Which approach is correct?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>INNER JOIN orders ... WHERE order_id IS NULL</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)"><code>LEFT JOIN orders ... WHERE orders.id IS NULL</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>CROSS JOIN orders ... WHERE orders.id IS NULL</code></button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)"><code>FULL OUTER JOIN ... WHERE customers.id IS NULL</code></button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: What is the difference between LEFT JOIN and RIGHT JOIN?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">LEFT JOIN is faster than RIGHT JOIN</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">LEFT JOIN shows matches, RIGHT JOIN shows non-matches</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">LEFT JOIN keeps all rows from the first (left) table; RIGHT JOIN keeps all rows from the second (right) table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">They produce identical results</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: If Table A has 5 rows and Table B has 4 rows, how many rows does a CROSS JOIN produce?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">9 rows (5 + 4)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">20 rows (5 × 4)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">5 rows (the bigger table)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">4 rows (the smaller table)</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: When do you use a Self JOIN?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">When you want to delete duplicate rows</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">When joining two different databases</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">When you need to compare rows within the same table (e.g., employees and their managers)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">When you want to create a backup of a table</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: What happens if you forget the ON clause in an INNER JOIN?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">PostgreSQL joins on columns with the same name automatically</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">The query returns zero rows</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">It becomes a CROSS JOIN and produces every possible row combination</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">PostgreSQL throws an error and refuses to run the query</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: Why are table aliases essential when doing a Self JOIN?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">They make the query run faster</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">PostgreSQL needs to distinguish between the two "copies" of the same table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">They are only needed for readability, the query works without them</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">They prevent NULLs from appearing in results</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== 13. WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>🎉 What's Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">JOIN types mastered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">SQL examples practiced</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Quiz questions conquered</div>
+                </div>
+            </div>
+
+            <p>Congratulations! You've conquered JOINs — the single most important concept in relational databases. Here's a quick recap:</p>
+
+            <table class="comparison-table">
+                <tr><th>JOIN Type</th><th>When to Use</th><th>Key Syntax</th></tr>
+                <tr><td>INNER JOIN</td><td>Only want matched rows</td><td><code>FROM a INNER JOIN b ON a.id = b.a_id</code></td></tr>
+                <tr><td>LEFT JOIN</td><td>Keep all rows from the main table</td><td><code>FROM a LEFT JOIN b ON a.id = b.a_id</code></td></tr>
+                <tr><td>RIGHT JOIN</td><td>Keep all from the second table (rare)</td><td><code>FROM a RIGHT JOIN b ON a.id = b.a_id</code></td></tr>
+                <tr><td>FULL OUTER JOIN</td><td>Keep everything from both</td><td><code>FROM a FULL OUTER JOIN b ON ...</code></td></tr>
+                <tr><td>CROSS JOIN</td><td>Every possible combination</td><td><code>FROM a CROSS JOIN b</code></td></tr>
+                <tr><td>Self JOIN</td><td>Compare rows within the same table</td><td><code>FROM a x JOIN a y ON x.col = y.col</code></td></tr>
+                <tr><td>Multi-Table JOIN</td><td>Chain 3+ tables together</td><td><code>FROM a JOIN b ON ... JOIN c ON ...</code></td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>🔮 Coming Up Next: Subqueries &amp; CTEs</h4>
+                <p>Now that you can combine tables, it's time to learn about <strong>queries inside queries</strong>! Subqueries let you use the result of one query as input to another — like a Russian nesting doll of SQL. And CTEs (Common Table Expressions) let you name and reuse complex query parts, making your SQL cleaner and more readable. Think of it as going from "one big messy query" to "organized, modular building blocks."</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="aggregations.html" class="secondary"><i class="fas fa-arrow-left"></i> Aggregations &amp; Grouping</a>
+            <a href="subqueries-ctes.html">Subqueries &amp; CTEs <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">Correct!</strong>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">Not quite!</strong>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

@@ -294,7 +294,15 @@
             </div>
         </div>
 
-        <!-- Row 5: Visitor IP list -->
+        <!-- Row 5: Subscribers Table -->
+        <div class="panel-grid">
+            <div class="panel panel-full">
+                <h3><i class="fas fa-crown" style="color:#f59e0b"></i> Pro Subscribers</h3>
+                <div id="subscriberTable"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+            </div>
+        </div>
+
+        <!-- Row 6: Visitor IP list -->
         <div class="panel-grid">
             <div class="panel panel-full">
                 <h3><i class="fas fa-network-wired"></i> Recent Visitors (IP / Geo / Device)</h3>
@@ -347,7 +355,8 @@
                     var ev = result.data.analytics_events || [];
                     var vis = result.data.site_visitors || [];
                     var totalSubs = result.data.total_active_subscribers;
-                    renderAll(pv, ev, vis, totalSubs);
+                    var subsList = result.data.subscribers || [];
+                    renderAll(pv, ev, vis, totalSubs, subsList);
                 } else {
                     var errMsg = (result.data && result.data.error) ? result.data.error : 'Invalid passcode. Try again.';
                     document.getElementById('authError').textContent = errMsg;
@@ -399,7 +408,8 @@
                 var evData = result.data.analytics_events || [];
                 var visData = result.data.site_visitors || [];
                 var totalSubs = result.data.total_active_subscribers;
-                renderAll(pvData, evData, visData, totalSubs);
+                var subsList = result.data.subscribers || [];
+                renderAll(pvData, evData, visData, totalSubs, subsList);
             })
             .catch(function (err) {
                 var msg = err && err.message ? err.message : 'Failed to load analytics.';
@@ -414,7 +424,7 @@
             });
     };
 
-    function renderAll(pvData, evData, visData, totalActiveSubscribers) {
+    function renderAll(pvData, evData, visData, totalActiveSubscribers, subscribersList) {
         renderKPIs(pvData, evData, visData, totalActiveSubscribers);
         renderTopPages(pvData);
         renderCountries(pvData);
@@ -423,6 +433,7 @@
         renderFunnel(pvData, evData);
         renderCourseClicks(evData);
         renderDailyChart(pvData);
+        renderSubscriberTable(subscribersList || []);
         renderVisitorList(visData);
         renderRecentActivity(pvData);
     }
@@ -571,6 +582,25 @@
                 var lastSeen = v.last_seen ? new Date(v.last_seen).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '—';
                 var devCls = v.device_type === 'mobile' ? 'badge-mobile' : v.device_type === 'tablet' ? 'badge-tablet' : 'badge-desktop';
                 return '<tr><td>' + (v.ip_address || '—') + '</td><td>' + (v.country || '—') + '</td><td>' + (v.city || '—') + '</td><td><span class="badge ' + devCls + '">' + (v.device_type || '—') + '</span></td><td>' + (v.browser || '—') + '</td><td>' + (v.os || '—') + '</td><td><strong>' + (v.total_visits || 1) + '</strong></td><td style="font-size:0.8rem;color:#6e6e73">' + lastSeen + '</td></tr>';
+            }).join('') + '</tbody></table>';
+    }
+
+    function renderSubscriberTable(subs) {
+        var el = document.getElementById('subscriberTable');
+        if (!subs || !subs.length) { el.innerHTML = '<p style="color:#6e6e73;font-size:0.85rem;">No subscribers yet</p>'; return; }
+        el.innerHTML = '<table class="data-table"><thead><tr><th>Email</th><th>Plan</th><th>Status</th><th>Expires</th><th>Subscribed</th></tr></thead><tbody>' +
+            subs.map(function (s) {
+                var email = s.email || '(no email)';
+                var plan = (s.subscription_plan || 'weekly');
+                var planBadge = plan === 'monthly'
+                    ? '<span style="background:#d1fae5;color:#065f46;padding:3px 8px;border-radius:6px;font-size:0.7rem;font-weight:700;">MONTHLY</span>'
+                    : '<span style="background:#dbeafe;color:#1d4ed8;padding:3px 8px;border-radius:6px;font-size:0.7rem;font-weight:700;">WEEKLY</span>';
+                var status = s.subscription_status === 'pro'
+                    ? '<span style="background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:6px;font-size:0.7rem;font-weight:700;">PRO</span>'
+                    : '<span style="background:#f3f4f6;color:#6b7280;padding:3px 8px;border-radius:6px;font-size:0.7rem;font-weight:700;">FREE</span>';
+                var expires = s.subscription_end_date ? new Date(s.subscription_end_date).toLocaleDateString('en-IN') : '—';
+                var created = s.created_at ? new Date(s.created_at).toLocaleDateString('en-IN') : '—';
+                return '<tr><td>' + email + '</td><td>' + planBadge + '</td><td>' + status + '</td><td>' + expires + '</td><td style="font-size:0.8rem;color:#6e6e73">' + created + '</td></tr>';
             }).join('') + '</tbody></table>';
     }
 

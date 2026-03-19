@@ -136,6 +136,15 @@
             100% { fill-opacity: 0.15; }
         }
 
+        .quiz-box{background:rgba(30,41,59,0.5);border-radius:16px;padding:24px;margin:20px 0;border:1px solid rgba(139,92,246,0.15);}
+        .quiz-q{color:#c4b5fd;margin-bottom:14px;font-size:1.15em;}
+        .quiz-opt{display:block;width:100%;text-align:left;padding:12px 18px;margin:8px 0;background:rgba(124,58,237,0.08);border:2px solid rgba(139,92,246,0.15);border-radius:10px;color:#e2e8f0;cursor:pointer;font-family:inherit;font-size:0.95em;transition:all 0.2s;}
+        .quiz-opt:hover{border-color:rgba(139,92,246,0.4);background:rgba(124,58,237,0.15);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.1);}
+        .quiz-opt:disabled{cursor:default;opacity:0.7;}
+        .quiz-fb{display:none;margin-top:10px;padding:12px;border-radius:8px;font-weight:600;}
+
         @media (max-width: 768px) {
             body { padding: 10px; font-size: 16px; }
             .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
@@ -972,6 +981,65 @@ logits = <span class="function">model</span>(idx)
         </div>
     </div>
 
+    <!-- ========== QUIZ ========== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-question-circle"></i> Quiz — Test Your Knowledge</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: Which architecture family does GPT (the model behind ChatGPT) belong to?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Encoder-Only — it reads all tokens bidirectionally</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Encoder-Decoder — it reads input then generates output</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Decoder-Only — it generates text left-to-right, one token at a time</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Attention-Only — it only uses attention layers with no feed-forward</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What are the four components inside a single Transformer block, in correct order?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) Multi-Head Attention → Add & LayerNorm → Feed-Forward Network → Add & LayerNorm</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Feed-Forward → Attention → Softmax → Dropout</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Embedding → Attention → Linear → Sigmoid</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) LayerNorm → Feed-Forward → Attention → LayerNorm</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: What does Layer Normalization (LayerNorm) do?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It removes unimportant tokens from the sequence</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It doubles the embedding dimension to increase capacity</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It converts token IDs into embedding vectors</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) It re-centers values to mean≈0 and std≈1, preventing values from exploding or vanishing across deep layers</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: What is the purpose of residual (skip) connections in a Transformer?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) They skip the attention mechanism entirely for faster inference</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) They add the original input back to the layer's output, letting gradients flow and preventing information loss in deep networks</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) They remove duplicate tokens from the input sequence</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) They connect the first layer directly to the last layer only</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: What role does the Feed-Forward Network (FFN) play inside a Transformer block?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) It processes each token independently — expanding to a higher dimension, applying non-linearity, then compressing back — storing factual knowledge</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It lets tokens share information with each other across the sequence</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It converts probability distributions into token IDs</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It reduces the sequence length by half at each layer</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: Why does GPT use causal masking (filling future positions with -∞)?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To make training faster by skipping half the computations</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) To allow the model to see the entire sentence for better understanding</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) To randomly drop tokens for regularization, like dropout</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) To prevent each token from attending to future tokens — forcing the model to predict the next word using only past context</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
     <div class="nav-buttons">
         <a href="attention.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Prev: Attention</a>
         <a href="training.html" class="nav-btn next">Next: Training <i class="fas fa-arrow-right"></i></a>
@@ -1079,6 +1147,9 @@ function calcParams() {
     document.getElementById('paramLabel').textContent = label;
 }
 calcParams();
+</script>
+<script>
+function checkQ(btn,ok){var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');opts.forEach(function(o){o.disabled=true;});if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#4ade80';fb.textContent='✅ Correct!';}else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#f87171';fb.textContent='❌ Not quite — check the green answer!';opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/supabase-config.js"></script>

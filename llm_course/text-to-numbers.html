@@ -64,6 +64,24 @@
         .word-order-display .word-chip { background:rgba(139,92,246,0.12); padding:8px 18px; border-radius:12px; transition:all .4s; }
         .meaning-text { font-size:1.05em; color:#475569; min-height:40px; margin-top:10px; font-weight:600; }
 
+        .quiz-box { background: rgba(245,243,255,0.85); border-radius:16px; padding:24px; margin:20px 0; border:1px solid rgba(139,92,246,0.2); }
+        .quiz-q { color:#5b21b6; margin-bottom:14px; font-size:1.15em; font-weight:700; }
+        .quiz-opt { display:block; width:100%; text-align:left; padding:12px 18px; margin:8px 0; background:rgba(124,58,237,0.05); border:2px solid rgba(139,92,246,0.15); border-radius:10px; color:#334155; cursor:pointer; font-family:inherit; font-size:0.95em; transition:all 0.2s; }
+        .quiz-opt:hover { border-color:rgba(139,92,246,0.4); background:rgba(124,58,237,0.12); }
+        .quiz-opt.correct { border-color:#22c55e; background:rgba(34,197,94,0.15); color:#166534; }
+        .quiz-opt.wrong { border-color:#ef4444; background:rgba(239,68,68,0.1); color:#991b1b; }
+        .quiz-opt:disabled { cursor:default; opacity:0.7; }
+        .quiz-fb { display:none; margin-top:10px; padding:12px; border-radius:8px; font-weight:600; }
+
+        .quiz-box { background:rgba(245,243,255,0.85); border-radius:16px; padding:24px; margin:20px 0; border:1px solid rgba(139,92,246,0.2); }
+        .quiz-q { color:#5b21b6; margin-bottom:14px; font-size:1.15em; font-weight:700; }
+        .quiz-opt { display:block; width:100%; text-align:left; padding:12px 18px; margin:8px 0; background:rgba(124,58,237,0.05); border:2px solid rgba(139,92,246,0.15); border-radius:10px; color:#334155; cursor:pointer; font-family:inherit; font-size:0.95em; transition:all 0.2s; }
+        .quiz-opt:hover { border-color:rgba(139,92,246,0.4); background:rgba(124,58,237,0.12); }
+        .quiz-opt.correct { border-color:#22c55e; background:rgba(34,197,94,0.15); color:#166534; }
+        .quiz-opt.wrong { border-color:#ef4444; background:rgba(239,68,68,0.1); color:#991b1b; }
+        .quiz-opt:disabled { cursor:default; opacity:0.7; }
+        .quiz-fb { display:none; margin-top:10px; padding:12px; border-radius:8px; font-weight:600; }
+
         @media (max-width:768px) {
             body { padding:10px; font-size:16px; }
             .header { padding:30px 20px; }
@@ -743,6 +761,126 @@ tokens, ids = bpe.<span class="func">encode</span>(<span class="string">"lowest"
         </div>
     </div>
 
+    <!-- ======================================== -->
+    <!-- Quiz Section                              -->
+    <!-- ======================================== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-flask"></i> 🧪 Quiz — Test Your Understanding!</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: Why do computers need text converted to numbers before processing it?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Numbers take up less storage space than letters</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) Computer processors can only perform mathematical operations on numbers — they have no concept of "words"</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Numbers are easier for humans to debug and understand</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Converting to numbers is optional — it just makes things faster</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What does tokenization do to a piece of text?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Encrypts the text so it can be securely transmitted</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Translates the text from one language to another</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Splits the text into smaller pieces (tokens) — like subwords — that can each be mapped to a number</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Removes all punctuation and special characters from the text</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: In Byte Pair Encoding (BPE), what happens at each training step?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) The rarest character is removed from the vocabulary to save space</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) The most frequently occurring pair of adjacent tokens is merged into a single new token</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Each word is randomly split into characters and reassembled</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Every word is assigned a unique random number from a hash function</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: What is the purpose of word embeddings?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To compress text files so they take up less disk space</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) To count how many times each word appears in a document</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) To represent words as vectors (lists of numbers) where similar words have similar numerical representations</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) To sort words alphabetically so they can be looked up faster</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: Why do Transformers need positional encoding?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To make the model run faster by parallelizing computations on the GPU</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) To reduce the total vocabulary size needed by the tokenizer</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Because Transformers process all tokens simultaneously, so they need explicit position signals to know word order</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) To translate tokens between different languages during multilingual training</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: What is the main tradeoff when choosing vocabulary size for a tokenizer?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Larger vocabularies always perform better — there are no downsides</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) Larger vocabularies produce shorter token sequences but require a bigger embedding table; smaller vocabularies produce longer sequences but keep the model compact</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Vocabulary size only affects training speed, not model quality</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Smaller vocabularies are always better because they train faster and use less memory</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
+    <!-- ==================== QUIZ ==================== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-flask"></i> 🧪 Quiz — Test Your Understanding!</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: Why can't a neural network process the raw text "Hello World" directly?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Because neural networks only understand HTML, not plain text</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) Because computers only understand and compute with numbers, not letters or words</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Because "Hello World" contains a space character, which crashes the algorithm</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Because English is too ambiguous — the text must first be translated into Python code</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What is the main purpose of tokenization in an LLM pipeline?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) To translate text from one human language to another (e.g. English → French)</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) To remove punctuation and common "stop words" from the input</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) To break text into smaller pieces (tokens) and assign each piece a numeric ID</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) To encrypt the text for security before sending it to the model</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: In Byte Pair Encoding (BPE), how does the algorithm build its vocabulary?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It uses a pre-built English dictionary to look up every word</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It splits every word at the vowels to create consonant clusters</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) It starts with individual characters and repeatedly merges the most frequent adjacent pair</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It trains a separate neural network to decide where to split each word</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: Why do we use word embeddings instead of just feeding raw token IDs (like 15339 for "Hello") into the model?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Token IDs are too large and cause the GPU to run out of memory</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Token IDs only work for English text; embeddings support all languages</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Token IDs are arbitrary labels — embeddings capture meaning so that similar words have similar vectors</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Token IDs make the model train slower because they require double-precision floating point</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: What problem does positional encoding solve in Transformers?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It reduces the vocabulary size to save memory during training</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) It adds word-order information, since embeddings alone don't know which word came first or last</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It speeds up the training process by roughly 10× compared to no encoding</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It tells the model which human language the input text is written in</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: What is the key tradeoff when choosing a tokenizer's vocabulary size?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Vocabulary size has no impact — all sizes produce identical model quality</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) A larger vocabulary always gives better results with no downsides</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Smaller vocab = more tokens per sentence (longer sequences) but handles any word; larger vocab = fewer tokens but uses more memory</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) A smaller vocabulary trains faster because it needs fewer GPU cores</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <div class="nav-buttons">
         <a href="what-are-llms.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Prev: What Are LLMs?</a>
@@ -973,9 +1111,27 @@ function copyCode(btn) {
     });
 }
 </script>
+<script>
+function checkQ(btn,ok){
+    var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');
+    opts.forEach(function(o){o.disabled=true;});
+    if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#166534';fb.textContent='✅ Correct!';}
+    else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#991b1b';fb.textContent='❌ Not quite — check the green answer!';
+    opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/supabase-config.js"></script>
 <script src="../js/supabase-auth.js"></script>
 <script src="../js/paywall.js"></script>
+<script>
+function checkQ(btn,ok){
+    var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');
+    opts.forEach(function(o){o.disabled=true;});
+    if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#166534';fb.textContent='✅ Correct!';}
+    else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#991b1b';fb.textContent='❌ Not quite — check the green answer!';
+    opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}
+}
+</script>
 </body>
 </html>

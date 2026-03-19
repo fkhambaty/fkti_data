@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Basics | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>SQL Basics — CRUD Operations | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,1026 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="data-types.html">Data Types & Constraints <i class="fas fa-arrow-right"></i></a>
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Course Home</a>
+            <a href="data-types.html">Data Types &amp; Constraints <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>SQL Basics</h1>
-            <p>CREATE, INSERT, SELECT, UPDATE, DELETE — the fundamental CRUD operations.</p>
+            <h1>📝 SQL Basics — CRUD</h1>
+            <p>CREATE, INSERT, SELECT, UPDATE, DELETE — the five magic words that let you talk to any database.</p>
         </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1: What is SQL?                                       -->
+        <!-- ============================================================ -->
         <div class="section visible">
-            <h2>📚 SQL Basics</h2>
-            <p>CREATE, INSERT, SELECT, UPDATE, DELETE — the fundamental CRUD operations.</p>
+            <h2><i class="fas fa-language"></i> What is SQL?</h2>
+
+            <p>SQL stands for <strong>Structured Query Language</strong>. It is the universal language every relational database understands — PostgreSQL, MySQL, SQL Server, Oracle, SQLite — all of them speak SQL. If databases were countries, SQL would be English: the one language everyone agrees to communicate in.</p>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers sql basics with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>🧒 ELI5 — Explain Like I'm 5</h4>
+                <p>Imagine you walk into a huge library with millions of books. You can't just grab random shelves — you need to <em>ask the librarian</em>. SQL is the language you use to talk to the librarian (the database). You say things like "Show me all the science fiction books published after 2020" and the librarian fetches exactly what you asked for.</p>
+            </div>
+
+            <h3>A Tiny Bit of History</h3>
+            <p>In the early 1970s, two researchers at IBM — Edgar F. Codd, Donald Chamberlin, and Raymond Boyce — developed a way to store and retrieve data using simple English-like commands. They called the first version "SEQUEL" (Structured English Query Language). Over time the name was shortened to <strong>SQL</strong>.</p>
+
+            <p>Today, SQL is the most in-demand technical skill in data jobs worldwide. Every data analyst, data engineer, backend developer, and data scientist uses it daily.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Years Old</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">#1</div>
+                    <div class="stat-label">Data Skill</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Relational DBs use it</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Core Operations</div>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy</h4>
+                <p>Think of SQL as the <strong>remote control</strong> for your TV. The TV (database) holds thousands of channels (data), but without the remote (SQL), you'd have to walk up and press buttons on the TV itself. SQL lets you sit back and command the database from a distance: "Show me channel 42", "Record this show", "Delete last week's recordings."</p>
+            </div>
+
+            <h3>SQL Statement Categories</h3>
+            <p>SQL commands are grouped into families. In this lesson we focus on the two you'll use most:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Stands For</th>
+                        <th>What It Does</th>
+                        <th>Example Commands</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>DDL</strong></td>
+                        <td>Data Definition Language</td>
+                        <td>Defines the <em>structure</em> of your data</td>
+                        <td>CREATE, ALTER, DROP</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DML</strong></td>
+                        <td>Data Manipulation Language</td>
+                        <td>Works with the <em>data itself</em></td>
+                        <td>INSERT, SELECT, UPDATE, DELETE</td>
+                    </tr>
+                    <tr>
+                        <td>DCL</td>
+                        <td>Data Control Language</td>
+                        <td>Controls access &amp; permissions</td>
+                        <td>GRANT, REVOKE</td>
+                    </tr>
+                    <tr>
+                        <td>TCL</td>
+                        <td>Transaction Control Language</td>
+                        <td>Manages transactions</td>
+                        <td>BEGIN, COMMIT, ROLLBACK</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2: What is CRUD?                                      -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-arrows-rotate"></i> What is CRUD?</h2>
+
+            <p><strong>CRUD</strong> is an acronym that describes the four fundamental things you can do with data:</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">C</div>
+                    <div class="stat-label">Create — add new data</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">R</div>
+                    <div class="stat-label">Read — fetch data</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">U</div>
+                    <div class="stat-label">Update — change data</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">D</div>
+                    <div class="stat-label">Delete — remove data</div>
+                </div>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Phone Contacts App</h4>
+                <p>Open the Contacts app on your phone. Everything you do there maps to CRUD:</p>
+                <ul style="color:#cbd5e1; margin-top:10px; padding-left:20px;">
+                    <li><strong>Create</strong> — Tap "Add Contact" and type a new name &amp; number.</li>
+                    <li><strong>Read</strong> — Search for "Mom" to see her number.</li>
+                    <li><strong>Update</strong> — Mom changed her number, so you edit it.</li>
+                    <li><strong>Delete</strong> — Remove that spam caller you accidentally saved.</li>
+                </ul>
+                <p style="margin-top:10px;">That's it! Every app — Instagram, Gmail, Amazon, Uber — does these four things under the hood with SQL.</p>
+            </div>
+
+            <h3>CRUD Mapped to SQL</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>CRUD Operation</th>
+                        <th>SQL Command</th>
+                        <th>English Translation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Create</strong></td>
+                        <td>INSERT INTO</td>
+                        <td>"Add this new row to the table"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Read</strong></td>
+                        <td>SELECT</td>
+                        <td>"Show me the data that matches..."</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Update</strong></td>
+                        <td>UPDATE</td>
+                        <td>"Change this value to something new"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delete</strong></td>
+                        <td>DELETE</td>
+                        <td>"Remove these rows forever"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>We also need <code>CREATE TABLE</code> (to build the table in the first place) and <code>ALTER/DROP TABLE</code> (to change or destroy it). This lesson covers all of them.</p>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 3: CREATE TABLE                                       -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-hammer"></i> CREATE TABLE — Building Your First Table</h2>
+
+            <p>Before you can store any data, you need a <strong>table</strong>. A table is like a spreadsheet: it has <strong>columns</strong> (the headers) and <strong>rows</strong> (the actual data). The <code>CREATE TABLE</code> command defines the columns, what type of data each column holds, and any rules the data must follow.</p>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy — The Blank Spreadsheet</h4>
+                <p>Imagine opening a fresh Excel spreadsheet. Before typing any numbers, you first set up the column headers: "Name", "Department", "Salary", "Hire Date". That's exactly what <code>CREATE TABLE</code> does — it defines the column headers and their rules, but the table starts completely empty.</p>
+            </div>
+
+            <h3>Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> table_name (
+    column1  <span style="color:#38bdf8;">DATA_TYPE</span>  constraints,
+    column2  <span style="color:#38bdf8;">DATA_TYPE</span>  constraints,
+    ...
+);</pre></div>
+
+            <h3>Our Running Example: employees</h3>
+            <p>Throughout this lesson, we'll work with an <code>employees</code> table. Here's how we create it:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> employees (
+    id          <span style="color:#38bdf8;">SERIAL</span>        <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name        <span style="color:#38bdf8;">VARCHAR(100)</span>  <span style="color:#c084fc;">NOT NULL</span>,
+    department  <span style="color:#38bdf8;">VARCHAR(50)</span>,
+    salary      <span style="color:#38bdf8;">DECIMAL(10,2)</span>,
+    hire_date   <span style="color:#38bdf8;">DATE</span>          <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">CURRENT_DATE</span>
+);</pre></div>
+
+            <p>Let's break every piece of this down:</p>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">SERIAL</h4>
+                <p>This is a PostgreSQL shortcut that means "auto-incrementing integer." Every time you add a new row, PostgreSQL automatically assigns the next number (1, 2, 3, ...). You never have to type the id yourself.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">PRIMARY KEY</h4>
+                <p>This marks the column as the <strong>unique identifier</strong> for each row. No two rows can have the same id. Think of it like a Social Security Number — every person (row) gets a unique one.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">VARCHAR(100)</h4>
+                <p>A text column that can hold up to 100 characters. "VARCHAR" stands for "VARiable CHARacters." If you type "Alice" (5 characters), it only stores 5, not 100.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">NOT NULL</h4>
+                <p>This means "this column must always have a value." You can't leave it blank. An employee <em>must</em> have a name — it would be weird to have a nameless person on payroll!</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">DECIMAL(10,2)</h4>
+                <p>A number with up to 10 digits total and 2 decimal places. Perfect for money: 99999999.99 is the max. You don't want salary stored as "around 50k" — you want the exact number.</p>
+            </div>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">DEFAULT CURRENT_DATE</h4>
+                <p>If you don't provide a hire_date, PostgreSQL automatically fills in today's date. Defaults save you time and prevent empty fields.</p>
+            </div>
+
+            <h3>Result: The Empty Table</h3>
+            <p>After running the command above, you get a table with the structure defined but zero rows:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>id</th><th>name</th><th>department</th><th>salary</th><th>hire_date</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" style="text-align:center; color:#94a3b8;"><em>(0 rows — the table is empty)</em></td></tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Naming Conventions</h4>
+                <p>Use <strong>lowercase letters</strong> and <strong>underscores</strong> for table and column names. Avoid spaces, special characters, and reserved words. Good: <code>hire_date</code>. Bad: <code>Hire Date</code>, <code>date</code> (reserved word).</p>
             </div>
         </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 4: INSERT INTO                                        -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-plus-circle"></i> INSERT INTO — Adding Data</h2>
+
+            <p>Now that we have our empty table, let's fill it with data. The <code>INSERT INTO</code> command adds new rows (records) to a table.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Writing in Your Diary</h4>
+                <p>Imagine you have a brand new diary with pre-printed columns: Date, Mood, What Happened. Every evening, you write a new line. That's INSERT — you're adding a brand-new entry to your diary (table) every time.</p>
+            </div>
+
+            <h3>Single-Row INSERT</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">INSERT INTO</span> employees (name, department, salary, hire_date)
+<span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Alice Johnson'</span>, <span style="color:#4ade80;">'Engineering'</span>, <span style="color:#fb923c;">85000.00</span>, <span style="color:#4ade80;">'2023-01-15'</span>);</pre></div>
+
+            <p>Notice we did <strong>not</strong> provide a value for <code>id</code>. Because it's <code>SERIAL</code>, PostgreSQL auto-assigns 1.</p>
+
+            <h3>Multi-Row INSERT</h3>
+            <p>You can insert many rows at once by separating each set of values with a comma:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">INSERT INTO</span> employees (name, department, salary, hire_date) <span style="color:#c084fc;">VALUES</span>
+    (<span style="color:#4ade80;">'Bob Smith'</span>,       <span style="color:#4ade80;">'Marketing'</span>,    <span style="color:#fb923c;">62000.00</span>,  <span style="color:#4ade80;">'2023-03-20'</span>),
+    (<span style="color:#4ade80;">'Carol Davis'</span>,     <span style="color:#4ade80;">'Engineering'</span>,  <span style="color:#fb923c;">91000.00</span>,  <span style="color:#4ade80;">'2022-11-01'</span>),
+    (<span style="color:#4ade80;">'David Lee'</span>,       <span style="color:#4ade80;">'Sales'</span>,        <span style="color:#fb923c;">55000.00</span>,  <span style="color:#4ade80;">'2024-01-10'</span>),
+    (<span style="color:#4ade80;">'Eva Martinez'</span>,    <span style="color:#4ade80;">'Engineering'</span>,  <span style="color:#fb923c;">97000.00</span>,  <span style="color:#4ade80;">'2021-07-22'</span>),
+    (<span style="color:#4ade80;">'Frank Wilson'</span>,    <span style="color:#4ade80;">'HR'</span>,           <span style="color:#fb923c;">58000.00</span>,  <span style="color:#4ade80;">'2023-06-05'</span>),
+    (<span style="color:#4ade80;">'Grace Chen'</span>,      <span style="color:#4ade80;">'Marketing'</span>,    <span style="color:#fb923c;">67000.00</span>,  <span style="color:#4ade80;">'2022-09-14'</span>),
+    (<span style="color:#4ade80;">'Hank Brown'</span>,      <span style="color:#4ade80;">'Sales'</span>,        <span style="color:#fb923c;">52000.00</span>,  <span style="color:#4ade80;">'2024-02-28'</span>),
+    (<span style="color:#4ade80;">'Irene Taylor'</span>,    <span style="color:#4ade80;">'Engineering'</span>,  <span style="color:#fb923c;">89000.00</span>,  <span style="color:#4ade80;">'2023-04-18'</span>),
+    (<span style="color:#4ade80;">'Jake Nguyen'</span>,     <span style="color:#4ade80;">'HR'</span>,           <span style="color:#fb923c;">61000.00</span>,  <span style="color:#4ade80;">'2023-08-30'</span>);</pre></div>
+
+            <p>After both INSERTs, the table now has <strong>10 employees</strong> (Alice + 9 others).</p>
+
+            <h3>The Table After INSERTs</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>id</th><th>name</th><th>department</th><th>salary</th><th>hire_date</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Alice Johnson</td><td>Engineering</td><td>85000.00</td><td>2023-01-15</td></tr>
+                    <tr><td>2</td><td>Bob Smith</td><td>Marketing</td><td>62000.00</td><td>2023-03-20</td></tr>
+                    <tr><td>3</td><td>Carol Davis</td><td>Engineering</td><td>91000.00</td><td>2022-11-01</td></tr>
+                    <tr><td>4</td><td>David Lee</td><td>Sales</td><td>55000.00</td><td>2024-01-10</td></tr>
+                    <tr><td>5</td><td>Eva Martinez</td><td>Engineering</td><td>97000.00</td><td>2021-07-22</td></tr>
+                    <tr><td>6</td><td>Frank Wilson</td><td>HR</td><td>58000.00</td><td>2023-06-05</td></tr>
+                    <tr><td>7</td><td>Grace Chen</td><td>Marketing</td><td>67000.00</td><td>2022-09-14</td></tr>
+                    <tr><td>8</td><td>Hank Brown</td><td>Sales</td><td>52000.00</td><td>2024-02-28</td></tr>
+                    <tr><td>9</td><td>Irene Taylor</td><td>Engineering</td><td>89000.00</td><td>2023-04-18</td></tr>
+                    <tr><td>10</td><td>Jake Nguyen</td><td>HR</td><td>61000.00</td><td>2023-08-30</td></tr>
+                </tbody>
+            </table>
+
+            <h3>What Happens If You Break a Rule?</h3>
+            <p>Try inserting a row without the <code>name</code> column (which is <code>NOT NULL</code>):</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">INSERT INTO</span> employees (department, salary)
+<span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Marketing'</span>, <span style="color:#fb923c;">70000</span>);
+
+<span style="color:#94a3b8;">-- ERROR: null value in column "name" violates not-null constraint</span></pre></div>
+
+            <div class="important-box">
+                <h4>🚨 Important — NOT NULL Means Required</h4>
+                <p>When you define a column as <code>NOT NULL</code>, the database will <strong>reject</strong> any INSERT that tries to leave it empty. This protects your data quality. Always think about which columns truly need a value.</p>
+            </div>
+
+            <h3>INSERT With DEFAULT Values</h3>
+            <p>If you skip <code>hire_date</code>, the <code>DEFAULT CURRENT_DATE</code> kicks in:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">INSERT INTO</span> employees (name, department, salary)
+<span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Karen White'</span>, <span style="color:#4ade80;">'Sales'</span>, <span style="color:#fb923c;">59000</span>);
+
+<span style="color:#94a3b8;">-- hire_date will automatically be today's date</span></pre></div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 5: SELECT                                             -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-search"></i> SELECT — Reading Data</h2>
+
+            <p><code>SELECT</code> is the <strong>most important</strong> SQL command. You'll use it far more than any other. It retrieves (reads) data from a table. You can fetch everything, fetch specific columns, filter rows, sort results, and much more.</p>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy — Asking the Librarian</h4>
+                <p>Imagine walking into a library with a million books. You don't rummage through every shelf — you go to the librarian and say: "Show me all mystery novels by Agatha Christie published after 1950." The librarian disappears into the stacks and comes back with exactly the books you asked for. That's SELECT — you describe what you want, and the database fetches it.</p>
+            </div>
+
+            <h3>SELECT * — Get Everything</h3>
+            <p>The asterisk <code>*</code> means "all columns." This fetches every column and every row:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span> * <span style="color:#c084fc;">FROM</span> employees;</pre></div>
+
+            <p>Result: the full 10-row table we saw above. While <code>SELECT *</code> is great for quick exploration, in production code you should always name the columns you need (we'll see why in a moment).</p>
+
+            <h3>SELECT Specific Columns</h3>
+            <p>Instead of all columns, pick only the ones you need:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span> name, department, salary
+<span style="color:#c084fc;">FROM</span> employees;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>name</th><th>department</th><th>salary</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Alice Johnson</td><td>Engineering</td><td>85000.00</td></tr>
+                    <tr><td>Bob Smith</td><td>Marketing</td><td>62000.00</td></tr>
+                    <tr><td>Carol Davis</td><td>Engineering</td><td>91000.00</td></tr>
+                    <tr><td>David Lee</td><td>Sales</td><td>55000.00</td></tr>
+                    <tr><td>Eva Martinez</td><td>Engineering</td><td>97000.00</td></tr>
+                    <tr><td>Frank Wilson</td><td>HR</td><td>58000.00</td></tr>
+                    <tr><td>Grace Chen</td><td>Marketing</td><td>67000.00</td></tr>
+                    <tr><td>Hank Brown</td><td>Sales</td><td>52000.00</td></tr>
+                    <tr><td>Irene Taylor</td><td>Engineering</td><td>89000.00</td></tr>
+                    <tr><td>Jake Nguyen</td><td>HR</td><td>61000.00</td></tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Avoid SELECT * in Production</h4>
+                <p><code>SELECT *</code> is convenient for quick checks, but in real applications you should always list the columns you need. Why? (1) It's faster — the database doesn't fetch unnecessary data. (2) It's clearer — anyone reading your code knows exactly which columns are used. (3) It's safer — if someone adds a column later, your query won't break.</p>
+            </div>
+
+            <h3>Column Aliases with AS</h3>
+            <p>You can rename columns in the output using <code>AS</code>:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span>
+    name        <span style="color:#c084fc;">AS</span> employee_name,
+    department  <span style="color:#c084fc;">AS</span> dept,
+    salary      <span style="color:#c084fc;">AS</span> annual_pay
+<span style="color:#c084fc;">FROM</span> employees;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>employee_name</th><th>dept</th><th>annual_pay</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Alice Johnson</td><td>Engineering</td><td>85000.00</td></tr>
+                    <tr><td>Bob Smith</td><td>Marketing</td><td>62000.00</td></tr>
+                    <tr><td colspan="3" style="text-align:center; color:#94a3b8;"><em>... (8 more rows)</em></td></tr>
+                </tbody>
+            </table>
+
+            <p>Aliases don't change the actual table — they only change the column names in your query output. They're great for making reports more readable.</p>
+
+            <h3>ORDER BY — Sorting Results</h3>
+            <p>Want to see the highest-paid employees first?</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span> name, salary
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">ORDER BY</span> salary <span style="color:#c084fc;">DESC</span>;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>name</th><th>salary</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Eva Martinez</td><td>97000.00</td></tr>
+                    <tr><td>Carol Davis</td><td>91000.00</td></tr>
+                    <tr><td>Irene Taylor</td><td>89000.00</td></tr>
+                    <tr><td>Alice Johnson</td><td>85000.00</td></tr>
+                    <tr><td>Grace Chen</td><td>67000.00</td></tr>
+                    <tr><td>Bob Smith</td><td>62000.00</td></tr>
+                    <tr><td>Jake Nguyen</td><td>61000.00</td></tr>
+                    <tr><td>Frank Wilson</td><td>58000.00</td></tr>
+                    <tr><td>David Lee</td><td>55000.00</td></tr>
+                    <tr><td>Hank Brown</td><td>52000.00</td></tr>
+                </tbody>
+            </table>
+
+            <p><code>DESC</code> = descending (biggest first). <code>ASC</code> = ascending (smallest first, which is the default).</p>
+
+            <h3>LIMIT — Just a Few Rows</h3>
+            <p>When you have millions of rows, you don't want to fetch them all. <code>LIMIT</code> restricts the number of rows returned:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span> name, salary
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">ORDER BY</span> salary <span style="color:#c084fc;">DESC</span>
+<span style="color:#c084fc;">LIMIT</span> <span style="color:#fb923c;">3</span>;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>name</th><th>salary</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Eva Martinez</td><td>97000.00</td></tr>
+                    <tr><td>Carol Davis</td><td>91000.00</td></tr>
+                    <tr><td>Irene Taylor</td><td>89000.00</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 6: WHERE Clause                                       -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-filter"></i> WHERE — Filtering Data</h2>
+
+            <p>The <code>WHERE</code> clause filters rows based on conditions. Only rows that match the condition are returned. Without WHERE, you get everything. With WHERE, you get exactly what you need.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Picky Eater</h4>
+                <p>Imagine a buffet with 50 dishes. A picky eater doesn't grab everything — they say "Only give me dishes that are vegetarian AND spicy." The WHERE clause is the picky eater. It looks at each row and asks: "Do you meet my criteria?" If yes, you're in. If no, you're skipped.</p>
+            </div>
+
+            <h3>Basic Comparisons</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>Operator</th><th>Meaning</th><th>Example</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>=</code></td><td>Equal to</td><td><code>department = 'Sales'</code></td></tr>
+                    <tr><td><code>!=</code> or <code>&lt;&gt;</code></td><td>Not equal to</td><td><code>department != 'HR'</code></td></tr>
+                    <tr><td><code>&gt;</code></td><td>Greater than</td><td><code>salary > 70000</code></td></tr>
+                    <tr><td><code>&lt;</code></td><td>Less than</td><td><code>salary < 60000</code></td></tr>
+                    <tr><td><code>&gt;=</code></td><td>Greater than or equal</td><td><code>salary >= 85000</code></td></tr>
+                    <tr><td><code>&lt;=</code></td><td>Less than or equal</td><td><code>salary <= 60000</code></td></tr>
+                </tbody>
+            </table>
+
+            <h3>Example: Filter by Department</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span> name, department, salary
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> department = <span style="color:#4ade80;">'Engineering'</span>;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>name</th><th>department</th><th>salary</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Alice Johnson</td><td>Engineering</td><td>85000.00</td></tr>
+                    <tr><td>Carol Davis</td><td>Engineering</td><td>91000.00</td></tr>
+                    <tr><td>Eva Martinez</td><td>Engineering</td><td>97000.00</td></tr>
+                    <tr><td>Irene Taylor</td><td>Engineering</td><td>89000.00</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Example: Filter by Salary</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span> name, salary
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> salary > <span style="color:#fb923c;">80000</span>;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>name</th><th>salary</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Alice Johnson</td><td>85000.00</td></tr>
+                    <tr><td>Carol Davis</td><td>91000.00</td></tr>
+                    <tr><td>Eva Martinez</td><td>97000.00</td></tr>
+                    <tr><td>Irene Taylor</td><td>89000.00</td></tr>
+                </tbody>
+            </table>
+
+            <h3>AND &amp; OR — Combining Conditions</h3>
+            <p><code>AND</code> means <strong>both</strong> conditions must be true. <code>OR</code> means <strong>at least one</strong> must be true.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Engineers earning more than 90k</span>
+<span style="color:#c084fc;">SELECT</span> name, department, salary
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> department = <span style="color:#4ade80;">'Engineering'</span>
+  <span style="color:#c084fc;">AND</span> salary > <span style="color:#fb923c;">90000</span>;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>name</th><th>department</th><th>salary</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Carol Davis</td><td>Engineering</td><td>91000.00</td></tr>
+                    <tr><td>Eva Martinez</td><td>Engineering</td><td>97000.00</td></tr>
+                </tbody>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- People in Sales OR HR</span>
+<span style="color:#c084fc;">SELECT</span> name, department
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> department = <span style="color:#4ade80;">'Sales'</span>
+   <span style="color:#c084fc;">OR</span> department = <span style="color:#4ade80;">'HR'</span>;</pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>name</th><th>department</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>David Lee</td><td>Sales</td></tr>
+                    <tr><td>Frank Wilson</td><td>HR</td></tr>
+                    <tr><td>Hank Brown</td><td>Sales</td></tr>
+                    <tr><td>Jake Nguyen</td><td>HR</td></tr>
+                </tbody>
+            </table>
+
+            <h3>BETWEEN, IN, LIKE</h3>
+            <p>PostgreSQL gives you handy shortcuts for common filtering patterns:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Salaries between 60k and 80k (inclusive)</span>
+<span style="color:#c084fc;">SELECT</span> name, salary
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> salary <span style="color:#c084fc;">BETWEEN</span> <span style="color:#fb923c;">60000</span> <span style="color:#c084fc;">AND</span> <span style="color:#fb923c;">80000</span>;
+
+<span style="color:#94a3b8;">-- Same as: WHERE salary >= 60000 AND salary <= 80000</span></pre></div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- People in specific departments (cleaner than multiple ORs)</span>
+<span style="color:#c084fc;">SELECT</span> name, department
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> department <span style="color:#c084fc;">IN</span> (<span style="color:#4ade80;">'Engineering'</span>, <span style="color:#4ade80;">'Marketing'</span>);</pre></div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Names starting with 'A' (pattern matching)</span>
+<span style="color:#c084fc;">SELECT</span> name
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> name <span style="color:#c084fc;">LIKE</span> <span style="color:#4ade80;">'A%'</span>;
+
+<span style="color:#94a3b8;">-- % means "any characters after". 'A%' matches Alice, Andrew, Angela...</span></pre></div>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy — The Library Search</h4>
+                <p><code>BETWEEN</code> is like telling the librarian: "Show me books published between 2010 and 2020." <code>IN</code> is like saying: "I only want books by Stephen King, J.K. Rowling, or Dan Brown." <code>LIKE</code> is like saying: "Show me any book whose title starts with 'The'."</p>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 7: UPDATE                                             -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-pen-to-square"></i> UPDATE — Changing Existing Data</h2>
+
+            <p>When data changes in the real world, you need to reflect that in the database. Got a raise? New department? Changed your name? The <code>UPDATE</code> command modifies existing rows.</p>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy — White-Out on Paper</h4>
+                <p>Remember using white-out (correction fluid) on handwritten notes? You'd cover the old text and write the new text on top. <code>UPDATE</code> is the digital version of white-out — it replaces old values with new ones, right where they are. The row stays in the same place; only the data changes.</p>
+            </div>
+
+            <h3>Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">UPDATE</span> table_name
+<span style="color:#c084fc;">SET</span> column1 = new_value1,
+    column2 = new_value2
+<span style="color:#c084fc;">WHERE</span> condition;</pre></div>
+
+            <h3>Example: Give Alice a Raise</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">UPDATE</span> employees
+<span style="color:#c084fc;">SET</span> salary = <span style="color:#fb923c;">92000.00</span>
+<span style="color:#c084fc;">WHERE</span> name = <span style="color:#4ade80;">'Alice Johnson'</span>;</pre></div>
+
+            <p><strong>Before:</strong></p>
+            <table class="comparison-table">
+                <thead><tr><th>id</th><th>name</th><th>salary</th></tr></thead>
+                <tbody><tr><td>1</td><td>Alice Johnson</td><td style="color:#f87171;">85000.00</td></tr></tbody>
+            </table>
+
+            <p><strong>After:</strong></p>
+            <table class="comparison-table">
+                <thead><tr><th>id</th><th>name</th><th>salary</th></tr></thead>
+                <tbody><tr><td>1</td><td>Alice Johnson</td><td style="color:#4ade80;">92000.00</td></tr></tbody>
+            </table>
+
+            <h3>Example: Move Bob to a New Department</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">UPDATE</span> employees
+<span style="color:#c084fc;">SET</span> department = <span style="color:#4ade80;">'Sales'</span>,
+    salary = <span style="color:#fb923c;">65000.00</span>
+<span style="color:#c084fc;">WHERE</span> name = <span style="color:#4ade80;">'Bob Smith'</span>;</pre></div>
+
+            <p>You can update multiple columns at once by separating them with commas in the <code>SET</code> clause.</p>
+
+            <h3>Example: Give Everyone a 10% Raise</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">UPDATE</span> employees
+<span style="color:#c084fc;">SET</span> salary = salary * <span style="color:#fb923c;">1.10</span>
+<span style="color:#c084fc;">WHERE</span> department = <span style="color:#4ade80;">'Engineering'</span>;</pre></div>
+
+            <p>This multiplies the current salary by 1.10 (a 10% increase) for every engineer. The <code>salary</code> on the right side of <code>=</code> refers to the current value.</p>
+
+            <div class="important-box">
+                <h4>🚨 DANGER — UPDATE Without WHERE</h4>
+                <p>If you forget the <code>WHERE</code> clause, <strong>every single row</strong> in the table gets updated:</p>
+                <div class="code-block"><pre><span style="color:#94a3b8;">-- THIS IS DANGEROUS! Every employee's salary becomes 50000!</span>
+<span style="color:#c084fc;">UPDATE</span> employees
+<span style="color:#c084fc;">SET</span> salary = <span style="color:#fb923c;">50000</span>;</pre></div>
+                <p style="margin-top:10px;">Always double-check your WHERE clause before running an UPDATE. A good habit: write the SELECT first to see which rows match, then convert it to an UPDATE.</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Preview Before You Update</h4>
+                <p>Before running a risky UPDATE, run a SELECT with the same WHERE clause to see which rows will be affected:</p>
+                <div class="code-block"><pre><span style="color:#94a3b8;">-- Step 1: Preview (safe)</span>
+<span style="color:#c084fc;">SELECT</span> * <span style="color:#c084fc;">FROM</span> employees <span style="color:#c084fc;">WHERE</span> department = <span style="color:#4ade80;">'Engineering'</span>;
+
+<span style="color:#94a3b8;">-- Step 2: If the rows look right, update</span>
+<span style="color:#c084fc;">UPDATE</span> employees <span style="color:#c084fc;">SET</span> salary = salary * <span style="color:#fb923c;">1.10</span> <span style="color:#c084fc;">WHERE</span> department = <span style="color:#4ade80;">'Engineering'</span>;</pre></div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 8: DELETE                                             -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-trash-can"></i> DELETE — Removing Data</h2>
+
+            <p><code>DELETE</code> removes rows from a table. This is the "scary" command because once data is deleted, it's <strong>gone</strong> (unless you have backups or use transactions).</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Paper Shredder</h4>
+                <p>Imagine you have a filing cabinet full of folders. DELETE is like pulling out one specific folder and feeding it into a paper shredder. It's gone forever. You can't un-shred paper, and you can't un-delete data (without backups). That's why we're extra careful with DELETE.</p>
+            </div>
+
+            <h3>Syntax</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">DELETE FROM</span> table_name
+<span style="color:#c084fc;">WHERE</span> condition;</pre></div>
+
+            <h3>Example: Remove One Employee</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">DELETE FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> name = <span style="color:#4ade80;">'Hank Brown'</span>;</pre></div>
+
+            <p>This removes only Hank Brown's row. Everyone else stays untouched.</p>
+
+            <h3>Example: Remove All Employees in a Department</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">DELETE FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> department = <span style="color:#4ade80;">'Sales'</span>;</pre></div>
+
+            <p>This deletes every row where department is 'Sales'. David Lee and Hank Brown (if he hadn't been deleted already) would be removed.</p>
+
+            <div class="important-box">
+                <h4>🚨 DANGER — DELETE Without WHERE</h4>
+                <p>Just like UPDATE, forgetting WHERE in a DELETE statement is catastrophic:</p>
+                <div class="code-block"><pre><span style="color:#94a3b8;">-- THIS DELETES EVERY SINGLE ROW in the table!</span>
+<span style="color:#c084fc;">DELETE FROM</span> employees;</pre></div>
+                <p style="margin-top:10px;">The table structure survives (columns, constraints remain), but all your data is erased. <strong>Always include WHERE.</strong></p>
+            </div>
+
+            <h3>DELETE vs TRUNCATE</h3>
+            <p>If you genuinely want to wipe all rows, PostgreSQL offers <code>TRUNCATE</code> which is faster:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>Feature</th><th>DELETE FROM table</th><th>TRUNCATE TABLE table</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Removes rows</td><td>One by one (can use WHERE)</td><td>All at once (no WHERE)</td></tr>
+                    <tr><td>Speed</td><td>Slower for large tables</td><td>Much faster</td></tr>
+                    <tr><td>Can be rolled back?</td><td>Yes (inside a transaction)</td><td>Yes in PostgreSQL (not all DBs)</td></tr>
+                    <tr><td>Resets auto-increment?</td><td>No</td><td>Yes (with RESTART IDENTITY)</td></tr>
+                    <tr><td>Fires triggers?</td><td>Yes</td><td>No</td></tr>
+                </tbody>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy — Shredder vs Dumpster</h4>
+                <p><code>DELETE</code> with WHERE is like shredding one specific document. <code>DELETE</code> without WHERE is like shredding every document in the cabinet one by one. <code>TRUNCATE</code> is like tipping the entire filing cabinet into a dumpster — same result (all gone) but way faster.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 9: ALTER TABLE & DROP TABLE                           -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-wrench"></i> ALTER TABLE &amp; DROP TABLE</h2>
+
+            <p>After a table exists, you might realize you forgot a column, or need to rename something, or want to destroy the entire table. That's where <code>ALTER TABLE</code> and <code>DROP TABLE</code> come in.</p>
+
+            <h3>ALTER TABLE — Add a Column</h3>
+            <p>Oops, we forgot to track email addresses!</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">ALTER TABLE</span> employees
+<span style="color:#c084fc;">ADD COLUMN</span> email <span style="color:#38bdf8;">VARCHAR(255)</span>;</pre></div>
+
+            <p>This adds a new <code>email</code> column. Existing rows will have <code>NULL</code> for this column until you update them.</p>
+
+            <h3>ALTER TABLE — Drop a Column</h3>
+            <p>Don't need a column anymore? Remove it:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">ALTER TABLE</span> employees
+<span style="color:#c084fc;">DROP COLUMN</span> email;</pre></div>
+
+            <div class="important-box">
+                <h4>🚨 Important — Dropping a Column Deletes Its Data</h4>
+                <p>When you drop a column, all the data in that column vanishes immediately and permanently. This is not recoverable unless you have a backup. Always double-check before dropping columns on production databases.</p>
+            </div>
+
+            <h3>ALTER TABLE — Rename a Column</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">ALTER TABLE</span> employees
+<span style="color:#c084fc;">RENAME COLUMN</span> name <span style="color:#c084fc;">TO</span> full_name;</pre></div>
+
+            <h3>ALTER TABLE — Rename the Table</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">ALTER TABLE</span> employees
+<span style="color:#c084fc;">RENAME TO</span> staff;</pre></div>
+
+            <h3>ALTER TABLE — Change a Column's Type</h3>
+            <div class="code-block"><pre><span style="color:#c084fc;">ALTER TABLE</span> employees
+<span style="color:#c084fc;">ALTER COLUMN</span> salary <span style="color:#c084fc;">TYPE</span> <span style="color:#38bdf8;">NUMERIC(12,2)</span>;</pre></div>
+
+            <h3>DROP TABLE — The Nuclear Option</h3>
+            <p><code>DROP TABLE</code> doesn't just delete the data — it destroys the <strong>entire table structure</strong>. The table ceases to exist. Gone. Columns, rows, constraints, indexes — everything.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Destroys the table completely</span>
+<span style="color:#c084fc;">DROP TABLE</span> employees;
+
+<span style="color:#94a3b8;">-- Safer version: only drops if the table exists (no error if it doesn't)</span>
+<span style="color:#c084fc;">DROP TABLE IF EXISTS</span> employees;</pre></div>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — DELETE vs DROP</h4>
+                <p>Think of it this way: <code>DELETE</code> erases the entries you wrote in the notebook but keeps the notebook. <code>DROP TABLE</code> <em>throws the notebook in the fire</em>. The notebook (table) is gone — not just the entries. You'd have to buy a whole new notebook (CREATE TABLE again) to start over.</p>
+            </div>
+
+            <h3>Quick Reference: ALTER TABLE Commands</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>Action</th><th>SQL Command</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Add a column</td><td><code>ALTER TABLE t ADD COLUMN col TYPE;</code></td></tr>
+                    <tr><td>Drop a column</td><td><code>ALTER TABLE t DROP COLUMN col;</code></td></tr>
+                    <tr><td>Rename a column</td><td><code>ALTER TABLE t RENAME COLUMN old TO new;</code></td></tr>
+                    <tr><td>Rename table</td><td><code>ALTER TABLE t RENAME TO new_name;</code></td></tr>
+                    <tr><td>Change column type</td><td><code>ALTER TABLE t ALTER COLUMN col TYPE new_type;</code></td></tr>
+                    <tr><td>Set default</td><td><code>ALTER TABLE t ALTER COLUMN col SET DEFAULT val;</code></td></tr>
+                    <tr><td>Remove default</td><td><code>ALTER TABLE t ALTER COLUMN col DROP DEFAULT;</code></td></tr>
+                    <tr><td>Add NOT NULL</td><td><code>ALTER TABLE t ALTER COLUMN col SET NOT NULL;</code></td></tr>
+                    <tr><td>Remove NOT NULL</td><td><code>ALTER TABLE t ALTER COLUMN col DROP NOT NULL;</code></td></tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — IF EXISTS Saves You From Errors</h4>
+                <p>Use <code>DROP TABLE IF EXISTS</code> instead of plain <code>DROP TABLE</code>. If the table doesn't exist, PostgreSQL will silently do nothing instead of throwing an error. Similarly, use <code>ADD COLUMN IF NOT EXISTS</code> (PostgreSQL 9.6+) to avoid duplicate column errors in migration scripts.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 10: Complete CRUD Summary                             -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-map"></i> The Complete CRUD Cheat Sheet</h2>
+
+            <p>Let's put it all together. Here's every command from this lesson in one place:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>Operation</th><th>SQL Command</th><th>What It Does</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Create Table</td><td><code>CREATE TABLE t (...)</code></td><td>Builds a new empty table with defined columns</td></tr>
+                    <tr><td>Create (Insert)</td><td><code>INSERT INTO t VALUES (...)</code></td><td>Adds one or more new rows</td></tr>
+                    <tr><td>Read (Select)</td><td><code>SELECT ... FROM t WHERE ...</code></td><td>Fetches rows matching your criteria</td></tr>
+                    <tr><td>Update</td><td><code>UPDATE t SET col=val WHERE ...</code></td><td>Changes values in existing rows</td></tr>
+                    <tr><td>Delete</td><td><code>DELETE FROM t WHERE ...</code></td><td>Removes rows permanently</td></tr>
+                    <tr><td>Alter Table</td><td><code>ALTER TABLE t ...</code></td><td>Modifies the table structure</td></tr>
+                    <tr><td>Drop Table</td><td><code>DROP TABLE t</code></td><td>Destroys the table entirely</td></tr>
+                </tbody>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real-Life Analogy — The Restaurant</h4>
+                <p>Think of a database as a restaurant kitchen:<br>
+                <strong>CREATE TABLE</strong> = setting up a new station with labeled containers.<br>
+                <strong>INSERT</strong> = stocking ingredients into the containers.<br>
+                <strong>SELECT</strong> = the chef checking what ingredients are available.<br>
+                <strong>UPDATE</strong> = replacing a stale ingredient with a fresh one.<br>
+                <strong>DELETE</strong> = tossing out expired items.<br>
+                <strong>ALTER TABLE</strong> = adding a new container to the station.<br>
+                <strong>DROP TABLE</strong> = demolishing the entire station.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 11: Practice Exercises                                -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-dumbbell"></i> Practice Exercises</h2>
+
+            <p>Time to practice! Try these exercises on your own PostgreSQL database. We recommend opening <code>psql</code> or pgAdmin and typing these out manually — don't just copy-paste. Muscle memory matters.</p>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Exercise: Create a Products Table</h4>
+                <p>Create a table called <code>products</code> with these columns:</p>
+                <ul style="color:#cbd5e1; padding-left:20px; margin-top:8px;">
+                    <li><code>product_id</code> — auto-incrementing primary key</li>
+                    <li><code>product_name</code> — text up to 150 characters, required</li>
+                    <li><code>category</code> — text up to 50 characters</li>
+                    <li><code>price</code> — decimal with 2 decimal places</li>
+                    <li><code>in_stock</code> — boolean, default true</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Exercise: Insert 5 Products</h4>
+                <p>Using a single multi-row INSERT, add these products: Laptop ($999.99, Electronics), Notebook ($4.50, Stationery), Coffee Mug ($12.99, Kitchen), USB Cable ($8.75, Electronics), Desk Lamp ($34.00, Furniture).</p>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Exercise: Query Products</h4>
+                <p>Write a SELECT statement that shows only the <code>product_name</code> and <code>price</code> of products in the "Electronics" category, sorted by price from highest to lowest.</p>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Exercise: Update a Price</h4>
+                <p>The Laptop's price dropped to $899.99. Write an UPDATE statement to change it. Make sure you only update the Laptop!</p>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Exercise: Delete Out-of-Stock Items</h4>
+                <p>First, update the USB Cable to <code>in_stock = false</code>. Then, write a DELETE that removes all products where <code>in_stock</code> is false.</p>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">Exercise: Alter the Table</h4>
+                <p>Add a new column <code>created_at</code> of type <code>TIMESTAMP</code> with a default of <code>NOW()</code>. Then rename the <code>category</code> column to <code>product_category</code>.</p>
+            </div>
+
+            <h3>Solution Hints</h3>
+            <p>Try each exercise on your own first! If you're stuck, here are the first two solutions:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Exercise 1: Create products table</span>
+<span style="color:#c084fc;">CREATE TABLE</span> products (
+    product_id    <span style="color:#38bdf8;">SERIAL</span>        <span style="color:#c084fc;">PRIMARY KEY</span>,
+    product_name  <span style="color:#38bdf8;">VARCHAR(150)</span>  <span style="color:#c084fc;">NOT NULL</span>,
+    category      <span style="color:#38bdf8;">VARCHAR(50)</span>,
+    price         <span style="color:#38bdf8;">DECIMAL(10,2)</span>,
+    in_stock      <span style="color:#38bdf8;">BOOLEAN</span>       <span style="color:#c084fc;">DEFAULT</span> <span style="color:#fb923c;">true</span>
+);</pre></div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Exercise 2: Insert 5 products</span>
+<span style="color:#c084fc;">INSERT INTO</span> products (product_name, category, price) <span style="color:#c084fc;">VALUES</span>
+    (<span style="color:#4ade80;">'Laptop'</span>,     <span style="color:#4ade80;">'Electronics'</span>,  <span style="color:#fb923c;">999.99</span>),
+    (<span style="color:#4ade80;">'Notebook'</span>,   <span style="color:#4ade80;">'Stationery'</span>,   <span style="color:#fb923c;">4.50</span>),
+    (<span style="color:#4ade80;">'Coffee Mug'</span>, <span style="color:#4ade80;">'Kitchen'</span>,      <span style="color:#fb923c;">12.99</span>),
+    (<span style="color:#4ade80;">'USB Cable'</span>,  <span style="color:#4ade80;">'Electronics'</span>,  <span style="color:#fb923c;">8.75</span>),
+    (<span style="color:#4ade80;">'Desk Lamp'</span>,  <span style="color:#4ade80;">'Furniture'</span>,    <span style="color:#fb923c;">34.00</span>);</pre></div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 12: Interactive Quiz                                  -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-brain"></i> Knowledge Check — Quiz Time!</h2>
+            <p>Test what you've learned! Click the answer you think is correct.</p>
+
+            <div class="quiz-section">
+                <h4 style="color:#e2e8f0; margin-bottom:15px;">1. What does SQL stand for?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Simple Query Language</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) Structured Query Language</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) System Query Logic</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Standard Question Language</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4 style="color:#e2e8f0; margin-bottom:15px;">2. Which SQL command is used to add new rows to a table?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) CREATE</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) ADD ROW</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) INSERT INTO</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) UPDATE</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4 style="color:#e2e8f0; margin-bottom:15px;">3. What happens if you run <code>UPDATE employees SET salary = 0;</code> without a WHERE clause?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Nothing — PostgreSQL requires a WHERE clause</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) Only the first row is updated</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) Every employee's salary becomes 0</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) The table is deleted</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4 style="color:#e2e8f0; margin-bottom:15px;">4. What is the difference between DELETE and DROP TABLE?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) They do the same thing</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) DELETE removes rows; DROP TABLE destroys the entire table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) DROP TABLE removes rows; DELETE destroys the table</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) DELETE is faster than DROP TABLE</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4 style="color:#e2e8f0; margin-bottom:15px;">5. What does SERIAL do in a column definition?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Makes the column store text</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) Encrypts the column's data</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) Creates an auto-incrementing integer</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Makes the column optional</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4 style="color:#e2e8f0; margin-bottom:15px;">6. Which WHERE clause correctly selects rows where salary is between 50000 and 80000?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) WHERE salary IN (50000, 80000)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) WHERE salary BETWEEN 50000 AND 80000</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) WHERE salary FROM 50000 TO 80000</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) WHERE salary RANGE(50000, 80000)</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4 style="color:#e2e8f0; margin-bottom:15px;">7. You want to add a new column <code>email</code> to an existing table. Which command do you use?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) UPDATE employees ADD email VARCHAR(255);</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) INSERT COLUMN email INTO employees;</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) ALTER TABLE employees ADD COLUMN email VARCHAR(255);</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) CREATE COLUMN email ON employees;</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 13: What's Next                                       -->
+        <!-- ============================================================ -->
+        <div class="section">
+            <h2><i class="fas fa-rocket"></i> What's Next?</h2>
+
+            <h3>What You Learned Today</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-hammer"></i></div>
+                    <div class="stat-label">CREATE TABLE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-plus"></i></div>
+                    <div class="stat-label">INSERT INTO</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-search"></i></div>
+                    <div class="stat-label">SELECT &amp; WHERE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-pen"></i></div>
+                    <div class="stat-label">UPDATE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-trash"></i></div>
+                    <div class="stat-label">DELETE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-wrench"></i></div>
+                    <div class="stat-label">ALTER &amp; DROP</div>
+                </div>
+            </div>
+
+            <p>You now know the fundamental building blocks of SQL. Every application — from tiny personal projects to billion-dollar platforms like Netflix and Amazon — uses these exact same commands under the hood. The difference is just scale.</p>
+
+            <div class="real-life">
+                <h4>🌍 Looking Ahead — Data Types &amp; Constraints</h4>
+                <p>In the next module, we'll dive deeper into <strong>Data Types &amp; Constraints</strong>. You'll learn about INTEGER vs BIGINT vs SMALLINT, TEXT vs VARCHAR vs CHAR, BOOLEAN, TIMESTAMP, UUID, and the powerful constraint system (UNIQUE, CHECK, FOREIGN KEY) that keeps your data clean and consistent. If this lesson was about learning to speak Database Language, the next one is about expanding your vocabulary!</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Practice Makes Permanent</h4>
+                <p>The best way to learn SQL is by doing. Open <code>psql</code>, create a few tables about something you care about (video games, recipes, your music collection), and practice INSERT, SELECT, UPDATE, and DELETE until they feel second nature. Don't just read — <strong>type the commands yourself</strong>.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- Bottom Navigation                                             -->
+        <!-- ============================================================ -->
         <div class="lesson-nav">
-            <a href="installation.html" class="secondary"><i class="fas fa-arrow-left"></i> Installation & Setup</a>
-            <a href="data-types.html">Data Types & Constraints <i class="fas fa-arrow-right"></i></a>
+            <a href="installation.html" class="secondary"><i class="fas fa-arrow-left"></i> Installation &amp; Setup</a>
+            <a href="data-types.html">Data Types &amp; Constraints <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">&#10003; Correct!</strong> <span style="color:#94a3b8;">Great job!</span>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">&#10007; Not quite!</strong> <span style="color:#94a3b8;">Check the correct answer above.</span>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

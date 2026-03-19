@@ -112,6 +112,15 @@
         .train-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(202,138,4,0.4); }
         .train-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         @keyframes pulseGold { 0%,100%{box-shadow:0 0 0 0 rgba(234,179,8,0.3);}50%{box-shadow:0 0 0 12px rgba(234,179,8,0);} }
+        .quiz-box{background:rgba(30,41,59,0.5);border-radius:16px;padding:24px;margin:20px 0;border:1px solid rgba(139,92,246,0.15);}
+        .quiz-q{color:#c4b5fd;margin-bottom:14px;font-size:1.15em;}
+        .quiz-opt{display:block;width:100%;text-align:left;padding:12px 18px;margin:8px 0;background:rgba(124,58,237,0.08);border:2px solid rgba(139,92,246,0.15);border-radius:10px;color:#e2e8f0;cursor:pointer;font-family:inherit;font-size:0.95em;transition:all 0.2s;}
+        .quiz-opt:hover{border-color:rgba(139,92,246,0.4);background:rgba(124,58,237,0.15);}
+        .quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);}
+        .quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.1);}
+        .quiz-opt:disabled{cursor:default;opacity:0.7;}
+        .quiz-fb{display:none;margin-top:10px;padding:12px;border-radius:8px;font-weight:600;}
+
         @media (max-width: 768px) {
             body { padding: 10px; font-size: 16px; }
             .header { padding: 30px 20px; } .header h1 { font-size: 1.8em; }
@@ -584,6 +593,124 @@ prompt = torch.<span class="function">tensor</span>([[<span class="builtin">ord<
         </div>
     </div>
 
+    <!-- ========== QUIZ ========== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-question-circle"></i> Quiz — Test Your Knowledge</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: What is the core training objective of models like GPT?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Classify each sentence into positive or negative sentiment</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) Predict the next token given all previous tokens in the sequence</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Memorize the entire training dataset word-for-word</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Match pairs of sentences that have the same meaning</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What does cross-entropy loss measure during LLM training?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) How surprised the model is by the actual next token — lower means the model predicted it more confidently</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) The number of tokens the model got wrong in the entire dataset</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) The total number of parameters that changed during training</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) The distance between the first and last hidden states</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: What happens if the learning rate is set too high during training?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Training is slower but more accurate</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) The model generates text in a different language</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) The model overshoots optimal weights and training becomes unstable — the loss may explode instead of decreasing</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) The model uses less GPU memory</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: What is a key tradeoff of using very large batch sizes?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Large batches make the model smaller and faster to train</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Large batches cause the model to forget previously learned tokens</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Large batches always produce better results with no downsides</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) More stable gradient estimates but higher memory usage, and the model may generalize worse to unseen data</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: What does a low temperature (e.g. 0.1) do during text generation?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It makes the model generate longer sequences</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) It sharpens the probability distribution, making the model almost always pick the highest-probability token — safe but repetitive</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It flattens the distribution so every token is equally likely — maximum creativity</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It increases the model's context window size</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: What is the purpose of top-k sampling?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) Restrict sampling to only the K most likely tokens, preventing the model from picking rare nonsensical words</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Train the model on only the top K sentences in the dataset</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Keep only the first K tokens of the generated output</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Reduce the vocabulary size to K tokens before training</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
+    <!-- ========== QUIZ ========== -->
+    <div class="section" id="quiz">
+        <h2><i class="fas fa-question-circle"></i> Quiz — Test Your Knowledge</h2>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 1: What is the core training objective of GPT and other modern LLMs?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Classify each sentence as positive or negative sentiment</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) Match pairs of sentences that have similar meaning</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) Predict the next token given all previous tokens — self-supervised, no human labels needed</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Translate every sentence into multiple languages simultaneously</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 2: What does cross-entropy loss measure during LLM training?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,true)">A) How surprised the model is by the actual next token — lower means better predictions</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) The total number of incorrect tokens generated per batch</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) The physical memory consumed by the model during forward pass</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) The cosine similarity between input and output embeddings</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 3: Why is the learning rate one of the most important hyperparameters in training?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It determines how many layers the Transformer has</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It sets the vocabulary size used by the tokenizer</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It controls the context window length during generation</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) It controls how much weights change per step — too high causes instability, too low makes training painfully slow</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 4: What is the tradeoff when choosing a larger batch size for training?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) Larger batches always train faster with zero downsides</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">B) Larger batches give more stable gradient estimates but require more GPU memory; smaller batches are noisier but use less memory</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) Larger batches make the model forget earlier training data</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) Batch size has no effect on training — it only affects inference speed</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 5: What does the temperature parameter do during text generation?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It controls how many transformer layers are used at inference time</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It sets the maximum number of tokens the model can generate</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">C) It determines the learning rate schedule during fine-tuning</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">D) It scales logits before softmax — low temperature makes output deterministic, high temperature makes it more random and creative</button>
+            <div class="quiz-fb"></div>
+        </div>
+
+        <div class="quiz-box">
+            <h3 class="quiz-q">Question 6: What is the purpose of top-k sampling in text generation?</h3>
+            <button class="quiz-opt" onclick="checkQ(this,false)">A) It trains the model on only the top K most common words</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">B) It limits the model to generating exactly K tokens per response</button>
+            <button class="quiz-opt" onclick="checkQ(this,true)">C) It restricts sampling to only the K most probable next tokens, preventing the model from picking nonsensical low-probability words</button>
+            <button class="quiz-opt" onclick="checkQ(this,false)">D) It selects the K fastest attention heads for inference speedup</button>
+            <div class="quiz-fb"></div>
+        </div>
+    </div>
+
     <div class="nav-buttons">
         <a href="transformer.html" class="nav-btn prev"><i class="fas fa-arrow-left"></i> Prev: Transformer</a>
         <a href="finetuning.html" class="nav-btn next">Next: Fine-Tuning <i class="fas fa-arrow-right"></i></a>
@@ -709,6 +836,12 @@ function updateTemp() {
     document.getElementById('tempOutput').querySelector('span:first-child').textContent = best.style + ':';
 }
 updateTemp();
+</script>
+<script>
+function checkQ(btn,ok){var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');opts.forEach(function(o){o.disabled=true;});if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#4ade80';fb.textContent='✅ Correct!';}else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#f87171';fb.textContent='❌ Not quite — check the green answer!';opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}}
+</script>
+<script>
+function checkQ(btn,ok){var box=btn.closest('.quiz-box'),opts=box.querySelectorAll('.quiz-opt'),fb=box.querySelector('.quiz-fb');opts.forEach(function(o){o.disabled=true;});if(ok){btn.classList.add('correct');fb.style.display='block';fb.style.background='rgba(34,197,94,0.15)';fb.style.color='#4ade80';fb.textContent='✅ Correct!';}else{btn.classList.add('wrong');fb.style.display='block';fb.style.background='rgba(239,68,68,0.15)';fb.style.color='#f87171';fb.textContent='❌ Not quite — check the green answer!';opts.forEach(function(o){if(o.getAttribute('onclick').includes('true')){o.classList.add('correct');o.style.opacity='1';}});}}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/supabase-config.js"></script>

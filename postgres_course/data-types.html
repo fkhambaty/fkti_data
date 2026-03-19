@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Types & Constraints | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Data Types &amp; Constraints | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,1155 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="querying.html">Advanced Querying <i class="fas fa-arrow-right"></i></a>
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Course Home</a>
+            <a href="querying.html">Querying Data <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Data Types & Constraints</h1>
-            <p>Integers, text, timestamps, JSON, arrays, UUIDs, and constraints (PK, FK, UNIQUE, CHECK).</p>
+            <h1>🧱 Data Types &amp; Constraints</h1>
+            <p>Every column needs a type — numbers, text, dates, booleans, JSON. Plus constraints that act as bouncers, keeping bad data out!</p>
         </div>
-        <div class="section visible">
-            <h2>📚 Data Types & Constraints</h2>
-            <p>Integers, text, timestamps, JSON, arrays, UUIDs, and constraints (PK, FK, UNIQUE, CHECK).</p>
+
+        <!-- ========================================== -->
+        <!-- SECTION 1: Why Data Types Matter           -->
+        <!-- ========================================== -->
+        <div class="section" id="why">
+            <h2>🤔 Why Data Types Matter</h2>
+            <p>Before we learn all the fancy types, let's understand <strong>why</strong> PostgreSQL even needs them. Can't we just throw data in and let the database figure it out?</p>
+            <p>Short answer: <strong>No.</strong> And here's why that's actually a good thing.</p>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers data types & constraints with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>🧒 ELI5 — Containers for Your Data</h4>
+                <p>Imagine you have water, sand, and marbles. You need different containers for each:</p>
+                <p>🧴 <strong>Water</strong> goes in a <strong>bottle</strong> — if you put it in a paper bag, it leaks everywhere!</p>
+                <p>🪣 <strong>Sand</strong> goes in a <strong>bucket</strong> — a bottle would be silly, you can't scoop sand out.</p>
+                <p>🎒 <strong>Marbles</strong> go in a <strong>bag</strong> — they'd roll out of a bucket.</p>
+                <p>Data types are the same idea. A <strong>number</strong> needs a number container. A <strong>name</strong> needs a text container. A <strong>date</strong> needs a date container. Put data in the wrong container and bad things happen — your database gets confused, wastes space, or flat-out rejects your data.</p>
+            </div>
+
+            <h3>Three Reasons Data Types Are Essential</h3>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-shield-halved"></i></div>
+                    <div class="stat-label"><strong>Data Integrity</strong><br>Prevents "abc" from sneaking into an age column</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-bolt"></i></div>
+                    <div class="stat-label"><strong>Performance</strong><br>PostgreSQL stores &amp; searches typed data much faster</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><i class="fas fa-hard-drive"></i></div>
+                    <div class="stat-label"><strong>Storage Efficiency</strong><br>SMALLINT uses 2 bytes vs BIGINT's 8 — that's 4× savings</div>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <h4>🏪 Real-Life Analogy — The Grocery Store</h4>
+                <p>Think of a grocery store. Every shelf has a label: <em>Fruits</em>, <em>Dairy</em>, <em>Frozen</em>. If someone puts ice cream on the fruit shelf, it melts and ruins the apples. Data types are the labels that keep everything in the right place.</p>
+            </div>
+
+            <p>Let's look at what happens without proper types:</p>
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Without data types, this could happen:</span>
+<span style="color:#c084fc;">INSERT INTO</span> users (age) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'twenty-five'</span>);
+<span style="color:#94a3b8;">-- Uh oh! "twenty-five" is text, not a number.</span>
+<span style="color:#94a3b8;">-- How do you calculate average age now? You can't!</span>
+
+<span style="color:#94a3b8;">-- With proper data types:</span>
+<span style="color:#c084fc;">INSERT INTO</span> users (age <span style="color:#38bdf8;">INTEGER</span>) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'twenty-five'</span>);
+<span style="color:#94a3b8;">-- ERROR: invalid input syntax for type integer</span>
+<span style="color:#94a3b8;">-- PostgreSQL catches the mistake immediately! 🎉</span></pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ Golden Rule</h4>
+                <p>Always pick the <strong>smallest data type that fits your needs</strong>. Don't use BIGINT for someone's age (0–150). Don't use TEXT for a two-letter country code. Smaller types = less storage, faster queries, happier databases.</p>
             </div>
         </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 2: Numeric Types                   -->
+        <!-- ========================================== -->
+        <div class="section" id="numeric">
+            <h2>🔢 Numeric Types</h2>
+            <p>Numbers are the bread and butter of databases. But not all numbers are the same — some are tiny, some are huge, some need decimal points, and some are approximate. PostgreSQL gives you the right container for each.</p>
+
+            <h3>Integer Types — Whole Numbers</h3>
+            <p>These store whole numbers (no decimal points). Think of them as different-sized buckets:</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Bucket Sizes</h4>
+                <p>🪣 <strong>SMALLINT</strong> = a small cup (holds numbers up to ~32 thousand)</p>
+                <p>🪣 <strong>INTEGER</strong> = a normal bucket (holds numbers up to ~2.1 billion)</p>
+                <p>🪣 <strong>BIGINT</strong> = a swimming pool (holds numbers up to ~9.2 quintillion)</p>
+                <p>Don't use a swimming pool to store a glass of water. Pick the right size!</p>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Storage</th>
+                        <th>Range</th>
+                        <th>Use When…</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>SMALLINT</code></td>
+                        <td>2 bytes</td>
+                        <td>-32,768 to 32,767</td>
+                        <td>Age, rating (1-5), small counters</td>
+                    </tr>
+                    <tr>
+                        <td><code>INTEGER</code></td>
+                        <td>4 bytes</td>
+                        <td>-2.1 billion to 2.1 billion</td>
+                        <td>Most IDs, quantities, populations of cities</td>
+                    </tr>
+                    <tr>
+                        <td><code>BIGINT</code></td>
+                        <td>8 bytes</td>
+                        <td>-9.2 quintillion to 9.2 quintillion</td>
+                        <td>World population, YouTube view counts, financial transactions</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> example_integers (
+    age            <span style="color:#38bdf8;">SMALLINT</span>,      <span style="color:#94a3b8;">-- Max 32,767 — plenty for age</span>
+    employee_id    <span style="color:#38bdf8;">INTEGER</span>,       <span style="color:#94a3b8;">-- Max 2.1 billion — enough for most companies</span>
+    galaxy_stars   <span style="color:#38bdf8;">BIGINT</span>         <span style="color:#94a3b8;">-- Max 9.2 quintillion — for astronomically big numbers</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> example_integers <span style="color:#c084fc;">VALUES</span> (<span style="color:#fb923c;">25</span>, <span style="color:#fb923c;">100042</span>, <span style="color:#fb923c;">400000000000</span>);</pre></div>
+
+            <div class="real-life">
+                <h4>📱 Real-Life Example — Phone Numbers</h4>
+                <p>Should you store phone numbers as INTEGER? <strong>No!</strong> Phone numbers like <code>+1-555-012-3456</code> have dashes, plus signs, and leading zeros. Store them as <strong>TEXT</strong> or <strong>VARCHAR</strong>. Just because something looks like a number doesn't mean it <em>is</em> a number. Ask yourself: "Will I ever add, subtract, or average this?" If no, it's probably text.</p>
+            </div>
+
+            <h3>Decimal / Exact Numeric Types — Money Matters</h3>
+            <p>When you need decimal points <strong>and</strong> exact precision (like money), use <code>NUMERIC</code> or <code>DECIMAL</code> (they're identical in PostgreSQL).</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- NUMERIC(precision, scale)</span>
+<span style="color:#94a3b8;">-- precision = total digits, scale = digits after decimal</span>
+
+<span style="color:#c084fc;">CREATE TABLE</span> products (
+    name     <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>),
+    price    <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">10</span>, <span style="color:#fb923c;">2</span>)   <span style="color:#94a3b8;">-- Up to 99,999,999.99</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> products <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Laptop'</span>, <span style="color:#fb923c;">999.99</span>);
+<span style="color:#c084fc;">INSERT INTO</span> products <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Coffee'</span>, <span style="color:#fb923c;">4.50</span>);
+
+<span style="color:#94a3b8;">-- PostgreSQL stores these EXACTLY as 999.99 and 4.50</span>
+<span style="color:#94a3b8;">-- No rounding errors. Ever. Period.</span></pre></div>
+
+            <div class="important-box">
+                <h4>💸 NEVER Use FLOAT for Money!</h4>
+                <p>This is one of the most common mistakes in programming. Floating point numbers are <strong>approximate</strong>. Watch what happens:</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- The horror of using FLOAT for money:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">0.1</span>::<span style="color:#38bdf8;">FLOAT</span> + <span style="color:#fb923c;">0.2</span>::<span style="color:#38bdf8;">FLOAT</span>;
+<span style="color:#94a3b8;">-- Result: 0.30000000000000004  😱</span>
+<span style="color:#94a3b8;">-- That's NOT 0.30!</span>
+
+<span style="color:#94a3b8;">-- The safety of using NUMERIC for money:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">0.1</span>::<span style="color:#38bdf8;">NUMERIC</span> + <span style="color:#fb923c;">0.2</span>::<span style="color:#38bdf8;">NUMERIC</span>;
+<span style="color:#94a3b8;">-- Result: 0.3  ✅ Exactly right!</span></pre></div>
+
+            <h3>Floating-Point Types — Approximate Numbers</h3>
+            <p>Use these for scientific calculations where speed matters more than exact precision.</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Storage</th>
+                        <th>Precision</th>
+                        <th>Use When…</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>REAL</code></td>
+                        <td>4 bytes</td>
+                        <td>6 decimal digits</td>
+                        <td>Sensor readings, rough calculations</td>
+                    </tr>
+                    <tr>
+                        <td><code>DOUBLE PRECISION</code></td>
+                        <td>8 bytes</td>
+                        <td>15 decimal digits</td>
+                        <td>Scientific data, coordinates, physics</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> weather_readings (
+    station_id    <span style="color:#38bdf8;">INTEGER</span>,
+    temperature   <span style="color:#38bdf8;">REAL</span>,              <span style="color:#94a3b8;">-- 23.456°C — doesn't need to be exact to the penny</span>
+    latitude      <span style="color:#38bdf8;">DOUBLE PRECISION</span>,   <span style="color:#94a3b8;">-- 40.7128° — needs more decimal places</span>
+    longitude     <span style="color:#38bdf8;">DOUBLE PRECISION</span>    <span style="color:#94a3b8;">-- -74.0060°</span>
+);</pre></div>
+
+            <h3>Auto-Incrementing Types — SERIAL &amp; BIGSERIAL</h3>
+            <p>Need an ID that automatically counts up? That's what SERIAL is for. It's like a ticket dispenser at the deli counter — each new customer gets the next number.</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> employees (
+    id      <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,    <span style="color:#94a3b8;">-- 1, 2, 3, 4, 5 ... auto!</span>
+    name    <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>)
+);
+
+<span style="color:#94a3b8;">-- You DON'T specify the id — PostgreSQL does it for you:</span>
+<span style="color:#c084fc;">INSERT INTO</span> employees (name) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Alice'</span>);   <span style="color:#94a3b8;">-- id = 1</span>
+<span style="color:#c084fc;">INSERT INTO</span> employees (name) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Bob'</span>);     <span style="color:#94a3b8;">-- id = 2</span>
+<span style="color:#c084fc;">INSERT INTO</span> employees (name) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Charlie'</span>); <span style="color:#94a3b8;">-- id = 3</span></pre></div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Underlying Type</th>
+                        <th>Range</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>SMALLSERIAL</code></td>
+                        <td>SMALLINT</td>
+                        <td>1 to 32,767</td>
+                    </tr>
+                    <tr>
+                        <td><code>SERIAL</code></td>
+                        <td>INTEGER</td>
+                        <td>1 to 2,147,483,647</td>
+                    </tr>
+                    <tr>
+                        <td><code>BIGSERIAL</code></td>
+                        <td>BIGINT</td>
+                        <td>1 to 9,223,372,036,854,775,807</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Modern PostgreSQL Prefers IDENTITY</h4>
+                <p>In PostgreSQL 10+, the SQL-standard <code>GENERATED ALWAYS AS IDENTITY</code> is preferred over SERIAL. It's more portable and harder to accidentally bypass:</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> employees (
+    id   <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">GENERATED ALWAYS AS IDENTITY PRIMARY KEY</span>,
+    name <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>)
+);</pre></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 3: Character / Text Types          -->
+        <!-- ========================================== -->
+        <div class="section" id="text">
+            <h2>📝 Character &amp; Text Types</h2>
+            <p>Storing words, sentences, names, emails, and paragraphs — PostgreSQL has three main text types, and picking the right one matters.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Three Ways to Pack Text</h4>
+                <p>📦 <strong>CHAR(n)</strong> = a rigid cardboard box. Always exactly <code>n</code> characters. If your text is shorter, PostgreSQL pads it with spaces. Like writing your name on a form that has exactly 20 boxes — you fill in "Alice" then leave 15 boxes empty.</p>
+                <p>🎒 <strong>VARCHAR(n)</strong> = a stretchy backpack with a maximum size. It only uses as much room as your text needs, up to <code>n</code> characters. Efficient and flexible!</p>
+                <p>📜 <strong>TEXT</strong> = an infinite scroll. No limit. Write a novel if you want. PostgreSQL doesn't care how long it is.</p>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Max Length</th>
+                        <th>Padding</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CHAR(n)</code></td>
+                        <td>Fixed at <code>n</code></td>
+                        <td>Yes — pads with spaces</td>
+                        <td>Country codes (US, UK), fixed-length codes</td>
+                    </tr>
+                    <tr>
+                        <td><code>VARCHAR(n)</code></td>
+                        <td>Up to <code>n</code></td>
+                        <td>No padding</td>
+                        <td>Names, emails, usernames</td>
+                    </tr>
+                    <tr>
+                        <td><code>TEXT</code></td>
+                        <td>Unlimited (~1 GB)</td>
+                        <td>No padding</td>
+                        <td>Blog posts, comments, descriptions</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> text_demo (
+    country_code  <span style="color:#38bdf8;">CHAR</span>(<span style="color:#fb923c;">2</span>),        <span style="color:#94a3b8;">-- Always 2 chars: 'US', 'UK', 'IN'</span>
+    username      <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">50</span>),    <span style="color:#94a3b8;">-- Up to 50 chars — "alice_wonder" uses 12</span>
+    bio           <span style="color:#38bdf8;">TEXT</span>            <span style="color:#94a3b8;">-- No limit — write your life story</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> text_demo <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'US'</span>, <span style="color:#4ade80;">'alice_wonder'</span>, <span style="color:#4ade80;">'I love databases!'</span>);</pre></div>
+
+            <h3>The CHAR Padding Gotcha</h3>
+            <p>Here's something that surprises many beginners — CHAR pads your text with invisible spaces:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Inserting a 2-char value into CHAR(10):</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'AB'</span>::<span style="color:#38bdf8;">CHAR</span>(<span style="color:#fb923c;">10</span>) = <span style="color:#4ade80;">'AB'</span>;
+<span style="color:#94a3b8;">-- Result: true (PostgreSQL ignores trailing spaces for comparison)</span>
+
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">LENGTH</span>(<span style="color:#4ade80;">'AB'</span>::<span style="color:#38bdf8;">CHAR</span>(<span style="color:#fb923c;">10</span>));
+<span style="color:#94a3b8;">-- Result: 2 (LENGTH trims trailing spaces)</span>
+
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">OCTET_LENGTH</span>(<span style="color:#4ade80;">'AB'</span>::<span style="color:#38bdf8;">CHAR</span>(<span style="color:#fb923c;">10</span>));
+<span style="color:#94a3b8;">-- Result: 10 (but it's actually STORING 10 bytes!)</span></pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ CHAR Wastes Space</h4>
+                <p>In PostgreSQL, there is <strong>no performance benefit</strong> to using CHAR over VARCHAR. CHAR always stores the full padded length. For most cases, just use <code>VARCHAR(n)</code> or <code>TEXT</code>. The only reason to use CHAR is when every value is guaranteed to be exactly <code>n</code> characters (like ISO country codes).</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — TEXT vs VARCHAR in PostgreSQL</h4>
+                <p>Unlike other databases, PostgreSQL stores TEXT and VARCHAR identically under the hood. The only difference is that VARCHAR(n) enforces a maximum length. Many PostgreSQL experts recommend using <code>TEXT</code> for most columns and adding a <code>CHECK</code> constraint if you need length validation — it gives you a better error message and more flexibility.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Instead of VARCHAR(100):</span>
+<span style="color:#c084fc;">CREATE TABLE</span> users (
+    email <span style="color:#38bdf8;">TEXT</span> <span style="color:#c084fc;">CHECK</span> (<span style="color:#c084fc;">LENGTH</span>(email) &lt;= <span style="color:#fb923c;">254</span>)
+);
+<span style="color:#94a3b8;">-- Same limit, but the error message says</span>
+<span style="color:#94a3b8;">-- "violates check constraint" instead of "value too long"</span></pre></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 4: Date / Time Types               -->
+        <!-- ========================================== -->
+        <div class="section" id="dates">
+            <h2>📅 Date &amp; Time Types</h2>
+            <p>Dates and times are trickier than they look. Time zones, leap years, daylight saving — PostgreSQL handles all the chaos so you don't have to.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Calendars and Clocks</h4>
+                <p>📅 <strong>DATE</strong> = a calendar page. Just the day: "March 19, 2026." No clock involved.</p>
+                <p>⏰ <strong>TIME</strong> = a clock on the wall. Just the time: "2:30 PM." No date involved.</p>
+                <p>📅⏰ <strong>TIMESTAMP</strong> = a calendar AND a clock together: "March 19, 2026 at 2:30 PM."</p>
+                <p>🌍📅⏰ <strong>TIMESTAMPTZ</strong> = a calendar, a clock, AND a world map: "March 19, 2026 at 2:30 PM in New York." This is the one you almost always want!</p>
+                <p>⏳ <strong>INTERVAL</strong> = a stopwatch. Not a specific moment, but a <em>duration</em>: "3 days, 4 hours, 15 minutes."</p>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Storage</th>
+                        <th>Example</th>
+                        <th>Timezone?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>DATE</code></td>
+                        <td>4 bytes</td>
+                        <td>2026-03-19</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><code>TIME</code></td>
+                        <td>8 bytes</td>
+                        <td>14:30:00</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><code>TIMESTAMP</code></td>
+                        <td>8 bytes</td>
+                        <td>2026-03-19 14:30:00</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td><code>TIMESTAMPTZ</code></td>
+                        <td>8 bytes</td>
+                        <td>2026-03-19 14:30:00+05:30</td>
+                        <td>Yes ✅</td>
+                    </tr>
+                    <tr>
+                        <td><code>INTERVAL</code></td>
+                        <td>16 bytes</td>
+                        <td>3 days 04:15:00</td>
+                        <td>N/A</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> events (
+    id           <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    event_name   <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>),
+    event_date   <span style="color:#38bdf8;">DATE</span>,              <span style="color:#94a3b8;">-- Just the day</span>
+    start_time   <span style="color:#38bdf8;">TIME</span>,              <span style="color:#94a3b8;">-- Just the clock time</span>
+    created_at   <span style="color:#38bdf8;">TIMESTAMPTZ</span>,       <span style="color:#94a3b8;">-- Full timestamp with timezone</span>
+    duration     <span style="color:#38bdf8;">INTERVAL</span>           <span style="color:#94a3b8;">-- How long it lasts</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> events (event_name, event_date, start_time, created_at, duration)
+<span style="color:#c084fc;">VALUES</span> (
+    <span style="color:#4ade80;">'PostgreSQL Workshop'</span>,
+    <span style="color:#4ade80;">'2026-04-15'</span>,
+    <span style="color:#4ade80;">'09:00:00'</span>,
+    <span style="color:#c084fc;">NOW</span>(),
+    <span style="color:#4ade80;">'3 hours 30 minutes'</span>
+);</pre></div>
+
+            <div class="important-box">
+                <h4>🌍 Always Use TIMESTAMPTZ!</h4>
+                <p>If your application has users in different time zones (and almost every app does), <strong>always use TIMESTAMPTZ</strong>, not TIMESTAMP. Without timezone info, "3:00 PM" means nothing — is that New York time? Tokyo time? PostgreSQL converts TIMESTAMPTZ to UTC for storage and back to the client's timezone for display. Problem solved!</p>
+            </div>
+
+            <h3>Essential Date/Time Functions</h3>
+            <p>PostgreSQL has a treasure trove of built-in functions for working with dates:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Get the current date and time:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">NOW</span>();              <span style="color:#94a3b8;">-- 2026-03-19 14:30:00+05:30</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">CURRENT_DATE</span>;      <span style="color:#94a3b8;">-- 2026-03-19</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">CURRENT_TIME</span>;      <span style="color:#94a3b8;">-- 14:30:00+05:30</span>
+
+<span style="color:#94a3b8;">-- Calculate age (years, months, days between two dates):</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">AGE</span>(<span style="color:#4ade80;">'2026-03-19'</span>, <span style="color:#4ade80;">'1995-07-15'</span>);
+<span style="color:#94a3b8;">-- Result: 30 years 8 mons 4 days</span>
+
+<span style="color:#94a3b8;">-- Extract parts of a date:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">EXTRACT</span>(<span style="color:#c084fc;">YEAR</span> <span style="color:#c084fc;">FROM</span> <span style="color:#c084fc;">NOW</span>());    <span style="color:#94a3b8;">-- 2026</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">EXTRACT</span>(<span style="color:#c084fc;">MONTH</span> <span style="color:#c084fc;">FROM</span> <span style="color:#c084fc;">NOW</span>());   <span style="color:#94a3b8;">-- 3</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">EXTRACT</span>(<span style="color:#c084fc;">DOW</span> <span style="color:#c084fc;">FROM</span> <span style="color:#c084fc;">NOW</span>());     <span style="color:#94a3b8;">-- Day of week (0=Sun, 6=Sat)</span>
+
+<span style="color:#94a3b8;">-- Date arithmetic with INTERVAL:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">NOW</span>() + <span style="color:#38bdf8;">INTERVAL</span> <span style="color:#4ade80;">'7 days'</span>;         <span style="color:#94a3b8;">-- One week from now</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">NOW</span>() - <span style="color:#38bdf8;">INTERVAL</span> <span style="color:#4ade80;">'3 months'</span>;       <span style="color:#94a3b8;">-- Three months ago</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">NOW</span>() + <span style="color:#38bdf8;">INTERVAL</span> <span style="color:#4ade80;">'1 year 6 months'</span>; <span style="color:#94a3b8;">-- 18 months from now</span></pre></div>
+
+            <div class="real-life">
+                <h4>🎂 Real-Life Example — Birthday Calculator</h4>
+                <p>Want to find how old each employee is? Use AGE():</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">SELECT</span>
+    name,
+    birth_date,
+    <span style="color:#c084fc;">AGE</span>(birth_date) <span style="color:#c084fc;">AS</span> age,
+    <span style="color:#c084fc;">EXTRACT</span>(<span style="color:#c084fc;">YEAR</span> <span style="color:#c084fc;">FROM</span> <span style="color:#c084fc;">AGE</span>(birth_date)) <span style="color:#c084fc;">AS</span> years_old
+<span style="color:#c084fc;">FROM</span> employees;
+
+<span style="color:#94a3b8;">-- Result:</span>
+<span style="color:#94a3b8;">-- name  | birth_date | age                    | years_old</span>
+<span style="color:#94a3b8;">-- Alice | 1995-07-15 | 30 years 8 mons 4 days | 30</span>
+<span style="color:#94a3b8;">-- Bob   | 2000-01-01 | 26 years 2 mons 18 days| 26</span></pre></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 5: Boolean, UUID, ENUM, JSON       -->
+        <!-- ========================================== -->
+        <div class="section" id="other">
+            <h2>🎛️ Boolean, UUID, ENUM &amp; JSON</h2>
+            <p>Beyond numbers, text, and dates — PostgreSQL has some special types that solve specific problems beautifully.</p>
+
+            <h3>BOOLEAN — True, False, or… NULL?</h3>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Light Switch with a Twist</h4>
+                <p>A Boolean is like a light switch: ON (true) or OFF (false). But in PostgreSQL, there's a third option: the switch is <strong>missing from the wall</strong> (NULL). You don't know if the light is on or off because there's no switch to check. This is called <strong>three-valued logic</strong>, and it trips up a LOT of beginners.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> users (
+    id         <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name       <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>),
+    is_active  <span style="color:#38bdf8;">BOOLEAN</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#fb923c;">true</span>,
+    is_admin   <span style="color:#38bdf8;">BOOLEAN</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#fb923c;">false</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> users (name, is_active, is_admin)
+<span style="color:#c084fc;">VALUES</span>
+    (<span style="color:#4ade80;">'Alice'</span>, <span style="color:#fb923c;">true</span>,  <span style="color:#fb923c;">false</span>),
+    (<span style="color:#4ade80;">'Bob'</span>,   <span style="color:#fb923c;">true</span>,  <span style="color:#fb923c;">true</span>),
+    (<span style="color:#4ade80;">'Eve'</span>,   <span style="color:#fb923c;">false</span>, <span style="color:#fb923c;">false</span>);
+
+<span style="color:#94a3b8;">-- Find active, non-admin users:</span>
+<span style="color:#c084fc;">SELECT</span> name <span style="color:#c084fc;">FROM</span> users <span style="color:#c084fc;">WHERE</span> is_active = <span style="color:#fb923c;">true</span> <span style="color:#c084fc;">AND</span> is_admin = <span style="color:#fb923c;">false</span>;
+<span style="color:#94a3b8;">-- Result: Alice</span></pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ The NULL Boolean Trap</h4>
+                <p>NULL is not true. NULL is not false. NULL is "I don't know." This means:</p>
+                <p><code>NULL = true</code> → NULL (not false!)</p>
+                <p><code>NULL = false</code> → NULL (not true!)</p>
+                <p><code>NOT NULL</code> → NULL (still unknown!)</p>
+                <p>Always use <code>IS NULL</code> or <code>IS NOT NULL</code> to check for NULL values. Never use <code>= NULL</code>.</p>
+            </div>
+
+            <h3>UUID — Universally Unique Identifiers</h3>
+            <p>A UUID looks like this: <code>a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11</code>. It's a 128-bit random identifier that's practically guaranteed to be unique across the entire universe.</p>
+
+            <div class="real-life">
+                <h4>🆔 Real-Life Analogy — Social Security Numbers vs UUIDs</h4>
+                <p>SERIAL IDs are like taking a number at a bakery — 1, 2, 3, 4. Simple, but if you have <em>two</em> bakeries, both start at 1 and you get collisions. UUIDs are like fingerprints — every person's is unique, no matter which bakery they go to. That's why UUIDs are essential for <strong>distributed systems</strong> (multiple servers generating IDs simultaneously).</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Enable the UUID extension (needed once per database):</span>
+<span style="color:#c084fc;">CREATE EXTENSION IF NOT EXISTS</span> <span style="color:#4ade80;">"uuid-ossp"</span>;
+
+<span style="color:#c084fc;">CREATE TABLE</span> orders (
+    id          <span style="color:#38bdf8;">UUID</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">uuid_generate_v4</span>() <span style="color:#c084fc;">PRIMARY KEY</span>,
+    product     <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>),
+    quantity    <span style="color:#38bdf8;">INTEGER</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> orders (product, quantity) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Laptop'</span>, <span style="color:#fb923c;">1</span>);
+<span style="color:#c084fc;">INSERT INTO</span> orders (product, quantity) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Mouse'</span>, <span style="color:#fb923c;">3</span>);
+
+<span style="color:#c084fc;">SELECT</span> * <span style="color:#c084fc;">FROM</span> orders;
+<span style="color:#94a3b8;">-- id                                   | product | quantity</span>
+<span style="color:#94a3b8;">-- f47ac10b-58cc-4372-a567-0e02b2c3d479 | Laptop  | 1</span>
+<span style="color:#94a3b8;">-- 7c9e6679-7425-40de-944b-e07fc1f90ae7 | Mouse   | 3</span></pre></div>
+
+            <h3>ENUM — Custom Named Types</h3>
+            <p>Sometimes you have a column that should only allow certain specific values. Like a traffic light — it's <em>always</em> red, yellow, or green. Never "purple" or "plaid."</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Create a custom ENUM type:</span>
+<span style="color:#c084fc;">CREATE TYPE</span> user_status <span style="color:#c084fc;">AS ENUM</span> (<span style="color:#4ade80;">'active'</span>, <span style="color:#4ade80;">'inactive'</span>, <span style="color:#4ade80;">'banned'</span>);
+
+<span style="color:#c084fc;">CREATE TABLE</span> accounts (
+    id       <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name     <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>),
+    status   user_status <span style="color:#c084fc;">DEFAULT</span> <span style="color:#4ade80;">'active'</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> accounts (name, status) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Alice'</span>, <span style="color:#4ade80;">'active'</span>);   <span style="color:#94a3b8;">-- ✅ Works</span>
+<span style="color:#c084fc;">INSERT INTO</span> accounts (name, status) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Bob'</span>,   <span style="color:#4ade80;">'banned'</span>);   <span style="color:#94a3b8;">-- ✅ Works</span>
+<span style="color:#c084fc;">INSERT INTO</span> accounts (name, status) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Eve'</span>,   <span style="color:#4ade80;">'deleted'</span>);  <span style="color:#94a3b8;">-- ❌ ERROR!</span>
+<span style="color:#94a3b8;">-- ERROR: invalid input value for enum user_status: "deleted"</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — ENUM vs CHECK Constraint</h4>
+                <p>ENUMs are great, but once created they're hard to modify (you can add values but not remove them). An alternative is a VARCHAR with a CHECK constraint, which is easier to change later:</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Alternative: VARCHAR + CHECK (easier to modify):</span>
+<span style="color:#c084fc;">CREATE TABLE</span> accounts (
+    status <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">20</span>) <span style="color:#c084fc;">CHECK</span> (status <span style="color:#c084fc;">IN</span> (<span style="color:#4ade80;">'active'</span>, <span style="color:#4ade80;">'inactive'</span>, <span style="color:#4ade80;">'banned'</span>))
+);</pre></div>
+
+            <h3>JSON &amp; JSONB — Structured Flexible Data</h3>
+            <p>PostgreSQL can store JSON documents right inside your relational tables. This is a powerful feature we'll cover in depth in <strong>Module 12: JSON &amp; Arrays</strong>, but here's a quick preview:</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> user_profiles (
+    id       <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name     <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>),
+    settings <span style="color:#38bdf8;">JSONB</span>  <span style="color:#94a3b8;">-- Use JSONB (binary), not JSON — it's faster for queries</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> user_profiles (name, settings) <span style="color:#c084fc;">VALUES</span> (
+    <span style="color:#4ade80;">'Alice'</span>,
+    <span style="color:#4ade80;">'{"theme": "dark", "language": "en", "notifications": true}'</span>
+);
+
+<span style="color:#94a3b8;">-- Query a specific key from the JSON:</span>
+<span style="color:#c084fc;">SELECT</span> name, settings-&gt;&gt;<span style="color:#4ade80;">'theme'</span> <span style="color:#c084fc;">AS</span> theme <span style="color:#c084fc;">FROM</span> user_profiles;
+<span style="color:#94a3b8;">-- Result: Alice | dark</span></pre></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">JSON</div>
+                    <div class="stat-label">Stores raw text. Preserves formatting. Slower to query.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">JSONB</div>
+                    <div class="stat-label">Stores binary. Faster queries. Supports indexes. Use this one!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 6: Constraints                     -->
+        <!-- ========================================== -->
+        <div class="section" id="constraints">
+            <h2>🚧 Constraints — The Data Bouncers</h2>
+            <p>Data types define <em>what kind</em> of data a column holds. Constraints define the <em>rules</em> that data must follow. Think of them as bouncers at a nightclub — they check every piece of data at the door and reject anything that doesn't meet the rules.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — The Bouncer at the Club</h4>
+                <p>🚪 <strong>NOT NULL</strong> = "You can't come in without a name badge."</p>
+                <p>🔒 <strong>UNIQUE</strong> = "Only one person with each name is allowed inside."</p>
+                <p>🎫 <strong>PRIMARY KEY</strong> = "Everyone must have a unique VIP wristband." (It's NOT NULL + UNIQUE combined!)</p>
+                <p>🔗 <strong>FOREIGN KEY</strong> = "Your wristband must match a valid group reservation."</p>
+                <p>✅ <strong>CHECK</strong> = "You must be at least 21 to enter." (Custom rules!)</p>
+                <p>📝 <strong>DEFAULT</strong> = "If you don't tell me your drink order, I'll give you water."</p>
+            </div>
+
+            <h3>NOT NULL — "This Field Is Required!"</h3>
+            <p>The simplest constraint. It says: this column <strong>must</strong> have a value. You can't leave it blank.</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> customers (
+    id     <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name   <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>) <span style="color:#c084fc;">NOT NULL</span>,   <span style="color:#94a3b8;">-- You MUST have a name</span>
+    email  <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>) <span style="color:#c084fc;">NOT NULL</span>    <span style="color:#94a3b8;">-- You MUST have an email</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> customers (name, email) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Alice'</span>, <span style="color:#4ade80;">'alice@mail.com'</span>);  <span style="color:#94a3b8;">-- ✅</span>
+<span style="color:#c084fc;">INSERT INTO</span> customers (name, email) <span style="color:#c084fc;">VALUES</span> (<span style="color:#c084fc;">NULL</span>, <span style="color:#4ade80;">'bob@mail.com'</span>);      <span style="color:#94a3b8;">-- ❌ ERROR!</span>
+<span style="color:#94a3b8;">-- ERROR: null value in column "name" violates not-null constraint</span></pre></div>
+
+            <h3>UNIQUE — "No Duplicates Allowed!"</h3>
+            <p>Ensures every value in the column is different from all others. Perfect for emails, usernames, phone numbers — anything that should never repeat.</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> users (
+    id       <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    email    <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>) <span style="color:#c084fc;">UNIQUE NOT NULL</span>,
+    username <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">50</span>)  <span style="color:#c084fc;">UNIQUE NOT NULL</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> users (email, username) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'alice@mail.com'</span>, <span style="color:#4ade80;">'alice99'</span>);  <span style="color:#94a3b8;">-- ✅</span>
+<span style="color:#c084fc;">INSERT INTO</span> users (email, username) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'alice@mail.com'</span>, <span style="color:#4ade80;">'bob42'</span>);    <span style="color:#94a3b8;">-- ❌ ERROR!</span>
+<span style="color:#94a3b8;">-- ERROR: duplicate key value violates unique constraint "users_email_key"</span></pre></div>
+
+            <h3>PRIMARY KEY — "Your Unique ID Card"</h3>
+            <p>Every table should have a primary key. It's the unique identifier for each row — like a Social Security number or a passport number. It's automatically NOT NULL + UNIQUE.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Single-column primary key (most common):</span>
+<span style="color:#c084fc;">CREATE TABLE</span> products (
+    product_id   <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name         <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>)
+);
+
+<span style="color:#94a3b8;">-- Composite primary key (two columns together form the key):</span>
+<span style="color:#c084fc;">CREATE TABLE</span> order_items (
+    order_id     <span style="color:#38bdf8;">INTEGER</span>,
+    product_id   <span style="color:#38bdf8;">INTEGER</span>,
+    quantity     <span style="color:#38bdf8;">INTEGER</span>,
+    <span style="color:#c084fc;">PRIMARY KEY</span> (order_id, product_id)  <span style="color:#94a3b8;">-- Together they must be unique</span>
+);</pre></div>
+
+            <h3>FOREIGN KEY — "Links Between Tables"</h3>
+            <p>Foreign keys create relationships between tables. They say: "The value in this column <strong>must exist</strong> in another table's column." This is how relational databases stay <em>relational</em>.</p>
+
+            <div class="real-life">
+                <h4>🔗 Real-Life Analogy — Library Cards</h4>
+                <p>At a library, every book loan is linked to a library card number. If you try to check out a book with card #9999 but no card #9999 exists — the system rejects it. That's a foreign key! It ensures you can't reference something that doesn't exist.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Parent table (the "referenced" table):</span>
+<span style="color:#c084fc;">CREATE TABLE</span> departments (
+    id    <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name  <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>) <span style="color:#c084fc;">NOT NULL</span>
+);
+
+<span style="color:#94a3b8;">-- Child table (has the foreign key):</span>
+<span style="color:#c084fc;">CREATE TABLE</span> employees (
+    id             <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name           <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>) <span style="color:#c084fc;">NOT NULL</span>,
+    department_id  <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">REFERENCES</span> departments(id)
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> departments (name) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Engineering'</span>);  <span style="color:#94a3b8;">-- id = 1</span>
+<span style="color:#c084fc;">INSERT INTO</span> departments (name) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Marketing'</span>);    <span style="color:#94a3b8;">-- id = 2</span>
+
+<span style="color:#c084fc;">INSERT INTO</span> employees (name, department_id) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Alice'</span>, <span style="color:#fb923c;">1</span>);  <span style="color:#94a3b8;">-- ✅ dept 1 exists</span>
+<span style="color:#c084fc;">INSERT INTO</span> employees (name, department_id) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Bob'</span>,   <span style="color:#fb923c;">99</span>); <span style="color:#94a3b8;">-- ❌ ERROR!</span>
+<span style="color:#94a3b8;">-- ERROR: insert or update violates foreign key constraint</span>
+<span style="color:#94a3b8;">-- Key (department_id)=(99) is not present in table "departments"</span></pre></div>
+
+            <h3>What Happens When You Delete a Referenced Row?</h3>
+            <p>If you delete a department, what happens to its employees? PostgreSQL gives you options:</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Behavior</th>
+                        <th>When to Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>RESTRICT</code> (default)</td>
+                        <td>Blocks the delete — "You can't delete this department, it has employees!"</td>
+                        <td>When child rows must always have a valid parent</td>
+                    </tr>
+                    <tr>
+                        <td><code>CASCADE</code></td>
+                        <td>Deletes the department AND all its employees</td>
+                        <td>When child rows are meaningless without parent (e.g., order items when order is cancelled)</td>
+                    </tr>
+                    <tr>
+                        <td><code>SET NULL</code></td>
+                        <td>Sets the foreign key column to NULL in child rows</td>
+                        <td>When child rows can exist without a parent (e.g., employee with no department)</td>
+                    </tr>
+                    <tr>
+                        <td><code>SET DEFAULT</code></td>
+                        <td>Sets the foreign key column to its default value</td>
+                        <td>When there's a sensible fallback value</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> employees (
+    id             <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name           <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>),
+    department_id  <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">REFERENCES</span> departments(id)
+                   <span style="color:#c084fc;">ON DELETE SET NULL</span>       <span style="color:#94a3b8;">-- If dept is deleted, set to NULL</span>
+                   <span style="color:#c084fc;">ON UPDATE CASCADE</span>        <span style="color:#94a3b8;">-- If dept id changes, update here too</span>
+);</pre></div>
+
+            <h3>CHECK — "Custom Rules"</h3>
+            <p>CHECK lets you write any condition you want. If the data doesn't pass the check, PostgreSQL rejects it. Think of it as a custom bouncer rule.</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> products (
+    id       <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name     <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>) <span style="color:#c084fc;">NOT NULL</span>,
+    price    <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">10</span>,<span style="color:#fb923c;">2</span>) <span style="color:#c084fc;">CHECK</span> (price &gt; <span style="color:#fb923c;">0</span>),           <span style="color:#94a3b8;">-- No free or negative-priced items!</span>
+    quantity <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">CHECK</span> (quantity &gt;= <span style="color:#fb923c;">0</span>),                <span style="color:#94a3b8;">-- Can't have negative stock</span>
+    rating   <span style="color:#38bdf8;">SMALLINT</span> <span style="color:#c084fc;">CHECK</span> (rating <span style="color:#c084fc;">BETWEEN</span> <span style="color:#fb923c;">1</span> <span style="color:#c084fc;">AND</span> <span style="color:#fb923c;">5</span>)      <span style="color:#94a3b8;">-- 1 to 5 stars only</span>
+);
+
+<span style="color:#c084fc;">INSERT INTO</span> products (name, price, quantity, rating) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Laptop'</span>, <span style="color:#fb923c;">999.99</span>, <span style="color:#fb923c;">50</span>, <span style="color:#fb923c;">5</span>);  <span style="color:#94a3b8;">-- ✅</span>
+<span style="color:#c084fc;">INSERT INTO</span> products (name, price, quantity, rating) <span style="color:#c084fc;">VALUES</span> (<span style="color:#4ade80;">'Scam'</span>,   <span style="color:#fb923c;">-10</span>,   <span style="color:#fb923c;">5</span>,  <span style="color:#fb923c;">3</span>);  <span style="color:#94a3b8;">-- ❌ ERROR!</span>
+<span style="color:#94a3b8;">-- ERROR: new row violates check constraint "products_price_check"</span></pre></div>
+
+            <h3>DEFAULT — "If You Don't Tell Me, I'll Use This"</h3>
+            <p>Provides a fallback value when the user doesn't specify one during INSERT.</p>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> orders (
+    id          <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    status      <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">20</span>) <span style="color:#c084fc;">DEFAULT</span> <span style="color:#4ade80;">'pending'</span>,   <span style="color:#94a3b8;">-- New orders start as 'pending'</span>
+    created_at  <span style="color:#38bdf8;">TIMESTAMPTZ</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">NOW</span>(),      <span style="color:#94a3b8;">-- Auto-stamp with current time</span>
+    priority    <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#fb923c;">0</span>                <span style="color:#94a3b8;">-- Default priority is 0 (normal)</span>
+);
+
+<span style="color:#94a3b8;">-- Insert without specifying defaults — they fill in automatically:</span>
+<span style="color:#c084fc;">INSERT INTO</span> orders <span style="color:#c084fc;">DEFAULT VALUES</span>;
+<span style="color:#c084fc;">SELECT</span> * <span style="color:#c084fc;">FROM</span> orders;
+<span style="color:#94a3b8;">-- id | status  | created_at                    | priority</span>
+<span style="color:#94a3b8;">-- 1  | pending | 2026-03-19 14:30:00.123456+00 | 0</span></pre></div>
+
+            <h3>🏗️ Putting It All Together — The Ultimate CREATE TABLE</h3>
+            <p>Here's a real-world example that combines every constraint we've learned:</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- A complete e-commerce schema with all constraints:</span>
+
+<span style="color:#c084fc;">CREATE TABLE</span> categories (
+    id    <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name  <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">100</span>) <span style="color:#c084fc;">UNIQUE NOT NULL</span>
+);
+
+<span style="color:#c084fc;">CREATE TABLE</span> products (
+    id           <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name         <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>) <span style="color:#c084fc;">NOT NULL</span>,
+    description  <span style="color:#38bdf8;">TEXT</span>,
+    price        <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">10</span>,<span style="color:#fb923c;">2</span>) <span style="color:#c084fc;">NOT NULL CHECK</span> (price &gt; <span style="color:#fb923c;">0</span>),
+    stock        <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">NOT NULL DEFAULT</span> <span style="color:#fb923c;">0</span> <span style="color:#c084fc;">CHECK</span> (stock &gt;= <span style="color:#fb923c;">0</span>),
+    category_id  <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">REFERENCES</span> categories(id) <span style="color:#c084fc;">ON DELETE SET NULL</span>,
+    is_active    <span style="color:#38bdf8;">BOOLEAN</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#fb923c;">true</span>,
+    created_at   <span style="color:#38bdf8;">TIMESTAMPTZ</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">NOW</span>()
+);
+
+<span style="color:#c084fc;">CREATE TABLE</span> customers (
+    id           <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    email        <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">254</span>) <span style="color:#c084fc;">UNIQUE NOT NULL</span>,
+    full_name    <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>) <span style="color:#c084fc;">NOT NULL</span>,
+    age          <span style="color:#38bdf8;">SMALLINT</span> <span style="color:#c084fc;">CHECK</span> (age <span style="color:#c084fc;">BETWEEN</span> <span style="color:#fb923c;">13</span> <span style="color:#c084fc;">AND</span> <span style="color:#fb923c;">150</span>),
+    joined_at    <span style="color:#38bdf8;">TIMESTAMPTZ</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">NOW</span>()
+);
+
+<span style="color:#c084fc;">CREATE TABLE</span> orders (
+    id           <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    customer_id  <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">NOT NULL REFERENCES</span> customers(id) <span style="color:#c084fc;">ON DELETE RESTRICT</span>,
+    total        <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">12</span>,<span style="color:#fb923c;">2</span>) <span style="color:#c084fc;">NOT NULL CHECK</span> (total &gt;= <span style="color:#fb923c;">0</span>),
+    status       <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">20</span>) <span style="color:#c084fc;">DEFAULT</span> <span style="color:#4ade80;">'pending'</span>
+                 <span style="color:#c084fc;">CHECK</span> (status <span style="color:#c084fc;">IN</span> (<span style="color:#4ade80;">'pending'</span>,<span style="color:#4ade80;">'processing'</span>,<span style="color:#4ade80;">'shipped'</span>,<span style="color:#4ade80;">'delivered'</span>,<span style="color:#4ade80;">'cancelled'</span>)),
+    ordered_at   <span style="color:#38bdf8;">TIMESTAMPTZ</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">NOW</span>()
+);
+
+<span style="color:#c084fc;">CREATE TABLE</span> order_items (
+    order_id     <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">REFERENCES</span> orders(id) <span style="color:#c084fc;">ON DELETE CASCADE</span>,
+    product_id   <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">REFERENCES</span> products(id) <span style="color:#c084fc;">ON DELETE RESTRICT</span>,
+    quantity     <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">NOT NULL CHECK</span> (quantity &gt; <span style="color:#fb923c;">0</span>),
+    unit_price   <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">10</span>,<span style="color:#fb923c;">2</span>) <span style="color:#c084fc;">NOT NULL CHECK</span> (unit_price &gt; <span style="color:#fb923c;">0</span>),
+    <span style="color:#c084fc;">PRIMARY KEY</span> (order_id, product_id)
+);</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip — Read Those Constraint Names</h4>
+                <p>When PostgreSQL gives you an error like <code>violates constraint "products_price_check"</code>, the name tells you exactly which constraint failed. You can also name constraints yourself for even clearer errors:</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#c084fc;">CREATE TABLE</span> products (
+    price <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">10</span>,<span style="color:#fb923c;">2</span>) <span style="color:#c084fc;">CONSTRAINT</span> price_must_be_positive <span style="color:#c084fc;">CHECK</span> (price &gt; <span style="color:#fb923c;">0</span>)
+);
+<span style="color:#94a3b8;">-- Now the error says: violates constraint "price_must_be_positive"</span>
+<span style="color:#94a3b8;">-- Much clearer than "products_price_check"!</span></pre></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 7: Type Casting                    -->
+        <!-- ========================================== -->
+        <div class="section" id="casting">
+            <h2>🔄 Type Casting — Converting Between Types</h2>
+            <p>Sometimes you have data in one type and need it in another. PostgreSQL gives you two ways to cast (convert) types.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5 — Pouring Water Into a Different Cup</h4>
+                <p>You have juice in a tall glass but need it in a mug. You pour it from one to the other — that's type casting! You're taking the same data and putting it into a different "container" (type). But be careful: if the mug is smaller than the glass, some juice spills (data loss).</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Method 1: CAST function (SQL standard)</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">CAST</span>(<span style="color:#4ade80;">'42'</span> <span style="color:#c084fc;">AS</span> <span style="color:#38bdf8;">INTEGER</span>);           <span style="color:#94a3b8;">-- '42' (text) → 42 (number)</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">CAST</span>(<span style="color:#fb923c;">3.14159</span> <span style="color:#c084fc;">AS</span> <span style="color:#38bdf8;">INTEGER</span>);       <span style="color:#94a3b8;">-- 3.14159 → 3 (truncated!)</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">CAST</span>(<span style="color:#c084fc;">NOW</span>() <span style="color:#c084fc;">AS</span> <span style="color:#38bdf8;">DATE</span>);            <span style="color:#94a3b8;">-- timestamp → just the date part</span>
+
+<span style="color:#94a3b8;">-- Method 2: :: operator (PostgreSQL shorthand — much more common)</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'42'</span>::<span style="color:#38bdf8;">INTEGER</span>;                  <span style="color:#94a3b8;">-- Same as CAST('42' AS INTEGER)</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">3.14159</span>::<span style="color:#38bdf8;">INTEGER</span>;              <span style="color:#94a3b8;">-- Same as CAST(3.14159 AS INTEGER)</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">NOW</span>()::<span style="color:#38bdf8;">DATE</span>;                   <span style="color:#94a3b8;">-- Same as CAST(NOW() AS DATE)</span>
+
+<span style="color:#94a3b8;">-- Practical examples:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'2026-03-19'</span>::<span style="color:#38bdf8;">DATE</span>;              <span style="color:#94a3b8;">-- Text → Date</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">100</span>::<span style="color:#38bdf8;">TEXT</span>;                      <span style="color:#94a3b8;">-- Number → Text ('100')</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'true'</span>::<span style="color:#38bdf8;">BOOLEAN</span>;                <span style="color:#94a3b8;">-- Text → Boolean</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">99.95</span>::<span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">5</span>,<span style="color:#fb923c;">1</span>);           <span style="color:#94a3b8;">-- 99.95 → 100.0 (rounded to 1 decimal)</span></pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ Casting Can Fail!</h4>
+                <p>Not all conversions are possible. Trying to cast <code>'hello'::INTEGER</code> will throw an error because "hello" isn't a number. Always make sure the data actually <em>can</em> be converted to the target type.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- This works:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'123'</span>::<span style="color:#38bdf8;">INTEGER</span>;   <span style="color:#94a3b8;">-- ✅ 123</span>
+
+<span style="color:#94a3b8;">-- This fails:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'hello'</span>::<span style="color:#38bdf8;">INTEGER</span>; <span style="color:#94a3b8;">-- ❌ ERROR: invalid input syntax for type integer: "hello"</span>
+
+<span style="color:#94a3b8;">-- This loses precision:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">99.999</span>::<span style="color:#38bdf8;">INTEGER</span>;  <span style="color:#94a3b8;">-- ⚠️ 100 (rounded up — the .999 is gone!)</span></pre></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 8: Common Mistakes                 -->
+        <!-- ========================================== -->
+        <div class="section" id="mistakes">
+            <h2>🚨 Common Mistakes &amp; Gotchas</h2>
+            <p>Even experienced developers fall into these traps. Learn them now so you don't have to learn them the hard way.</p>
+
+            <div class="important-box">
+                <h4>💸 Mistake #1: Using FLOAT for Money</h4>
+                <p><code>0.1 + 0.2 = 0.30000000000000004</code> in floating point. Always use <code>NUMERIC(precision, scale)</code> for financial data. Banks have gone bankrupt over floating point errors (okay, not really, but rounding errors add up to real money).</p>
+            </div>
+
+            <div class="important-box">
+                <h4>🔢 Mistake #2: Storing Phone Numbers as INTEGER</h4>
+                <p>Phone numbers have leading zeros (like 0044-7700-900123), plus signs, dashes, and parentheses. Store them as <code>VARCHAR</code> or <code>TEXT</code>. Same goes for ZIP codes (01234), credit card numbers, and SSNs.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⏰ Mistake #3: Using TIMESTAMP Instead of TIMESTAMPTZ</h4>
+                <p>If a user in Tokyo creates a record at 3:00 PM and a user in London reads it, is it 3:00 PM London time or Tokyo time? Without timezone info, you'll never know. Always use <code>TIMESTAMPTZ</code>.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>📏 Mistake #4: Using CHAR When VARCHAR Works</h4>
+                <p><code>CHAR(100)</code> always stores 100 bytes even if you only put 5 characters in it. <code>VARCHAR(100)</code> stores only as many bytes as needed. There's no speed benefit to CHAR in PostgreSQL.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>🏗️ Mistake #5: Forgetting NOT NULL on Required Fields</h4>
+                <p>Every column is nullable by default. If a field is required (like email, name, price), always add <code>NOT NULL</code>. A NULL email means your "send welcome email" feature silently fails — fun to debug at 3 AM.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>🗂️ Mistake #6: Using BIGINT for Everything "Just in Case"</h4>
+                <p>BIGINT uses 8 bytes per row. INTEGER uses 4. In a table with 100 million rows, that's 400 MB of wasted space. Multiply by 10 columns and you've wasted 4 GB. Pick the right size.</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Quick Reference — When to Use What</h4>
+                <p><strong>IDs:</strong> SERIAL / INTEGER (or UUID for distributed systems)<br>
+                <strong>Money:</strong> NUMERIC(precision, scale) — NEVER FLOAT<br>
+                <strong>Names:</strong> VARCHAR(n) or TEXT<br>
+                <strong>Timestamps:</strong> TIMESTAMPTZ — always with timezone<br>
+                <strong>True/False:</strong> BOOLEAN — with NOT NULL if required<br>
+                <strong>Phone/ZIP:</strong> VARCHAR — they're not really numbers</p>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 9: Practice Exercises              -->
+        <!-- ========================================== -->
+        <div class="section" id="exercises">
+            <h2>🏋️ Practice Exercises</h2>
+            <p>Time to put your knowledge to the test! Try these exercises on your own PostgreSQL instance. Each one reinforces a key concept from this lesson.</p>
+
+            <div class="step-box">
+                <h4>Exercise 1: Design a Students Table</h4>
+                <p>Create a table called <code>students</code> with these columns:</p>
+                <ul style="margin: 10px 0; padding-left: 20px; color: #cbd5e1;">
+                    <li>Auto-incrementing ID (primary key)</li>
+                    <li>Full name (required, up to 150 characters)</li>
+                    <li>Email (required, unique, up to 254 characters)</li>
+                    <li>Age (must be between 5 and 120)</li>
+                    <li>GPA (decimal with exactly 1 decimal place, between 0.0 and 4.0)</li>
+                    <li>Enrollment date (defaults to today)</li>
+                    <li>Active status (defaults to true)</li>
+                </ul>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Solution:</span>
+<span style="color:#c084fc;">CREATE TABLE</span> students (
+    id              <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    full_name       <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">150</span>) <span style="color:#c084fc;">NOT NULL</span>,
+    email           <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">254</span>) <span style="color:#c084fc;">UNIQUE NOT NULL</span>,
+    age             <span style="color:#38bdf8;">SMALLINT</span> <span style="color:#c084fc;">CHECK</span> (age <span style="color:#c084fc;">BETWEEN</span> <span style="color:#fb923c;">5</span> <span style="color:#c084fc;">AND</span> <span style="color:#fb923c;">120</span>),
+    gpa             <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">2</span>,<span style="color:#fb923c;">1</span>) <span style="color:#c084fc;">CHECK</span> (gpa <span style="color:#c084fc;">BETWEEN</span> <span style="color:#fb923c;">0.0</span> <span style="color:#c084fc;">AND</span> <span style="color:#fb923c;">4.0</span>),
+    enrollment_date <span style="color:#38bdf8;">DATE</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">CURRENT_DATE</span>,
+    is_active       <span style="color:#38bdf8;">BOOLEAN</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#fb923c;">true</span>
+);</pre></div>
+
+            <div class="step-box">
+                <h4>Exercise 2: Build a Library System</h4>
+                <p>Create two related tables: <code>authors</code> and <code>books</code>. Books must reference an author via foreign key. When an author is deleted, their books should also be deleted (CASCADE).</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Solution:</span>
+<span style="color:#c084fc;">CREATE TABLE</span> authors (
+    id    <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    name  <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>) <span style="color:#c084fc;">NOT NULL</span>
+);
+
+<span style="color:#c084fc;">CREATE TABLE</span> books (
+    id         <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    title      <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">300</span>) <span style="color:#c084fc;">NOT NULL</span>,
+    author_id  <span style="color:#38bdf8;">INTEGER</span> <span style="color:#c084fc;">NOT NULL REFERENCES</span> authors(id) <span style="color:#c084fc;">ON DELETE CASCADE</span>,
+    isbn       <span style="color:#38bdf8;">CHAR</span>(<span style="color:#fb923c;">13</span>) <span style="color:#c084fc;">UNIQUE</span>,
+    price      <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">8</span>,<span style="color:#fb923c;">2</span>) <span style="color:#c084fc;">CHECK</span> (price &gt;= <span style="color:#fb923c;">0</span>),
+    published  <span style="color:#38bdf8;">DATE</span>
+);</pre></div>
+
+            <div class="step-box">
+                <h4>Exercise 3: Type Casting Practice</h4>
+                <p>Write queries to perform these type conversions using the <code>::</code> operator:</p>
+                <ul style="margin: 10px 0; padding-left: 20px; color: #cbd5e1;">
+                    <li>Convert the text '2026-12-25' to a DATE</li>
+                    <li>Convert the number 42 to TEXT</li>
+                    <li>Convert a TIMESTAMP to just a DATE</li>
+                    <li>Round 3.14159 to 2 decimal places using NUMERIC casting</li>
+                </ul>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Solution:</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#4ade80;">'2026-12-25'</span>::<span style="color:#38bdf8;">DATE</span>;               <span style="color:#94a3b8;">-- 2026-12-25</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">42</span>::<span style="color:#38bdf8;">TEXT</span>;                         <span style="color:#94a3b8;">-- '42'</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#c084fc;">NOW</span>()::<span style="color:#38bdf8;">DATE</span>;                      <span style="color:#94a3b8;">-- 2026-03-19</span>
+<span style="color:#c084fc;">SELECT</span> <span style="color:#fb923c;">3.14159</span>::<span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">5</span>,<span style="color:#fb923c;">2</span>);            <span style="color:#94a3b8;">-- 3.14</span></pre></div>
+
+            <div class="step-box">
+                <h4>Exercise 4: Fix the Broken Table</h4>
+                <p>This table has problems. Identify all the issues and rewrite it properly:</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- BROKEN table — find the issues!</span>
+<span style="color:#c084fc;">CREATE TABLE</span> invoices (
+    id          <span style="color:#38bdf8;">BIGINT</span>,              <span style="color:#94a3b8;">-- Issue: No PRIMARY KEY, BIGINT overkill</span>
+    client_name <span style="color:#38bdf8;">CHAR</span>(<span style="color:#fb923c;">500</span>),           <span style="color:#94a3b8;">-- Issue: CHAR wastes 500 bytes per row!</span>
+    amount      <span style="color:#38bdf8;">FLOAT</span>,              <span style="color:#94a3b8;">-- Issue: FLOAT for money = rounding errors!</span>
+    phone       <span style="color:#38bdf8;">BIGINT</span>,             <span style="color:#94a3b8;">-- Issue: Phone numbers aren't math!</span>
+    created_at  <span style="color:#38bdf8;">TIMESTAMP</span>           <span style="color:#94a3b8;">-- Issue: No timezone info!</span>
+);
+
+<span style="color:#94a3b8;">-- FIXED table:</span>
+<span style="color:#c084fc;">CREATE TABLE</span> invoices (
+    id          <span style="color:#38bdf8;">SERIAL</span> <span style="color:#c084fc;">PRIMARY KEY</span>,
+    client_name <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">200</span>) <span style="color:#c084fc;">NOT NULL</span>,
+    amount      <span style="color:#38bdf8;">NUMERIC</span>(<span style="color:#fb923c;">12</span>,<span style="color:#fb923c;">2</span>) <span style="color:#c084fc;">NOT NULL CHECK</span> (amount &gt; <span style="color:#fb923c;">0</span>),
+    phone       <span style="color:#38bdf8;">VARCHAR</span>(<span style="color:#fb923c;">20</span>),
+    created_at  <span style="color:#38bdf8;">TIMESTAMPTZ</span> <span style="color:#c084fc;">DEFAULT</span> <span style="color:#c084fc;">NOW</span>()
+);</pre></div>
+
+            <div class="step-box">
+                <h4>Exercise 5: Date Arithmetic</h4>
+                <p>Given an <code>employees</code> table with <code>hire_date</code> (DATE) and <code>birth_date</code> (DATE), write queries to find:</p>
+                <ul style="margin: 10px 0; padding-left: 20px; color: #cbd5e1;">
+                    <li>Each employee's age in years</li>
+                    <li>How long each employee has worked (years &amp; months)</li>
+                    <li>Employees who have their birthday this month</li>
+                    <li>The date 90 days from each employee's hire date (probation end)</li>
+                </ul>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8;">-- Solution:</span>
+
+<span style="color:#94a3b8;">-- Age in years:</span>
+<span style="color:#c084fc;">SELECT</span> name, <span style="color:#c084fc;">EXTRACT</span>(<span style="color:#c084fc;">YEAR</span> <span style="color:#c084fc;">FROM</span> <span style="color:#c084fc;">AGE</span>(birth_date)) <span style="color:#c084fc;">AS</span> age
+<span style="color:#c084fc;">FROM</span> employees;
+
+<span style="color:#94a3b8;">-- Tenure:</span>
+<span style="color:#c084fc;">SELECT</span> name, <span style="color:#c084fc;">AGE</span>(hire_date) <span style="color:#c084fc;">AS</span> tenure
+<span style="color:#c084fc;">FROM</span> employees;
+
+<span style="color:#94a3b8;">-- Birthday this month:</span>
+<span style="color:#c084fc;">SELECT</span> name, birth_date
+<span style="color:#c084fc;">FROM</span> employees
+<span style="color:#c084fc;">WHERE</span> <span style="color:#c084fc;">EXTRACT</span>(<span style="color:#c084fc;">MONTH</span> <span style="color:#c084fc;">FROM</span> birth_date) = <span style="color:#c084fc;">EXTRACT</span>(<span style="color:#c084fc;">MONTH</span> <span style="color:#c084fc;">FROM</span> <span style="color:#c084fc;">CURRENT_DATE</span>);
+
+<span style="color:#94a3b8;">-- Probation end date (90 days after hire):</span>
+<span style="color:#c084fc;">SELECT</span> name, hire_date, hire_date + <span style="color:#38bdf8;">INTERVAL</span> <span style="color:#4ade80;">'90 days'</span> <span style="color:#c084fc;">AS</span> probation_end
+<span style="color:#c084fc;">FROM</span> employees;</pre></div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 10: Quiz                           -->
+        <!-- ========================================== -->
+        <div class="section" id="quiz">
+            <h2>🧠 Knowledge Check</h2>
+            <p>Test what you've learned! Click the answer you think is correct.</p>
+
+            <div class="quiz-section">
+                <h4>Q1: Which data type should you use to store product prices?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) REAL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) DOUBLE PRECISION</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) NUMERIC(10,2)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) FLOAT</button>
+                <div class="quiz-feedback" style="display:none; padding:15px; border-radius:12px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Q2: What does the NOT NULL constraint do?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Makes the column default to 0</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) Prevents NULL values — the column is required</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) Automatically generates unique IDs</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Makes the column read-only</button>
+                <div class="quiz-feedback" style="display:none; padding:15px; border-radius:12px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Q3: What is the key difference between TIMESTAMP and TIMESTAMPTZ?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) TIMESTAMPTZ stores milliseconds, TIMESTAMP doesn't</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) TIMESTAMP is faster</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) TIMESTAMPTZ stores and converts timezone information</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) There is no difference</button>
+                <div class="quiz-feedback" style="display:none; padding:15px; border-radius:12px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Q4: If you delete a parent row and the foreign key uses ON DELETE CASCADE, what happens to child rows?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) The delete is blocked</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) Child rows' foreign key column is set to NULL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) All related child rows are also deleted</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Nothing happens — child rows are left unchanged</button>
+                <div class="quiz-feedback" style="display:none; padding:15px; border-radius:12px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Q5: What is the PostgreSQL shorthand for type casting?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) CONVERT(value, type)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) value::type</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) value-&gt;type</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) TO_TYPE(value)</button>
+                <div class="quiz-feedback" style="display:none; padding:15px; border-radius:12px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Q6: Why should you NOT store phone numbers as INTEGER?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Integers can't hold large enough values</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) Phone numbers can have leading zeros, plus signs, and dashes which would be lost</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) Phone numbers are too short for INTEGER</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) PostgreSQL doesn't allow it</button>
+                <div class="quiz-feedback" style="display:none; padding:15px; border-radius:12px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Q7: What does a PRIMARY KEY constraint guarantee?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Only uniqueness</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) Only NOT NULL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) Both uniqueness AND NOT NULL</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Auto-incrementing values</button>
+                <div class="quiz-feedback" style="display:none; padding:15px; border-radius:12px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 11: What's Next                    -->
+        <!-- ========================================== -->
+        <div class="section" id="next">
+            <h2>🎯 What's Next?</h2>
+            <p>Congratulations! You now understand the building blocks of every PostgreSQL table. Let's recap what you've mastered:</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">🔢</div>
+                    <div class="stat-label"><strong>Numeric Types</strong><br>SMALLINT, INTEGER, BIGINT, NUMERIC, REAL, SERIAL</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">📝</div>
+                    <div class="stat-label"><strong>Text Types</strong><br>CHAR, VARCHAR, TEXT</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">📅</div>
+                    <div class="stat-label"><strong>Date/Time</strong><br>DATE, TIME, TIMESTAMP, TIMESTAMPTZ, INTERVAL</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🎛️</div>
+                    <div class="stat-label"><strong>Special Types</strong><br>BOOLEAN, UUID, ENUM, JSONB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🚧</div>
+                    <div class="stat-label"><strong>Constraints</strong><br>NOT NULL, UNIQUE, PK, FK, CHECK, DEFAULT</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">🔄</div>
+                    <div class="stat-label"><strong>Type Casting</strong><br>CAST() and the :: operator</div>
+                </div>
+            </div>
+
+            <div class="real-life">
+                <h4>🚀 Coming Up: Querying Data</h4>
+                <p>Now that you know how to design tables with the right types and constraints, it's time to <strong>ask questions about your data</strong>. In the next module, you'll learn JOINs, subqueries, CTEs, window functions, and aggregations — the tools that make PostgreSQL incredibly powerful for data analysis.</p>
+            </div>
+
+            <div class="pro-tip">
+                <h4>💡 Remember This</h4>
+                <p>A well-designed table with the right data types and constraints is the foundation of a healthy database. It's like building a house — if the foundation is solid, everything else is easier. Take the time to choose your types carefully, and your future self (and your teammates) will thank you!</p>
+            </div>
+        </div>
+
         <div class="lesson-nav">
             <a href="sql-basics.html" class="secondary"><i class="fas fa-arrow-left"></i> SQL Basics</a>
-            <a href="querying.html">Advanced Querying <i class="fas fa-arrow-right"></i></a>
+            <a href="querying.html">Querying Data <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">Correct!</strong>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">Not quite!</strong> <span style="color:#94a3b8;">Check the correct answer.</span>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

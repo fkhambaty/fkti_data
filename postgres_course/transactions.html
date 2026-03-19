@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transactions & ACID | PostgreSQL Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <title>Transactions & Concurrency | PostgreSQL Mastery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,30 +12,775 @@
     <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
     <div class="container">
         <nav class="nav">
-            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
-            <a href="functions.html">Functions & Triggers <i class="fas fa-arrow-right"></i></a>
+            <a href="functions.html"><i class="fas fa-arrow-left"></i> Functions &amp; Procedures</a>
+            <a href="json-arrays.html">JSON &amp; Arrays <i class="fas fa-arrow-right"></i></a>
         </nav>
+
         <div class="lesson-hero">
-            <h1>Transactions & ACID</h1>
-            <p>BEGIN, COMMIT, ROLLBACK, isolation levels, and why ACID matters.</p>
+            <h1>&#128274; Transactions &amp; Concurrency</h1>
+            <p>The bank transfer problem &mdash; and how PostgreSQL keeps your data safe when 1000 users hit the database at once.</p>
         </div>
+
+        <!-- ===================== 1. WHAT IS A TRANSACTION? ===================== -->
         <div class="section visible">
-            <h2>📚 Transactions & ACID</h2>
-            <p>BEGIN, COMMIT, ROLLBACK, isolation levels, and why ACID matters.</p>
+            <h2>1&#65039;&#8419; What Is a Transaction?</h2>
+
             <div class="eli5-box">
-                <h4>🧒 ELI5</h4>
-                <p>This lesson covers transactions & acid with detailed explanations, real-world examples, code snippets, and interactive exercises. Every concept is broken down into simple analogies that anyone can understand.</p>
+                <h4>&#129490; ELI5 &mdash; The Bank Transfer Story</h4>
+                <p>Imagine you want to send $500 from your savings account to your friend&rsquo;s account. The bank needs to do <strong>two things</strong>:</p>
+                <ol style="color:#cbd5e1; padding-left:20px; margin-top:10px; line-height:2;">
+                    <li><strong>Subtract</strong> $500 from YOUR account</li>
+                    <li><strong>Add</strong> $500 to your FRIEND&rsquo;s account</li>
+                </ol>
+                <p style="margin-top:10px;">Now here&rsquo;s the scary question: what if the power goes out <em>after step 1 but before step 2</em>? Your money was taken out but never arrived! $500 just vanished into thin air! &#128561;</p>
+                <p style="margin-top:10px;">A <strong>transaction</strong> prevents this nightmare. It bundles both steps into a single "all-or-nothing" package. Either <em>both</em> steps succeed, or <em>neither</em> happens. If the power goes out mid-transfer, PostgreSQL automatically reverses step 1. Your money is safe.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>&#127758; Real-Life Analogies</h4>
+                <p><strong>Wedding vows:</strong> "Do you take this person to be your spouse?" Both people must say "I do." If one says no, the wedding is off &mdash; nobody is married. Both must commit, or it&rsquo;s rolled back.</p>
+                <p style="margin-top:10px;"><strong>Online shopping checkout:</strong> The system must (1) charge your credit card, (2) reduce stock, and (3) create the order. If the credit card is declined at step 1, it must NOT reduce stock or create an order. All three steps are one transaction.</p>
+            </div>
+
+            <h3>Without Transactions &mdash; The Danger</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- DANGEROUS! Two separate statements with no transaction</span>
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance - <span style="color:#fb923c">500</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;
+<span style="color:#94a3b8">-- &#9889; POWER OUTAGE HERE &#9889;</span>
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance + <span style="color:#fb923c">500</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">2</span>;
+<span style="color:#94a3b8">-- This second statement never runs. $500 is LOST.</span></pre></div>
+
+            <h3>With a Transaction &mdash; Safe!</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">BEGIN</span>;
+    <span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance - <span style="color:#fb923c">500</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;
+    <span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance + <span style="color:#fb923c">500</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">2</span>;
+<span style="color:#c084fc">COMMIT</span>;
+<span style="color:#94a3b8">-- If ANYTHING fails between BEGIN and COMMIT, ALL changes are undone automatically.</span></pre></div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">BEGIN</div>
+                    <div class="stat-label">Starts the transaction</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">COMMIT</div>
+                    <div class="stat-label">Saves all changes permanently</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">ROLLBACK</div>
+                    <div class="stat-label">Undoes everything since BEGIN</div>
+                </div>
             </div>
         </div>
+
+        <!-- ===================== 2. BEGIN, COMMIT, ROLLBACK ===================== -->
+        <div class="section">
+            <h2>2&#65039;&#8419; BEGIN, COMMIT, ROLLBACK &mdash; The Three Magic Words</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Writing in Pencil</h4>
+                <p>Think of <code>BEGIN</code> as picking up a <strong>pencil</strong> instead of a pen. Everything you write (SQL statements) between BEGIN and COMMIT is written in pencil &mdash; it can be erased. When you say <code>COMMIT</code>, you trace over everything with a <strong>permanent marker</strong> &mdash; now it&rsquo;s saved forever. If you say <code>ROLLBACK</code>, you grab an eraser and wipe everything clean, as if you never wrote anything.</p>
+            </div>
+
+            <h3>Basic Syntax</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Start a transaction</span>
+<span style="color:#c084fc">BEGIN</span>;
+
+<span style="color:#94a3b8">-- Do some work</span>
+<span style="color:#c084fc">INSERT INTO</span> orders (customer_id, amount) <span style="color:#c084fc">VALUES</span> (<span style="color:#fb923c">42</span>, <span style="color:#fb923c">299.99</span>);
+<span style="color:#c084fc">UPDATE</span> inventory <span style="color:#c084fc">SET</span> stock = stock - <span style="color:#fb923c">1</span> <span style="color:#c084fc">WHERE</span> product_id = <span style="color:#fb923c">101</span>;
+
+<span style="color:#94a3b8">-- Everything looks good? Save it!</span>
+<span style="color:#c084fc">COMMIT</span>;</pre></div>
+
+            <h3>ROLLBACK &mdash; Undo Everything</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">BEGIN</span>;
+
+<span style="color:#c084fc">UPDATE</span> employees <span style="color:#c084fc">SET</span> salary = <span style="color:#fb923c">0</span>;
+<span style="color:#94a3b8">-- OH NO! I forgot the WHERE clause! Everyone's salary is now 0!</span>
+
+<span style="color:#c084fc">ROLLBACK</span>;
+<span style="color:#94a3b8">-- Phew! Nothing happened. All salaries are back to normal.</span></pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; Auto-Commit Mode</h4>
+                <p>By default, PostgreSQL runs in <strong>auto-commit mode</strong>. This means every individual SQL statement is automatically wrapped in its own invisible <code>BEGIN...COMMIT</code>. So when you type <code>UPDATE employees SET salary = 0;</code> without an explicit BEGIN, it's immediately committed &mdash; no take-backs! Always use explicit transactions for dangerous operations.</p>
+            </div>
+
+            <h3>SAVEPOINT &mdash; Partial Rollbacks</h3>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Checkpoints in a Video Game</h4>
+                <p>In a video game, you hit save points along the way. If you die at the boss fight, you don&rsquo;t restart the entire game &mdash; you go back to the last save point. <code>SAVEPOINT</code> works the same way: it creates a checkpoint within your transaction so you can roll back to that specific point without losing all your work.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#c084fc">BEGIN</span>;
+
+<span style="color:#c084fc">INSERT INTO</span> orders (customer_id, amount) <span style="color:#c084fc">VALUES</span> (<span style="color:#fb923c">1</span>, <span style="color:#fb923c">100</span>);
+<span style="color:#94a3b8">-- &#10004; Order created successfully</span>
+
+<span style="color:#c084fc">SAVEPOINT</span> before_discount;
+
+<span style="color:#c084fc">UPDATE</span> orders <span style="color:#c084fc">SET</span> amount = amount * <span style="color:#fb923c">0.5</span> <span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">1</span>;
+<span style="color:#94a3b8">-- Hmm, 50% discount is too much. Let's undo just THIS part.</span>
+
+<span style="color:#c084fc">ROLLBACK TO</span> before_discount;
+<span style="color:#94a3b8">-- The order INSERT is still intact! Only the discount was undone.</span>
+
+<span style="color:#c084fc">UPDATE</span> orders <span style="color:#c084fc">SET</span> amount = amount * <span style="color:#fb923c">0.9</span> <span style="color:#c084fc">WHERE</span> customer_id = <span style="color:#fb923c">1</span>;
+<span style="color:#94a3b8">-- 10% discount instead. Much better.</span>
+
+<span style="color:#c084fc">COMMIT</span>;
+<span style="color:#94a3b8">-- Both the order and the 10% discount are now permanent.</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Use SAVEPOINTs in Application Code</h4>
+                <p>SAVEPOINTs are incredibly useful in application code. If a batch of 100 operations mostly succeeds but one fails, you can roll back just the failed one and continue processing the rest &mdash; instead of throwing away all 99 successful operations.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 3. ACID PROPERTIES ===================== -->
+        <div class="section">
+            <h2>3&#65039;&#8419; ACID Properties &mdash; The Four Guarantees</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; What is ACID?</h4>
+                <p>ACID is like the <strong>safety standards</strong> for a database, just like how a car has seatbelts, airbags, ABS brakes, and a roll cage. Each letter stands for a different type of protection for your data. Without ACID, using a database would be like driving a car with no brakes on a highway &mdash; terrifying and guaranteed to end badly.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">A</div>
+                    <div class="stat-label">Atomicity</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">C</div>
+                    <div class="stat-label">Consistency</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">I</div>
+                    <div class="stat-label">Isolation</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">D</div>
+                    <div class="stat-label">Durability</div>
+                </div>
+            </div>
+
+            <h3>A &mdash; Atomicity (All or Nothing)</h3>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4 style="color:#60a5fa;">The "Atom" Analogy</h4>
+                <p>"Atom" comes from the Greek word meaning <strong>"indivisible."</strong> An atomic transaction is indivisible &mdash; it either happens completely or not at all. There&rsquo;s no in-between. Like a light switch: it&rsquo;s either ON or OFF, never stuck halfway.</p>
+                <p style="margin-top:10px;"><strong>Bank transfer example:</strong> Deducting $500 from account A and adding $500 to account B is ONE atomic operation. If the deduction succeeds but the addition fails, the deduction is automatically reversed.</p>
+            </div>
+
+            <h3>C &mdash; Consistency (Rules Always Hold)</h3>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">The "Rulebook" Analogy</h4>
+                <p>A transaction takes the database from one <strong>valid state</strong> to another valid state. If your database has a rule saying "account balance can never be negative," then no transaction can ever leave an account with -$100 &mdash; even if the code tries. The transaction will be rejected.</p>
+                <p style="margin-top:10px;"><strong>Constraints like NOT NULL, UNIQUE, CHECK, and FOREIGN KEY</strong> are the rulebook. Consistency means these rules are enforced before, during, and after every transaction.</p>
+            </div>
+
+            <h3>I &mdash; Isolation (Users Don&rsquo;t See Half-Done Work)</h3>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">The "Exam" Analogy</h4>
+                <p>Imagine 30 students taking an exam at the same time. Each student works independently &mdash; they can&rsquo;t see each other&rsquo;s answer sheets. Even though everyone is working simultaneously, each student&rsquo;s experience is <em>as if</em> they&rsquo;re the only one in the room. That&rsquo;s isolation.</p>
+                <p style="margin-top:10px;"><strong>Database version:</strong> If User A is in the middle of a bank transfer (deducted from account A but hasn&rsquo;t yet added to account B), User B querying the database should NOT see the intermediate state where $500 is missing from both accounts.</p>
+            </div>
+
+            <h3>D &mdash; Durability (Committed = Permanent)</h3>
+            <div class="step-box">
+                <h4 style="color:#60a5fa;">The "Tattoo" Analogy</h4>
+                <p>Once you <code>COMMIT</code> a transaction, it&rsquo;s like getting a <strong>tattoo</strong> &mdash; it&rsquo;s permanent. Even if the power goes out one millisecond after you press COMMIT, when the server comes back up, your data is still there. PostgreSQL writes committed data to the <strong>WAL (Write-Ahead Log)</strong> on disk before confirming the commit, so it survives crashes.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>&#127758; Why ACID Matters</h4>
+                <p>Imagine if Amazon&rsquo;s database was <strong>not</strong> ACID-compliant: you could be charged for an order that was never created (no Atomicity), your account balance could go negative (no Consistency), you could see someone else&rsquo;s half-processed order (no Isolation), or a confirmed order could vanish after a server restart (no Durability). ACID is what makes databases trustworthy.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 4. ISOLATION LEVELS ===================== -->
+        <div class="section">
+            <h2>4&#65039;&#8419; Isolation Levels &mdash; How Much Do Transactions See?</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Different Levels of Privacy</h4>
+                <p>Think of hotel room privacy. At the cheapest level, housekeeping barges in anytime (you see everyone&rsquo;s mess). At the most expensive level, you have a private villa with soundproof walls (total isolation). PostgreSQL lets you choose how much "privacy" (isolation) your transaction gets. More privacy = safer but potentially slower.</p>
+            </div>
+
+            <h3>The Four SQL Standard Isolation Levels</h3>
+            <table class="comparison-table">
+                <tr><th>Level</th><th>Dirty Reads?</th><th>Non-Repeatable Reads?</th><th>Phantom Reads?</th></tr>
+                <tr><td><strong>Read Uncommitted</strong></td><td style="color:#f87171;">Yes</td><td style="color:#f87171;">Yes</td><td style="color:#f87171;">Yes</td></tr>
+                <tr><td><strong>Read Committed</strong> &#9733;</td><td style="color:#4ade80;">No</td><td style="color:#f87171;">Yes</td><td style="color:#f87171;">Yes</td></tr>
+                <tr><td><strong>Repeatable Read</strong></td><td style="color:#4ade80;">No</td><td style="color:#4ade80;">No</td><td style="color:#f87171;">Yes*</td></tr>
+                <tr><td><strong>Serializable</strong></td><td style="color:#4ade80;">No</td><td style="color:#4ade80;">No</td><td style="color:#4ade80;">No</td></tr>
+            </table>
+            <p style="color:#94a3b8; font-size:0.9em;">&#9733; = PostgreSQL default. *PostgreSQL&rsquo;s Repeatable Read actually prevents phantom reads too (it&rsquo;s stricter than the SQL standard requires).</p>
+
+            <h3>What Are These "Read" Problems?</h3>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4 style="color:#f87171;">Dirty Read &mdash; Reading Uncommitted Data</h4>
+                <p>Transaction A changes a salary to $100,000 but hasn&rsquo;t committed yet. Transaction B reads $100,000. Then Transaction A does a ROLLBACK. Transaction B now has data that <em>never actually existed</em>. It&rsquo;s like reading a draft of someone&rsquo;s email before they decided not to send it.</p>
+                <p style="margin-top:10px; color:#4ade80;"><strong>PostgreSQL never allows dirty reads</strong> &mdash; even at Read Uncommitted level, PostgreSQL silently upgrades it to Read Committed.</p>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#f87171;">Non-Repeatable Read &mdash; Same Query, Different Result</h4>
+                <p>Transaction B reads Alice&rsquo;s salary: $85,000. Then Transaction A commits a raise to $92,000. Transaction B reads Alice&rsquo;s salary again: $92,000. The same query returned different results within the same transaction! It&rsquo;s like checking the price of a flight, going to the bathroom, coming back, and the price changed.</p>
+            </div>
+
+            <div class="step-box">
+                <h4 style="color:#f87171;">Phantom Read &mdash; New Rows Appear Out of Nowhere</h4>
+                <p>Transaction B counts employees in Engineering: 4 people. Then Transaction A inserts a new engineer and commits. Transaction B counts again: 5 people. A "phantom" row appeared! It&rsquo;s like counting people in a room, turning around, and suddenly there&rsquo;s one more person.</p>
+            </div>
+
+            <h3>Setting the Isolation Level</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Set for the current transaction only</span>
+<span style="color:#c084fc">BEGIN</span>;
+<span style="color:#c084fc">SET TRANSACTION ISOLATION LEVEL</span> <span style="color:#4ade80">REPEATABLE READ</span>;
+<span style="color:#94a3b8">-- ... your queries here ...</span>
+<span style="color:#c084fc">COMMIT</span>;
+
+<span style="color:#94a3b8">-- Set for the entire session</span>
+<span style="color:#c084fc">SET</span> default_transaction_isolation = <span style="color:#4ade80">'serializable'</span>;</pre></div>
+
+            <h3>When to Use Each Level</h3>
+            <table class="comparison-table">
+                <tr><th>Level</th><th>Best For</th><th>Trade-off</th></tr>
+                <tr><td>Read Committed</td><td>Most applications (default)</td><td>Good balance of safety and performance</td></tr>
+                <tr><td>Repeatable Read</td><td>Reports that need consistent data throughout</td><td>May get serialization errors on conflicts</td></tr>
+                <tr><td>Serializable</td><td>Financial transactions, inventory systems</td><td>Slowest &mdash; more serialization errors</td></tr>
+            </table>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; Serialization Errors</h4>
+                <p>At Repeatable Read and Serializable levels, PostgreSQL may throw <code>ERROR: could not serialize access</code> if two transactions conflict. Your application must be ready to <strong>catch this error and retry the transaction</strong>. This is normal and expected &mdash; it&rsquo;s how PostgreSQL maintains isolation without locking everything.</p>
+            </div>
+        </div>
+
+        <!-- ===================== 5. MVCC ===================== -->
+        <div class="section">
+            <h2>5&#65039;&#8419; MVCC &mdash; PostgreSQL&rsquo;s Secret Weapon</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; The Magic Notebook</h4>
+                <p>Imagine a magic notebook where every time someone changes a word, the old version <strong>doesn&rsquo;t disappear</strong> &mdash; instead, a new version is written on a fresh page. Different people reading the notebook at different times see different versions, depending on when they started reading. Nobody has to wait for someone else to finish writing because they&rsquo;re looking at their own snapshot of the notebook.</p>
+                <p style="margin-top:10px;">That&rsquo;s <strong>Multi-Version Concurrency Control (MVCC)</strong>. PostgreSQL keeps multiple versions of each row. Readers see a consistent snapshot of the data without blocking writers, and writers don&rsquo;t block readers.</p>
+            </div>
+
+            <h3>The Golden Rule</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">&#128218;&rarr;&#9997;&#65039;</div>
+                    <div class="stat-label">Readers NEVER block Writers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&#9997;&#65039;&rarr;&#128218;</div>
+                    <div class="stat-label">Writers NEVER block Readers</div>
+                </div>
+            </div>
+            <p>This is PostgreSQL&rsquo;s superpower. In many other databases (like MySQL with MyISAM), a writer must lock the table, making all readers wait. PostgreSQL doesn&rsquo;t have this problem.</p>
+
+            <h3>How It Works: xmin and xmax</h3>
+            <p>Every row in PostgreSQL secretly has two hidden columns:</p>
+            <table class="comparison-table">
+                <tr><th>Hidden Column</th><th>Meaning</th></tr>
+                <tr><td><code>xmin</code></td><td>The transaction ID that <strong>created</strong> (inserted) this row version</td></tr>
+                <tr><td><code>xmax</code></td><td>The transaction ID that <strong>deleted or updated</strong> this row version (0 if still alive)</td></tr>
+            </table>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- You can actually SEE these hidden columns!</span>
+<span style="color:#c084fc">SELECT</span> xmin, xmax, id, name, salary
+<span style="color:#c084fc">FROM</span> employees
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">3</span>;</pre></div>
+
+            <table class="comparison-table">
+                <tr><th>xmin</th><th>xmax</th><th>id</th><th>name</th><th>salary</th></tr>
+                <tr><td>100</td><td>0</td><td>1</td><td>Alice Johnson</td><td>85000</td></tr>
+                <tr><td>100</td><td>0</td><td>2</td><td>Bob Smith</td><td>62000</td></tr>
+                <tr><td>105</td><td>0</td><td>3</td><td>Carol Davis</td><td>91000</td></tr>
+            </table>
+
+            <h3>What Happens During an UPDATE</h3>
+            <p>PostgreSQL doesn&rsquo;t overwrite the old row. Instead, it:</p>
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Mark the old version as "expired"</h4>
+                <p>Sets <code>xmax</code> on the old row to the current transaction ID.</p>
+            </div>
+            <div class="step-box">
+                <h4>Create a brand new row version</h4>
+                <p>Inserts a new physical row with the updated values and a new <code>xmin</code>.</p>
+            </div>
+            <div class="step-box">
+                <h4>Old transactions still see the old version</h4>
+                <p>Any transaction that started before the update continues to see the old row. New transactions see the updated row.</p>
+            </div>
+
+            <div class="real-life">
+                <h4>&#127758; Why This Matters</h4>
+                <p>Imagine a reporting query that takes 5 minutes to run. Without MVCC, every INSERT/UPDATE/DELETE during those 5 minutes would either (a) be blocked, killing your application&rsquo;s performance, or (b) produce inconsistent results where some rows are from before the changes and some from after. With MVCC, the report sees a <strong>consistent snapshot</strong> from the moment it started, while other users continue writing freely.</p>
+            </div>
+
+            <h3>VACUUM &mdash; Cleaning Up Old Versions</h3>
+            <p>Since PostgreSQL keeps old row versions around, they accumulate over time. <code>VACUUM</code> is the cleanup crew that removes expired row versions that no active transaction can see anymore.</p>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Manual vacuum (rarely needed &mdash; autovacuum handles it)</span>
+<span style="color:#c084fc">VACUUM</span> employees;
+
+<span style="color:#94a3b8">-- Vacuum with extra info</span>
+<span style="color:#c084fc">VACUUM VERBOSE</span> employees;
+
+<span style="color:#94a3b8">-- VACUUM FULL reclaims disk space (locks the table &mdash; use sparingly!)</span>
+<span style="color:#c084fc">VACUUM FULL</span> employees;</pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; Trust Autovacuum</h4>
+                <p>PostgreSQL runs <strong>autovacuum</strong> in the background by default. It monitors tables and vacuums them when dead tuple counts get high. In 99% of cases, you don&rsquo;t need to run VACUUM manually. If you&rsquo;re experiencing bloat, tune autovacuum settings &mdash; don&rsquo;t disable it!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 6. LOCKS ===================== -->
+        <div class="section">
+            <h2>6&#65039;&#8419; Locks &mdash; When You DO Need to Block</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; The Bathroom Door Lock</h4>
+                <p>Even in the most freedom-loving household, the bathroom has a lock. When you&rsquo;re using it, nobody else can come in &mdash; they have to wait. Database locks work the same way: sometimes you NEED exclusive access to a resource to prevent conflicts. But just like bathroom locks, you should hold them for the <strong>shortest time possible</strong> so others aren&rsquo;t waiting forever.</p>
+            </div>
+
+            <h3>Row-Level Locks (Most Common)</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- SELECT FOR UPDATE: Lock specific rows for modification</span>
+<span style="color:#c084fc">BEGIN</span>;
+
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> products
+<span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">42</span>
+<span style="color:#c084fc">FOR UPDATE</span>;
+<span style="color:#94a3b8">-- This row is now LOCKED. Nobody else can UPDATE or DELETE it</span>
+<span style="color:#94a3b8">-- until we COMMIT or ROLLBACK.</span>
+
+<span style="color:#94a3b8">-- Check stock and process the order safely</span>
+<span style="color:#c084fc">UPDATE</span> products <span style="color:#c084fc">SET</span> stock = stock - <span style="color:#fb923c">1</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">42</span>;
+
+<span style="color:#c084fc">COMMIT</span>;
+<span style="color:#94a3b8">-- Lock released!</span></pre></div>
+
+            <h3>Lock Variants</h3>
+            <table class="comparison-table">
+                <tr><th>Lock Type</th><th>What It Does</th><th>When to Use</th></tr>
+                <tr><td><code>FOR UPDATE</code></td><td>Blocks other UPDATEs and DELETEs on the row</td><td>When you're going to modify the row</td></tr>
+                <tr><td><code>FOR NO KEY UPDATE</code></td><td>Like FOR UPDATE but allows foreign key checks</td><td>Most UPDATE scenarios</td></tr>
+                <tr><td><code>FOR SHARE</code></td><td>Blocks UPDATEs/DELETEs but allows other FOR SHARE</td><td>When you need to ensure the row doesn&rsquo;t change while you read it</td></tr>
+                <tr><td><code>FOR KEY SHARE</code></td><td>Lightest lock &mdash; only blocks DELETE and key changes</td><td>Foreign key references</td></tr>
+            </table>
+
+            <h3>SKIP LOCKED &mdash; Don&rsquo;t Wait, Skip!</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Job queue pattern: grab the next available task, skip locked ones</span>
+<span style="color:#c084fc">BEGIN</span>;
+
+<span style="color:#c084fc">SELECT</span> * <span style="color:#c084fc">FROM</span> tasks
+<span style="color:#c084fc">WHERE</span> status = <span style="color:#4ade80">'pending'</span>
+<span style="color:#c084fc">ORDER BY</span> created_at
+<span style="color:#c084fc">LIMIT</span> <span style="color:#fb923c">1</span>
+<span style="color:#c084fc">FOR UPDATE SKIP LOCKED</span>;
+<span style="color:#94a3b8">-- If the first pending task is locked by another worker, skip it</span>
+<span style="color:#94a3b8">-- and grab the next one. No waiting!</span>
+
+<span style="color:#c084fc">UPDATE</span> tasks <span style="color:#c084fc">SET</span> status = <span style="color:#4ade80">'processing'</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">123</span>;
+
+<span style="color:#c084fc">COMMIT</span>;</pre></div>
+
+            <h3>Table-Level Locks</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Explicitly lock an entire table (very rare)</span>
+<span style="color:#c084fc">BEGIN</span>;
+<span style="color:#c084fc">LOCK TABLE</span> accounts <span style="color:#c084fc">IN EXCLUSIVE MODE</span>;
+<span style="color:#94a3b8">-- Nobody else can write to accounts until we COMMIT</span>
+<span style="color:#94a3b8">-- Use extremely sparingly!</span>
+<span style="color:#c084fc">COMMIT</span>;</pre></div>
+
+            <h3>Advisory Locks &mdash; Application-Level Locking</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Advisory locks are custom, application-defined locks</span>
+<span style="color:#94a3b8">-- They don't lock any table or row &mdash; they lock a number/key</span>
+
+<span style="color:#94a3b8">-- Acquire an advisory lock (blocks until available)</span>
+<span style="color:#c084fc">SELECT</span> pg_advisory_lock(<span style="color:#fb923c">12345</span>);
+<span style="color:#94a3b8">-- Do critical work that only one process should do at a time</span>
+<span style="color:#c084fc">SELECT</span> pg_advisory_unlock(<span style="color:#fb923c">12345</span>);
+
+<span style="color:#94a3b8">-- Try to acquire without blocking (returns true/false)</span>
+<span style="color:#c084fc">SELECT</span> pg_try_advisory_lock(<span style="color:#fb923c">12345</span>);
+<span style="color:#94a3b8">-- Returns: true (got the lock) or false (someone else has it)</span></pre></div>
+
+            <div class="real-life">
+                <h4>&#127758; Real-Life Use Case for Advisory Locks</h4>
+                <p>Imagine you have a daily report that takes 10 minutes to generate. Multiple app servers might try to run it at the same time. Use an advisory lock so only ONE server generates the report. Others check the lock, see it's taken, and skip. No wasted computation!</p>
+            </div>
+        </div>
+
+        <!-- ===================== 7. DEADLOCKS ===================== -->
+        <div class="section">
+            <h2>7&#65039;&#8419; Deadlocks &mdash; When Transactions Get Stuck</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; The Narrow Hallway Problem</h4>
+                <p>Imagine two people in a narrow hallway, walking toward each other. Person A says "I won&rsquo;t move until you move." Person B says "I won&rsquo;t move until YOU move." Neither moves. They&rsquo;re stuck forever. That&rsquo;s a <strong>deadlock</strong>.</p>
+                <p style="margin-top:10px;">In database terms: Transaction A holds a lock on Row 1 and waits for Row 2. Transaction B holds a lock on Row 2 and waits for Row 1. Each is waiting for the other to finish. Neither can proceed.</p>
+            </div>
+
+            <h3>How a Deadlock Happens</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Transaction A (running in one session)</span>
+<span style="color:#c084fc">BEGIN</span>;
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance - <span style="color:#fb923c">100</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;  <span style="color:#94a3b8">-- Locks row 1</span>
+<span style="color:#94a3b8">-- ... pause ...</span>
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance + <span style="color:#fb923c">100</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">2</span>;  <span style="color:#94a3b8">-- WAITS for row 2!</span>
+
+<span style="color:#94a3b8">-- Transaction B (running in another session at the same time)</span>
+<span style="color:#c084fc">BEGIN</span>;
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance - <span style="color:#fb923c">50</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">2</span>;   <span style="color:#94a3b8">-- Locks row 2</span>
+<span style="color:#94a3b8">-- ... pause ...</span>
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance + <span style="color:#fb923c">50</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;   <span style="color:#94a3b8">-- WAITS for row 1!</span>
+
+<span style="color:#94a3b8">-- DEADLOCK! A waits for B, B waits for A.</span>
+<span style="color:#94a3b8">-- PostgreSQL detects this within ~1 second and kills one transaction:</span>
+<span style="color:#94a3b8">-- ERROR: deadlock detected</span></pre></div>
+
+            <h3>PostgreSQL&rsquo;s Deadlock Detection</h3>
+            <p>PostgreSQL automatically detects deadlocks (default check interval: 1 second). When it finds one, it <strong>kills the younger transaction</strong> (the one that has done less work) and lets the older one proceed. The killed transaction gets an error that your application should catch and retry.</p>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; How to PREVENT Deadlocks</h4>
+                <p>The #1 rule: <strong>always lock resources in the same order.</strong> If every transaction that needs accounts 1 and 2 always locks account 1 first, then account 2, deadlocks are impossible. This is called <strong>consistent lock ordering</strong>.</p>
+            </div>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- SAFE: Always lock the lower ID first</span>
+<span style="color:#c084fc">CREATE PROCEDURE</span> safe_transfer(
+    from_id <span style="color:#38bdf8">INTEGER</span>,
+    to_id <span style="color:#38bdf8">INTEGER</span>,
+    amount <span style="color:#38bdf8">NUMERIC</span>
+)
+<span style="color:#c084fc">LANGUAGE</span> plpgsql
+<span style="color:#c084fc">AS</span> $$
+<span style="color:#c084fc">DECLARE</span>
+    first_id  <span style="color:#38bdf8">INTEGER</span> := <span style="color:#c084fc">LEAST</span>(from_id, to_id);
+    second_id <span style="color:#38bdf8">INTEGER</span> := <span style="color:#c084fc">GREATEST</span>(from_id, to_id);
+<span style="color:#c084fc">BEGIN</span>
+    <span style="color:#94a3b8">-- Lock both rows in a consistent order (lowest ID first)</span>
+    <span style="color:#c084fc">PERFORM</span> * <span style="color:#c084fc">FROM</span> accounts <span style="color:#c084fc">WHERE</span> id <span style="color:#c084fc">IN</span> (first_id, second_id)
+    <span style="color:#c084fc">ORDER BY</span> id
+    <span style="color:#c084fc">FOR UPDATE</span>;
+
+    <span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance - amount <span style="color:#c084fc">WHERE</span> id = from_id;
+    <span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance + amount <span style="color:#c084fc">WHERE</span> id = to_id;
+<span style="color:#c084fc">END</span>;
+$$;</pre></div>
+
+            <h3>Other Deadlock Prevention Tips</h3>
+            <table class="comparison-table">
+                <tr><th>Tip</th><th>Why It Helps</th></tr>
+                <tr><td>Keep transactions short</td><td>Less time holding locks = less chance of conflict</td></tr>
+                <tr><td>Lock in consistent order</td><td>Prevents circular wait (the root cause of deadlocks)</td></tr>
+                <tr><td>Use <code>NOWAIT</code></td><td>Fail immediately instead of waiting &mdash; <code>SELECT ... FOR UPDATE NOWAIT</code></td></tr>
+                <tr><td>Avoid locking in user-facing paths</td><td>Don't hold locks while waiting for user input</td></tr>
+                <tr><td>Use retry logic in your app</td><td>If a deadlock kills your transaction, just try again</td></tr>
+            </table>
+        </div>
+
+        <!-- ===================== 8. PRACTICAL PATTERNS ===================== -->
+        <div class="section">
+            <h2>8&#65039;&#8419; Practical Patterns</h2>
+
+            <div class="eli5-box">
+                <h4>&#129490; ELI5 &mdash; Battle-Tested Recipes</h4>
+                <p>Now that you understand the theory, let&rsquo;s look at patterns that professional developers use every day. These are like <strong>cooking recipes</strong> that experienced chefs swear by &mdash; they&rsquo;ve been tested in real production systems handling millions of transactions.</p>
+            </div>
+
+            <h3>Pattern 1: UPSERT (ON CONFLICT)</h3>
+            <p>"Insert this row. If it already exists, update it instead." This is incredibly common.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Insert a new user, or update their email if they already exist</span>
+<span style="color:#c084fc">INSERT INTO</span> users (username, email, last_login)
+<span style="color:#c084fc">VALUES</span> (<span style="color:#4ade80">'john_doe'</span>, <span style="color:#4ade80">'john@example.com'</span>, <span style="color:#c084fc">NOW</span>())
+<span style="color:#c084fc">ON CONFLICT</span> (username)
+<span style="color:#c084fc">DO UPDATE SET</span>
+    email = EXCLUDED.email,
+    last_login = EXCLUDED.last_login;</pre></div>
+
+            <div class="important-box">
+                <h4>&#9888;&#65039; What Is EXCLUDED?</h4>
+                <p><code>EXCLUDED</code> refers to the row that was <em>proposed</em> for insertion but couldn&rsquo;t be inserted because of a conflict. So <code>EXCLUDED.email</code> is the email from the VALUES clause. It&rsquo;s like saying: "Use the new values I was trying to insert."</p>
+            </div>
+
+            <h3>Pattern 2: Idempotent Operations</h3>
+            <p>An operation is <strong>idempotent</strong> if running it multiple times produces the same result as running it once. This is critical when retrying failed transactions.</p>
+
+            <div class="code-block"><pre><span style="color:#94a3b8">-- BAD: Not idempotent &mdash; each run adds another $100</span>
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance + <span style="color:#fb923c">100</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;
+
+<span style="color:#94a3b8">-- GOOD: Idempotent &mdash; uses a unique transaction reference</span>
+<span style="color:#c084fc">INSERT INTO</span> transactions (id, account_id, amount)
+<span style="color:#c084fc">VALUES</span> (<span style="color:#4ade80">'txn-abc-123'</span>, <span style="color:#fb923c">1</span>, <span style="color:#fb923c">100</span>)
+<span style="color:#c084fc">ON CONFLICT</span> (id) <span style="color:#c084fc">DO NOTHING</span>;
+<span style="color:#94a3b8">-- If this transaction was already processed, it's silently skipped</span></pre></div>
+
+            <h3>Pattern 3: Retry Logic (Pseudocode)</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Application-side retry pattern (Python-like pseudocode)</span>
+<span style="color:#94a3b8">-- max_retries = 3</span>
+<span style="color:#94a3b8">-- for attempt in range(max_retries):</span>
+<span style="color:#94a3b8">--     try:</span>
+<span style="color:#94a3b8">--         BEGIN</span>
+<span style="color:#94a3b8">--         ... do work ...</span>
+<span style="color:#94a3b8">--         COMMIT</span>
+<span style="color:#94a3b8">--         break  # Success! Exit the loop</span>
+<span style="color:#94a3b8">--     except SerializationError:</span>
+<span style="color:#94a3b8">--         ROLLBACK</span>
+<span style="color:#94a3b8">--         sleep(random(0.01, 0.1))  # Brief random delay</span>
+<span style="color:#94a3b8">--         continue  # Try again</span></pre></div>
+
+            <h3>Pattern 4: Safe Inventory Decrement</h3>
+            <div class="code-block"><pre><span style="color:#94a3b8">-- Check stock AND decrement in one atomic query</span>
+<span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> stock = stock - <span style="color:#fb923c">1</span>
+<span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">42</span>
+  <span style="color:#c084fc">AND</span> stock &gt; <span style="color:#fb923c">0</span>
+<span style="color:#c084fc">RETURNING</span> id, name, stock;
+
+<span style="color:#94a3b8">-- If stock was already 0, no rows are updated</span>
+<span style="color:#94a3b8">-- RETURNING tells you what happened &mdash; empty = out of stock</span></pre></div>
+
+            <div class="pro-tip">
+                <h4>&#128161; Pro Tip &mdash; RETURNING Clause</h4>
+                <p><code>RETURNING</code> is a PostgreSQL extension that returns the affected rows after an INSERT, UPDATE, or DELETE. It&rsquo;s like doing the operation and a SELECT in one statement. Extremely useful to confirm what changed without a second query.</p>
+            </div>
+
+            <h3>Pattern 5: Batch Processing With Savepoints</h3>
+            <div class="code-block"><pre><span style="color:#c084fc">BEGIN</span>;
+
+<span style="color:#94a3b8">-- Process each order in a batch, skipping failures</span>
+<span style="color:#c084fc">SAVEPOINT</span> order_1;
+<span style="color:#c084fc">INSERT INTO</span> orders <span style="color:#c084fc">VALUES</span> (<span style="color:#fb923c">1</span>, <span style="color:#fb923c">100</span>, <span style="color:#c084fc">NOW</span>());
+<span style="color:#94a3b8">-- success!</span>
+
+<span style="color:#c084fc">SAVEPOINT</span> order_2;
+<span style="color:#c084fc">INSERT INTO</span> orders <span style="color:#c084fc">VALUES</span> (<span style="color:#fb923c">2</span>, -<span style="color:#fb923c">50</span>, <span style="color:#c084fc">NOW</span>());
+<span style="color:#94a3b8">-- fails! (maybe CHECK constraint on positive amount)</span>
+<span style="color:#c084fc">ROLLBACK TO</span> order_2;
+
+<span style="color:#c084fc">SAVEPOINT</span> order_3;
+<span style="color:#c084fc">INSERT INTO</span> orders <span style="color:#c084fc">VALUES</span> (<span style="color:#fb923c">3</span>, <span style="color:#fb923c">200</span>, <span style="color:#c084fc">NOW</span>());
+<span style="color:#94a3b8">-- success!</span>
+
+<span style="color:#c084fc">COMMIT</span>;
+<span style="color:#94a3b8">-- Orders 1 and 3 are saved. Order 2 was rolled back.</span></pre></div>
+        </div>
+
+        <!-- ===================== 9. PRACTICE + QUIZ ===================== -->
+        <div class="section">
+            <h2>&#127947;&#65039; Practice Exercises</h2>
+
+            <div class="step-box" style="counter-reset: step-counter 0;">
+                <h4>Exercise 1: Safe Transfer</h4>
+                <p>Write a transaction that transfers $250 from account 1 to account 3. Make sure both updates are in a single transaction. Add a SAVEPOINT before the second update.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">BEGIN</span>;
+
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance - <span style="color:#fb923c">250</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">1</span>;
+
+<span style="color:#c084fc">SAVEPOINT</span> before_credit;
+
+<span style="color:#c084fc">UPDATE</span> accounts <span style="color:#c084fc">SET</span> balance = balance + <span style="color:#fb923c">250</span> <span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">3</span>;
+
+<span style="color:#c084fc">COMMIT</span>;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 2: UPSERT Product</h4>
+                <p>Write an INSERT that adds a product with id=1, name='Laptop', price=999. If id 1 already exists, update only the price to 999.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">INSERT INTO</span> products (id, name, price)
+<span style="color:#c084fc">VALUES</span> (<span style="color:#fb923c">1</span>, <span style="color:#4ade80">'Laptop'</span>, <span style="color:#fb923c">999</span>)
+<span style="color:#c084fc">ON CONFLICT</span> (id)
+<span style="color:#c084fc">DO UPDATE SET</span> price = EXCLUDED.price;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 3: Safe Stock Decrement</h4>
+                <p>Write a query that decreases the stock of product 42 by 1, but ONLY if stock is greater than 0. Use RETURNING to see the new stock.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#c084fc">UPDATE</span> products
+<span style="color:#c084fc">SET</span> stock = stock - <span style="color:#fb923c">1</span>
+<span style="color:#c084fc">WHERE</span> id = <span style="color:#fb923c">42</span> <span style="color:#c084fc">AND</span> stock &gt; <span style="color:#fb923c">0</span>
+<span style="color:#c084fc">RETURNING</span> id, name, stock;</pre></div>
+                </details>
+            </div>
+
+            <div class="step-box">
+                <h4>Exercise 4: Check Isolation Level</h4>
+                <p>Write the SQL to (a) check your current isolation level, and (b) start a transaction at SERIALIZABLE level.</p>
+                <details style="margin-top:15px">
+                    <summary style="cursor:pointer;color:#336791;font-weight:700">Reveal Solution</summary>
+                    <div class="code-block"><pre><span style="color:#94a3b8">-- (a) Check current level</span>
+<span style="color:#c084fc">SHOW</span> transaction_isolation;
+
+<span style="color:#94a3b8">-- (b) Start a SERIALIZABLE transaction</span>
+<span style="color:#c084fc">BEGIN</span>;
+<span style="color:#c084fc">SET TRANSACTION ISOLATION LEVEL SERIALIZABLE</span>;
+<span style="color:#94a3b8">-- ... your queries ...</span>
+<span style="color:#c084fc">COMMIT</span>;</pre></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- ===================== QUIZ ===================== -->
+        <div class="section">
+            <h2>&#128221; Quiz &mdash; Test Your Knowledge!</h2>
+
+            <div class="quiz-section">
+                <h4>Question 1: What does ACID stand for?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Automatic, Consistent, Integrated, Durable</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Atomicity, Consistency, Isolation, Durability</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Asynchronous, Concurrent, Independent, Distributed</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Atomic, Cached, Indexed, Durable</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 2: What is PostgreSQL&rsquo;s default isolation level?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Read Uncommitted</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Read Committed</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Repeatable Read</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Serializable</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 3: What happens if you run <code>UPDATE employees SET salary = 0;</code> inside a BEGIN block and then run ROLLBACK?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">All salaries become 0 permanently</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Nothing changes &mdash; the ROLLBACK undoes the UPDATE</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Only the first employee's salary becomes 0</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">PostgreSQL throws an error</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 4: What does MVCC stand for?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Multiple Value Correction Check</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Main Version Control Center</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Multi-Version Concurrency Control</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Managed Virtual Commit Controller</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 5: What is a deadlock?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A transaction that takes too long to execute</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A table that has been locked by the DBA</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Two or more transactions waiting for each other to release locks, so none can proceed</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A row that cannot be updated because of a foreign key</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 6: How do you prevent deadlocks?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Disable MVCC</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Always use SERIALIZABLE isolation</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Always lock resources in the same consistent order</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Avoid using transactions entirely</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 7: What does <code>ON CONFLICT DO UPDATE</code> do?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Deletes the conflicting row and inserts a new one</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Throws an error when a conflict occurs</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">If the INSERT would cause a unique violation, it updates the existing row instead</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">Skips the INSERT silently</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+
+            <div class="quiz-section">
+                <h4>Question 8: What is the key benefit of MVCC?</h4>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It makes queries execute faster by using indexes</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">Readers never block writers and writers never block readers</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It automatically prevents all deadlocks</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">It compresses data to save disk space</button>
+                <div class="quiz-feedback" style="display:none; padding:12px; border-radius:8px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===================== WHAT'S NEXT ===================== -->
+        <div class="section">
+            <h2>&#127881; What&rsquo;s Next?</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Magic words: BEGIN, COMMIT, ROLLBACK</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">ACID guarantees mastered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Isolation levels understood</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Production patterns learned</div>
+                </div>
+            </div>
+
+            <p>You now understand how PostgreSQL keeps data safe under the most challenging conditions. Here&rsquo;s a recap:</p>
+
+            <table class="comparison-table">
+                <tr><th>Topic</th><th>Key Takeaway</th></tr>
+                <tr><td>Transactions</td><td>BEGIN...COMMIT bundles operations into an all-or-nothing unit</td></tr>
+                <tr><td>ROLLBACK &amp; SAVEPOINT</td><td>Undo everything or roll back to a specific checkpoint</td></tr>
+                <tr><td>ACID</td><td>Atomicity + Consistency + Isolation + Durability = trustworthy data</td></tr>
+                <tr><td>Isolation Levels</td><td>Read Committed (default), Repeatable Read, Serializable &mdash; trade-off between safety and speed</td></tr>
+                <tr><td>MVCC</td><td>PostgreSQL&rsquo;s multi-version system: readers and writers never block each other</td></tr>
+                <tr><td>Locks</td><td>FOR UPDATE, SKIP LOCKED, advisory locks &mdash; explicit control when needed</td></tr>
+                <tr><td>Deadlocks</td><td>Circular waits; prevent with consistent lock ordering</td></tr>
+                <tr><td>UPSERT &amp; Patterns</td><td>ON CONFLICT, idempotent ops, retry logic, safe stock decrement</td></tr>
+            </table>
+
+            <div class="real-life">
+                <h4>&#128302; Coming Up Next: JSON &amp; Arrays</h4>
+                <p>PostgreSQL is unique among relational databases because it has first-class support for <strong>JSON and array data types</strong>. In the next module, you&rsquo;ll learn how to store, query, and manipulate JSON documents right inside PostgreSQL &mdash; getting the best of both relational AND document database worlds. Think of it as PostgreSQL&rsquo;s answer to MongoDB, but with ACID transactions and SQL power!</p>
+            </div>
+        </div>
+
         <div class="lesson-nav">
-            <a href="json-arrays.html" class="secondary"><i class="fas fa-arrow-left"></i> JSON & Arrays</a>
-            <a href="functions.html">Functions & Triggers <i class="fas fa-arrow-right"></i></a>
+            <a href="functions.html" class="secondary"><i class="fas fa-arrow-left"></i> Functions &amp; Procedures</a>
+            <a href="json-arrays.html">JSON &amp; Arrays <i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
+
     <script>
+    function checkQuiz(btn, isCorrect) {
+        var section = btn.closest('.quiz-section');
+        var options = section.querySelectorAll('.quiz-option');
+        var feedback = section.querySelector('.quiz-feedback');
+        options.forEach(function(opt) { opt.disabled = true; opt.style.opacity = '0.7'; opt.style.cursor = 'default'; });
+        if (isCorrect) {
+            btn.classList.add('correct'); btn.style.opacity = '1';
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(34,197,94,0.15)'; feedback.style.border = '1px solid #22c55e';
+            feedback.innerHTML = '<strong style="color:#4ade80;">&#10003; Correct!</strong> <span style="color:#94a3b8;">Great job!</span>';
+        } else {
+            btn.classList.add('wrong');
+            feedback.style.display = 'block'; feedback.style.background = 'rgba(239,68,68,0.15)'; feedback.style.border = '1px solid #ef4444';
+            feedback.innerHTML = '<strong style="color:#f87171;">&#10007; Not quite!</strong> <span style="color:#94a3b8;">Check the correct answer above.</span>';
+            options.forEach(function(opt) { if (opt.getAttribute('onclick') && opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.style.opacity = '1'; } });
+        }
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
-            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold: 0.1}).observe(s);
         });
     });
     </script>

@@ -20,7 +20,7 @@
 .ux-section {
     max-width: 1100px;
     margin: 0 auto;
-    padding: var(--ux-8) var(--ux-3);
+    padding: var(--ux-5) var(--ux-3);
 }
 .ux-section-title {
     text-align: center;
@@ -37,7 +37,7 @@
     color: var(--ux-text2);
     font-size: 0.95rem;
     max-width: 540px;
-    margin: 0 auto var(--ux-5);
+    margin: 0 auto var(--ux-3);
     line-height: 1.7;
 }
 .ux-divider {
@@ -45,13 +45,13 @@
     height: 3px;
     background: linear-gradient(90deg, #6366f1, #ec4899);
     border-radius: 99px;
-    margin: var(--ux-2) auto var(--ux-3);
+    margin: var(--ux-1) auto var(--ux-2);
 }
 
 /* ── Enhanced Hero ── */
 .ux-hero {
     text-align: center;
-    padding: var(--ux-6) var(--ux-3) var(--ux-5);
+    padding: var(--ux-4) var(--ux-3) var(--ux-3);
     max-width: 720px;
     margin: 0 auto;
     animation: uxFadeUp .7s cubic-bezier(.16,1,.3,1) both;
@@ -296,7 +296,7 @@
 /* ── CTA Banner ── */
 .ux-cta-banner {
     text-align: center;
-    padding: var(--ux-8) var(--ux-3);
+    padding: var(--ux-5) var(--ux-3);
     max-width: 700px;
     margin: 0 auto;
 }
@@ -347,7 +347,7 @@
 .ux-logos-section {
     max-width: 1100px;
     margin: 0 auto;
-    padding: var(--ux-4) var(--ux-3);
+    padding: var(--ux-2) var(--ux-3);
     text-align: center;
 }
 .ux-logos-label {
@@ -496,4 +496,15 @@
     .ux-logo-item { width: 100px; height: 44px; }
     .ux-testimonial-card, .ux-instructor-card { padding: var(--ux-4) var(--ux-3); }
     .ux-faq-item { padding: var(--ux-2) var(--ux-3); }
+}
+
+/* ── Scroll-reveal (applied via JS IntersectionObserver) ── */
+.ux-section, .ux-cta-banner {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.ux-section.ux-visible, .ux-cta-banner.ux-visible {
+    opacity: 1;
+    transform: translateY(0);
 }
