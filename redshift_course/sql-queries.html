@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Queries | Redshift Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="data-loading.html">Data Loading <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>SQL Queries</h1>
+            <p>Write analytical queries in Redshift — window functions, CTEs, approximate functions, and Redshift-specific SQL.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>📚 SQL Queries</h2>
+            <p>Write analytical queries in Redshift — window functions, CTEs, approximate functions, and Redshift-specific SQL.</p>
+            <div class="eli5-box">
+                <h4>🧒 ELI5 Coming Up!</h4>
+                <p>This lesson covers sql queries in depth with real-world examples, code snippets, animated diagrams, and hands-on exercises. Every concept is explained like you're 5 years old with layman analogies.</p>
+            </div>
+        </div>
+        <div class="section">
+            <h2>📊 Redshift SQL</h2>
+            <p>Redshift SQL is PostgreSQL-compatible with some powerful additions:</p>
+            <div class="code-block"><pre><span class="comment">-- Window functions for analytics</span>
+<span class="keyword">SELECT</span>
+    date,
+    revenue,
+    <span class="function">SUM</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> date <span class="keyword">ROWS UNBOUNDED PRECEDING</span>) <span class="keyword">AS</span> running_total,
+    <span class="function">LAG</span>(revenue, 7) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> date) <span class="keyword">AS</span> last_week,
+    <span class="function">PERCENT_RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> revenue) <span class="keyword">AS</span> percentile
+<span class="keyword">FROM</span> daily_sales;
+
+<span class="comment">-- Approximate count distinct (much faster!)</span>
+<span class="keyword">SELECT</span> <span class="function">APPROXIMATE COUNT</span>(<span class="keyword">DISTINCT</span> user_id) <span class="keyword">FROM</span> events;
+
+<span class="comment">-- SUPER type for semi-structured data (JSON)</span>
+<span class="keyword">SELECT</span> json_data.customer.name
+<span class="keyword">FROM</span> orders
+<span class="keyword">WHERE</span> json_data.customer.country = <span class="string">'US'</span>;</pre></div>
+        </div>
+        <div class="lesson-nav">
+            <a href="architecture.html" class="secondary"><i class="fas fa-arrow-left"></i> Architecture</a>
+            <a href="data-loading.html">Data Loading <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

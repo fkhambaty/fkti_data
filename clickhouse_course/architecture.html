@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Deep Dive | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="table-engines.html">Table Engines <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="lesson-hero">
+            <h1>Architecture Deep Dive</h1>
+            <p>Understand HOW ClickHouse achieves its insane speed. Columnar storage, compression, sparse indexes, and the query pipeline — all explained with analogies.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>🏗️ The Big Picture</h2>
+            <p>ClickHouse's architecture has 5 key layers that work together to make it blazing fast:</p>
+
+            <div class="visual-example">
+                <svg viewBox="0 0 700 400" style="max-width: 100%;">
+                    <defs>
+                        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#facc15"/><stop offset="100%" stop-color="#eab308"/></linearGradient>
+                        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient>
+                        <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
+                        <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#4ade80"/></linearGradient>
+                        <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ec4899"/><stop offset="100%" stop-color="#f472b6"/></linearGradient>
+                    </defs>
+                    <text x="350" y="30" text-anchor="middle" fill="#94a3b8" font-size="14" font-weight="700">ClickHouse Architecture Layers</text>
+
+                    <rect x="100" y="50" width="500" height="55" rx="10" fill="url(#g1)" opacity="0.2" stroke="#facc15" stroke-width="1.5"/>
+                    <text x="350" y="75" text-anchor="middle" fill="#facc15" font-size="15" font-weight="700">1. SQL Parser & Query Planner</text>
+                    <text x="350" y="95" text-anchor="middle" fill="#fde68a" font-size="11">Parses SQL → builds AST → optimizes query plan</text>
+
+                    <rect x="100" y="115" width="500" height="55" rx="10" fill="url(#g2)" opacity="0.2" stroke="#3b82f6" stroke-width="1.5"/>
+                    <text x="350" y="140" text-anchor="middle" fill="#60a5fa" font-size="15" font-weight="700">2. Vectorized Execution Engine</text>
+                    <text x="350" y="160" text-anchor="middle" fill="#93c5fd" font-size="11">Processes data in batches of 8192 rows using SIMD</text>
+
+                    <rect x="100" y="180" width="500" height="55" rx="10" fill="url(#g3)" opacity="0.2" stroke="#8b5cf6" stroke-width="1.5"/>
+                    <text x="350" y="205" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="700">3. MergeTree Storage Engine</text>
+                    <text x="350" y="225" text-anchor="middle" fill="#c4b5fd" font-size="11">Sorted data parts, background merges, sparse indexes</text>
+
+                    <rect x="100" y="245" width="500" height="55" rx="10" fill="url(#g4)" opacity="0.2" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="350" y="270" text-anchor="middle" fill="#4ade80" font-size="15" font-weight="700">4. Compression Layer</text>
+                    <text x="350" y="290" text-anchor="middle" fill="#86efac" font-size="11">LZ4/ZSTD per-column compression, 10x reduction</text>
+
+                    <rect x="100" y="310" width="500" height="55" rx="10" fill="url(#g5)" opacity="0.2" stroke="#ec4899" stroke-width="1.5"/>
+                    <text x="350" y="335" text-anchor="middle" fill="#f472b6" font-size="15" font-weight="700">5. Disk & Memory Management</text>
+                    <text x="350" y="355" text-anchor="middle" fill="#f9a8d4" font-size="11">Direct I/O, memory-mapped files, tiered storage</text>
+
+                    <line x1="350" y1="105" x2="350" y2="115" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+                    <line x1="350" y1="170" x2="350" y2="180" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+                    <line x1="350" y1="235" x2="350" y2="245" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+                    <line x1="350" y1="300" x2="350" y2="310" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📦 Columnar Storage Explained</h2>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Wardrobe Analogy</h4>
+                <p>Imagine you have a wardrobe with 1000 outfits. Each outfit has: shirt, pants, shoes, hat, belt.</p>
+                <p style="margin-top:12px;"><strong>Row storage:</strong> Each outfit is in its own drawer. To count all red shirts, you open ALL 1000 drawers and check each shirt. Exhausting!</p>
+                <p style="margin-top:12px;"><strong>Column storage (ClickHouse):</strong> All shirts are in one section, all pants in another, all shoes in another. To count red shirts? Just go to the shirt section. You never touch pants, shoes, hats, or belts. 5x less work!</p>
+            </div>
+
+            <h3>How Data is Stored on Disk</h3>
+            <p>When you insert data into a ClickHouse table, here's what happens:</p>
+
+            <div class="code-block"><pre><span class="comment">-- Your table has 3 columns</span>
+<span class="comment">-- On disk, ClickHouse creates SEPARATE files:</span>
+
+data/
+├── my_table/
+│   ├── all_1_1_0/          <span class="comment">← "data part" (batch of rows)</span>
+│   │   ├── name.bin        <span class="comment">← ALL names, compressed</span>
+│   │   ├── age.bin         <span class="comment">← ALL ages, compressed</span>
+│   │   ├── city.bin        <span class="comment">← ALL cities, compressed</span>
+│   │   ├── primary.idx     <span class="comment">← sparse index</span>
+│   │   └── checksums.txt
+│   └── all_2_2_0/          <span class="comment">← another data part</span>
+│       ├── name.bin
+│       ├── age.bin
+│       └── ...</pre></div>
+
+            <div class="important-box">
+                <h4>🔑 Key Insight</h4>
+                <p>Each column is a separate file! When you query <code>SELECT AVG(age) FROM users</code>, ClickHouse ONLY reads <code>age.bin</code>. The <code>name.bin</code> and <code>city.bin</code> files are never touched. This is why columnar storage is so fast for analytics.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🗜️ Compression Magic</h2>
+            <p>Columnar storage enables <strong>incredible compression</strong> because similar values are stored together:</p>
+
+            <table class="comparison-table">
+                <thead><tr><th>Data Type</th><th>Row DB Compression</th><th>ClickHouse Compression</th><th>Why?</th></tr></thead>
+                <tbody>
+                    <tr><td>Country codes</td><td>~2x</td><td>~50x</td><td>Only 200 unique values → dictionary encoding</td></tr>
+                    <tr><td>Timestamps</td><td>~1.5x</td><td>~20x</td><td>Sequential values → delta encoding</td></tr>
+                    <tr><td>Integers</td><td>~2x</td><td>~10x</td><td>Same type → gorilla/T64 encoding</td></tr>
+                    <tr><td>Strings</td><td>~2x</td><td>~8x</td><td>Similar patterns → LZ4/ZSTD</td></tr>
+                </tbody>
+            </table>
+
+            <div class="real-life">
+                <h4>🌍 Real World Impact</h4>
+                <p>A dataset that takes <strong>1 TB</strong> in PostgreSQL might only take <strong>100 GB</strong> in ClickHouse. That's 10x less storage cost AND 10x less data to read from disk for every query!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Sparse Primary Indexes</h2>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Book Index Analogy</h4>
+                <p>A regular database index is like a book where every single word has a page number. The index itself becomes as big as the book!</p>
+                <p style="margin-top:12px;">ClickHouse's sparse index is like a book that says: "Chapter 1 starts on page 1, Chapter 2 on page 50, Chapter 3 on page 100..." Much smaller! If you're looking for something on page 75, you know it's between Chapter 2 (page 50) and Chapter 3 (page 100). You only scan 50 pages instead of the whole book.</p>
+            </div>
+
+            <div class="code-block"><pre><span class="comment">-- For 8.87 million rows with default granularity (8192):</span>
+<span class="comment">-- Traditional B-tree index: 8,870,000 entries (huge!)</span>
+<span class="comment">-- ClickHouse sparse index:     1,083 entries (tiny!)</span>
+
+<span class="comment">-- The sparse index fits in CPU L2 cache!</span>
+<span class="comment">-- This means index lookups are essentially FREE.</span></pre></div>
+        </div>
+
+        <div class="section">
+            <h2>⚡ Vectorized Execution</h2>
+            <p>This is ClickHouse's secret weapon for CPU-bound operations:</p>
+
+            <div class="visual-example">
+                <svg viewBox="0 0 700 250" style="max-width: 100%;">
+                    <text x="175" y="25" text-anchor="middle" fill="#f87171" font-size="14" font-weight="700">Traditional (Row-at-a-time)</text>
+                    <rect x="30" y="40" width="50" height="30" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+                    <text x="55" y="60" text-anchor="middle" fill="#fca5a5" font-size="10">Row 1</text>
+                    <text x="95" y="60" fill="#94a3b8" font-size="14">→</text>
+                    <rect x="110" y="40" width="50" height="30" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+                    <text x="135" y="60" text-anchor="middle" fill="#fca5a5" font-size="10">Row 2</text>
+                    <text x="175" y="60" fill="#94a3b8" font-size="14">→</text>
+                    <rect x="190" y="40" width="50" height="30" rx="4" fill="rgba(239,68,68,0.2)" stroke="#ef4444"/>
+                    <text x="215" y="60" text-anchor="middle" fill="#fca5a5" font-size="10">Row 3</text>
+                    <text x="255" y="60" fill="#94a3b8" font-size="14">→ ...</text>
+                    <text x="175" y="95" text-anchor="middle" fill="#f87171" font-size="11">One row at a time = SLOW 🐌</text>
+
+                    <text x="525" y="25" text-anchor="middle" fill="#4ade80" font-size="14" font-weight="700">ClickHouse (Vectorized)</text>
+                    <rect x="400" y="35" width="250" height="45" rx="8" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="2">
+                        <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="420" y="62" fill="#86efac" font-size="10" font-family="monospace">R1 R2 R3 R4 ... R8192</text>
+                    <text x="525" y="105" text-anchor="middle" fill="#4ade80" font-size="11">8192 rows at once = FAST 🚀</text>
+
+                    <rect x="50" y="130" width="600" height="80" rx="12" fill="rgba(250,204,21,0.05)" stroke="rgba(250,204,21,0.2)"/>
+                    <text x="350" y="155" text-anchor="middle" fill="#facc15" font-size="14" font-weight="700">Why does this matter?</text>
+                    <text x="350" y="175" text-anchor="middle" fill="#cbd5e1" font-size="12">Modern CPUs have SIMD instructions (SSE, AVX) that can process</text>
+                    <text x="350" y="195" text-anchor="middle" fill="#cbd5e1" font-size="12">multiple values in a single CPU cycle. ClickHouse exploits this fully.</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔄 Data Parts & Merges</h2>
+            <p>When you INSERT data, ClickHouse doesn't modify existing files. Instead:</p>
+            <ol style="padding-left: 20px; color: #cbd5e1; margin: 15px 0;">
+                <li>Each INSERT creates a new <strong>"data part"</strong> (a directory of column files)</li>
+                <li>A background process <strong>merges</strong> small parts into larger ones</li>
+                <li>This is why it's called <strong>MergeTree</strong>!</li>
+            </ol>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Snowball Effect</h4>
+                <p>Imagine you're making a snowman. You start with tiny snowballs (small data parts from each INSERT). Over time, you roll them together into bigger and bigger balls (merges). Eventually you have a few large, well-organized snowballs instead of thousands of tiny ones.</p>
+            </div>
+
+            <div class="important-box">
+                <h4>⚠️ Why This Matters</h4>
+                <p>This is why ClickHouse is <strong>append-optimized</strong>. UPDATEs and DELETEs are expensive because they require rewriting entire data parts. Always prefer INSERT over UPDATE in ClickHouse.</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="installation.html" class="secondary"><i class="fas fa-arrow-left"></i> Installation</a>
+            <a href="table-engines.html">Table Engines <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var sections = document.querySelectorAll('.section:not(.visible)');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        sections.forEach(function(s) { observer.observe(s); });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

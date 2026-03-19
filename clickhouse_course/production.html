@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production & Use Cases | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="hub.html">Back to Hub <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Production & Use Cases</h1>
+            <p>Everything you need to run ClickHouse in production: monitoring, backups, security, data ingestion, and real-world architecture patterns.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>📊 Monitoring</h2>
+            <div class="code-block"><pre><span class="comment">-- System tables for monitoring</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> system.metrics;        <span class="comment">-- Current metrics</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> system.events;         <span class="comment">-- Cumulative counters</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> system.query_log;      <span class="comment">-- Query history</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> system.parts;          <span class="comment">-- Data parts info</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> system.replicas;       <span class="comment">-- Replication status</span>
+
+<span class="comment">-- Useful monitoring queries</span>
+<span class="keyword">SELECT</span>
+    database,
+    table,
+    <span class="function">formatReadableSize</span>(<span class="function">sum</span>(bytes_on_disk)) <span class="keyword">AS</span> size,
+    <span class="function">sum</span>(rows) <span class="keyword">AS</span> total_rows,
+    <span class="function">count</span>() <span class="keyword">AS</span> parts
+<span class="keyword">FROM</span> system.parts
+<span class="keyword">WHERE</span> active
+<span class="keyword">GROUP BY</span> database, table
+<span class="keyword">ORDER BY</span> <span class="function">sum</span>(bytes_on_disk) <span class="keyword">DESC</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Grafana + ClickHouse</h4>
+                <p>The most popular monitoring setup: export ClickHouse metrics to <strong>Prometheus</strong> and visualize in <strong>Grafana</strong>. ClickHouse has a built-in Prometheus endpoint at <code>/metrics</code>.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💾 Backups</h2>
+            <div class="code-block"><pre><span class="comment">-- Built-in backup (ClickHouse 22.8+)</span>
+<span class="keyword">BACKUP TABLE</span> events <span class="keyword">TO</span> Disk(<span class="string">'backups'</span>, <span class="string">'events_backup.zip'</span>);
+
+<span class="comment">-- Restore</span>
+<span class="keyword">RESTORE TABLE</span> events <span class="keyword">FROM</span> Disk(<span class="string">'backups'</span>, <span class="string">'events_backup.zip'</span>);
+
+<span class="comment">-- Backup entire database</span>
+<span class="keyword">BACKUP DATABASE</span> default <span class="keyword">TO</span> S3(<span class="string">'https://bucket.s3.amazonaws.com/backups/'</span>);</pre></div>
+            <div class="important-box">
+                <h4>⚠️ Backup Strategy</h4>
+                <ul style="padding-left: 20px; color: #cbd5e1; margin-top: 10px;">
+                    <li>Daily incremental backups to S3/GCS</li>
+                    <li>Weekly full backups</li>
+                    <li>Test restores monthly</li>
+                    <li>Replication is NOT a backup!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔐 Security</h2>
+            <div class="code-block"><pre><span class="comment">-- Create users with specific permissions</span>
+<span class="keyword">CREATE USER</span> analyst <span class="keyword">IDENTIFIED BY</span> <span class="string">'strong_password'</span>;
+<span class="keyword">GRANT SELECT ON</span> analytics.* <span class="keyword">TO</span> analyst;
+
+<span class="keyword">CREATE USER</span> etl_service <span class="keyword">IDENTIFIED BY</span> <span class="string">'service_password'</span>;
+<span class="keyword">GRANT INSERT ON</span> raw_data.* <span class="keyword">TO</span> etl_service;
+
+<span class="comment">-- Row-level security</span>
+<span class="keyword">CREATE ROW POLICY</span> us_only <span class="keyword">ON</span> events
+<span class="keyword">FOR SELECT</span>
+<span class="keyword">USING</span> country = <span class="string">'US'</span>
+<span class="keyword">TO</span> us_analyst;</pre></div>
+        </div>
+
+        <div class="section">
+            <h2>📥 Data Ingestion Patterns</h2>
+            <table class="comparison-table">
+                <thead><tr><th>Method</th><th>Speed</th><th>Use Case</th></tr></thead>
+                <tbody>
+                    <tr><td>clickhouse-client</td><td>~1M rows/sec</td><td>Batch loads, CSV/TSV files</td></tr>
+                    <tr><td>HTTP API</td><td>~500K rows/sec</td><td>Application inserts, REST APIs</td></tr>
+                    <tr><td>Kafka Engine</td><td>~2M rows/sec</td><td>Real-time streaming from Kafka</td></tr>
+                    <tr><td>S3 Table Function</td><td>~5M rows/sec</td><td>Bulk loads from cloud storage</td></tr>
+                    <tr><td>clickhouse-local</td><td>~3M rows/sec</td><td>Local file processing</td></tr>
+                </tbody>
+            </table>
+
+            <div class="code-block"><pre><span class="comment">-- Load from S3</span>
+<span class="keyword">INSERT INTO</span> events
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="function">s3</span>(
+    <span class="string">'https://bucket.s3.amazonaws.com/data/*.parquet'</span>,
+    <span class="string">'AWS_KEY'</span>, <span class="string">'AWS_SECRET'</span>,
+    <span class="string">'Parquet'</span>
+);
+
+<span class="comment">-- Stream from Kafka</span>
+<span class="keyword">CREATE TABLE</span> events_kafka (
+    event_time <span class="function">DateTime</span>,
+    user_id <span class="function">UInt64</span>,
+    event_type <span class="function">String</span>
+) <span class="keyword">ENGINE</span> = Kafka
+<span class="keyword">SETTINGS</span>
+    kafka_broker_list = <span class="string">'kafka:9092'</span>,
+    kafka_topic_list = <span class="string">'events'</span>,
+    kafka_group_name = <span class="string">'clickhouse_consumer'</span>,
+    kafka_format = <span class="string">'JSONEachRow'</span>;</pre></div>
+        </div>
+
+        <div class="section">
+            <h2>🏢 Real-World Architecture</h2>
+            <div class="visual-example">
+                <svg viewBox="0 0 700 300" style="max-width: 100%;">
+                    <text x="350" y="25" text-anchor="middle" fill="#94a3b8" font-size="14" font-weight="700">Typical Production Architecture</text>
+
+                    <rect x="20" y="50" width="120" height="50" rx="8" fill="rgba(59,130,246,0.15)" stroke="#3b82f6"/>
+                    <text x="80" y="80" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="600">App / API</text>
+
+                    <rect x="20" y="120" width="120" height="50" rx="8" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6"/>
+                    <text x="80" y="150" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">Kafka</text>
+
+                    <line x1="140" y1="75" x2="220" y2="145" stroke="#94a3b8" stroke-width="1.5"/>
+                    <line x1="140" y1="145" x2="220" y2="145" stroke="#94a3b8" stroke-width="1.5"/>
+
+                    <rect x="220" y="110" width="160" height="70" rx="10" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="2"/>
+                    <text x="300" y="140" text-anchor="middle" fill="#facc15" font-size="13" font-weight="700">ClickHouse</text>
+                    <text x="300" y="160" text-anchor="middle" fill="#fde68a" font-size="10">3 shards × 2 replicas</text>
+
+                    <line x1="380" y1="130" x2="460" y2="80" stroke="#94a3b8" stroke-width="1.5"/>
+                    <line x1="380" y1="160" x2="460" y2="200" stroke="#94a3b8" stroke-width="1.5"/>
+
+                    <rect x="460" y="50" width="120" height="50" rx="8" fill="rgba(34,197,94,0.15)" stroke="#22c55e"/>
+                    <text x="520" y="80" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="600">Grafana</text>
+
+                    <rect x="460" y="120" width="120" height="50" rx="8" fill="rgba(236,72,153,0.15)" stroke="#ec4899"/>
+                    <text x="520" y="150" text-anchor="middle" fill="#f472b6" font-size="11" font-weight="600">Metabase</text>
+
+                    <rect x="460" y="190" width="120" height="50" rx="8" fill="rgba(249,115,22,0.15)" stroke="#f97316"/>
+                    <text x="520" y="220" text-anchor="middle" fill="#fb923c" font-size="11" font-weight="600">dbt</text>
+
+                    <rect x="100" y="250" width="500" height="35" rx="8" fill="rgba(250,204,21,0.05)" stroke="rgba(250,204,21,0.15)"/>
+                    <text x="350" y="272" text-anchor="middle" fill="#fde68a" font-size="12">App → Kafka → ClickHouse → Dashboards (Grafana/Metabase) + dbt transforms</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎓 Course Complete!</h2>
+            <div class="eli5-box">
+                <h4>🏆 Congratulations!</h4>
+                <p>You've completed the ClickHouse course! You now understand:</p>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>Columnar storage and why it's fast</li>
+                    <li>MergeTree and its variants</li>
+                    <li>Data types and schema design</li>
+                    <li>SQL queries, aggregations, and window functions</li>
+                    <li>Performance optimization techniques</li>
+                    <li>Materialized views for real-time aggregation</li>
+                    <li>Replication, sharding, and production deployment</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>Next steps:</strong> Build a real project! Try loading your company's data into ClickHouse and see the speed difference yourself.</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="replication-sharding.html" class="secondary"><i class="fas fa-arrow-left"></i> Replication</a>
+            <a href="hub.html">Back to Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

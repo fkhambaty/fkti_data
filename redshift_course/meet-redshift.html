@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Amazon Redshift | Redshift Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="setup.html">Cluster Setup <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Meet Amazon Redshift</h1>
+            <p>AWS's cloud data warehouse that powers analytics for thousands of companies. Let's understand what it is and why it matters.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>☁️ What is Amazon Redshift?</h2>
+            <p>Amazon Redshift is a <strong>fully managed, petabyte-scale cloud data warehouse</strong> by AWS. It's designed for running complex analytical queries on massive datasets — think billions of rows analyzed in seconds.</p>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Giant Calculator in the Cloud</h4>
+                <p>Imagine you have a <strong>super-powerful calculator</strong> that lives in Amazon's cloud. You can send it millions of math problems at once, and it solves them all in seconds. You don't need to buy the calculator — you just rent it by the hour. That's Redshift!</p>
+                <p style="margin-top:12px;">Unlike your laptop's database that struggles with millions of rows, Redshift can handle <strong>trillions of rows</strong> because it splits the work across many computers working together.</p>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🏗️ How is Redshift Different?</h2>
+            <table class="comparison-table">
+                <thead><tr><th>Feature</th><th>PostgreSQL</th><th>Redshift</th><th>Snowflake</th></tr></thead>
+                <tbody>
+                    <tr><td>Type</td><td>OLTP (transactions)</td><td>OLAP (analytics)</td><td>OLAP (analytics)</td></tr>
+                    <tr><td>Storage</td><td>Row-based</td><td>Columnar</td><td>Columnar</td></tr>
+                    <tr><td>Scale</td><td>Single server</td><td>Multi-node cluster</td><td>Elastic cloud</td></tr>
+                    <tr><td>Pricing</td><td>Self-hosted</td><td>Per-node/hour or Serverless</td><td>Per-credit</td></tr>
+                    <tr><td>Best For</td><td>App backends</td><td>AWS-centric analytics</td><td>Multi-cloud analytics</td></tr>
+                    <tr><td>SQL</td><td>Standard PostgreSQL</td><td>PostgreSQL-compatible</td><td>ANSI SQL</td></tr>
+                </tbody>
+            </table>
+            <div class="pro-tip">
+                <h4>💡 Key Insight</h4>
+                <p>Redshift is based on PostgreSQL 8.0, so if you know PostgreSQL, you already know ~80% of Redshift SQL! But Redshift adds columnar storage, MPP (Massively Parallel Processing), and deep AWS integration.</p>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>⚡ Why is Redshift Fast?</h2>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number">MPP</div><div class="stat-label">Massively Parallel Processing</div></div>
+                <div class="stat-card"><div class="stat-number">Columnar</div><div class="stat-label">Column-oriented storage</div></div>
+                <div class="stat-card"><div class="stat-number">Compressed</div><div class="stat-label">Automatic compression</div></div>
+                <div class="stat-card"><div class="stat-number">Cached</div><div class="stat-label">Result caching</div></div>
+            </div>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Team of Workers</h4>
+                <p>Imagine you need to count all the red balls in a warehouse with 1 million balls. <strong>PostgreSQL</strong> sends ONE person to count them all — takes hours.</p>
+                <p style="margin-top:12px;"><strong>Redshift</strong> sends a TEAM of 100 workers, each counting their section simultaneously. Done in minutes! That's MPP — splitting work across multiple "nodes" (computers).</p>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🎯 When Should You Use Redshift?</h2>
+            <div class="pro-tip">
+                <h4>✅ Perfect For</h4>
+                <ul style="padding-left: 20px; color: #cbd5e1; margin-top: 10px;">
+                    <li>You're already on AWS (S3, Glue, Lambda, etc.)</li>
+                    <li>Business intelligence dashboards (Tableau, Looker, Metabase)</li>
+                    <li>ETL/ELT pipelines with large datasets</li>
+                    <li>Data science teams running complex queries</li>
+                    <li>Predictable workloads with consistent cluster sizing</li>
+                </ul>
+            </div>
+            <div class="important-box">
+                <h4>❌ Consider Alternatives When</h4>
+                <ul style="padding-left: 20px; color: #cbd5e1; margin-top: 10px;">
+                    <li>Multi-cloud strategy → Snowflake or BigQuery</li>
+                    <li>Real-time sub-second queries → ClickHouse</li>
+                    <li>Transactional workloads → PostgreSQL/MySQL</li>
+                    <li>Highly variable workloads → Snowflake (auto-scaling)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🏢 Who Uses Redshift?</h2>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number">Netflix</div><div class="stat-label">Streaming analytics</div></div>
+                <div class="stat-card"><div class="stat-number">Airbnb</div><div class="stat-label">Booking analytics</div></div>
+                <div class="stat-card"><div class="stat-number">Nasdaq</div><div class="stat-label">Financial data</div></div>
+                <div class="stat-card"><div class="stat-number">Yelp</div><div class="stat-label">Review analytics</div></div>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🧠 Quick Quiz</h2>
+            <div class="quiz-section">
+                <p style="font-weight: 700; margin-bottom: 15px;">Redshift uses which type of storage?</p>
+                <button class="quiz-option" onclick="this.classList.add('wrong');this.nextElementSibling.classList.add('correct')">A) Row-based</button>
+                <button class="quiz-option" onclick="this.classList.add('correct')">B) Columnar</button>
+                <button class="quiz-option" onclick="this.classList.add('wrong')">C) Document-based</button>
+                <button class="quiz-option" onclick="this.classList.add('wrong')">D) Graph-based</button>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <a href="hub.html" class="secondary"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="setup.html">Cluster Setup <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+</body>
+</html>

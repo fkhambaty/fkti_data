@@ -3,35 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClickHouse Course Hub | Fakhruddin Khambaty's Learning Hub</title>
+    <title>ClickHouse Course Hub | Data For Dummies</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; }
         .container { max-width: 1200px; margin: 0 auto; }
-        .nav { background: rgba(30, 41, 59, 0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #475569; }
-        .nav a { color: #38bdf8; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .nav a:hover { color: #7dd3fc; }
-        .header { text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #eab308 0%, #ca8a04 50%, #a16207 100%); border-radius: 25px; margin-bottom: 50px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); color: #1e293b; }
+        .nav { background: rgba(30, 41, 59, 0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(250, 204, 21, 0.15); }
+        .nav a { color: #facc15; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #fbbf24; }
+        .header { text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #ca8a04 0%, #eab308 50%, #facc15 100%); border-radius: 25px; margin-bottom: 50px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); color: #1e293b; }
         .header h1 { font-size: 3em; margin-bottom: 15px; font-weight: 800; }
-        .header p { font-size: 1.3em; opacity: 0.95; max-width: 700px; margin: 0 auto 20px; }
+        .header p { font-size: 1.3em; opacity: 0.85; max-width: 700px; margin: 0 auto 20px; }
         .header-badge { background: rgba(0,0,0,0.15); color: #1e293b; padding: 10px 25px; border-radius: 30px; font-weight: 700; display: inline-block; margin-bottom: 20px; }
-        .progress-section { background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 30px; margin-bottom: 40px; border: 1px solid #475569; }
-        .progress-section h3 { color: #facc15; margin-bottom: 15px; }
-        .progress-bar-bg { background: #334155; border-radius: 10px; height: 25px; overflow: hidden; }
-        .progress-bar { background: linear-gradient(90deg, #eab308 0%, #facc15 100%); height: 100%; width: 85%; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #1e293b; font-size: 0.9em; }
-        .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .module-card { background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 28px; border: 2px solid #475569; transition: all 0.3s; position: relative; text-decoration: none; color: inherit; display: block; }
-        .module-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, #eab308 0%, #facc15 100%); border-radius: 20px 20px 0 0; }
-        .module-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); border-color: #eab308; }
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .module-card { background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 28px; border: 2px solid #475569; position: relative; }
+        .module-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--module-color, #facc15) 0%, var(--module-color-2, #eab308) 100%); border-radius: 20px 20px 0 0; }
         .module-icon { font-size: 2.5em; margin-bottom: 12px; }
-        .module-card h3 { font-size: 1.25em; margin-bottom: 10px; color: white; }
-        .module-card p { color: #94a3b8; font-size: 0.95em; line-height: 1.5; }
+        .module-card h3 { font-size: 1.4em; margin-bottom: 12px; color: white; }
+        .module-card p { color: #94a3b8; margin-bottom: 20px; line-height: 1.6; }
+        .module-status { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.85em; font-weight: 600; margin-bottom: 15px; }
+        .status-ready { background: #22c55e; color: white; }
+        .module-lessons { margin-top: 15px; padding-top: 15px; border-top: 1px solid #475569; }
+        .lesson-link { display: block; padding: 10px 15px; margin: 8px 0; background: rgba(250, 204, 21, 0.1); border-radius: 10px; color: #fde68a; text-decoration: none; font-weight: 500; transition: all 0.2s; }
+        .lesson-link:hover { background: rgba(250, 204, 21, 0.2); transform: translateX(5px); }
+        .lesson-link i { margin-right: 8px; }
+        .lesson-link-pro { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+        .lesson-link-pro:hover { background: rgba(148, 163, 184, 0.25); }
+        .lesson-link-pro i.fa-lock { margin-right: 8px; color: #f59e0b; }
+        .lesson-link-pro .pro-badge { font-size: 0.7em; margin-left: 8px; padding: 2px 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 6px; font-weight: 700; }
+        .module-intro  { --module-color: #facc15; --module-color-2: #eab308; }
+        .module-setup  { --module-color: #3b82f6; --module-color-2: #60a5fa; }
+        .module-core   { --module-color: #8b5cf6; --module-color-2: #a78bfa; }
+        .module-query  { --module-color: #22c55e; --module-color-2: #4ade80; }
+        .module-adv    { --module-color: #ec4899; --module-color-2: #f472b6; }
+        .module-prod   { --module-color: #f97316; --module-color-2: #fb923c; }
         .footer { text-align: center; padding: 30px; color: #64748b; font-size: 0.95em; }
         .footer a { color: #facc15; text-decoration: none; }
-        .btn-full { display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; padding: 14px 28px; background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #1e293b; border-radius: 12px; font-weight: 700; text-decoration: none; font-family: 'Nunito', sans-serif; transition: all 0.2s; }
-        .btn-full:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(234, 179, 8, 0.4); }
         @media (max-width: 768px) { .header h1 { font-size: 2em; } .modules-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -39,32 +48,82 @@
     <div class="container">
         <nav class="nav">
             <a href="../index.html"><i class="fas fa-home"></i><span>Main Website</span></a>
-            <a href="index.html"><span>Full ClickHouse Course</span><i class="fas fa-arrow-right"></i></a>
+            <a href="../redshift_course/hub.html"><span>Redshift Course</span><i class="fas fa-arrow-right"></i></a>
         </nav>
         <div class="header">
-            <span class="header-badge">⚡ ClickHouse</span>
+            <span class="header-badge">⚡ THE COMPLETE CLICKHOUSE CURRICULUM</span>
             <h1>ClickHouse Course Hub</h1>
-            <p>Analytics at speed. Super detailed, same “explain like you’re 5” philosophy. Install with Docker on Mac step-by-step.</p>
+            <p>From "What is ClickHouse?" to building blazing-fast analytics at petabyte scale. Every concept explained like you're 5!</p>
         </div>
-        <div class="progress-section">
-            <h3>📈 Course Progress</h3>
-            <div class="progress-bar-bg"><div class="progress-bar">Full Course Ready</div></div>
-            <p style="margin-top: 15px; color: #94a3b8;">Welcome, What is ClickHouse, Why So Fast, History &amp; Benchmarks, Install with Docker (Mac), Tables &amp; Data Types, SQL, Aggregations, Window Functions, Real-time &amp; Integrations.</p>
-        </div>
+
         <div class="modules-grid">
-            <a href="index.html#welcome" class="module-card"><div class="module-icon">🏠</div><h3>Welcome</h3><p>What you'll learn and why ClickHouse.</p></a>
-            <a href="index.html#what-is-ch" class="module-card"><div class="module-icon">👶</div><h3>What is ClickHouse? (ELI5)</h3><p>Why it’s fast and when to use it.</p></a>
-            <a href="index.html#why-fast" class="module-card"><div class="module-icon">⚡</div><h3>Why So Fast</h3><p>Columnar, pruning, vectorized execution, LSM (research made simple).</p></a>
-            <a href="index.html#history-benchmarks" class="module-card"><div class="module-icon">📊</div><h3>History &amp; Benchmarks</h3><p>Yandex → open source → $2B; real benchmarks vs Elasticsearch.</p></a>
-            <a href="index.html#install-docker-mac" class="module-card"><div class="module-icon">⚙️</div><h3>Install with Docker on Mac</h3><p>Step-by-step with screenshots.</p></a>
-            <a href="index.html#tables-types" class="module-card"><div class="module-icon">📋</div><h3>Tables &amp; Data Types</h3><p>Columnar storage and types.</p></a>
-            <a href="index.html#sql-basics" class="module-card"><div class="module-icon">🔤</div><h3>SQL Basics</h3><p>SELECT, WHERE, GROUP BY, ORDER BY.</p></a>
-            <a href="index.html#aggregations" class="module-card"><div class="module-icon">📊</div><h3>Aggregations</h3><p>SUM, COUNT, AVG, and more.</p></a>
-            <a href="index.html#window-functions" class="module-card"><div class="module-icon">🪟</div><h3>Window Functions</h3><p>OVER, PARTITION BY, ROW_NUMBER.</p></a>
-            <a href="index.html#realtime-integrations" class="module-card"><div class="module-icon">🔌</div><h3>Real-time &amp; Integrations</h3><p>Dashboards, Kafka, and APIs.</p></a>
+            <div class="module-card module-intro">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">👋</div>
+                <h3>Module 1: Introduction</h3>
+                <p>What is ClickHouse, why is it so fast, and when should you use it?</p>
+                <div class="module-lessons">
+                    <a href="meet-clickhouse.html" class="lesson-link"><i class="fas fa-play-circle"></i> Meet ClickHouse (Start Here!)</a>
+                </div>
+            </div>
+
+            <div class="module-card module-setup">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚙️</div>
+                <h3>Module 2: Setup & Architecture</h3>
+                <p>Install ClickHouse, understand columnar storage, and explore the architecture.</p>
+                <div class="module-lessons">
+                    <a href="installation.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Installation & Setup<span class="pro-badge">Pro</span></a>
+                    <a href="architecture.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Architecture Deep Dive<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card module-core">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🏗️</div>
+                <h3>Module 3: Tables & Engines</h3>
+                <p>MergeTree, ReplacingMergeTree, partitions, primary keys, and table engines.</p>
+                <div class="module-lessons">
+                    <a href="table-engines.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Table Engines & MergeTree<span class="pro-badge">Pro</span></a>
+                    <a href="data-types.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Data Types & Schema Design<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card module-query">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">📊</div>
+                <h3>Module 4: Querying & SQL</h3>
+                <p>Write blazing-fast queries, aggregations, window functions, and JOINs.</p>
+                <div class="module-lessons">
+                    <a href="querying.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> SQL Queries & Aggregations<span class="pro-badge">Pro</span></a>
+                    <a href="advanced-sql.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Advanced SQL & Functions<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card module-adv">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">⚡</div>
+                <h3>Module 5: Performance</h3>
+                <p>Optimize queries, understand indexes, materialized views, and compression.</p>
+                <div class="module-lessons">
+                    <a href="performance.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Performance & Optimization<span class="pro-badge">Pro</span></a>
+                    <a href="materialized-views.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Materialized Views<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
+
+            <div class="module-card module-prod">
+                <span class="module-status status-ready">✅ READY</span>
+                <div class="module-icon">🏭</div>
+                <h3>Module 6: Production</h3>
+                <p>Replication, sharding, monitoring, backups, and real-world use cases.</p>
+                <div class="module-lessons">
+                    <a href="replication-sharding.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Replication & Sharding<span class="pro-badge">Pro</span></a>
+                    <a href="production.html" class="lesson-link lesson-link-pro"><i class="fas fa-lock"></i> Production & Use Cases<span class="pro-badge">Pro</span></a>
+                </div>
+            </div>
         </div>
-        <p style="text-align: center;"><a href="index.html" class="btn-full"><i class="fas fa-bolt"></i> Open Full Course</a></p>
-        <div class="footer"><p>© 2026 <a href="../index.html">Fakhruddin Khambaty's Learning Hub</a> | ClickHouse Course</p></div>
+
+        <div class="footer"><p>&copy; 2026 <a href="../index.html">Data For Dummies</a> | ClickHouse Course</p></div>
     </div>
 </body>
 </html>

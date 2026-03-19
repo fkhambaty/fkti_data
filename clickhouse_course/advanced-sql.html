@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced SQL & Functions | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="performance.html">Performance <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Advanced SQL & Functions</h1>
+            <p>Window functions, arrays, lambdas, CTEs, and ClickHouse-specific SQL magic that makes complex analytics a breeze.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>🪟 Window Functions</h2>
+            <p>Window functions let you compute values across rows without collapsing them (unlike GROUP BY).</p>
+            <div class="code-block"><pre><span class="comment">-- Running total of revenue by date</span>
+<span class="keyword">SELECT</span>
+    event_date,
+    revenue,
+    <span class="function">sum</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> event_date) <span class="keyword">AS</span> running_total,
+    <span class="function">row_number</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION BY</span> country <span class="keyword">ORDER BY</span> revenue <span class="keyword">DESC</span>) <span class="keyword">AS</span> rank_in_country,
+    <span class="function">lag</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> event_date) <span class="keyword">AS</span> prev_day_revenue,
+    revenue - <span class="function">lag</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> event_date) <span class="keyword">AS</span> day_over_day_change
+<span class="keyword">FROM</span> daily_revenue;</pre></div>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: Window Functions</h4>
+                <p>Imagine you're in a race. GROUP BY tells you "the average speed of all runners." A window function tells you "your speed AND how you compare to the runner before you AND your running total distance" — all in one row. You see the big picture without losing the details.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📦 Array Functions</h2>
+            <p>ClickHouse has first-class array support — no need for unnest/lateral joins like in PostgreSQL.</p>
+            <div class="code-block"><pre><span class="comment">-- Create and manipulate arrays</span>
+<span class="keyword">SELECT</span>
+    [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>] <span class="keyword">AS</span> arr,
+    <span class="function">arrayMap</span>(x -> x * <span class="number">2</span>, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]) <span class="keyword">AS</span> doubled,        <span class="comment">-- [2, 4, 6]</span>
+    <span class="function">arrayFilter</span>(x -> x > <span class="number">2</span>, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]) <span class="keyword">AS</span> filtered,  <span class="comment">-- [3, 4]</span>
+    <span class="function">arraySum</span>([<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>]) <span class="keyword">AS</span> total,                  <span class="comment">-- 60</span>
+    <span class="function">arrayJoin</span>([<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]) <span class="keyword">AS</span> exploded;            <span class="comment">-- 3 rows</span>
+
+<span class="comment">-- Real use case: User's browsing path analysis</span>
+<span class="keyword">SELECT</span>
+    user_id,
+    <span class="function">groupArray</span>(url) <span class="keyword">AS</span> browsing_path,
+    <span class="function">length</span>(<span class="function">groupArray</span>(url)) <span class="keyword">AS</span> pages_visited,
+    <span class="function">arrayElement</span>(<span class="function">groupArray</span>(url), <span class="number">1</span>) <span class="keyword">AS</span> landing_page,
+    <span class="function">arrayElement</span>(<span class="function">groupArray</span>(url), -<span class="number">1</span>) <span class="keyword">AS</span> exit_page
+<span class="keyword">FROM</span> events
+<span class="keyword">GROUP BY</span> user_id;</pre></div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Lambda Functions</h2>
+            <p>ClickHouse supports inline lambda functions for array processing — like Python's <code>lambda</code>:</p>
+            <div class="code-block"><pre><span class="comment">-- Lambda syntax: x -> expression</span>
+<span class="keyword">SELECT</span>
+    <span class="function">arrayMap</span>(x -> x * x, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]) <span class="keyword">AS</span> squares,
+    <span class="comment">-- [1, 4, 9, 16, 25]</span>
+
+    <span class="function">arrayFilter</span>(x -> x % <span class="number">2</span> = <span class="number">0</span>, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]) <span class="keyword">AS</span> evens,
+    <span class="comment">-- [2, 4, 6]</span>
+
+    <span class="function">arrayExists</span>(x -> x > <span class="number">100</span>, [<span class="number">10</span>,<span class="number">50</span>,<span class="number">200</span>]) <span class="keyword">AS</span> has_big;
+    <span class="comment">-- 1 (true)</span></pre></div>
+        </div>
+
+        <div class="section">
+            <h2>📝 CTEs (WITH Clause)</h2>
+            <div class="code-block"><pre><span class="keyword">WITH</span>
+    daily_stats <span class="keyword">AS</span> (
+        <span class="keyword">SELECT</span>
+            event_date,
+            <span class="function">count</span>() <span class="keyword">AS</span> events,
+            <span class="function">uniq</span>(user_id) <span class="keyword">AS</span> users
+        <span class="keyword">FROM</span> events
+        <span class="keyword">GROUP BY</span> event_date
+    ),
+    averages <span class="keyword">AS</span> (
+        <span class="keyword">SELECT</span>
+            <span class="function">avg</span>(events) <span class="keyword">AS</span> avg_events,
+            <span class="function">avg</span>(users) <span class="keyword">AS</span> avg_users
+        <span class="keyword">FROM</span> daily_stats
+    )
+<span class="keyword">SELECT</span>
+    d.*,
+    <span class="function">round</span>(d.events / a.avg_events * <span class="number">100</span>, <span class="number">1</span>) <span class="keyword">AS</span> pct_of_avg
+<span class="keyword">FROM</span> daily_stats d, averages a
+<span class="keyword">ORDER BY</span> d.event_date <span class="keyword">DESC</span>
+<span class="keyword">LIMIT</span> <span class="number">30</span>;</pre></div>
+        </div>
+
+        <div class="section">
+            <h2>🎨 String & URL Functions</h2>
+            <p>ClickHouse has built-in URL parsing — no regex needed!</p>
+            <div class="code-block"><pre><span class="keyword">SELECT</span>
+    <span class="function">domain</span>(<span class="string">'https://shop.example.com/products?id=123'</span>),
+    <span class="comment">-- 'shop.example.com'</span>
+
+    <span class="function">path</span>(<span class="string">'https://shop.example.com/products?id=123'</span>),
+    <span class="comment">-- '/products'</span>
+
+    <span class="function">extractURLParameter</span>(<span class="string">'https://shop.example.com/products?id=123&amp;color=red'</span>, <span class="string">'color'</span>),
+    <span class="comment">-- 'red'</span>
+
+    <span class="function">topLevelDomain</span>(<span class="string">'https://shop.example.com'</span>);
+    <span class="comment">-- 'com'</span></pre></div>
+            <div class="pro-tip">
+                <h4>💡 This is Huge for Web Analytics</h4>
+                <p>Most databases require complex regex to parse URLs. ClickHouse does it natively, which is why it's the go-to for web analytics (it was literally built for Yandex.Metrica, a Google Analytics competitor).</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Conditional Aggregation</h2>
+            <div class="code-block"><pre><span class="comment">-- Count events by type in a single query</span>
+<span class="keyword">SELECT</span>
+    event_date,
+    <span class="function">countIf</span>(event_type = <span class="string">'click'</span>) <span class="keyword">AS</span> clicks,
+    <span class="function">countIf</span>(event_type = <span class="string">'purchase'</span>) <span class="keyword">AS</span> purchases,
+    <span class="function">sumIf</span>(revenue, event_type = <span class="string">'purchase'</span>) <span class="keyword">AS</span> total_revenue,
+    <span class="function">round</span>(<span class="function">countIf</span>(event_type = <span class="string">'purchase'</span>) / <span class="function">countIf</span>(event_type = <span class="string">'click'</span>) * <span class="number">100</span>, <span class="number">2</span>) <span class="keyword">AS</span> conversion_rate
+<span class="keyword">FROM</span> events
+<span class="keyword">GROUP BY</span> event_date
+<span class="keyword">ORDER BY</span> event_date;</pre></div>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: countIf / sumIf</h4>
+                <p>Instead of writing multiple queries or complex CASE WHEN statements, ClickHouse lets you say "count ONLY the rows where this condition is true." It's like asking a teacher: "How many students got an A?" vs "How many students are there total?" — in the same breath!</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="querying.html" class="secondary"><i class="fas fa-arrow-left"></i> SQL Queries</a>
+            <a href="performance.html">Performance <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

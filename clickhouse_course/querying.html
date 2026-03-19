@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Queries & Aggregations | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="advanced-sql.html">Advanced SQL <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>SQL Queries & Aggregations</h1>
+            <p>ClickHouse speaks SQL — but with superpowers. Learn to write queries that crunch billions of rows in milliseconds.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>📊 Basic SELECT</h2>
+            <p>ClickHouse SQL is 95% standard SQL. If you know PostgreSQL or MySQL, you already know most of it.</p>
+            <div class="code-block"><pre><span class="comment">-- Basic queries work exactly as expected</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> events <span class="keyword">LIMIT</span> <span class="number">10</span>;
+
+<span class="keyword">SELECT</span> user_id, event_type, <span class="function">count</span>() <span class="keyword">AS</span> cnt
+<span class="keyword">FROM</span> events
+<span class="keyword">WHERE</span> event_date >= <span class="string">'2024-01-01'</span>
+<span class="keyword">GROUP BY</span> user_id, event_type
+<span class="keyword">ORDER BY</span> cnt <span class="keyword">DESC</span>
+<span class="keyword">LIMIT</span> <span class="number">20</span>;</pre></div>
+            <div class="pro-tip">
+                <h4>💡 ClickHouse Shortcut: count()</h4>
+                <p>In ClickHouse, <code>count()</code> (without arguments) is the same as <code>COUNT(*)</code> but slightly faster. Use it!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔢 Aggregation Functions</h2>
+            <p>ClickHouse has 100+ built-in aggregation functions. Here are the most important ones:</p>
+            <div class="code-block"><pre><span class="keyword">SELECT</span>
+    <span class="function">count</span>()                          <span class="keyword">AS</span> total_rows,
+    <span class="function">uniq</span>(user_id)                    <span class="keyword">AS</span> unique_users,
+    <span class="function">sum</span>(revenue)                     <span class="keyword">AS</span> total_revenue,
+    <span class="function">avg</span>(response_time)               <span class="keyword">AS</span> avg_response,
+    <span class="function">min</span>(response_time)               <span class="keyword">AS</span> min_response,
+    <span class="function">max</span>(response_time)               <span class="keyword">AS</span> max_response,
+    <span class="function">quantile</span>(<span class="number">0.50</span>)(response_time)    <span class="keyword">AS</span> median,
+    <span class="function">quantile</span>(<span class="number">0.95</span>)(response_time)    <span class="keyword">AS</span> p95,
+    <span class="function">quantile</span>(<span class="number">0.99</span>)(response_time)    <span class="keyword">AS</span> p99,
+    <span class="function">topK</span>(<span class="number">5</span>)(url)                     <span class="keyword">AS</span> top_5_urls,
+    <span class="function">groupArray</span>(<span class="number">10</span>)(event_type)      <span class="keyword">AS</span> sample_events
+<span class="keyword">FROM</span> events
+<span class="keyword">WHERE</span> event_date = today();</pre></div>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5: What are Quantiles?</h4>
+                <p>Imagine 100 students take a test. <strong>Quantile(0.50)</strong> (median) = the score of the 50th student when sorted. <strong>Quantile(0.95)</strong> (p95) = the score of the 95th student. p95 tells you "95% of users had a response time BELOW this value." It's the industry standard for measuring performance.</p>
+            </div>
+
+            <h3>Special ClickHouse Functions</h3>
+            <table class="comparison-table">
+                <thead><tr><th>Function</th><th>What It Does</th><th>PostgreSQL Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td><code>uniq()</code></td><td>Approximate COUNT DISTINCT (fast!)</td><td><code>COUNT(DISTINCT x)</code></td></tr>
+                    <tr><td><code>uniqExact()</code></td><td>Exact COUNT DISTINCT</td><td><code>COUNT(DISTINCT x)</code></td></tr>
+                    <tr><td><code>topK(N)(col)</code></td><td>Top N most frequent values</td><td>No equivalent</td></tr>
+                    <tr><td><code>quantile(p)(col)</code></td><td>Percentile value</td><td><code>percentile_cont(p)</code></td></tr>
+                    <tr><td><code>groupArray(col)</code></td><td>Collect values into array</td><td><code>array_agg(col)</code></td></tr>
+                    <tr><td><code>argMax(a, b)</code></td><td>Value of a where b is maximum</td><td>Subquery needed</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>📅 Time-Series Queries</h2>
+            <p>ClickHouse excels at time-series analytics. Here are common patterns:</p>
+            <div class="code-block"><pre><span class="comment">-- Hourly traffic breakdown</span>
+<span class="keyword">SELECT</span>
+    <span class="function">toStartOfHour</span>(event_time) <span class="keyword">AS</span> hour,
+    <span class="function">count</span>() <span class="keyword">AS</span> events,
+    <span class="function">uniq</span>(user_id) <span class="keyword">AS</span> unique_users
+<span class="keyword">FROM</span> events
+<span class="keyword">WHERE</span> event_date = today()
+<span class="keyword">GROUP BY</span> hour
+<span class="keyword">ORDER BY</span> hour;
+
+<span class="comment">-- 7-day rolling average</span>
+<span class="keyword">SELECT</span>
+    event_date,
+    <span class="function">count</span>() <span class="keyword">AS</span> daily_events,
+    <span class="function">avg</span>(<span class="function">count</span>()) <span class="keyword">OVER</span> (
+        <span class="keyword">ORDER BY</span> event_date
+        <span class="keyword">ROWS BETWEEN</span> <span class="number">6</span> <span class="keyword">PRECEDING AND CURRENT ROW</span>
+    ) <span class="keyword">AS</span> rolling_7d_avg
+<span class="keyword">FROM</span> events
+<span class="keyword">GROUP BY</span> event_date
+<span class="keyword">ORDER BY</span> event_date;</pre></div>
+
+            <div class="real-life">
+                <h4>🌍 Real World: Dashboard Query</h4>
+                <p>This is exactly the kind of query that powers real-time dashboards at companies like Uber and Cloudflare. ClickHouse can return these results for billions of rows in under 100ms.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔗 JOINs in ClickHouse</h2>
+            <div class="important-box">
+                <h4>⚠️ JOINs Are Expensive!</h4>
+                <p>ClickHouse can do JOINs, but they're much slower than in PostgreSQL. The right table is loaded entirely into memory. Always put the <strong>smaller table on the RIGHT</strong> side of the JOIN.</p>
+            </div>
+            <div class="code-block"><pre><span class="comment">-- Small dimension table on the RIGHT</span>
+<span class="keyword">SELECT</span>
+    e.event_type,
+    d.category_name,
+    <span class="function">count</span>() <span class="keyword">AS</span> cnt
+<span class="keyword">FROM</span> events <span class="keyword">AS</span> e                  <span class="comment">-- big table (LEFT)</span>
+<span class="keyword">JOIN</span> dim_categories <span class="keyword">AS</span> d          <span class="comment">-- small table (RIGHT)</span>
+    <span class="keyword">ON</span> e.category_id = d.id
+<span class="keyword">GROUP BY</span> e.event_type, d.category_name;</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Better Alternative: Dictionary</h4>
+                <p>For small lookup tables, use ClickHouse <strong>Dictionaries</strong> instead of JOINs. They're cached in memory and accessed via <code>dictGet()</code> — much faster than a JOIN!</p>
+                <div class="code-block"><pre><span class="keyword">SELECT</span>
+    event_type,
+    <span class="function">dictGet</span>(<span class="string">'categories'</span>, <span class="string">'name'</span>, category_id) <span class="keyword">AS</span> category_name,
+    <span class="function">count</span>() <span class="keyword">AS</span> cnt
+<span class="keyword">FROM</span> events
+<span class="keyword">GROUP BY</span> event_type, category_name;</pre></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Hands-On Exercise</h2>
+            <div class="quiz-section">
+                <p style="font-weight: 700; margin-bottom: 15px;">Try this yourself! Create a table and run analytics:</p>
+                <div class="code-block"><pre><span class="comment">-- 1. Create table</span>
+<span class="keyword">CREATE TABLE</span> web_logs (
+    ts <span class="function">DateTime</span>,
+    url <span class="function">String</span>,
+    status_code <span class="function">UInt16</span>,
+    response_ms <span class="function">UInt32</span>,
+    country <span class="function">LowCardinality</span>(<span class="function">String</span>)
+) <span class="keyword">ENGINE</span> = MergeTree() <span class="keyword">ORDER BY</span> ts;
+
+<span class="comment">-- 2. Insert 10M rows</span>
+<span class="keyword">INSERT INTO</span> web_logs
+<span class="keyword">SELECT</span>
+    now() - <span class="function">toIntervalSecond</span>(<span class="function">rand</span>() % <span class="number">604800</span>),
+    <span class="function">arrayElement</span>([<span class="string">'/api/users'</span>,<span class="string">'/api/orders'</span>,<span class="string">'/home'</span>,<span class="string">'/login'</span>], (<span class="function">rand</span>()%<span class="number">4</span>)+<span class="number">1</span>),
+    <span class="function">arrayElement</span>([<span class="number">200</span>,<span class="number">201</span>,<span class="number">404</span>,<span class="number">500</span>], (<span class="function">rand</span>()%<span class="number">4</span>)+<span class="number">1</span>),
+    <span class="function">rand</span>() % <span class="number">3000</span>,
+    <span class="function">arrayElement</span>([<span class="string">'US'</span>,<span class="string">'UK'</span>,<span class="string">'IN'</span>,<span class="string">'DE'</span>,<span class="string">'JP'</span>,<span class="string">'BR'</span>], (<span class="function">rand</span>()%<span class="number">6</span>)+<span class="number">1</span>)
+<span class="keyword">FROM</span> <span class="function">numbers</span>(<span class="number">10000000</span>);
+
+<span class="comment">-- 3. Now try these queries:</span>
+<span class="comment">-- a) Top 5 countries by error rate (status >= 400)</span>
+<span class="comment">-- b) Hourly p95 response time for /api/users</span>
+<span class="comment">-- c) Which URL has the most 500 errors?</span></pre></div>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="data-types.html" class="secondary"><i class="fas fa-arrow-left"></i> Data Types</a>
+            <a href="advanced-sql.html">Advanced SQL <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

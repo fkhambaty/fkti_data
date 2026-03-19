@@ -126,7 +126,7 @@
                 key: keyId,
                 subscription_id: subscriptionId,
                 name: 'Data For Dummies',
-                description: 'Pro — ₹499/month',
+                description: 'Pro — ₹99/week',
                 image: window.location.origin + '/logo.png',
                 callback_url: callbackUrl,
                 prefill: { name: name, email: email, contact: contact },

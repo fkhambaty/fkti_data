@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet ClickHouse | Data For Dummies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="installation.html">Installation <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="lesson-hero">
+            <h1>Meet ClickHouse</h1>
+            <p>The fastest analytics database on the planet. Let's understand what it is, why it exists, and why companies like Uber, Cloudflare, and eBay trust it with billions of rows.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>⚡ What is ClickHouse?</h2>
+            <p>ClickHouse is an <strong>open-source columnar database</strong> designed for <strong>online analytical processing (OLAP)</strong>. It was created by <strong>Yandex</strong> (Russia's Google) and can process <strong>billions of rows per second</strong>.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Library Analogy</h4>
+                <p>Imagine you have a <strong>giant library</strong> with millions of books. Each book has: title, author, year, genre, pages, and price.</p>
+                <p style="margin-top:12px;"><strong>Traditional database (row-based):</strong> It's like storing each book on its own shelf — title, author, year, genre, pages, price all together. If you want to find the average price of all books, you have to walk to EVERY shelf and read EVERY book's price tag. Slow!</p>
+                <p style="margin-top:12px;"><strong>ClickHouse (column-based):</strong> It's like having separate filing cabinets — one for all titles, one for all authors, one for all prices. Want the average price? Just open the "price" cabinet. You don't touch anything else. FAST!</p>
+            </div>
+
+            <div class="visual-example">
+                <h4 style="color: #facc15; margin-bottom: 20px;">Row Storage vs Column Storage</h4>
+                <svg viewBox="0 0 800 350" style="max-width: 100%;">
+                    <!-- Row storage -->
+                    <text x="200" y="30" text-anchor="middle" fill="#94a3b8" font-size="16" font-weight="700">Row Storage (PostgreSQL, MySQL)</text>
+                    <rect x="20" y="45" width="360" height="35" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="30" y="68" fill="#fca5a5" font-size="12" font-family="monospace">Alice | 25 | NYC | $50 | 2024-01-01</text>
+                    <rect x="20" y="85" width="360" height="35" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="30" y="108" fill="#fca5a5" font-size="12" font-family="monospace">Bob   | 30 | LA  | $75 | 2024-01-02</text>
+                    <rect x="20" y="125" width="360" height="35" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+                    <text x="30" y="148" fill="#fca5a5" font-size="12" font-family="monospace">Carol | 28 | SF  | $60 | 2024-01-03</text>
+                    <text x="200" y="190" text-anchor="middle" fill="#f87171" font-size="13">Must read ALL columns for every row ❌</text>
+
+                    <!-- Column storage -->
+                    <text x="600" y="30" text-anchor="middle" fill="#94a3b8" font-size="16" font-weight="700">Column Storage (ClickHouse)</text>
+                    <rect x="420" y="45" width="120" height="115" rx="6" fill="rgba(250,204,21,0.1)" stroke="#facc15" stroke-width="1.5"/>
+                    <text x="480" y="65" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="700">Names</text>
+                    <text x="480" y="85" text-anchor="middle" fill="#fde68a" font-size="11" font-family="monospace">Alice</text>
+                    <text x="480" y="105" text-anchor="middle" fill="#fde68a" font-size="11" font-family="monospace">Bob</text>
+                    <text x="480" y="125" text-anchor="middle" fill="#fde68a" font-size="11" font-family="monospace">Carol</text>
+
+                    <rect x="550" y="45" width="80" height="115" rx="6" fill="rgba(250,204,21,0.1)" stroke="#facc15" stroke-width="1.5"/>
+                    <text x="590" y="65" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="700">Ages</text>
+                    <text x="590" y="85" text-anchor="middle" fill="#fde68a" font-size="11" font-family="monospace">25</text>
+                    <text x="590" y="105" text-anchor="middle" fill="#fde68a" font-size="11" font-family="monospace">30</text>
+                    <text x="590" y="125" text-anchor="middle" fill="#fde68a" font-size="11" font-family="monospace">28</text>
+
+                    <rect x="640" y="45" width="90" height="115" rx="6" fill="rgba(34,197,94,0.2)" stroke="#22c55e" stroke-width="2.5">
+                        <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="685" y="65" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700">Prices 💰</text>
+                    <text x="685" y="85" text-anchor="middle" fill="#4ade80" font-size="11" font-family="monospace">$50</text>
+                    <text x="685" y="105" text-anchor="middle" fill="#4ade80" font-size="11" font-family="monospace">$75</text>
+                    <text x="685" y="125" text-anchor="middle" fill="#4ade80" font-size="11" font-family="monospace">$60</text>
+
+                    <text x="600" y="190" text-anchor="middle" fill="#4ade80" font-size="13">Only reads the "price" column! ✅</text>
+
+                    <!-- Speed comparison -->
+                    <rect x="100" y="220" width="600" height="50" rx="12" fill="rgba(250,204,21,0.05)" stroke="rgba(250,204,21,0.2)" stroke-width="1"/>
+                    <text x="400" y="250" text-anchor="middle" fill="#facc15" font-size="16" font-weight="800">Result: ClickHouse reads 80% LESS data = 100x FASTER</text>
+
+                    <!-- Animated arrow -->
+                    <line x1="400" y1="200" x2="400" y2="218" stroke="#facc15" stroke-width="2">
+                        <animate attributeName="y2" values="215;220;215" dur="1s" repeatCount="indefinite"/>
+                    </line>
+                </svg>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>📜 The Origin Story</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>2008 — Born at Yandex</h4>
+                    <p>Yandex (Russia's largest search engine) needed to analyze web analytics data — billions of page views per day. No existing database was fast enough, so they built ClickHouse.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2016 — Open-Sourced</h4>
+                    <p>Yandex open-sourced ClickHouse on GitHub. The world discovered a database that could query billions of rows in milliseconds.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2021 — ClickHouse Inc. Founded</h4>
+                    <p>The original creators left Yandex and founded ClickHouse Inc., raising $250M+ to build ClickHouse Cloud.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2024-2026 — Industry Standard</h4>
+                    <p>Used by Uber, Cloudflare, eBay, Spotify, Lyft, Deutsche Bank, and thousands more. Over 1 billion rows processed per second on a single server.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🤔 OLAP vs OLTP — Why Does It Matter?</h2>
+            <p>Databases come in two flavors, and understanding the difference is <strong>crucial</strong>:</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Cash Register vs The Accountant</h4>
+                <p><strong>OLTP (PostgreSQL, MySQL)</strong> = The <strong>cash register</strong>. It handles one transaction at a time — "Alice bought shoes for $50." Fast for individual operations. Like a cashier scanning items one by one.</p>
+                <p style="margin-top:12px;"><strong>OLAP (ClickHouse)</strong> = The <strong>accountant</strong>. At the end of the month, the accountant asks: "What were total sales by category across all 500 stores for the last 3 years?" That's analyzing millions of transactions at once. ClickHouse is that accountant — insanely fast at crunching massive amounts of data.</p>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>Feature</th><th>OLTP (PostgreSQL)</th><th>OLAP (ClickHouse)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Purpose</td><td>Process transactions</td><td>Analyze data</td></tr>
+                    <tr><td>Queries</td><td>INSERT, UPDATE, DELETE one row</td><td>SELECT with GROUP BY on millions of rows</td></tr>
+                    <tr><td>Speed</td><td>Fast for single rows</td><td>Fast for billions of rows</td></tr>
+                    <tr><td>Storage</td><td>Row-based</td><td>Column-based</td></tr>
+                    <tr><td>Use Case</td><td>E-commerce checkout, banking</td><td>Dashboards, reports, analytics</td></tr>
+                    <tr><td>Updates</td><td>Frequent updates/deletes</td><td>Mostly append-only (insert)</td></tr>
+                    <tr><td>Example Query</td><td><code>SELECT * FROM orders WHERE id = 123</code></td><td><code>SELECT country, SUM(revenue) FROM orders GROUP BY country</code></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section visible">
+            <h2>🏎️ Why Is ClickHouse So Fast?</h2>
+            <p>ClickHouse isn't just "a little faster" — it's often <strong>100-1000x faster</strong> than traditional databases for analytics. Here's why:</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">1B+</div>
+                    <div class="stat-label">Rows/second on a single server</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10x</div>
+                    <div class="stat-label">Better compression than row DBs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100x</div>
+                    <div class="stat-label">Faster than PostgreSQL for analytics</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">PB</div>
+                    <div class="stat-label">Petabyte-scale datasets</div>
+                </div>
+            </div>
+
+            <h3>Secret 1: Columnar Storage</h3>
+            <p>Instead of storing data row by row, ClickHouse stores each column separately. When you query <code>SELECT AVG(price) FROM products</code>, it only reads the "price" column — ignoring name, description, category, etc. Less data read = faster query.</p>
+
+            <h3>Secret 2: Vectorized Execution</h3>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Assembly Line</h4>
+                <p>Imagine you need to add 1 to a million numbers. A normal database does it one number at a time: "1+1=2, 2+1=3, 3+1=4..."</p>
+                <p style="margin-top:12px;">ClickHouse uses <strong>vectorized execution</strong> — it processes numbers in batches of thousands at once, using your CPU's SIMD instructions. It's like having 1000 workers each adding 1 to their number simultaneously. Same work, 1000x faster.</p>
+            </div>
+
+            <h3>Secret 3: Aggressive Compression</h3>
+            <p>Because columns contain similar data types (all integers, all strings of similar length), ClickHouse compresses data <strong>10x better</strong> than row databases. Less data on disk = less data to read = faster queries.</p>
+
+            <h3>Secret 4: Sparse Primary Indexes</h3>
+            <p>Traditional databases create an index entry for every single row. ClickHouse creates one entry per ~8,192 rows. For 8.87 million rows, that's only ~1,083 index entries — fits entirely in CPU cache!</p>
+
+            <div class="real-life">
+                <h4>🌍 Real World: Cloudflare's Story</h4>
+                <p>Cloudflare processes <strong>32 million HTTP requests per second</strong>. They use ClickHouse to analyze this traffic in real-time. Their analytics dashboard queries billions of rows and returns results in <strong>under 100 milliseconds</strong>. Try doing that with PostgreSQL!</p>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🎯 When Should You Use ClickHouse?</h2>
+
+            <div class="pro-tip">
+                <h4>✅ Perfect For</h4>
+                <ul style="margin-top: 10px; padding-left: 20px; color: #cbd5e1;">
+                    <li>Web/product analytics (page views, clicks, events)</li>
+                    <li>Time-series data (IoT sensors, metrics, logs)</li>
+                    <li>Real-time dashboards and BI reporting</li>
+                    <li>Log aggregation and analysis (like ELK but faster)</li>
+                    <li>Financial data analysis (trades, transactions)</li>
+                    <li>Ad-tech (impressions, clicks, conversions)</li>
+                    <li>Any dataset with millions/billions of rows</li>
+                </ul>
+            </div>
+
+            <div class="important-box">
+                <h4>❌ NOT Ideal For</h4>
+                <ul style="margin-top: 10px; padding-left: 20px; color: #cbd5e1;">
+                    <li>Frequent UPDATE/DELETE operations (use PostgreSQL)</li>
+                    <li>Transactional workloads (banking, e-commerce checkout)</li>
+                    <li>Small datasets (under 1 million rows — overkill)</li>
+                    <li>Point lookups by primary key (use Redis or DynamoDB)</li>
+                    <li>Complex JOIN-heavy workloads (ClickHouse prefers denormalized data)</li>
+                </ul>
+            </div>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Right Tool</h4>
+                <p>You wouldn't use a <strong>race car</strong> to go grocery shopping (too impractical). And you wouldn't use a <strong>shopping cart</strong> to win a race (too slow).</p>
+                <p style="margin-top:12px;">ClickHouse is the race car — built for speed on the analytics track. PostgreSQL is the reliable family car — great for everyday transactions. Use the right tool for the right job!</p>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🏢 Who Uses ClickHouse?</h2>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number">Uber</div><div class="stat-label">Real-time trip analytics</div></div>
+                <div class="stat-card"><div class="stat-number">Cloudflare</div><div class="stat-label">32M req/sec analytics</div></div>
+                <div class="stat-card"><div class="stat-number">eBay</div><div class="stat-label">Listing analytics</div></div>
+                <div class="stat-card"><div class="stat-number">Spotify</div><div class="stat-label">Music streaming metrics</div></div>
+                <div class="stat-card"><div class="stat-number">Lyft</div><div class="stat-label">Ride data analysis</div></div>
+                <div class="stat-card"><div class="stat-number">Deutsche Bank</div><div class="stat-label">Financial analytics</div></div>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>🧠 Quick Quiz</h2>
+            <div class="quiz-section">
+                <p style="font-weight: 700; margin-bottom: 15px;">Q1: ClickHouse stores data in _____ format.</p>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Row-based</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) Column-based</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) Document-based</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Graph-based</button>
+                <div class="quiz-feedback" id="q1-feedback"></div>
+            </div>
+            <div class="quiz-section">
+                <p style="font-weight: 700; margin-bottom: 15px;">Q2: ClickHouse is best suited for which type of workload?</p>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) OLTP (transactions)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) OLAP (analytics)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) HTAP (hybrid)</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Key-value lookups</button>
+                <div class="quiz-feedback" id="q2-feedback"></div>
+            </div>
+            <div class="quiz-section">
+                <p style="font-weight: 700; margin-bottom: 15px;">Q3: Which company originally created ClickHouse?</p>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) Google</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">B) Facebook</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">C) Yandex</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) Amazon</button>
+                <div class="quiz-feedback" id="q3-feedback"></div>
+            </div>
+        </div>
+
+        <div class="section visible">
+            <h2>📋 What You'll Learn in This Course</h2>
+            <div style="counter-reset: step-counter;">
+                <div class="step-box"><h4 style="color: #facc15;">Installation & Setup</h4><p>Install ClickHouse locally and on Docker, connect with the CLI and GUI tools.</p></div>
+                <div class="step-box"><h4 style="color: #facc15;">Architecture Deep Dive</h4><p>Understand columnar storage, compression, sparse indexes, and the MergeTree engine family.</p></div>
+                <div class="step-box"><h4 style="color: #facc15;">Table Engines & Schema Design</h4><p>Choose the right engine (MergeTree, ReplacingMergeTree, SummingMergeTree) and design efficient schemas.</p></div>
+                <div class="step-box"><h4 style="color: #facc15;">SQL Queries & Aggregations</h4><p>Write blazing-fast SELECT queries, GROUP BY, window functions, and array operations.</p></div>
+                <div class="step-box"><h4 style="color: #facc15;">Performance Optimization</h4><p>Tune queries, use materialized views, projections, and understand the query pipeline.</p></div>
+                <div class="step-box"><h4 style="color: #facc15;">Production Deployment</h4><p>Replication, sharding, monitoring, backups, and real-world architecture patterns.</p></div>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="hub.html" class="secondary"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="installation.html">Installation & Setup <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <script>
+    function checkQuiz(btn, correct) {
+        var parent = btn.parentElement;
+        var options = parent.querySelectorAll('.quiz-option');
+        options.forEach(function(o) { o.disabled = true; o.style.pointerEvents = 'none'; });
+        if (correct) {
+            btn.classList.add('correct');
+            var fb = parent.querySelector('.quiz-feedback');
+            fb.style.display = 'block';
+            fb.style.background = 'rgba(34,197,94,0.15)';
+            fb.style.color = '#4ade80';
+            fb.textContent = '✅ Correct! Great job!';
+        } else {
+            btn.classList.add('wrong');
+            options.forEach(function(o) { if (!o.classList.contains('wrong')) { /* find correct */ } });
+            var fb = parent.querySelector('.quiz-feedback');
+            fb.style.display = 'block';
+            fb.style.background = 'rgba(239,68,68,0.15)';
+            fb.style.color = '#f87171';
+            fb.textContent = '❌ Not quite. Try reviewing the section above!';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var sections = document.querySelectorAll('.section:not(.visible)');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) { entry.target.classList.add('visible'); }
+            });
+        }, { threshold: 0.1 });
+        sections.forEach(function(s) { observer.observe(s); });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+</body>
+</html>

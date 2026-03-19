@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation & Setup | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="architecture.html">Architecture <i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="lesson-hero">
+            <h1>Installation & Setup</h1>
+            <p>Get ClickHouse running on your machine in under 5 minutes. We'll cover Docker, native install, and the clickhouse-client CLI.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>🐳 Method 1: Docker (Recommended)</h2>
+            <p>Docker is the fastest way to get ClickHouse running. One command and you're done.</p>
+
+            <div class="eli5-box">
+                <h4>🧒 ELI5: What is Docker?</h4>
+                <p>Think of Docker like a <strong>lunchbox</strong>. Instead of bringing all the ingredients and cooking at school, someone packs a ready-made meal in a box. Docker "packs" ClickHouse with everything it needs into a container. You just open the box and eat!</p>
+            </div>
+
+            <div style="counter-reset: step-counter;">
+                <div class="step-box">
+                    <h4 style="color: #facc15;">Install Docker</h4>
+                    <p>Download Docker Desktop from <a href="https://docker.com" style="color: #60a5fa;">docker.com</a>. Install it and make sure it's running (you'll see a whale icon in your taskbar).</p>
+                </div>
+                <div class="step-box">
+                    <h4 style="color: #facc15;">Pull & Run ClickHouse</h4>
+                    <div class="code-block"><pre><span class="comment"># Pull the official ClickHouse image</span>
+docker pull clickhouse/clickhouse-server
+
+<span class="comment"># Run ClickHouse with persistent storage</span>
+docker run -d \
+  --name clickhouse-server \
+  -p 8123:8123 \
+  -p 9000:9000 \
+  -v clickhouse-data:/var/lib/clickhouse \
+  -v clickhouse-logs:/var/log/clickhouse-server \
+  clickhouse/clickhouse-server</pre></div>
+                    <p style="margin-top: 10px; color: #94a3b8;"><strong>Port 8123</strong> = HTTP interface (for web tools) | <strong>Port 9000</strong> = Native TCP (for clickhouse-client)</p>
+                </div>
+                <div class="step-box">
+                    <h4 style="color: #facc15;">Connect with CLI</h4>
+                    <div class="code-block"><pre><span class="comment"># Open the ClickHouse client inside the container</span>
+docker exec -it clickhouse-server clickhouse-client
+
+<span class="comment"># You should see:</span>
+<span class="comment"># ClickHouse client version 24.x.x</span>
+<span class="comment"># Connecting to localhost:9000</span>
+<span class="comment"># Connected to ClickHouse server</span>
+<span class="comment"># :)</span></pre></div>
+                    <p style="margin-top: 10px;">That smiley face <code>:)</code> is the ClickHouse prompt. You're in!</p>
+                </div>
+                <div class="step-box">
+                    <h4 style="color: #facc15;">Test It Works</h4>
+                    <div class="code-block"><pre><span class="keyword">SELECT</span> <span class="string">'Hello, ClickHouse!'</span> <span class="keyword">AS</span> greeting;
+
+<span class="comment">-- Output:</span>
+<span class="comment">-- ┌─greeting───────────┐</span>
+<span class="comment">-- │ Hello, ClickHouse!  │</span>
+<span class="comment">-- └────────────────────┘</span></pre></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💻 Method 2: Native Install (Ubuntu/Debian)</h2>
+            <div class="code-block"><pre><span class="comment"># Add ClickHouse repository</span>
+sudo apt-get install -y apt-transport-https ca-certificates dirmngr
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 8919F6BD2B48D754
+
+echo "deb https://packages.clickhouse.com/deb stable main" | \
+  sudo tee /etc/apt/sources.list.d/clickhouse.list
+
+<span class="comment"># Install ClickHouse</span>
+sudo apt-get update
+sudo apt-get install -y clickhouse-server clickhouse-client
+
+<span class="comment"># Start the server</span>
+sudo service clickhouse-server start
+
+<span class="comment"># Connect</span>
+clickhouse-client</pre></div>
+        </div>
+
+        <div class="section">
+            <h2>🍎 Method 3: macOS</h2>
+            <div class="code-block"><pre><span class="comment"># Using Homebrew</span>
+brew install clickhouse
+
+<span class="comment"># Start server</span>
+clickhouse server
+
+<span class="comment"># In another terminal, connect</span>
+clickhouse client</pre></div>
+
+            <div class="pro-tip">
+                <h4>💡 Pro Tip: ClickHouse Cloud</h4>
+                <p>Don't want to install anything? Use <strong>ClickHouse Cloud</strong> at <a href="https://clickhouse.cloud" style="color: #4ade80;">clickhouse.cloud</a>. Free tier includes 10GB storage and is perfect for learning. Just sign up and start querying!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🖥️ GUI Tools</h2>
+            <p>The CLI is great, but sometimes you want a visual interface. Here are the best options:</p>
+
+            <h3>1. Built-in Play UI</h3>
+            <p>Open <code>http://localhost:8123/play</code> in your browser. It's a simple SQL editor built into ClickHouse itself!</p>
+
+            <h3>2. DBeaver</h3>
+            <p>Free, open-source database tool. Supports ClickHouse natively. Download from <a href="https://dbeaver.io" style="color: #60a5fa;">dbeaver.io</a>.</p>
+
+            <h3>3. Tabix</h3>
+            <p>Web-based ClickHouse GUI. Visit <a href="http://tabix.io" style="color: #60a5fa;">tabix.io</a> and connect to your local instance.</p>
+
+            <div class="real-life">
+                <h4>🌍 Real World</h4>
+                <p>Most ClickHouse teams use a combination: CLI for quick queries, DBeaver for exploration, and Grafana/Metabase for dashboards connected to ClickHouse.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⚙️ Configuration Basics</h2>
+            <p>ClickHouse has two main config files:</p>
+
+            <div class="code-block"><pre><span class="comment"># Server config (ports, memory, storage)</span>
+/etc/clickhouse-server/config.xml
+
+<span class="comment"># User config (authentication, quotas)</span>
+/etc/clickhouse-server/users.xml</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ Important Settings for Learning</h4>
+                <p>For now, the defaults are perfect. Don't change anything yet. We'll dive into configuration in the Production lesson.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Your First Real Query</h2>
+            <p>Let's load some sample data and run a real analytics query:</p>
+
+            <div class="code-block"><pre><span class="comment">-- Create a sample table</span>
+<span class="keyword">CREATE TABLE</span> hits (
+    timestamp <span class="function">DateTime</span>,
+    url <span class="function">String</span>,
+    country <span class="function">String</span>,
+    browser <span class="function">String</span>,
+    response_time <span class="function">UInt32</span>
+) <span class="keyword">ENGINE</span> = MergeTree()
+<span class="keyword">ORDER BY</span> timestamp;
+
+<span class="comment">-- Insert 1 million random rows</span>
+<span class="keyword">INSERT INTO</span> hits
+<span class="keyword">SELECT</span>
+    now() - <span class="function">toIntervalSecond</span>(<span class="function">rand</span>() % <span class="number">86400</span>),
+    <span class="function">arrayElement</span>([<span class="string">'/home'</span>, <span class="string">'/about'</span>, <span class="string">'/products'</span>, <span class="string">'/cart'</span>], (<span class="function">rand</span>() % <span class="number">4</span>) + <span class="number">1</span>),
+    <span class="function">arrayElement</span>([<span class="string">'US'</span>, <span class="string">'UK'</span>, <span class="string">'IN'</span>, <span class="string">'DE'</span>, <span class="string">'JP'</span>], (<span class="function">rand</span>() % <span class="number">5</span>) + <span class="number">1</span>),
+    <span class="function">arrayElement</span>([<span class="string">'Chrome'</span>, <span class="string">'Firefox'</span>, <span class="string">'Safari'</span>], (<span class="function">rand</span>() % <span class="number">3</span>) + <span class="number">1</span>),
+    <span class="function">rand</span>() % <span class="number">5000</span>
+<span class="keyword">FROM</span> <span class="function">numbers</span>(<span class="number">1000000</span>);
+
+<span class="comment">-- Analytics query: Top countries by avg response time</span>
+<span class="keyword">SELECT</span>
+    country,
+    <span class="function">count</span>() <span class="keyword">AS</span> total_hits,
+    <span class="function">round</span>(<span class="function">avg</span>(response_time), <span class="number">2</span>) <span class="keyword">AS</span> avg_response_ms,
+    <span class="function">quantile</span>(<span class="number">0.95</span>)(response_time) <span class="keyword">AS</span> p95_response_ms
+<span class="keyword">FROM</span> hits
+<span class="keyword">GROUP BY</span> country
+<span class="keyword">ORDER BY</span> total_hits <span class="keyword">DESC</span>;</pre></div>
+
+            <div class="pro-tip">
+                <h4>⚡ Speed Check</h4>
+                <p>That query just analyzed <strong>1 million rows</strong> in under <strong>50 milliseconds</strong>. On PostgreSQL, the same query would take 2-5 seconds. That's the ClickHouse difference!</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="meet-clickhouse.html" class="secondary"><i class="fas fa-arrow-left"></i> Meet ClickHouse</a>
+            <a href="architecture.html">Architecture Deep Dive <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var sections = document.querySelectorAll('.section:not(.visible)');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        sections.forEach(function(s) { observer.observe(s); });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

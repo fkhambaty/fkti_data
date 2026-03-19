@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replication & Sharding | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="production.html">Production <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Replication & Sharding</h1>
+            <p>Scale ClickHouse from a single server to a distributed cluster. Understand replication for reliability and sharding for performance.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>🔄 Replication</h2>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Backup Notebook</h4>
+                <p>Imagine you're taking notes in class. <strong>Replication</strong> means your friend copies everything you write into their notebook too. If you lose your notebook, your friend still has all the notes. That's replication — keeping identical copies of data on multiple servers for safety.</p>
+            </div>
+
+            <h3>How It Works</h3>
+            <p>ClickHouse uses <strong>ClickHouse Keeper</strong> (or ZooKeeper) to coordinate replicas:</p>
+            <div class="code-block"><pre><span class="comment">-- ReplicatedMergeTree = MergeTree + Replication</span>
+<span class="keyword">CREATE TABLE</span> events_replicated (
+    event_date <span class="function">Date</span>,
+    event_time <span class="function">DateTime</span>,
+    user_id <span class="function">UInt64</span>,
+    event_type <span class="function">String</span>
+) <span class="keyword">ENGINE</span> = ReplicatedMergeTree(
+    <span class="string">'/clickhouse/tables/{shard}/events'</span>,
+    <span class="string">'{replica}'</span>
+)
+<span class="keyword">PARTITION BY</span> toYYYYMM(event_date)
+<span class="keyword">ORDER BY</span> (event_date, user_id);</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ Replication ≠ Backup</h4>
+                <p>Replication protects against <strong>server failure</strong>. But if you accidentally run <code>DROP TABLE</code>, it drops on ALL replicas! You still need proper backups.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔀 Sharding</h2>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Pizza Slices</h4>
+                <p>You have a pizza so big one person can't eat it. So you <strong>shard</strong> (slice) it — give 1/4 to each of 4 friends. Each friend eats their slice in parallel. Done 4x faster! Sharding splits your data across multiple servers so each one handles a fraction of the work.</p>
+            </div>
+
+            <div class="visual-example">
+                <svg viewBox="0 0 700 250" style="max-width: 100%;">
+                    <rect x="250" y="10" width="200" height="50" rx="10" fill="rgba(250,204,21,0.15)" stroke="#facc15" stroke-width="1.5"/>
+                    <text x="350" y="40" text-anchor="middle" fill="#facc15" font-size="14" font-weight="700">10 Billion Rows</text>
+
+                    <line x1="280" y1="60" x2="100" y2="100" stroke="#94a3b8" stroke-width="1.5"/>
+                    <line x1="350" y1="60" x2="350" y2="100" stroke="#94a3b8" stroke-width="1.5"/>
+                    <line x1="420" y1="60" x2="600" y2="100" stroke="#94a3b8" stroke-width="1.5"/>
+
+                    <rect x="20" y="100" width="160" height="70" rx="10" fill="rgba(59,130,246,0.15)" stroke="#3b82f6" stroke-width="1.5"/>
+                    <text x="100" y="130" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="700">Shard 1</text>
+                    <text x="100" y="150" text-anchor="middle" fill="#93c5fd" font-size="10">3.3B rows</text>
+
+                    <rect x="270" y="100" width="160" height="70" rx="10" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="1.5"/>
+                    <text x="350" y="130" text-anchor="middle" fill="#a78bfa" font-size="12" font-weight="700">Shard 2</text>
+                    <text x="350" y="150" text-anchor="middle" fill="#c4b5fd" font-size="10">3.3B rows</text>
+
+                    <rect x="520" y="100" width="160" height="70" rx="10" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="600" y="130" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="700">Shard 3</text>
+                    <text x="600" y="150" text-anchor="middle" fill="#86efac" font-size="10">3.3B rows</text>
+
+                    <rect x="100" y="200" width="500" height="35" rx="8" fill="rgba(250,204,21,0.08)" stroke="rgba(250,204,21,0.2)"/>
+                    <text x="350" y="222" text-anchor="middle" fill="#facc15" font-size="13" font-weight="700">Query runs on ALL shards in parallel → 3x faster!</text>
+                </svg>
+            </div>
+
+            <div class="code-block"><pre><span class="comment">-- Distributed table (queries all shards)</span>
+<span class="keyword">CREATE TABLE</span> events_distributed
+<span class="keyword">ENGINE</span> = Distributed(
+    <span class="string">'my_cluster'</span>,     <span class="comment">-- cluster name</span>
+    <span class="string">'default'</span>,         <span class="comment">-- database</span>
+    <span class="string">'events_local'</span>,    <span class="comment">-- local table name</span>
+    <span class="function">rand</span>()             <span class="comment">-- sharding key</span>
+);</pre></div>
+        </div>
+
+        <div class="section">
+            <h2>🏗️ Cluster Architectures</h2>
+            <table class="comparison-table">
+                <thead><tr><th>Setup</th><th>Servers</th><th>Use Case</th></tr></thead>
+                <tbody>
+                    <tr><td>Single Server</td><td>1</td><td>Development, small datasets (&lt;1TB)</td></tr>
+                    <tr><td>2 Replicas</td><td>2</td><td>High availability, no sharding needed</td></tr>
+                    <tr><td>3 Shards × 2 Replicas</td><td>6</td><td>Medium datasets (1-50TB)</td></tr>
+                    <tr><td>10+ Shards × 3 Replicas</td><td>30+</td><td>Petabyte-scale (Uber, Cloudflare)</td></tr>
+                </tbody>
+            </table>
+
+            <div class="pro-tip">
+                <h4>💡 ClickHouse Cloud</h4>
+                <p>Don't want to manage clusters? <strong>ClickHouse Cloud</strong> handles replication, sharding, scaling, and backups automatically. It's the easiest way to run ClickHouse in production.</p>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="materialized-views.html" class="secondary"><i class="fas fa-arrow-left"></i> Materialized Views</a>
+            <a href="production.html">Production <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

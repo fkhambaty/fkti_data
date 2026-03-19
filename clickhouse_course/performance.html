@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance & Optimization | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="materialized-views.html">Materialized Views <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Performance & Optimization</h1>
+            <p>ClickHouse is fast by default, but with the right techniques you can make it 10-100x faster. Learn the three golden rules of ClickHouse optimization.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>🏆 The Three Golden Rules</h2>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">Read Less Data</div></div>
+                <div class="stat-card"><div class="stat-number">2</div><div class="stat-label">Avoid Unnecessary Work</div></div>
+                <div class="stat-card"><div class="stat-number">3</div><div class="stat-label">Filter First, Process Later</div></div>
+            </div>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Grocery Store</h4>
+                <p><strong>Rule 1:</strong> Don't walk through every aisle if you only need milk. Go straight to the dairy section (= select only needed columns).</p>
+                <p style="margin-top:8px;"><strong>Rule 2:</strong> Don't pick up every item to check the price. Only pick up what you're buying (= avoid SELECT *).</p>
+                <p style="margin-top:8px;"><strong>Rule 3:</strong> Check your shopping list BEFORE entering the store, not after filling your cart (= filter in WHERE before GROUP BY).</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 EXPLAIN & Query Analysis</h2>
+            <div class="code-block"><pre><span class="comment">-- See the query execution plan</span>
+<span class="keyword">EXPLAIN</span> <span class="keyword">SELECT</span> country, <span class="function">count</span>() <span class="keyword">FROM</span> events <span class="keyword">GROUP BY</span> country;
+
+<span class="comment">-- See how much data was read</span>
+<span class="keyword">SELECT</span> country, <span class="function">count</span>()
+<span class="keyword">FROM</span> events
+<span class="keyword">GROUP BY</span> country
+<span class="keyword">SETTINGS</span> send_logs_level = <span class="string">'trace'</span>;
+
+<span class="comment">-- Check query log for slow queries</span>
+<span class="keyword">SELECT</span>
+    query,
+    <span class="function">round</span>(query_duration_ms / <span class="number">1000</span>, <span class="number">2</span>) <span class="keyword">AS</span> duration_sec,
+    <span class="function">formatReadableSize</span>(read_bytes) <span class="keyword">AS</span> data_read,
+    read_rows
+<span class="keyword">FROM</span> system.query_log
+<span class="keyword">WHERE</span> type = <span class="string">'QueryFinish'</span>
+<span class="keyword">ORDER BY</span> query_duration_ms <span class="keyword">DESC</span>
+<span class="keyword">LIMIT</span> <span class="number">10</span>;</pre></div>
+        </div>
+
+        <div class="section">
+            <h2>⚡ Optimization Techniques</h2>
+
+            <h3>1. Select Only Needed Columns</h3>
+            <div class="code-block"><pre><span class="comment">-- ❌ BAD: Reads ALL columns</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> events <span class="keyword">WHERE</span> country = <span class="string">'US'</span>;
+
+<span class="comment">-- ✅ GOOD: Reads only 2 columns</span>
+<span class="keyword">SELECT</span> event_type, revenue <span class="keyword">FROM</span> events <span class="keyword">WHERE</span> country = <span class="string">'US'</span>;</pre></div>
+
+            <h3>2. Use ORDER BY Key in WHERE</h3>
+            <div class="code-block"><pre><span class="comment">-- Table: ORDER BY (event_date, user_id)</span>
+
+<span class="comment">-- ✅ FAST: Uses primary key (reads 0.1% of data)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> events <span class="keyword">WHERE</span> event_date = <span class="string">'2024-01-15'</span>;
+
+<span class="comment">-- ❌ SLOW: country is NOT in ORDER BY (full scan)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> events <span class="keyword">WHERE</span> country = <span class="string">'US'</span>;</pre></div>
+
+            <h3>3. Partition Pruning</h3>
+            <div class="code-block"><pre><span class="comment">-- Table: PARTITION BY toYYYYMM(event_date)</span>
+
+<span class="comment">-- ✅ Reads only January partition</span>
+<span class="keyword">SELECT</span> <span class="function">count</span>() <span class="keyword">FROM</span> events
+<span class="keyword">WHERE</span> event_date >= <span class="string">'2024-01-01'</span> <span class="keyword">AND</span> event_date < <span class="string">'2024-02-01'</span>;
+
+<span class="comment">-- Check which partitions were read:</span>
+<span class="keyword">SELECT</span> partition, <span class="function">sum</span>(rows) <span class="keyword">AS</span> total_rows
+<span class="keyword">FROM</span> system.parts
+<span class="keyword">WHERE</span> table = <span class="string">'events'</span> <span class="keyword">AND</span> active
+<span class="keyword">GROUP BY</span> partition;</pre></div>
+
+            <h3>4. Use LowCardinality</h3>
+            <div class="code-block"><pre><span class="comment">-- Before: 10 seconds for 1B rows</span>
+country <span class="function">String</span>
+
+<span class="comment">-- After: 1 second for 1B rows (10x faster!)</span>
+country <span class="function">LowCardinality</span>(<span class="function">String</span>)</pre></div>
+
+            <h3>5. Projections (Pre-sorted Views)</h3>
+            <div class="code-block"><pre><span class="comment">-- Main table sorted by (date, user_id)</span>
+<span class="comment">-- But you often query by country...</span>
+
+<span class="keyword">ALTER TABLE</span> events
+<span class="keyword">ADD PROJECTION</span> by_country (
+    <span class="keyword">SELECT</span> *
+    <span class="keyword">ORDER BY</span> country, event_date
+);
+
+<span class="comment">-- Now queries filtering by country are FAST too!</span>
+<span class="comment">-- ClickHouse automatically uses the projection</span></pre></div>
+            <div class="pro-tip">
+                <h4>💡 Projections = Multiple Sort Orders</h4>
+                <p>Projections let you have the same data sorted in multiple ways. It's like having the same book organized both alphabetically AND by date. The trade-off: more disk space (2x for each projection).</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Common Anti-Patterns</h2>
+            <table class="comparison-table">
+                <thead><tr><th>Anti-Pattern</th><th>Why It's Bad</th><th>Fix</th></tr></thead>
+                <tbody>
+                    <tr><td><code>SELECT *</code></td><td>Reads all columns</td><td>Select only needed columns</td></tr>
+                    <tr><td>Frequent UPDATEs</td><td>Rewrites entire parts</td><td>Use ReplacingMergeTree or append-only</td></tr>
+                    <tr><td>Too many small INSERTs</td><td>Creates too many parts</td><td>Batch inserts (1000+ rows)</td></tr>
+                    <tr><td>JOINing large tables</td><td>Right table loaded to memory</td><td>Denormalize or use Dictionaries</td></tr>
+                    <tr><td>Wrong ORDER BY</td><td>Full table scans</td><td>Put filtered columns first</td></tr>
+                    <tr><td>Over-partitioning</td><td>Too many small files</td><td>Aim for 1M+ rows per partition</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="advanced-sql.html" class="secondary"><i class="fas fa-arrow-left"></i> Advanced SQL</a>
+            <a href="materialized-views.html">Materialized Views <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

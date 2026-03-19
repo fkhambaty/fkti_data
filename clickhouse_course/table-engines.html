@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Engines & MergeTree | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="data-types.html">Data Types <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Table Engines & MergeTree</h1>
+            <p>The engine you choose determines HOW your data is stored, sorted, merged, and queried. MergeTree is the king — let's master it and its variants.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>🏗️ What is a Table Engine?</h2>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Car Engine Analogy</h4>
+                <p>A car's body might look the same, but the <strong>engine</strong> determines everything: speed, fuel efficiency, power. Similarly, a ClickHouse table looks like a normal SQL table, but the <strong>engine</strong> determines how data is stored, sorted, compressed, and queried.</p>
+                <p style="margin-top:12px;">Choose the wrong engine? Your queries will be slow. Choose the right one? Blazing fast!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🌲 MergeTree — The King of Engines</h2>
+            <p>95% of the time, you'll use <strong>MergeTree</strong> or one of its variants. It's the default, the most powerful, and the most optimized.</p>
+            <div class="code-block"><pre><span class="keyword">CREATE TABLE</span> events (
+    event_date <span class="function">Date</span>,
+    event_time <span class="function">DateTime</span>,
+    user_id <span class="function">UInt64</span>,
+    event_type <span class="function">String</span>,
+    revenue <span class="function">Float64</span>
+) <span class="keyword">ENGINE</span> = MergeTree()
+<span class="keyword">PARTITION BY</span> toYYYYMM(event_date)
+<span class="keyword">ORDER BY</span> (event_date, user_id)
+<span class="keyword">SETTINGS</span> index_granularity = <span class="number">8192</span>;</pre></div>
+
+            <h3>Key Clauses Explained</h3>
+            <table class="comparison-table">
+                <thead><tr><th>Clause</th><th>What It Does</th><th>Analogy</th></tr></thead>
+                <tbody>
+                    <tr><td><code>ENGINE = MergeTree()</code></td><td>Selects the storage engine</td><td>Choosing your car's engine type</td></tr>
+                    <tr><td><code>PARTITION BY</code></td><td>Splits data into folders by value</td><td>Filing cabinet drawers by month</td></tr>
+                    <tr><td><code>ORDER BY</code></td><td>Sorts data within each partition</td><td>Alphabetical order within each drawer</td></tr>
+                    <tr><td><code>index_granularity</code></td><td>How many rows per index entry</td><td>How many pages between bookmarks</td></tr>
+                </tbody>
+            </table>
+
+            <div class="important-box">
+                <h4>⚠️ ORDER BY is CRITICAL</h4>
+                <p>The <code>ORDER BY</code> clause is the most important decision you'll make. It determines the physical sort order on disk and directly affects query speed. Put your most-filtered columns first!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔄 MergeTree Variants</h2>
+
+            <h3>ReplacingMergeTree</h3>
+            <p>Deduplicates rows with the same <code>ORDER BY</code> key during merges. Keeps the latest version.</p>
+            <div class="code-block"><pre><span class="keyword">CREATE TABLE</span> user_profiles (
+    user_id <span class="function">UInt64</span>,
+    name <span class="function">String</span>,
+    email <span class="function">String</span>,
+    updated_at <span class="function">DateTime</span>
+) <span class="keyword">ENGINE</span> = ReplacingMergeTree(updated_at)
+<span class="keyword">ORDER BY</span> user_id;</pre></div>
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>Like a phone contacts list — if you save "John" twice with different phone numbers, it keeps only the latest one. But it doesn't happen instantly; it happens during background "cleaning" (merges).</p>
+            </div>
+
+            <h3>SummingMergeTree</h3>
+            <p>Automatically sums numeric columns for rows with the same key during merges.</p>
+            <div class="code-block"><pre><span class="keyword">CREATE TABLE</span> daily_stats (
+    date <span class="function">Date</span>,
+    country <span class="function">String</span>,
+    views <span class="function">UInt64</span>,
+    clicks <span class="function">UInt64</span>,
+    revenue <span class="function">Float64</span>
+) <span class="keyword">ENGINE</span> = SummingMergeTree()
+<span class="keyword">ORDER BY</span> (date, country);</pre></div>
+
+            <h3>AggregatingMergeTree</h3>
+            <p>Stores pre-aggregated states (like partial AVG, COUNT DISTINCT). Used with materialized views for real-time aggregation.</p>
+
+            <h3>CollapsingMergeTree</h3>
+            <p>Uses a "sign" column (+1/-1) to handle updates and deletes by canceling out rows during merges.</p>
+
+            <div class="pro-tip">
+                <h4>💡 Which Engine Should I Use?</h4>
+                <ul style="padding-left: 20px; color: #cbd5e1; margin-top: 10px;">
+                    <li><strong>MergeTree</strong> — Default choice, works for 90% of cases</li>
+                    <li><strong>ReplacingMergeTree</strong> — When you need deduplication (CDC, upserts)</li>
+                    <li><strong>SummingMergeTree</strong> — Pre-aggregated counters/metrics</li>
+                    <li><strong>AggregatingMergeTree</strong> — Complex real-time aggregations</li>
+                    <li><strong>CollapsingMergeTree</strong> — When you need mutable data</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📂 Partitioning Strategy</h2>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: The Filing Cabinet</h4>
+                <p>Partitioning is like having separate drawers in a filing cabinet. If your data is partitioned by month, and you query "show me January data," ClickHouse opens ONLY the January drawer. It completely ignores the other 11 drawers. This is called <strong>partition pruning</strong>.</p>
+            </div>
+
+            <div class="code-block"><pre><span class="comment">-- Common partitioning strategies:</span>
+
+<span class="comment">-- By month (most common)</span>
+<span class="keyword">PARTITION BY</span> toYYYYMM(event_date)
+
+<span class="comment">-- By day (high-volume data)</span>
+<span class="keyword">PARTITION BY</span> toYYYYMMDD(event_date)
+
+<span class="comment">-- By year (low-volume data)</span>
+<span class="keyword">PARTITION BY</span> toYear(event_date)
+
+<span class="comment">-- By custom expression</span>
+<span class="keyword">PARTITION BY</span> (toYYYYMM(event_date), country_code)</pre></div>
+
+            <div class="important-box">
+                <h4>⚠️ Don't Over-Partition!</h4>
+                <p>Having too many partitions (>1000) creates too many small files and actually SLOWS things down. Rule of thumb: aim for partitions with at least 1 million rows each.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧠 Quick Quiz</h2>
+            <div class="quiz-section">
+                <p style="font-weight: 700; margin-bottom: 15px;">Which MergeTree variant automatically deduplicates rows?</p>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">A) SummingMergeTree</button>
+                <button class="quiz-option" onclick="checkQuiz(this, true)">B) ReplacingMergeTree</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">C) AggregatingMergeTree</button>
+                <button class="quiz-option" onclick="checkQuiz(this, false)">D) CollapsingMergeTree</button>
+                <div class="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="architecture.html" class="secondary"><i class="fas fa-arrow-left"></i> Architecture</a>
+            <a href="data-types.html">Data Types <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    function checkQuiz(btn, correct) {
+        var parent = btn.parentElement;
+        parent.querySelectorAll('.quiz-option').forEach(function(o) { o.disabled = true; o.style.pointerEvents = 'none'; });
+        btn.classList.add(correct ? 'correct' : 'wrong');
+        var fb = parent.querySelector('.quiz-feedback');
+        fb.style.display = 'block';
+        fb.style.background = correct ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
+        fb.style.color = correct ? '#4ade80' : '#f87171';
+        fb.textContent = correct ? '✅ Correct! ReplacingMergeTree keeps only the latest version of each row.' : '❌ Not quite. ReplacingMergeTree is the one that deduplicates!';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

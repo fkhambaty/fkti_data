@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Questions | Data For Dummies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/fkti-light-theme.css">
+    <link rel="stylesheet" href="../css/hub-styles.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); min-height: 100vh; padding: 20px; color: #e2e8f0; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .nav { background: rgba(30, 41, 59, 0.9); padding: 15px 30px; border-radius: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(139, 92, 246, 0.2); }
+        .nav a { color: #a78bfa; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav a:hover { color: #c4b5fd; }
+        .header { text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #6366f1 100%); border-radius: 25px; margin-bottom: 50px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .header h1 { font-size: 3em; margin-bottom: 15px; font-weight: 800; }
+        .header p { font-size: 1.3em; opacity: 0.9; max-width: 700px; margin: 0 auto 20px; }
+        .header-badge { background: rgba(255,255,255,0.2); color: white; padding: 10px 25px; border-radius: 30px; font-weight: 700; display: inline-block; margin-bottom: 20px; }
+        .free-sample { background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 20px; padding: 30px; margin-bottom: 40px; }
+        .free-sample h2 { color: #4ade80; margin-bottom: 20px; font-size: 1.8em; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .card { background: rgba(30, 41, 59, 0.8); border-radius: 20px; padding: 28px; border: 2px solid #475569; transition: all 0.3s; text-decoration: none; color: inherit; display: block; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--card-color, #7c3aed), var(--card-color2, #6366f1)); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); border-color: var(--card-color, #7c3aed); }
+        .card-icon { font-size: 2.5em; margin-bottom: 12px; }
+        .card h3 { font-size: 1.3em; margin-bottom: 10px; color: white; }
+        .card p { color: #94a3b8; font-size: 0.95em; line-height: 1.5; margin-bottom: 15px; }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; }
+        .card-count { color: #a78bfa; font-weight: 700; font-size: 0.9em; }
+        .card-badge { font-size: 0.75em; padding: 4px 12px; border-radius: 8px; font-weight: 700; }
+        .badge-free { background: #22c55e; color: white; }
+        .badge-pro { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .architect-card { --card-color: #f59e0b; --card-color2: #eab308; }
+        .python-card { --card-color: #3b82f6; --card-color2: #60a5fa; }
+        .sql-card { --card-color: #ef4444; --card-color2: #f87171; }
+        .airflow-card { --card-color: #0d9488; --card-color2: #14b8a6; }
+        .dbt-card { --card-color: #ff694a; --card-color2: #f97316; }
+        .ds-card { --card-color: #8b5cf6; --card-color2: #a78bfa; }
+        .clickhouse-card { --card-color: #facc15; --card-color2: #eab308; }
+        .redshift-card { --card-color: #e47911; --card-color2: #ff9900; }
+        .llm-card { --card-color: #ec4899; --card-color2: #f472b6; }
+        .footer { text-align: center; padding: 30px; color: #64748b; font-size: 0.95em; }
+        .footer a { color: #a78bfa; text-decoration: none; }
+        @media (max-width: 768px) { .header h1 { font-size: 2em; } .cards-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="../index.html"><i class="fas fa-home"></i><span>Main Website</span></a>
+            <a href="../pricing.html"><span>Pricing</span><i class="fas fa-arrow-right"></i></a>
+        </nav>
+
+        <div class="header">
+            <span class="header-badge">🎯 INTERVIEW PREPARATION</span>
+            <h1>Interview Questions</h1>
+            <p>Prepare for data engineering, data science, and data architect interviews. Choose a specific technology or go for the comprehensive Data Architect track.</p>
+        </div>
+
+        <div class="free-sample">
+            <h2><i class="fas fa-gift" style="margin-right: 10px;"></i> Free Sample Questions</h2>
+            <p style="color: #cbd5e1; margin-bottom: 20px;">Get a taste of what's inside. Each category below includes 5 free sample questions. Upgrade to Pro for the full 50+ questions per category with detailed answers and explanations.</p>
+        </div>
+
+        <h2 style="color: #a78bfa; margin-bottom: 20px; font-size: 1.6em;"><i class="fas fa-crown" style="margin-right: 10px; color: #f59e0b;"></i> Comprehensive Track</h2>
+        <div class="cards-grid" style="margin-bottom: 40px;">
+            <a href="data-architect.html" class="card architect-card">
+                <div class="card-icon">🏗️</div>
+                <h3>Data Architect Interview</h3>
+                <p>The ultimate preparation — covers SQL, Python, data modeling, ETL, cloud, and system design. Everything a data architect needs.</p>
+                <div class="card-meta">
+                    <span class="card-count">100+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 95+ Pro</span>
+                </div>
+            </a>
+        </div>
+
+        <h2 style="color: #a78bfa; margin-bottom: 20px; font-size: 1.6em;"><i class="fas fa-book" style="margin-right: 10px;"></i> Individual Course Interviews</h2>
+        <div class="cards-grid">
+            <a href="python-interview.html" class="card python-card">
+                <div class="card-icon">🐍</div>
+                <h3>Python Interview</h3>
+                <p>Data structures, OOP, decorators, generators, pandas, numpy, and coding challenges.</p>
+                <div class="card-meta">
+                    <span class="card-count">50+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 45+ Pro</span>
+                </div>
+            </a>
+
+            <a href="sql-interview.html" class="card sql-card">
+                <div class="card-icon">🗄️</div>
+                <h3>SQL & Database Interview</h3>
+                <p>JOINs, window functions, optimization, indexing, normalization, and tricky SQL puzzles.</p>
+                <div class="card-meta">
+                    <span class="card-count">50+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 45+ Pro</span>
+                </div>
+            </a>
+
+            <a href="airflow-interview.html" class="card airflow-card">
+                <div class="card-icon">🌊</div>
+                <h3>Airflow Interview</h3>
+                <p>DAGs, operators, XCom, scheduling, best practices, and production scenarios.</p>
+                <div class="card-meta">
+                    <span class="card-count">40+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 35+ Pro</span>
+                </div>
+            </a>
+
+            <a href="dbt-interview.html" class="card dbt-card">
+                <div class="card-icon">🔄</div>
+                <h3>dbt Interview</h3>
+                <p>Models, materializations, testing, Jinja, macros, and deployment strategies.</p>
+                <div class="card-meta">
+                    <span class="card-count">40+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 35+ Pro</span>
+                </div>
+            </a>
+
+            <a href="data-science-interview.html" class="card ds-card">
+                <div class="card-icon">📊</div>
+                <h3>Data Science Interview</h3>
+                <p>ML algorithms, statistics, A/B testing, feature engineering, and case studies.</p>
+                <div class="card-meta">
+                    <span class="card-count">60+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 55+ Pro</span>
+                </div>
+            </a>
+
+            <a href="clickhouse-interview.html" class="card clickhouse-card">
+                <div class="card-icon">⚡</div>
+                <h3>ClickHouse Interview</h3>
+                <p>Columnar storage, MergeTree, performance tuning, and distributed queries.</p>
+                <div class="card-meta">
+                    <span class="card-count">30+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 25+ Pro</span>
+                </div>
+            </a>
+
+            <a href="redshift-interview.html" class="card redshift-card">
+                <div class="card-icon">☁️</div>
+                <h3>Redshift Interview</h3>
+                <p>MPP architecture, distribution keys, COPY, Spectrum, and cost optimization.</p>
+                <div class="card-meta">
+                    <span class="card-count">30+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 25+ Pro</span>
+                </div>
+            </a>
+
+            <a href="llm-interview.html" class="card llm-card">
+                <div class="card-icon">🤖</div>
+                <h3>LLM & AI Interview</h3>
+                <p>Transformers, attention, fine-tuning, RAG, prompt engineering, and deployment.</p>
+                <div class="card-meta">
+                    <span class="card-count">40+ Questions</span>
+                    <span class="card-badge badge-pro">5 Free / 35+ Pro</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="footer"><p>&copy; 2026 <a href="../index.html">Data For Dummies</a> | Interview Preparation</p></div>
+    </div>
+</body>
+</html>

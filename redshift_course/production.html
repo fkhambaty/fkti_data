@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Patterns | Redshift Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="hub.html">Course Hub <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Production Patterns</h1>
+            <p>Monitoring, backups, security, cost optimization, and real-world Redshift architecture patterns used by top companies.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>📚 Production Patterns</h2>
+            <p>Monitoring, backups, security, cost optimization, and real-world Redshift architecture patterns used by top companies.</p>
+            <div class="eli5-box">
+                <h4>🧒 ELI5 Coming Up!</h4>
+                <p>This lesson covers production patterns in depth with real-world examples, code snippets, animated diagrams, and hands-on exercises. Every concept is explained like you're 5 years old with layman analogies.</p>
+            </div>
+        </div>
+        <div class="section">
+            <h2>🏭 Production Best Practices</h2>
+            <table class="comparison-table">
+                <thead><tr><th>Area</th><th>Best Practice</th></tr></thead>
+                <tbody>
+                    <tr><td>Security</td><td>VPC, encryption at rest (KMS), IAM roles, no public access</td></tr>
+                    <tr><td>Monitoring</td><td>CloudWatch metrics, query monitoring rules, SNS alerts</td></tr>
+                    <tr><td>Backups</td><td>Automated snapshots (every 8 hours), cross-region copy</td></tr>
+                    <tr><td>Cost</td><td>Reserved instances for steady workloads, pause when idle</td></tr>
+                    <tr><td>Maintenance</td><td>Regular VACUUM, ANALYZE, and table redesign reviews</td></tr>
+                </tbody>
+            </table>
+            <div class="pro-tip">
+                <h4>🎓 Course Complete!</h4>
+                <p>You now understand Amazon Redshift from basics to production. Next steps: spin up a Redshift Serverless instance and load your own data!</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <a href="spectrum-serverless.html" class="secondary"><i class="fas fa-arrow-left"></i> Spectrum</a>
+            <a href="hub.html">Course Hub <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Types & Schema Design | ClickHouse Course</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-access="pro">
+    <div class="page-bg-particles" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+    <div class="container">
+        <nav class="nav">
+            <a href="hub.html"><i class="fas fa-arrow-left"></i> Course Hub</a>
+            <a href="querying.html">Querying <i class="fas fa-arrow-right"></i></a>
+        </nav>
+        <div class="lesson-hero">
+            <h1>Data Types & Schema Design</h1>
+            <p>Choosing the right data type can make your queries 10x faster and your storage 5x smaller. Every byte matters at billion-row scale.</p>
+        </div>
+
+        <div class="section visible">
+            <h2>🔢 Numeric Types</h2>
+            <div class="eli5-box">
+                <h4>🧒 ELI5: Choosing the Right Container</h4>
+                <p>If you're carrying water, you don't use a swimming pool when a glass will do. Similarly, don't use <code>Int64</code> (8 bytes) when <code>UInt8</code> (1 byte) is enough. At 1 billion rows, that's 7 GB wasted!</p>
+            </div>
+            <table class="comparison-table">
+                <thead><tr><th>Type</th><th>Size</th><th>Range</th><th>Use Case</th></tr></thead>
+                <tbody>
+                    <tr><td><code>UInt8</code></td><td>1 byte</td><td>0 to 255</td><td>Status codes, booleans, small enums</td></tr>
+                    <tr><td><code>UInt16</code></td><td>2 bytes</td><td>0 to 65,535</td><td>Port numbers, small counters</td></tr>
+                    <tr><td><code>UInt32</code></td><td>4 bytes</td><td>0 to 4.2 billion</td><td>User IDs, timestamps (epoch)</td></tr>
+                    <tr><td><code>UInt64</code></td><td>8 bytes</td><td>0 to 18 quintillion</td><td>Large IDs, big counters</td></tr>
+                    <tr><td><code>Int8/16/32/64</code></td><td>1-8 bytes</td><td>Signed (negative too)</td><td>When values can be negative</td></tr>
+                    <tr><td><code>Float32</code></td><td>4 bytes</td><td>~7 decimal digits</td><td>Approximate decimals (lat/lng)</td></tr>
+                    <tr><td><code>Float64</code></td><td>8 bytes</td><td>~15 decimal digits</td><td>Scientific calculations</td></tr>
+                    <tr><td><code>Decimal(P,S)</code></td><td>4-16 bytes</td><td>Exact precision</td><td>Money, financial data</td></tr>
+                </tbody>
+            </table>
+            <div class="important-box">
+                <h4>⚠️ Never Use Float for Money!</h4>
+                <p><code>Float64</code> can produce rounding errors: <code>0.1 + 0.2 = 0.30000000000000004</code>. Use <code>Decimal(18,2)</code> for financial data.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 String Types</h2>
+            <table class="comparison-table">
+                <thead><tr><th>Type</th><th>Description</th><th>When to Use</th></tr></thead>
+                <tbody>
+                    <tr><td><code>String</code></td><td>Variable-length, no limit</td><td>General text, URLs, JSON</td></tr>
+                    <tr><td><code>FixedString(N)</code></td><td>Exactly N bytes</td><td>Country codes (2), UUIDs (36)</td></tr>
+                    <tr><td><code>LowCardinality(String)</code></td><td>Dictionary-encoded</td><td>Columns with few unique values (&lt;10K)</td></tr>
+                    <tr><td><code>Enum8/Enum16</code></td><td>Named integer values</td><td>Status, category with fixed options</td></tr>
+                </tbody>
+            </table>
+            <div class="pro-tip">
+                <h4>💡 LowCardinality is a Game-Changer</h4>
+                <p>If a column has fewer than ~10,000 unique values (like country, browser, OS), wrapping it in <code>LowCardinality(String)</code> can make queries <strong>2-10x faster</strong> and use <strong>5-10x less storage</strong>. It's basically free performance!</p>
+                <div class="code-block"><pre><span class="comment">-- Instead of this:</span>
+country <span class="function">String</span>
+
+<span class="comment">-- Use this (much faster!):</span>
+country <span class="function">LowCardinality</span>(<span class="function">String</span>)</pre></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📅 Date & Time Types</h2>
+            <table class="comparison-table">
+                <thead><tr><th>Type</th><th>Size</th><th>Resolution</th><th>Range</th></tr></thead>
+                <tbody>
+                    <tr><td><code>Date</code></td><td>2 bytes</td><td>Day</td><td>1970 to 2149</td></tr>
+                    <tr><td><code>Date32</code></td><td>4 bytes</td><td>Day</td><td>1900 to 2299</td></tr>
+                    <tr><td><code>DateTime</code></td><td>4 bytes</td><td>Second</td><td>1970 to 2106</td></tr>
+                    <tr><td><code>DateTime64(3)</code></td><td>8 bytes</td><td>Millisecond</td><td>1900 to 2299</td></tr>
+                </tbody>
+            </table>
+            <div class="eli5-box">
+                <h4>🧒 ELI5</h4>
+                <p>Use <code>Date</code> when you only care about the day (like birthdays). Use <code>DateTime</code> when you need hours/minutes/seconds (like log timestamps). Use <code>DateTime64(3)</code> when you need milliseconds (like high-frequency trading).</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📐 Schema Design Best Practices</h2>
+            <h3>1. Denormalize Your Data</h3>
+            <p>Unlike PostgreSQL where you normalize into many tables and JOIN, ClickHouse prefers <strong>wide, flat tables</strong>. JOINs are expensive in columnar databases.</p>
+            <div class="code-block"><pre><span class="comment">-- ❌ DON'T: Normalized (slow JOINs)</span>
+<span class="keyword">SELECT</span> o.total, c.name, p.title
+<span class="keyword">FROM</span> orders o
+<span class="keyword">JOIN</span> customers c <span class="keyword">ON</span> o.customer_id = c.id
+<span class="keyword">JOIN</span> products p <span class="keyword">ON</span> o.product_id = p.id;
+
+<span class="comment">-- ✅ DO: Denormalized (fast scan)</span>
+<span class="keyword">SELECT</span> total, customer_name, product_title
+<span class="keyword">FROM</span> orders_denormalized;</pre></div>
+
+            <h3>2. Choose ORDER BY Wisely</h3>
+            <div class="code-block"><pre><span class="comment">-- Put most-filtered columns FIRST</span>
+<span class="comment">-- If you always filter by date and user_id:</span>
+<span class="keyword">ORDER BY</span> (event_date, user_id, event_type)
+
+<span class="comment">-- NOT this (date buried at the end):</span>
+<span class="keyword">ORDER BY</span> (event_type, user_id, event_date)  <span class="comment">-- ❌ slow!</span></pre></div>
+
+            <h3>3. Use the Smallest Possible Types</h3>
+            <div class="code-block"><pre><span class="comment">-- ❌ Wasteful</span>
+status <span class="function">String</span>          <span class="comment">-- "active", "inactive" = ~8 bytes each</span>
+country <span class="function">String</span>         <span class="comment">-- "US", "UK" = variable bytes</span>
+age <span class="function">Int64</span>              <span class="comment">-- 8 bytes for a number 0-150?!</span>
+
+<span class="comment">-- ✅ Efficient</span>
+status <span class="function">Enum8</span>(<span class="string">'active'</span>=<span class="number">1</span>, <span class="string">'inactive'</span>=<span class="number">2</span>)  <span class="comment">-- 1 byte</span>
+country <span class="function">LowCardinality</span>(<span class="function">String</span>)              <span class="comment">-- dictionary encoded</span>
+age <span class="function">UInt8</span>                                     <span class="comment">-- 1 byte (0-255)</span></pre></div>
+        </div>
+
+        <div class="lesson-nav">
+            <a href="table-engines.html" class="secondary"><i class="fas fa-arrow-left"></i> Table Engines</a>
+            <a href="querying.html">SQL Queries <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.section:not(.visible)').forEach(function(s) {
+            new IntersectionObserver(function(e) { if (e[0].isIntersecting) e[0].target.classList.add('visible'); }, {threshold:0.1}).observe(s);
+        });
+    });
+    </script>
+    <script src="../js/code-copy.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-auth.js"></script>
+    <script src="../js/paywall.js"></script>
+</body>
+</html>
